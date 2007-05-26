@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "MidiControlEngine.h"
 #include "PatchBank.h"
 #include "IMainDisplay.h"
@@ -16,6 +17,7 @@ MidiControlEngine::MidiControlEngine(IMidiOut * midiOut,
 	mTrace(traceDisplay),
 	mInMeta(false),
 	mActiveBank(NULL),
+	mActiveBankIndex(0),
 	mPowerUpTimeout(0),
 	mPowerUpBank(-1),
 	mPowerUpPatch(-1),
@@ -27,11 +29,29 @@ MidiControlEngine::MidiControlEngine(IMidiOut * midiOut,
 	mBanks.reserve(999);
 }
 
+struct DeletePtr
+{
+	template<typename T>
+	void operator()(const T * ptr)
+	{
+		delete ptr;
+	}
+};
+
+struct DeletePatch
+{
+	void operator()(const std::pair<int, Patch *> & pr)
+	{
+		delete pr.second;
+	}
+};
+
 MidiControlEngine::~MidiControlEngine()
 {
-	// for_each delete items
-	// mPatches
-	// mBanks
+	std::for_each(mBanks.begin(), mBanks.end(), DeletePtr<PatchBank>());
+	mBanks.clear();
+	std::for_each(mPatches.begin(), mPatches.end(), DeletePatch());
+	mPatches.clear();
 }
 
 void
@@ -80,7 +100,7 @@ MidiControlEngine::LoadBankRelative(int relativeBankIndex)
 	if (!kBankCnt)
 		return;
 
-	int newBankIndex = mActiveBank + relativeBankIndex;
+	int newBankIndex = mActiveBankIndex + relativeBankIndex;
 	if (newBankIndex < 0)
 		newBankIndex = kBankCnt - 1;
 	if (newBankIndex >= kBankCnt)

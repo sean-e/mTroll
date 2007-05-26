@@ -8,6 +8,7 @@
 class IMainDisplay;
 class ISwitchDisplay;
 class ITraceDisplay;
+class IMidiOut;
 class Patch;
 class PatchBank;
 

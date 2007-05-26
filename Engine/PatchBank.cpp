@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "PatchBank.h"
 #include "Patch.h"
 
@@ -11,13 +12,20 @@ PatchBank::PatchBank(int number,
 	mNumber(number),
 	mName(name)
 {
-	mPatches.reserve(50);
 }
+
+struct DeletePatchMap
+{
+	void operator()(const std::pair<int, PatchBank::PatchMap *> & pr)
+	{
+		delete pr.second;
+	}
+};
 
 PatchBank::~PatchBank()
 {
-	// for_each delete items
-	// mPatches
+	std::for_each(mPatches.begin(), mPatches.end(), DeletePatchMap());
+	mPatches.clear();
 }
 
 void

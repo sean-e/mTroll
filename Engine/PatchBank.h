@@ -32,16 +32,17 @@ public:
 	void PatchSwitchPressed(int switchNumber, IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 	void PatchSwitchReleased(int switchNumber, IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 
-private:
-	int			mNumber;					// unique across all patchBanks
-	std::string	mName;
 	struct PatchMap
 	{
 		int					mSwitchNumber;	// unique per bank
 		int					mPatchNumber;	// needed for load of document
 		PatchState			mPatchStateAtLoad;
 		PatchState			mPatchStateAtUnload;
-		Patch				*mPatch;		// non-retained runtime state
+		Patch				*mPatch;		// non-retained runtime state; weak ref
 	};
+
+private:
+	int							mNumber;	// unique across all patchBanks
+	std::string					mName;
 	std::map<int, PatchMap*>	mPatches;	// switchNumber is key
 };
