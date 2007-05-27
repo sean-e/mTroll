@@ -19,11 +19,11 @@ MidiControlEngine::MidiControlEngine(IMidiOut * midiOut,
 	mActiveBank(NULL),
 	mActiveBankIndex(0),
 	mPowerUpTimeout(0),
-	mPowerUpBank(-1),
+	mPowerUpBank(0),
 	mPowerUpPatch(-1),
 	mIncrementSwitchNumber(14),
 	mDecrementSwitchNumber(15),
-	mUtilSwitchNumber(16),
+	mUtilSwitchNumber(-1),
 	mFilterRedundantProgramChanges(false)
 {
 	mBanks.reserve(999);
@@ -52,6 +52,48 @@ MidiControlEngine::~MidiControlEngine()
 	mBanks.clear();
 	std::for_each(mPatches.begin(), mPatches.end(), DeletePatch());
 	mPatches.clear();
+}
+
+PatchBank &
+MidiControlEngine::AddBank(int number,
+						   std::string name)
+{
+	mBanks.push_back(new PatchBank(number, name));
+}
+
+void
+MidiControlEngine::AddPatch(int number,
+							std::string name,
+							Patch::PatchType patchType,
+							const Bytes & stringA,
+							const Bytes & stringB)
+{
+	mPatches[number] = new Patch(number, name, patchType, stringA, stringB);
+}
+
+static bool
+SortByBankNumber(const PatchBank* & lhs, const PatchBank* & rhs)
+{
+	return lhs->mNumber < rhs->mNumber;
+}
+
+// this would not need to exist if we could ensure that banks 
+// were only added after all patches had been added (AddBank 
+// would then need to maintain sort)
+void
+MidiControlEngine::InitComplete()
+{
+	std::sort(mBanks.begin, mBanks.end(), SortByBankNumber);
+
+	for (Banks::iterator it = mBanks.begin();
+		it != mBanks.end();
+		++it)
+	{
+		PatchBank * curItem = *it;
+		curItem->InitPatches(mPatches);
+	}
+
+	LoadBankRelative(mPowerUpBank);
 }
 
 void
@@ -110,7 +152,8 @@ MidiControlEngine::LoadBankRelative(int relativeBankIndex)
 	if (!bank)
 		return;
 
-	mActiveBank->Unload(mMidiOut, mMainDisplay, mSwitchDisplay);
+	if (mActiveBank)
+		mActiveBank->Unload(mMidiOut, mMainDisplay, mSwitchDisplay);
 	mActiveBank = bank;
 	mActiveBankIndex = newBankIndex;
 	mActiveBank->Load(mMidiOut, mMainDisplay, mSwitchDisplay);

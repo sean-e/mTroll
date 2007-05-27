@@ -8,19 +8,11 @@
 
 
 PatchBank::PatchBank(int number, 
-					 std::string name) :
+					 const std::string & name) :
 	mNumber(number),
 	mName(name)
 {
 }
-
-struct DeletePatchMap
-{
-	void operator()(const std::pair<int, PatchBank::PatchMap *> & pr)
-	{
-		delete pr.second;
-	}
-};
 
 PatchBank::~PatchBank()
 {
@@ -29,15 +21,15 @@ PatchBank::~PatchBank()
 }
 
 void
-PatchBank::AddPatch(int switchNumber, int patchNumber, PatchState patchLoadState, PatchState patchUnloadState)
+PatchBank::AddPatchMapping(int switchNumber, int patchNumber, PatchState patchLoadState, PatchState patchUnloadState)
 {
-	mPatches[switchNumber] = new PatchMap(switchNumber, patchNumber, patchLoadState, patchUnloadState, NULL);
+	mPatches[switchNumber] = new PatchMap(patchNumber, patchLoadState, patchUnloadState, NULL);
 }
 
 void
-PatchBank::InitPatches(const std::map<int, Patch*> & patches)
+PatchBank::InitPatches(const MidiControlEngine::Patches & patches)
 {
-	for (std::map<int, PatchMap>::iterator it = mPatches.begin();
+	for (PatchMaps::iterator it = mPatches.begin();
 		it != mPatches.end();
 		++it)
 	{
@@ -50,7 +42,7 @@ PatchBank::InitPatches(const std::map<int, Patch*> & patches)
 bool
 PatchBank::Load(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 {
-	for (std::map<int, PatchMap>::iterator it = mPatches.begin();
+	for (PatchMaps::iterator it = mPatches.begin();
 		it != mPatches.end();
 		++it)
 	{
@@ -63,7 +55,7 @@ PatchBank::Load(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay *
 		else if (PatchState::stB == curItem->mPatchStateAtLoad)
 			curItem->mPatch->SendStringB(midiOut);
 
-		curItem->mPatch->AssignSwitch(curItem->mSwitchNumber, switchDisplay);
+		curItem->mPatch->AssignSwitch((*it).first(), switchDisplay);
 	}
 
 	mainDisplay->TextOut("Bank: " + mNumber + " " + mName);
@@ -72,7 +64,7 @@ PatchBank::Load(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay *
 void
 PatchBank::Unload(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 {
-	for (std::map<int, PatchMap>::iterator it = mPatches.begin();
+	for (PatchMaps::iterator it = mPatches.begin();
 		it != mPatches.end();
 		++it)
 	{

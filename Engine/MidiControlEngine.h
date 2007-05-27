@@ -3,6 +3,7 @@
 #include <map>
 #include <vector>
 #include "IInput.h"
+#include "Patch.h"
 
 
 class IMainDisplay;
@@ -22,6 +23,12 @@ public:
 					  ITraceDisplay * traceDisplay);
 	~MidiControlEngine();
 
+	// initialization
+	typedef std::map<int, Patch*> Patches;
+	PatchBank & AddBank(int number, const std::string & name);
+	void AddPatch(int number, const std::string & name, Patch::PatchType patchType, const Bytes & stringA, const Bytes & stringB);
+	void InitComplete();
+
 	// IInput
 	virtual void SwitchPressed(int switchNumber);
 	virtual void SwitchReleased(int switchNumber);
@@ -30,17 +37,20 @@ private:
 	void LoadBankRelative(int relativeBankIndex);
 
 private:
-	// runtime state
+	// non-retained runtime state
 	IMidiOut *				mMidiOut;
 	IMainDisplay *			mMainDisplay;
 	ITraceDisplay *			mTrace;
 	ISwitchDisplay *		mSwitchDisplay;
 
-	std::map<int, Patch*>	mPatches;		// patchNum is key
-	std::vector<PatchBank*> mBanks;			// compressed; bankNum is not index
 	PatchBank *				mActiveBank;
 	int						mActiveBankIndex;
 	bool					mInMeta;
+
+	// retained in different form
+	Patches					mPatches;		// patchNum is key
+	typedef std::vector<PatchBank*> Banks;
+	Banks					mBanks;			// compressed; bankNum is not index
 
 	// retained state
 	int						mPowerUpTimeout;

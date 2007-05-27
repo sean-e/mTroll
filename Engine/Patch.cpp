@@ -9,17 +9,15 @@
 Patch * Patch::sCurrentNormalPatch = NULL;
 
 Patch::Patch(int number, 
-			 std::string name, 
+			 const std::string & name, 
 			 PatchType patchType, 
-			 byte * stringA, 
-			 byte * stringB) : 
+			 const std::vector<byte> & stringA, 
+			 const std::vector<byte> & stringB) : 
 	mNumber(number),
 	mName(name),
 	mPatchType(patchType),
 	mByteStringA(stringA),
 	mByteStringB(stringB),
-//	mMetaStringA(NULL),
-//	mMetaStringB(NULL),
 	mSwitchNumber(-1),
 	mPatchIsOn(false)
 {
@@ -27,10 +25,6 @@ Patch::Patch(int number,
 
 Patch::~Patch()
 {
-	delete [] mByteStringA;
-	delete [] mByteStringB;
-// 	delete [] mMetaStringA;
-// 	delete [] mMetaStringB;
 }
 
 void

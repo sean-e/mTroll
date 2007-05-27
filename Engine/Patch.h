@@ -1,16 +1,17 @@
 #pragma once
 
 #include <string>
+#include <vector>
+#include "IMidiOut.h"
 
 class IMainDisplay;
 class ISwitchDisplay;
-class IMidiOut;
 
 
 class Patch
 {
 public:
-	Patch(int number, std::string name, PatchType patchType, byte * stringA, byte * stringB);
+	Patch(int number, const std::string & name, PatchType patchType, const Bytes & stringA, const Bytes & stringB);
 	~Patch();
 
 	enum PatchType 
@@ -33,16 +34,16 @@ private:
 	void SendStringB(IMidiOut * midiOut);
 
 private:
-	int			mNumber;	// unique across patches
-	std::string	mName;
-	PatchType	mPatchType;
-	byte		*mByteStringA;
-	byte		*mByteStringB;
-// 	byte		*mMetaStringA;
-// 	byte		*mMetaStringB;
+	const int				mNumber;	// unique across patches
+	const std::string		mName;
+	const PatchType			mPatchType;
+	const Bytes				mByteStringA;
+	const Bytes				mByteStringB;
+// 	const Bytes				mMetaStringA;
+// 	const Bytes				mMetaStringB;
 
 	// runtime only state
-	bool		mPatchIsOn;
-	int			mSwitchNumber;
-	static Patch * sCurrentNormalPatch;
+	bool					mPatchIsOn;
+	int						mSwitchNumber;
+	static Patch			* sCurrentNormalPatch;
 };
