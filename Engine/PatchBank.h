@@ -36,6 +36,8 @@ public:
 	void PatchSwitchReleased(int switchNumber, IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 
 private:
+	void PatchSwitchAction(bool pressed, int switchNumber, IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
+
 	struct PatchMap
 	{
 		int					mPatchNumber;	// needed for load of document
@@ -44,17 +46,18 @@ private:
 		Patch				*mPatch;		// non-retained runtime state; weak ref
 	};
 
-	struct DeletePatchMap
+	struct DeletePatchMaps
 	{
-		void operator()(const std::pair<int, PatchMap *> & pr)
-		{
-			delete pr.second;
-		}
+		void operator()(const std::pair<int, PatchVect *> & pr);
 	};
 
 	const int					mNumber;	// unique across all patchBanks
 	const std::string			mName;
-	typedef std::map<int, PatchMap*> PatchMaps;
+	// a switch in a bank can have multiple patches
+	// only the first patch associated with a switch gets control of the switch
+	// only the name of the first patch will be displayed
+	typedef std::vector<PatchMap*> PatchVect;
+	typedef std::map<int, PatchVect> PatchMaps;
 	PatchMaps					mPatches;	// switchNumber is key
 };
 

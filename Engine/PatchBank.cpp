@@ -16,14 +16,29 @@ PatchBank::PatchBank(int number,
 
 PatchBank::~PatchBank()
 {
-	std::for_each(mPatches.begin(), mPatches.end(), DeletePatchMap());
+	std::for_each(mPatches.begin(), mPatches.end(), DeletePatchMaps());
 	mPatches.clear();
+}
+
+struct DeletePtr
+{
+	template<typename T>
+	void operator()(const T * ptr)
+	{
+		delete ptr;
+	}
+};
+
+void PatchBank::DeletePatchMaps::operator()(const std::pair<int, PatchVect> & pr)
+{
+	std::for_each(pr.second.begin(), pr.second.end(), DeletePtr<PatchMap>());
 }
 
 void
 PatchBank::AddPatchMapping(int switchNumber, int patchNumber, PatchState patchLoadState, PatchState patchUnloadState)
 {
-	mPatches[switchNumber] = new PatchMap(patchNumber, patchLoadState, patchUnloadState, NULL);
+	PatchVect & curPatches = mPatches[switchNumber];
+	curPatches.push_back(new PatchMap(patchNumber, patchLoadState, patchUnloadState, NULL));
 }
 
 void
@@ -33,11 +48,17 @@ PatchBank::InitPatches(const MidiControlEngine::Patches & patches)
 		it != mPatches.end();
 		++it)
 	{
-		PatchMap * curItem = (*it).second();
-		if (curItem)
+		PatchVect & patches = (*it).second();
+		for (PatchVect::iterator it2 = patches.begin();
+			 it2 != patches.end();
+			 ++it2)
 		{
-			Patch * thePatch = patches[curItem->mPatchNumber];
-			curItem->mPatch = thePatch;
+			PatchMap * curItem = *it2;
+			if (curItem)
+			{
+				Patch * thePatch = patches[curItem->mPatchNumber];
+				curItem->mPatch = thePatch;
+			}
 		}
 	}
 }
@@ -49,16 +70,29 @@ PatchBank::Load(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay *
 		it != mPatches.end();
 		++it)
 	{
-		PatchMap * curItem = (*it).second();
-		if (!curItem || !curItem->mPatch)
-			continue;
+		bool once = true;
+		PatchVect & patches = (*it).second();
+		for (PatchVect::iterator it2 = patches.begin();
+			 it2 != patches.end();
+			 ++it2)
+		{
+			PatchMap * curItem = *it2;
+			if (!curItem || !curItem->mPatch)
+				continue;
 
-		if (PatchState::stA == curItem->mPatchStateAtLoad)
-			curItem->mPatch->SendStringA(midiOut);
-		else if (PatchState::stB == curItem->mPatchStateAtLoad)
-			curItem->mPatch->SendStringB(midiOut);
+			if (PatchState::stA == curItem->mPatchStateAtLoad)
+				curItem->mPatch->SendStringA(midiOut);
+			else if (PatchState::stB == curItem->mPatchStateAtLoad)
+				curItem->mPatch->SendStringB(midiOut);
 
-		curItem->mPatch->AssignSwitch((*it).first(), switchDisplay);
+			// only assign a switch to the first patch (if multiple 
+			// patches are assigned to the same switch)
+			if (once)
+			{
+				curItem->mPatch->AssignSwitch((*it).first(), switchDisplay);
+				once = false;
+			}
+		}
 	}
 
 	DisplayInfo(mainDisplay);
@@ -71,16 +105,22 @@ PatchBank::Unload(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay
 		it != mPatches.end();
 		++it)
 	{
-		PatchMap * curItem = (*it).second();
-		if (!curItem || !curItem->mPatch)
-			continue;
+		PatchVect & patches = (*it).second();
+		for (PatchVect::iterator it2 = patches.begin();
+			 it2 != patches.end();
+			 ++it2)
+		{
+			PatchMap * curItem = *it2;
+			if (!curItem || !curItem->mPatch)
+				continue;
 
-		if (PatchState::stA == curItem->mPatchStateAtUnload)
-			curItem->mPatch->SendStringA(midiOut);
-		else if (PatchState::stB == curItem->mPatchStateAtUnload)
-			curItem->mPatch->SendStringB(midiOut);
+			if (PatchState::stA == curItem->mPatchStateAtUnload)
+				curItem->mPatch->SendStringA(midiOut);
+			else if (PatchState::stB == curItem->mPatchStateAtUnload)
+				curItem->mPatch->SendStringB(midiOut);
 
-		curItem->mPatch->ClearSwitch(switchDisplay);
+			curItem->mPatch->ClearSwitch(switchDisplay);
+		}
 	}
 
 	mainDisplay->Clear();
@@ -89,27 +129,32 @@ PatchBank::Unload(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay
 void
 PatchBank::PatchSwitchPressed(int switchNumber, IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 {
-	if (switchNumber >= mPatches.size())
-		return;
-
-	PatchMap * switchItem = mPatches[switchNumber];
-	if (!switchItem || !switchItem->mPatch)
-		return;
-
-	switchItem->mPatch->SwitchPressed(midiOut, mainDisplay, switchDisplay);
+	PatchSwitchAction(true, switchNumber, midiOut, mainDisplay, switchDisplay);
 }
 
 void
 PatchBank::PatchSwitchReleased(int switchNumber, IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 {
-	if (switchNumber >= mPatches.size())
-		return;
+	PatchSwitchAction(false, switchNumber, midiOut, mainDisplay, switchDisplay);
+}
 
-	PatchMap * switchItem = mPatches[switchNumber];
-	if (!switchItem || !switchItem->mPatch)
-		return;
+void
+PatchBank::PatchSwitchAction(bool pressed, int switchNumber, IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
+{
+	PatchVect & curPatches = mPatches[switchNumber];
+	for (PatchVect::iterator it = curPatches.begin();
+		 it != curPatches.end();
+		 ++it)
+	{
+		PatchMap * curSwitchItem = *it;
+		if (!curSwitchItem || !curSwitchItem->mPatch)
+			continue;
 
-	switchItem->mPatch->SwitchReleased(midiOut, mainDisplay, switchDisplay);
+		if (pressed)
+			curSwitchItem->mPatch->SwitchPressed(midiOut, mainDisplay, switchDisplay);
+		else
+			curSwitchItem->mPatch->SwitchReleased(midiOut, mainDisplay, switchDisplay);
+	}
 }
 
 void
