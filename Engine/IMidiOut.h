@@ -1,4 +1,5 @@
-#pragma once
+#ifndef IMidiOut_h__
+#define IMidiOut_h__
 
 #include <vector>
 
@@ -18,3 +19,5 @@ public:
 	virtual bool MidiOut(const Bytes & bytes) = 0;
 	virtual void Close() = 0;
 };
+
+#endif // IMidiOut_h__

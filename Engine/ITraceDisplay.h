@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ITraceDisplay_h__
+#define ITraceDisplay_h__
 
 #include <string>
 
@@ -12,3 +13,5 @@ class ITraceDisplay
 public:
 	virtual void TextOut(const std::string & txt) = 0;
 };
+
+#endif // ITraceDisplay_h__

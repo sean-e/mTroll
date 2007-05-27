@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ISwitchDisplay_h__
+#define ISwitchDisplay_h__
 
 // ISwitchDisplay
 // ----------------------------------------------------------------------------
@@ -9,3 +10,5 @@ class ISwitchDisplay
 public:
 	virtual void SetSwitchDisplay(int switchNumber, bool isOn) = 0;
 };
+
+#endif // ISwitchDisplay_h__

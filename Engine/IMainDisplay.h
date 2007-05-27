@@ -1,4 +1,5 @@
-#pragma once
+#ifndef IMainDisplay_h__
+#define IMainDisplay_h__
 
 #include <string>
 
@@ -13,3 +14,5 @@ public:
 	virtual void TextOut(const std::string & txt) = 0;
 	virtual void Clear() = 0;
 };
+
+#endif // IMainDisplay_h__

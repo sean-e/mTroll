@@ -1,4 +1,5 @@
-#pragma once
+#ifndef Patch_h__
+#define Patch_h__
 
 #include <string>
 #include <vector>
@@ -47,3 +48,5 @@ private:
 	int						mSwitchNumber;
 	static Patch			* sCurrentNormalPatch;
 };
+
+#endif // Patch_h__
