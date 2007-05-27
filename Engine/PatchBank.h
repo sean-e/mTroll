@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PatchBank_h__
+#define PatchBank_h__
 
 #include <map>
 #include <string>
@@ -29,6 +30,7 @@ public:
 
 	bool Load(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 	void Unload(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
+	void DisplayInfo(IMainDisplay * mainDisplay);
 
 	void PatchSwitchPressed(int switchNumber, IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 	void PatchSwitchReleased(int switchNumber, IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
@@ -55,3 +57,5 @@ private:
 	typedef std::map<int, PatchMap*> PatchMaps;
 	PatchMaps					mPatches;	// switchNumber is key
 };
+
+#endif // PatchBank_h__

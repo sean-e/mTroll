@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MidiControlEngine_h__
+#define MidiControlEngine_h__
 
 #include <map>
 #include <vector>
@@ -25,16 +26,18 @@ public:
 
 	// initialization
 	typedef std::map<int, Patch*> Patches;
-	PatchBank & AddBank(int number, const std::string & name);
-	void AddPatch(int number, const std::string & name, Patch::PatchType patchType, const Bytes & stringA, const Bytes & stringB);
-	void InitComplete();
+	PatchBank &				AddBank(int number, const std::string & name);
+	void					AddPatch(int number, const std::string & name, Patch::PatchType patchType, const Bytes & stringA, const Bytes & stringB);
+	void					CompleteInit();
 
 	// IInput
-	virtual void SwitchPressed(int switchNumber);
-	virtual void SwitchReleased(int switchNumber);
+	virtual void			SwitchPressed(int switchNumber);
+	virtual void			SwitchReleased(int switchNumber);
 
 private:
-	void LoadBankRelative(int relativeBankIndex);
+	bool					NavigateBankRelative(int relativeBankIndex);
+	bool					LoadBank(int bankIndex);
+	PatchBank *				GetBank(int bankIndex);
 
 private:
 	// non-retained runtime state
@@ -45,7 +48,10 @@ private:
 
 	PatchBank *				mActiveBank;
 	int						mActiveBankIndex;
+	int						mBankNavigationIndex;
+	bool					mProcessSwitches;
 	bool					mInMeta;
+	bool					mInBankNavigation;
 
 	// retained in different form
 	Patches					mPatches;		// patchNum is key
@@ -61,3 +67,5 @@ private:
 	int						mUtilSwitchNumber;
 	bool					mFilterRedundantProgramChanges;
 };
+
+#endif // MidiControlEngine_h__

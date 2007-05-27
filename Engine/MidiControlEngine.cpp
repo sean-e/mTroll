@@ -15,15 +15,18 @@ MidiControlEngine::MidiControlEngine(IMidiOut * midiOut,
 	mMainDisplay(mainDisplay),
 	mSwitchDisplay(switchDisplay),
 	mTrace(traceDisplay),
+	mProcessSwitches(false),
 	mInMeta(false),
+	mInBankNavigation(false),
 	mActiveBank(NULL),
 	mActiveBankIndex(0),
+	mBankNavigationIndex(0),
 	mPowerUpTimeout(0),
 	mPowerUpBank(0),
 	mPowerUpPatch(-1),
-	mIncrementSwitchNumber(14),
-	mDecrementSwitchNumber(15),
-	mUtilSwitchNumber(-1),
+	mIncrementSwitchNumber(13),
+	mDecrementSwitchNumber(14),
+	mUtilSwitchNumber(15),
 	mFilterRedundantProgramChanges(false)
 {
 	mBanks.reserve(999);
@@ -58,7 +61,9 @@ PatchBank &
 MidiControlEngine::AddBank(int number,
 						   std::string name)
 {
-	mBanks.push_back(new PatchBank(number, name));
+	PatchBank * pBank = new PatchBank(number, name);
+	mBanks.push_back(pBank);
+	return * pBank;
 }
 
 void
@@ -81,7 +86,7 @@ SortByBankNumber(const PatchBank* & lhs, const PatchBank* & rhs)
 // were only added after all patches had been added (AddBank 
 // would then need to maintain sort)
 void
-MidiControlEngine::InitComplete()
+MidiControlEngine::CompleteInit()
 {
 	std::sort(mBanks.begin, mBanks.end(), SortByBankNumber);
 
@@ -93,16 +98,38 @@ MidiControlEngine::InitComplete()
 		curItem->InitPatches(mPatches);
 	}
 
-	LoadBankRelative(mPowerUpBank);
+	LoadBank(mPowerUpBank);
+	mProcessSwitches = true;
 }
 
 void
 MidiControlEngine::SwitchPressed(int switchNumber)
 {
+	if (!mProcessSwitches)
+		return;
+
 	if (switchNumber == mIncrementSwitchNumber)
-		LoadBankRelative(1);
+	{
+		if (mInMeta)
+			;
+		else
+		{
+			// bank inc/dec does not commit bank
+			NavigateBankRelative(1);
+		}
+	}
 	else if (switchNumber == mDecrementSwitchNumber)
-		LoadBankRelative(-1);
+	{
+		if (mInMeta)
+			;
+		else
+		{
+			// bank inc/dec does not commit bank
+			NavigateBankRelative(-1);
+		}
+	}
+	else if (mInBankNavigation)
+		; // check before util switch so that meta state is not entered
 	else if (switchNumber == mUtilSwitchNumber)
 	{
 		if (mInMeta)
@@ -121,7 +148,30 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 void
 MidiControlEngine::SwitchReleased(int switchNumber)
 {
-	if (switchNumber == mIncrementSwitchNumber)
+	if (!mProcessSwitches)
+		return;
+
+	if (mInBankNavigation)
+	{
+		if (switchNumber == mIncrementSwitchNumber)
+			; // handled in SwitchPressed
+		else if (switchNumber == mDecrementSwitchNumber)
+			; // handled in SwitchPressed
+		else if (switchNumber == mUtilSwitchNumber)
+		{
+			// escape bank nav
+			mBankNavigationIndex = mActiveBankIndex;
+			NavigateBankRelative(0);
+			mInBankNavigation = false;
+		}
+		else
+		{
+			// any switch release (except inc/dec/util) after bank inc/dec commits bank
+			LoadBank(mBankNavigationIndex);
+			mInBankNavigation = false;
+		}
+	}
+	else if (switchNumber == mIncrementSwitchNumber)
 		;
 	else if (switchNumber == mDecrementSwitchNumber)
 		;
@@ -135,26 +185,53 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 		mTrace->TextOut("SwitchReleased: no bank loaded");
 }
 
-void
-MidiControlEngine::LoadBankRelative(int relativeBankIndex)
+bool
+MidiControlEngine::NavigateBankRelative(int relativeBankIndex)
+{
+	// bank inc/dec does not commit bank
+	const int kBankCnt = mBanks.size();
+	if (!kBankCnt || kBankCnt == 1)
+		return false;
+
+	mInBankNavigation = true;
+	mBankNavigationIndex = mBankNavigationIndex + relativeBankIndex;
+	if (mBankNavigationIndex < 0)
+		mBankNavigationIndex = kBankCnt - 1;
+	if (mBankNavigationIndex >= kBankCnt)
+		mBankNavigationIndex = 0;
+
+	// display bank info
+	PatchBank * bank = GetBank(mBankNavigationIndex);
+	if (!bank)
+		return false;
+
+	bank->DisplayInfo(mMainDisplay);
+	return true;
+}
+
+PatchBank *
+MidiControlEngine::GetBank(int bankIndex)
 {
 	const int kBankCnt = mBanks.size();
-	if (!kBankCnt)
-		return;
+	if (bankIndex < 0 || bankIndex >= kBankCnt)
+		return NULL;
 
-	int newBankIndex = mActiveBankIndex + relativeBankIndex;
-	if (newBankIndex < 0)
-		newBankIndex = kBankCnt - 1;
-	if (newBankIndex >= kBankCnt)
-		newBankIndex = 0;
+	PatchBank * bank = mBanks[bankIndex];
+	return bank;
+}
 
-	PatchBank * bank = mBanks[newBankIndex];
+bool
+MidiControlEngine::LoadBank(int bankIndex)
+{
+	PatchBank * bank = GetBank(bankIndex);
 	if (!bank)
-		return;
+		return false;
 
 	if (mActiveBank)
 		mActiveBank->Unload(mMidiOut, mMainDisplay, mSwitchDisplay);
+
 	mActiveBank = bank;
-	mActiveBankIndex = newBankIndex;
+	mBankNavigationIndex = mActiveBankIndex = bankIndex;
 	mActiveBank->Load(mMidiOut, mMainDisplay, mSwitchDisplay);
+	return true;
 }

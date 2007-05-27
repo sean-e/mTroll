@@ -34,8 +34,11 @@ PatchBank::InitPatches(const MidiControlEngine::Patches & patches)
 		++it)
 	{
 		PatchMap * curItem = (*it).second();
-		Patch * thePatch = patches[curItem->mPatchNumber];
-		curItem->mPatch = thePatch;
+		if (curItem)
+		{
+			Patch * thePatch = patches[curItem->mPatchNumber];
+			curItem->mPatch = thePatch;
+		}
 	}
 }
 
@@ -58,7 +61,7 @@ PatchBank::Load(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay *
 		curItem->mPatch->AssignSwitch((*it).first(), switchDisplay);
 	}
 
-	mainDisplay->TextOut("Bank: " + mNumber + " " + mName);
+	DisplayInfo(mainDisplay);
 }
 
 void
@@ -107,4 +110,10 @@ PatchBank::PatchSwitchReleased(int switchNumber, IMidiOut * midiOut, IMainDispla
 		return;
 
 	switchItem->mPatch->SwitchReleased(midiOut, mainDisplay, switchDisplay);
+}
+
+void
+PatchBank::DisplayInfo(IMainDisplay * mainDisplay)
+{
+	mainDisplay->TextOut("Bank: " + mNumber + " " + mName);
 }
