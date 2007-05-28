@@ -7,31 +7,6 @@
 
 
 
-MidiControlEngine::MidiControlEngine(IMidiOut * midiOut, 
-									 IMainDisplay * mainDisplay, 
-									 ISwitchDisplay * switchDisplay, 
-									 ITraceDisplay * traceDisplay) :
-	mMidiOut(midiOut),
-	mMainDisplay(mainDisplay),
-	mSwitchDisplay(switchDisplay),
-	mTrace(traceDisplay),
-	mProcessSwitches(false),
-	mInMeta(false),
-	mInBankNavigation(false),
-	mActiveBank(NULL),
-	mActiveBankIndex(0),
-	mBankNavigationIndex(0),
-	mPowerUpTimeout(0),
-	mPowerUpBank(0),
-	mPowerUpPatch(-1),
-	mIncrementSwitchNumber(13),
-	mDecrementSwitchNumber(14),
-	mUtilSwitchNumber(15),
-	mFilterRedundantProgramChanges(false)
-{
-	mBanks.reserve(999);
-}
-
 struct DeletePtr
 {
 	template<typename T>
@@ -48,6 +23,39 @@ struct DeletePatch
 		delete pr.second;
 	}
 };
+
+static bool
+SortByBankNumber(const PatchBank* & lhs, const PatchBank* & rhs)
+{
+	return lhs->mNumber < rhs->mNumber;
+}
+
+
+MidiControlEngine::MidiControlEngine(IMidiOut * midiOut, 
+									 IMainDisplay * mainDisplay, 
+									 ISwitchDisplay * switchDisplay, 
+									 ITraceDisplay * traceDisplay,
+									 int incrementSwitchNumber,
+									 int decrementSwitchNumber,
+									 int modeSwitchNumber) :
+	mMidiOut(midiOut),
+	mMainDisplay(mainDisplay),
+	mSwitchDisplay(switchDisplay),
+	mTrace(traceDisplay),
+	mMode(emCreated),
+	mActiveBank(NULL),
+	mActiveBankIndex(0),
+	mBankNavigationIndex(0),
+	mPowerUpTimeout(0),
+	mPowerUpBank(0),
+	mPowerUpPatch(-1),
+	mIncrementSwitchNumber(incrementSwitchNumber),
+	mDecrementSwitchNumber(decrementSwitchNumber),
+	mModeSwitchNumber(modeSwitchNumber),
+	mFilterRedundantProgramChanges(false)
+{
+	mBanks.reserve(999);
+}
 
 MidiControlEngine::~MidiControlEngine()
 {
@@ -76,12 +84,6 @@ MidiControlEngine::AddPatch(int number,
 	mPatches[number] = new Patch(number, name, patchType, stringA, stringB);
 }
 
-static bool
-SortByBankNumber(const PatchBank* & lhs, const PatchBank* & rhs)
-{
-	return lhs->mNumber < rhs->mNumber;
-}
-
 // this would not need to exist if we could ensure that banks 
 // were only added after all patches had been added (AddBank 
 // would then need to maintain sort)
@@ -99,90 +101,89 @@ MidiControlEngine::CompleteInit()
 	}
 
 	LoadBank(mPowerUpBank);
-	mProcessSwitches = true;
+	mMode = emDefault;
 }
 
 void
 MidiControlEngine::SwitchPressed(int switchNumber)
 {
-	if (!mProcessSwitches)
+	if (emCreated == mMode)
 		return;
 
-	if (switchNumber == mIncrementSwitchNumber)
+	switch (switchNumber)
 	{
-		if (mInMeta)
-			;
-		else
+	case mIncrementSwitchNumber:
+		if (emDefault == mMode)
+			mMode = emBankNav;
+		return;
+	case mDecrementSwitchNumber:
+		if (emDefault == mMode)
+			mMode = emBankNav;
+		return;
+	case mModeSwitchNumber:
+		return;
+	default:
+		if (emDefault == mMode)
 		{
-			// bank inc/dec does not commit bank
-			NavigateBankRelative(1);
+			if (mActiveBank)
+				mActiveBank->PatchSwitchPressed(switchNumber, mMidiOut, mMainDisplay, mSwitchDisplay);
 		}
+	    break;
 	}
-	else if (switchNumber == mDecrementSwitchNumber)
-	{
-		if (mInMeta)
-			;
-		else
-		{
-			// bank inc/dec does not commit bank
-			NavigateBankRelative(-1);
-		}
-	}
-	else if (mInBankNavigation)
-		; // check before util switch so that meta state is not entered
-	else if (switchNumber == mUtilSwitchNumber)
-	{
-		if (mInMeta)
-			mInMeta = false;
-		else
-			mInMeta = true;
-	}
-	else if (mInMeta)
-		;
-	else if (mActiveBank)
-		mActiveBank->PatchSwitchPressed(switchNumber, mMidiOut, mMainDisplay, mSwitchDisplay);
-	else if (mTrace)
-		mTrace->TextOut("SwitchPressed: no bank loaded");
 }
 
 void
 MidiControlEngine::SwitchReleased(int switchNumber)
 {
-	if (!mProcessSwitches)
+	if (emCreated == mMode)
 		return;
 
-	if (mInBankNavigation)
+	if (emBankNav == mMode)
 	{
 		if (switchNumber == mIncrementSwitchNumber)
-			; // handled in SwitchPressed
+		{
+			// bank inc/dec does not commit bank
+			NavigateBankRelative(1);
+		}
 		else if (switchNumber == mDecrementSwitchNumber)
-			; // handled in SwitchPressed
-		else if (switchNumber == mUtilSwitchNumber)
+		{
+			// bank inc/dec does not commit bank
+			NavigateBankRelative(-1);
+		}
+		else if (switchNumber == mModeSwitchNumber)
 		{
 			// escape bank nav
 			mBankNavigationIndex = mActiveBankIndex;
 			NavigateBankRelative(0);
-			mInBankNavigation = false;
+			// go to next mode
+			NextMode(false);
 		}
 		else
 		{
 			// any switch release (except inc/dec/util) after bank inc/dec commits bank
 			LoadBank(mBankNavigationIndex);
-			mInBankNavigation = false;
+			// reset to default mode
+			mMode = emDefault;
 		}
+		return;
 	}
-	else if (switchNumber == mIncrementSwitchNumber)
-		;
-	else if (switchNumber == mDecrementSwitchNumber)
-		;
-	else if (switchNumber == mUtilSwitchNumber)
-		;
-	else if (mInMeta)
-		;
-	else if (mActiveBank)
-		mActiveBank->PatchSwitchReleased(switchNumber, mMidiOut, mMainDisplay, mSwitchDisplay);
-	else if (mTrace)
-		mTrace->TextOut("SwitchReleased: no bank loaded");
+
+	switch (switchNumber)
+	{
+	case mIncrementSwitchNumber:
+	case mDecrementSwitchNumber:
+		return;
+	case mModeSwitchNumber:
+		NextMode(true);
+		return;
+	default:
+		if (emDefault == mMode)
+		{
+			if (mActiveBank)
+				mActiveBank->PatchSwitchReleased(switchNumber, mMidiOut, mMainDisplay, mSwitchDisplay);
+		}
+	    break;
+	}
 }
 
 bool
@@ -193,7 +194,6 @@ MidiControlEngine::NavigateBankRelative(int relativeBankIndex)
 	if (!kBankCnt || kBankCnt == 1)
 		return false;
 
-	mInBankNavigation = true;
 	mBankNavigationIndex = mBankNavigationIndex + relativeBankIndex;
 	if (mBankNavigationIndex < 0)
 		mBankNavigationIndex = kBankCnt - 1;
@@ -234,4 +234,30 @@ MidiControlEngine::LoadBank(int bankIndex)
 	mBankNavigationIndex = mActiveBankIndex = bankIndex;
 	mActiveBank->Load(mMidiOut, mMainDisplay, mSwitchDisplay);
 	return true;
+}
+
+void
+MidiControlEngine::NextMode(bool displayMode)
+{
+	if (emNotValid == ++mMode)
+		mMode = emDefault;
+
+	if (!displayMode)
+		return;
+
+	std::string msg;
+	switch (mMode)
+	{
+	case emDefault:
+		msg = "mode: Default\n";
+		break;
+	case emBankNav:
+		msg = "mode: Bank\n";
+		break;
+	default:
+		msg = "mode: Invalid\n";
+	    break;
+	}
+
+	mMainDisplay->TextOut(msg);
 }

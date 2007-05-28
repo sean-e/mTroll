@@ -160,5 +160,37 @@ PatchBank::PatchSwitchAction(bool pressed, int switchNumber, IMidiOut * midiOut,
 void
 PatchBank::DisplayInfo(IMainDisplay * mainDisplay)
 {
-	mainDisplay->TextOut("Bank: " + mNumber + " " + mName);
+	std::string info;
+	info = "Bank: " + mNumber + " " + mName + "\n";
+
+	for (PatchMaps::iterator it = mPatches.begin();
+		it != mPatches.end();
+		++it)
+	{
+		bool once = true;
+		const std::string kSwitchNumber(std::string("sw ") + (*it).first() + std::string(": "));
+		PatchVect & patches = (*it).second();
+		for (PatchVect::iterator it2 = patches.begin();
+			 it2 != patches.end();
+			 ++it2)
+		{
+			PatchMap * curItem = *it2;
+			if (!curItem || !curItem->mPatch)
+				continue;
+
+			if (once)
+			{
+				std::string tmp(kSwitchNumber + std::string(curItem->mPatch->GetNumber()) + " " + curItem->mPatch->GetName() + "\n");
+				info += tmp;
+				once = false;
+			}
+			else
+			{
+				std::string tmp(std::string(" (") + std::string(curItem->mPatch->GetNumber()) + " " + curItem->mPatch->GetName() + ")\n");
+				info += tmp;
+			}
+		}
+	}
+
+	mainDisplay->TextOut(info);
 }

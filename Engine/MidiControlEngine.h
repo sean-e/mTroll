@@ -21,7 +21,10 @@ public:
 	MidiControlEngine(IMidiOut * midiOut, 
 					  IMainDisplay * mainDisplay, 
 					  ISwitchDisplay * switchDisplay,
-					  ITraceDisplay * traceDisplay);
+					  ITraceDisplay * traceDisplay,
+					  int incrementSwitchNumber,
+					  int decrementSwitchNumber,
+					  int modeSwitchNumber);
 	~MidiControlEngine();
 
 	// initialization
@@ -38,6 +41,7 @@ private:
 	bool					NavigateBankRelative(int relativeBankIndex);
 	bool					LoadBank(int bankIndex);
 	PatchBank *				GetBank(int bankIndex);
+	void					NextMode(bool displayMode);
 
 private:
 	// non-retained runtime state
@@ -48,10 +52,15 @@ private:
 
 	PatchBank *				mActiveBank;
 	int						mActiveBankIndex;
+	enum EngineMode 
+	{ 
+		emCreated,			// initial state - no data loaded
+		emDefault,			// select presets in banks
+		emBankNav,			// navigate banks
+		emNotValid 
+	};
+	EngineMode				mMode;
 	int						mBankNavigationIndex;
-	bool					mProcessSwitches;
-	bool					mInMeta;
-	bool					mInBankNavigation;
 
 	// retained in different form
 	Patches					mPatches;		// patchNum is key
@@ -62,9 +71,9 @@ private:
 	int						mPowerUpTimeout;
 	int						mPowerUpBank;
 	int						mPowerUpPatch;
-	int						mIncrementSwitchNumber;
-	int						mDecrementSwitchNumber;
-	int						mUtilSwitchNumber;
+	const int				mIncrementSwitchNumber;
+	const int				mDecrementSwitchNumber;
+	const int				mModeSwitchNumber;
 	bool					mFilterRedundantProgramChanges;
 };
 

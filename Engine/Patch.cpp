@@ -95,7 +95,7 @@ Patch::UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay
 	if (switchDisplay)
 		switchDisplay->SetSwitchDisplay(mSwitchNumber, mPatchIsOn);
 	if (mainDisplay)
-		mainDisplay->TextOut();
+		mainDisplay->TextOut(std::string(mNumber) + " " + mName + "\n");
 }
 
 void

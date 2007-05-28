@@ -29,6 +29,8 @@ public:
 	void SwitchReleased(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 
 	void UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
+	const std::string & GetName() const {return mName;}
+	int GetNumber() const {return mNumber;}
 
 private:
 	void SendStringA(IMidiOut * midiOut);
