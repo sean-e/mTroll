@@ -84,6 +84,16 @@ MidiControlEngine::AddPatch(int number,
 	mPatches[number] = new Patch(number, name, patchType, stringA, stringB);
 }
 
+void
+MidiControlEngine::SetPowerup(int powerupBank,
+							  int powerupPatch,
+							  int powerupTimeout)
+{
+	mPowerUpPatch = powerupPatch;
+	mPowerUpBank = powerupBank;
+	mPowerUpTimeout = powerupTimeout;
+}
+
 // this would not need to exist if we could ensure that banks 
 // were only added after all patches had been added (AddBank 
 // would then need to maintain sort)
