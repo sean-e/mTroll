@@ -168,9 +168,9 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 			const int patchNumber = childElem->Attribute("patch");
 
 			std::string tmp;
-			pElem->QueryStringAttribute("loadState", &tmp);
+			childElem->QueryStringAttribute("loadState", &tmp);
 			const PatchBank::PatchState loadState = GetLoadState(tmp);
-			pElem->QueryStringAttribute("unloadState", &tmp);
+			childElem->QueryStringAttribute("unloadState", &tmp);
 			const PatchBank::PatchState unloadState = GetLoadState(tmp);
 
 			bank.AddPatchMapping(switchNumber, patchNumber, loadState, unloadState);
