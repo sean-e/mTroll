@@ -215,7 +215,7 @@ MidiControlEngine::NavigateBankRelative(int relativeBankIndex)
 	if (!bank)
 		return false;
 
-	bank->DisplayInfo(mMainDisplay);
+	bank->DisplayInfo(mMainDisplay, false);
 	return true;
 }
 

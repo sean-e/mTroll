@@ -31,6 +31,8 @@ void
 Patch::AssignSwitch(int switchNumber, ISwitchDisplay * switchDisplay)
 {
 	mSwitchNumber = switchNumber;
+	if (switchDisplay)
+		switchDisplay->SetSwitchText(mSwitchNumber, mName);
 	UpdateDisplays(NULL, switchDisplay);
 }
 
@@ -41,7 +43,10 @@ Patch::ClearSwitch(ISwitchDisplay * switchDisplay)
 		return;
 
 	if (switchDisplay)
+	{
 		switchDisplay->SetSwitchDisplay(mSwitchNumber, false);
+		switchDisplay->ClearSwitchText(mSwitchNumber);
+	}
 
 	mSwitchNumber = -1;
 }
