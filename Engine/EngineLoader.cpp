@@ -1,7 +1,8 @@
+#include "EngineLoader.h"
 #include "MidiControlEngine.h"
 #include "PatchBank.h"
 #include "Patch.h"
-#include "..\tinyxml\tinyxml.h"
+#include "../tinyxml/tinyxml.h"
 
 
 static PatchBank::PatchState GetLoadState(const std::string & tmpLoad);
@@ -83,7 +84,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 	{
 		std::string name;
 		int id = 0;
-		pChildElem->QueryStringAttribute("name", &name);
+		pChildElem->QueryValueAttribute("name", &name);
 		pChildElem->QueryIntAttribute("id", &id);
 
 		if (name == "increment" && id > 0)
@@ -114,7 +115,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 
 		const std::string patchName = pElem->Attribute("name");
 		const int patchNumber = pElem->Attribute("number");
-		pElem->QueryStringAttribute("type", &tmp);
+		pElem->QueryValueAttribute("type", &tmp);
 		Patch::PatchType patchType = Patch::ptNormal;
 		if (tmp == "normal")
 			patchType = Patch::ptNormal;
@@ -168,9 +169,9 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 			const int patchNumber = childElem->Attribute("patch");
 
 			std::string tmp;
-			childElem->QueryStringAttribute("loadState", &tmp);
+			childElem->QueryValueAttribute("loadState", &tmp);
 			const PatchBank::PatchState loadState = GetLoadState(tmp);
-			childElem->QueryStringAttribute("unloadState", &tmp);
+			childElem->QueryValueAttribute("unloadState", &tmp);
 			const PatchBank::PatchState unloadState = GetLoadState(tmp);
 
 			bank.AddPatchMapping(switchNumber, patchNumber, loadState, unloadState);
