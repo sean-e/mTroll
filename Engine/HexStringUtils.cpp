@@ -1,4 +1,7 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <stdio.h>
+#include <assert.h>
 #include "HexStringUtils.h"
 
 
@@ -35,7 +38,7 @@ CharToByte(const char ch)
 	case 'F':
 		return 15;
 	default:
-		assert(FALSE);
+		assert(0);
 		return 0;
 	}
 }
@@ -52,7 +55,7 @@ CharsToByte(const char ch1,
 }
 
 byte
-CharsToByte(const char[2] & chrs)
+CharsToByte(const char chrs[2])
 {
 	return CharsToByte(chrs[0], chrs[1]);
 }

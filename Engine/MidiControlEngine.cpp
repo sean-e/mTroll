@@ -27,7 +27,7 @@ struct DeletePatch
 static bool
 SortByBankNumber(const PatchBank* & lhs, const PatchBank* & rhs)
 {
-	return lhs->mNumber < rhs->mNumber;
+	return lhs->GetBankNumber() < rhs->GetBankNumber();
 }
 
 
@@ -118,27 +118,34 @@ void
 MidiControlEngine::SwitchPressed(int switchNumber)
 {
 	if (emCreated == mMode)
-		return;
-
-	switch (switchNumber)
 	{
-	case mIncrementSwitchNumber:
+		return;
+	}
+
+	if (switchNumber == mIncrementSwitchNumber)
+	{
 		if (emDefault == mMode)
 			mMode = emBankNav;
 		return;
-	case mDecrementSwitchNumber:
+	}
+	
+	if (switchNumber == mDecrementSwitchNumber)
+	{
 		if (emDefault == mMode)
 			mMode = emBankNav;
 		return;
-	case mModeSwitchNumber:
+	}
+	
+	if (switchNumber == mModeSwitchNumber)
+	{
 		return;
-	default:
-		if (emDefault == mMode)
-		{
-			if (mActiveBank)
-				mActiveBank->PatchSwitchPressed(switchNumber, mMidiOut, mMainDisplay, mSwitchDisplay);
-		}
-	    break;
+	}
+	
+	if (emDefault == mMode)
+	{
+		if (mActiveBank)
+			mActiveBank->PatchSwitchPressed(switchNumber, mMidiOut, mMainDisplay, mSwitchDisplay);
+		return;
 	}
 }
 
@@ -178,21 +185,23 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 		return;
 	}
 
-	switch (switchNumber)
+	if (switchNumber == mIncrementSwitchNumber ||
+		switchNumber == mDecrementSwitchNumber)
 	{
-	case mIncrementSwitchNumber:
-	case mDecrementSwitchNumber:
 		return;
-	case mModeSwitchNumber:
+	}
+
+	if (switchNumber == mModeSwitchNumber)
+	{
 		NextMode(true);
 		return;
-	default:
-		if (emDefault == mMode)
-		{
-			if (mActiveBank)
-				mActiveBank->PatchSwitchReleased(switchNumber, mMidiOut, mMainDisplay, mSwitchDisplay);
-		}
-	    break;
+	}
+
+	if (emDefault == mMode)
+	{
+		if (mActiveBank)
+			mActiveBank->PatchSwitchReleased(switchNumber, mMidiOut, mMainDisplay, mSwitchDisplay);
+		return;
 	}
 }
 

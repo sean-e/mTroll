@@ -73,9 +73,9 @@ private:
 	int						mPowerUpTimeout;
 	int						mPowerUpBank;
 	int						mPowerUpPatch;
-	const int				mIncrementSwitchNumber;
-	const int				mDecrementSwitchNumber;
-	const int				mModeSwitchNumber;
+	int						mIncrementSwitchNumber;
+	int						mDecrementSwitchNumber;
+	int						mModeSwitchNumber;
 	bool					mFilterRedundantProgramChanges;
 };
 

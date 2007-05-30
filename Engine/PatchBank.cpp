@@ -38,7 +38,7 @@ void
 PatchBank::AddPatchMapping(int switchNumber, int patchNumber, PatchState patchLoadState, PatchState patchUnloadState)
 {
 	PatchVect & curPatches = mPatches[switchNumber];
-	curPatches.push_back(new PatchMap(patchNumber, patchLoadState, patchUnloadState, NULL));
+	curPatches.push_back(new PatchMap(patchNumber, patchLoadState, patchUnloadState));
 }
 
 void

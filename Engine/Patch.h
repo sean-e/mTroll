@@ -12,15 +12,15 @@ class ISwitchDisplay;
 class Patch
 {
 public:
-	Patch(int number, const std::string & name, PatchType patchType, const Bytes & stringA, const Bytes & stringB);
-	~Patch();
-
 	enum PatchType 
 	{
 		ptNormal,			// responds to SwitchPressed; SwitchReleased does not affect patch state
 		ptToggle,			// responds to SwitchPressed; SwitchReleased does not affect patch state
 		ptMomentary			// responds to SwitchPressed and SwitchReleased
 	};
+
+	Patch(int number, const std::string & name, PatchType patchType, const Bytes & stringA, const Bytes & stringB);
+	~Patch();
 
 	void AssignSwitch(int switchNumber, ISwitchDisplay * switchDisplay);
 	void ClearSwitch(ISwitchDisplay * switchDisplay);
