@@ -3,6 +3,7 @@
 #include "PatchBank.h"
 #include "Patch.h"
 #include "../tinyxml/tinyxml.h"
+#include "HexStringUtils.h"
 
 
 static PatchBank::PatchState GetLoadState(const std::string & tmpLoad);
@@ -139,7 +140,17 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		}
 
 		if (patchNumber != -1 && !patchName.empty())
-			mEngine->AddPatch(patchNumber, patchName, patchType, byteStringA, byteStringB);
+		{
+			Bytes bytesA;
+			int retval = ::ValidateString(byteStringA, bytesA);
+			if (-1 != retval)
+			{
+				Bytes bytesB;
+				retval = ::ValidateString(byteStringB, bytesB);
+				if (-1 != retval)
+					mEngine->AddPatch(patchNumber, patchName, patchType, bytesA, bytesB);
+			}
+		}
 	}
 }
 
