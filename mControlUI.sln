@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mControlUI", "mControlUI\mControlUI.vcproj", "{3D33E5B3-BA0F-45D2-AAE7-A939F9F4B985}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3D33E5B3-BA0F-45D2-AAE7-A939F9F4B985}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3D33E5B3-BA0F-45D2-AAE7-A939F9F4B985}.Debug|Win32.Build.0 = Debug|Win32
+		{3D33E5B3-BA0F-45D2-AAE7-A939F9F4B985}.Release|Win32.ActiveCfg = Release|Win32
+		{3D33E5B3-BA0F-45D2-AAE7-A939F9F4B985}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
