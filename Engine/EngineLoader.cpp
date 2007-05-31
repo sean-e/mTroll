@@ -37,16 +37,17 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 	if (pElem->Value() != "MidiControlSettings")
 		return mEngine;
 
-	TiXmlHandle hRoot(TiXmlHandle(pElem));
+	TiXmlHandle hRoot(NULL);
+	hRoot = TiXmlHandle(pElem);
 
 	pElem = hRoot.FirstChild("SystemConfig").Element();
 	if (!LoadSystemConfig(pElem))
 		return mEngine;
 
-	pElem = hRoot.FirstChild("patches").Element().FirstChild().Element();
+	pElem = hRoot.FirstChild("patches").FirstChild().Element();
 	LoadPatches(pElem);
 
-	pElem = hRoot.FirstChild("banks").Element().FirstChild().Element();
+	pElem = hRoot.FirstChild("banks").FirstChild().Element();
 	LoadBanks(pElem);
 
 	mEngine->CompleteInit();
@@ -72,7 +73,10 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 
 	pElem->QueryIntAttribute("filterPC", &filterPC);
 
-	TiXmlElement * pChildElem = pElem->FirstChild("powerup").Element();
+	TiXmlHandle hRoot(NULL);
+	hRoot = TiXmlHandle(pElem);
+
+	TiXmlElement * pChildElem = hRoot.FirstChild("powerup").Element();
 	if (pChildElem)
 	{
 		pChildElem->QueryIntAttribute("timeout", &powerupTimeout);
@@ -80,7 +84,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 		pChildElem->QueryIntAttribute("patch", &powerupPatch);
 	}
 
-	pChildElem = pElem->FirstChild("switches").Element().FirstChild().Element();
+	pChildElem = hRoot.FirstChild("switches").FirstChild().Element();
 	for ( ; pChildElem; pChildElem = pChildElem->NextSiblingElement())
 	{
 		std::string name;
@@ -98,7 +102,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 
 	mEngine = new MidiControlEngine(mMidiOut, mMainDisplay, mSwitchDisplay, mTraceDisplay, incrementSwitch, decrementSwitch, modeSwitch);
 	mEngine->SetPowerup(powerupBank, powerupPatch, powerupTimeout);
-	mEngine->FilterRedundantProgChg(filterPC);
+	mEngine->FilterRedundantProgChg(filterPC ? true : false);
 	return true;
 }
 
@@ -115,7 +119,11 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		std::string byteStringB;
 
 		const std::string patchName = pElem->Attribute("name");
-		const int patchNumber = pElem->Attribute("number");
+		int patchNumber = -1;
+		pElem->QueryIntAttribute("number", &patchNumber);
+		if (-1 == patchNumber || patchName.empty())
+			continue;
+
 		pElem->QueryValueAttribute("type", &tmp);
 		Patch::PatchType patchType = Patch::ptNormal;
 		if (tmp == "normal")
@@ -125,7 +133,10 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		else if (tmp == "momentary")
 			patchType = Patch::ptMomentary;
 
-		for (TiXmlElement * childElem = pElem->FirstChild().Element(); 
+		TiXmlHandle hRoot(NULL);
+		hRoot = TiXmlHandle(pElem);
+
+		for (TiXmlElement * childElem = hRoot.FirstChild().Element(); 
 			 childElem; 
 			 childElem = childElem->NextSiblingElement())
 		{
@@ -139,17 +150,14 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				byteStringB = childElem->GetText();
 		}
 
-		if (patchNumber != -1 && !patchName.empty())
+		Bytes bytesA;
+		int retval = ::ValidateString(byteStringA, bytesA);
+		if (-1 != retval)
 		{
-			Bytes bytesA;
-			int retval = ::ValidateString(byteStringA, bytesA);
+			Bytes bytesB;
+			retval = ::ValidateString(byteStringB, bytesB);
 			if (-1 != retval)
-			{
-				Bytes bytesB;
-				retval = ::ValidateString(byteStringB, bytesB);
-				if (-1 != retval)
-					mEngine->AddPatch(patchNumber, patchName, patchType, bytesA, bytesB);
-			}
+				mEngine->AddPatch(patchNumber, patchName, patchType, bytesA, bytesB);
 		}
 	}
 }
@@ -163,21 +171,29 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 			continue;
 
 		const std::string bankName = pElem->Attribute("name");
-		const int bankNumber = pElem->Attribute("number");
-		if (bankNumber == -1 || bankName.empty())
+		int bankNumber = -1;
+		pElem->QueryIntAttribute("number", &bankNumber);
+		if (-1 == bankNumber || bankName.empty())
 			continue;
 
 		PatchBank & bank = mEngine->AddBank(bankNumber, bankName);
 
-		for (TiXmlElement * childElem = pElem->FirstChild().Element(); 
+		TiXmlHandle hRoot(NULL);
+		hRoot = TiXmlHandle(pElem);
+
+		for (TiXmlElement * childElem = hRoot.FirstChild().Element(); 
 			 childElem; 
 			 childElem = childElem->NextSiblingElement())
 		{
 			if (childElem->Value() != "PatchMap")
 				continue;
 
-			const int switchNumber = childElem->Attribute("switch");
-			const int patchNumber = childElem->Attribute("patch");
+			int switchNumber = -1;
+			childElem->QueryIntAttribute("switch", &switchNumber);
+			int patchNumber = -1;
+			childElem->Attribute("patch", &patchNumber);
+			if (-1 == switchNumber || -1 == patchNumber)
+				continue;
 
 			std::string tmp;
 			childElem->QueryValueAttribute("loadState", &tmp);
