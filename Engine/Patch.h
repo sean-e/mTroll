@@ -32,7 +32,6 @@ public:
 	const std::string & GetName() const {return mName;}
 	int GetNumber() const {return mNumber;}
 
-private:
 	void SendStringA(IMidiOut * midiOut);
 	void SendStringB(IMidiOut * midiOut);
 

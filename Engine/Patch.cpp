@@ -1,5 +1,5 @@
 #include "Patch.h"
-
+#include <strstream>
 #include "IMidiOut.h"
 #include "IMainDisplay.h"
 #include "ISwitchDisplay.h"
@@ -99,8 +99,13 @@ Patch::UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay
 
 	if (switchDisplay)
 		switchDisplay->SetSwitchDisplay(mSwitchNumber, mPatchIsOn);
+
 	if (mainDisplay)
-		mainDisplay->TextOut(std::string(mNumber) + " " + mName + "\n");
+	{
+		std::strstream msgstr;
+		msgstr << mNumber << " " << mName << std::endl;
+		mainDisplay->TextOut(msgstr.str());
+	}
 }
 
 void

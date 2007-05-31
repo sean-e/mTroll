@@ -7,9 +7,9 @@
 
 
 
+template<typename T>
 struct DeletePtr
 {
-	template<typename T>
 	void operator()(const T * ptr)
 	{
 		delete ptr;
@@ -25,7 +25,7 @@ struct DeletePatch
 };
 
 static bool
-SortByBankNumber(const PatchBank* & lhs, const PatchBank* & rhs)
+SortByBankNumber(const PatchBank* lhs, const PatchBank* rhs)
 {
 	return lhs->GetBankNumber() < rhs->GetBankNumber();
 }
@@ -67,7 +67,7 @@ MidiControlEngine::~MidiControlEngine()
 
 PatchBank &
 MidiControlEngine::AddBank(int number,
-						   std::string name)
+						   const std::string & name)
 {
 	PatchBank * pBank = new PatchBank(number, name);
 	mBanks.push_back(pBank);
@@ -76,7 +76,7 @@ MidiControlEngine::AddBank(int number,
 
 void
 MidiControlEngine::AddPatch(int number,
-							std::string name,
+							const std::string & name,
 							Patch::PatchType patchType,
 							const Bytes & stringA,
 							const Bytes & stringB)
@@ -100,7 +100,7 @@ MidiControlEngine::SetPowerup(int powerupBank,
 void
 MidiControlEngine::CompleteInit()
 {
-	std::sort(mBanks.begin, mBanks.end(), SortByBankNumber);
+	std::sort(mBanks.begin(), mBanks.end(), SortByBankNumber);
 
 	for (Banks::iterator it = mBanks.begin();
 		it != mBanks.end();
@@ -258,7 +258,8 @@ MidiControlEngine::LoadBank(int bankIndex)
 void
 MidiControlEngine::NextMode(bool displayMode)
 {
-	if (emNotValid == ++mMode)
+	mMode = (EngineMode)(mMode + 1);
+	if (emNotValid == mMode)
 		mMode = emDefault;
 
 	if (!displayMode)

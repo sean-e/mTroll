@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <strstream>
 #include "PatchBank.h"
 #include "Patch.h"
 
@@ -20,9 +21,9 @@ PatchBank::~PatchBank()
 	mPatches.clear();
 }
 
+template<typename T>
 struct DeletePtr
 {
-	template<typename T>
 	void operator()(const T * ptr)
 	{
 		delete ptr;
@@ -42,13 +43,13 @@ PatchBank::AddPatchMapping(int switchNumber, int patchNumber, PatchState patchLo
 }
 
 void
-PatchBank::InitPatches(const MidiControlEngine::Patches & patches)
+PatchBank::InitPatches(const MidiControlEngine::Patches & enginePatches)
 {
 	for (PatchMaps::iterator it = mPatches.begin();
 		it != mPatches.end();
 		++it)
 	{
-		PatchVect & patches = (*it).second();
+		PatchVect & patches = (*it).second;
 		for (PatchVect::iterator it2 = patches.begin();
 			 it2 != patches.end();
 			 ++it2)
@@ -56,14 +57,15 @@ PatchBank::InitPatches(const MidiControlEngine::Patches & patches)
 			PatchMap * curItem = *it2;
 			if (curItem)
 			{
-				Patch * thePatch = patches[curItem->mPatchNumber];
+				MidiControlEngine::Patches::const_iterator patchIt = enginePatches.find(curItem->mPatchNumber);
+				Patch * thePatch = (*patchIt).second;
 				curItem->mPatch = thePatch;
 			}
 		}
 	}
 }
 
-bool
+void
 PatchBank::Load(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 {
 	for (PatchMaps::iterator it = mPatches.begin();
@@ -71,7 +73,7 @@ PatchBank::Load(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay *
 		++it)
 	{
 		bool once = true;
-		PatchVect & patches = (*it).second();
+		PatchVect & patches = (*it).second;
 		for (PatchVect::iterator it2 = patches.begin();
 			 it2 != patches.end();
 			 ++it2)
@@ -80,16 +82,16 @@ PatchBank::Load(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay *
 			if (!curItem || !curItem->mPatch)
 				continue;
 
-			if (PatchState::stA == curItem->mPatchStateAtLoad)
+			if (stA == curItem->mPatchStateAtLoad)
 				curItem->mPatch->SendStringA(midiOut);
-			else if (PatchState::stB == curItem->mPatchStateAtLoad)
+			else if (stB == curItem->mPatchStateAtLoad)
 				curItem->mPatch->SendStringB(midiOut);
 
 			// only assign a switch to the first patch (if multiple 
 			// patches are assigned to the same switch)
 			if (once)
 			{
-				curItem->mPatch->AssignSwitch((*it).first(), switchDisplay);
+				curItem->mPatch->AssignSwitch((*it).first, switchDisplay);
 				once = false;
 			}
 		}
@@ -105,7 +107,7 @@ PatchBank::Unload(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay
 		it != mPatches.end();
 		++it)
 	{
-		PatchVect & patches = (*it).second();
+		PatchVect & patches = (*it).second;
 		for (PatchVect::iterator it2 = patches.begin();
 			 it2 != patches.end();
 			 ++it2)
@@ -114,9 +116,9 @@ PatchBank::Unload(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay
 			if (!curItem || !curItem->mPatch)
 				continue;
 
-			if (PatchState::stA == curItem->mPatchStateAtUnload)
+			if (stA == curItem->mPatchStateAtUnload)
 				curItem->mPatch->SendStringA(midiOut);
-			else if (PatchState::stB == curItem->mPatchStateAtUnload)
+			else if (stB == curItem->mPatchStateAtUnload)
 				curItem->mPatch->SendStringB(midiOut);
 
 			curItem->mPatch->ClearSwitch(switchDisplay);
@@ -161,8 +163,8 @@ void
 PatchBank::DisplayInfo(IMainDisplay * mainDisplay, 
 					   bool showPatchInfo)
 {
-	std::string info;
-	info = "Bank: " + mNumber + " " + mName + "\n";
+	std::ostrstream info;
+	info << "Bank: " << mNumber << " " << mName << std::endl;
 
 	if (showPatchInfo)
 	{
@@ -171,8 +173,7 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 			++it)
 		{
 			bool once = true;
-			const std::string kSwitchNumber(std::string("sw ") + (*it).first() + std::string(": "));
-			PatchVect & patches = (*it).second();
+			PatchVect & patches = (*it).second;
 			for (PatchVect::iterator it2 = patches.begin();
 				it2 != patches.end();
 				++it2)
@@ -183,18 +184,16 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 
 				if (once)
 				{
-					std::string tmp(kSwitchNumber + std::string(curItem->mPatch->GetNumber()) + " " + curItem->mPatch->GetName() + "\n");
-					info += tmp;
+					info << "sw " << (*it).first << ": " << curItem->mPatch->GetNumber() << " " << curItem->mPatch->GetName() << std::endl;
 					once = false;
 				}
 				else
 				{
-					std::string tmp(std::string(" (") + std::string(curItem->mPatch->GetNumber()) + " " + curItem->mPatch->GetName() + ")\n");
-					info += tmp;
+					info << " (" << curItem->mPatch->GetNumber() << " " << curItem->mPatch->GetName() << ")" << std::endl;
 				}
 			}
 		}
 	}
 
-	mainDisplay->TextOut(info);
+	mainDisplay->TextOut(info.str());
 }

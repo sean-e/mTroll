@@ -28,7 +28,7 @@ public:
 	void AddPatchMapping(int switchNumber, int patchNumber, PatchState patchLoadState, PatchState patchUnloadState);
 	void InitPatches(const MidiControlEngine::Patches & patches);
 
-	bool Load(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
+	void Load(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 	void Unload(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 	void DisplayInfo(IMainDisplay * mainDisplay, bool showPatchInfo);
 
