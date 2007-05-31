@@ -11,7 +11,7 @@
 class ITraceDisplay
 {
 public:
-	virtual void TextOut(const std::string & txt) = 0;
+	virtual void Trace(const std::string & txt) = 0;
 };
 
 #endif // ITraceDisplay_h__
