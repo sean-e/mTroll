@@ -102,15 +102,21 @@ MidiControlEngine::CompleteInit()
 {
 	std::sort(mBanks.begin(), mBanks.end(), SortByBankNumber);
 
+	int powerUpBankIndex = -1;
+
+	int itIdx = 0;
 	for (Banks::iterator it = mBanks.begin();
 		it != mBanks.end();
-		++it)
+		++it, ++itIdx)
 	{
 		PatchBank * curItem = *it;
 		curItem->InitPatches(mPatches);
+
+		if (curItem->GetBankNumber() == mPowerUpBank)
+			powerUpBankIndex = itIdx;
 	}
 
-	LoadBank(mPowerUpBank);
+	LoadBank(powerUpBankIndex);
 	mMode = emDefault;
 }
 
