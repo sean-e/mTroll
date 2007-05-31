@@ -6,10 +6,10 @@ EndProject
 Global
 	GlobalSection(SourceCodeControl) = preSolution
 		SccNumberOfProjects = 2
+		SccProjectUniqueName0 = mControlUI\\mControlUI.vcproj
 		SccLocalPath0 = .
-		SccProjectUniqueName1 = mControlUI\\mControlUI.vcproj
+		SccProjectFilePathRelativizedFromConnection0 = mControlUI\\
 		SccLocalPath1 = .
-		SccProjectFilePathRelativizedFromConnection1 = mControlUI\\
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
