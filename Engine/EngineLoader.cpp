@@ -34,7 +34,7 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 	if (!pElem) 
 		return mEngine;
 
-	if (pElem->Value() != "MidiControlSettings")
+	if (pElem->ValueStr() != "MidiControlSettings")
 		return mEngine;
 
 	TiXmlHandle hRoot(NULL);
@@ -111,7 +111,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 {
 	for ( ; pElem; pElem = pElem->NextSiblingElement())
 	{
-		if (pElem->Value() != "patch")
+		if (pElem->ValueStr() != "patch")
 			continue;
 
 		std::string tmp;
@@ -140,7 +140,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			 childElem; 
 			 childElem = childElem->NextSiblingElement())
 		{
-			if (childElem->Value() != "bytestring")
+			if (childElem->ValueStr() != "bytestring")
 				continue;
 		
 			tmp = childElem->Attribute("name");
@@ -167,7 +167,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 {
 	for ( ; pElem; pElem = pElem->NextSiblingElement())
 	{
-		if (pElem->Value() != "bank")
+		if (pElem->ValueStr() != "bank")
 			continue;
 
 		const std::string bankName = pElem->Attribute("name");
@@ -185,7 +185,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 			 childElem; 
 			 childElem = childElem->NextSiblingElement())
 		{
-			if (childElem->Value() != "PatchMap")
+			if (childElem->ValueStr() != "PatchMap")
 				continue;
 
 			int switchNumber = -1;
