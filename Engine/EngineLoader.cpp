@@ -67,9 +67,9 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 	int powerupTimeout = 0;
 	int powerupPatch = 0;
 	int powerupBank = 0;
-	int incrementSwitch = 13;
-	int decrementSwitch = 14;
-	int modeSwitch = 15;
+	int incrementSwitch = -1;
+	int decrementSwitch = -1;
+	int modeSwitch = -1;
 
 	pElem->QueryIntAttribute("filterPC", &filterPC);
 
