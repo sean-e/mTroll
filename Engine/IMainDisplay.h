@@ -12,7 +12,7 @@ class IMainDisplay
 {
 public:
 	virtual void TextOut(const std::string & txt) = 0;
-	virtual void Clear() = 0;
+	virtual void ClearDisplay() = 0;
 };
 
 #endif // IMainDisplay_h__
