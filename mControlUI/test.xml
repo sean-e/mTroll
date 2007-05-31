@@ -1,0 +1,79 @@
+<?xml version="1.0" ?>
+<MidiControlSettings>
+	<SystemConfig filterPC="0">
+	    <powerup timeout="0" bank="0" patch="0" />
+	    <switches>
+	    	<switch name="increment" id="13" />
+	    	<switch name="decrement" id="14" />
+	    	<switch name="mode" id="15" />
+	    </switches>
+	</SystemConfig>
+	<patches>
+	    <patch name="the first patch" number="1" type="normal">
+	    	<bytestring name="A">f0 f7</bytestring>
+	    	<bytestring name="B">f0 f7</bytestring>
+	    </patch>
+	    <patch name="the second patch" number="2" type="normal">
+	    	<bytestring name="A">f0 f7</bytestring>
+	    	<bytestring name="B">f0 f7</bytestring>
+	    </patch>
+	    <patch name="patch 3" number="3" type="toggle">
+	    	<bytestring name="A">f0 f7</bytestring>
+	    	<bytestring name="B">f0 f7</bytestring>
+	    </patch>
+	    <patch name="patch 4" number="4" type="momentary">
+	    	<bytestring name="A">f0 f7</bytestring>
+	    	<bytestring name="B">f0 f7</bytestring>
+	    </patch>
+	    <patch name="patch 5" number="5" type="normal">
+	    	<bytestring name="A">f0 f7</bytestring>
+	    	<bytestring name="B">f0 f7</bytestring>
+	    </patch>
+	    <patch name="patch 6" number="6" type="normal">
+	    	<bytestring name="A">f0 f7</bytestring>
+	    	<bytestring name="B">f0 f7</bytestring>
+	    </patch>
+	    <patch name="patch 7" number="7" type="normal">
+	    	<bytestring name="A">f0 f7</bytestring>
+	    	<bytestring name="B">f0 f7</bytestring>
+	    </patch>
+	    <patch name="patch 8" number="8" type="normal">
+	    	<bytestring name="A">f0 f7</bytestring>
+	    	<bytestring name="B">f0 f7</bytestring>
+	    </patch>
+	    <patch name="patch 9" number="9" type="normal">
+	    	<bytestring name="A">f0 f7</bytestring>
+	    	<bytestring name="B">f0 f7</bytestring>
+	    </patch>
+	    <patch name="patch 10" number="10" type="normal">
+	    	<bytestring name="A">f0 f7</bytestring>
+	    	<bytestring name="B">f0 f7</bytestring>
+	    </patch>
+	    <patch name="patch 11" number="11" type="normal">
+	    	<bytestring name="A">f0 f7</bytestring>
+	    	<bytestring name="B">f0 f7</bytestring>
+	    </patch>
+	    <patch name="patch 12" number="12" type="normal">
+	    	<bytestring name="A">f0 f7</bytestring>
+	    	<bytestring name="B">f0 f7</bytestring>
+	    </patch>
+	</patches>
+	<banks>
+		<bank name="the first bank" number="1">
+			<PatchMap switch="1" patch="1" loadState="ignore" unloadState="" />
+			<PatchMap switch="2" patch="2" loadState="ignore" unloadState="" />
+			<PatchMap switch="3" patch="3" loadState="" unloadState="A" />
+			<PatchMap switch="4" patch="4" loadState="" unloadState="B" />
+			<PatchMap switch="2" patch="5" loadState="" unloadState="A" />
+			<PatchMap switch="2" patch="6" loadState="" unloadState="B" />
+		</bank>
+		<bank name="the second bank" number="5">
+			<PatchMap switch="1" patch="7" loadState="ignore" unloadState="" />
+			<PatchMap switch="2" patch="8" loadState="ignore" unloadState="" />
+			<PatchMap switch="3" patch="9" loadState="" unloadState="B" />
+			<PatchMap switch="4" patch="10" loadState="" unloadState="A" />
+			<PatchMap switch="2" patch="11" loadState="" unloadState="B" />
+			<PatchMap switch="2" patch="12" loadState="" unloadState="A" />
+		</bank>
+	</banks>
+</MidiControlSettings>

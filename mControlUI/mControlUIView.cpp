@@ -13,7 +13,7 @@
 CMControlUIView::CMControlUIView()
 {
 	EngineLoader ldr(this, this, this, this);
-	mEngine = ldr.CreateEngine("");
+	mEngine = ldr.CreateEngine("test.xml");
 }
 
 CMControlUIView::~CMControlUIView()
