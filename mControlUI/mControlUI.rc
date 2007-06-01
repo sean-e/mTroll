@@ -108,9 +108,10 @@ BEGIN
     END
     POPUP "&Help"
     BEGIN
-        MENUITEM "&About mControlUI...",              ID_APP_ABOUT
+        MENUITEM "&About mControlUI...",        ID_APP_ABOUT
     END
 END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -127,27 +128,67 @@ IDR_MAINFRAME           ICON                    "res\\mControlUI.ico"
 //
 
 IDD_ABOUTBOX DIALOG  0, 0, 187, 102
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About"
 FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,130,81,50,14
-    CTEXT           "mControlUI Application v1.0\n\n(c) Copyright 2007",IDC_STATIC,25,57,78,
-                    32
+    CTEXT           "mControlUI Application v1.0\n\n(c) Copyright 2007",IDC_STATIC,25,57,78,32
     ICON            IDR_MAINFRAME,IDC_STATIC,55,26,18,20
     GROUPBOX        "",IDC_STATIC,7,7,115,88
 END
 
-IDD_MCONTROLUI_FORM DIALOGEX 0, 0, 185, 93
-STYLE WS_CHILD | WS_VISIBLE
+IDD_MCONTROLUI_FORM DIALOGEX 0, 0, 535, 246
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
 EXSTYLE WS_EX_CLIENTEDGE
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-	LTEXT	"TODO: Place form controls on this dialog.",IDC_STATIC,24,42,
-		136,8
+    PUSHBUTTON      "&1",IDC_SWITCH1,15,31,50,14
+    EDITTEXT        IDC_SWITCH_TEXT1,5,5,70,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_LED1,"msctls_progress32",WS_BORDER,31,22,17,6
+    PUSHBUTTON      "&2",IDC_SWITCH2,95,31,50,14
+    EDITTEXT        IDC_SWITCH_TEXT2,85,5,70,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_LED2,"msctls_progress32",WS_BORDER,111,22,17,6
+    PUSHBUTTON      "&3",IDC_SWITCH3,175,31,50,14
+    EDITTEXT        IDC_SWITCH_TEXT3,165,5,70,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_LED3,"msctls_progress32",WS_BORDER,191,22,17,6
+    PUSHBUTTON      "&4",IDC_SWITCH4,255,31,50,14
+    EDITTEXT        IDC_SWITCH_TEXT4,245,5,70,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_LED4,"msctls_progress32",WS_BORDER,271,22,17,6
+    PUSHBUTTON      "&5",IDC_SWITCH5,335,31,50,14
+    EDITTEXT        IDC_SWITCH_TEXT5,325,5,70,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_LED5,"msctls_progress32",WS_BORDER,351,22,17,6
+    PUSHBUTTON      "&6",IDC_SWITCH6,15,86,50,14
+    EDITTEXT        IDC_SWITCH_TEXT6,5,60,70,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_LED6,"msctls_progress32",WS_BORDER,31,78,17,6
+    PUSHBUTTON      "&7",IDC_SWITCH7,95,86,50,14
+    EDITTEXT        IDC_SWITCH_TEXT7,85,60,70,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_LED7,"msctls_progress32",WS_BORDER,111,78,17,6
+    PUSHBUTTON      "&8",IDC_SWITCH8,175,86,50,14
+    EDITTEXT        IDC_SWITCH_TEXT8,165,60,70,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_LED8,"msctls_progress32",WS_BORDER,191,78,17,6
+    PUSHBUTTON      "&9",IDC_SWITCH9,255,86,50,14
+    EDITTEXT        IDC_SWITCH_TEXT9,245,60,70,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_LED9,"msctls_progress32",WS_BORDER,271,78,17,6
+    PUSHBUTTON      "1&0",IDC_SWITCH10,335,86,50,14
+    EDITTEXT        IDC_SWITCH_TEXT10,325,60,70,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_LED10,"msctls_progress32",WS_BORDER,351,78,17,6
+    PUSHBUTTON      "11",IDC_SWITCH11,15,143,50,14
+    EDITTEXT        IDC_SWITCH_TEXT11,5,117,70,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_LED11,"msctls_progress32",WS_BORDER,31,135,17,6
+    PUSHBUTTON      "12",IDC_SWITCH12,95,143,50,14
+    EDITTEXT        IDC_SWITCH_TEXT12,85,117,70,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_LED12,"msctls_progress32",WS_BORDER,111,135,17,6
+    PUSHBUTTON      "13",IDC_SWITCH13,175,143,50,14
+    EDITTEXT        IDC_SWITCH_TEXT13,165,117,70,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_LED13,"msctls_progress32",WS_BORDER,191,135,17,6
+    EDITTEXT        IDC_BANKTEXT,5,171,525,70,ES_MULTILINE | ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "Mode",IDC_SWITCH14,461,31,50,14
+    EDITTEXT        IDC_SWITCH_TEXT14,451,5,70,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_LED14,"msctls_progress32",WS_BORDER,477,23,17,6
+    PUSHBUTTON      "Decrement",IDC_SWITCH15,388,143,50,14
+    PUSHBUTTON      "Increment",IDC_SWITCH16,461,143,50,14
 END
-
-
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -168,10 +209,10 @@ BEGIN
 
     IDD_MCONTROLUI_FORM, DIALOG
     BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 178
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 86
+        LEFTMARGIN, 5
+        RIGHTMARGIN, 530
+        TOPMARGIN, 5
+        BOTTOMMARGIN, 241
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -215,21 +256,21 @@ BEGIN
     BEGIN
         BLOCK "040904B0"
         BEGIN
-            VALUE "CompanyName", "\0"
-            VALUE "FileDescription", "mControlUI Module\0"
-            VALUE "FileVersion", "1, 0, 0, 1\0"
-            VALUE "InternalName", "mControlUI\0"
-            VALUE "LegalCopyright", "Copyright 2007\0"
-            VALUE "OriginalFilename", "mControlUI.exe\0"
-            VALUE "ProductName", "mControlUI Module\0"
-            VALUE "ProductVersion", "1, 0, 0, 1\0"
+            VALUE "FileDescription", "mControlUI Module"
+            VALUE "FileVersion", "1, 0, 0, 1"
+            VALUE "InternalName", "mControlUI"
+            VALUE "LegalCopyright", "Copyright 2007"
+            VALUE "OriginalFilename", "mControlUI.exe"
+            VALUE "ProductName", "mControlUI Module"
+            VALUE "ProductVersion", "1, 0, 0, 1"
         END
     END
     BLOCK "VarFileInfo"
     BEGIN
-        VALUE "Translation", 0x0409, 0x04B0
+        VALUE "Translation", 0x409, 1200
     END
 END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -238,7 +279,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDR_MAINFRAME	"mControlUI"
+    IDR_MAINFRAME           "mControlUI"
 END
 
 STRINGTABLE 
@@ -318,6 +359,10 @@ END
 STRINGTABLE 
 BEGIN
     ATL_IDS_IDLEMESSAGE     "Ready"
+END
+
+STRINGTABLE 
+BEGIN
     ATL_IDS_MRU_FILE        "Open this document"
 END
 
@@ -325,5 +370,3 @@ END
 /////////////////////////////////////////////////////////////////////////////
 
 
-#ifndef APSTUDIO_INVOKED
-#endif    // not APSTUDIO_INVOKED
