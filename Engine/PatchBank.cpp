@@ -164,10 +164,11 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 					   bool showPatchInfo)
 {
 	std::ostrstream info;
-	info << "Bank: " << mNumber << " " << mName << std::endl;
+	info << "Bank: " << mNumber << " " << mName;
 
 	if (showPatchInfo)
 	{
+		info << "\r\n";
 		for (PatchMaps::iterator it = mPatches.begin();
 			it != mPatches.end();
 			++it)
@@ -184,12 +185,12 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 
 				if (once)
 				{
-					info << "sw " << (*it).first << ": " << curItem->mPatch->GetNumber() << " " << curItem->mPatch->GetName() << std::endl;
+					info << "sw " << (*it).first << ":\t" << curItem->mPatch->GetNumber() << " " << curItem->mPatch->GetName() << "\r\n";
 					once = false;
 				}
 				else
 				{
-					info << " (" << curItem->mPatch->GetNumber() << " " << curItem->mPatch->GetName() << ")" << std::endl;
+					info << "\t(" << curItem->mPatch->GetNumber() << " " << curItem->mPatch->GetName() << ")" << "\r\n";
 				}
 			}
 		}
