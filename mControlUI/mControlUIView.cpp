@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "resource.h"
+#include <atlstr.h>
 
 #include "mControlUIView.h"
 #include "..\Engine\EngineLoader.h"
@@ -77,7 +78,8 @@ CMControlUIView::Create(HWND hWndParent, LPARAM dwInitParam /*= NULL*/)
 		for (int idx = 0; idx < 16; ++idx)
 		{
 			if (mLeds[idx].IsWindow())
-				mLeds[idx].SetRange(0, 1);
+				mLeds[idx].SetRange(1, 10);
+			mStupidSwitchStates[idx] = false;
 		}
 
 		EngineLoader ldr(this, this, this, this);
@@ -120,7 +122,7 @@ CMControlUIView::SetSwitchDisplay(int switchNumber, bool isOn)
 	if (!mLeds[switchNumber].IsWindow())
 		return;
 
-	mLeds[switchNumber].SetPos(isOn ? 1 : 0);
+	mLeds[switchNumber].SetPos(isOn ? 10 : 1);
 }
 
 bool
@@ -172,4 +174,76 @@ CMControlUIView::MidiOut(const Bytes & bytes)
 void
 CMControlUIView::CloseMidiOut()
 {
+}
+
+LRESULT 
+CMControlUIView::OnDrawItem(UINT /*uMsg*/, 
+							WPARAM wParam, 
+							LPARAM lParam, 
+							BOOL& /*bHandled*/)
+{
+	DRAWITEMSTRUCT * drStr = (DRAWITEMSTRUCT *) lParam;
+
+	_ASSERTE(drStr->CtlType == ODT_BUTTON);
+	_ASSERTE(wParam == drStr->CtlID);
+
+	int idx = -1;
+	switch (wParam)
+	{
+	case IDC_SWITCH1:	idx = 0;	break;
+	case IDC_SWITCH2:	idx = 1;	break;
+	case IDC_SWITCH3:	idx = 2;	break;
+	case IDC_SWITCH4:	idx = 3;	break;
+	case IDC_SWITCH5:	idx = 4;	break;
+	case IDC_SWITCH6:	idx = 5;	break;
+	case IDC_SWITCH7:	idx = 6;	break;
+	case IDC_SWITCH8:	idx = 7;	break;
+	case IDC_SWITCH9:	idx = 8;	break;
+	case IDC_SWITCH10:	idx = 9;	break;
+	case IDC_SWITCH11:	idx = 10;	break;
+	case IDC_SWITCH12:	idx = 11;	break;
+	case IDC_SWITCH13:	idx = 12;	break;
+	case IDC_SWITCH14:	idx = 13;	break;
+	case IDC_SWITCH15:	idx = 14;	break;
+	case IDC_SWITCH16:	idx = 15;	break;
+	}
+
+	if (-1 != idx)
+	{
+		if (drStr->itemState & ODS_SELECTED)
+		{
+			if (!mStupidSwitchStates[idx])
+			{
+				mStupidSwitchStates[idx] = true;
+				mEngine->SwitchPressed(idx);
+			}
+		}
+		else
+		{
+			if (mStupidSwitchStates[idx])
+			{
+				mStupidSwitchStates[idx] = false;
+				mEngine->SwitchReleased(idx);
+			}
+		}
+	}
+
+	UINT uStyle = DFCS_BUTTONPUSH;
+
+	// If drawing selected, add the pushed style to DrawFrameControl.
+	if (drStr->itemState & ODS_SELECTED)
+		uStyle |= DFCS_PUSHED;
+
+	// Draw the button frame.
+	::DrawFrameControl(drStr->hDC, &drStr->rcItem, DFC_BUTTON, uStyle);
+
+	// Get the button's text.
+	CString strText;
+	GetWindowText(strText);
+
+	// Draw the button text using the text color red.
+	COLORREF crOldColor = ::SetTextColor(drStr->hDC, RGB(0,0,128));
+	::DrawText(drStr->hDC, strText, strText.GetLength(), &drStr->rcItem, DT_SINGLELINE|DT_VCENTER|DT_CENTER);
+	::SetTextColor(drStr->hDC, crOldColor);
+	return 1;
 }
