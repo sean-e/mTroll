@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="mControlUI"
 	ProjectGUID="{3D33E5B3-BA0F-45D2-AAE7-A939F9F4B985}"
+	RootNamespace="mControlUI"
 	SccProjectName="Perforce Project"
 	SccLocalPath=".."
 	SccProvider="MSSCCI:Perforce SCM"
@@ -360,5 +361,9 @@
 		</Filter>
 	</Files>
 	<Globals>
+		<Global
+			Name="RESOURCE_FILE"
+			Value="mControlUI.rc"
+		/>
 	</Globals>
 </VisualStudioProject>
