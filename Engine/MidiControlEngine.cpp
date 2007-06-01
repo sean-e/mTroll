@@ -113,7 +113,10 @@ MidiControlEngine::CompleteInit()
 		curItem->InitPatches(mPatches);
 
 		if (curItem->GetBankNumber() == mPowerUpBank)
+		{
 			powerUpBankIndex = itIdx;
+			break;
+		}
 	}
 
 	LoadBank(powerUpBankIndex);
