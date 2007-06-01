@@ -1,11 +1,11 @@
 <?xml version="1.0" ?>
 <MidiControlSettings>
 	<SystemConfig filterPC="0">
-	    <powerup timeout="0" bank="0" patch="0" />
+	    <powerup timeout="0" bank="5" patch="0" />
 	    <switches>
-	    	<switch name="increment" id="13" />
-	    	<switch name="decrement" id="14" />
-	    	<switch name="mode" id="15" />
+	    	<switch name="increment" id="14" />
+	    	<switch name="decrement" id="15" />
+	    	<switch name="mode" id="13" />
 	    </switches>
 	</SystemConfig>
 	<patches>
