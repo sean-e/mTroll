@@ -115,12 +115,9 @@ CMControlUIView::ClearDisplay()
 void
 CMControlUIView::Trace(const std::string & txt)
 {
-	CString prevTxt;
-	mTraceDisplay.GetWindowText(prevTxt);
 	CString newTxt(txt.c_str());
 	newTxt.Replace("\n", "\r\n");
-	newTxt += prevTxt;
-	mTraceDisplay.SetWindowText(newTxt);
+	mTraceDisplay.AppendText(newTxt);
 }
 
 // ISwitchDisplay
