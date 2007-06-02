@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "resource.h"
+#include <atlmisc.h>
 
 #include "aboutdlg.h"
 #include "mControlUIView.h"
@@ -53,6 +54,12 @@ LRESULT CMainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/
 	ATLASSERT(pLoop != NULL);
 	pLoop->AddMessageFilter(this);
 	pLoop->AddIdleHandler(this);
+
+	CRect wndRc;
+	GetWindowRect(&wndRc);
+	wndRc.right = wndRc.left + 817;
+	wndRc.bottom = wndRc.top + 567;
+	MoveWindow(&wndRc);
 
 	return 0;
 }
