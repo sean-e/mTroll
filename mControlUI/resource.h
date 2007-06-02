@@ -9,6 +9,7 @@
 #define IDC_SWITCH_TEXT1                1001
 #define IDC_LED1                        1002
 #define IDC_BANKTEXT                    1003
+#define IDC_TRACETEXT                   1004
 #define IDC_SWITCH2                     1006
 #define IDC_SWITCH_TEXT2                1007
 #define IDC_LED2                        1008

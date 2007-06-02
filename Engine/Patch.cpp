@@ -103,7 +103,7 @@ Patch::UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay
 	if (mainDisplay)
 	{
 		std::strstream msgstr;
-		msgstr << mNumber << " " << mName << std::endl;
+		msgstr << mNumber << " " << mName << std::endl << std::ends;
 		mainDisplay->TextOut(msgstr.str());
 	}
 }

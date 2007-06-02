@@ -130,5 +130,6 @@ private:
 	CEdit				mSwitchTextDisplays[16];
 	CButton				mSwitches[16];
 	CEdit				mMainDisplay;
+	CEdit				mTraceDisplay;
 	bool				mStupidSwitchStates[16];
 };

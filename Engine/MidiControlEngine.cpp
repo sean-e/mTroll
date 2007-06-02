@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <strstream>
 #include "MidiControlEngine.h"
 #include "PatchBank.h"
 #include "IMainDisplay.h"
@@ -126,6 +127,13 @@ MidiControlEngine::CompleteInit()
 void
 MidiControlEngine::SwitchPressed(int switchNumber)
 {
+	if (mTrace)
+	{
+		std::strstream msg;
+		msg << "SwitchPressed: " << switchNumber << std::endl << std::ends;
+		mTrace->Trace(std::string(msg.str()));
+	}
+
 	if (emCreated == mMode)
 	{
 		return;
@@ -161,6 +169,13 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 void
 MidiControlEngine::SwitchReleased(int switchNumber)
 {
+	if (mTrace)
+	{
+		std::strstream msg;
+		msg << "SwitchReleased: " << switchNumber << std::endl << std::ends;
+		mTrace->Trace(msg.str());
+	}
+
 	if (emCreated == mMode)
 		return;
 

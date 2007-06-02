@@ -27,6 +27,7 @@ CMControlUIView::Create(HWND hWndParent, LPARAM dwInitParam /*= NULL*/)
 	if (wnd)
 	{
 		mMainDisplay = (CEdit) GetDlgItem(IDC_BANKTEXT);
+		mTraceDisplay = (CEdit) GetDlgItem(IDC_TRACETEXT);
 
 		mLeds[0] = (CProgressBarCtrl) GetDlgItem(IDC_LED1);
 		mLeds[1] = (CProgressBarCtrl) GetDlgItem(IDC_LED2);
@@ -99,7 +100,9 @@ BOOL CMControlUIView::PreTranslateMessage(MSG* pMsg)
 void
 CMControlUIView::TextOut(const std::string & txt)
 {
-	mMainDisplay.SetWindowText(txt.c_str());
+	CStringA newTxt(txt.c_str());
+	newTxt.Replace("\n", "\r\n");
+	mMainDisplay.SetWindowText(newTxt);
 }
 
 void
@@ -112,7 +115,12 @@ CMControlUIView::ClearDisplay()
 void
 CMControlUIView::Trace(const std::string & txt)
 {
-
+	CString prevTxt;
+	mTraceDisplay.GetWindowText(prevTxt);
+	CString newTxt(txt.c_str());
+	newTxt.Replace("\n", "\r\n");
+	newTxt += prevTxt;
+	mTraceDisplay.SetWindowText(newTxt);
 }
 
 // ISwitchDisplay

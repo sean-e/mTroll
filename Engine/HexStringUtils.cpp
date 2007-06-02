@@ -120,7 +120,7 @@ GetAsciiHexStr(const Bytes & inBytes,
 			if ((idx+1) % 8)
 				retval += " ";
 			else
-				retval += "\r\n";
+				retval += "\n";
 		}
 	}
 
