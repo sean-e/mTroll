@@ -3,8 +3,8 @@
 	<SystemConfig filterPC="0">
 	    <powerup timeout="0" bank="5" patch="0" />
 	    <switches>
-	    	<switch name="increment" id="14" />
-	    	<switch name="decrement" id="15" />
+	    	<switch name="increment" id="15" />
+	    	<switch name="decrement" id="14" />
 	    	<switch name="mode" id="13" />
 	    </switches>
 	</SystemConfig>
@@ -62,18 +62,18 @@
 		<bank name="the first bank" number="1">
 			<PatchMap switch="1" patch="1" loadState="ignore" unloadState="" />
 			<PatchMap switch="2" patch="2" loadState="ignore" unloadState="" />
-			<PatchMap switch="3" patch="3" loadState="" unloadState="A" />
-			<PatchMap switch="4" patch="4" loadState="" unloadState="B" />
-			<PatchMap switch="2" patch="5" loadState="" unloadState="A" />
-			<PatchMap switch="2" patch="6" loadState="" unloadState="B" />
+			<PatchMap switch="3" patch="3" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="4" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="5" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="6" loadState="" unloadState="" />
 		</bank>
 		<bank name="the second bank" number="5">
 			<PatchMap switch="1" patch="7" loadState="ignore" unloadState="" />
 			<PatchMap switch="2" patch="8" loadState="ignore" unloadState="" />
-			<PatchMap switch="3" patch="9" loadState="" unloadState="B" />
-			<PatchMap switch="4" patch="10" loadState="" unloadState="A" />
-			<PatchMap switch="2" patch="11" loadState="" unloadState="B" />
-			<PatchMap switch="2" patch="12" loadState="" unloadState="A" />
+			<PatchMap switch="3" patch="9" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="10" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="11" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="12" loadState="" unloadState="" />
 		</bank>
 	</banks>
 </MidiControlSettings>
