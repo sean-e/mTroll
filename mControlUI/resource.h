@@ -50,6 +50,8 @@
 #define IDC_SWITCH_TEXT14               1049
 #define IDC_LED14                       1050
 #define IDC_SWITCH15                    1051
+#define IDC_SWITCH_TEXT15               1052
+#define IDC_SWITCH_TEXT16               1053
 #define IDC_SWITCH16                    1054
 #define IDC_LED16                       1056
 

@@ -60,6 +60,8 @@ CMControlUIView::Create(HWND hWndParent, LPARAM dwInitParam /*= NULL*/)
 	mSwitchTextDisplays[11] = (CEdit) GetDlgItem(IDC_SWITCH_TEXT12);
 	mSwitchTextDisplays[12] = (CEdit) GetDlgItem(IDC_SWITCH_TEXT13);
 	mSwitchTextDisplays[13] = (CEdit) GetDlgItem(IDC_SWITCH_TEXT14);
+	mSwitchTextDisplays[14] = (CEdit) GetDlgItem(IDC_SWITCH_TEXT15);
+	mSwitchTextDisplays[15] = (CEdit) GetDlgItem(IDC_SWITCH_TEXT16);
 
 	mSwitches[0] = (CButton) GetDlgItem(IDC_SWITCH1);
 	mSwitches[1] = (CButton) GetDlgItem(IDC_SWITCH2);
@@ -97,7 +99,7 @@ CMControlUIView::Create(HWND hWndParent, LPARAM dwInitParam /*= NULL*/)
 		mSwitches[idx].SetFont(mSwitchButtonFont);
 
 		if (mLeds[idx].IsWindow())
-			mLeds[idx].SetRange(1, 5);
+			mLeds[idx].SetRange(0, 4);
 
 		if (mSwitchTextDisplays[idx].IsWindow())
 			mSwitchTextDisplays[idx].SetFont(mSwitchDisplayFont);
@@ -143,10 +145,10 @@ CMControlUIView::Trace(const std::string & txt)
 void
 CMControlUIView::SetSwitchDisplay(int switchNumber, bool isOn)
 {
-	if (!mLeds[switchNumber].IsWindow())
+	if (switchNumber > 15 || !mLeds[switchNumber].IsWindow())
 		return;
 
-	mLeds[switchNumber].SetPos(isOn ? 10 : 1);
+	mLeds[switchNumber].SetPos(isOn ? 4 : 0);
 }
 
 bool
@@ -158,10 +160,20 @@ CMControlUIView::SupportsSwitchText() const
 void
 CMControlUIView::SetSwitchText(int switchNumber, const std::string & txt)
 {
-	if (!mSwitchTextDisplays[switchNumber].IsWindow())
+	if (switchNumber > 15 || !mSwitchTextDisplays[switchNumber].IsWindow())
 		return;
 
 	mSwitchTextDisplays[switchNumber].SetWindowText(txt.c_str());
+}
+
+void
+CMControlUIView::SetSwitchDisplayPos(int switchNumber, int pos, int range)
+{
+	if (switchNumber > 15 || !mSwitchTextDisplays[switchNumber].IsWindow())
+		return;
+
+	mLeds[switchNumber].SetRange(0, range);
+	mLeds[switchNumber].SetPos(pos);
 }
 
 void

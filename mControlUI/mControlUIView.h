@@ -39,6 +39,7 @@ public:
 	virtual bool SupportsSwitchText() const;
 	virtual void SetSwitchText(int switchNumber, const std::string & txt);
 	virtual void ClearSwitchText(int switchNumber);
+	virtual void SetSwitchDisplayPos(int switchNumber, int pos, int range);
 
 	// IMidiOut
 	virtual int GetDeviceCount();

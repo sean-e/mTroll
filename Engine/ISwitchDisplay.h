@@ -12,6 +12,7 @@ class ISwitchDisplay
 {
 public:
 	virtual void SetSwitchDisplay(int switchNumber, bool isOn) = 0;
+	virtual void SetSwitchDisplayPos(int switchNumber, int pos, int range) = 0;
 	virtual bool SupportsSwitchText() const = 0;
 	virtual void SetSwitchText(int switchNumber, const std::string & txt) = 0;
 	virtual void ClearSwitchText(int switchNumber) = 0;

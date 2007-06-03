@@ -31,6 +31,7 @@ public:
 	void UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 	const std::string & GetName() const {return mName;}
 	int GetNumber() const {return mNumber;}
+	bool IsOn() const {return mPatchIsOn;}
 
 	void SendStringA(IMidiOut * midiOut);
 	void SendStringB(IMidiOut * midiOut);

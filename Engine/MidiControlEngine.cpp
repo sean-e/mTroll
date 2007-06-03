@@ -120,8 +120,8 @@ MidiControlEngine::CompleteInit()
 		}
 	}
 
+	NextMode(true);
 	LoadBank(powerUpBankIndex);
-	mMode = emDefault;
 }
 
 void
@@ -139,17 +139,22 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 		return;
 	}
 
+	if (emBankDesc == mMode)
+	{
+		return;
+	}
+
 	if (switchNumber == mIncrementSwitchNumber)
 	{
 		if (emDefault == mMode)
-			mMode = emBankNav;
+			NextMode(true);
 		return;
 	}
 	
 	if (switchNumber == mDecrementSwitchNumber)
 	{
 		if (emDefault == mMode)
-			mMode = emBankNav;
+			NextMode(true);
 		return;
 	}
 	
@@ -197,15 +202,52 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 			mBankNavigationIndex = mActiveBankIndex;
 			NavigateBankRelative(0);
 			// go to next mode
-			NextMode(false);
+			NextMode(true);
 		}
 		else
 		{
 			// any switch release (except inc/dec/util) after bank inc/dec commits bank
 			LoadBank(mBankNavigationIndex);
 			// reset to default mode
-			mMode = emDefault;
+			mMode = emCreated;
+			NextMode(false);
 		}
+		return;
+	}
+
+	if (emBankDesc == mMode)
+	{
+		if (switchNumber == mIncrementSwitchNumber)
+		{
+			if (mMainDisplay)
+			{
+				std::strstream msgstr;
+				msgstr << switchNumber << ": Increment" << std::endl << std::ends;
+				mMainDisplay->TextOut(msgstr.str());
+			}
+			return;
+		}
+
+		if (switchNumber == mDecrementSwitchNumber)
+		{
+			if (mMainDisplay)
+			{
+				std::strstream msgstr;
+				msgstr << switchNumber << ": Decrement" << std::endl << std::ends;
+				mMainDisplay->TextOut(msgstr.str());
+			}
+			return;
+		}
+
+		if (switchNumber == mModeSwitchNumber)
+		{
+			NextMode(true);
+			return;
+		}
+
+		if (mActiveBank)
+			mActiveBank->DisplayInfo(mMainDisplay, true);
+
 		return;
 	}
 
@@ -248,7 +290,7 @@ MidiControlEngine::NavigateBankRelative(int relativeBankIndex)
 	if (!bank)
 		return false;
 
-	bank->DisplayInfo(mMainDisplay, false);
+	bank->DisplayInfo(mMainDisplay, true);
 	return true;
 }
 
@@ -283,25 +325,58 @@ void
 MidiControlEngine::NextMode(bool displayMode)
 {
 	mMode = (EngineMode)(mMode + 1);
-	if (emNotValid == mMode)
+	if (emNotValid <= mMode)
 		mMode = emDefault;
-
-	if (!displayMode)
-		return;
 
 	std::string msg;
 	switch (mMode)
 	{
 	case emDefault:
-		msg = "mode: Default\n";
+		msg = "Default\n";
+		if (mSwitchDisplay)
+		{
+			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Next Bank");
+			mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "Prev Bank");
+		}
 		break;
 	case emBankNav:
-		msg = "mode: Bank\n";
+		msg = "Bank Navigation\n";
+		if (mSwitchDisplay)
+		{
+			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Next Bank");
+			mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "Prev Bank");
+
+			for (int idx = 0; idx < 16; idx++)
+			{
+				if (idx != mIncrementSwitchNumber &&
+					idx != mDecrementSwitchNumber &&
+					idx != mModeSwitchNumber)
+				{
+					mSwitchDisplay->ClearSwitchText(idx);
+					mSwitchDisplay->SetSwitchDisplay(idx, false);
+				}
+			}
+		}
+		break;
+	case emBankDesc:
+		msg = "Bank and Switch Description\n";
+		if (mSwitchDisplay)
+		{
+			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "");
+			mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "");
+		}
 		break;
 	default:
-		msg = "mode: Invalid\n";
+		msg = "Invalid\n";
 	    break;
 	}
 
-	mMainDisplay->TextOut(msg);
+	if (displayMode && mMainDisplay)
+		mMainDisplay->TextOut("mode: " +  msg);
+
+	if (mSwitchDisplay)
+	{
+		mSwitchDisplay->SetSwitchText(mModeSwitchNumber, msg);
+		mSwitchDisplay->SetSwitchDisplayPos(mModeSwitchNumber, emNotValid - 1 - mMode, emNotValid - 1);
+	}
 }

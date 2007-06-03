@@ -56,9 +56,10 @@ private:
 	int						mActiveBankIndex;
 	enum EngineMode 
 	{ 
-		emCreated,			// initial state - no data loaded
+		emCreated = -1,		// initial state - no data loaded
 		emDefault,			// select presets in banks
 		emBankNav,			// navigate banks
+		emBankDesc,			// describe switches in bank
 		emNotValid 
 	};
 	EngineMode				mMode;
