@@ -120,7 +120,7 @@ MidiControlEngine::CompleteInit()
 		}
 	}
 
-	NextMode();
+	ChangeMode(emDefault);
 	LoadBank(powerUpBankIndex);
 }
 
@@ -143,7 +143,7 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 	{
 		if (switchNumber == mIncrementSwitchNumber ||
 			switchNumber == mDecrementSwitchNumber)
-			NextMode();
+			ChangeMode(emBankNav);
 		else if (switchNumber == mModeSwitchNumber)
 			;
 		else if (mActiveBank)
@@ -190,8 +190,7 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 		{
 			// any switch release (except inc/dec/util) after bank inc/dec commits bank
 			// reset to default mode when in bankNav mode
-			mMode = emCreated;
-			NextMode();
+			ChangeMode(emDefault);
 			LoadBank(mBankNavigationIndex);
 		}
 		else if (emBankDesc == mMode)
@@ -217,7 +216,7 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 
 		if (switchNumber == mModeSwitchNumber)
 		{
-			NextMode();
+			ChangeMode(emBankNav);
 			return;
 		}
 
@@ -349,6 +348,6 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 	if (mSwitchDisplay)
 	{
 		mSwitchDisplay->SetSwitchText(mModeSwitchNumber, msg);
-		mSwitchDisplay->SetSwitchDisplayPos(mModeSwitchNumber, emNotValid - 1 - mMode, emNotValid - 1);
+		mSwitchDisplay->SetSwitchDisplay(mModeSwitchNumber, mMode == emDefault ? false : true);
 	}
 }
