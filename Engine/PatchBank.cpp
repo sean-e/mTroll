@@ -229,12 +229,12 @@ PatchBank::DisplayDetailedPatchInfo(int switchNumber, IMainDisplay * mainDisplay
 				continue;
 
 			if (cnt == 0)
-				info << "\tNum\tOn/Off\tName" << std::endl;
+				info << "\tNum\tOn/Off\tType\tName" << std::endl;
 			
 			if (cnt == 1)
 				info << "(Hidden patches)" << std::endl;
 
-			info << "\t" << curItem->mPatch->GetNumber() << "\t" << (curItem->mPatch->IsOn() ? "on" : "off") << "\t" << curItem->mPatch->GetName() << std::endl;
+			info << "\t" << curItem->mPatch->GetNumber() << "\t" << (curItem->mPatch->IsOn() ? "on" : "off") << "\t" << curItem->mPatch->GetPatchType() << "\t" << curItem->mPatch->GetName() << std::endl;
 			++cnt;
 		}
 
