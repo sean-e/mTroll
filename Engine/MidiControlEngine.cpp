@@ -339,7 +339,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 	switch (mMode)
 	{
 	case emDefault:
-		msg = "Default\n";
+		msg = "Default";
 		if (mSwitchDisplay)
 		{
 			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Next Bank");
@@ -353,7 +353,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		}
 		break;
 	case emBankNav:
-		msg = "Bank Navigation\n";
+		msg = "Bank Navigation";
 		if (mSwitchDisplay)
 		{
 			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Next Bank");
@@ -361,7 +361,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		}
 		break;
 	case emBankDesc:
-		msg = "Bank and Switch Description\n";
+		msg = "Bank and Switch Description";
 		if (mSwitchDisplay)
 		{
 			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Next Bank");
@@ -369,7 +369,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		}
 		break;
 	case emModeSelect:
-		msg = "Mode Select\n";
+		msg = "Mode Select";
 		if (mSwitchDisplay)
 		{
 			mSwitchDisplay->SetSwitchText(mModeDefaultSwitchNumber, "Default");
@@ -378,7 +378,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		}
 		break;
 	default:
-		msg = "Invalid\n";
+		msg = "Invalid";
 	    break;
 	}
 
