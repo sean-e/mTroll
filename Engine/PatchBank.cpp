@@ -91,13 +91,15 @@ PatchBank::Load(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay *
 			// patches are assigned to the same switch)
 			if (once)
 			{
-				curItem->mPatch->AssignSwitch((*it).first, switchDisplay);
 				once = false;
+				curItem->mPatch->AssignSwitch((*it).first, switchDisplay);
 			}
+			else
+				curItem->mPatch->AssignSwitch(-1, NULL);
 		}
 	}
 
-	DisplayInfo(mainDisplay, !switchDisplay->SupportsSwitchText());
+	DisplayInfo(mainDisplay, switchDisplay, !switchDisplay->SupportsSwitchText());
 }
 
 void
@@ -161,6 +163,7 @@ PatchBank::PatchSwitchAction(bool pressed, int switchNumber, IMidiOut * midiOut,
 
 void
 PatchBank::DisplayInfo(IMainDisplay * mainDisplay, 
+					   ISwitchDisplay * switchDisplay,
 					   bool showPatchInfo)
 {
 	std::ostrstream info;
@@ -185,8 +188,9 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 
 				if (once)
 				{
-					info << "sw " << (*it).first << ":\t" << curItem->mPatch->GetNumber() << " " << curItem->mPatch->GetName() << std::endl;
 					once = false;
+					curItem->mPatch->AssignSwitch((*it).first, switchDisplay);
+					info << "sw " << (*it).first << ":\t" << curItem->mPatch->GetNumber() << " " << curItem->mPatch->GetName() << std::endl;
 				}
 				else
 				{
@@ -197,5 +201,47 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 	}
 
 	info << std::ends;
-	mainDisplay->TextOut(info.str());
+	if (mainDisplay)
+		mainDisplay->TextOut(info.str());
+}
+
+void
+PatchBank::DisplayDetailedPatchInfo(int switchNumber, IMainDisplay * mainDisplay)
+{
+	std::ostrstream info;
+	info << "Status for switch: " << switchNumber << std::endl;
+
+	for (PatchMaps::iterator it = mPatches.begin();
+		it != mPatches.end();
+		++it)
+	{
+		if ((*it).first != switchNumber)
+			continue;
+
+		int cnt = 0;
+		PatchVect & patches = (*it).second;
+		for (PatchVect::iterator it2 = patches.begin();
+			it2 != patches.end();
+			++it2)
+		{
+			PatchMap * curItem = *it2;
+			if (!curItem || !curItem->mPatch)
+				continue;
+
+			if (cnt == 0)
+				info << "\tNum\tOn/Off\tName" << std::endl;
+			
+			if (cnt == 1)
+				info << "(Hidden patches)" << std::endl;
+
+			info << "\t" << curItem->mPatch->GetNumber() << "\t" << (curItem->mPatch->IsOn() ? "on" : "off") << "\t" << curItem->mPatch->GetName() << std::endl;
+			++cnt;
+		}
+
+		break;
+	}
+
+	info << std::ends;
+	if (mainDisplay)
+		mainDisplay->TextOut(info.str());
 }

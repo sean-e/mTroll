@@ -120,7 +120,7 @@ MidiControlEngine::CompleteInit()
 		}
 	}
 
-	NextMode(true);
+	NextMode();
 	LoadBank(powerUpBankIndex);
 }
 
@@ -147,14 +147,14 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 	if (switchNumber == mIncrementSwitchNumber)
 	{
 		if (emDefault == mMode)
-			NextMode(true);
+			NextMode();
 		return;
 	}
 	
 	if (switchNumber == mDecrementSwitchNumber)
 	{
 		if (emDefault == mMode)
-			NextMode(true);
+			NextMode();
 		return;
 	}
 	
@@ -199,18 +199,18 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 		else if (switchNumber == mModeSwitchNumber)
 		{
 			// escape bank nav
+			// go to next mode
+			NextMode();
 			mBankNavigationIndex = mActiveBankIndex;
 			NavigateBankRelative(0);
-			// go to next mode
-			NextMode(true);
 		}
 		else
 		{
 			// any switch release (except inc/dec/util) after bank inc/dec commits bank
-			LoadBank(mBankNavigationIndex);
 			// reset to default mode
 			mMode = emCreated;
-			NextMode(false);
+			NextMode();
+			LoadBank(mBankNavigationIndex);
 		}
 		return;
 	}
@@ -241,12 +241,15 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 
 		if (switchNumber == mModeSwitchNumber)
 		{
-			NextMode(true);
+			NextMode();
 			return;
 		}
 
 		if (mActiveBank)
-			mActiveBank->DisplayInfo(mMainDisplay, true);
+		{
+			mActiveBank->DisplayInfo(mMainDisplay, mSwitchDisplay, true);
+			mActiveBank->DisplayDetailedPatchInfo(switchNumber, mMainDisplay);
+		}
 
 		return;
 	}
@@ -259,7 +262,7 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 
 	if (switchNumber == mModeSwitchNumber)
 	{
-		NextMode(true);
+		NextMode();
 		return;
 	}
 
@@ -290,7 +293,7 @@ MidiControlEngine::NavigateBankRelative(int relativeBankIndex)
 	if (!bank)
 		return false;
 
-	bank->DisplayInfo(mMainDisplay, true);
+	bank->DisplayInfo(mMainDisplay, mSwitchDisplay, true);
 	return true;
 }
 
@@ -322,8 +325,9 @@ MidiControlEngine::LoadBank(int bankIndex)
 }
 
 void
-MidiControlEngine::NextMode(bool displayMode)
+MidiControlEngine::NextMode()
 {
+	bool showModeInMainDisplay = true;
 	mMode = (EngineMode)(mMode + 1);
 	if (emNotValid <= mMode)
 		mMode = emDefault;
@@ -338,6 +342,12 @@ MidiControlEngine::NextMode(bool displayMode)
 			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Next Bank");
 			mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "Prev Bank");
 		}
+
+		if (mActiveBank)
+		{
+			mActiveBank->DisplayInfo(mMainDisplay, mSwitchDisplay, true);
+			showModeInMainDisplay = false;
+		}
 		break;
 	case emBankNav:
 		msg = "Bank Navigation\n";
@@ -346,7 +356,7 @@ MidiControlEngine::NextMode(bool displayMode)
 			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Next Bank");
 			mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "Prev Bank");
 
-			for (int idx = 0; idx < 16; idx++)
+			for (int idx = 0; idx < 32; idx++)
 			{
 				if (idx != mIncrementSwitchNumber &&
 					idx != mDecrementSwitchNumber &&
@@ -371,7 +381,7 @@ MidiControlEngine::NextMode(bool displayMode)
 	    break;
 	}
 
-	if (displayMode && mMainDisplay)
+	if (showModeInMainDisplay && mMainDisplay)
 		mMainDisplay->TextOut("mode: " +  msg);
 
 	if (mSwitchDisplay)

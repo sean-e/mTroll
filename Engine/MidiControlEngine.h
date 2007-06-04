@@ -43,7 +43,7 @@ private:
 	bool					NavigateBankRelative(int relativeBankIndex);
 	bool					LoadBank(int bankIndex);
 	PatchBank *				GetBank(int bankIndex);
-	void					NextMode(bool displayMode);
+	void					NextMode();
 
 private:
 	// non-retained runtime state
