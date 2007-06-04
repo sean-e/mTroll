@@ -121,3 +121,25 @@ Patch::SendStringB(IMidiOut * midiOut)
 	midiOut->MidiOut(mByteStringB);
 	mPatchIsOn = false;
 }
+
+std::string
+Patch::GetPatchType() const
+{
+	std::string retval;
+	switch (mPatchType)
+	{
+	case ptNormal:
+		retval = "normal";
+		break;
+	case ptToggle:
+		retval = "toggle";
+		break;
+	case ptMomentary:
+		retval = "momentary";
+		break;
+	default:
+		retval = "unknown";
+	}
+
+	return retval;
+}

@@ -43,11 +43,11 @@ private:
 	bool					NavigateBankRelative(int relativeBankIndex);
 	bool					LoadBank(int bankIndex);
 	PatchBank *				GetBank(int bankIndex);
-	void					NextMode();
 	enum EngineMode 
 	{ 
 		emCreated = -1,		// initial state - no data loaded
 		emDefault,			// select presets in banks
+		emModeSelect,		// out of default ready to select new mode
 		emBankNav,			// navigate banks
 		emBankDesc,			// describe switches in bank
 		emNotValid 
@@ -79,6 +79,9 @@ private:
 	int						mDecrementSwitchNumber;
 	int						mModeSwitchNumber;
 	bool					mFilterRedundantProgramChanges;
+	int						mModeDefaultSwitchNumber;
+	int						mModeBankNavSwitchNumber;
+	int						mModeBankDescSwitchNumber;
 };
 
 #endif // MidiControlEngine_h__

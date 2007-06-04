@@ -53,7 +53,10 @@ MidiControlEngine::MidiControlEngine(IMidiOut * midiOut,
 	mIncrementSwitchNumber(incrementSwitchNumber),
 	mDecrementSwitchNumber(decrementSwitchNumber),
 	mModeSwitchNumber(modeSwitchNumber),
-	mFilterRedundantProgramChanges(false)
+	mFilterRedundantProgramChanges(false),
+	mModeDefaultSwitchNumber(0),
+	mModeBankNavSwitchNumber(1),
+	mModeBankDescSwitchNumber(2)
 {
 	mBanks.reserve(999);
 }
@@ -136,7 +139,8 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 
 	if (emCreated == mMode ||
 		emBankDesc == mMode ||
-		emBankNav == mMode)
+		emBankNav == mMode ||
+		emModeSelect == mMode)
 		return;
 
 	if (emDefault == mMode)
@@ -165,6 +169,37 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 	if (emCreated == mMode)
 		return;
 
+	if (emModeSelect == mMode)
+	{
+		if (switchNumber == mIncrementSwitchNumber ||
+			switchNumber == mDecrementSwitchNumber)
+		{
+			return;
+		}
+		else if (switchNumber == mModeSwitchNumber ||
+			switchNumber == mModeDefaultSwitchNumber)
+		{
+			// escape
+			ChangeMode(emDefault);
+			mBankNavigationIndex = mActiveBankIndex;
+			NavigateBankRelative(0);
+		}
+		else if (switchNumber == mModeBankDescSwitchNumber)
+		{
+			ChangeMode(emBankDesc);
+			mBankNavigationIndex = mActiveBankIndex;
+			NavigateBankRelative(0);
+		}
+		else if (switchNumber == mModeBankNavSwitchNumber)
+		{
+			ChangeMode(emBankNav);
+			mBankNavigationIndex = mActiveBankIndex;
+			NavigateBankRelative(0);
+		}
+
+		return;
+	}
+
 	if (emBankNav == mMode ||
 		emBankDesc == mMode)
 	{
@@ -181,8 +216,7 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 		else if (switchNumber == mModeSwitchNumber)
 		{
 			// escape
-			// go to next mode
-			NextMode();
+			ChangeMode(emDefault);
 			mBankNavigationIndex = mActiveBankIndex;
 			NavigateBankRelative(0);
 		}
@@ -216,7 +250,7 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 
 		if (switchNumber == mModeSwitchNumber)
 		{
-			ChangeMode(emBankNav);
+			ChangeMode(emModeSelect);
 			return;
 		}
 
@@ -277,20 +311,28 @@ MidiControlEngine::LoadBank(int bankIndex)
 	return true;
 }
 
-void
-MidiControlEngine::NextMode()
-{
-	EngineMode newMode = (EngineMode)(mMode + 1);
-	if (emNotValid <= newMode)
-		newMode = emDefault;
-
-	ChangeMode(newMode);
-}
-
+// possible mode transitions:
+// emCreated -> emDefault
+// emDefault -> emBankNav
+// emDefault -> emModeSelect
+// emModeSelect -> emDefault
+// emModeSelect -> emBankNav
+// emModeSelect -> emBankDesc
+// emBankNav -> emDefault
+// emBankDesc -> emDefault
 void
 MidiControlEngine::ChangeMode(EngineMode newMode)
 {
 	mMode = newMode;
+
+	if (mSwitchDisplay)
+	{
+		for (int idx = 0; idx < 32; idx++)
+		{
+			mSwitchDisplay->ClearSwitchText(idx);
+			mSwitchDisplay->SetSwitchDisplay(idx, false);
+		}
+	}
 
 	bool showModeInMainDisplay = true;
 	std::string msg;
@@ -316,17 +358,6 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		{
 			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Next Bank");
 			mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "Prev Bank");
-
-			for (int idx = 0; idx < 32; idx++)
-			{
-				if (idx != mIncrementSwitchNumber &&
-					idx != mDecrementSwitchNumber &&
-					idx != mModeSwitchNumber)
-				{
-					mSwitchDisplay->ClearSwitchText(idx);
-					mSwitchDisplay->SetSwitchDisplay(idx, false);
-				}
-			}
 		}
 		break;
 	case emBankDesc:
@@ -335,6 +366,15 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		{
 			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Next Bank");
 			mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "Prev Bank");
+		}
+		break;
+	case emModeSelect:
+		msg = "Mode Select\n";
+		if (mSwitchDisplay)
+		{
+			mSwitchDisplay->SetSwitchText(mModeDefaultSwitchNumber, "Default");
+			mSwitchDisplay->SetSwitchText(mModeBankNavSwitchNumber, "Bank Nav");
+			mSwitchDisplay->SetSwitchText(mModeBankDescSwitchNumber, "Bank Desc");
 		}
 		break;
 	default:
@@ -348,6 +388,6 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 	if (mSwitchDisplay)
 	{
 		mSwitchDisplay->SetSwitchText(mModeSwitchNumber, msg);
-		mSwitchDisplay->SetSwitchDisplay(mModeSwitchNumber, mMode == emDefault ? false : true);
+		mSwitchDisplay->SetSwitchDisplay(mModeSwitchNumber, mMode == emDefault ? true : false);
 	}
 }
