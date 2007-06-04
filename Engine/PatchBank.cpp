@@ -209,7 +209,7 @@ void
 PatchBank::DisplayDetailedPatchInfo(int switchNumber, IMainDisplay * mainDisplay)
 {
 	std::ostrstream info;
-	info << "Status for switch: " << switchNumber << std::endl;
+	info << "Status for bank " << mNumber << " '" << mName << "' switch " << switchNumber << std::endl;
 
 	for (PatchMaps::iterator it = mPatches.begin();
 		it != mPatches.end();

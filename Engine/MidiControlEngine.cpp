@@ -134,38 +134,19 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 		mTrace->Trace(std::string(msg.str()));
 	}
 
-	if (emCreated == mMode)
-	{
+	if (emCreated == mMode ||
+		emBankDesc == mMode ||
+		emBankNav == mMode)
 		return;
-	}
 
-	if (emBankDesc == mMode)
-	{
-		return;
-	}
-
-	if (switchNumber == mIncrementSwitchNumber)
-	{
-		if (emDefault == mMode)
-			NextMode();
-		return;
-	}
-	
-	if (switchNumber == mDecrementSwitchNumber)
-	{
-		if (emDefault == mMode)
-			NextMode();
-		return;
-	}
-	
-	if (switchNumber == mModeSwitchNumber)
-	{
-		return;
-	}
-	
 	if (emDefault == mMode)
 	{
-		if (mActiveBank)
+		if (switchNumber == mIncrementSwitchNumber ||
+			switchNumber == mDecrementSwitchNumber)
+			NextMode();
+		else if (switchNumber == mModeSwitchNumber)
+			;
+		else if (mActiveBank)
 			mActiveBank->PatchSwitchPressed(switchNumber, mMidiOut, mMainDisplay, mSwitchDisplay);
 		return;
 	}
@@ -184,7 +165,8 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 	if (emCreated == mMode)
 		return;
 
-	if (emBankNav == mMode)
+	if (emBankNav == mMode ||
+		emBankDesc == mMode)
 	{
 		if (switchNumber == mIncrementSwitchNumber)
 		{
@@ -198,44 +180,38 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 		}
 		else if (switchNumber == mModeSwitchNumber)
 		{
-			// escape bank nav
+			// escape
 			// go to next mode
 			NextMode();
 			mBankNavigationIndex = mActiveBankIndex;
 			NavigateBankRelative(0);
 		}
-		else
+		else if (emBankNav == mMode)
 		{
 			// any switch release (except inc/dec/util) after bank inc/dec commits bank
-			// reset to default mode
+			// reset to default mode when in bankNav mode
 			mMode = emCreated;
 			NextMode();
 			LoadBank(mBankNavigationIndex);
 		}
+		else if (emBankDesc == mMode)
+		{
+			PatchBank * bank = GetBank(mBankNavigationIndex);
+			if (bank)
+			{
+				bank->DisplayInfo(mMainDisplay, mSwitchDisplay, true);
+				bank->DisplayDetailedPatchInfo(switchNumber, mMainDisplay);
+			}
+		}
+
 		return;
 	}
 
-	if (emBankDesc == mMode)
+	if (emDefault == mMode)
 	{
-		if (switchNumber == mIncrementSwitchNumber)
+		if (switchNumber == mIncrementSwitchNumber ||
+			switchNumber == mDecrementSwitchNumber)
 		{
-			if (mMainDisplay)
-			{
-				std::strstream msgstr;
-				msgstr << switchNumber << ": Increment" << std::endl << std::ends;
-				mMainDisplay->TextOut(msgstr.str());
-			}
-			return;
-		}
-
-		if (switchNumber == mDecrementSwitchNumber)
-		{
-			if (mMainDisplay)
-			{
-				std::strstream msgstr;
-				msgstr << switchNumber << ": Decrement" << std::endl << std::ends;
-				mMainDisplay->TextOut(msgstr.str());
-			}
 			return;
 		}
 
@@ -246,30 +222,8 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 		}
 
 		if (mActiveBank)
-		{
-			mActiveBank->DisplayInfo(mMainDisplay, mSwitchDisplay, true);
-			mActiveBank->DisplayDetailedPatchInfo(switchNumber, mMainDisplay);
-		}
-
-		return;
-	}
-
-	if (switchNumber == mIncrementSwitchNumber ||
-		switchNumber == mDecrementSwitchNumber)
-	{
-		return;
-	}
-
-	if (switchNumber == mModeSwitchNumber)
-	{
-		NextMode();
-		return;
-	}
-
-	if (emDefault == mMode)
-	{
-		if (mActiveBank)
 			mActiveBank->PatchSwitchReleased(switchNumber, mMidiOut, mMainDisplay, mSwitchDisplay);
+
 		return;
 	}
 }
@@ -327,11 +281,19 @@ MidiControlEngine::LoadBank(int bankIndex)
 void
 MidiControlEngine::NextMode()
 {
-	bool showModeInMainDisplay = true;
-	mMode = (EngineMode)(mMode + 1);
-	if (emNotValid <= mMode)
-		mMode = emDefault;
+	EngineMode newMode = (EngineMode)(mMode + 1);
+	if (emNotValid <= newMode)
+		newMode = emDefault;
 
+	ChangeMode(newMode);
+}
+
+void
+MidiControlEngine::ChangeMode(EngineMode newMode)
+{
+	mMode = newMode;
+
+	bool showModeInMainDisplay = true;
 	std::string msg;
 	switch (mMode)
 	{
@@ -372,8 +334,8 @@ MidiControlEngine::NextMode()
 		msg = "Bank and Switch Description\n";
 		if (mSwitchDisplay)
 		{
-			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "");
-			mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "");
+			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Next Bank");
+			mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "Prev Bank");
 		}
 		break;
 	default:

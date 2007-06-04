@@ -44,6 +44,15 @@ private:
 	bool					LoadBank(int bankIndex);
 	PatchBank *				GetBank(int bankIndex);
 	void					NextMode();
+	enum EngineMode 
+	{ 
+		emCreated = -1,		// initial state - no data loaded
+		emDefault,			// select presets in banks
+		emBankNav,			// navigate banks
+		emBankDesc,			// describe switches in bank
+		emNotValid 
+	};
+	void					ChangeMode(EngineMode newMode);
 
 private:
 	// non-retained runtime state
@@ -54,14 +63,6 @@ private:
 
 	PatchBank *				mActiveBank;
 	int						mActiveBankIndex;
-	enum EngineMode 
-	{ 
-		emCreated = -1,		// initial state - no data loaded
-		emDefault,			// select presets in banks
-		emBankNav,			// navigate banks
-		emBankDesc,			// describe switches in bank
-		emNotValid 
-	};
 	EngineMode				mMode;
 	int						mBankNavigationIndex;
 

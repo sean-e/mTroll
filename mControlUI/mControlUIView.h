@@ -70,4 +70,5 @@ private:
 	CFont				mSwitchButtonFont;
 	CFont				mSwitchDisplayFont;
 	CFont				mMainTextFont;
+	CFont				mTraceFont;
 };

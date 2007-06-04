@@ -85,13 +85,17 @@ CMControlUIView::Create(HWND hWndParent, LPARAM dwInitParam /*= NULL*/)
 	CFont fn(mSwitches[0].GetFont());
 	fn.GetLogFont(&lf);
 
+	lf.lfWeight = FW_BOLD;
+	mSwitchButtonFont.CreateFontIndirect(&lf);
+
+	lf.lfWeight = FW_NORMAL;
+	mTraceFont.CreateFontIndirect(&lf);
+	mTraceDisplay.SetFont(mTraceFont);
+
+	lf.lfHeight -= 2;
 	mMainTextFont.CreateFontIndirect(&lf);
 	mSwitchDisplayFont.CreateFontIndirect(&lf);
 	mMainDisplay.SetFont(mMainTextFont);
-	mTraceDisplay.SetFont(mMainTextFont);
-
-	lf.lfWeight = FW_BOLD;
-	mSwitchButtonFont.CreateFontIndirect(&lf);
 
 	for (int idx = 0; idx < 16; ++idx)
 	{
@@ -179,7 +183,7 @@ CMControlUIView::SetSwitchDisplayPos(int switchNumber, int pos, int range)
 void
 CMControlUIView::ClearSwitchText(int switchNumber)
 {
-	SetSwitchText(switchNumber, "");
+	SetSwitchText(switchNumber, std::string(""));
 }
 
 // IMidiOut
