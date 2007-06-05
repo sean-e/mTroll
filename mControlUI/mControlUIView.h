@@ -25,6 +25,9 @@ public:
 	enum { IDD = IDD_MCONTROLUI_FORM };
 
 	HWND Create(HWND hWndParent, LPARAM dwInitParam = NULL);
+	void Init();
+	void LoadMidiSettings(const std::string & file);
+
 	BOOL PreTranslateMessage(MSG* pMsg);
 
 	// IMainDisplay

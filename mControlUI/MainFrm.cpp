@@ -55,6 +55,9 @@ LRESULT CMainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/
 	pLoop->AddMessageFilter(this);
 	pLoop->AddIdleHandler(this);
 
+	m_view.Init();
+	m_view.LoadMidiSettings("test.xml");
+
 	CRect wndRc;
 	GetWindowRect(&wndRc);
 	wndRc.right = wndRc.left + 817;

@@ -12,7 +12,8 @@
 #include "..\Engine\MidiControlEngine.h"
 
 
-CMControlUIView::CMControlUIView()
+CMControlUIView::CMControlUIView() :
+	mEngine(NULL)
 {
 }
 
@@ -25,9 +26,12 @@ HWND
 CMControlUIView::Create(HWND hWndParent, LPARAM dwInitParam /*= NULL*/)
 {
 	HWND wnd = CDialogImpl<CMControlUIView>::Create(hWndParent, dwInitParam);
-	if (!wnd)
-		return wnd;
+	return wnd;
+}
 
+void
+CMControlUIView::Init()
+{
 	mMainDisplay = (CEdit) GetDlgItem(IDC_BANKTEXT);
 	mTraceDisplay = (CEdit) GetDlgItem(IDC_TRACETEXT);
 
@@ -108,11 +112,14 @@ CMControlUIView::Create(HWND hWndParent, LPARAM dwInitParam /*= NULL*/)
 		if (mSwitchTextDisplays[idx].IsWindow())
 			mSwitchTextDisplays[idx].SetFont(mSwitchDisplayFont);
 	}
+}
 
+void
+CMControlUIView::LoadMidiSettings(const std::string & file)
+{
+	delete mEngine;
 	EngineLoader ldr(this, this, this, this);
-	mEngine = ldr.CreateEngine("test.xml");
-
-	return wnd;
+	mEngine = ldr.CreateEngine(file);
 }
 
 BOOL CMControlUIView::PreTranslateMessage(MSG* pMsg)
