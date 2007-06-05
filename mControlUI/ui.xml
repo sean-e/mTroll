@@ -1,0 +1,69 @@
+<?xml version="1.0" ?>
+<MidiControlUiSettings>
+	<frame height="567" width="817" />
+	<mainTextDisplay font-height="12" top="177" left="5" width="338" height="163" />
+	<traceTextDisplay top="177" left="305" width="338" height="163" />
+	<switchTextDisplays font-height="12" >
+		<switchTextDisplay number="0" top="5" left="5" width="105" height="23" />
+		<switchTextDisplay number="1" top="5" left="85" width="105" height="23" />
+		<switchTextDisplay number="2" top="5" left="165" width="105" height="23" />
+		<switchTextDisplay number="3" top="5" left="245" width="105" height="23" />
+		<switchTextDisplay number="4" top="5" left="325" width="105" height="23" />
+
+		<switchTextDisplay number="5" top="60" left="5" width="105" height="23" />
+		<switchTextDisplay number="6" top="60" left="85" width="105" height="23" />
+		<switchTextDisplay number="7" top="60" left="165" width="105" height="23" />
+		<switchTextDisplay number="8" top="60" left="245" width="105" height="23" />
+		<switchTextDisplay number="9" top="60" left="325" width="105" height="23" />
+
+		<switchTextDisplay number="10" top="117" left="5" width="105" height="23" />
+		<switchTextDisplay number="11" top="117" left="85" width="105" height="23" />
+		<switchTextDisplay number="12" top="117" left="165" width="105" height="23" />
+
+		<switchTextDisplay number="13" top="5" left="451" width="105" height="23" />
+		<switchTextDisplay number="14" top="117" left="369" width="105" height="23" />
+		<switchTextDisplay number="15" top="117" left="449" width="105" height="23" />
+	</switchTextDisplays>
+
+	<switchLeds>
+		<switchLed number="0" top="22" left="31" width="26" height="10" />
+		<switchLed number="1" top="22" left="111" width="26" height="10" />
+		<switchLed number="2" top="22" left="191" width="26" height="10" />
+		<switchLed number="3" top="22" left="271" width="26" height="10" />
+		<switchLed number="4" top="22" left="351" width="26" height="10" />
+
+		<switchLed number="5" top="78" left="31" width="26" height="10" />
+		<switchLed number="6" top="78" left="111" width="26" height="10" />
+		<switchLed number="7" top="78" left="191" width="26" height="10" />
+		<switchLed number="8" top="78" left="271" width="26" height="10" />
+		<switchLed number="9" top="78" left="351" width="26" height="10" />
+
+		<switchLed number="10" top="135" left="31" width="26" height="10" />
+		<switchLed number="11" top="135" left="111" width="26" height="10" />
+		<switchLed number="12" top="135" left="191" width="26" height="10" />
+
+		<switchLed number="13" top="23" left="477" width="26" height="10" />
+	</switchLeds>
+
+	<switches font-weight="bold" >
+	    <switch name="&1" number="0" top="31" left="15" width="75" height="23" />
+	    <switch name="&2" number="1" top="31" left="95" width="75" height="23" />
+	    <switch name="&3" number="2" top="31" left="175" width="75" height="23" />
+	    <switch name="&4" number="3" top="31" left="255" width="75" height="23" />
+	    <switch name="&5" number="4" top="31" left="335" width="75" height="23" />
+
+	    <switch name="&6" number="5" top="86" left="15" width="75" height="23" />
+	    <switch name="&7" number="6" top="86" left="95" width="75" height="23" />
+	    <switch name="&8" number="7" top="86" left="175" width="75" height="23" />
+	    <switch name="&9" number="8" top="86" left="255" width="75" height="23" />
+	    <switch name="1&0" number="9" top="86" left="335" width="75" height="23" />
+
+	    <switch name="11" number="10" top="143" left="175" width="75" height="23" />
+	    <switch name="12" number="11" top="143" left="255" width="75" height="23" />
+	    <switch name="13" number="12" top="143" left="335" width="75" height="23" />
+
+	    <switch name="&Mode" number="13" top="31" left="461" width="75" height="23" />
+	    <switch name="&Decrement" number="14" top="143" left="379" width="75" height="23" />
+	    <switch name="&Increment" number="15" top="143" left="459" width="75" height="23" />
+	</switches>
+</MidiControlUiSettings>
