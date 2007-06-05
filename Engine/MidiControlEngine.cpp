@@ -123,7 +123,7 @@ MidiControlEngine::CompleteInit()
 		}
 	}
 
-	ChangeMode(emDefault);
+	ChangeMode(emBank);
 	LoadBank(powerUpBankIndex);
 }
 
@@ -143,7 +143,7 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 		emModeSelect == mMode)
 		return;
 
-	if (emDefault == mMode)
+	if (emBank == mMode)
 	{
 		if (switchNumber == mIncrementSwitchNumber ||
 			switchNumber == mDecrementSwitchNumber)
@@ -180,7 +180,7 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 			switchNumber == mModeDefaultSwitchNumber)
 		{
 			// escape
-			ChangeMode(emDefault);
+			ChangeMode(emBank);
 			mBankNavigationIndex = mActiveBankIndex;
 			NavigateBankRelative(0);
 		}
@@ -216,7 +216,7 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 		else if (switchNumber == mModeSwitchNumber)
 		{
 			// escape
-			ChangeMode(emDefault);
+			ChangeMode(emBank);
 			mBankNavigationIndex = mActiveBankIndex;
 			NavigateBankRelative(0);
 		}
@@ -224,7 +224,7 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 		{
 			// any switch release (except inc/dec/util) after bank inc/dec commits bank
 			// reset to default mode when in bankNav mode
-			ChangeMode(emDefault);
+			ChangeMode(emBank);
 			LoadBank(mBankNavigationIndex);
 		}
 		else if (emBankDesc == mMode)
@@ -240,7 +240,7 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 		return;
 	}
 
-	if (emDefault == mMode)
+	if (emBank == mMode)
 	{
 		if (switchNumber == mIncrementSwitchNumber ||
 			switchNumber == mDecrementSwitchNumber)
@@ -338,8 +338,8 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 	std::string msg;
 	switch (mMode)
 	{
-	case emDefault:
-		msg = "Default";
+	case emBank:
+		msg = "Bank";
 		if (mSwitchDisplay)
 		{
 			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Next Bank");
@@ -372,7 +372,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		msg = "Mode Select";
 		if (mSwitchDisplay)
 		{
-			mSwitchDisplay->SetSwitchText(mModeDefaultSwitchNumber, "Default");
+			mSwitchDisplay->SetSwitchText(mModeDefaultSwitchNumber, "Bank");
 			mSwitchDisplay->SetSwitchText(mModeBankNavSwitchNumber, "Bank Nav");
 			mSwitchDisplay->SetSwitchText(mModeBankDescSwitchNumber, "Bank Desc");
 		}
@@ -388,6 +388,6 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 	if (mSwitchDisplay)
 	{
 		mSwitchDisplay->SetSwitchText(mModeSwitchNumber, msg);
-		mSwitchDisplay->SetSwitchDisplay(mModeSwitchNumber, mMode == emDefault ? true : false);
+		mSwitchDisplay->SetSwitchDisplay(mModeSwitchNumber, mMode == emBank ? true : false);
 	}
 }

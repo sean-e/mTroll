@@ -46,7 +46,7 @@ private:
 	enum EngineMode 
 	{ 
 		emCreated = -1,		// initial state - no data loaded
-		emDefault,			// select presets in banks
+		emBank,			// select presets in banks
 		emModeSelect,		// out of default ready to select new mode
 		emBankNav,			// navigate banks
 		emBankDesc,			// describe switches in bank
