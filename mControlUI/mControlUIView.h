@@ -9,6 +9,7 @@
 #include "..\Engine\ISwitchDisplay.h"
 #include "..\Engine\ITraceDisplay.h"
 #include "..\Engine\MidiControlEngine.h"
+#include "..\Engine\IMidiControlUi.h"
 #include <atlctrls.h>
 
 
@@ -16,7 +17,8 @@ class CMControlUIView : public CDialogImpl<CMControlUIView>,
 								IMainDisplay, 
 								IMidiOut, 
 								ISwitchDisplay, 
-								ITraceDisplay
+								ITraceDisplay,
+								IMidiControlUi
 {
 public:
 	CMControlUIView();
@@ -25,7 +27,7 @@ public:
 	enum { IDD = IDD_MCONTROLUI_FORM };
 
 	HWND Create(HWND hWndParent, LPARAM dwInitParam = NULL);
-	void Init();
+	void Init(const std::string & uiSettingsFile);
 	void LoadMidiSettings(const std::string & file);
 
 	BOOL PreTranslateMessage(MSG* pMsg);
@@ -51,11 +53,22 @@ public:
 	virtual bool MidiOut(const Bytes & bytes);
 	virtual void CloseMidiOut();
 
+private:
+	// IMidiControlUi
+	virtual void	CreateSwitchLed(int id, int top, int left, int width, int height);
+	virtual void	CreateSwitchFont(int fontHeight, bool boldFont);
+	virtual void	CreateSwitch(int id, const std::string & label, int top, int left, int width, int height);
+	virtual void	CreateSwitchTextDisplayFont(int fontHeight, bool boldFont);
+	virtual void	CreateSwitchTextDisplay(int id, int top, int left, int width, int height);
+	virtual void	CreateMainDisplay(int top, int left, int width, int height, int fontHeight, bool boldFont);
+	virtual void	CreateTraceDisplay(int top, int left, int width, int height, int fontHeight, bool boldFont);
+	virtual void	CreateStaticLabel(const std::string & label, int top, int left, int width, int height, int fontHeight, bool boldFont);
+	virtual void	SetMainSize(int width, int height);
+
 	BEGIN_MSG_MAP(CMControlUIView)
 		NOTIFY_CODE_HANDLER(NM_CUSTOMDRAW, OnNotifyCustomDraw)
 	END_MSG_MAP()
 
-public:
 // Handler prototypes (uncomment arguments if needed):
 //	LRESULT MessageHandler(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 //	LRESULT CommandHandler(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)

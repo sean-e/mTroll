@@ -55,7 +55,7 @@ LRESULT CMainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/
 	pLoop->AddMessageFilter(this);
 	pLoop->AddIdleHandler(this);
 
-	m_view.Init();
+	m_view.Init("ui.xml");
 	m_view.LoadMidiSettings("test.xml");
 
 	CRect wndRc;

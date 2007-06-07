@@ -30,7 +30,7 @@ CMControlUIView::Create(HWND hWndParent, LPARAM dwInitParam /*= NULL*/)
 }
 
 void
-CMControlUIView::Init()
+CMControlUIView::Init(const std::string & uiSettingsFile)
 {
 	mMainDisplay = (CEdit) GetDlgItem(IDC_BANKTEXT);
 	mTraceDisplay = (CEdit) GetDlgItem(IDC_TRACETEXT);
@@ -274,4 +274,92 @@ CMControlUIView::OnNotifyCustomDraw(int idCtrl,
 	COLORREF crOldColor = ::SetTextColor(pCustomDraw->hdc, RGB(0,0,200));
 
 	return 0;
+}
+
+
+// IMidiControlUi
+void
+CMControlUIView::CreateSwitchLed(int id, 
+								 int top, 
+								 int left, 
+								 int width, 
+								 int height)
+{
+
+}
+
+void
+CMControlUIView::CreateSwitchFont(int fontHeight, 
+								  bool boldFont)
+{
+
+}
+
+void
+CMControlUIView::CreateSwitch(int id, 
+							  const std::string & label, 
+							  int top, 
+							  int left, 
+							  int width, 
+							  int height)
+{
+
+}
+
+void
+CMControlUIView::CreateSwitchTextDisplayFont(int fontHeight, 
+											 bool boldFont)
+{
+
+}
+
+void
+CMControlUIView::CreateSwitchTextDisplay(int id, 
+										 int top, 
+										 int left, 
+										 int width, 
+										 int height)
+{
+
+}
+
+void
+CMControlUIView::CreateMainDisplay(int top, 
+								   int left, 
+								   int width, 
+								   int height, 
+								   int fontHeight, 
+								   bool boldFont)
+{
+
+}
+
+void
+CMControlUIView::CreateTraceDisplay(int top, 
+									int left, 
+									int width, 
+									int height, 
+									int fontHeight, 
+									bool boldFont)
+{
+
+}
+
+void
+CMControlUIView::CreateStaticLabel(const std::string & label, 
+								   int top, 
+								   int left, 
+								   int width, 
+								   int height, 
+								   int fontHeight, 
+								   bool boldFont)
+{
+
+}
+
+void
+CMControlUIView::SetMainSize(int width, 
+							 int height)
+{
+
 }

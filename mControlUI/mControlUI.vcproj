@@ -303,6 +303,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Engine\IMidiControlUi.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Engine\IMidiOut.h"
 				>
 			</File>
@@ -336,6 +340,14 @@
 			</File>
 			<File
 				RelativePath="..\Engine\PatchBank.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Engine\UiLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Engine\UiLoader.h"
 				>
 			</File>
 		</Filter>
