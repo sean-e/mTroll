@@ -1,8 +1,8 @@
 <?xml version="1.0" ?>
 <MidiControlUiSettings>
 	<frame height="567" width="817" />
-	<mainTextDisplay font-height="12" top="177" left="5" width="338" height="163" />
-	<traceTextDisplay top="177" left="305" width="338" height="163" />
+	<mainTextDisplay font-height="12" top="288" left="9" width="338" height="163" />
+	<traceTextDisplay top="288" left="460" width="338" height="163" />
 
 	<switchTextDisplays font-height="12" >
 		<switchTextDisplay number="0" top="5" left="5" width="105" height="23" />
@@ -47,24 +47,24 @@
 	</switchLeds>
 
 	<switches font-weight="bold" >
-	    <switch label="&1" number="0" top="31" left="15" width="75" height="23" />
-	    <switch label="&2" number="1" top="31" left="95" width="75" height="23" />
-	    <switch label="&3" number="2" top="31" left="175" width="75" height="23" />
-	    <switch label="&4" number="3" top="31" left="255" width="75" height="23" />
-	    <switch label="&5" number="4" top="31" left="335" width="75" height="23" />
+	    <switch label="&amp;1" number="0" top="31" left="15" width="75" height="23" />
+	    <switch label="&amp;2" number="1" top="31" left="95" width="75" height="23" />
+	    <switch label="&amp;3" number="2" top="31" left="175" width="75" height="23" />
+	    <switch label="&amp;4" number="3" top="31" left="255" width="75" height="23" />
+	    <switch label="&amp;5" number="4" top="31" left="335" width="75" height="23" />
 
-	    <switch label="&6" number="5" top="86" left="15" width="75" height="23" />
-	    <switch label="&7" number="6" top="86" left="95" width="75" height="23" />
-	    <switch label="&8" number="7" top="86" left="175" width="75" height="23" />
-	    <switch label="&9" number="8" top="86" left="255" width="75" height="23" />
-	    <switch label="1&0" number="9" top="86" left="335" width="75" height="23" />
+	    <switch label="&amp;6" number="5" top="86" left="15" width="75" height="23" />
+	    <switch label="&amp;7" number="6" top="86" left="95" width="75" height="23" />
+	    <switch label="&amp;8" number="7" top="86" left="175" width="75" height="23" />
+	    <switch label="&amp;9" number="8" top="86" left="255" width="75" height="23" />
+	    <switch label="1&amp;0" number="9" top="86" left="335" width="75" height="23" />
 
 	    <switch label="11" number="10" top="143" left="175" width="75" height="23" />
 	    <switch label="12" number="11" top="143" left="255" width="75" height="23" />
 	    <switch label="13" number="12" top="143" left="335" width="75" height="23" />
 
-	    <switch label="&Mode" number="13" top="31" left="461" width="75" height="23" />
-	    <switch label="&Decrement" number="14" top="143" left="379" width="75" height="23" />
-	    <switch label="&Increment" number="15" top="143" left="459" width="75" height="23" />
+	    <switch label="&amp;Mode" number="13" top="31" left="461" width="75" height="23" />
+	    <switch label="&amp;Decrement" number="14" top="143" left="379" width="75" height="23" />
+	    <switch label="&amp;Increment" number="15" top="143" left="459" width="75" height="23" />
 	</switches>
 </MidiControlUiSettings>

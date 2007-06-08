@@ -6,20 +6,71 @@
 #include "resource.h"
 #include <atlstr.h>
 #include <atlmisc.h>
+#include <algorithm>
 
 #include "mControlUIView.h"
 #include "..\Engine\EngineLoader.h"
 #include "..\Engine\MidiControlEngine.h"
+#include "..\Engine\UiLoader.h"
 
 
 CMControlUIView::CMControlUIView() :
-	mEngine(NULL)
+	mEngine(NULL),
+	mMainDisplay(NULL),
+	mTraceDisplay(NULL),
+	mPreferredHeight(0),
+	mPreferredWidth(0),
+	mMaxSwitchId(0)
 {
 }
 
 CMControlUIView::~CMControlUIView()
 {
+	Unload();
+}
+
+struct DeleteSwitchLed
+{
+	void operator()(const std::pair<int, CMControlUIView::SwitchLed *> & pr)
+	{
+		delete pr.second;
+	}
+};
+
+struct DeleteSwitch
+{
+	void operator()(const std::pair<int, CMControlUIView::Switch *> & pr)
+	{
+		delete pr.second;
+	}
+};
+
+struct DeleteSwitchTextDisplay
+{
+	void operator()(const std::pair<int, CMControlUIView::SwitchTextDisplay *> & pr)
+	{
+		delete pr.second;
+	}
+};
+
+void
+CMControlUIView::Unload()
+{
 	delete mEngine;
+	mEngine = NULL;
+	delete mMainDisplay;
+	mMainDisplay = NULL;
+	delete mTraceDisplay;
+	mTraceDisplay = NULL;
+
+	for_each(mLeds.begin(), mLeds.end(), DeleteSwitchLed());
+	mLeds.clear();
+
+	for_each(mSwitches.begin(), mSwitches.end(), DeleteSwitch());
+	mSwitches.clear();
+
+	for_each(mSwitchTextDisplays.begin(), mSwitchTextDisplays.end(), DeleteSwitchTextDisplay());
+	mSwitchTextDisplays.clear();
 }
 
 HWND
@@ -30,88 +81,10 @@ CMControlUIView::Create(HWND hWndParent, LPARAM dwInitParam /*= NULL*/)
 }
 
 void
-CMControlUIView::Init(const std::string & uiSettingsFile)
+CMControlUIView::LoadUi(const std::string & uiSettingsFile)
 {
-	mMainDisplay = (CEdit) GetDlgItem(IDC_BANKTEXT);
-	mTraceDisplay = (CEdit) GetDlgItem(IDC_TRACETEXT);
-
-	mLeds[0] = (CProgressBarCtrl) GetDlgItem(IDC_LED1);
-	mLeds[1] = (CProgressBarCtrl) GetDlgItem(IDC_LED2);
-	mLeds[2] = (CProgressBarCtrl) GetDlgItem(IDC_LED3);
-	mLeds[3] = (CProgressBarCtrl) GetDlgItem(IDC_LED4);
-	mLeds[4] = (CProgressBarCtrl) GetDlgItem(IDC_LED5);
-	mLeds[5] = (CProgressBarCtrl) GetDlgItem(IDC_LED6);
-	mLeds[6] = (CProgressBarCtrl) GetDlgItem(IDC_LED7);
-	mLeds[7] = (CProgressBarCtrl) GetDlgItem(IDC_LED8);
-	mLeds[8] = (CProgressBarCtrl) GetDlgItem(IDC_LED9);
-	mLeds[9] = (CProgressBarCtrl) GetDlgItem(IDC_LED10);
-	mLeds[10] = (CProgressBarCtrl) GetDlgItem(IDC_LED11);
-	mLeds[11] = (CProgressBarCtrl) GetDlgItem(IDC_LED12);
-	mLeds[12] = (CProgressBarCtrl) GetDlgItem(IDC_LED13);
-	mLeds[13] = (CProgressBarCtrl) GetDlgItem(IDC_LED14);
-
-	mSwitchTextDisplays[0] = (CEdit) GetDlgItem(IDC_SWITCH_TEXT1);
-	mSwitchTextDisplays[1] = (CEdit) GetDlgItem(IDC_SWITCH_TEXT2);
-	mSwitchTextDisplays[2] = (CEdit) GetDlgItem(IDC_SWITCH_TEXT3);
-	mSwitchTextDisplays[3] = (CEdit) GetDlgItem(IDC_SWITCH_TEXT4);
-	mSwitchTextDisplays[4] = (CEdit) GetDlgItem(IDC_SWITCH_TEXT5);
-	mSwitchTextDisplays[5] = (CEdit) GetDlgItem(IDC_SWITCH_TEXT6);
-	mSwitchTextDisplays[6] = (CEdit) GetDlgItem(IDC_SWITCH_TEXT7);
-	mSwitchTextDisplays[7] = (CEdit) GetDlgItem(IDC_SWITCH_TEXT8);
-	mSwitchTextDisplays[8] = (CEdit) GetDlgItem(IDC_SWITCH_TEXT9);
-	mSwitchTextDisplays[9] = (CEdit) GetDlgItem(IDC_SWITCH_TEXT10);
-	mSwitchTextDisplays[10] = (CEdit) GetDlgItem(IDC_SWITCH_TEXT11);
-	mSwitchTextDisplays[11] = (CEdit) GetDlgItem(IDC_SWITCH_TEXT12);
-	mSwitchTextDisplays[12] = (CEdit) GetDlgItem(IDC_SWITCH_TEXT13);
-	mSwitchTextDisplays[13] = (CEdit) GetDlgItem(IDC_SWITCH_TEXT14);
-	mSwitchTextDisplays[14] = (CEdit) GetDlgItem(IDC_SWITCH_TEXT15);
-	mSwitchTextDisplays[15] = (CEdit) GetDlgItem(IDC_SWITCH_TEXT16);
-
-	mSwitches[0] = (CButton) GetDlgItem(IDC_SWITCH1);
-	mSwitches[1] = (CButton) GetDlgItem(IDC_SWITCH2);
-	mSwitches[2] = (CButton) GetDlgItem(IDC_SWITCH3);
-	mSwitches[3] = (CButton) GetDlgItem(IDC_SWITCH4);
-	mSwitches[4] = (CButton) GetDlgItem(IDC_SWITCH5);
-	mSwitches[5] = (CButton) GetDlgItem(IDC_SWITCH6);
-	mSwitches[6] = (CButton) GetDlgItem(IDC_SWITCH7);
-	mSwitches[7] = (CButton) GetDlgItem(IDC_SWITCH8);
-	mSwitches[8] = (CButton) GetDlgItem(IDC_SWITCH9);
-	mSwitches[9] = (CButton) GetDlgItem(IDC_SWITCH10);
-	mSwitches[10] = (CButton) GetDlgItem(IDC_SWITCH11);
-	mSwitches[11] = (CButton) GetDlgItem(IDC_SWITCH12);
-	mSwitches[12] = (CButton) GetDlgItem(IDC_SWITCH13);
-	mSwitches[13] = (CButton) GetDlgItem(IDC_SWITCH14);
-	mSwitches[14] = (CButton) GetDlgItem(IDC_SWITCH15);
-	mSwitches[15] = (CButton) GetDlgItem(IDC_SWITCH16);
-
-	LOGFONT lf;
-	memset (&lf, 0, sizeof(lf));
-	CFont fn(mSwitches[0].GetFont());
-	fn.GetLogFont(&lf);
-
-	lf.lfWeight = FW_BOLD;
-	mSwitchButtonFont.CreateFontIndirect(&lf);
-
-	lf.lfWeight = FW_NORMAL;
-	mTraceFont.CreateFontIndirect(&lf);
-	mTraceDisplay.SetFont(mTraceFont);
-
-	lf.lfHeight -= 2;
-	mMainTextFont.CreateFontIndirect(&lf);
-	mSwitchDisplayFont.CreateFontIndirect(&lf);
-	mMainDisplay.SetFont(mMainTextFont);
-
-	for (int idx = 0; idx < 16; ++idx)
-	{
-		mStupidSwitchStates[idx] = false;
-		mSwitches[idx].SetFont(mSwitchButtonFont);
-
-		if (mLeds[idx].IsWindow())
-			mLeds[idx].SetRange(0, 4);
-
-		if (mSwitchTextDisplays[idx].IsWindow())
-			mSwitchTextDisplays[idx].SetFont(mSwitchDisplayFont);
-	}
+	Unload();
+	UiLoader ldr(this, uiSettingsFile);
 }
 
 void
@@ -132,34 +105,41 @@ BOOL CMControlUIView::PreTranslateMessage(MSG* pMsg)
 void
 CMControlUIView::TextOut(const std::string & txt)
 {
-	CStringA newTxt(txt.c_str());
-	newTxt.Replace("\n", "\r\n");
-	mMainDisplay.SetWindowText(newTxt);
+	if (mMainDisplay)
+	{
+		CStringA newTxt(txt.c_str());
+		newTxt.Replace("\n", "\r\n");
+		mMainDisplay->SetWindowText(newTxt);
+	}
 }
 
 void
 CMControlUIView::ClearDisplay()
 {
-	mMainDisplay.SetWindowText("");
+	if (mMainDisplay)
+		mMainDisplay->SetWindowText("");
 }
 
 // ITraceDisplay
 void
 CMControlUIView::Trace(const std::string & txt)
 {
-	ATL::CString newTxt(txt.c_str());
-	newTxt.Replace("\n", "\r\n");
-	mTraceDisplay.AppendText(newTxt);
+	if (mTraceDisplay)
+	{
+		ATL::CString newTxt(txt.c_str());
+		newTxt.Replace("\n", "\r\n");
+		mTraceDisplay->AppendText(newTxt);
+	}
 }
 
 // ISwitchDisplay
 void
 CMControlUIView::SetSwitchDisplay(int switchNumber, bool isOn)
 {
-	if (switchNumber > 15 || !mLeds[switchNumber].IsWindow())
+	if (!mLeds[switchNumber] || !mLeds[switchNumber]->IsWindow())
 		return;
 
-	mLeds[switchNumber].SetPos(isOn ? 4 : 0);
+	mLeds[switchNumber]->SetPos(isOn ? 4 : 0);
 }
 
 bool
@@ -171,20 +151,20 @@ CMControlUIView::SupportsSwitchText() const
 void
 CMControlUIView::SetSwitchText(int switchNumber, const std::string & txt)
 {
-	if (switchNumber > 15 || !mSwitchTextDisplays[switchNumber].IsWindow())
+	if (!mSwitchTextDisplays[switchNumber] || !mSwitchTextDisplays[switchNumber]->IsWindow())
 		return;
 
-	mSwitchTextDisplays[switchNumber].SetWindowText(txt.c_str());
+	mSwitchTextDisplays[switchNumber]->SetWindowText(txt.c_str());
 }
 
 void
 CMControlUIView::SetSwitchDisplayPos(int switchNumber, int pos, int range)
 {
-	if (switchNumber > 15 || !mSwitchTextDisplays[switchNumber].IsWindow())
+	if (!mSwitchTextDisplays[switchNumber] || !mSwitchTextDisplays[switchNumber]->IsWindow())
 		return;
 
-	mLeds[switchNumber].SetRange(0, range);
-	mLeds[switchNumber].SetPos(pos);
+	mLeds[switchNumber]->SetRange(0, range);
+	mLeds[switchNumber]->SetPos(pos);
 }
 
 void
@@ -192,6 +172,42 @@ CMControlUIView::ClearSwitchText(int switchNumber)
 {
 	SetSwitchText(switchNumber, std::string(""));
 }
+
+LRESULT
+CMControlUIView::OnNotifyCustomDraw(int idCtrl,
+									LPNMHDR pNotifyStruct,
+									BOOL& /*bHandled*/)
+{
+	LPNMCUSTOMDRAW pCustomDraw = (LPNMCUSTOMDRAW) pNotifyStruct;
+	_ASSERTE(pCustomDraw->hdr.code == NM_CUSTOMDRAW);
+	_ASSERTE(pCustomDraw->hdr.idFrom == idCtrl);
+
+	const int idx = pCustomDraw->hdr.idFrom;
+	if (idx >= 0 && idx <= mMaxSwitchId)
+	{
+		if (pCustomDraw->uItemState & ODS_SELECTED)
+		{
+			if (!mStupidSwitchStates[idx])
+			{
+				mStupidSwitchStates[idx] = true;
+				mEngine->SwitchPressed(idx);
+			}
+		}
+		else
+		{
+			if (mStupidSwitchStates[idx])
+			{
+				mStupidSwitchStates[idx] = false;
+				mEngine->SwitchReleased(idx);
+			}
+		}
+	}
+
+	COLORREF crOldColor = ::SetTextColor(pCustomDraw->hdc, RGB(0,0,200));
+
+	return 0;
+}
+
 
 // IMidiOut
 int
@@ -223,60 +239,6 @@ CMControlUIView::CloseMidiOut()
 {
 }
 
-LRESULT
-CMControlUIView::OnNotifyCustomDraw(int idCtrl,
-									LPNMHDR pNotifyStruct,
-									BOOL& /*bHandled*/)
-{
-	LPNMCUSTOMDRAW pCustomDraw = (LPNMCUSTOMDRAW) pNotifyStruct;
-	_ASSERTE(pCustomDraw->hdr.code == NM_CUSTOMDRAW);
-	_ASSERTE(pCustomDraw->hdr.idFrom == idCtrl);
-
-	int idx = -1;
-	switch (pCustomDraw->hdr.idFrom)
-	{
-	case IDC_SWITCH1:	idx = 0;	break;
-	case IDC_SWITCH2:	idx = 1;	break;
-	case IDC_SWITCH3:	idx = 2;	break;
-	case IDC_SWITCH4:	idx = 3;	break;
-	case IDC_SWITCH5:	idx = 4;	break;
-	case IDC_SWITCH6:	idx = 5;	break;
-	case IDC_SWITCH7:	idx = 6;	break;
-	case IDC_SWITCH8:	idx = 7;	break;
-	case IDC_SWITCH9:	idx = 8;	break;
-	case IDC_SWITCH10:	idx = 9;	break;
-	case IDC_SWITCH11:	idx = 10;	break;
-	case IDC_SWITCH12:	idx = 11;	break;
-	case IDC_SWITCH13:	idx = 12;	break;
-	case IDC_SWITCH14:	idx = 13;	break;
-	case IDC_SWITCH15:	idx = 14;	break;
-	case IDC_SWITCH16:	idx = 15;	break;
-	default:						return 0;
-	}
-
-	if (pCustomDraw->uItemState & ODS_SELECTED)
-	{
-		if (!mStupidSwitchStates[idx])
-		{
-			mStupidSwitchStates[idx] = true;
-			mEngine->SwitchPressed(idx);
-		}
-	}
-	else
-	{
-		if (mStupidSwitchStates[idx])
-		{
-			mStupidSwitchStates[idx] = false;
-			mEngine->SwitchReleased(idx);
-		}
-	}
-
-	COLORREF crOldColor = ::SetTextColor(pCustomDraw->hdc, RGB(0,0,200));
-
-	return 0;
-}
-
-
 // IMidiControlUi
 void
 CMControlUIView::CreateSwitchLed(int id, 
@@ -285,14 +247,54 @@ CMControlUIView::CreateSwitchLed(int id,
 								 int width, 
 								 int height)
 {
-
+	SwitchLed * curSwitchLed = new SwitchLed;
+	RECT rc;
+	rc.top = top;
+	rc.left = left;
+	rc.bottom = top + height;
+	rc.right = left + width;
+	curSwitchLed->Create(m_hWnd, rc, NULL, 
+		WS_VISIBLE | WS_CHILDWINDOW | PBS_SMOOTH, 
+		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_NOPARENTNOTIFY | WS_EX_RIGHTSCROLLBAR);
+	_ASSERTE(!mLeds[id]);
+	curSwitchLed->SetRange(0, 4);
+	mLeds[id] = curSwitchLed;
 }
 
 void
 CMControlUIView::CreateSwitchFont(int fontHeight, 
 								  bool boldFont)
 {
+/*
+	LOGFONT lf;
+	memset (&lf, 0, sizeof(lf));
+	CFont fn(mSwitches[0].GetFont());
+	fn.GetLogFont(&lf);
 
+	lf.lfWeight = FW_BOLD;
+	mSwitchButtonFont.CreateFontIndirect(&lf);
+
+	lf.lfWeight = FW_NORMAL;
+	mTraceFont.CreateFontIndirect(&lf);
+	mTraceDisplay.SetFont(mTraceFont);
+
+	lf.lfHeight -= 2;
+	mMainTextFont.CreateFontIndirect(&lf);
+	mSwitchDisplayFont.CreateFontIndirect(&lf);
+	mMainDisplay.SetFont(mMainTextFont);
+
+	for (int idx = 0; idx < 16; ++idx)
+	{
+		mStupidSwitchStates[idx] = false;
+		mSwitches[idx].SetFont(mSwitchButtonFont);
+
+		if (mLeds[idx].IsWindow())
+			mLeds[idx].SetRange(0, 4);
+
+		if (mSwitchTextDisplays[idx].IsWindow())
+			mSwitchTextDisplays[idx].SetFont(mSwitchDisplayFont);
+	}
+*/
 }
 
 void
@@ -303,7 +305,20 @@ CMControlUIView::CreateSwitch(int id,
 							  int width, 
 							  int height)
 {
-
+	Switch * curSwitch = new Switch;
+	RECT rc;
+	rc.top = top;
+	rc.left = left;
+	rc.bottom = top + height;
+	rc.right = left + width;
+	curSwitch->Create(m_hWnd, rc, label.c_str(), 
+		WS_VISIBLE | WS_CHILDWINDOW | BS_PUSHBUTTON | BS_TEXT | WS_TABSTOP, 
+		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY,
+		id);
+	_ASSERTE(!mSwitches[id]);
+	mSwitches[id] = curSwitch;
+	if (id > mMaxSwitchId)
+		mMaxSwitchId = id;
 }
 
 void
@@ -320,7 +335,19 @@ CMControlUIView::CreateSwitchTextDisplay(int id,
 										 int width, 
 										 int height)
 {
+	SwitchTextDisplay * curSwitchDisplay = new SwitchTextDisplay;
+	RECT rc;
+	rc.top = top;
+	rc.left = left;
+	rc.bottom = top + height;
+	rc.right = left + width;
+	curSwitchDisplay->Create(m_hWnd, rc, NULL, 
+		ES_AUTOHSCROLL | ES_READONLY | ES_LEFT | WS_VISIBLE | WS_CHILDWINDOW, 
+		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY | WS_EX_CLIENTEDGE);
+	_ASSERTE(!mSwitchTextDisplays[id]);
+	mSwitchTextDisplays[id] = curSwitchDisplay;
 
+	// xxx_sean do font
 }
 
 void
@@ -331,7 +358,18 @@ CMControlUIView::CreateMainDisplay(int top,
 								   int fontHeight, 
 								   bool boldFont)
 {
+	_ASSERTE(!mMainDisplay);
+	mMainDisplay = new CEdit;
+	RECT rc;
+	rc.top = top;
+	rc.left = left;
+	rc.bottom = top + height;
+	rc.right = left + width;
+	mMainDisplay->Create(m_hWnd, rc, NULL, 
+		WS_VSCROLL | ES_LEFT | ES_MULTILINE | ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_READONLY | WS_VISIBLE | WS_CHILDWINDOW, 
+		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY | WS_EX_CLIENTEDGE);
 
+	// xxx_sean do font
 }
 
 void
@@ -342,7 +380,18 @@ CMControlUIView::CreateTraceDisplay(int top,
 									int fontHeight, 
 									bool boldFont)
 {
+	_ASSERTE(!mTraceDisplay);
+	mTraceDisplay = new CEdit;
+	RECT rc;
+	rc.top = top;
+	rc.left = left;
+	rc.bottom = top + height;
+	rc.right = left + width;
+	mTraceDisplay->Create(m_hWnd, rc, NULL, 
+		WS_VSCROLL | ES_LEFT | ES_MULTILINE | ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_READONLY | WS_VISIBLE | WS_CHILDWINDOW, 
+		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY | WS_EX_CLIENTEDGE);
 
+	// xxx_sean do font
 }
 
 void
@@ -354,12 +403,13 @@ CMControlUIView::CreateStaticLabel(const std::string & label,
 								   int fontHeight, 
 								   bool boldFont)
 {
-
+	_ASSERTE(!"not implemented yet");
 }
 
 void
 CMControlUIView::SetMainSize(int width, 
 							 int height)
 {
-
+	mPreferredHeight = height;
+	mPreferredWidth = width;
 }

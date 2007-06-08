@@ -106,7 +106,8 @@ UiLoader::LoadSwitches(TiXmlElement * pElem)
 		int width = -1;
 		int height = -1;
 
-		const std::string label = pElem->Attribute("name");
+		std::string label;
+		pElem->QueryValueAttribute("label", &label);
 		childElem->QueryIntAttribute("number", &number);
 		childElem->QueryIntAttribute("top", &top);
 		childElem->QueryIntAttribute("left", &left);
@@ -153,7 +154,6 @@ UiLoader::LoadSwitchDisplays(TiXmlElement * pElem)
 		int width = -1;
 		int height = -1;
 
-		const std::string label = pElem->Attribute("name");
 		childElem->QueryIntAttribute("number", &number);
 		childElem->QueryIntAttribute("top", &top);
 		childElem->QueryIntAttribute("left", &left);
@@ -194,7 +194,6 @@ UiLoader::LoadOtherStuffAndFinalize(TiXmlElement * pElem)
 		int width = -1;
 		int height = -1;
 
-		const std::string label = pElem->Attribute("name");
 		pElem->QueryIntAttribute("top", &top);
 		pElem->QueryIntAttribute("left", &left);
 		pElem->QueryIntAttribute("width", &width);
@@ -225,7 +224,6 @@ UiLoader::LoadOtherStuffAndFinalize(TiXmlElement * pElem)
 		int width = -1;
 		int height = -1;
 
-		const std::string label = pElem->Attribute("name");
 		pElem->QueryIntAttribute("top", &top);
 		pElem->QueryIntAttribute("left", &left);
 		pElem->QueryIntAttribute("width", &width);

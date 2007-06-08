@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <map>
 #include "..\Engine\IMainDisplay.h"
 #include "..\Engine\IMidiOut.h"
 #include "..\Engine\ISwitchDisplay.h"
@@ -25,9 +26,12 @@ public:
 	~CMControlUIView();
 
 	enum { IDD = IDD_MCONTROLUI_FORM };
+	typedef CProgressBarCtrl	SwitchLed;
+	typedef CEdit				SwitchTextDisplay;
+	typedef CButton				Switch;
 
 	HWND Create(HWND hWndParent, LPARAM dwInitParam = NULL);
-	void Init(const std::string & uiSettingsFile);
+	void LoadUi(const std::string & uiSettingsFile);
 	void LoadMidiSettings(const std::string & file);
 
 	BOOL PreTranslateMessage(MSG* pMsg);
@@ -54,6 +58,8 @@ public:
 	virtual void CloseMidiOut();
 
 private:
+	void Unload();
+
 	// IMidiControlUi
 	virtual void	CreateSwitchLed(int id, int top, int left, int width, int height);
 	virtual void	CreateSwitchFont(int fontHeight, bool boldFont);
@@ -76,15 +82,17 @@ private:
 	LRESULT OnNotifyCustomDraw(int idCtrl, LPNMHDR pNotifyStruct, BOOL& /*bHandled*/);
 
 private:
-	MidiControlEngine	* mEngine;
-	CProgressBarCtrl	mLeds[16];
-	CEdit				mSwitchTextDisplays[16];
-	CButton				mSwitches[16];
-	CEdit				mMainDisplay;
-	CEdit				mTraceDisplay;
-	bool				mStupidSwitchStates[16];
-	CFont				mSwitchButtonFont;
-	CFont				mSwitchDisplayFont;
-	CFont				mMainTextFont;
-	CFont				mTraceFont;
+	MidiControlEngine			* mEngine;
+	CEdit						* mMainDisplay;
+	CEdit						* mTraceDisplay;
+	std::map<int, SwitchLed*>	mLeds;
+	std::map<int, SwitchTextDisplay *>		mSwitchTextDisplays;
+	std::map<int, Switch *>		mSwitches;
+	std::map<int, bool>			mStupidSwitchStates;
+	CFont						mSwitchButtonFont;
+	CFont						mSwitchDisplayFont;
+	CFont						mMainTextFont;
+	CFont						mTraceFont;
+	int							mPreferredHeight, mPreferredWidth;
+	int							mMaxSwitchId;
 };
