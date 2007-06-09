@@ -63,6 +63,8 @@ MidiControlEngine::MidiControlEngine(IMidiOut * midiOut,
 
 MidiControlEngine::~MidiControlEngine()
 {
+	if (mMidiOut)
+		mMidiOut->CloseMidiOut();
 	std::for_each(mBanks.begin(), mBanks.end(), DeletePtr<PatchBank>());
 	mBanks.clear();
 	std::for_each(mPatches.begin(), mPatches.end(), DeletePatch());
@@ -124,6 +126,8 @@ MidiControlEngine::CompleteInit()
 	}
 
 	ChangeMode(emBank);
+	if (mMidiOut)
+		mMidiOut->OpenMidiOut(0);
 	LoadBank(powerUpBankIndex);
 }
 
