@@ -10,12 +10,13 @@
 #include "mControlUIView.h"
 #include "MainFrm.h"
 
+
 BOOL CMainFrame::PreTranslateMessage(MSG* pMsg)
 {
 	if(CFrameWindowImpl<CMainFrame>::PreTranslateMessage(pMsg))
 		return TRUE;
 
-	return m_view.PreTranslateMessage(pMsg);
+	return mView.PreTranslateMessage(pMsg);
 }
 
 BOOL CMainFrame::OnIdle()
@@ -43,7 +44,7 @@ LRESULT CMainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/
 
 	CreateSimpleStatusBar();
 
-	m_hWndClient = m_view.Create(m_hWnd);
+	m_hWndClient = mView.Create(m_hWnd);
 
 	UIAddToolBar(hWndToolBar);
 	UISetCheck(ID_VIEW_TOOLBAR, 1);
@@ -55,8 +56,8 @@ LRESULT CMainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/
 	pLoop->AddMessageFilter(this);
 	pLoop->AddIdleHandler(this);
 
-	m_view.LoadUi("ui.xml");
-	m_view.LoadMidiSettings("test.xml");
+	mView.LoadUi("ui.xml");
+	mView.LoadMidiSettings("test.xml");
 
 	CRect wndRc;
 	GetWindowRect(&wndRc);
@@ -75,8 +76,8 @@ LRESULT CMainFrame::OnFileExit(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCt
 
 LRESULT CMainFrame::OnFileNew(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
-	// TODO: add code to initialize document
-
+	mView.LoadUi("ui.xml");
+	mView.LoadMidiSettings("test.xml");
 	return 0;
 }
 

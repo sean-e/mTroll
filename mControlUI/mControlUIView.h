@@ -62,13 +62,13 @@ private:
 
 	// IMidiControlUi
 	virtual void	CreateSwitchLed(int id, int top, int left, int width, int height);
-	virtual void	CreateSwitchFont(int fontHeight, bool boldFont);
+	virtual void	CreateSwitchFont(const std::string & fontName, int fontHeight, bool bold);
 	virtual void	CreateSwitch(int id, const std::string & label, int top, int left, int width, int height);
-	virtual void	CreateSwitchTextDisplayFont(int fontHeight, bool boldFont);
+	virtual void	CreateSwitchTextDisplayFont(const std::string & fontName, int fontHeight, bool bold);
 	virtual void	CreateSwitchTextDisplay(int id, int top, int left, int width, int height);
-	virtual void	CreateMainDisplay(int top, int left, int width, int height, int fontHeight, bool boldFont);
-	virtual void	CreateTraceDisplay(int top, int left, int width, int height, int fontHeight, bool boldFont);
-	virtual void	CreateStaticLabel(const std::string & label, int top, int left, int width, int height, int fontHeight, bool boldFont);
+	virtual void	CreateMainDisplay(int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold);
+	virtual void	CreateTraceDisplay(int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold);
+	virtual void	CreateStaticLabel(const std::string & label, int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold);
 	virtual void	SetMainSize(int width, int height);
 
 	BEGIN_MSG_MAP(CMControlUIView)

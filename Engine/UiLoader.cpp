@@ -80,14 +80,16 @@ UiLoader::LoadSwitchLeds(TiXmlElement * pElem)
 void
 UiLoader::LoadSwitches(TiXmlElement * pElem)
 {
-	// <switches font-weight="bold" >
+	std::string fontname("courier");
+	pElem->QueryValueAttribute("font-name", &fontname);
+
 	std::string fontWeight;
 	pElem->QueryValueAttribute("font-weight", &fontWeight);
 	const bool boldFont = (fontWeight == "bold");
 
 	int fontHeight = 10;
 	pElem->QueryIntAttribute("font-height", &fontHeight);
-	mUi->CreateSwitchFont(fontHeight, boldFont);
+	mUi->CreateSwitchFont(fontname, fontHeight, boldFont);
 
 	TiXmlHandle hRoot(NULL);
 	hRoot = TiXmlHandle(pElem);
@@ -107,7 +109,7 @@ UiLoader::LoadSwitches(TiXmlElement * pElem)
 		int height = -1;
 
 		std::string label;
-		pElem->QueryValueAttribute("label", &label);
+		childElem->QueryValueAttribute("label", &label);
 		childElem->QueryIntAttribute("number", &number);
 		childElem->QueryIntAttribute("top", &top);
 		childElem->QueryIntAttribute("left", &left);
@@ -129,13 +131,16 @@ void
 UiLoader::LoadSwitchDisplays(TiXmlElement * pElem)
 {
 	// <switchTextDisplays font-height="12" >
+	std::string fontname("courier");
+	pElem->QueryValueAttribute("font-name", &fontname);
+
 	std::string fontWeight;
 	pElem->QueryValueAttribute("font-weight", &fontWeight);
 	const bool boldFont = (fontWeight == "bold");
 
 	int fontHeight = 10;
 	pElem->QueryIntAttribute("font-height", &fontHeight);
-	mUi->CreateSwitchTextDisplayFont(fontHeight, boldFont);
+	mUi->CreateSwitchTextDisplayFont(fontname, fontHeight, boldFont);
 
 	TiXmlHandle hRoot(NULL);
 	hRoot = TiXmlHandle(pElem);
@@ -182,6 +187,9 @@ UiLoader::LoadOtherStuffAndFinalize(TiXmlElement * pElem)
 	pElem = hRoot.FirstChild("mainTextDisplay").Element();
 	if (pElem)
 	{
+		std::string fontname("courier");
+		pElem->QueryValueAttribute("font-name", &fontname);
+
 		std::string fontWeight;
 		pElem->QueryValueAttribute("font-weight", &fontWeight);
 		const bool boldFont = (fontWeight == "bold");
@@ -204,7 +212,7 @@ UiLoader::LoadOtherStuffAndFinalize(TiXmlElement * pElem)
 			-1 == width ||
 			-1 == height))
 		{
-			mUi->CreateMainDisplay(top, left, width, height, fontHeight, boldFont);
+			mUi->CreateMainDisplay(top, left, width, height, fontname, fontHeight, boldFont);
 		}
 	}
 
@@ -212,6 +220,9 @@ UiLoader::LoadOtherStuffAndFinalize(TiXmlElement * pElem)
 	pElem = hRoot.FirstChild("traceTextDisplay").Element();
 	if (pElem)
 	{
+		std::string fontname("courier new");
+		pElem->QueryValueAttribute("font-name", &fontname);
+
 		std::string fontWeight;
 		pElem->QueryValueAttribute("font-weight", &fontWeight);
 		const bool boldFont = (fontWeight == "bold");
@@ -234,7 +245,7 @@ UiLoader::LoadOtherStuffAndFinalize(TiXmlElement * pElem)
 			-1 == width ||
 			-1 == height))
 		{
-			mUi->CreateTraceDisplay(top, left, width, height, fontHeight, boldFont);
+			mUi->CreateTraceDisplay(top, left, width, height, fontname, fontHeight, boldFont);
 		}
 	}
 

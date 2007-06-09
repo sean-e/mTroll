@@ -13,15 +13,15 @@ class IMidiControlUi
 public:
 	virtual void	CreateSwitchLed(int id, int top, int left, int width, int height) = 0;
 
-	virtual void	CreateSwitchFont(int fontHeight, bool boldFont) = 0;
+	virtual void	CreateSwitchFont(const std::string & fontName, int fontHeight, bool bold) = 0;
 	virtual void	CreateSwitch(int id, const std::string & label, int top, int left, int width, int height) = 0;
 
-	virtual void	CreateSwitchTextDisplayFont(int fontHeight, bool boldFont) = 0;
+	virtual void	CreateSwitchTextDisplayFont(const std::string & fontName, int fontHeight, bool bold) = 0;
 	virtual void	CreateSwitchTextDisplay(int id, int top, int left, int width, int height) = 0;
 
-	virtual void	CreateMainDisplay(int top, int left, int width, int height, int fontHeight, bool boldFont) = 0;
-	virtual void	CreateTraceDisplay(int top, int left, int width, int height, int fontHeight, bool boldFont) = 0;
-	virtual void	CreateStaticLabel(const std::string & label, int top, int left, int width, int height, int fontHeight, bool boldFont) = 0;
+	virtual void	CreateMainDisplay(int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold) = 0;
+	virtual void	CreateTraceDisplay(int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold) = 0;
+	virtual void	CreateStaticLabel(const std::string & label, int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold) = 0;
 
 	virtual void	SetMainSize(int width, int height) = 0;
 };

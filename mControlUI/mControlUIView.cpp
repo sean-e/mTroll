@@ -63,6 +63,9 @@ CMControlUIView::Unload()
 	delete mTraceDisplay;
 	mTraceDisplay = NULL;
 
+	mMaxSwitchId = 0;
+	mStupidSwitchStates.clear();
+
 	for_each(mLeds.begin(), mLeds.end(), DeleteSwitchLed());
 	mLeds.clear();
 
@@ -71,6 +74,18 @@ CMControlUIView::Unload()
 
 	for_each(mSwitchTextDisplays.begin(), mSwitchTextDisplays.end(), DeleteSwitchTextDisplay());
 	mSwitchTextDisplays.clear();
+
+	if (mSwitchButtonFont)
+		mSwitchButtonFont.DeleteObject();
+	
+	if (mSwitchDisplayFont)
+		mSwitchDisplayFont.DeleteObject();
+
+	if (mMainTextFont)
+		mMainTextFont.DeleteObject();
+
+	if (mTraceFont)
+		mTraceFont.DeleteObject();
 }
 
 HWND
@@ -120,6 +135,7 @@ CMControlUIView::ClearDisplay()
 		mMainDisplay->SetWindowText("");
 }
 
+
 // ITraceDisplay
 void
 CMControlUIView::Trace(const std::string & txt)
@@ -131,6 +147,7 @@ CMControlUIView::Trace(const std::string & txt)
 		mTraceDisplay->AppendText(newTxt);
 	}
 }
+
 
 // ISwitchDisplay
 void
@@ -209,6 +226,160 @@ CMControlUIView::OnNotifyCustomDraw(int idCtrl,
 }
 
 
+// IMidiControlUi
+void
+CMControlUIView::CreateSwitchLed(int id, 
+								 int top, 
+								 int left, 
+								 int width, 
+								 int height)
+{
+	SwitchLed * curSwitchLed = new SwitchLed;
+	RECT rc;
+	rc.top = top;
+	rc.left = left;
+	rc.bottom = top + height;
+	rc.right = left + width;
+	curSwitchLed->Create(m_hWnd, rc, NULL, 
+		WS_VISIBLE | WS_CHILDWINDOW | PBS_SMOOTH, 
+		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_NOPARENTNOTIFY | WS_EX_RIGHTSCROLLBAR);
+	_ASSERTE(!mLeds[id]);
+	curSwitchLed->SetRange(0, 4);
+	mLeds[id] = curSwitchLed;
+}
+
+void
+CMControlUIView::CreateSwitchFont(const std::string & fontName,
+								  int fontHeight, 
+								  bool bold)
+{
+	mSwitchButtonFont.CreatePointFont(fontHeight * 10, fontName.c_str(), NULL, bold);
+}
+
+void
+CMControlUIView::CreateSwitch(int id, 
+							  const std::string & label, 
+							  int top, 
+							  int left, 
+							  int width, 
+							  int height)
+{
+	Switch * curSwitch = new Switch;
+	RECT rc;
+	rc.top = top;
+	rc.left = left;
+	rc.bottom = top + height;
+	rc.right = left + width;
+	curSwitch->Create(m_hWnd, rc, label.c_str(), 
+		WS_VISIBLE | WS_CHILDWINDOW | BS_PUSHBUTTON | BS_TEXT | WS_TABSTOP, 
+		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY,
+		id);
+	curSwitch->SetFont(mSwitchButtonFont);
+	_ASSERTE(!mSwitches[id]);
+	mSwitches[id] = curSwitch;
+	if (id > mMaxSwitchId)
+		mMaxSwitchId = id;
+}
+
+void
+CMControlUIView::CreateSwitchTextDisplayFont(const std::string & fontName,
+											 int fontHeight, 
+											 bool bold)
+{
+	mSwitchDisplayFont.CreatePointFont(fontHeight * 10, fontName.c_str(), NULL, bold);
+}
+
+void
+CMControlUIView::CreateSwitchTextDisplay(int id, 
+										 int top, 
+										 int left, 
+										 int width, 
+										 int height)
+{
+	SwitchTextDisplay * curSwitchDisplay = new SwitchTextDisplay;
+	RECT rc;
+	rc.top = top;
+	rc.left = left;
+	rc.bottom = top + height;
+	rc.right = left + width;
+	curSwitchDisplay->Create(m_hWnd, rc, NULL, 
+		ES_AUTOHSCROLL | /*ES_READONLY |*/ ES_LEFT | WS_VISIBLE | WS_CHILDWINDOW, 
+		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY | WS_EX_CLIENTEDGE);
+	curSwitchDisplay->SetFont(mSwitchDisplayFont);
+	_ASSERTE(!mSwitchTextDisplays[id]);
+	mSwitchTextDisplays[id] = curSwitchDisplay;
+}
+
+void
+CMControlUIView::CreateMainDisplay(int top, 
+								   int left, 
+								   int width, 
+								   int height,
+								   const std::string & fontName,
+								   int fontHeight, 
+								   bool bold)
+{
+	_ASSERTE(!mMainDisplay);
+	mMainDisplay = new CEdit;
+	RECT rc;
+	rc.top = top;
+	rc.left = left;
+	rc.bottom = top + height;
+	rc.right = left + width;
+	mMainDisplay->Create(m_hWnd, rc, NULL, 
+		WS_VSCROLL | ES_LEFT | ES_MULTILINE | ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_READONLY | WS_VISIBLE | WS_CHILDWINDOW, 
+		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY | WS_EX_CLIENTEDGE);
+
+	mMainTextFont.CreatePointFont(fontHeight * 10, fontName.c_str(), NULL, bold);
+	mMainDisplay->SetFont(mMainTextFont);
+}
+
+void
+CMControlUIView::CreateTraceDisplay(int top, 
+									int left, 
+									int width, 
+									int height, 
+									const std::string & fontName,
+									int fontHeight, 
+									bool bold)
+{
+	_ASSERTE(!mTraceDisplay);
+	mTraceDisplay = new CEdit;
+	RECT rc;
+	rc.top = top;
+	rc.left = left;
+	rc.bottom = top + height;
+	rc.right = left + width;
+	mTraceDisplay->Create(m_hWnd, rc, NULL, 
+		WS_VSCROLL | ES_LEFT | ES_MULTILINE | ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_READONLY | WS_VISIBLE | WS_CHILDWINDOW, 
+		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY | WS_EX_CLIENTEDGE);
+
+	mTraceFont.CreatePointFont(fontHeight * 10, fontName.c_str(), NULL, bold);
+	mTraceDisplay->SetFont(mTraceFont);
+}
+
+void
+CMControlUIView::CreateStaticLabel(const std::string & label, 
+								   int top, 
+								   int left, 
+								   int width, 
+								   int height, 
+								   const std::string & fontName,
+								   int fontHeight, 
+								   bool bold)
+{
+	_ASSERTE(!"not implemented yet");
+}
+
+void
+CMControlUIView::SetMainSize(int width, 
+							 int height)
+{
+	mPreferredHeight = height;
+	mPreferredWidth = width;
+}
+
+
 // IMidiOut
 int
 CMControlUIView::GetDeviceCount()
@@ -237,179 +408,4 @@ CMControlUIView::MidiOut(const Bytes & bytes)
 void
 CMControlUIView::CloseMidiOut()
 {
-}
-
-// IMidiControlUi
-void
-CMControlUIView::CreateSwitchLed(int id, 
-								 int top, 
-								 int left, 
-								 int width, 
-								 int height)
-{
-	SwitchLed * curSwitchLed = new SwitchLed;
-	RECT rc;
-	rc.top = top;
-	rc.left = left;
-	rc.bottom = top + height;
-	rc.right = left + width;
-	curSwitchLed->Create(m_hWnd, rc, NULL, 
-		WS_VISIBLE | WS_CHILDWINDOW | PBS_SMOOTH, 
-		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_NOPARENTNOTIFY | WS_EX_RIGHTSCROLLBAR);
-	_ASSERTE(!mLeds[id]);
-	curSwitchLed->SetRange(0, 4);
-	mLeds[id] = curSwitchLed;
-}
-
-void
-CMControlUIView::CreateSwitchFont(int fontHeight, 
-								  bool boldFont)
-{
-/*
-	LOGFONT lf;
-	memset (&lf, 0, sizeof(lf));
-	CFont fn(mSwitches[0].GetFont());
-	fn.GetLogFont(&lf);
-
-	lf.lfWeight = FW_BOLD;
-	mSwitchButtonFont.CreateFontIndirect(&lf);
-
-	lf.lfWeight = FW_NORMAL;
-	mTraceFont.CreateFontIndirect(&lf);
-	mTraceDisplay.SetFont(mTraceFont);
-
-	lf.lfHeight -= 2;
-	mMainTextFont.CreateFontIndirect(&lf);
-	mSwitchDisplayFont.CreateFontIndirect(&lf);
-	mMainDisplay.SetFont(mMainTextFont);
-
-	for (int idx = 0; idx < 16; ++idx)
-	{
-		mStupidSwitchStates[idx] = false;
-		mSwitches[idx].SetFont(mSwitchButtonFont);
-
-		if (mLeds[idx].IsWindow())
-			mLeds[idx].SetRange(0, 4);
-
-		if (mSwitchTextDisplays[idx].IsWindow())
-			mSwitchTextDisplays[idx].SetFont(mSwitchDisplayFont);
-	}
-*/
-}
-
-void
-CMControlUIView::CreateSwitch(int id, 
-							  const std::string & label, 
-							  int top, 
-							  int left, 
-							  int width, 
-							  int height)
-{
-	Switch * curSwitch = new Switch;
-	RECT rc;
-	rc.top = top;
-	rc.left = left;
-	rc.bottom = top + height;
-	rc.right = left + width;
-	curSwitch->Create(m_hWnd, rc, label.c_str(), 
-		WS_VISIBLE | WS_CHILDWINDOW | BS_PUSHBUTTON | BS_TEXT | WS_TABSTOP, 
-		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY,
-		id);
-	_ASSERTE(!mSwitches[id]);
-	mSwitches[id] = curSwitch;
-	if (id > mMaxSwitchId)
-		mMaxSwitchId = id;
-}
-
-void
-CMControlUIView::CreateSwitchTextDisplayFont(int fontHeight, 
-											 bool boldFont)
-{
-
-}
-
-void
-CMControlUIView::CreateSwitchTextDisplay(int id, 
-										 int top, 
-										 int left, 
-										 int width, 
-										 int height)
-{
-	SwitchTextDisplay * curSwitchDisplay = new SwitchTextDisplay;
-	RECT rc;
-	rc.top = top;
-	rc.left = left;
-	rc.bottom = top + height;
-	rc.right = left + width;
-	curSwitchDisplay->Create(m_hWnd, rc, NULL, 
-		ES_AUTOHSCROLL | ES_READONLY | ES_LEFT | WS_VISIBLE | WS_CHILDWINDOW, 
-		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY | WS_EX_CLIENTEDGE);
-	_ASSERTE(!mSwitchTextDisplays[id]);
-	mSwitchTextDisplays[id] = curSwitchDisplay;
-
-	// xxx_sean do font
-}
-
-void
-CMControlUIView::CreateMainDisplay(int top, 
-								   int left, 
-								   int width, 
-								   int height, 
-								   int fontHeight, 
-								   bool boldFont)
-{
-	_ASSERTE(!mMainDisplay);
-	mMainDisplay = new CEdit;
-	RECT rc;
-	rc.top = top;
-	rc.left = left;
-	rc.bottom = top + height;
-	rc.right = left + width;
-	mMainDisplay->Create(m_hWnd, rc, NULL, 
-		WS_VSCROLL | ES_LEFT | ES_MULTILINE | ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_READONLY | WS_VISIBLE | WS_CHILDWINDOW, 
-		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY | WS_EX_CLIENTEDGE);
-
-	// xxx_sean do font
-}
-
-void
-CMControlUIView::CreateTraceDisplay(int top, 
-									int left, 
-									int width, 
-									int height, 
-									int fontHeight, 
-									bool boldFont)
-{
-	_ASSERTE(!mTraceDisplay);
-	mTraceDisplay = new CEdit;
-	RECT rc;
-	rc.top = top;
-	rc.left = left;
-	rc.bottom = top + height;
-	rc.right = left + width;
-	mTraceDisplay->Create(m_hWnd, rc, NULL, 
-		WS_VSCROLL | ES_LEFT | ES_MULTILINE | ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_READONLY | WS_VISIBLE | WS_CHILDWINDOW, 
-		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY | WS_EX_CLIENTEDGE);
-
-	// xxx_sean do font
-}
-
-void
-CMControlUIView::CreateStaticLabel(const std::string & label, 
-								   int top, 
-								   int left, 
-								   int width, 
-								   int height, 
-								   int fontHeight, 
-								   bool boldFont)
-{
-	_ASSERTE(!"not implemented yet");
-}
-
-void
-CMControlUIView::SetMainSize(int width, 
-							 int height)
-{
-	mPreferredHeight = height;
-	mPreferredWidth = width;
 }
