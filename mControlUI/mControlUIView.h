@@ -51,9 +51,9 @@ public:
 	virtual void SetSwitchDisplayPos(int switchNumber, int pos, int range);
 
 	// IMidiOut
-	virtual int GetDeviceCount();
-	virtual std::string GetDeviceName(int deviceIdx);
-	virtual bool OpenMidiOut(int deviceIdx);
+	virtual unsigned int GetDeviceCount();
+	virtual std::string GetDeviceName(unsigned int deviceIdx);
+	virtual bool OpenMidiOut(unsigned int deviceIdx);
 	virtual bool MidiOut(const Bytes & bytes);
 	virtual void CloseMidiOut();
 
@@ -95,4 +95,5 @@ private:
 	CFont						mTraceFont;
 	int							mPreferredHeight, mPreferredWidth;
 	int							mMaxSwitchId;
+	HMIDIOUT					mMidiOut;
 };
