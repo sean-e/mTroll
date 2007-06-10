@@ -105,6 +105,12 @@ CMControlUIView::LoadUi(const std::string & uiSettingsFile)
 {
 	Unload();
 	UiLoader ldr(this, uiSettingsFile);
+
+	Trace("Midi Devices:\n");
+	const int kMidiOutCnt = GetMidiOutDeviceCount();
+	for (int idx = 0; idx < kMidiOutCnt; ++idx)
+		Trace(GetMidiOutDeviceName(idx) + "\n");
+	Trace("\n");
 }
 
 void
@@ -387,21 +393,19 @@ CMControlUIView::SetMainSize(int width,
 
 // IMidiOut
 unsigned int
-CMControlUIView::GetDeviceCount()
+CMControlUIView::GetMidiOutDeviceCount()
 {
 	return ::midiOutGetNumDevs();
 }
 
 std::string
-CMControlUIView::GetDeviceName(unsigned int deviceIdx)
+CMControlUIView::GetMidiOutDeviceName(unsigned int deviceIdx)
 {
 	std::string devName;
 	MIDIOUTCAPS outCaps;
 	MMRESULT res = ::midiOutGetDevCaps(deviceIdx, &outCaps, sizeof(MIDIOUTCAPS));
 	if (res == MMSYSERR_NOERROR)
-	{
-		// xxx_sean finish me
-	}
+		devName = outCaps.szPname;
 
 	return devName;
 }
@@ -417,7 +421,11 @@ CMControlUIView::OpenMidiOut(unsigned int deviceIdx)
 bool
 CMControlUIView::MidiOut(const Bytes & bytes)
 {
-	// xxx_sean finish me
+	_ASSERTE(mMidiOut);
+	if (mMidiOut)
+	{
+		// xxx_sean finish me
+	}
 	return false;
 }
 

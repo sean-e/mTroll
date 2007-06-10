@@ -15,8 +15,8 @@ typedef std::vector<byte> Bytes;
 class IMidiOut
 {
 public:
-	virtual unsigned int GetDeviceCount() = 0;
-	virtual std::string GetDeviceName(unsigned int deviceIdx) = 0;
+	virtual unsigned int GetMidiOutDeviceCount() = 0;
+	virtual std::string GetMidiOutDeviceName(unsigned int deviceIdx) = 0;
 	virtual bool OpenMidiOut(unsigned int deviceIdx) = 0;
 	virtual bool MidiOut(const Bytes & bytes) = 0;
 	virtual void CloseMidiOut() = 0;
