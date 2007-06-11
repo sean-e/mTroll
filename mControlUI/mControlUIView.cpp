@@ -7,14 +7,11 @@
 #include <atlstr.h>
 #include <atlmisc.h>
 #include <algorithm>
-#include <MMSystem.h>
 
 #include "mControlUIView.h"
 #include "..\Engine\EngineLoader.h"
 #include "..\Engine\MidiControlEngine.h"
 #include "..\Engine\UiLoader.h"
-
-#pragma comment(lib, "winmm.lib")
 
 
 CMControlUIView::CMControlUIView() :
@@ -24,7 +21,7 @@ CMControlUIView::CMControlUIView() :
 	mPreferredHeight(0),
 	mPreferredWidth(0),
 	mMaxSwitchId(0),
-	mMidiOut(NULL)
+	mMidiOut(this)
 {
 }
 
@@ -66,7 +63,8 @@ CMControlUIView::Unload()
 	mMainDisplay = NULL;
 	delete mTraceDisplay;
 	mTraceDisplay = NULL;
-	CloseMidiOut();
+	if (mMidiOut.IsMidiOutOpen())
+		mMidiOut.CloseMidiOut();
 
 	mMaxSwitchId = 0;
 	mStupidSwitchStates.clear();
@@ -107,9 +105,9 @@ CMControlUIView::LoadUi(const std::string & uiSettingsFile)
 	UiLoader ldr(this, uiSettingsFile);
 
 	Trace("Midi Devices:\n");
-	const int kMidiOutCnt = GetMidiOutDeviceCount();
+	const int kMidiOutCnt = mMidiOut.GetMidiOutDeviceCount();
 	for (int idx = 0; idx < kMidiOutCnt; ++idx)
-		Trace(GetMidiOutDeviceName(idx) + "\n");
+		Trace(mMidiOut.GetMidiOutDeviceName(idx) + "\n");
 	Trace("\n");
 }
 
@@ -117,7 +115,7 @@ void
 CMControlUIView::LoadMidiSettings(const std::string & file)
 {
 	delete mEngine;
-	EngineLoader ldr(this, this, this, this);
+	EngineLoader ldr(&mMidiOut, this, this, this);
 	mEngine = ldr.CreateEngine(file);
 }
 
@@ -388,54 +386,4 @@ CMControlUIView::SetMainSize(int width,
 {
 	mPreferredHeight = height;
 	mPreferredWidth = width;
-}
-
-
-// IMidiOut
-unsigned int
-CMControlUIView::GetMidiOutDeviceCount()
-{
-	return ::midiOutGetNumDevs();
-}
-
-std::string
-CMControlUIView::GetMidiOutDeviceName(unsigned int deviceIdx)
-{
-	std::string devName;
-	MIDIOUTCAPS outCaps;
-	MMRESULT res = ::midiOutGetDevCaps(deviceIdx, &outCaps, sizeof(MIDIOUTCAPS));
-	if (res == MMSYSERR_NOERROR)
-		devName = outCaps.szPname;
-
-	return devName;
-}
-
-bool
-CMControlUIView::OpenMidiOut(unsigned int deviceIdx)
-{
-	_ASSERTE(!mMidiOut);
-	MMRESULT res = ::midiOutOpen(&mMidiOut, deviceIdx, NULL, NULL, CALLBACK_NULL);
-	return res == MMSYSERR_NOERROR;
-}
-
-bool
-CMControlUIView::MidiOut(const Bytes & bytes)
-{
-	_ASSERTE(mMidiOut);
-	if (mMidiOut)
-	{
-		// xxx_sean finish me
-	}
-	return false;
-}
-
-void
-CMControlUIView::CloseMidiOut()
-{
-	if (mMidiOut)
-	{
-		MMRESULT res = ::midiOutClose(mMidiOut);
-		if (res == MMSYSERR_NOERROR)
-			mMidiOut = NULL;
-	}
 }

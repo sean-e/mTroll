@@ -6,17 +6,16 @@
 
 #include <map>
 #include "..\Engine\IMainDisplay.h"
-#include "..\Engine\IMidiOut.h"
 #include "..\Engine\ISwitchDisplay.h"
 #include "..\Engine\ITraceDisplay.h"
 #include "..\Engine\MidiControlEngine.h"
 #include "..\Engine\IMidiControlUi.h"
+#include "WinMidiOut.h"
 #include <atlctrls.h>
 
 
 class CMControlUIView : public CDialogImpl<CMControlUIView>, 
 								IMainDisplay, 
-								IMidiOut, 
 								ISwitchDisplay, 
 								ITraceDisplay,
 								IMidiControlUi
@@ -49,13 +48,6 @@ public:
 	virtual void SetSwitchText(int switchNumber, const std::string & txt);
 	virtual void ClearSwitchText(int switchNumber);
 	virtual void SetSwitchDisplayPos(int switchNumber, int pos, int range);
-
-	// IMidiOut
-	virtual unsigned int GetMidiOutDeviceCount();
-	virtual std::string GetMidiOutDeviceName(unsigned int deviceIdx);
-	virtual bool OpenMidiOut(unsigned int deviceIdx);
-	virtual bool MidiOut(const Bytes & bytes);
-	virtual void CloseMidiOut();
 
 private:
 	void Unload();
@@ -95,5 +87,5 @@ private:
 	CFont						mTraceFont;
 	int							mPreferredHeight, mPreferredWidth;
 	int							mMaxSwitchId;
-	HMIDIOUT					mMidiOut;
+	WinMidiOut					mMidiOut;
 };
