@@ -69,8 +69,8 @@ WinMidiOut::MidiOut(const Bytes & bytes)
 		return false;
 
 	// number of data bytes for each status
-	static const int kStatusByteLenArrayLen = 23;
-	static const int kMsglens[23] = { 2, 2, 2, 2, 1, 1, 2, 0, 1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	static const int kMsgDataBytesLen = 23;
+	static const int kMsgDataBytes[23] = { 2, 2, 2, 2, 1, 1, 2, 0, 1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 	const byte * dataPtr = &bytes[0];
 	size_t idx = 0;
@@ -86,9 +86,7 @@ WinMidiOut::MidiOut(const Bytes & bytes)
 		int curMsgLen;
 		int statusByteIdx = dataPtr[idx];
 
-		if (sysexDepth ||
-			SYSEX == statusByteIdx || 
-			EOX == statusByteIdx)
+		if (sysexDepth || SYSEX == statusByteIdx)
 		{
 			curMsgLen = 0;
 
@@ -117,38 +115,34 @@ WinMidiOut::MidiOut(const Bytes & bytes)
 		}
 		else
 		{
-			curMsgLen = kMsglens[statusByteIdx];
 			if ((statusByteIdx & 0xF0) < SYSEX)		// is it a channel message?
 				statusByteIdx = ((statusByteIdx & 0xF0) >> 4) - 8;
 			else		// or system message
 				statusByteIdx = (statusByteIdx & 0x0F) + 7;
 
-			if (statusByteIdx < 0 || statusByteIdx >= kStatusByteLenArrayLen)
+			if (statusByteIdx < 0)
 			{
 				ReportError("Status byte handling error at byte %d (%x).\n", idx+1, dataPtr[idx]);
 				break;
 			}
 
-			const int kCurMsgLen = kMsglens[statusByteIdx];
-			if ((idx + kCurMsgLen) > kDataSize)
+			curMsgLen = statusByteIdx >= kMsgDataBytesLen ? 1 : kMsgDataBytes[statusByteIdx] + 1;
+			if ((idx + curMsgLen) > kDataSize)
 			{
 				ReportError("Data string consistency error at byte %d.  Missing data byte.\n", idx+1);
 				break;
 			}
 
 			DWORD shortMsg;
-			switch (kCurMsgLen)
+			switch (curMsgLen)
 			{
-			case 0:
-				// no data bytes
+			case 1:			// no data bytes
 				shortMsg = dataPtr[idx];
 				break;
-			case 1:
-				// one data byte
+			case 2:			// one data byte
 				shortMsg = dataPtr[idx] | (dataPtr[idx+1] << 8);
 				break;
-			case 2:
-				// two data bytes
+			case 3:			// two data bytes
 				shortMsg = dataPtr[idx] | (dataPtr[idx+1] << 8) | (dataPtr[idx+2] << 16);
 				break;
 			default:
@@ -156,11 +150,7 @@ WinMidiOut::MidiOut(const Bytes & bytes)
 				shortMsg = 0;
 			}
 
-			if (mMidiOutError)
-				break;
-
 			res = ::midiOutShortMsg(mMidiOut, shortMsg);
-			curMsgLen += 1;
 		}
 
 		if (MMSYSERR_NOERROR != res)
@@ -186,6 +176,23 @@ WinMidiOut::MidiOut(const Bytes & bytes)
 		mTrace->Trace("Transmission complete.\n");
 
 	return true;
+}
+
+void CALLBACK 
+WinMidiOut::MidiOutCallbackProc(HMIDIOUT hmo, 
+								UINT wMsg, 
+								DWORD dwInstance, 
+								DWORD dwParam1, 
+								DWORD dwParam2)
+{
+	if (MOM_DONE == wMsg)
+	{
+		WinMidiOut * _this = (WinMidiOut *) dwInstance;
+		LPMIDIHDR hdr = (LPMIDIHDR) dwParam1;
+		MMRESULT res = ::midiOutUnprepareHeader(_this->mMidiOut, hdr, sizeof(MIDIHDR));
+		hdr->dwFlags = 0;
+		_ASSERTE(MMSYSERR_NOERROR == res);
+	}
 }
 
 void
@@ -240,21 +247,4 @@ WinMidiOut::ReportError(LPCSTR msg,
 	CString errMsg;
 	errMsg.Format(msg, param1, param2);
 	ReportError(errMsg);
-}
-
-void CALLBACK 
-WinMidiOut::MidiOutCallbackProc(HMIDIOUT hmo, 
-								UINT wMsg, 
-								DWORD dwInstance, 
-								DWORD dwParam1, 
-								DWORD dwParam2)
-{
-	if (MOM_DONE == wMsg)
-	{
-		WinMidiOut * _this = (WinMidiOut *) dwInstance;
-		LPMIDIHDR hdr = (LPMIDIHDR) dwParam1;
-		MMRESULT res = ::midiOutUnprepareHeader(_this->mMidiOut, hdr, sizeof(MIDIHDR));
-		hdr->dwFlags = 0;
-		_ASSERTE(MMSYSERR_NOERROR == res);
-	}
 }
