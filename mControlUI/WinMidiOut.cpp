@@ -5,6 +5,16 @@
 #pragma comment(lib, "winmm.lib")
 
 
+WinMidiOut::WinMidiOut(ITraceDisplay * trace) : 
+	mTrace(trace), 
+	mMidiOut(NULL), 
+	mMidiOutError(false),
+	mCurMidiHdrIdx(0)
+{
+	for (int idx = 0; idx < MIDIHDR_CNT; ++idx)
+		ZeroMemory(&mMidiHdrs[idx], sizeof(MIDIHDR));
+}
+
 WinMidiOut::~WinMidiOut()
 {
 	CloseMidiOut();
@@ -35,7 +45,7 @@ bool
 WinMidiOut::OpenMidiOut(unsigned int deviceIdx)
 {
 	_ASSERTE(!mMidiOut);
-	MMRESULT res = ::midiOutOpen(&mMidiOut, deviceIdx, NULL, this, CALLBACK_NULL);
+	MMRESULT res = ::midiOutOpen(&mMidiOut, deviceIdx, (DWORD_PTR)MidiOutCallbackProc, (DWORD_PTR)this, CALLBACK_FUNCTION);
 	if (MMSYSERR_NOERROR != res)
 		ReportMidiError(res, __LINE__);
 	return res == MMSYSERR_NOERROR;
@@ -54,43 +64,60 @@ bool
 WinMidiOut::MidiOut(const Bytes & bytes)
 {
 	_ASSERTE(mMidiOut);
-	if (!mMidiOut)
+	const size_t kDataSize = bytes.size();
+	if (!mMidiOut || !kDataSize)
 		return false;
 
 	// number of data bytes for each status
 	static const int kStatusByteLenArrayLen = 23;
 	static const int kMsglens[23] = { 2, 2, 2, 2, 1, 1, 2, 0, 1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	const size_t kDataSize = bytes.size();
+
 	const byte * dataPtr = &bytes[0];
 	size_t idx = 0;
-	int sysexDepth = 0;
 	MMRESULT res;
 	mMidiOutError = false;
+	int sysexDepth = 0;
 
 	const int kBufferSize = 256;
 	const int kDelayTime = 60;
 
 	for ( ; idx < kDataSize && !mMidiOutError; )
 	{
-		// pack the data into a midievent
-		if (sysexDepth || 
-			SYSEX == dataPtr[idx] || 
-			EOX == dataPtr[idx])
-		{
-			if (EOX == dataPtr[idx])
-				sysexDepth--;
-			else if (SYSEX == dataPtr[idx])
-				sysexDepth++;	// nested sysex
+		int curMsgLen;
+		int statusByteIdx = dataPtr[idx];
 
-			++idx;
-			// send sysex
-// 			res = ::MidiOut(mMidiOut, (LPMIDIEVENT) &outEvent);
-			res = MMSYSERR_NOTSUPPORTED;
+		if (sysexDepth ||
+			SYSEX == statusByteIdx || 
+			EOX == statusByteIdx)
+		{
+			curMsgLen = 0;
+
+			do
+			{
+				if (SYSEX == statusByteIdx)
+					sysexDepth++;	// nested sysex
+				else if (EOX == statusByteIdx)
+					sysexDepth--;
+
+				if (!((idx + ++curMsgLen) % kBufferSize))
+					break;
+			}
+			while (sysexDepth && (idx + curMsgLen) < kDataSize);
+
+			LPMIDIHDR curHdr = &mMidiHdrs[mCurMidiHdrIdx++];
+			if (mCurMidiHdrIdx == MIDIHDR_CNT)
+				mCurMidiHdrIdx = 0;
+
+			curHdr->dwBufferLength = curMsgLen;
+			curHdr->lpData = (LPSTR)(byte*)&bytes[idx];
+
+			res = ::midiOutPrepareHeader(mMidiOut, curHdr, sizeof(MIDIHDR));
+			if (MMSYSERR_NOERROR == res)
+				res = ::midiOutLongMsg(mMidiOut, curHdr, sizeof(MIDIHDR));
 		}
 		else
 		{
-			int statusByteIdx = dataPtr[idx];
-
+			curMsgLen = kMsglens[statusByteIdx];
 			if ((statusByteIdx & 0xF0) < SYSEX)		// is it a channel message?
 				statusByteIdx = ((statusByteIdx & 0xF0) >> 4) - 8;
 			else		// or system message
@@ -133,7 +160,7 @@ WinMidiOut::MidiOut(const Bytes & bytes)
 				break;
 
 			res = ::midiOutShortMsg(mMidiOut, shortMsg);
-			idx += kCurMsgLen + 1;
+			curMsgLen += 1;
 		}
 
 		if (MMSYSERR_NOERROR != res)
@@ -150,8 +177,9 @@ WinMidiOut::MidiOut(const Bytes & bytes)
 			}
 		}
 
+		idx += curMsgLen;
 		if (!(idx % kBufferSize))
-			Sleep(kDelayTime);
+			::Sleep(kDelayTime);
 	}
 
 	if (mTrace && !mMidiOutError)
@@ -212,4 +240,21 @@ WinMidiOut::ReportError(LPCSTR msg,
 	CString errMsg;
 	errMsg.Format(msg, param1, param2);
 	ReportError(errMsg);
+}
+
+void CALLBACK 
+WinMidiOut::MidiOutCallbackProc(HMIDIOUT hmo, 
+								UINT wMsg, 
+								DWORD dwInstance, 
+								DWORD dwParam1, 
+								DWORD dwParam2)
+{
+	if (MOM_DONE == wMsg)
+	{
+		WinMidiOut * _this = (WinMidiOut *) dwInstance;
+		LPMIDIHDR hdr = (LPMIDIHDR) dwParam1;
+		MMRESULT res = ::midiOutUnprepareHeader(_this->mMidiOut, hdr, sizeof(MIDIHDR));
+		hdr->dwFlags = 0;
+		_ASSERTE(MMSYSERR_NOERROR == res);
+	}
 }

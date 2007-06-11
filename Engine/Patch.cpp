@@ -111,14 +111,16 @@ Patch::UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay
 void
 Patch::SendStringA(IMidiOut * midiOut)
 {
-	midiOut->MidiOut(mByteStringA);
+	if (mByteStringA.size())
+		midiOut->MidiOut(mByteStringA);
 	mPatchIsOn = true;
 }
 
 void
 Patch::SendStringB(IMidiOut * midiOut)
 {
-	midiOut->MidiOut(mByteStringB);
+	if (mByteStringB.size())
+		midiOut->MidiOut(mByteStringB);
 	mPatchIsOn = false;
 }
 

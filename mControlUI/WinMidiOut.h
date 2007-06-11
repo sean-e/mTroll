@@ -19,7 +19,7 @@ class ITraceDisplay;
 class WinMidiOut : public IMidiOut
 {
 public:
-	WinMidiOut(ITraceDisplay * trace) : mTrace(trace), mMidiOut(NULL), mMidiOutError(false) { }
+	WinMidiOut(ITraceDisplay * trace);
 	~WinMidiOut();
 
 	// IMidiOut
@@ -37,7 +37,12 @@ private:
 	void ReportError(LPCSTR msg, int param1) const;
 	void ReportError(LPCSTR msg, int param1, int param2) const;
 
+	static void CALLBACK MidiOutCallbackProc(HMIDIOUT hmo, UINT wMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2);
+
 	ITraceDisplay				* mTrace;
 	HMIDIOUT					mMidiOut;
+	enum {MIDIHDR_CNT = 256};
+	MIDIHDR						mMidiHdrs[MIDIHDR_CNT];
+	int							mCurMidiHdrIdx;
 	mutable bool				mMidiOutError;
 };
