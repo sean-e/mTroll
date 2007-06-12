@@ -22,10 +22,10 @@ public:
 	virtual void CloseMidiOut();
 
 private:
-	void ReportMidiError(MMRESULT resultCode, unsigned int lineNumber) const;
-	void ReportError(LPCSTR msg) const;
-	void ReportError(LPCSTR msg, int param1) const;
-	void ReportError(LPCSTR msg, int param1, int param2) const;
+	void ReportMidiError(MMRESULT resultCode, unsigned int lineNumber);
+	void ReportError(LPCSTR msg);
+	void ReportError(LPCSTR msg, int param1);
+	void ReportError(LPCSTR msg, int param1, int param2);
 
 	static void CALLBACK MidiOutCallbackProc(HMIDIOUT hmo, UINT wMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2);
 
@@ -34,5 +34,5 @@ private:
 	enum {MIDIHDR_CNT = 128};
 	MIDIHDR						mMidiHdrs[MIDIHDR_CNT];
 	int							mCurMidiHdrIdx;
-	mutable bool				mMidiOutError;
+	bool						mMidiOutError;
 };

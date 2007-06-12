@@ -4,6 +4,8 @@
 
 #pragma comment(lib, "winmm.lib")
 
+static std::string GetMidiErrorText(MMRESULT resultCode);
+
 
 WinMidiOut::WinMidiOut(ITraceDisplay * trace) : 
 	mTrace(trace), 
@@ -36,7 +38,12 @@ WinMidiOut::GetMidiOutDeviceName(unsigned int deviceIdx) const
 	if (res == MMSYSERR_NOERROR)
 		devName = outCaps.szPname;
 	else
-		ReportMidiError(res, __LINE__);
+	{
+		std::string errMsg(::GetMidiErrorText(res));
+		CString msg;
+		msg.Format(_T("Error getting name of out device %d: %s"), deviceIdx, errMsg.c_str());
+		devName = msg;
+	}
 
 	return devName;
 }
@@ -210,20 +217,19 @@ WinMidiOut::CloseMidiOut()
 
 void
 WinMidiOut::ReportMidiError(MMRESULT resultCode, 
-							unsigned int lineNumber) const
+							unsigned int lineNumber)
 {
-	TCHAR	errMsg[MAXERRORLENGTH];
+	std::string errMsg(::GetMidiErrorText(resultCode));
 	CString msg;
 
 	mMidiOutError = true;
-	::midiOutGetErrorText(resultCode, errMsg, sizeof(TCHAR)*MAXERRORLENGTH);
-	msg.Format(_T("Error: %s\nError location: %s (%d)\n"), errMsg, __FILE__, lineNumber);
+	msg.Format(_T("Error: %s\nError location: %s (%d)\n"), errMsg.c_str(), __FILE__, lineNumber);
 	if (mTrace)
 		mTrace->Trace(std::string(msg));
 }
 
 void
-WinMidiOut::ReportError(LPCSTR msg) const
+WinMidiOut::ReportError(LPCSTR msg)
 {
 	mMidiOutError = true;
 	if (mTrace)
@@ -232,7 +238,7 @@ WinMidiOut::ReportError(LPCSTR msg) const
 
 void
 WinMidiOut::ReportError(LPCSTR msg, 
-						int param1) const
+						int param1)
 {
 	CString errMsg;
 	errMsg.Format(msg, param1);
@@ -242,9 +248,17 @@ WinMidiOut::ReportError(LPCSTR msg,
 void
 WinMidiOut::ReportError(LPCSTR msg, 
 						int param1, 
-						int param2) const
+						int param2)
 {
 	CString errMsg;
 	errMsg.Format(msg, param1, param2);
 	ReportError(errMsg);
+}
+
+std::string
+GetMidiErrorText(MMRESULT resultCode)
+{
+	TCHAR	errMsg[MAXERRORLENGTH];
+	::midiOutGetErrorText(resultCode, errMsg, sizeof(TCHAR)*MAXERRORLENGTH);
+	return errMsg;
 }
