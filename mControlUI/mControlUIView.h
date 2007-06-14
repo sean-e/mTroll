@@ -14,6 +14,9 @@
 #include <atlctrls.h>
 
 
+class CLabel;
+
+
 class CMControlUIView : public CDialogImpl<CMControlUIView>, 
 								IMainDisplay, 
 								ISwitchDisplay, 
@@ -26,7 +29,7 @@ public:
 
 	enum { IDD = IDD_MCONTROLUI_FORM };
 	typedef CProgressBarCtrl	SwitchLed;
-	typedef CEdit				SwitchTextDisplay;
+	typedef CLabel				SwitchTextDisplay;
 	typedef CButton				Switch;
 
 	HWND Create(HWND hWndParent, LPARAM dwInitParam = NULL);

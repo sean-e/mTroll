@@ -12,6 +12,7 @@
 #include "..\Engine\EngineLoader.h"
 #include "..\Engine\MidiControlEngine.h"
 #include "..\Engine\UiLoader.h"
+#include "ATLLabel.h"
 
 
 CMControlUIView::CMControlUIView() :
@@ -180,7 +181,7 @@ CMControlUIView::SetSwitchText(int switchNumber, const std::string & txt)
 	if (!mSwitchTextDisplays[switchNumber] || !mSwitchTextDisplays[switchNumber]->IsWindow())
 		return;
 
-	mSwitchTextDisplays[switchNumber]->SetWindowText(txt.c_str());
+	mSwitchTextDisplays[switchNumber]->SetText(txt);
 }
 
 void
@@ -312,9 +313,16 @@ CMControlUIView::CreateSwitchTextDisplay(int id,
 	rc.bottom = top + height;
 	rc.right = left + width;
 	curSwitchDisplay->Create(m_hWnd, rc, NULL, 
-		ES_AUTOHSCROLL | /*ES_READONLY |*/ ES_LEFT | WS_VISIBLE | WS_CHILDWINDOW, 
-		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY | WS_EX_CLIENTEDGE);
-	curSwitchDisplay->SetFont(mSwitchDisplayFont);
+		/*ES_AUTOHSCROLL |*/ ES_READONLY | ES_LEFT | WS_VISIBLE | WS_CHILDWINDOW, 
+		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY /*| WS_EX_CLIENTEDGE*/);
+	curSwitchDisplay->Created();
+// 	curSwitchDisplay->SetFont(mSwitchDisplayFont);
+	curSwitchDisplay->SetFontName(std::string("Courier New"));
+	curSwitchDisplay->SetFontBold(true);
+	curSwitchDisplay->SetFontSize(11);
+	curSwitchDisplay->SetSunken(false);
+	curSwitchDisplay->SetBkColor(0);
+	curSwitchDisplay->SetTextColor(0x00FF00);
 	_ASSERTE(!mSwitchTextDisplays[id]);
 	mSwitchTextDisplays[id] = curSwitchDisplay;
 }
