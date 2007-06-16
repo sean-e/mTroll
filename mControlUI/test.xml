@@ -9,71 +9,1048 @@
 	    </switches>
 	</SystemConfig>
 	<patches>
-	    <patch name="the first patch" number="1" type="normal">
-	    	<bytestring name="A">f0 f7</bytestring>
-	    	<bytestring name="B">f0 f7</bytestring>
+	    <patch name="DRV TOGGLE" number="1" type="toggle">
+	    	<bytestring name="A">ca 00 ba 6f 29</bytestring>
+	    	<bytestring name="B">ca 02 ba 6f 7f</bytestring>
 	    </patch>
-	    <patch name="the second patch" number="2" type="normal">
-	    	<bytestring name="A">f0 f7</bytestring>
-	    	<bytestring name="B">f0 f7</bytestring>
+	    <patch name="DRV TOGGLE2" number="2" type="toggle">
+	    	<bytestring name="A">ca 00</bytestring>
+	    	<bytestring name="B">ca 02</bytestring>
 	    </patch>
-	    <patch name="patch 3" number="3" type="toggle">
-	    	<bytestring name="A">f0 f7</bytestring>
-	    	<bytestring name="B">f0 f7</bytestring>
+	    <patch name="SS ALL MUTE TGL" number="3" type="toggle">
+	    	<bytestring name="A">ba 09 00</bytestring>
+	    	<bytestring name="B">ba 09 7f</bytestring>
 	    </patch>
-	    <patch name="patch 4" number="4" type="momentary">
-	    	<bytestring name="A">f0 f7</bytestring>
-	    	<bytestring name="B">f0 f7</bytestring>
+	    <patch name="SS ALL MUTE MOM" number="4" type="momentary">
+	    	<bytestring name="A">ba 09 00</bytestring>
+	    	<bytestring name="B">ba 09 7f</bytestring>
 	    </patch>
-	    <patch name="patch 5" number="5" type="normal">
-	    	<bytestring name="A">f0 f7</bytestring>
-	    	<bytestring name="B">f0 f7</bytestring>
+	    <patch name="SS TA MUTE TGL" number="5" type="toggle">
+	    	<bytestring name="A">ba 0a 00</bytestring>
+	    	<bytestring name="B">ba 0a 7f</bytestring>
 	    </patch>
-	    <patch name="patch 6" number="6" type="normal">
-	    	<bytestring name="A">f0 f7</bytestring>
-	    	<bytestring name="B">f0 f7</bytestring>
+	    <patch name="SS TA MUTE MOM" number="6" type="momentary">
+	    	<bytestring name="A">ba 0a 00</bytestring>
+	    	<bytestring name="B">ba 0a 7f</bytestring>
 	    </patch>
-	    <patch name="patch 7" number="7" type="normal">
-	    	<bytestring name="A">f0 f7</bytestring>
-	    	<bytestring name="B">f0 f7</bytestring>
+	    <patch name="H8K A ALL OFF" number="7" type="momentary">
+	    	<bytestring name="A">b2 05 7f b2 05 00</bytestring>
 	    </patch>
-	    <patch name="patch 8" number="8" type="normal">
-	    	<bytestring name="A">f0 f7</bytestring>
-	    	<bytestring name="B">f0 f7</bytestring>
+	    <patch name="H8K A TOGGLE 1" number="8" type="toggle">
+	    	<bytestring name="A">b2 07 7f b2 07 00</bytestring>
+	    	<bytestring name="B">b2 07 7f b2 07 00</bytestring>
 	    </patch>
-	    <patch name="patch 9" number="9" type="normal">
-	    	<bytestring name="A">f0 f7</bytestring>
-	    	<bytestring name="B">f0 f7</bytestring>
+	    <patch name="H8K A TOGGLE 2" number="9" type="toggle">
+	    	<bytestring name="A">b2 08 7f b2 08 00</bytestring>
+	    	<bytestring name="B">b2 08 7f b2 08 00</bytestring>
 	    </patch>
-	    <patch name="patch 10" number="10" type="normal">
-	    	<bytestring name="A">f0 f7</bytestring>
-	    	<bytestring name="B">f0 f7</bytestring>
+	    <patch name="H8K A TOGGLE 3" number="10" type="toggle">
+	    	<bytestring name="A">b2 0a 7f b2 0a 00</bytestring>
+	    	<bytestring name="B">b2 0a 7f b2 0a 00</bytestring>
 	    </patch>
-	    <patch name="patch 11" number="11" type="normal">
-	    	<bytestring name="A">f0 f7</bytestring>
-	    	<bytestring name="B">f0 f7</bytestring>
+	    <patch name="H8K A TOGGLE 4" number="11" type="toggle">
+	    	<bytestring name="A">b2 0b 7f b2 0b 00</bytestring>
+	    	<bytestring name="B">b2 0b 7f b2 0b 00</bytestring>
 	    </patch>
-	    <patch name="patch 12" number="12" type="normal">
-	    	<bytestring name="A">f0 f7</bytestring>
-	    	<bytestring name="B">f0 f7</bytestring>
+	    <patch name="H8K A TOGGLE 5" number="12" type="toggle">
+	    	<bytestring name="A">b2 10 7f b2 10 00</bytestring>
+	    	<bytestring name="B">b2 10 7f b2 10 00</bytestring>
+	    </patch>
+	    <patch name="H8K A TOGGLE 6" number="13" type="toggle">
+	    	<bytestring name="A">b2 11 7f b2 11 00</bytestring>
+	    	<bytestring name="B">b2 11 7f b2 11 00</bytestring>
+	    </patch>
+	    <patch name="H8K A TOGGLE 7" number="14" type="toggle">
+	    	<bytestring name="A">b2 12 7f b2 12 00</bytestring>
+	    	<bytestring name="B">b2 12 7f b2 12 00</bytestring>
+	    </patch>
+	    <patch name="H8K A TOGGLE 8" number="15" type="toggle">
+	    	<bytestring name="A">b2 13 7f b2 13 00</bytestring>
+	    	<bytestring name="B">b2 13 7f b2 13 00</bytestring>
+	    </patch>
+	    <patch name="H8K A TOGGLE 9" number="16" type="toggle">
+	    	<bytestring name="A">b2 40 7f b2 40 00</bytestring>
+	    	<bytestring name="B">b2 40 7f b2 40 00</bytestring>
+	    </patch>
+	    <patch name="H8K A TOGGLE 10" number="17" type="toggle">
+	    	<bytestring name="A">b2 42 7f b2 42 00</bytestring>
+	    	<bytestring name="B">b2 42 7f b2 42 00</bytestring>
+	    </patch>
+	    <patch name="H8K A TOGGLE 11" number="18" type="toggle">
+	    	<bytestring name="A">b2 43 7f b2 43 00</bytestring>
+	    	<bytestring name="B">b2 43 7f b2 43 00</bytestring>
+	    </patch>
+	    <patch name="H8K A TOGGLE 12" number="19" type="toggle">
+	    	<bytestring name="A">b2 45 7f b2 45 00</bytestring>
+	    	<bytestring name="B">b2 45 7f b2 45 00</bytestring>
+	    </patch>
+	    <patch name="H8K A TOGGLE 13" number="20" type="toggle">
+	    	<bytestring name="A">b2 50 7f b2 50 00</bytestring>
+	    	<bytestring name="B">b2 50 7f b2 50 00</bytestring>
+	    </patch>
+	    <patch name="H8K A TOGGLE 14" number="21" type="toggle">
+	    	<bytestring name="A">b2 51 7f b2 51 00</bytestring>
+	    	<bytestring name="B">b2 51 7f b2 51 00</bytestring>
+	    </patch>
+	    <patch name="H8K A TOGGLE 15" number="22" type="toggle">
+	    	<bytestring name="A">b2 52 7f b2 52 00</bytestring>
+	    	<bytestring name="B">b2 52 7f b2 52 00</bytestring>
+	    </patch>
+	    <patch name="H8K A TOGGLE 16" number="23" type="toggle">
+	    	<bytestring name="A">b2 53 7f b2 53 00</bytestring>
+	    	<bytestring name="B">b2 53 7f b2 53 00</bytestring>
+	    </patch>
+	    <patch name="H8K B ALL OFF" number="24" type="momentary">
+	    	<bytestring name="A">b3 05 7f b3 05 00</bytestring>
+	    </patch>
+	    <patch name="H8K B TOGGLE 1" number="25" type="toggle">
+	    	<bytestring name="A">b3 07 7f b3 07 00</bytestring>
+	    	<bytestring name="B">b3 07 7f b3 07 00</bytestring>
+	    </patch>
+	    <patch name="H8K B TOGGLE 2" number="26" type="toggle">
+	    	<bytestring name="A">b3 08 7f b3 08 00</bytestring>
+	    	<bytestring name="B">b3 08 7f b3 08 00</bytestring>
+	    </patch>
+	    <patch name="H8K B TOGGLE 3" number="27" type="toggle">
+	    	<bytestring name="A">b3 0a 7f b3 0a 00</bytestring>
+	    	<bytestring name="B">b3 0a 7f b3 0a 00</bytestring>
+	    </patch>
+	    <patch name="H8K B TOGGLE 4" number="28" type="toggle">
+	    	<bytestring name="A">b3 0b 7f b3 0b 00</bytestring>
+	    	<bytestring name="B">b3 0b 7f b3 0b 00</bytestring>
+	    </patch>
+	    <patch name="H8K B TOGGLE 5" number="29" type="toggle">
+	    	<bytestring name="A">b3 10 7f b3 10 00</bytestring>
+	    	<bytestring name="B">b3 10 7f b3 10 00</bytestring>
+	    </patch>
+	    <patch name="H8K B TOGGLE 6" number="30" type="toggle">
+	    	<bytestring name="A">b3 11 7f b3 11 00</bytestring>
+	    	<bytestring name="B">b3 11 7f b3 11 00</bytestring>
+	    </patch>
+	    <patch name="H8K B TOGGLE 7" number="31" type="toggle">
+	    	<bytestring name="A">b3 12 7f b3 12 00</bytestring>
+	    	<bytestring name="B">b3 12 7f b3 12 00</bytestring>
+	    </patch>
+	    <patch name="H8K B TOGGLE 8" number="32" type="toggle">
+	    	<bytestring name="A">b3 13 7f b3 13 00</bytestring>
+	    	<bytestring name="B">b3 13 7f b3 13 00</bytestring>
+	    </patch>
+	    <patch name="H8K B TOGGLE 9" number="33" type="toggle">
+	    	<bytestring name="A">b3 40 7f b3 40 00</bytestring>
+	    	<bytestring name="B">b3 40 7f b3 40 00</bytestring>
+	    </patch>
+	    <patch name="H8K B TOGGLE 10" number="34" type="toggle">
+	    	<bytestring name="A">b3 42 7f b3 42 00</bytestring>
+	    	<bytestring name="B">b3 42 7f b3 42 00</bytestring>
+	    </patch>
+	    <patch name="H8K B TOGGLE 11" number="35" type="toggle">
+	    	<bytestring name="A">b3 43 7f b3 43 00</bytestring>
+	    	<bytestring name="B">b3 43 7f b3 43 00</bytestring>
+	    </patch>
+	    <patch name="H8K B TOGGLE 12" number="36" type="toggle">
+	    	<bytestring name="A">b3 45 7f b3 45 00</bytestring>
+	    	<bytestring name="B">b3 45 7f b3 45 00</bytestring>
+	    </patch>
+	    <patch name="H8K B TOGGLE 13" number="37" type="toggle">
+	    	<bytestring name="A">b3 50 7f b3 50 00</bytestring>
+	    	<bytestring name="B">b3 50 7f b3 50 00</bytestring>
+	    </patch>
+	    <patch name="H8K B TOGGLE 14" number="38" type="toggle">
+	    	<bytestring name="A">b3 51 7f b3 51 00</bytestring>
+	    	<bytestring name="B">b3 51 7f b3 51 00</bytestring>
+	    </patch>
+	    <patch name="H8K B TOGGLE 15" number="39" type="toggle">
+	    	<bytestring name="A">b3 52 7f b3 52 00</bytestring>
+	    	<bytestring name="B">b3 52 7f b3 52 00</bytestring>
+	    </patch>
+	    <patch name="H8K B TOGGLE 16" number="40" type="toggle">
+	    	<bytestring name="A">b3 53 7f b3 53 00</bytestring>
+	    	<bytestring name="B">b3 53 7f b3 53 00</bytestring>
+	    </patch>
+	    <patch name="H8K B MUTE MOM" number="41" type="momentary">
+	    	<bytestring name="A">b3 02 00</bytestring>
+	    	<bytestring name="B">b3 02 7f</bytestring>
+	    </patch>
+	    <patch name="TRX RG1" number="44" type="normal">
+	    	<bytestring name="A">c1 14</bytestring>
+	    </patch>
+	    <patch name="TRX RY1" number="45" type="normal">
+	    	<bytestring name="A">c1 19</bytestring>
+	    </patch>
+	    <patch name="TRX L1R1" number="46" type="normal">
+	    	<bytestring name="A">c1 15</bytestring>
+	    </patch>
+	    <patch name="TRX L2R1" number="47" type="normal">
+	    	<bytestring name="A">c1 16</bytestring>
+	    </patch>
+	    <patch name="TRX L1R2" number="48" type="normal">
+	    	<bytestring name="A">c1 18</bytestring>
+	    </patch>
+	    <patch name="TRX L1R3" number="49" type="normal">
+	    	<bytestring name="A">c1 1c</bytestring>
+	    </patch>
+	    <patch name="TRX L2R3" number="50" type="normal">
+	    	<bytestring name="A">c1 1b</bytestring>
+	    </patch>
+	    <patch name="TRX L2R2" number="51" type="normal">
+	    	<bytestring name="A">c1 1a</bytestring>
+	    </patch>
+	    <patch name="TORN" number="52" type="normal">
+	    	<bytestring name="A">ca 04 c4 14 c5 14 c1 14</bytestring>
+	    </patch>
+	    <patch name="ECHO" number="53" type="normal">
+	    	<bytestring name="A">ca 0d c5 15</bytestring>
+	    </patch>
+	    <patch name="3 ON 2" number="54" type="normal">
+	    	<bytestring name="A">c1 14 ca 0d c5 18</bytestring>
+	    </patch>
+	    <patch name="REVERSE" number="55" type="normal">
+	    	<bytestring name="A">ca 0d c5 16</bytestring>
+	    </patch>
+	    <patch name="SLEESTAKS" number="56" type="normal">
+	    	<bytestring name="A">ca 0e c4 17</bytestring>
+	    </patch>
+	    <patch name="STRINGPAD" number="57" type="normal">
+	    	<bytestring name="A">c5 01 c4 12 ca 04 c1 19</bytestring>
+	    </patch>
+	    <patch name="DARKSONG" number="58" type="normal">
+	    	<bytestring name="A">c3 00 c4 02 c5 15 ca 04 c1 22</bytestring>
+	    </patch>
+	    <patch name="G STR BEND" number="59" type="normal">
+	    	<bytestring name="A">c4 18 c5 0e ca 05 c1 14</bytestring>
+	    </patch>
+	    <patch name="EDP -) H3500" number="60" type="normal">
+	    	<bytestring name="A">c4 12 c5 01 c2 05 c1 14</bytestring>
+	    </patch>
+	    <patch name="LESSONS IN DARK" number="61" type="normal">
+	    	<bytestring name="A">c1 14 ca 0d c4 1e c5 1e</bytestring>
+	    </patch>
+	    <patch name="LESSONS 2" number="62" type="normal">
+	    	<bytestring name="A">c4 1e c1 1a ca 0e</bytestring>
+	    </patch>
+	    <patch name="FRAGMENTED ORIG" number="63" type="normal">
+	    	<bytestring name="A">c4 59 c1 1e ca 00</bytestring>
+	    </patch>
+	    <patch name="RECURSIVE LOOPS" number="64" type="normal">
+	    	<bytestring name="A">c4 1e c5 20 ca 0d c1 14</bytestring>
+	    </patch>
+	    <patch name="DRY DIST" number="65" type="normal">
+	    	<bytestring name="A">c1 1a ca 00 c3 21</bytestring>
+	    </patch>
+	    <patch name="A MINOR NEBULA" number="66" type="normal">
+	    	<bytestring name="A">ca 00 c1 23 c3 22 c4 59</bytestring>
+	    </patch>
+	    <patch name="ILLUSORY VISION" number="67" type="normal">
+	    	<bytestring name="A">c4 59 c1 1f ca 00 c3 24</bytestring>
+	    </patch>
+	    <patch name="INTRICATE THREA" number="68" type="normal">
+	    	<bytestring name="A">c1 1a ca 0d c4 59 c5 23</bytestring>
+	    </patch>
+	    <patch name="THE HORROR" number="69" type="normal">
+	    	<bytestring name="A">c1 1e ca 00 c3 25 c4 59</bytestring>
+	    </patch>
+	    <patch name="SONANCE VARIANC" number="70" type="normal">
+	    	<bytestring name="A">c1 26 ca 00 c5 28</bytestring>
+	    </patch>
+	    <patch name="SONANCE 2" number="71" type="normal">
+	    	<bytestring name="A">c1 1a ca 0d</bytestring>
+	    </patch>
+	    <patch name="SONANCE 3" number="72" type="normal">
+	    	<bytestring name="A">c5 2a</bytestring>
+	    </patch>
+	    <patch name="SONANCE SILENCE" number="73" type="normal">
+	    	<bytestring name="A">c1 7f c2 00 c3 27 c4 00</bytestring>
+	    </patch>
+	    <patch name="DISCHORD UNSET1" number="74" type="normal">
+	    	<bytestring name="A">c1 1f ca 00 c3 2c c4 00</bytestring>
+	    </patch>
+	    <patch name="DISCHORD UNSET2" number="75" type="normal">
+	    	<bytestring name="A">c1 1e ca 00</bytestring>
+	    </patch>
+	    <patch name="DISCHORD UNSET3" number="76" type="normal">
+	    	<bytestring name="A">c1 1a ca 00</bytestring>
+	    </patch>
+	    <patch name="ABSENCE OF EXIS" number="77" type="normal">
+	    	<bytestring name="A">c1 1a ca 00 c5 2f</bytestring>
+	    </patch>
+	    <patch name="ABSENCE 2" number="78" type="normal">
+	    	<bytestring name="A">ca 0d</bytestring>
+	    </patch>
+	    <patch name="COBWEB SETUP" number="79" type="normal">
+	    	<bytestring name="A">b2 07 00 ca 0e c4 31 c1 5a</bytestring>
+	    </patch>
+	    <patch name="COBWEBS IN SPA1" number="80" type="normal">
+	    	<bytestring name="A">c1 19 ca 0e b2 07 01 c3 32</bytestring>
+	    </patch>
+	    <patch name="COBWEBS IN SPA2" number="81" type="normal">
+	    	<bytestring name="A">c1 1e ca 00</bytestring>
+	    </patch>
+	    <patch name="COBWEBS IN SPA3" number="82" type="normal">
+	    	<bytestring name="A">c1 1a ca 00 c3 34</bytestring>
+	    </patch>
+	    <patch name="COBWEBS IN SPA4" number="83" type="normal">
+	    	<bytestring name="A">c1 1f ca 00</bytestring>
+	    </patch>
+	    <patch name="BELOW CRUSH DE1" number="84" type="normal">
+	    	<bytestring name="A">b2 07 01 c1 1a ca 00 c3 36 c4 36 c5 36</bytestring>
+	    </patch>
+	    <patch name="BELOW CRUSH DE2" number="85" type="normal">
+	    	<bytestring name="A">c1 22 ca 00</bytestring>
+	    </patch>
+	    <patch name="BELOW CRUSH DE3" number="86" type="normal">
+	    	<bytestring name="A">c1 1a ca 00</bytestring>
+	    </patch>
+	    <patch name="SYSTEM OF SIRI1" number="87" type="normal">
+	    	<bytestring name="A">c1 16 ca 00 c5 39</bytestring>
+	    </patch>
+	    <patch name="SYSTEM OF SIRI2" number="88" type="normal">
+	    	<bytestring name="A">ca 0d c1 20</bytestring>
+	    </patch>
+	    <patch name="TRX LD1 PED 2" number="89" type="normal">
+	    	<bytestring name="A">c1 3c</bytestring>
+	    </patch>
+	    <patch name="DHP PEDAL 2" number="90" type="normal">
+	    </patch>
+	    <patch name="SWB PEDAL 2" number="91" type="normal">
+	    </patch>
+	    <patch name="H35 PEDAL 2" number="92" type="normal">
+	    </patch>
+	    <patch name="DEFAULT PEDALS" number="93" type="normal">
+	    </patch>
+	    <patch name="TRIA MUTE MOM" number="94" type="momentary">
+	    	<bytestring name="A">b1 01 7f</bytestring>
+	    	<bytestring name="B">b1 01 00</bytestring>
+	    </patch>
+	    <patch name="SS A MUTE MOM" number="95" type="momentary">
+	    	<bytestring name="A">ba 6e 00</bytestring>
+	    	<bytestring name="B">ba 6e 7f</bytestring>
+	    </patch>
+	    <patch name="SS B MUTE MOM" number="96" type="momentary">
+	    	<bytestring name="A">ba 6f 00</bytestring>
+	    	<bytestring name="B">ba 6f 7f</bytestring>
+	    </patch>
+	    <patch name="H8K A MVR 1" number="100" type="normal">
+	    	<bytestring name="A">b2 60 01</bytestring>
+	    </patch>
+	    <patch name="H8K A MVR 2" number="101" type="normal">
+	    	<bytestring name="A">b2 60 02</bytestring>
+	    </patch>
+	    <patch name="H8K A MVR 3" number="102" type="normal">
+	    	<bytestring name="A">b2 60 03</bytestring>
+	    </patch>
+	    <patch name="H8K A MVR 4" number="103" type="normal">
+	    	<bytestring name="A">b2 60 04</bytestring>
+	    </patch>
+	    <patch name="H8K A MVR 5" number="104" type="normal">
+	    	<bytestring name="A">b2 60 05</bytestring>
+	    </patch>
+	    <patch name="H8K A MVR 6" number="105" type="normal">
+	    	<bytestring name="A">b2 60 06</bytestring>
+	    </patch>
+	    <patch name="H8K A MVR 7" number="106" type="normal">
+	    	<bytestring name="A">b2 60 07</bytestring>
+	    </patch>
+	    <patch name="H8K A MVR 8" number="107" type="normal">
+	    	<bytestring name="A">b2 60 08</bytestring>
+	    </patch>
+	    <patch name="H8K A MVR 9" number="108" type="normal">
+	    	<bytestring name="A">b2 60 09</bytestring>
+	    </patch>
+	    <patch name="H8K A MVR 10" number="109" type="normal">
+	    	<bytestring name="A">b2 60 10</bytestring>
+	    </patch>
+	    <patch name="H8K B MVR 1" number="110" type="normal">
+	    	<bytestring name="A">b3 60 01</bytestring>
+	    </patch>
+	    <patch name="H8K B MVR 2" number="111" type="normal">
+	    	<bytestring name="A">b3 60 02</bytestring>
+	    </patch>
+	    <patch name="H8K B MVR 3" number="112" type="normal">
+	    	<bytestring name="A">b3 60 03</bytestring>
+	    </patch>
+	    <patch name="H8K B MVR 4" number="113" type="normal">
+	    	<bytestring name="A">b3 60 04</bytestring>
+	    </patch>
+	    <patch name="H8K B MVR 5" number="114" type="normal">
+	    	<bytestring name="A">b3 60 05</bytestring>
+	    </patch>
+	    <patch name="H8K B MVR 6" number="115" type="normal">
+	    	<bytestring name="A">b3 60 06</bytestring>
+	    </patch>
+	    <patch name="H8K B MVR 7" number="116" type="normal">
+	    	<bytestring name="A">b3 60 07</bytestring>
+	    </patch>
+	    <patch name="H8K B MVR 8" number="117" type="normal">
+	    	<bytestring name="A">b3 60 08</bytestring>
+	    </patch>
+	    <patch name="H8K B MVR 9" number="118" type="normal">
+	    	<bytestring name="A">b3 60 09</bytestring>
+	    </patch>
+	    <patch name="H8K B MVR 10" number="119" type="normal">
+	    	<bytestring name="A">b3 60 10</bytestring>
+	    </patch>
+	    <patch name="EDPV PARAMETER" number="270" type="normal">
+	    	<bytestring name="A">b6 24 7f b6 24 00</bytestring>
+	    </patch>
+	    <patch name="EDPV RECORD" number="271" type="normal">
+	    	<bytestring name="A">b6 26 7f b6 26 00</bytestring>
+	    </patch>
+	    <patch name="EDPV OVERDUB" number="272" type="normal">
+	    	<bytestring name="A">b6 27 7f b6 27 00</bytestring>
+	    </patch>
+	    <patch name="EDPV MULTIPLY" number="273" type="normal">
+	    	<bytestring name="A">b6 28 7f b6 28 00</bytestring>
+	    </patch>
+	    <patch name="EDPV INSERT" number="274" type="normal">
+	    	<bytestring name="A">b6 29 7f b6 29 00</bytestring>
+	    </patch>
+	    <patch name="EDPV MUTE" number="275" type="normal">
+	    	<bytestring name="A">b6 2a 7f b6 2a 00</bytestring>
+	    </patch>
+	    <patch name="EDPV UNDO" number="276" type="normal">
+	    	<bytestring name="A">b6 2b 7f b6 2b 00</bytestring>
+	    </patch>
+	    <patch name="EDPV NEXTLOOP" number="277" type="normal">
+	    	<bytestring name="A">b6 2c 7f b6 2c 00</bytestring>
+	    </patch>
+	    <patch name="EDPV REPLACE" number="278" type="normal">
+	    	<bytestring name="A">b6 2d 7f b6 2d 00</bytestring>
+	    </patch>
+	    <patch name="EDPV SUBSTITUTE" number="279" type="normal">
+	    	<bytestring name="A">b6 2e 7f b6 2e 00</bytestring>
+	    </patch>
+	    <patch name="EDPV INSERTONLY" number="280" type="normal">
+	    	<bytestring name="A">b6 2f 7f b6 2f 00</bytestring>
+	    </patch>
+	    <patch name="EDPV SPEED" number="281" type="normal">
+	    	<bytestring name="A">b6 30 7f b6 30 00</bytestring>
+	    </patch>
+	    <patch name="EDPV REVERSE" number="282" type="normal">
+	    	<bytestring name="A">b6 31 7f b6 31 00</bytestring>
+	    </patch>
+	    <patch name="EDP SUSRECORD" number="283" type="momentary">
+	    	<bytestring name="A">b6 32 7f</bytestring>
+	    	<bytestring name="B">b6 32 00</bytestring>
+	    </patch>
+	    <patch name="EDP SUSOVERDUB" number="284" type="momentary">
+	    	<bytestring name="A">b6 33 7f</bytestring>
+	    	<bytestring name="B">b6 33 00</bytestring>
+	    </patch>
+	    <patch name="EDP SUSRNDMULT" number="285" type="momentary">
+	    	<bytestring name="A">b6 34 7f</bytestring>
+	    	<bytestring name="B">b6 34 00</bytestring>
+	    </patch>
+	    <patch name="EDP SUSRNDINSRT" number="286" type="momentary">
+	    	<bytestring name="A">b6 35 7f</bytestring>
+	    	<bytestring name="B">b6 35 00</bytestring>
+	    </patch>
+	    <patch name="EDP SUSMUTE" number="287" type="momentary">
+	    	<bytestring name="A">b6 36 7f</bytestring>
+	    	<bytestring name="B">b6 36 00</bytestring>
+	    </patch>
+	    <patch name="EDP SHORTUNDO" number="288" type="normal">
+	    	<bytestring name="A">b6 37 7f</bytestring>
+	    </patch>
+	    <patch name="EDP SUSNEXTLOOP" number="289" type="momentary">
+	    	<bytestring name="A">b6 38 7f</bytestring>
+	    	<bytestring name="B">b6 38 00</bytestring>
+	    </patch>
+	    <patch name="EDP SUSREPLACE" number="290" type="momentary">
+	    	<bytestring name="A">b6 39 7f</bytestring>
+	    	<bytestring name="B">b6 39 00</bytestring>
+	    </patch>
+	    <patch name="EDP SUSSUBSTIT" number="291" type="momentary">
+	    	<bytestring name="A">b6 3a 7f</bytestring>
+	    	<bytestring name="B">b6 3a 00</bytestring>
+	    </patch>
+	    <patch name="EDP SUSTGL REV" number="292" type="momentary">
+	    	<bytestring name="A">b6 3b 7f</bytestring>
+	    	<bytestring name="B">b6 3b 00</bytestring>
+	    </patch>
+	    <patch name="EDP SUSTGL SPD" number="293" type="momentary">
+	    	<bytestring name="A">b6 3c 7f</bytestring>
+	    	<bytestring name="B">b6 3c 00</bytestring>
+	    </patch>
+	    <patch name="EDP RESET" number="294" type="normal">
+	    	<bytestring name="A">b6 3d 7f</bytestring>
+	    </patch>
+	    <patch name="EDP GEN RESET" number="295" type="normal">
+	    	<bytestring name="A">b6 3e 7f</bytestring>
+	    </patch>
+	    <patch name="EDP EXIT PARAMS" number="296" type="normal">
+	    	<bytestring name="A">b6 3f 7f</bytestring>
+	    </patch>
+	    <patch name="EDP SUSUNRNDMUL" number="297" type="momentary">
+	    	<bytestring name="A">b6 40 7f</bytestring>
+	    	<bytestring name="B">b6 40 00</bytestring>
+	    </patch>
+	    <patch name="EDP SUSUNRNDINS" number="298" type="momentary">
+	    	<bytestring name="A">b6 41 7f</bytestring>
+	    	<bytestring name="B">b6 41 00</bytestring>
+	    </patch>
+	    <patch name="EDP SUSMUTE-RET" number="299" type="momentary">
+	    	<bytestring name="A">b6 42 7f</bytestring>
+	    	<bytestring name="B">b6 42 00</bytestring>
+	    </patch>
+	    <patch name="EDP LONG UNDO" number="300" type="normal">
+	    	<bytestring name="A">b6 43 7f</bytestring>
+	    </patch>
+	    <patch name="EDP FORWARD" number="301" type="normal">
+	    	<bytestring name="A">b6 44 7f</bytestring>
+	    </patch>
+	    <patch name="EDP REVERSE" number="302" type="normal">
+	    	<bytestring name="A">b6 45 7f</bytestring>
+	    </patch>
+	    <patch name="EDP FULL SPEED" number="303" type="normal">
+	    	<bytestring name="A">b6 46 7f</bytestring>
+	    </patch>
+	    <patch name="EDP HALF SPEED" number="304" type="normal">
+	    	<bytestring name="A">b6 47 7f</bytestring>
+	    </patch>
+	    <patch name="EDP PLAYSAMPLE" number="305" type="normal">
+	    	<bytestring name="A">b6 48 7f</bytestring>
+	    </patch>
+	    <patch name="EDP RETRIGGER" number="306" type="normal">
+	    	<bytestring name="A">b6 49 7f</bytestring>
+	    </patch>
+	    <patch name="EDP REALIGN" number="307" type="normal">
+	    	<bytestring name="A">b6 4a 7f</bytestring>
+	    </patch>
+	    <patch name="EDP MUTEREALIGN" number="308" type="normal">
+	    	<bytestring name="A">b6 4b 7f</bytestring>
+	    </patch>
+	    <patch name="EDP QNTSTARTSNG" number="309" type="normal">
+	    	<bytestring name="A">b6 4c 7f</bytestring>
+	    </patch>
+	    <patch name="EDP MUQNSTRTSNG" number="310" type="normal">
+	    	<bytestring name="A">b6 4d 7f</bytestring>
+	    </patch>
+	    <patch name="EDP START POINT" number="311" type="normal">
+	    	<bytestring name="A">b6 4e 7f</bytestring>
+	    </patch>
+	    <patch name="EDP QNT STRT PT" number="312" type="normal">
+	    	<bytestring name="A">b6 4f 7f</bytestring>
+	    </patch>
+	    <patch name="EDP BEATTRIGSMP" number="313" type="normal">
+	    	<bytestring name="A">b6 50 7f</bytestring>
+	    </patch>
+	    <patch name="EDP MIDBEATSYNC" number="314" type="normal">
+	    	<bytestring name="A">b6 51 7f</bytestring>
+	    </patch>
+	    <patch name="EDP LOOP 1" number="315" type="normal">
+	    	<bytestring name="A">96 54 7f</bytestring>
+	    </patch>
+	    <patch name="EDP LOOP 2" number="316" type="normal">
+	    	<bytestring name="A">96 55 7f</bytestring>
+	    </patch>
+	    <patch name="EDP LOOP 3" number="317" type="normal">
+	    	<bytestring name="A">96 56 7f</bytestring>
+	    </patch>
+	    <patch name="EDP LOOP 4" number="318" type="normal">
+	    	<bytestring name="A">96 57 7f</bytestring>
+	    </patch>
+	    <patch name="EDP LOOP 5" number="319" type="normal">
+	    	<bytestring name="A">96 58 7f</bytestring>
+	    </patch>
+	    <patch name="EDP LOOP 6" number="320" type="normal">
+	    	<bytestring name="A">96 59 7f</bytestring>
+	    </patch>
+	    <patch name="EDP LOOP 7" number="321" type="normal">
+	    	<bytestring name="A">96 5a 7f</bytestring>
+	    </patch>
+	    <patch name="EDP LOOP 8" number="322" type="normal">
+	    	<bytestring name="A">96 5b 7f</bytestring>
+	    </patch>
+	    <patch name="EDP REC/MUTE" number="323" type="momentary">
+	    	<bytestring name="A">b6 26 7f b6 26 00</bytestring>
+	    	<bytestring name="B">b6 2a 7f b6 2a 00</bytestring>
+	    </patch>
+	    <patch name="EDP QUANTZ CYC" number="324" type="momentary">
+	    	<bytestring name="A">b6 24 7f</bytestring>
+	    	<bytestring name="B">b6 24 00 b6 27 7f b6 27 00 b6 27 7f b6 27 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</bytestring>
+	    </patch>
+	    <patch name="EDP INS MOD CYC" number="325" type="momentary">
+	    	<bytestring name="A">b6 24 7f</bytestring>
+	    	<bytestring name="B">b6 24 00 b6 24 7f b6 24 00 b6 29 7f b6 29 00 b6 29 7f b6 29 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</bytestring>
+	    </patch>
+	    <patch name="EDP REC MOD CYC" number="326" type="momentary">
+	    	<bytestring name="A">b6 24 7f</bytestring>
+	    	<bytestring name="B">b6 24 00 b6 24 7f b6 24 00 b6 26 7f b6 26 00 b6 26 7f b6 26 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</bytestring>
+	    </patch>
+	    <patch name="EDP RND MOD TGL" number="327" type="momentary">
+	    	<bytestring name="A">b6 24 7f</bytestring>
+	    	<bytestring name="B">b6 24 00 b6 24 7f b6 24 00 b6 28 7f b6 28 00 b6 28 7f b6 28 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</bytestring>
+	    </patch>
+	    <patch name="EDP DUB MOD TGL" number="328" type="momentary">
+	    	<bytestring name="A">b6 24 7f</bytestring>
+	    	<bytestring name="B">b6 24 00 b6 24 7f b6 24 00 b6 27 7f b6 27 00 b6 27 7f b6 27 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</bytestring>
+	    </patch>
+	    <patch name="EDP MUTE MOD TG" number="329" type="momentary">
+	    	<bytestring name="A">b6 24 7f</bytestring>
+	    	<bytestring name="B">b6 24 00 b6 24 7f b6 24 00 b6 2a 7f b6 2a 00 b6 2a 7f b6 2a 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</bytestring>
+	    </patch>
+	    <patch name="EDP SW QUANT CY" number="330" type="momentary">
+	    	<bytestring name="A">b6 24 7f</bytestring>
+	    	<bytestring name="B">b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 29 7f b6 29 00 b6 29 7f b6 29 00 b6 24 7f b6 24 00</bytestring>
+	    </patch>
+	    <patch name="EDP AUTOREC TGL" number="331" type="momentary">
+	    	<bytestring name="A">b6 24 7f</bytestring>
+	    	<bytestring name="B">b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 27 7f b6 27 00 b6 27 7f b6 27 00 b6 24 7f b6 24 00</bytestring>
+	    </patch>
+	    <patch name="EDP MORELOOP CY" number="332" type="momentary">
+	    	<bytestring name="A">b6 24 7f</bytestring>
+	    	<bytestring name="B">b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 26 7f b6 26 00 b6 26 7f b6 26 00 b6 24 7f b6 24 00</bytestring>
+	    </patch>
+	    <patch name="EDP LOOPCPY TGL" number="333" type="momentary">
+	    	<bytestring name="A">b6 24 7f</bytestring>
+	    	<bytestring name="B">b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 28 7f b6 28 00 b6 28 7f b6 28 00 b6 24 7f b6 24 00</bytestring>
+	    </patch>
+	    <patch name="EDP REC MODE SH" number="334" type="momentary">
+	    	<bytestring name="A">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 26 7f b6 26 00</bytestring>
+	    	<bytestring name="B">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</bytestring>
+	    </patch>
+	    <patch name="EDP DUB MODE SH" number="335" type="momentary">
+	    	<bytestring name="A">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 27 7f b6 27 00</bytestring>
+	    	<bytestring name="B">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</bytestring>
+	    </patch>
+	    <patch name="EDP RND MODE SH" number="336" type="momentary">
+	    	<bytestring name="A">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 28 7f b6 28 00</bytestring>
+	    	<bytestring name="B">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</bytestring>
+	    </patch>
+	    <patch name="EDP INS MODE SH" number="337" type="momentary">
+	    	<bytestring name="A">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 29 7f b6 29 00</bytestring>
+	    	<bytestring name="B">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</bytestring>
+	    </patch>
+	    <patch name="EDP MUTE MOD SH" number="338" type="momentary">
+	    	<bytestring name="A">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 2a 7f b6 2a 00</bytestring>
+	    	<bytestring name="B">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</bytestring>
+	    </patch>
+	    <patch name="EDP LOP DEL SHO" number="339" type="momentary">
+	    	<bytestring name="A">b6 24 7f b6 24 00 b6 26 7f b6 26 00</bytestring>
+	    	<bytestring name="B">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</bytestring>
+	    </patch>
+	    <patch name="EDP QUANTZ SHOW" number="340" type="momentary">
+	    	<bytestring name="A">b6 24 7f b6 24 00 b6 27 7f b6 27 00</bytestring>
+	    	<bytestring name="B">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</bytestring>
+	    </patch>
+	    <patch name="EDP AUTOREC SHO" number="341" type="momentary">
+	    	<bytestring name="A">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 27 7f b6 27 00</bytestring>
+	    	<bytestring name="B">b6 24 7f b6 24 00</bytestring>
+	    </patch>
+	    <patch name="EDP LOOPCPY SHO" number="342" type="momentary">
+	    	<bytestring name="A">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 28 7f b6 28 00</bytestring>
+	    	<bytestring name="B">b6 24 7f b6 24 00</bytestring>
+	    </patch>
+	    <patch name="EDP SW QUANT SH" number="343" type="momentary">
+	    	<bytestring name="A">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 29 7f b6 29 00</bytestring>
+	    	<bytestring name="B">b6 24 7f b6 24 00</bytestring>
+	    </patch>
+	    <patch name="FF MTRY DISENG" number="360" type="momentary">
+	    	<bytestring name="A">bb 09 00</bytestring>
+	    	<bytestring name="B">bb 09 7f</bytestring>
+	    </patch>
+	    <patch name="FF MTRY ENG" number="361" type="momentary">
+	    	<bytestring name="A">bb 09 7f</bytestring>
+	    	<bytestring name="B">bb 09 00</bytestring>
+	    </patch>
+	    <patch name="FF LFO DEPTH P2" number="362" type="normal">
+	    </patch>
+	    <patch name="FF PRE-BUZZ P2" number="363" type="normal">
+	    </patch>
+	    <patch name="FF POST-BUZZ P2" number="364" type="normal">
+	    </patch>
+	    <patch name="FF BUZZ ENG" number="365" type="normal">
+	    	<bytestring name="A">bb 04 7f</bytestring>
+	    </patch>
+	    <patch name="FF BUZZ DISENG" number="366" type="normal">
+	    	<bytestring name="A">bb 04 00</bytestring>
+	    </patch>
+	    <patch name="FF FILT FREQ P2" number="367" type="normal">
+	    </patch>
+	    <patch name="FF WET/DRY P2" number="368" type="normal">
+	    </patch>
+	    <patch name="FF FILT RES P2" number="369" type="normal">
+	    </patch>
+	    <patch name="FF LO PASS FLTR" number="370" type="normal">
+	    	<bytestring name="A">bb 08 00</bytestring>
+	    </patch>
+	    <patch name="FF HI PASS FLTR" number="371" type="normal">
+	    	<bytestring name="A">bb 08 01</bytestring>
+	    </patch>
+	    <patch name="FF BND PASS FLT" number="372" type="normal">
+	    	<bytestring name="A">bb 08 02</bytestring>
+	    </patch>
+	    <patch name="FF NOTCH FLT" number="373" type="normal">
+	    	<bytestring name="A">bb 08 03</bytestring>
+	    </patch>
+	    <patch name="FF FLTR ENGAGE" number="374" type="normal">
+	    	<bytestring name="A">bb 09 7f</bytestring>
+	    </patch>
+	    <patch name="FF FLTR DISENG" number="375" type="normal">
+	    	<bytestring name="A">bb 09 00</bytestring>
+	    </patch>
+	    <patch name="FF LFO SAWTOOTH" number="376" type="normal">
+	    	<bytestring name="A">bb 0a 00</bytestring>
+	    </patch>
+	    <patch name="FF LFO INV SAW" number="377" type="normal">
+	    	<bytestring name="A">bb 0a 01</bytestring>
+	    </patch>
+	    <patch name="FF LFO TRIANGLE" number="378" type="normal">
+	    	<bytestring name="A">bb 0a 02</bytestring>
+	    </patch>
+	    <patch name="FF LFO SQUARE" number="379" type="normal">
+	    	<bytestring name="A">bb 0a 03</bytestring>
+	    </patch>
+	    <patch name="FF LFO RANDOM" number="380" type="normal">
+	    	<bytestring name="A">bb 0a 04</bytestring>
+	    </patch>
+	    <patch name="FF LFO ENV FOLL" number="381" type="normal">
+	    	<bytestring name="A">bb 0a 05</bytestring>
+	    </patch>
+	    <patch name="FF LFO SNGLSHOT" number="382" type="normal">
+	    	<bytestring name="A">bb 0b 7f</bytestring>
+	    </patch>
+	    <patch name="FF LFO CONTINUO" number="383" type="normal">
+	    	<bytestring name="A">bb 0b 00</bytestring>
+	    </patch>
+	    <patch name="FF FILT RATE P2" number="384" type="normal">
+	    </patch>
+	    <patch name="FF LFO 1/1 DIV" number="385" type="normal">
+	    	<bytestring name="A">bb 0d 00</bytestring>
+	    </patch>
+	    <patch name="FF LFO 2/1 DIV" number="386" type="normal">
+	    	<bytestring name="A">bb 0d 01</bytestring>
+	    </patch>
+	    <patch name="FF LFO 3/1 DIV" number="387" type="normal">
+	    	<bytestring name="A">bb 0d 02</bytestring>
+	    </patch>
+	    <patch name="FF LFO 4/1 DIV" number="388" type="normal">
+	    	<bytestring name="A">bb 0d 03</bytestring>
+	    </patch>
+	    <patch name="FF LFO 6/1 DIV" number="389" type="normal">
+	    	<bytestring name="A">bb 0d 04</bytestring>
+	    </patch>
+	    <patch name="FF LFO 1/2 DIV" number="390" type="normal">
+	    	<bytestring name="A">bb 0d 05</bytestring>
+	    </patch>
+	    <patch name="FF LFO 1/4 DIV" number="391" type="normal">
+	    	<bytestring name="A">bb 0d 06</bytestring>
+	    </patch>
+	    <patch name="FF 2 POLE FLTR" number="392" type="normal">
+	    	<bytestring name="A">bb 10 00</bytestring>
+	    </patch>
+	    <patch name="FF 4 POLE FLTR" number="393" type="normal">
+	    	<bytestring name="A">bb 10 7f</bytestring>
+	    </patch>
+	    <patch name="FF BYPASS" number="394" type="normal">
+	    	<bytestring name="A">bb 11 00</bytestring>
+	    </patch>
+	    <patch name="FF ENGAGE" number="395" type="normal">
+	    	<bytestring name="A">bb 11 7f</bytestring>
+	    </patch>
+	    <patch name="FF TAP TEMPO" number="396" type="momentary">
+	    	<bytestring name="A">bb 43 7f</bytestring>
+	    </patch>
+	    <patch name="FF FLTR ENG TGL" number="397" type="toggle">
+	    	<bytestring name="A">bb 09 7f</bytestring>
+	    	<bytestring name="B">bb 09 00</bytestring>
+	    </patch>
+	    <patch name="FF BUZZ ENG TGL" number="398" type="toggle">
+	    	<bytestring name="A">bb 04 7f</bytestring>
+	    	<bytestring name="B">bb 04 00</bytestring>
+	    </patch>
+	    <patch name="FF BYPASS TGL" number="399" type="toggle">
+	    	<bytestring name="A">bb 11 7f</bytestring>
+	    	<bytestring name="B">bb 11 00</bytestring>
+	    </patch>
+	    <patch name="FF DEFAULT" number="400" type="normal">
+	    	<bytestring name="A">bb 04 7f bb 06 7f bb 08 00 bb 09 7f bb 0a 00 bb 0b 00 bb 0d 01 bb 10 00 bb 11 7f</bytestring>
+	    </patch>
+	    <patch name="RPT FF TAP TMP0" number="401" type="momentary">
+	    	<bytestring name="A">bb 43 7f bc 44 7f</bytestring>
 	    </patch>
 	</patches>
 	<banks>
-		<bank name="the first bank" number="1">
-			<PatchMap switch="1" patch="1" loadState="ignore" unloadState="" />
-			<PatchMap switch="2" patch="2" loadState="ignore" unloadState="" />
-			<PatchMap switch="3" patch="3" loadState="" unloadState="" />
-			<PatchMap switch="4" patch="4" loadState="" unloadState="" />
-			<PatchMap switch="2" patch="5" loadState="" unloadState="" />
-			<PatchMap switch="2" patch="6" loadState="" unloadState="" />
+		<bank name="MUTING" number="1">
+			<PatchMap switch="1" patch="1" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="2" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="94" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="5" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="3" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="6" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="4" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="95" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="96" loadState="" unloadState="" />
 		</bank>
-		<bank name="the second bank" number="5">
-			<PatchMap switch="1" patch="7" loadState="ignore" unloadState="" />
-			<PatchMap switch="2" patch="8" loadState="ignore" unloadState="" />
+		<bank name="H8000 DSP A-1" number="2">
+			<PatchMap switch="1" patch="7" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="8" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="9" loadState="" unloadState="" />
 			<PatchMap switch="4" patch="10" loadState="" unloadState="" />
-			<PatchMap switch="2" patch="11" loadState="" unloadState="" />
-			<PatchMap switch="2" patch="12" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="11" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="12" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="13" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="14" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="15" loadState="" unloadState="" />
+		</bank>
+		<bank name="H8000 DSP A-2" number="3">
+			<PatchMap switch="1" patch="7" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="16" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="17" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="18" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="19" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="20" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="21" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="22" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="23" loadState="" unloadState="" />
+		</bank>
+		<bank name="H8000 DSP B-1" number="4">
+			<PatchMap switch="1" patch="24" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="25" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="26" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="27" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="28" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="29" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="30" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="31" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="32" loadState="" unloadState="" />
+		</bank>
+		<bank name="H8000 DSP B-2" number="5">
+			<PatchMap switch="1" patch="24" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="33" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="34" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="35" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="36" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="37" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="38" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="39" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="40" loadState="" unloadState="" />
+		</bank>
+		<bank name="EDP GENERAL" number="6">
+			<PatchMap switch="1" patch="315" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="316" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="317" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="318" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="270" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="282" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="281" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="284" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="287" loadState="" unloadState="" />
+		</bank>
+		<bank name="DEDICATED PEDLS" number="7">
+			<PatchMap switch="1" patch="93" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="92" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="90" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="360" loadState="" unloadState="" />
+		</bank>
+		<bank name="H8000 DSP A MVR" number="8">
+			<PatchMap switch="1" patch="100" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="101" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="102" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="103" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="104" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="105" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="106" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="107" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="108" loadState="" unloadState="" />
+		</bank>
+		<bank name="H8000 DSP B MVR" number="9">
+			<PatchMap switch="1" patch="110" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="111" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="112" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="113" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="114" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="115" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="116" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="117" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="118" loadState="" unloadState="" />
+		</bank>
+		<bank name="TRIAXIS CLEAN" number="10">
+			<PatchMap switch="1" patch="44" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="45" loadState="" unloadState="" />
+		</bank>
+		<bank name="TRIAXIS DIRTY" number="11">
+			<PatchMap switch="1" patch="46" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="47" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="48" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="51" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="49" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="50" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="89" loadState="" unloadState="" />
+		</bank>
+		<bank name="CLEAN SCULPTURE" number="12">
+			<PatchMap switch="1" patch="52" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="53" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="54" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="55" loadState="" unloadState="" />
+		</bank>
+		<bank name="DIRTY SCULPTURE" number="13">
+			<PatchMap switch="1" patch="56" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="55" loadState="" unloadState="" />
+		</bank>
+		<bank name="TRANCE AMBIENCE" number="14">
+			<PatchMap switch="1" patch="57" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="58" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="59" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="60" loadState="" unloadState="" />
+		</bank>
+		<bank name="LID FRAG LOOP" number="15">
+			<PatchMap switch="1" patch="61" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="62" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="63" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="64" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="65" loadState="" unloadState="" />
+		</bank>
+		<bank name="NEBULOUS VISION" number="16">
+			<PatchMap switch="1" patch="66" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="67" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="68" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="69" loadState="" unloadState="" />
+		</bank>
+		<bank name="SONANCE VARIANC" number="17">
+			<PatchMap switch="1" patch="73" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="70" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="71" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="72" loadState="" unloadState="" />
+		</bank>
+		<bank name="UNSETTLING ABSE" number="18">
+			<PatchMap switch="1" patch="74" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="75" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="76" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="77" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="78" loadState="" unloadState="" />
+		</bank>
+		<bank name="COBWEBS IN SPAC" number="19">
+			<PatchMap switch="1" patch="79" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="80" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="81" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="82" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="83" loadState="" unloadState="" />
+		</bank>
+		<bank name="FROM DEPTHS BEL" number="20">
+			<PatchMap switch="1" patch="84" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="85" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="86" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="87" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="88" loadState="" unloadState="" />
+		</bank>
+		<bank name="EDP DIRECTMIDI1" number="21">
+			<PatchMap switch="1" patch="283" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="284" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="285" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="286" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="287" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="288" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="289" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="290" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="291" loadState="" unloadState="" />
+		</bank>
+		<bank name="EDP DIRECTMIDI2" number="22">
+			<PatchMap switch="1" patch="292" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="293" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="294" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="295" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="296" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="297" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="298" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="299" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="300" loadState="" unloadState="" />
+		</bank>
+		<bank name="EDP DIRECTMIDI3" number="23">
+			<PatchMap switch="1" patch="301" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="302" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="303" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="304" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="305" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="306" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="307" loadState="" unloadState="" />
+		</bank>
+		<bank name="EDP STATE MOD 1" number="24">
+			<PatchMap switch="1" patch="326" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="328" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="327" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="325" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="334" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="335" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="336" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="337" loadState="" unloadState="" />
+		</bank>
+		<bank name="EDP STATE MOD 2" number="25">
+			<PatchMap switch="1" patch="329" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="330" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="324" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="331" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="338" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="343" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="340" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="341" loadState="" unloadState="" />
+		</bank>
+		<bank name="EDP STATE MOD 3" number="26">
+			<PatchMap switch="1" patch="333" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="342" loadState="" unloadState="" />
+		</bank>
+		<bank name="EDP LOOPS" number="27">
+			<PatchMap switch="1" patch="315" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="316" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="317" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="318" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="319" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="320" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="321" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="322" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="323" loadState="" unloadState="" />
+		</bank>
+		<bank name="FILTER FACTORY1" number="28">
+			<PatchMap switch="1" patch="363" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="364" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="365" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="366" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="367" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="360" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="361" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="362" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="368" loadState="" unloadState="" />
+		</bank>
+		<bank name="FILTER FACTORY2" number="29">
+			<PatchMap switch="1" patch="369" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="370" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="371" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="372" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="373" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="374" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="375" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="376" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="377" loadState="" unloadState="" />
+		</bank>
+		<bank name="FILTER FACTORY3" number="30">
+			<PatchMap switch="1" patch="378" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="379" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="380" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="381" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="382" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="383" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="384" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="385" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="386" loadState="" unloadState="" />
+		</bank>
+		<bank name="FILTER FACTORY4" number="31">
+			<PatchMap switch="1" patch="387" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="388" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="389" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="390" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="391" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="392" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="393" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="394" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="395" loadState="" unloadState="" />
+		</bank>
+		<bank name="FILTER FACTORY5" number="32">
+			<PatchMap switch="4" patch="396" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="398" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="397" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="399" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="401" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="400" loadState="" unloadState="" />
 		</bank>
 	</banks>
 </MidiControlSettings>
