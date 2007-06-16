@@ -217,7 +217,8 @@ CMControlUIView::OnNotifyCustomDraw(int idCtrl,
 			if (!mStupidSwitchStates[idx])
 			{
 				mStupidSwitchStates[idx] = true;
-				mEngine->SwitchPressed(idx);
+				if (mEngine)
+					mEngine->SwitchPressed(idx);
 			}
 		}
 		else
@@ -225,7 +226,8 @@ CMControlUIView::OnNotifyCustomDraw(int idCtrl,
 			if (mStupidSwitchStates[idx])
 			{
 				mStupidSwitchStates[idx] = false;
-				mEngine->SwitchReleased(idx);
+				if (mEngine)
+					mEngine->SwitchReleased(idx);
 			}
 		}
 	}
@@ -313,16 +315,17 @@ CMControlUIView::CreateSwitchTextDisplay(int id,
 	rc.bottom = top + height;
 	rc.right = left + width;
 	curSwitchDisplay->Create(m_hWnd, rc, NULL, 
-		/*ES_AUTOHSCROLL |*/ ES_READONLY | ES_LEFT | WS_VISIBLE | WS_CHILDWINDOW, 
-		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY /*| WS_EX_CLIENTEDGE*/);
+		/*ES_AUTOHSCROLL |*/ ES_READONLY | WS_VISIBLE | WS_CHILDWINDOW | SS_LEFTNOWORDWRAP /*SS_CENTERIMAGE*/, 
+		/*WS_EX_LEFT |*/ WS_EX_LTRREADING /*| WS_EX_CLIENTEDGE*/);
 	curSwitchDisplay->Created();
 // 	curSwitchDisplay->SetFont(mSwitchDisplayFont);
 	curSwitchDisplay->SetFontName(std::string("Courier New"));
 	curSwitchDisplay->SetFontBold(true);
 	curSwitchDisplay->SetFontSize(11);
-	curSwitchDisplay->SetSunken(false);
+	curSwitchDisplay->SetSunken(true);
 	curSwitchDisplay->SetBkColor(0);
 	curSwitchDisplay->SetTextColor(0x00FF00);
+	curSwitchDisplay->SetMargin(2);
 	_ASSERTE(!mSwitchTextDisplays[id]);
 	mSwitchTextDisplays[id] = curSwitchDisplay;
 }

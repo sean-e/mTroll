@@ -246,6 +246,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\atllabel.h"
+				>
+			</File>
+			<File
 				RelativePath=".\MainFrm.h"
 				>
 			</File>

@@ -152,7 +152,8 @@ public:
 	CLabel::CLabel() :	m_bPaintLabel(true), m_hBackBrush(NULL), m_crHiColor(0), m_crLoColor(0),
 						m_bTimer(FALSE), m_bState(FALSE), m_bTransparent(FALSE), m_bLink(TRUE),
 						m_hCursor(NULL), m_Type(None), m_bFont3d(FALSE), m_bNotifyParent(FALSE),
-						m_bToolTips(FALSE), m_bRotation(FALSE), m_fillmode(Normal), m_hFont(NULL)
+						m_bToolTips(FALSE), m_bRotation(FALSE), m_fillmode(Normal), m_hFont(NULL),
+						mSideMargin(0)
 	{
 		m_crText = GetSysColor(COLOR_WINDOWTEXT);
 		m_cr3DHiliteColor =	RGB(255,255,255);		
@@ -557,6 +558,8 @@ public:
 		Init();
 	}
 
+	void SetMargin(int margin) {mSideMargin = margin;}
+
 protected:
 	
 	// =============================================================================================
@@ -687,6 +690,7 @@ protected:
 	BackFillMode	m_fillmode;
 	COLORREF		m_crHiColor;
 	COLORREF		m_crLoColor;
+	int				mSideMargin;
 
 protected:
 
@@ -839,7 +843,9 @@ protected:
 		}
 		else
 		{
+			rc.DeflateRect(mSideMargin, 0);
 			pDCMem->DrawText(cValue, -1,rc,dwFlags);
+			rc.InflateRect(mSideMargin, 0);
 			if (m_bFont3d)
 			{
 				pDCMem->SetTextColor(m_cr3DHiliteColor);
