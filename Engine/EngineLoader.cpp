@@ -26,7 +26,10 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 {
 	TiXmlDocument doc(engineSettingsFile);
 	if (!doc.LoadFile()) 
+	{
+		std::string err = doc.ErrorDesc();
 		return mEngine;
+	}
 
 	TiXmlHandle hDoc(&doc);
 	TiXmlElement* pElem = hDoc.FirstChildElement().Element();
@@ -192,7 +195,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 			childElem->QueryIntAttribute("switch", &switchNumber);
 			int patchNumber = -1;
 			childElem->Attribute("patch", &patchNumber);
-			if (-1 == switchNumber || -1 == patchNumber)
+			if (switchNumber <= 0|| -1 == patchNumber)
 				continue;
 
 			std::string tmp;
@@ -201,7 +204,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 			childElem->QueryValueAttribute("unloadState", &tmp);
 			const PatchBank::PatchState unloadState = GetLoadState(tmp);
 
-			bank.AddPatchMapping(switchNumber, patchNumber, loadState, unloadState);
+			bank.AddPatchMapping(switchNumber - 1, patchNumber, loadState, unloadState);
 		}
 	}
 }
