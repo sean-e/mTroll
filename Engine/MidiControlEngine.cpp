@@ -129,6 +129,14 @@ MidiControlEngine::CompleteInit()
 	if (mMidiOut)
 		mMidiOut->OpenMidiOut(0);
 	LoadBank(powerUpBankIndex);
+
+	if (mTrace)
+	{
+		std::strstream msg;
+		msg << "Load complete: bank cnt " << mBanks.size() << ", patch cnt " << mPatches.size() << std::endl << std::ends;
+		mTrace->Trace(std::string(msg.str()));
+	}
+
 }
 
 void
