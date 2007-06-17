@@ -31,6 +31,10 @@ SortByBankNumber(const PatchBank* lhs, const PatchBank* rhs)
 	return lhs->GetBankNumber() < rhs->GetBankNumber();
 }
 
+const int kModeDefaultSwitchNumber = 0;
+const int kModeBankNavSwitchNumber = 1;
+const int kModeBankDescSwitchNumber = 2;
+const int kModeBankDirect = 3;
 
 MidiControlEngine::MidiControlEngine(IMidiOut * midiOut, 
 									 IMainDisplay * mainDisplay, 
@@ -53,10 +57,7 @@ MidiControlEngine::MidiControlEngine(IMidiOut * midiOut,
 	mIncrementSwitchNumber(incrementSwitchNumber),
 	mDecrementSwitchNumber(decrementSwitchNumber),
 	mModeSwitchNumber(modeSwitchNumber),
-	mFilterRedundantProgramChanges(false),
-	mModeDefaultSwitchNumber(0),
-	mModeBankNavSwitchNumber(1),
-	mModeBankDescSwitchNumber(2)
+	mFilterRedundantProgramChanges(false)
 {
 	mBanks.reserve(999);
 }
@@ -149,7 +150,8 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 	if (emCreated == mMode ||
 		emBankDesc == mMode ||
 		emBankNav == mMode ||
-		emModeSelect == mMode)
+		emModeSelect == mMode ||
+		emBankDirect == mMode)
 		return;
 
 	if (emBank == mMode)
@@ -186,24 +188,28 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 			return;
 		}
 		else if (switchNumber == mModeSwitchNumber ||
-			switchNumber == mModeDefaultSwitchNumber)
+			switchNumber == kModeDefaultSwitchNumber)
 		{
 			// escape
 			ChangeMode(emBank);
 			mBankNavigationIndex = mActiveBankIndex;
 			NavigateBankRelative(0);
 		}
-		else if (switchNumber == mModeBankDescSwitchNumber)
+		else if (switchNumber == kModeBankDescSwitchNumber)
 		{
 			ChangeMode(emBankDesc);
 			mBankNavigationIndex = mActiveBankIndex;
 			NavigateBankRelative(0);
 		}
-		else if (switchNumber == mModeBankNavSwitchNumber)
+		else if (switchNumber == kModeBankNavSwitchNumber)
 		{
 			ChangeMode(emBankNav);
 			mBankNavigationIndex = mActiveBankIndex;
 			NavigateBankRelative(0);
+		}
+		else if (switchNumber == kModeBankDirect)
+		{
+			ChangeMode(emBankDirect);
 		}
 
 		return;
@@ -243,6 +249,56 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 			{
 				bank->DisplayInfo(mMainDisplay, mSwitchDisplay, true);
 				bank->DisplayDetailedPatchInfo(switchNumber, mMainDisplay);
+			}
+		}
+
+		return;
+	}
+
+	if (emBankDirect == mMode)
+	{
+		switch (switchNumber)
+		{
+		case 0:		mBankDirectNumber += "1";	break;
+		case 1:		mBankDirectNumber += "2";	break;
+		case 2:		mBankDirectNumber += "3";	break;
+		case 3:		mBankDirectNumber += "4";	break;
+		case 4:		mBankDirectNumber += "5";	break;
+		case 5:		mBankDirectNumber += "6";	break;
+		case 6:		mBankDirectNumber += "7";	break;
+		case 7:		mBankDirectNumber += "8";	break;
+		case 8:		mBankDirectNumber += "9";	break;
+		case 9:		mBankDirectNumber += "0";	break;
+		}
+
+		if (switchNumber == mModeSwitchNumber)
+		{
+			// escape
+			ChangeMode(emBank);
+			mBankNavigationIndex = mActiveBankIndex;
+			NavigateBankRelative(0);
+		}
+		else if (switchNumber == mIncrementSwitchNumber)
+		{
+			// commit
+			ChangeMode(emBank);
+			mBankNavigationIndex = mActiveBankIndex;
+			const int bnkIdx = GetBankIndex(::atoi(mBankDirectNumber.c_str()));
+			if (bnkIdx != -1)
+				LoadBank(bnkIdx);
+			else if (mMainDisplay)
+				mMainDisplay->TextOut("Invalid bank number");
+		}
+		else if (mMainDisplay)
+		{
+			const int bnkIdx = GetBankIndex(::atoi(mBankDirectNumber.c_str()));
+			if (bnkIdx == -1)
+				mMainDisplay->TextOut(mBankDirectNumber);
+			else
+			{
+				PatchBank * bnk = GetBank(bnkIdx);
+				_ASSERTE(bnk);
+				mMainDisplay->TextOut(mBankDirectNumber + " " + bnk->GetBankName());
 			}
 		}
 
@@ -293,6 +349,21 @@ MidiControlEngine::NavigateBankRelative(int relativeBankIndex)
 	return true;
 }
 
+int
+MidiControlEngine::GetBankIndex(int bankNumber)
+{
+	int idx = 0;
+	for (Banks::iterator it = mBanks.begin();
+		it != mBanks.end();
+		++it, ++idx)
+	{
+		PatchBank * curItem = *it;
+		if (curItem->GetBankNumber() == bankNumber)
+			return idx;
+	}
+	return -1;
+}
+
 PatchBank *
 MidiControlEngine::GetBank(int bankIndex)
 {
@@ -327,8 +398,10 @@ MidiControlEngine::LoadBank(int bankIndex)
 // emModeSelect -> emDefault
 // emModeSelect -> emBankNav
 // emModeSelect -> emBankDesc
+// emModeSelect -> emBankDirect
 // emBankNav -> emDefault
 // emBankDesc -> emDefault
+// emBankDirect -> emDefault
 void
 MidiControlEngine::ChangeMode(EngineMode newMode)
 {
@@ -381,9 +454,28 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		msg = "Mode Select";
 		if (mSwitchDisplay)
 		{
-			mSwitchDisplay->SetSwitchText(mModeDefaultSwitchNumber, "Bank");
-			mSwitchDisplay->SetSwitchText(mModeBankNavSwitchNumber, "Bank Nav");
-			mSwitchDisplay->SetSwitchText(mModeBankDescSwitchNumber, "Bank Desc");
+			mSwitchDisplay->SetSwitchText(kModeDefaultSwitchNumber, "Bank");
+			mSwitchDisplay->SetSwitchText(kModeBankNavSwitchNumber, "Bank Nav");
+			mSwitchDisplay->SetSwitchText(kModeBankDescSwitchNumber, "Bank Desc");
+			mSwitchDisplay->SetSwitchText(kModeBankDirect, "Bank Direct");
+		}
+		break;
+	case emBankDirect:
+		mBankDirectNumber.clear();
+		msg = "Bank Direct";
+		if (mSwitchDisplay)
+		{
+			mSwitchDisplay->SetSwitchText(0, "1");
+			mSwitchDisplay->SetSwitchText(1, "2");
+			mSwitchDisplay->SetSwitchText(2, "3");
+			mSwitchDisplay->SetSwitchText(3, "4");
+			mSwitchDisplay->SetSwitchText(4, "5");
+			mSwitchDisplay->SetSwitchText(5, "6");
+			mSwitchDisplay->SetSwitchText(6, "7");
+			mSwitchDisplay->SetSwitchText(7, "8");
+			mSwitchDisplay->SetSwitchText(8, "9");
+			mSwitchDisplay->SetSwitchText(9, "0");
+			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Commit");
 		}
 		break;
 	default:

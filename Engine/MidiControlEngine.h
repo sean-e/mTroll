@@ -43,13 +43,15 @@ private:
 	bool					NavigateBankRelative(int relativeBankIndex);
 	bool					LoadBank(int bankIndex);
 	PatchBank *				GetBank(int bankIndex);
+	int						GetBankIndex(int bankNumber);
 	enum EngineMode 
 	{ 
 		emCreated = -1,		// initial state - no data loaded
-		emBank,			// select presets in banks
+		emBank,				// select presets in banks
 		emModeSelect,		// out of default ready to select new mode
 		emBankNav,			// navigate banks
 		emBankDesc,			// describe switches in bank
+		emBankDirect,		// use buttons to call bank
 		emNotValid 
 	};
 	void					ChangeMode(EngineMode newMode);
@@ -65,6 +67,7 @@ private:
 	int						mActiveBankIndex;
 	EngineMode				mMode;
 	int						mBankNavigationIndex;
+	std::string				mBankDirectNumber;
 
 	// retained in different form
 	Patches					mPatches;		// patchNum is key
