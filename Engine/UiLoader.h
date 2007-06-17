@@ -13,9 +13,9 @@ public:
 	UiLoader(IMidiControlUi * ui, const std::string & settingsFile);
 
 private:
-	void					LoadSwitchLeds(TiXmlElement * pElem);
-	void					LoadSwitches(TiXmlElement * pElem);
-	void					LoadSwitchDisplays(TiXmlElement * pElem);
+	bool					LoadAssembyConfig(TiXmlElement * pElem);
+	void					LoadSwitchAssemblies(TiXmlElement * pElem);
+	void					LoadSwitchAssembly(TiXmlElement * pElem);
 	void					LoadOtherStuffAndFinalize(TiXmlElement * pElem);
 
 	IMidiControlUi			* mUi;

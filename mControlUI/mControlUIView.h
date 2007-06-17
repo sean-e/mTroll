@@ -56,11 +56,12 @@ private:
 	void Unload();
 
 	// IMidiControlUi
-	virtual void	CreateSwitchLed(int id, int top, int left, int width, int height);
-	virtual void	CreateSwitchFont(const std::string & fontName, int fontHeight, bool bold);
-	virtual void	CreateSwitch(int id, const std::string & label, int top, int left, int width, int height);
-	virtual void	SetSwitchDisplayFontSettings(const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor);
-	virtual void	CreateSwitchTextDisplay(int id, int top, int left, int width, int height);
+	virtual void	SetSwitchLedConfig(int width, int height, unsigned int onColor, unsigned int offColor);
+	virtual void	CreateSwitchLed(int id, int top, int left);
+	virtual void	SetSwitchConfig(int width, int height, const std::string & fontName, int fontHeight, bool bold);
+	virtual void	CreateSwitch(int id, const std::string & label, int top, int left);
+	virtual void	SetSwitchTextDisplayConfig(int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor);
+	virtual void	CreateSwitchTextDisplay(int id, int top, int left);
 	virtual void	CreateMainDisplay(int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor);
 	virtual void	CreateTraceDisplay(int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold);
 	virtual void	CreateStaticLabel(const std::string & label, int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor);
@@ -89,13 +90,35 @@ private:
 	int							mPreferredHeight, mPreferredWidth;
 	int							mMaxSwitchId;
 	WinMidiOut					mMidiOut;
-	struct SwitchDisplayFontSettings
+
+	struct SwitchTextDisplayConfig
 	{
-		std::string				mName;
-		int						mHeight;
+		std::string				mFontname;
+		int						mFontHeight;
 		DWORD					mFgColor;
 		DWORD					mBgColor;
 		bool					mBold;
+		int						mHeight;
+		int						mWidth;
 	};
-	SwitchDisplayFontSettings	mSwitchDisplayFontSettings;
+	SwitchTextDisplayConfig		mSwitchTextDisplayConfig;
+
+	struct SwitchConfig
+	{
+		std::string				mFontname;
+		int						mFontHeight;
+		bool					mBold;
+		int						mHeight;
+		int						mWidth;
+	};
+	SwitchConfig				mSwitchConfig;
+
+	struct LedConfig
+	{
+		int						mHeight;
+		int						mWidth;
+		DWORD					mOnColor;
+		DWORD					mOffColor;
+	};
+	LedConfig					mLedConfig;
 };

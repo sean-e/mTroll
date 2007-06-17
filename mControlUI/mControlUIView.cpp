@@ -236,18 +236,28 @@ CMControlUIView::OnNotifyCustomDraw(int idCtrl,
 
 // IMidiControlUi
 void
+CMControlUIView::SetSwitchLedConfig(int width, 
+									int height, 
+									unsigned int onColor, 
+									unsigned int offColor)
+{
+	mLedConfig.mWidth = width;
+	mLedConfig.mHeight = height;
+	mLedConfig.mOnColor = onColor;
+	mLedConfig.mOffColor = offColor;
+}
+
+void
 CMControlUIView::CreateSwitchLed(int id, 
 								 int top, 
-								 int left, 
-								 int width, 
-								 int height)
+								 int left)
 {
 	SwitchLed * curSwitchLed = new SwitchLed;
 	RECT rc;
 	rc.top = top;
 	rc.left = left;
-	rc.bottom = top + height;
-	rc.right = left + width;
+	rc.bottom = top + mLedConfig.mHeight;
+	rc.right = left + mLedConfig.mWidth;
 	curSwitchLed->Create(m_hWnd, rc, NULL, 
 		WS_VISIBLE | WS_CHILDWINDOW | PBS_SMOOTH, 
 		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_NOPARENTNOTIFY | WS_EX_RIGHTSCROLLBAR);
@@ -257,27 +267,32 @@ CMControlUIView::CreateSwitchLed(int id,
 }
 
 void
-CMControlUIView::CreateSwitchFont(const std::string & fontName,
-								  int fontHeight, 
-								  bool bold)
+CMControlUIView::SetSwitchConfig(int width, 
+								 int height, 
+								 const std::string & fontName, 
+								 int fontHeight, 
+								 bool bold)
 {
-	mSwitchButtonFont.CreatePointFont(fontHeight * 10, fontName.c_str(), NULL, bold);
+	mSwitchConfig.mWidth = width;
+	mSwitchConfig.mHeight = height;
+	mSwitchConfig.mFontname = fontName;
+	mSwitchConfig.mFontHeight = fontHeight;
+	mSwitchConfig.mBold = bold;
+	mSwitchButtonFont.CreatePointFont(mSwitchConfig.mFontHeight * 10, mSwitchConfig.mFontname.c_str(), NULL, mSwitchConfig.mBold);
 }
 
 void
 CMControlUIView::CreateSwitch(int id, 
 							  const std::string & label, 
 							  int top, 
-							  int left, 
-							  int width, 
-							  int height)
+							  int left)
 {
 	Switch * curSwitch = new Switch;
 	RECT rc;
 	rc.top = top;
 	rc.left = left;
-	rc.bottom = top + height;
-	rc.right = left + width;
+	rc.bottom = top + mSwitchConfig.mHeight;
+	rc.right = left + mSwitchConfig.mWidth;
 	curSwitch->Create(m_hWnd, rc, label.c_str(), 
 		WS_VISIBLE | WS_CHILDWINDOW | BS_PUSHBUTTON | BS_TEXT | WS_TABSTOP, 
 		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY,
@@ -290,32 +305,34 @@ CMControlUIView::CreateSwitch(int id,
 }
 
 void
-CMControlUIView::SetSwitchDisplayFontSettings(const std::string & fontName,
-											  int fontHeight, 
-											  bool bold,
-											  unsigned int bgColor,
-											  unsigned int fgColor)
+CMControlUIView::SetSwitchTextDisplayConfig(int width, 
+											int height, 
+											const std::string & fontName, 
+											int fontHeight, 
+											bool bold, 
+											unsigned int bgColor, 
+											unsigned int fgColor)
 {
-	mSwitchDisplayFontSettings.mName = fontName;
-	mSwitchDisplayFontSettings.mHeight = fontHeight;
-	mSwitchDisplayFontSettings.mBold = bold;
-	mSwitchDisplayFontSettings.mFgColor = fgColor;
-	mSwitchDisplayFontSettings.mBgColor = bgColor;
+	mSwitchTextDisplayConfig.mHeight = height;
+	mSwitchTextDisplayConfig.mWidth = width;
+	mSwitchTextDisplayConfig.mFontname = fontName;
+	mSwitchTextDisplayConfig.mFontHeight = fontHeight;
+	mSwitchTextDisplayConfig.mBold = bold;
+	mSwitchTextDisplayConfig.mFgColor = fgColor;
+	mSwitchTextDisplayConfig.mBgColor = bgColor;
 }
 
 void
 CMControlUIView::CreateSwitchTextDisplay(int id, 
 										 int top, 
-										 int left, 
-										 int width, 
-										 int height)
+										 int left)
 {
 	SwitchTextDisplay * curSwitchDisplay = new SwitchTextDisplay;
 	RECT rc;
 	rc.top = top;
 	rc.left = left;
-	rc.bottom = top + height;
-	rc.right = left + width;
+	rc.bottom = top + mSwitchTextDisplayConfig.mHeight;
+	rc.right = left + mSwitchTextDisplayConfig.mWidth;
 	curSwitchDisplay->Create(m_hWnd, rc, NULL, 
 		/*ES_AUTOHSCROLL |*/ ES_READONLY | WS_VISIBLE | WS_CHILDWINDOW | SS_LEFTNOWORDWRAP /*SS_CENTERIMAGE*/, 
 		/*WS_EX_LEFT |*/ WS_EX_LTRREADING /*| WS_EX_CLIENTEDGE*/);
@@ -323,11 +340,11 @@ CMControlUIView::CreateSwitchTextDisplay(int id,
 	curSwitchDisplay->SetMargin(2);
 	curSwitchDisplay->SetSunken(true);
 
-	curSwitchDisplay->SetFontName(mSwitchDisplayFontSettings.mName);
-	curSwitchDisplay->SetFontSize(mSwitchDisplayFontSettings.mHeight);
-	curSwitchDisplay->SetFontBold(mSwitchDisplayFontSettings.mBold);
-	curSwitchDisplay->SetBkColor(mSwitchDisplayFontSettings.mBgColor);
-	curSwitchDisplay->SetTextColor(mSwitchDisplayFontSettings.mFgColor);
+	curSwitchDisplay->SetFontName(mSwitchTextDisplayConfig.mFontname);
+	curSwitchDisplay->SetFontSize(mSwitchTextDisplayConfig.mFontHeight);
+	curSwitchDisplay->SetFontBold(mSwitchTextDisplayConfig.mBold);
+	curSwitchDisplay->SetBkColor(mSwitchTextDisplayConfig.mBgColor);
+	curSwitchDisplay->SetTextColor(mSwitchTextDisplayConfig.mFgColor);
 
 	_ASSERTE(!mSwitchTextDisplays[id]);
 	mSwitchTextDisplays[id] = curSwitchDisplay;

@@ -23,162 +23,172 @@ UiLoader::UiLoader(IMidiControlUi * theUi,
 	TiXmlHandle hRoot(NULL);
 	hRoot = TiXmlHandle(pElem);
 
-	pElem = hRoot.FirstChild("switches").Element();
+	pElem = hRoot.FirstChild("switchAssemblyConfig").Element();
 	if (pElem)
-		LoadSwitches(pElem);
+		LoadAssembyConfig(pElem);
+	else
+		return;
 
-	pElem = hRoot.FirstChild("switchLeds").Element();
+	pElem = hRoot.FirstChild("switchAssemblies").Element();
 	if (pElem)
-		LoadSwitchLeds(pElem);
-
-	pElem = hRoot.FirstChild("switchTextDisplays").Element();
-	if (pElem)
-		LoadSwitchDisplays(pElem);
+		LoadSwitchAssemblies(pElem);
 
 	LoadOtherStuffAndFinalize(hRoot.ToElement());
 }
 
-void
-UiLoader::LoadSwitchLeds(TiXmlElement * pElem)
+bool
+UiLoader::LoadAssembyConfig(TiXmlElement * pElem)
 {
-	// global state from pElem
-
+/*
+  <switchAssemblyConfig>
+    <switch font-name="Tahoma" font-weight="bold" font-height="10" width="75" height="23" />
+    <switchTextDisplay font-name="Tahoma" font-height="12" foregroundColor="65280" backgroundColor="0" width="105" height="23" />
+    <switchLed width="26" height="10" onColor="65280" offColor="256" />
+  </switchAssemblyConfig>
+*/
 	TiXmlHandle hRoot(NULL);
 	hRoot = TiXmlHandle(pElem);
 
-	// <switchLed number="0" top="22" left="31" width="26" height="10" />
-	for (TiXmlElement * childElem = hRoot.FirstChild().Element(); 
-		 childElem; 
-		 childElem = childElem->NextSiblingElement())
-	{
-		if (childElem->ValueStr() != "switchLed")
-			continue;
-
-		int number = -1;
-		int top = -1;
-		int left = -1;
-		int width = -1;
-		int height = -1;
-
-		childElem->QueryIntAttribute("number", &number);
-		childElem->QueryIntAttribute("top", &top);
-		childElem->QueryIntAttribute("left", &left);
-		childElem->QueryIntAttribute("width", &width);
-		childElem->QueryIntAttribute("height", &height);
-
-		if (-1 == number ||
-			-1 == top ||
-			-1 == left ||
-			-1 == width ||
-			-1 == height)
-			continue;
-
-		mUi->CreateSwitchLed(number, top, left, width, height);
-	}
-}
-
-void
-UiLoader::LoadSwitches(TiXmlElement * pElem)
-{
-	std::string fontname("courier");
-	pElem->QueryValueAttribute("font-name", &fontname);
-
+	std::string fontname;
 	std::string fontWeight;
-	pElem->QueryValueAttribute("font-weight", &fontWeight);
-	const bool boldFont = (fontWeight == "bold");
+	int fontHeight;
+	bool boldFont;
+	int bgColor, fgColor;
+	int width, height;
 
-	int fontHeight = 10;
-	pElem->QueryIntAttribute("font-height", &fontHeight);
-	mUi->CreateSwitchFont(fontname, fontHeight, boldFont);
+	pElem = hRoot.FirstChild("switch").Element();
+	if (!pElem)
+		return false;
+	
+	fontname = "courier";
+	fontWeight.clear();
+	fontHeight = 10;
+	bgColor = 0;
+	fgColor = 0xffffff;
+	width = height = 0;
 
-	TiXmlHandle hRoot(NULL);
-	hRoot = TiXmlHandle(pElem);
-
-	// <switch name="&1" number="0" top="31" left="15" width="75" height="23" />
-	for (TiXmlElement * childElem = hRoot.FirstChild().Element(); 
-		 childElem; 
-		 childElem = childElem->NextSiblingElement())
-	{
-		if (childElem->ValueStr() != "switch")
-			continue;
-
-		int number = -1;
-		int top = -1;
-		int left = -1;
-		int width = -1;
-		int height = -1;
-
-		std::string label;
-		childElem->QueryValueAttribute("label", &label);
-		childElem->QueryIntAttribute("number", &number);
-		childElem->QueryIntAttribute("top", &top);
-		childElem->QueryIntAttribute("left", &left);
-		childElem->QueryIntAttribute("width", &width);
-		childElem->QueryIntAttribute("height", &height);
-
-		if (-1 == number ||
-			-1 == top ||
-			-1 == left ||
-			-1 == width ||
-			-1 == height)
-			continue;
-
-		mUi->CreateSwitch(number, label, top, left, width, height);
-	}
-}
-
-void
-UiLoader::LoadSwitchDisplays(TiXmlElement * pElem)
-{
-	// <switchTextDisplays font-height="12" >
-	std::string fontname("courier");
 	pElem->QueryValueAttribute("font-name", &fontname);
-
-	std::string fontWeight;
 	pElem->QueryValueAttribute("font-weight", &fontWeight);
-	const bool boldFont = (fontWeight == "bold");
-
-	int fontHeight = 10;
 	pElem->QueryIntAttribute("font-height", &fontHeight);
+	pElem->QueryIntAttribute("height", &height);
+	pElem->QueryIntAttribute("width", &width);
+	boldFont = (fontWeight == "bold");
+	mUi->SetSwitchConfig(width, height, fontname, fontHeight, boldFont);
 
-	int bgColor = 0;
-	int fgColor = 0xffffff;
+	pElem = hRoot.FirstChild("switchTextDisplay").Element();
+	if (!pElem)
+		return false;
+
+	fontname = "courier";
+	fontWeight.clear();
+	fontHeight = 10;
+	bgColor = 0;
+	fgColor = 0xffffff;
+	width = height = 0;
+
 	pElem->QueryIntAttribute("foregroundColor", &fgColor);
 	pElem->QueryIntAttribute("backgroundColor", &bgColor);
+	pElem->QueryValueAttribute("font-name", &fontname);
+	pElem->QueryValueAttribute("font-weight", &fontWeight);
+	pElem->QueryIntAttribute("font-height", &fontHeight);
+	pElem->QueryIntAttribute("height", &height);
+	pElem->QueryIntAttribute("width", &width);
+	boldFont = (fontWeight == "bold");
+	mUi->SetSwitchTextDisplayConfig(width, height, fontname, fontHeight, boldFont, (unsigned int) bgColor, (unsigned int) fgColor);
 
-	mUi->SetSwitchDisplayFontSettings(fontname, fontHeight, boldFont, (unsigned int)bgColor, (unsigned int)fgColor);
+	pElem = hRoot.FirstChild("switchLed").Element();
+	if (!pElem)
+		return false;
 
+	bgColor = 0;
+	fgColor = 0xffffff;
+	width = height = 0;
+
+	pElem->QueryIntAttribute("onColor", &fgColor);
+	pElem->QueryIntAttribute("offColor", &bgColor);
+	pElem->QueryIntAttribute("height", &height);
+	pElem->QueryIntAttribute("width", &width);
+	mUi->SetSwitchLedConfig(width, height, (unsigned int) fgColor, (unsigned int) bgColor);
+
+	return true;
+}
+
+void
+UiLoader::LoadSwitchAssemblies(TiXmlElement * pElem)
+{
+/*
+  <switchAssemblies>
+    <switchAssembly>
+    </switchAssembly>
+  </switchAssemblies>
+*/
 	TiXmlHandle hRoot(NULL);
 	hRoot = TiXmlHandle(pElem);
 
-	// <switchTextDisplay number="0" top="5" left="5" width="105" height="23" />
 	for (TiXmlElement * childElem = hRoot.FirstChild().Element(); 
 		 childElem; 
 		 childElem = childElem->NextSiblingElement())
 	{
-		if (childElem->ValueStr() != "switchTextDisplay")
+		if (childElem->ValueStr() != "switchAssembly")
 			continue;
 
-		int number = -1;
-		int top = -1;
-		int left = -1;
-		int width = -1;
-		int height = -1;
+		LoadSwitchAssembly(childElem);
+	}
+}
 
-		childElem->QueryIntAttribute("number", &number);
-		childElem->QueryIntAttribute("top", &top);
-		childElem->QueryIntAttribute("left", &left);
-		childElem->QueryIntAttribute("width", &width);
-		childElem->QueryIntAttribute("height", &height);
+void
+UiLoader::LoadSwitchAssembly(TiXmlElement * pElem)
+{
+/*
+    <switchAssembly number="0" top="5" left="5" >
+      <switchTextDisplay />
+      <switchLed vOffset="30" hOffset="40" />
+      <switch label="&amp;1" vOffset="45" hOffset="15" />
+    </switchAssembly>
+*/
+	TiXmlHandle hRoot(NULL);
+	hRoot = TiXmlHandle(pElem);
 
-		if (-1 == number ||
-			-1 == top ||
-			-1 == left ||
-			-1 == width ||
-			-1 == height)
-			continue;
+	int vOffset, hOffset;
+	int idNumber = -1;
+	int top = -1;
+	int left = -1;
 
-		mUi->CreateSwitchTextDisplay(number, top, left, width, height);
+	pElem->QueryIntAttribute("number", &idNumber);
+	pElem->QueryIntAttribute("top", &top);
+	pElem->QueryIntAttribute("left", &left);
+	if (-1 == idNumber ||
+		-1 == top ||
+		-1 == left)
+		return;
+
+	pElem = hRoot.FirstChild("switchTextDisplay").Element();
+	if (pElem)
+	{
+		vOffset = hOffset = 0;
+		pElem->QueryIntAttribute("vOffset", &vOffset);
+		pElem->QueryIntAttribute("hOffset", &hOffset);
+		mUi->CreateSwitchTextDisplay(idNumber, top + vOffset, left + hOffset);
+	}
+
+	pElem = hRoot.FirstChild("switchLed").Element();
+	if (pElem)
+	{
+		vOffset = hOffset = 0;
+		pElem->QueryIntAttribute("vOffset", &vOffset);
+		pElem->QueryIntAttribute("hOffset", &hOffset);
+		mUi->CreateSwitchLed(idNumber, top + vOffset, left + hOffset);
+	}
+
+	pElem = hRoot.FirstChild("switch").Element();
+	if (pElem)
+	{
+		vOffset = hOffset = 0;
+		pElem->QueryIntAttribute("vOffset", &vOffset);
+		pElem->QueryIntAttribute("hOffset", &hOffset);
+		std::string label;
+		pElem->QueryValueAttribute("label", &label);
+		mUi->CreateSwitch(idNumber, label, top + vOffset, left + hOffset);
 	}
 }
 
@@ -187,7 +197,6 @@ UiLoader::LoadOtherStuffAndFinalize(TiXmlElement * pElem)
 {
 	TiXmlHandle hRoot(NULL);
 	hRoot = TiXmlHandle(pElem);
-
 
 	// <mainTextDisplay font-height="12" top="177" left="5" width="338" height="163" />
 	pElem = hRoot.FirstChild("mainTextDisplay").Element();

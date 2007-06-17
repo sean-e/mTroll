@@ -356,8 +356,13 @@ MidiControlEngine::NavigateBankRelative(int relativeBankIndex)
 	{
 		for (int idx = 0; idx < 32; idx++)
 		{
-			mSwitchDisplay->ClearSwitchText(idx);
-			mSwitchDisplay->SetSwitchDisplay(idx, false);
+			if (idx != mModeSwitchNumber &&
+				idx != mDecrementSwitchNumber &&
+				idx != mIncrementSwitchNumber)
+			{
+				mSwitchDisplay->ClearSwitchText(idx);
+				mSwitchDisplay->SetSwitchDisplay(idx, false);
+			}
 		}
 	}
 
