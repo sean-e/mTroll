@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <strstream>
+#include <iomanip>
 #include "PatchBank.h"
 #include "Patch.h"
 
@@ -167,7 +168,7 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 					   bool showPatchInfo)
 {
 	std::ostrstream info;
-	info << "Bank: " << mNumber << " " << mName;
+	info << "Bank:   " << std::setw(2) << mNumber << " " << mName;
 
 	if (showPatchInfo)
 	{
@@ -190,11 +191,11 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 				{
 					once = false;
 					curItem->mPatch->AssignSwitch((*it).first, switchDisplay);
-					info << "sw " << (*it).first << ":\t" << curItem->mPatch->GetNumber() << " " << curItem->mPatch->GetName() << std::endl;
+					info << "sw " << std::setw(2) << ((*it).first + 1) << ": " << std::setw(3) << curItem->mPatch->GetNumber() << " " << curItem->mPatch->GetName() << std::endl;
 				}
 				else
 				{
-					info << "\t(" << curItem->mPatch->GetNumber() << " " << curItem->mPatch->GetName() << ")" << std::endl;
+					info << "       " << std::setw(3) << curItem->mPatch->GetNumber() << " " << curItem->mPatch->GetName() << std::endl;
 				}
 			}
 		}
@@ -209,7 +210,7 @@ void
 PatchBank::DisplayDetailedPatchInfo(int switchNumber, IMainDisplay * mainDisplay)
 {
 	std::ostrstream info;
-	info << "Status for bank " << mNumber << " '" << mName << "' switch " << switchNumber << std::endl;
+	info << "Status for bank " << std::setw(2) << mNumber << " '" << mName << "'" << std::endl << "switch " << std::setw(2) << (switchNumber + 1) << std::endl;
 
 	for (PatchMaps::iterator it = mPatches.begin();
 		it != mPatches.end();
@@ -229,12 +230,12 @@ PatchBank::DisplayDetailedPatchInfo(int switchNumber, IMainDisplay * mainDisplay
 				continue;
 
 			if (cnt == 0)
-				info << "\tNum\tOn/Off\tType\tName" << std::endl;
+				info << "Num On/Off Type\t\tName" << std::endl;
 			
-			if (cnt == 1)
-				info << "(Hidden patches)" << std::endl;
+// 			if (cnt == 1)
+// 				info << "(Hidden patches)" << std::endl;
 
-			info << "\t" << curItem->mPatch->GetNumber() << "\t" << (curItem->mPatch->IsOn() ? "on" : "off") << "\t" << curItem->mPatch->GetPatchType() << "\t" << curItem->mPatch->GetName() << std::endl;
+			info << std::setw(3) << curItem->mPatch->GetNumber() << " " << (curItem->mPatch->IsOn() ? "ON     " : "off    ") << curItem->mPatch->GetPatchType() << "\t" << curItem->mPatch->GetName() << std::endl;
 			++cnt;
 		}
 
