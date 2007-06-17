@@ -37,6 +37,7 @@ public:
 	void PatchSwitchReleased(int switchNumber, IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 
 	int GetBankNumber() const {return mNumber;}
+	const std::string & GetBankName() const {return mName;}
 
 private:
 	void PatchSwitchAction(bool pressed, int switchNumber, IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
