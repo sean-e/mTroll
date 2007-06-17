@@ -153,7 +153,7 @@ public:
 						m_bTimer(FALSE), m_bState(FALSE), m_bTransparent(FALSE), m_bLink(TRUE),
 						m_hCursor(NULL), m_Type(None), m_bFont3d(FALSE), m_bNotifyParent(FALSE),
 						m_bToolTips(FALSE), m_bRotation(FALSE), m_fillmode(Normal), m_hFont(NULL),
-						mSideMargin(0)
+						mSideMargin(0), mSubclassed(false)
 	{
 		m_crText = GetSysColor(COLOR_WINDOWTEXT);
 		m_cr3DHiliteColor =	RGB(255,255,255);		
@@ -181,6 +181,9 @@ public:
 		if(m_hCursor != NULL)
 			::DestroyCursor(m_hCursor);
 #endif //(WINVER < 0x0500)
+
+		if (!mSubclassed && m_hWnd && ::IsWindow(m_hWnd))
+			DestroyWindow();
 	}
 
 	// =============================================================================================
@@ -549,7 +552,10 @@ public:
 	{
 		BOOL bRet = CWindowImpl<CLabel, CStatic>::SubclassWindow(hWnd);
 		if(bRet)
+		{
+			mSubclassed = true;
 			Init();
+		}
 		return bRet;
 	}
 
@@ -691,6 +697,7 @@ protected:
 	COLORREF		m_crHiColor;
 	COLORREF		m_crLoColor;
 	int				mSideMargin;
+	bool			mSubclassed;
 
 protected:
 
