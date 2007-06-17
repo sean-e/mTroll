@@ -82,12 +82,6 @@ CMControlUIView::Unload()
 	if (mSwitchButtonFont)
 		mSwitchButtonFont.DeleteObject();
 	
-	if (mSwitchDisplayFont)
-		mSwitchDisplayFont.DeleteObject();
-
-	if (mMainTextFont)
-		mMainTextFont.DeleteObject();
-
 	if (mTraceFont)
 		mTraceFont.DeleteObject();
 }
@@ -136,7 +130,7 @@ CMControlUIView::TextOut(const std::string & txt)
 	{
 		CStringA newTxt(txt.c_str());
 		newTxt.Replace("\n", "\r\n");
-		mMainDisplay->SetWindowText(newTxt);
+		mMainDisplay->SetText(newTxt);
 	}
 }
 
@@ -296,11 +290,17 @@ CMControlUIView::CreateSwitch(int id,
 }
 
 void
-CMControlUIView::CreateSwitchTextDisplayFont(const std::string & fontName,
-											 int fontHeight, 
-											 bool bold)
+CMControlUIView::SetSwitchDisplayFontSettings(const std::string & fontName,
+											  int fontHeight, 
+											  bool bold,
+											  unsigned int bgColor,
+											  unsigned int fgColor)
 {
-	mSwitchDisplayFont.CreatePointFont(fontHeight * 10, fontName.c_str(), NULL, bold);
+	mSwitchDisplayFontSettings.mName = fontName;
+	mSwitchDisplayFontSettings.mHeight = fontHeight;
+	mSwitchDisplayFontSettings.mBold = bold;
+	mSwitchDisplayFontSettings.mFgColor = fgColor;
+	mSwitchDisplayFontSettings.mBgColor = bgColor;
 }
 
 void
@@ -320,14 +320,15 @@ CMControlUIView::CreateSwitchTextDisplay(int id,
 		/*ES_AUTOHSCROLL |*/ ES_READONLY | WS_VISIBLE | WS_CHILDWINDOW | SS_LEFTNOWORDWRAP /*SS_CENTERIMAGE*/, 
 		/*WS_EX_LEFT |*/ WS_EX_LTRREADING /*| WS_EX_CLIENTEDGE*/);
 	curSwitchDisplay->Created();
-// 	curSwitchDisplay->SetFont(mSwitchDisplayFont);
-	curSwitchDisplay->SetFontName(std::string("Courier New"));
-	curSwitchDisplay->SetFontBold(true);
-	curSwitchDisplay->SetFontSize(11);
-	curSwitchDisplay->SetSunken(true);
-	curSwitchDisplay->SetBkColor(0);
-	curSwitchDisplay->SetTextColor(0x00FF00);
 	curSwitchDisplay->SetMargin(2);
+	curSwitchDisplay->SetSunken(true);
+
+	curSwitchDisplay->SetFontName(mSwitchDisplayFontSettings.mName);
+	curSwitchDisplay->SetFontSize(mSwitchDisplayFontSettings.mHeight);
+	curSwitchDisplay->SetFontBold(mSwitchDisplayFontSettings.mBold);
+	curSwitchDisplay->SetBkColor(mSwitchDisplayFontSettings.mBgColor);
+	curSwitchDisplay->SetTextColor(mSwitchDisplayFontSettings.mFgColor);
+
 	_ASSERTE(!mSwitchTextDisplays[id]);
 	mSwitchTextDisplays[id] = curSwitchDisplay;
 }
@@ -339,21 +340,30 @@ CMControlUIView::CreateMainDisplay(int top,
 								   int height,
 								   const std::string & fontName,
 								   int fontHeight, 
-								   bool bold)
+								   bool bold,
+								   unsigned int bgColor, 
+								   unsigned int fgColor)
 {
 	_ASSERTE(!mMainDisplay);
-	mMainDisplay = new CEdit;
+	mMainDisplay = new CLabel;
 	RECT rc;
 	rc.top = top;
 	rc.left = left;
 	rc.bottom = top + height;
 	rc.right = left + width;
 	mMainDisplay->Create(m_hWnd, rc, NULL, 
-		WS_VSCROLL | ES_LEFT | ES_MULTILINE | ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_READONLY | WS_VISIBLE | WS_CHILDWINDOW, 
-		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY | WS_EX_CLIENTEDGE);
+		WS_VSCROLL | /*ES_LEFT | ES_MULTILINE |*/ ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_READONLY | WS_VISIBLE | WS_CHILDWINDOW, 
+		/*WS_EX_LEFT | WS_EX_LTRREADING |*/ WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY /*| WS_EX_CLIENTEDGE*/);
 
-	mMainTextFont.CreatePointFont(fontHeight * 10, fontName.c_str(), NULL, bold);
-	mMainDisplay->SetFont(mMainTextFont);
+	mMainDisplay->Created();
+	mMainDisplay->SetMargin(2);
+	mMainDisplay->SetSunken(true);
+
+	mMainDisplay->SetFontName(fontName);
+	mMainDisplay->SetFontSize(fontHeight);
+	mMainDisplay->SetFontBold(bold);
+	mMainDisplay->SetBkColor(bgColor);
+	mMainDisplay->SetTextColor(fgColor);
 }
 
 void
@@ -388,7 +398,9 @@ CMControlUIView::CreateStaticLabel(const std::string & label,
 								   int height, 
 								   const std::string & fontName,
 								   int fontHeight, 
-								   bool bold)
+								   bool bold,
+								   unsigned int bgColor, 
+								   unsigned int fgColor)
 {
 	_ASSERTE(!"not implemented yet");
 }

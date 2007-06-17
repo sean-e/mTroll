@@ -59,11 +59,11 @@ private:
 	virtual void	CreateSwitchLed(int id, int top, int left, int width, int height);
 	virtual void	CreateSwitchFont(const std::string & fontName, int fontHeight, bool bold);
 	virtual void	CreateSwitch(int id, const std::string & label, int top, int left, int width, int height);
-	virtual void	CreateSwitchTextDisplayFont(const std::string & fontName, int fontHeight, bool bold);
+	virtual void	SetSwitchDisplayFontSettings(const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor);
 	virtual void	CreateSwitchTextDisplay(int id, int top, int left, int width, int height);
-	virtual void	CreateMainDisplay(int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold);
+	virtual void	CreateMainDisplay(int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor);
 	virtual void	CreateTraceDisplay(int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold);
-	virtual void	CreateStaticLabel(const std::string & label, int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold);
+	virtual void	CreateStaticLabel(const std::string & label, int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor);
 	virtual void	SetMainSize(int width, int height);
 
 	BEGIN_MSG_MAP(CMControlUIView)
@@ -78,17 +78,24 @@ private:
 
 private:
 	MidiControlEngine			* mEngine;
-	CEdit						* mMainDisplay;
+	CLabel						* mMainDisplay;
 	CEdit						* mTraceDisplay;
 	std::map<int, SwitchLed*>	mLeds;
 	std::map<int, SwitchTextDisplay *>		mSwitchTextDisplays;
 	std::map<int, Switch *>		mSwitches;
 	std::map<int, bool>			mStupidSwitchStates;
 	CFont						mSwitchButtonFont;
-	CFont						mSwitchDisplayFont;
-	CFont						mMainTextFont;
 	CFont						mTraceFont;
 	int							mPreferredHeight, mPreferredWidth;
 	int							mMaxSwitchId;
 	WinMidiOut					mMidiOut;
+	struct SwitchDisplayFontSettings
+	{
+		std::string				mName;
+		int						mHeight;
+		DWORD					mFgColor;
+		DWORD					mBgColor;
+		bool					mBold;
+	};
+	SwitchDisplayFontSettings	mSwitchDisplayFontSettings;
 };

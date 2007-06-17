@@ -1,10 +1,10 @@
 <?xml version="1.0" ?>
 <MidiControlUiSettings>
 	<frame height="567" width="817" />
-	<mainTextDisplay top="288" left="9" width="420" height="163" font-height="10" font-weight="bold" />
+	<mainTextDisplay top="288" left="9" width="420" height="163" font-height="10" font-weight="bold" foregroundColor="16711680" backgroundColor="0" />
 	<traceTextDisplay top="288" left="460" width="338" height="163" font-height="8" />
 
-	<switchTextDisplays font-name="Tahoma" font-height="12" >
+	<switchTextDisplays font-name="Tahoma" font-height="12" foregroundColor="65280" backgroundColor="0" >
 		<switchTextDisplay number="0" top="5" left="5" width="105" height="23" />
 		<switchTextDisplay number="1" top="5" left="125" width="105" height="23" />
 		<switchTextDisplay number="2" top="5" left="245" width="105" height="23" />

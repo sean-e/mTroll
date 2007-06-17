@@ -340,6 +340,15 @@ MidiControlEngine::NavigateBankRelative(int relativeBankIndex)
 	if (mBankNavigationIndex >= kBankCnt)
 		mBankNavigationIndex = 0;
 
+	if (mSwitchDisplay)
+	{
+		for (int idx = 0; idx < 32; idx++)
+		{
+			mSwitchDisplay->ClearSwitchText(idx);
+			mSwitchDisplay->SetSwitchDisplay(idx, false);
+		}
+	}
+
 	// display bank info
 	PatchBank * bank = GetBank(mBankNavigationIndex);
 	if (!bank)

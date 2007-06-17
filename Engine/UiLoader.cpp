@@ -140,7 +140,13 @@ UiLoader::LoadSwitchDisplays(TiXmlElement * pElem)
 
 	int fontHeight = 10;
 	pElem->QueryIntAttribute("font-height", &fontHeight);
-	mUi->CreateSwitchTextDisplayFont(fontname, fontHeight, boldFont);
+
+	int bgColor = 0;
+	int fgColor = 0xffffff;
+	pElem->QueryIntAttribute("foregroundColor", &fgColor);
+	pElem->QueryIntAttribute("backgroundColor", &bgColor);
+
+	mUi->SetSwitchDisplayFontSettings(fontname, fontHeight, boldFont, (unsigned int)bgColor, (unsigned int)fgColor);
 
 	TiXmlHandle hRoot(NULL);
 	hRoot = TiXmlHandle(pElem);
@@ -197,6 +203,11 @@ UiLoader::LoadOtherStuffAndFinalize(TiXmlElement * pElem)
 		int fontHeight = 10;
 		pElem->QueryIntAttribute("font-height", &fontHeight);
 
+		int bgColor = 0;
+		int fgColor = 0xffffff;
+		pElem->QueryIntAttribute("foregroundColor", &fgColor);
+		pElem->QueryIntAttribute("backgroundColor", &bgColor);
+
 		int top = -1;
 		int left = -1;
 		int width = -1;
@@ -212,7 +223,7 @@ UiLoader::LoadOtherStuffAndFinalize(TiXmlElement * pElem)
 			-1 == width ||
 			-1 == height))
 		{
-			mUi->CreateMainDisplay(top, left, width, height, fontname, fontHeight, boldFont);
+			mUi->CreateMainDisplay(top, left, width, height, fontname, fontHeight, boldFont, bgColor, fgColor);
 		}
 	}
 
