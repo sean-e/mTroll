@@ -118,6 +118,8 @@ CMControlUIView::LoadMidiSettings(const std::string & file)
 	delete mEngine;
 	EngineLoader ldr(&mMidiOut, this, this, this);
 	mEngine = ldr.CreateEngine(file);
+	if (!mEngine)
+		TextOut("Failed to load MIDI settings.");
 }
 
 BOOL CMControlUIView::PreTranslateMessage(MSG* pMsg)
