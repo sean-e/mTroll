@@ -4,67 +4,93 @@
 	<mainTextDisplay top="288" left="9" width="420" height="163" font-height="10" font-weight="bold" foregroundColor="16711680" backgroundColor="0" />
 	<traceTextDisplay top="288" left="460" width="338" height="163" font-height="8" />
 
-	<switchTextDisplays font-name="Tahoma" font-height="12" foregroundColor="65280" backgroundColor="0" >
-		<switchTextDisplay number="0" top="5" left="5" width="105" height="23" />
-		<switchTextDisplay number="1" top="5" left="125" width="105" height="23" />
-		<switchTextDisplay number="2" top="5" left="245" width="105" height="23" />
-		<switchTextDisplay number="3" top="5" left="365" width="105" height="23" />
-		<switchTextDisplay number="4" top="5" left="485" width="105" height="23" />
+  <switchAssemblyConfig>
+    <switch font-name="Tahoma" font-weight="bold" font-height="10" width="75" height="23" />
+    <switchTextDisplay font-name="Tahoma" font-height="12" foregroundColor="65280" backgroundColor="0" width="105" height="23" />
+    <switchLed width="26" height="10" onColor="65280" offColor="256" />
+  </switchAssemblyConfig>
 
-		<switchTextDisplay number="5" top="100" left="5" width="105" height="23" />
-		<switchTextDisplay number="6" top="100" left="125" width="105" height="23" />
-		<switchTextDisplay number="7" top="100" left="245" width="105" height="23" />
-		<switchTextDisplay number="8" top="100" left="365" width="105" height="23" />
-		<switchTextDisplay number="9" top="100" left="485" width="105" height="23" />
+  <switchAssemblies>
+    <switchAssembly number="0" top="5" left="5" >
+      <switchTextDisplay />
+      <switchLed vOffset="30" hOffset="40" />
+      <switch label="&amp;1" vOffset="45" hOffset="15" />
+    </switchAssembly>
+    <switchAssembly number="1" top="5" left="125" >
+      <switchTextDisplay />
+      <switchLed vOffset="30" hOffset="40" />
+      <switch label="&amp;2" vOffset="45" hOffset="15" />
+    </switchAssembly>
+    <switchAssembly number="2" top="5" left="245" >
+      <switchTextDisplay />
+      <switchLed vOffset="30" hOffset="40" />
+      <switch label="&amp;3" vOffset="45" hOffset="15" />
+    </switchAssembly>
+    <switchAssembly number="3" top="5" left="365" >
+      <switchTextDisplay />
+      <switchLed vOffset="30" hOffset="40" />
+      <switch label="&amp;4" vOffset="45" hOffset="15" />
+    </switchAssembly>
+    <switchAssembly number="4" top="5" left="485" >
+      <switchTextDisplay />
+      <switchLed vOffset="30" hOffset="40" />
+      <switch label="&amp;5" vOffset="45" hOffset="15" />
+    </switchAssembly>
 
-		<switchTextDisplay number="10" top="195" left="5" width="105" height="23" />
-		<switchTextDisplay number="11" top="195" left="125" width="105" height="23" />
-		<switchTextDisplay number="12" top="195" left="245" width="105" height="23" />
+    <switchAssembly number="5" top="100" left="5" >
+      <switchTextDisplay />
+      <switchLed vOffset="30" hOffset="40" />
+      <switch label="&amp;6" vOffset="45" hOffset="15" />
+    </switchAssembly>
+    <switchAssembly number="6" top="100" left="125" >
+      <switchTextDisplay />
+      <switchLed vOffset="30" hOffset="40" />
+      <switch label="&amp;7" vOffset="45" hOffset="15" />
+    </switchAssembly>
+    <switchAssembly number="7" top="100" left="245" >
+      <switchTextDisplay />
+      <switchLed vOffset="30" hOffset="40" />
+      <switch label="&amp;8" vOffset="45" hOffset="15" />
+    </switchAssembly>
+    <switchAssembly number="8" top="100" left="365" >
+      <switchTextDisplay />
+      <switchLed vOffset="30" hOffset="40" />
+      <switch label="&amp;9" vOffset="45" hOffset="15" />
+    </switchAssembly>
+    <switchAssembly number="9" top="100" left="485" >
+      <switchTextDisplay />
+      <switchLed vOffset="30" hOffset="40" />
+      <switch label="1&amp;0" vOffset="45" hOffset="15" />
+    </switchAssembly>
 
-		<switchTextDisplay number="13" top="5" left="690" width="105" height="23" />
-		<switchTextDisplay number="14" top="195" left="570" width="105" height="23" />
-		<switchTextDisplay number="15" top="195" left="690" width="105" height="23" />
-	</switchTextDisplays>
+    <switchAssembly number="10" top="195" left="5" >
+      <switchTextDisplay />
+      <switchLed vOffset="30" hOffset="40" />
+      <switch label="11" vOffset="45" hOffset="15" />
+    </switchAssembly>
+    <switchAssembly number="11" top="195" left="125" >
+      <switchTextDisplay />
+      <switchLed vOffset="30" hOffset="40" />
+      <switch label="12" vOffset="45" hOffset="15" />
+    </switchAssembly>
+    <switchAssembly number="12" top="195" left="245" >
+      <switchTextDisplay />
+      <switchLed vOffset="30" hOffset="40" />
+      <switch label="13" vOffset="45" hOffset="15" />
+    </switchAssembly>
 
-	<switchLeds>
-		<switchLed number="0" top="34" left="45" width="26" height="10" />
-		<switchLed number="1" top="34" left="165" width="26" height="10" />
-		<switchLed number="2" top="34" left="285" width="26" height="10" />
-		<switchLed number="3" top="34" left="405" width="26" height="10" />
-		<switchLed number="4" top="34" left="525" width="26" height="10" />
-
-		<switchLed number="5" top="129" left="45" width="26" height="10" />
-		<switchLed number="6" top="129" left="165" width="26" height="10" />
-		<switchLed number="7" top="129" left="285" width="26" height="10" />
-		<switchLed number="8" top="129" left="405" width="26" height="10" />
-		<switchLed number="9" top="129" left="525" width="26" height="10" />
-
-		<switchLed number="10" top="224" left="45" width="26" height="10" />
-		<switchLed number="11" top="224" left="165" width="26" height="10" />
-		<switchLed number="12" top="224" left="285" width="26" height="10" />
-
-		<switchLed number="13" top="34" left="730" width="26" height="10" />
-	</switchLeds>
-
-	<switches font-name="Tahoma" font-weight="bold" font-height="10" >
-		<switch label="&amp;1" number="0" top="50" left="20" width="75" height="23" />
-		<switch label="&amp;2" number="1" top="50" left="140" width="75" height="23" />
-		<switch label="&amp;3" number="2" top="50" left="260" width="75" height="23" />
-		<switch label="&amp;4" number="3" top="50" left="380" width="75" height="23" />
-		<switch label="&amp;5" number="4" top="50" left="500" width="75" height="23" />
-
-		<switch label="&amp;6" number="5" top="145" left="20" width="75" height="23" />
-		<switch label="&amp;7" number="6" top="145" left="140" width="75" height="23" />
-		<switch label="&amp;8" number="7" top="145" left="260" width="75" height="23" />
-		<switch label="&amp;9" number="8" top="145" left="380" width="75" height="23" />
-		<switch label="1&amp;0" number="9" top="145" left="500" width="75" height="23" />
-
-		<switch label="11" number="10" top="240" left="20" width="75" height="23" />
-		<switch label="12" number="11" top="240" left="140" width="75" height="23" />
-		<switch label="13" number="12" top="240" left="260" width="75" height="23" />
-
-		<switch label="&amp;Mode" number="13" top="50" left="705" width="75" height="23" />
-		<switch label="&amp;Dec" number="14" top="240" left="585" width="75" height="23" />
-		<switch label="&amp;Inc" number="15" top="240" left="705" width="75" height="23" />
-	</switches>
+    <switchAssembly number="13" top="5" left="690" >
+      <switchTextDisplay />
+      <switchLed vOffset="30" hOffset="40" />
+      <switch label="&amp;Mode" vOffset="45" hOffset="15" />
+    </switchAssembly>
+    <switchAssembly number="14" top="195" left="570" >
+      <switchTextDisplay />
+      <switch label="&amp;Dec" vOffset="45" hOffset="15" />
+    </switchAssembly>
+    <switchAssembly number="15" top="195" left="690" >
+      <switchTextDisplay />
+      <switch label="&amp;Inc" vOffset="45" hOffset="15" />
+    </switchAssembly>
+  </switchAssemblies>
 </MidiControlUiSettings>
