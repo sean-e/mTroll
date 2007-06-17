@@ -257,6 +257,7 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 
 	if (emBankDirect == mMode)
 	{
+		bool updateMainDisplay = true;
 		switch (switchNumber)
 		{
 		case 0:		mBankDirectNumber += "1";	break;
@@ -277,6 +278,13 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 			ChangeMode(emBank);
 			mBankNavigationIndex = mActiveBankIndex;
 			NavigateBankRelative(0);
+			updateMainDisplay = false;
+		}
+		else if (switchNumber == mDecrementSwitchNumber)
+		{
+			// remove last char
+			if (mBankDirectNumber.length())
+				mBankDirectNumber = mBankDirectNumber.erase(mBankDirectNumber.length() - 1);
 		}
 		else if (switchNumber == mIncrementSwitchNumber)
 		{
@@ -288,12 +296,16 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 				LoadBank(bnkIdx);
 			else if (mMainDisplay)
 				mMainDisplay->TextOut("Invalid bank number");
+			updateMainDisplay = false;
 		}
-		else if (mMainDisplay)
+
+		if (mMainDisplay && updateMainDisplay)
 		{
 			const int bnkIdx = GetBankIndex(::atoi(mBankDirectNumber.c_str()));
 			if (bnkIdx == -1)
-				mMainDisplay->TextOut(mBankDirectNumber);
+			{
+				mMainDisplay->TextOut(mBankDirectNumber + " (invalid bank number)");
+			}
 			else
 			{
 				PatchBank * bnk = GetBank(bnkIdx);
@@ -485,6 +497,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			mSwitchDisplay->SetSwitchText(8, "9");
 			mSwitchDisplay->SetSwitchText(9, "0");
 			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Commit");
+			mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "Backspace");
 		}
 		break;
 	default:
