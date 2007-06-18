@@ -66,15 +66,28 @@ CMControlUIView::Unload()
 {
 	delete mEngine;
 	mEngine = NULL;
+
+	if (mMainDisplay && mMainDisplay->m_hWnd && ::IsWindow(mMainDisplay->m_hWnd))
+		mMainDisplay->DestroyWindow();
 	delete mMainDisplay;
+
 	mMainDisplay = NULL;
+	if (mTraceDisplay && mTraceDisplay->m_hWnd && ::IsWindow(mTraceDisplay->m_hWnd))
+		mTraceDisplay->DestroyWindow();
 	delete mTraceDisplay;
 	mTraceDisplay = NULL;
+
 	if (mMidiOut.IsMidiOutOpen())
 		mMidiOut.CloseMidiOut();
 
 	mMaxSwitchId = 0;
 	mStupidSwitchStates.clear();
+
+	if (mSwitchButtonFont)
+		mSwitchButtonFont.DeleteObject();
+	
+	if (mTraceFont)
+		mTraceFont.DeleteObject();
 
 	for_each(mLeds.begin(), mLeds.end(), DeleteSwitchLed());
 	mLeds.clear();
@@ -84,12 +97,6 @@ CMControlUIView::Unload()
 
 	for_each(mSwitchTextDisplays.begin(), mSwitchTextDisplays.end(), DeleteSwitchTextDisplay());
 	mSwitchTextDisplays.clear();
-
-	if (mSwitchButtonFont)
-		mSwitchButtonFont.DeleteObject();
-	
-	if (mTraceFont)
-		mTraceFont.DeleteObject();
 }
 
 HWND
