@@ -191,7 +191,10 @@ CMControlUIView::TextOut(const std::string & txt)
 	{
 		CStringA newTxt(txt.c_str());
 		newTxt.Replace("\n", "\r\n");
-		mMainDisplay->SetText(newTxt);
+		CStringA prevTxt;
+		mMainDisplay->GetWindowText(prevTxt);
+		if (newTxt != prevTxt)
+			mMainDisplay->SetText(newTxt);
 	}
 }
 
@@ -199,7 +202,12 @@ void
 CMControlUIView::ClearDisplay()
 {
 	if (mMainDisplay)
-		mMainDisplay->SetWindowText("");
+	{
+		CStringA prevTxt;
+		mMainDisplay->GetWindowText(prevTxt);
+		if (!prevTxt.IsEmpty())
+			mMainDisplay->SetWindowText("");
+	}
 }
 
 

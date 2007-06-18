@@ -456,12 +456,14 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 
 		if (mActiveBank)
 		{
-			mActiveBank->DisplayInfo(mMainDisplay, mSwitchDisplay, true);
+			// caller changing to emBank will update mainDisplay - reduce flicker
 			showModeInMainDisplay = false;
 		}
 		break;
 	case emBankNav:
 		msg = "Bank Navigation";
+		if (mActiveBank)
+			showModeInMainDisplay = false;
 		if (mSwitchDisplay)
 		{
 			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Next Bank");

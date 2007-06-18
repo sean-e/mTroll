@@ -128,7 +128,7 @@ PatchBank::Unload(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay
 		}
 	}
 
-	mainDisplay->ClearDisplay();
+//	mainDisplay->ClearDisplay();
 }
 
 void
