@@ -66,13 +66,50 @@ private: // IMidiControlUi
 
 	BEGIN_MSG_MAP(CMControlUIView)
 		NOTIFY_CODE_HANDLER(NM_CUSTOMDRAW, OnNotifyCustomDraw)
+		COMMAND_HANDLER(0, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(1, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(2, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(3, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(4, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(5, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(6, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(7, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(8, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(9, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(10, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(11, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(12, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(13, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(14, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(15, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(16, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(17, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(18, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(19, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(20, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(21, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(22, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(23, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(24, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(25, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(26, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(27, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(28, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(29, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(30, BN_CLICKED, OnBnPushed)
+		COMMAND_HANDLER(31, BN_CLICKED, OnBnPushed)
 	END_MSG_MAP()
 
+private:
 // Handler prototypes (uncomment arguments if needed):
 //	LRESULT MessageHandler(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 //	LRESULT CommandHandler(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 //	LRESULT NotifyHandler(int /*idCtrl*/, LPNMHDR /*pnmh*/, BOOL& /*bHandled*/)
 	LRESULT OnNotifyCustomDraw(int idCtrl, LPNMHDR pNotifyStruct, BOOL& /*bHandled*/);
+	LRESULT OnBnPushed(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
+
+	void ButtonReleased(const int idx);
+	void ButtonPressed(const int idx);
 	void Unload();
 
 private:
@@ -87,6 +124,7 @@ private:
 	CFont						mTraceFont;
 	int							mPreferredHeight, mPreferredWidth;
 	int							mMaxSwitchId;
+	UINT						mKeyMessage;
 	WinMidiOut					mMidiOut;
 
 	struct SwitchTextDisplayConfig

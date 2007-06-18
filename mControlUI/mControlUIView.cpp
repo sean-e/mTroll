@@ -22,7 +22,8 @@ CMControlUIView::CMControlUIView() :
 	mPreferredHeight(0),
 	mPreferredWidth(0),
 	mMaxSwitchId(0),
-	mMidiOut(this)
+	mMidiOut(this),
+	mKeyMessage(0)
 {
 }
 
@@ -131,9 +132,56 @@ CMControlUIView::LoadMidiSettings(const std::string & file)
 
 BOOL CMControlUIView::PreTranslateMessage(MSG* pMsg)
 {
-	return CWindow::IsDialogMessage(pMsg);
+	if (WM_CHAR == pMsg->message)
+	{
+		if (VK_RETURN == pMsg->wParam || VK_SPACE == pMsg->wParam)
+			mKeyMessage = 0;
+		else
+			mKeyMessage = WM_CHAR;
+	}
+	else
+		mKeyMessage = 0;
+
+	BOOL retval = CWindow::IsDialogMessage(pMsg);
+	mKeyMessage = 0;
+	return retval;
 }
 
+LRESULT
+CMControlUIView::OnBnPushed(WORD wNotifyCode, 
+							WORD wID, 
+							HWND hWndCtl, 
+							BOOL& bHandled)
+{
+	if (WM_CHAR == mKeyMessage)
+	{
+		ButtonPressed(wID);
+		ButtonReleased(wID);
+	}
+	return 0;
+}
+
+void
+CMControlUIView::ButtonPressed(const int idx)
+{
+	if (!mStupidSwitchStates[idx])
+	{
+		mStupidSwitchStates[idx] = true;
+		if (mEngine)
+			mEngine->SwitchPressed(idx);
+	}
+}
+
+void
+CMControlUIView::ButtonReleased(const int idx)
+{
+	if (mStupidSwitchStates[idx])
+	{
+		mStupidSwitchStates[idx] = false;
+		if (mEngine)
+			mEngine->SwitchReleased(idx);
+	}
+}
 
 // IMainDisplay
 void
@@ -206,26 +254,10 @@ CMControlUIView::OnNotifyCustomDraw(int idCtrl,
 	if (idx >= 0 && idx <= mMaxSwitchId)
 	{
 		if (pCustomDraw->uItemState & ODS_SELECTED)
-		{
-			if (!mStupidSwitchStates[idx])
-			{
-				mStupidSwitchStates[idx] = true;
-				if (mEngine)
-					mEngine->SwitchPressed(idx);
-			}
-		}
+			ButtonPressed(idx);
 		else
-		{
-			if (mStupidSwitchStates[idx])
-			{
-				mStupidSwitchStates[idx] = false;
-				if (mEngine)
-					mEngine->SwitchReleased(idx);
-			}
-		}
+			ButtonReleased(idx);
 	}
-
-	COLORREF crOldColor = ::SetTextColor(pCustomDraw->hdc, RGB(0,0,200));
 
 	return 0;
 }
