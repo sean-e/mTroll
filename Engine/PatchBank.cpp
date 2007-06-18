@@ -100,7 +100,7 @@ PatchBank::Load(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay *
 		}
 	}
 
-	DisplayInfo(mainDisplay, switchDisplay, !switchDisplay->SupportsSwitchText());
+	DisplayInfo(mainDisplay, switchDisplay, true);
 }
 
 void
@@ -210,7 +210,8 @@ void
 PatchBank::DisplayDetailedPatchInfo(int switchNumber, IMainDisplay * mainDisplay)
 {
 	std::ostrstream info;
-	info << "Status for bank " << std::setw(2) << mNumber << " '" << mName << "'" << std::endl << "switch " << std::setw(2) << (switchNumber + 1) << std::endl;
+	info << "Status for bank " << std::setw(2) << mNumber << " '" << mName << "'" 
+		<< std::endl << "switch " << std::setw(2) << (switchNumber + 1) << std::endl;
 
 	for (PatchMaps::iterator it = mPatches.begin();
 		it != mPatches.end();
@@ -230,12 +231,15 @@ PatchBank::DisplayDetailedPatchInfo(int switchNumber, IMainDisplay * mainDisplay
 				continue;
 
 			if (cnt == 0)
-				info << "Num On/Off Type\t\tName" << std::endl;
+				info << "Num On/Off Type      Name" << std::endl;
 			
 // 			if (cnt == 1)
 // 				info << "(Hidden patches)" << std::endl;
 
-			info << std::setw(3) << curItem->mPatch->GetNumber() << " " << (curItem->mPatch->IsOn() ? "ON     " : "off    ") << curItem->mPatch->GetPatchType() << "\t" << curItem->mPatch->GetName() << std::endl;
+			info << std::setw(3) << curItem->mPatch->GetNumber() << " " 
+				<< (curItem->mPatch->IsOn() ? "ON     " : "off    ") 
+				<< std::setiosflags(std::ios::left) << std::setw(10) << curItem->mPatch->GetPatchType() 
+				<< curItem->mPatch->GetName() << std::endl;
 			++cnt;
 		}
 

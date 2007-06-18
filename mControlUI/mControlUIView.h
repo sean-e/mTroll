@@ -37,25 +37,21 @@ public:
 	void LoadMidiSettings(const std::string & file);
 
 	BOOL PreTranslateMessage(MSG* pMsg);
+	void GetPreferredSize(int & width, int & height) const {width = mPreferredWidth; height = mPreferredHeight;}
 
-	// IMainDisplay
+public: // IMainDisplay
 	virtual void TextOut(const std::string & txt);
 	virtual void ClearDisplay();
 
-	// ITraceDisplay
+public: // ITraceDisplay
 	virtual void Trace(const std::string & txt);
 
-	// ISwitchDisplay
+public: // ISwitchDisplay
 	virtual void SetSwitchDisplay(int switchNumber, bool isOn);
-	virtual bool SupportsSwitchText() const;
 	virtual void SetSwitchText(int switchNumber, const std::string & txt);
 	virtual void ClearSwitchText(int switchNumber);
-	virtual void SetSwitchDisplayPos(int switchNumber, int pos, int range);
 
-private:
-	void Unload();
-
-	// IMidiControlUi
+private: // IMidiControlUi
 	virtual void	SetSwitchLedConfig(int width, int height, unsigned int onColor, unsigned int offColor);
 	virtual void	CreateSwitchLed(int id, int top, int left);
 	virtual void	SetSwitchConfig(int width, int height, const std::string & fontName, int fontHeight, bool bold);
@@ -76,6 +72,7 @@ private:
 //	LRESULT CommandHandler(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 //	LRESULT NotifyHandler(int /*idCtrl*/, LPNMHDR /*pnmh*/, BOOL& /*bHandled*/)
 	LRESULT OnNotifyCustomDraw(int idCtrl, LPNMHDR pNotifyStruct, BOOL& /*bHandled*/);
+	void Unload();
 
 private:
 	MidiControlEngine			* mEngine;
@@ -93,23 +90,23 @@ private:
 
 	struct SwitchTextDisplayConfig
 	{
-		std::string				mFontname;
+		int						mHeight;
+		int						mWidth;
 		int						mFontHeight;
+		std::string				mFontname;
 		DWORD					mFgColor;
 		DWORD					mBgColor;
 		bool					mBold;
-		int						mHeight;
-		int						mWidth;
 	};
 	SwitchTextDisplayConfig		mSwitchTextDisplayConfig;
 
 	struct SwitchConfig
 	{
+		int						mHeight;
+		int						mWidth;
 		std::string				mFontname;
 		int						mFontHeight;
 		bool					mBold;
-		int						mHeight;
-		int						mWidth;
 	};
 	SwitchConfig				mSwitchConfig;
 

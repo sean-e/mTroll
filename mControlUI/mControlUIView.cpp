@@ -35,6 +35,8 @@ struct DeleteSwitchLed
 {
 	void operator()(const std::pair<int, CMControlUIView::SwitchLed *> & pr)
 	{
+		if (pr.second && pr.second->m_hWnd && ::IsWindow(pr.second->m_hWnd))
+			pr.second->DestroyWindow();
 		delete pr.second;
 	}
 };
@@ -43,6 +45,8 @@ struct DeleteSwitch
 {
 	void operator()(const std::pair<int, CMControlUIView::Switch *> & pr)
 	{
+		if (pr.second && pr.second->m_hWnd && ::IsWindow(pr.second->m_hWnd))
+			pr.second->DestroyWindow();
 		delete pr.second;
 	}
 };
@@ -51,6 +55,8 @@ struct DeleteSwitchTextDisplay
 {
 	void operator()(const std::pair<int, CMControlUIView::SwitchTextDisplay *> & pr)
 	{
+		if (pr.second && pr.second->m_hWnd && ::IsWindow(pr.second->m_hWnd))
+			pr.second->DestroyWindow();
 		delete pr.second;
 	}
 };
@@ -165,12 +171,6 @@ CMControlUIView::SetSwitchDisplay(int switchNumber, bool isOn)
 	mLeds[switchNumber]->SetPos(isOn ? 4 : 0);
 }
 
-bool
-CMControlUIView::SupportsSwitchText() const
-{
-	return false;
-}
-
 void
 CMControlUIView::SetSwitchText(int switchNumber, const std::string & txt)
 {
@@ -178,16 +178,6 @@ CMControlUIView::SetSwitchText(int switchNumber, const std::string & txt)
 		return;
 
 	mSwitchTextDisplays[switchNumber]->SetText(txt);
-}
-
-void
-CMControlUIView::SetSwitchDisplayPos(int switchNumber, int pos, int range)
-{
-	if (!mSwitchTextDisplays[switchNumber] || !mSwitchTextDisplays[switchNumber]->IsWindow())
-		return;
-
-	mLeds[switchNumber]->SetRange(0, range);
-	mLeds[switchNumber]->SetPos(pos);
 }
 
 void
