@@ -105,7 +105,7 @@ MidiControlEngine::SetPowerup(int powerupBank,
 // were only added after all patches had been added (AddBank 
 // would then need to maintain sort)
 void
-MidiControlEngine::CompleteInit()
+MidiControlEngine::CompleteInit(int midioutOutDeviceIdx)
 {
 	std::sort(mBanks.begin(), mBanks.end(), SortByBankNumber);
 
@@ -124,15 +124,24 @@ MidiControlEngine::CompleteInit()
 	}
 
 	ChangeMode(emBank);
+	_ASSERTE(midioutOutDeviceIdx >= 0);
+	std::strstream traceMsg;
 	if (mMidiOut)
-		mMidiOut->OpenMidiOut(0);
+	{
+		if (mMidiOut->OpenMidiOut(midioutOutDeviceIdx))
+			traceMsg << "Opened MIDI out " << midioutOutDeviceIdx << " " << mMidiOut->GetMidiOutDeviceName(midioutOutDeviceIdx) << std::endl;
+		else
+			traceMsg << "Failed to open MIDI out " << midioutOutDeviceIdx << std::endl;
+	}
+	else if (mTrace)
+		traceMsg << "No MIDI Out." << std::endl;
+
 	LoadBank(powerUpBankIndex);
 
 	if (mTrace)
 	{
-		std::strstream msg;
-		msg << "Load complete: bank cnt " << mBanks.size() << ", patch cnt " << mPatches.size() << std::endl << std::ends;
-		mTrace->Trace(std::string(msg.str()));
+		traceMsg << "Load complete: bank cnt " << mBanks.size() << ", patch cnt " << mPatches.size() << std::endl << std::ends;
+		mTrace->Trace(std::string(traceMsg.str()));
 	}
 
 }

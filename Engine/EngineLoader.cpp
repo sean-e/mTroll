@@ -17,7 +17,8 @@ EngineLoader::EngineLoader(IMidiOut * midiOut,
 	mMidiOut(midiOut),
 	mMainDisplay(mainDisplay),
 	mSwitchDisplay(switchDisplay),
-	mTraceDisplay(traceDisplay)
+	mTraceDisplay(traceDisplay),
+	mMidiOutDeviceIdx(0)
 {
 }
 
@@ -53,7 +54,7 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 	pElem = hRoot.FirstChild("banks").FirstChild().Element();
 	LoadBanks(pElem);
 
-	mEngine->CompleteInit();
+	mEngine->CompleteInit(mMidiOutDeviceIdx);
 
 	MidiControlEngine * createdEngine = mEngine;
 	mEngine = NULL;
@@ -102,6 +103,11 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 		else if (name == "mode" && id > 0)
 			modeSwitch = id;
 	}
+
+	// <midiDevice port="1" out="3" />
+	pChildElem = hRoot.FirstChild("midiDevice").Element();
+	if (pChildElem)
+		pChildElem->QueryIntAttribute("outIdx", &mMidiOutDeviceIdx);
 
 	mEngine = new MidiControlEngine(mMidiOut, mMainDisplay, mSwitchDisplay, mTraceDisplay, incrementSwitch, decrementSwitch, modeSwitch);
 	mEngine->SetPowerup(powerupBank, powerupPatch, powerupTimeout);

@@ -28,6 +28,7 @@ private:
 	IMidiOut *				mMidiOut;
 	ISwitchDisplay *		mSwitchDisplay;
 	ITraceDisplay *			mTraceDisplay;
+	int						mMidiOutDeviceIdx;
 };
 
 #endif // EngineLoader_h__

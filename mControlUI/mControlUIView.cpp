@@ -65,6 +65,9 @@ struct DeleteSwitchTextDisplay
 void
 CMControlUIView::Unload()
 {
+	if (mMidiOut.IsMidiOutOpen())
+		mMidiOut.CloseMidiOut();
+
 	delete mEngine;
 	mEngine = NULL;
 
@@ -77,9 +80,6 @@ CMControlUIView::Unload()
 		mTraceDisplay->DestroyWindow();
 	delete mTraceDisplay;
 	mTraceDisplay = NULL;
-
-	if (mMidiOut.IsMidiOutOpen())
-		mMidiOut.CloseMidiOut();
 
 	mMaxSwitchId = 0;
 	mStupidSwitchStates.clear();
