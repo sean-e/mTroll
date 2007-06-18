@@ -414,6 +414,7 @@ MidiControlEngine::LoadBank(int bankIndex)
 	mActiveBank = bank;
 	mBankNavigationIndex = mActiveBankIndex = bankIndex;
 	mActiveBank->Load(mMidiOut, mMainDisplay, mSwitchDisplay);
+	UpdateBankModeSwitchDisplay();
 	return true;
 }
 
@@ -458,6 +459,9 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		{
 			// caller changing to emBank will update mainDisplay - reduce flicker
 			showModeInMainDisplay = false;
+			UpdateBankModeSwitchDisplay();
+			if (mSwitchDisplay)
+				msg.clear();
 		}
 		break;
 	case emBankNav:
@@ -517,7 +521,27 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 
 	if (mSwitchDisplay)
 	{
-		mSwitchDisplay->SetSwitchText(mModeSwitchNumber, msg);
+		if (!msg.empty())
+			mSwitchDisplay->SetSwitchText(mModeSwitchNumber, msg);
 		mSwitchDisplay->SetSwitchDisplay(mModeSwitchNumber, mMode == emBank ? true : false);
+	}
+}
+
+void
+MidiControlEngine::UpdateBankModeSwitchDisplay()
+{
+	if (!mSwitchDisplay)
+		return;
+
+	_ASSERTE(emBank == mMode);
+	if (mActiveBank)
+	{
+		std::strstream msg;
+		msg << mActiveBank->GetBankNumber() << ": " << mActiveBank->GetBankName() << std::endl << std::ends;
+		mSwitchDisplay->SetSwitchText(mModeSwitchNumber, msg.str());
+	}
+	else
+	{
+		mSwitchDisplay->SetSwitchText(mModeSwitchNumber, "Bank");
 	}
 }

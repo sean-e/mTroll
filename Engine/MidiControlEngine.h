@@ -44,6 +44,7 @@ private:
 	bool					LoadBank(int bankIndex);
 	PatchBank *				GetBank(int bankIndex);
 	int						GetBankIndex(int bankNumber);
+	void					UpdateBankModeSwitchDisplay();
 	enum EngineMode 
 	{ 
 		emCreated = -1,		// initial state - no data loaded
