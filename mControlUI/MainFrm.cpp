@@ -56,13 +56,15 @@ LRESULT CMainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/
 	pLoop->AddMessageFilter(this);
 	pLoop->AddIdleHandler(this);
 
-	mView.LoadUi("ui.xml");
-	mView.LoadMidiSettings("test.xml");
+	BOOL dummy;
+	OnFileNew(0, 0, 0, dummy);
 
 	CRect wndRc;
 	GetWindowRect(&wndRc);
-	wndRc.right = wndRc.left + 817;
-	wndRc.bottom = wndRc.top + 567;
+	int width, height;
+	mView.GetPreferredSize(width, height);
+	wndRc.right = wndRc.left + width;
+	wndRc.bottom = wndRc.top + height;
 	MoveWindow(&wndRc);
 
 	return 0;
@@ -76,8 +78,10 @@ LRESULT CMainFrame::OnFileExit(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCt
 
 LRESULT CMainFrame::OnFileNew(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
+	::SetCursor(AtlLoadSysCursor(IDC_WAIT));
 	mView.LoadUi("ui.xml");
 	mView.LoadMidiSettings("test.xml");
+	::SetCursor(AtlLoadSysCursor(IDC_ARROW));
 	return 0;
 }
 
