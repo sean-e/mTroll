@@ -481,8 +481,8 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		if (mSwitchDisplay)
 		{
 			mSwitchDisplay->SetSwitchText(kModeDefaultSwitchNumber, "Bank");
-			mSwitchDisplay->SetSwitchText(kModeBankNavSwitchNumber, "Bank Nav");
-			mSwitchDisplay->SetSwitchText(kModeBankDescSwitchNumber, "Bank Desc");
+			mSwitchDisplay->SetSwitchText(kModeBankNavSwitchNumber, "Bank Navigation");
+			mSwitchDisplay->SetSwitchText(kModeBankDescSwitchNumber, "Bank Description");
 			mSwitchDisplay->SetSwitchText(kModeBankDirect, "Bank Direct");
 		}
 		break;
