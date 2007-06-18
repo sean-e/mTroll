@@ -579,10 +579,10 @@ protected:
 		GetWindowRect(rc);
 		RedrawWindow();
 
-		CWindow parent(GetParent());
-		parent.ScreenToClient(rc);
-		parent.InvalidateRect(rc,TRUE);
-		parent.UpdateWindow();
+// 		CWindow parent(GetParent());
+// 		parent.ScreenToClient(rc);
+// 		parent.InvalidateRect(rc,TRUE);
+// 		parent.UpdateWindow();
 	}
 
 	// =============================================================================================

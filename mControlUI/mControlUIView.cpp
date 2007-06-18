@@ -405,8 +405,8 @@ CMControlUIView::CreateMainDisplay(int top,
 	rc.bottom = top + height;
 	rc.right = left + width;
 	mMainDisplay->Create(m_hWnd, rc, NULL, 
-		WS_VSCROLL | /*ES_LEFT | ES_MULTILINE |*/ ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_READONLY | WS_VISIBLE | WS_CHILDWINDOW, 
-		/*WS_EX_LEFT | WS_EX_LTRREADING |*/ WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY /*| WS_EX_CLIENTEDGE*/);
+		ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_READONLY | WS_VISIBLE | WS_CHILDWINDOW /*| WS_VSCROLL | ES_LEFT | ES_MULTILINE*/, 
+		WS_EX_NOPARENTNOTIFY /*| WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | | WS_EX_CLIENTEDGE*/);
 
 	mMainDisplay->Created();
 	mMainDisplay->SetMargin(2);
@@ -436,8 +436,8 @@ CMControlUIView::CreateTraceDisplay(int top,
 	rc.bottom = top + height;
 	rc.right = left + width;
 	mTraceDisplay->Create(m_hWnd, rc, NULL, 
-		WS_VSCROLL | ES_LEFT | ES_MULTILINE | ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_READONLY | WS_VISIBLE | WS_CHILDWINDOW, 
-		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY | WS_EX_CLIENTEDGE);
+		WS_VSCROLL | ES_LEFT | ES_MULTILINE | ES_AUTOHSCROLL | ES_READONLY | WS_VISIBLE | WS_CHILDWINDOW, 
+		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_NOPARENTNOTIFY | WS_EX_CLIENTEDGE);
 
 	mTraceFont.CreatePointFont(fontHeight * 10, fontName.c_str(), NULL, bold);
 	mTraceDisplay->SetFont(mTraceFont);
