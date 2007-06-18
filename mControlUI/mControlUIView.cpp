@@ -168,7 +168,7 @@ CMControlUIView::SetSwitchDisplay(int switchNumber, bool isOn)
 	if (!mLeds[switchNumber] || !mLeds[switchNumber]->IsWindow())
 		return;
 
-	mLeds[switchNumber]->SetPos(isOn ? 4 : 0);
+	mLeds[switchNumber]->SetOnOff(isOn);
 }
 
 void
@@ -248,11 +248,10 @@ CMControlUIView::CreateSwitchLed(int id,
 	rc.left = left;
 	rc.bottom = top + mLedConfig.mHeight;
 	rc.right = left + mLedConfig.mWidth;
-	curSwitchLed->Create(m_hWnd, rc, NULL, 
-		WS_VISIBLE | WS_CHILDWINDOW | PBS_SMOOTH, 
-		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_NOPARENTNOTIFY | WS_EX_RIGHTSCROLLBAR);
+	curSwitchLed->SetShape(ID_SHAPE_SQUARE);
+	curSwitchLed->SetColor(mLedConfig.mOnColor, mLedConfig.mOffColor);
+	curSwitchLed->Create(m_hWnd, rc, NULL, WS_VISIBLE | WS_CHILDWINDOW, WS_EX_NOPARENTNOTIFY);
 	_ASSERTE(!mLeds[id]);
-	curSwitchLed->SetRange(0, 4);
 	mLeds[id] = curSwitchLed;
 }
 

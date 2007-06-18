@@ -250,6 +250,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\AtlLed.h"
+				>
+			</File>
+			<File
 				RelativePath=".\MainFrm.h"
 				>
 			</File>

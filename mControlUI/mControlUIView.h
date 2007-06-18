@@ -12,6 +12,7 @@
 #include "..\Engine\IMidiControlUi.h"
 #include "WinMidiOut.h"
 #include <atlctrls.h>
+#include "AtlLed.h"
 
 
 class CLabel;
@@ -28,7 +29,7 @@ public:
 	~CMControlUIView();
 
 	enum { IDD = IDD_MCONTROLUI_FORM };
-	typedef CProgressBarCtrl	SwitchLed;
+	typedef CLed				SwitchLed;
 	typedef CLabel				SwitchTextDisplay;
 	typedef CButton				Switch;
 
