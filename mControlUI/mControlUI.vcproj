@@ -387,6 +387,10 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath="..\todo.txt"
+			>
+		</File>
 	</Files>
 	<Globals>
 		<Global
