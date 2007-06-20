@@ -387,10 +387,22 @@
 				>
 			</File>
 		</Filter>
-		<File
-			RelativePath="..\todo.txt"
+		<Filter
+			Name="Text Files"
 			>
-		</File>
+			<File
+				RelativePath=".\test.xml"
+				>
+			</File>
+			<File
+				RelativePath="..\todo.txt"
+				>
+			</File>
+			<File
+				RelativePath=".\ui.xml"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 		<Global
