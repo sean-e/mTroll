@@ -2,6 +2,7 @@
 #define PatchBank_h__
 
 #include <map>
+#include <list>
 #include <string>
 #include "MidiControlEngine.h"
 
@@ -40,8 +41,6 @@ public:
 	const std::string & GetBankName() const {return mName;}
 
 private:
-	void PatchSwitchAction(bool pressed, int switchNumber, IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
-
 	struct PatchMap
 	{
 		int					mPatchNumber;	// needed for load of document
@@ -71,6 +70,7 @@ private:
 	// only the name of the first patch will be displayed
 	typedef std::map<int, PatchVect> PatchMaps;
 	PatchMaps					mPatches;	// switchNumber is key
+	static std::list<Patch *>	sActiveNormalPatches;	// weak refs
 };
 
 #endif // PatchBank_h__

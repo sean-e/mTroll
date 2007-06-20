@@ -6,8 +6,6 @@
 #include "ITraceDisplay.h"
 
 
-Patch * Patch::sCurrentNormalPatch = NULL;
-
 Patch::Patch(int number, 
 			 const std::string & name, 
 			 PatchType patchType, 
@@ -60,25 +58,13 @@ Patch::SwitchPressed(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisp
 
 		if (ptNormal == mPatchType)
 			SendStringA(midiOut);
-
-		UpdateDisplays(mainDisplay, switchDisplay);
 	}
 	else
 	{
-		if (ptNormal == mPatchType && 
-			sCurrentNormalPatch && 
-			sCurrentNormalPatch != this &&
-			sCurrentNormalPatch->mPatchIsOn)
-		{
-			sCurrentNormalPatch->SendStringB(midiOut);
-			sCurrentNormalPatch->UpdateDisplays(mainDisplay, switchDisplay);
-		}
-
 		SendStringA(midiOut);
-		if (ptNormal == mPatchType)
-			sCurrentNormalPatch = this;
-		UpdateDisplays(mainDisplay, switchDisplay);
 	}
+
+	UpdateDisplays(mainDisplay, switchDisplay);
 }
 
 void
@@ -125,7 +111,7 @@ Patch::SendStringB(IMidiOut * midiOut)
 }
 
 std::string
-Patch::GetPatchType() const
+Patch::GetPatchTypeStr() const
 {
 	std::string retval;
 	switch (mPatchType)

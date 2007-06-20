@@ -32,7 +32,8 @@ public:
 	const std::string & GetName() const {return mName;}
 	int GetNumber() const {return mNumber;}
 	bool IsOn() const {return mPatchIsOn;}
-	std::string GetPatchType() const;
+	std::string GetPatchTypeStr() const;
+	PatchType GetPatchType() const {return mPatchType;}
 
 	void SendStringA(IMidiOut * midiOut);
 	void SendStringB(IMidiOut * midiOut);

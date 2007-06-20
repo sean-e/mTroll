@@ -1,6 +1,4 @@
-fix normal logic for bank multipatches
 1024 X 600 (current: 870 x 625) (standard: 800 x 600; 1024 x 768)
-test with rack
 get hardware: usb to digital i/o bridge	
 	http://www.bcsideas.com/RP0000xxxxTBCLDC.htm
 	http://www.labjack.com/labjack_u3.php?prodId=25

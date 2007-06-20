@@ -9,6 +9,9 @@
 #include "ITraceDisplay.h"
 
 
+std::list<Patch *>	PatchBank::sActiveNormalPatches;
+
+
 PatchBank::PatchBank(int number, 
 					 const std::string & name) :
 	mNumber(number),
@@ -20,6 +23,7 @@ PatchBank::~PatchBank()
 {
 	std::for_each(mPatches.begin(), mPatches.end(), DeletePatchMaps());
 	mPatches.clear();
+	sActiveNormalPatches.clear();
 }
 
 template<typename T>
@@ -134,17 +138,72 @@ PatchBank::Unload(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay
 void
 PatchBank::PatchSwitchPressed(int switchNumber, IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 {
-	PatchSwitchAction(true, switchNumber, midiOut, mainDisplay, switchDisplay);
+	PatchVect & curPatches = mPatches[switchNumber];
+	PatchVect::iterator it;
+	bool curSwitchHasNormalPatch = false;
+
+	// if any patch for the switch is normal, then need to do normal processing
+	// on current normal patches.
+	for (it = curPatches.begin();
+		 it != curPatches.end();
+		 ++it)
+	{
+		PatchMap * curSwitchItem = *it;
+		if (!curSwitchItem || !curSwitchItem->mPatch)
+			continue;
+
+		if (curSwitchItem->mPatch->GetPatchType() == Patch::ptNormal)
+		{
+			curSwitchHasNormalPatch = true;
+			break;
+		}
+	}
+
+	if (curSwitchHasNormalPatch)
+	{
+		// do B processing
+		for (std::list<Patch*>::iterator it2 = sActiveNormalPatches.begin();
+			it2 != sActiveNormalPatches.end();
+			it2 = sActiveNormalPatches.begin())
+		{
+			Patch * curPatchItem = *it2;
+			if (curPatchItem && curPatchItem->IsOn())
+			{
+				curPatchItem->SendStringB(midiOut);
+				curPatchItem->UpdateDisplays(mainDisplay, switchDisplay);
+			}
+			sActiveNormalPatches.erase(it2);
+		}
+	}
+
+	// do standard pressed processing (send A)
+	std::strstream msgstr;
+	for (it = curPatches.begin();
+		 it != curPatches.end();
+		 ++it)
+	{
+		PatchMap * curSwitchItem = *it;
+		if (!curSwitchItem || !curSwitchItem->mPatch)
+			continue;
+
+		curSwitchItem->mPatch->SwitchPressed(midiOut, NULL, switchDisplay);
+		if (curSwitchItem->mPatch->GetPatchType() == Patch::ptNormal)
+		{
+			_ASSERTE(std::find(sActiveNormalPatches.begin(), sActiveNormalPatches.end(), curSwitchItem->mPatch) == sActiveNormalPatches.end());
+			sActiveNormalPatches.push_back(curSwitchItem->mPatch);
+		}
+		msgstr << curSwitchItem->mPatch->GetNumber() << " " << curSwitchItem->mPatch->GetName() << std::endl;
+	}
+
+	if (mainDisplay)
+	{
+		msgstr << std::ends;
+		mainDisplay->TextOut(msgstr.str());
+	}
 }
 
 void
 PatchBank::PatchSwitchReleased(int switchNumber, IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
-{
-	PatchSwitchAction(false, switchNumber, midiOut, mainDisplay, switchDisplay);
-}
-
-void
-PatchBank::PatchSwitchAction(bool pressed, int switchNumber, IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 {
 	PatchVect & curPatches = mPatches[switchNumber];
 	for (PatchVect::iterator it = curPatches.begin();
@@ -155,10 +214,7 @@ PatchBank::PatchSwitchAction(bool pressed, int switchNumber, IMidiOut * midiOut,
 		if (!curSwitchItem || !curSwitchItem->mPatch)
 			continue;
 
-		if (pressed)
-			curSwitchItem->mPatch->SwitchPressed(midiOut, mainDisplay, switchDisplay);
-		else
-			curSwitchItem->mPatch->SwitchReleased(midiOut, mainDisplay, switchDisplay);
+		curSwitchItem->mPatch->SwitchReleased(midiOut, mainDisplay, switchDisplay);
 	}
 }
 
@@ -238,7 +294,7 @@ PatchBank::DisplayDetailedPatchInfo(int switchNumber, IMainDisplay * mainDisplay
 
 			info << std::setw(3) << curItem->mPatch->GetNumber() << " " 
 				<< (curItem->mPatch->IsOn() ? "ON     " : "off    ") 
-				<< std::setiosflags(std::ios::left) << std::setw(10) << curItem->mPatch->GetPatchType() 
+				<< std::setiosflags(std::ios::left) << std::setw(10) << curItem->mPatch->GetPatchTypeStr() 
 				<< curItem->mPatch->GetName() << std::endl;
 			++cnt;
 		}
