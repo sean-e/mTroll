@@ -1,10 +1,46 @@
-1024 X 600 (current: 870 x 625) (standard: 800 x 600; 1024 x 768)
-get hardware: usb to digital i/o bridge	
-	http://www.bcsideas.com/RP0000xxxxTBCLDC.htm
-	http://www.labjack.com/labjack_u3.php?prodId=25
-	http://www.greta.dhs.org/UBW/
-	http://www.elexol.com/IO_Modules/
-new modes:
-	bank sequence
-	song
-	set
+[get hardware: usb to digital i/o bridge	]
+http://www.bcsideas.com/RP0000xxxxTBCLDC.htm
+http://www.labjack.com/labjack_u3.php?prodId=25
+http://www.greta.dhs.org/UBW/
+http://www.elexol.com/IO_Modules/
+
+
+
+[display sizes]
+	current: 
+		870 x 625
+	8.9 in:
+		1024 x 600
+					http://www.umpcportal.com/products/product.php?id=98
+	7 in:
+		1024 x 600
+					http://www.umpcportal.com/products/product.php?id=119
+					http://www.umpcportal.com/products/product.php?id=97
+					http://www.umpcportal.com/products/product.php?id=106
+		800 x 480
+					http://www.umpcportal.com/products/product.php?id=99
+					http://www.umpcportal.com/products/product.php?id=115
+					http://www.umpcportal.com/products/product.php?id=9
+					http://www.umpcportal.com/products/product.php?id=39
+	5.6 in:
+		1024 x 600
+					http://www.umpcportal.com/products/product.php?id=103
+	5 in:
+		800 x 480	
+					http://www.umpcportal.com/products/product.php?id=57
+	6.5 in:
+		800 x 480
+					http://www.umpcportal.com/products/product.php?id=100
+	4.5 in:
+		1024 x 600
+					http://www.umpcportal.com/products/product.php?id=42
+	win standards:
+		640 x 480
+		800 x 600
+		1024 x 768
+
+
+[new modes]
+bank sequence
+song
+set
