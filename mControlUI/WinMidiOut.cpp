@@ -70,9 +70,15 @@ WinMidiOut::OpenMidiOut(unsigned int deviceIdx)
 bool
 WinMidiOut::MidiOut(const Bytes & bytes)
 {
-	_ASSERTE(mMidiOut);
+	if (!mMidiOut)
+	{
+		if (mTrace)
+			mTrace->Trace("No midiout is open.\n");
+		return false;
+	}
+
 	const size_t kDataSize = bytes.size();
-	if (!mMidiOut || !kDataSize)
+	if (!kDataSize)
 		return false;
 
 	// number of data bytes for each status
