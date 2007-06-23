@@ -9,6 +9,7 @@
 Patch::Patch(int number, 
 			 const std::string & name, 
 			 PatchType patchType, 
+			 int midiOutPortNumber,
 			 const std::vector<byte> & stringA, 
 			 const std::vector<byte> & stringB) : 
 	mNumber(number),
@@ -17,7 +18,8 @@ Patch::Patch(int number,
 	mByteStringA(stringA),
 	mByteStringB(stringB),
 	mSwitchNumber(-1),
-	mPatchIsOn(false)
+	mPatchIsOn(false),
+	mMidiOutPort(midiOutPortNumber)
 {
 }
 

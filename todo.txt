@@ -1,8 +1,18 @@
-[get hardware: usb to digital i/o bridge	]
+[add support for multiple ports]
+1 port per patch
+		<patch name="DRV TOGGLE" number="1" type="toggle" port="1" >
+modify raymond writer
+settings reader
+patch
+midiout
+
+
+[get hardware: usb to digital i/o bridge]
 http://www.bcsideas.com/RP0000xxxxTBCLDC.htm
 http://www.labjack.com/labjack_u3.php?prodId=25
 http://www.greta.dhs.org/UBW/
 http://www.elexol.com/IO_Modules/
+http://www.hobbyengineering.com/
 
 
 

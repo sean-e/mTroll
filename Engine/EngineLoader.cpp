@@ -126,6 +126,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		std::string tmp;
 		std::string byteStringA;
 		std::string byteStringB;
+		int midiOutPortNumber = 1;
 
 		const std::string patchName = pElem->Attribute("name");
 		int patchNumber = -1;
@@ -133,6 +134,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		if (-1 == patchNumber || patchName.empty())
 			continue;
 
+		pElem->QueryIntAttribute("port", &midiOutPortNumber);
 		pElem->QueryValueAttribute("type", &tmp);
 		Patch::PatchType patchType = Patch::ptNormal;
 		if (tmp == "normal")
@@ -166,7 +168,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			Bytes bytesB;
 			retval = ::ValidateString(byteStringB, bytesB);
 			if (-1 != retval)
-				mEngine->AddPatch(patchNumber, patchName, patchType, bytesA, bytesB);
+				mEngine->AddPatch(patchNumber, patchName, patchType, midiOutPortNumber, bytesA, bytesB);
 		}
 	}
 }

@@ -85,10 +85,11 @@ void
 MidiControlEngine::AddPatch(int number,
 							const std::string & name,
 							Patch::PatchType patchType,
+							int midiOutPortNumber,
 							const Bytes & stringA,
 							const Bytes & stringB)
 {
-	mPatches[number] = new Patch(number, name, patchType, stringA, stringB);
+	mPatches[number] = new Patch(number, name, patchType, midiOutPortNumber, stringA, stringB);
 }
 
 void
