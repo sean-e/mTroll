@@ -8,9 +8,9 @@ midiout
 
 
 [get hardware: usb to digital i/o bridge]
-http://www.bcsideas.com/RP0000xxxxTBCLDC.htm
-http://www.labjack.com/labjack_u3.php?prodId=25
-http://www.greta.dhs.org/UBW/
+http://www.create.ucsb.edu/~dano/CUI/
+http://eroktronix.com/index.html
+http://www.piengineering.com/custom/xkmatrix.php
 http://www.elexol.com/IO_Modules/
 http://www.hobbyengineering.com/
 
