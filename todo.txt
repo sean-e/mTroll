@@ -1,10 +1,12 @@
 [add support for multiple ports]
 1 port per patch
 		<patch name="DRV TOGGLE" number="1" type="toggle" port="1" >
-modify raymond writer
 settings reader
 patch
 midiout
+
+[get m-audio vista driver]
+http://www.m-audio.com/index.php?do=support.drivers&f=799
 
 
 [get hardware: usb to digital i/o bridge]
