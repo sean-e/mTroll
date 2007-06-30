@@ -36,14 +36,12 @@ const int kModeBankNavSwitchNumber = 1;
 const int kModeBankDescSwitchNumber = 2;
 const int kModeBankDirect = 3;
 
-MidiControlEngine::MidiControlEngine(IMidiOut * midiOut, 
-									 IMainDisplay * mainDisplay, 
+MidiControlEngine::MidiControlEngine(IMainDisplay * mainDisplay, 
 									 ISwitchDisplay * switchDisplay, 
 									 ITraceDisplay * traceDisplay,
 									 int incrementSwitchNumber,
 									 int decrementSwitchNumber,
 									 int modeSwitchNumber) :
-	mMidiOut(midiOut),
 	mMainDisplay(mainDisplay),
 	mSwitchDisplay(switchDisplay),
 	mTrace(traceDisplay),
@@ -64,8 +62,6 @@ MidiControlEngine::MidiControlEngine(IMidiOut * midiOut,
 
 MidiControlEngine::~MidiControlEngine()
 {
-	if (mMidiOut)
-		mMidiOut->CloseMidiOut();
 	std::for_each(mBanks.begin(), mBanks.end(), DeletePtr<PatchBank>());
 	mBanks.clear();
 	std::for_each(mPatches.begin(), mPatches.end(), DeletePatch());
@@ -86,10 +82,11 @@ MidiControlEngine::AddPatch(int number,
 							const std::string & name,
 							Patch::PatchType patchType,
 							int midiOutPortNumber,
+							IMidiOut * midiOut,
 							const Bytes & stringA,
 							const Bytes & stringB)
 {
-	mPatches[number] = new Patch(number, name, patchType, midiOutPortNumber, stringA, stringB);
+	mPatches[number] = new Patch(number, name, patchType, midiOutPortNumber, midiOut, stringA, stringB);
 }
 
 void
@@ -105,12 +102,10 @@ MidiControlEngine::SetPowerup(int powerupBank,
 // this would not need to exist if we could ensure that banks 
 // were only added after all patches had been added (AddBank 
 // would then need to maintain sort)
-bool
-MidiControlEngine::CompleteInit(int midioutOutDeviceIdx)
+void
+MidiControlEngine::CompleteInit()
 {
 	std::sort(mBanks.begin(), mBanks.end(), SortByBankNumber);
-
-	int powerUpBankIndex = -1;
 
 	int itIdx = 0;
 	for (Banks::iterator it = mBanks.begin();
@@ -119,37 +114,40 @@ MidiControlEngine::CompleteInit(int midioutOutDeviceIdx)
 	{
 		PatchBank * curItem = *it;
 		curItem->InitPatches(mPatches);
-
-		if (curItem->GetBankNumber() == mPowerUpBank)
-			powerUpBankIndex = itIdx;
 	}
 
 	ChangeMode(emBank);
-	_ASSERTE(midioutOutDeviceIdx >= 0);
-	std::strstream traceMsg;
-	bool result = false;
-	if (mMidiOut)
-	{
-		if (mMidiOut->OpenMidiOut(midioutOutDeviceIdx))
-		{
-			result = true;
-			traceMsg << "Opened MIDI out " << midioutOutDeviceIdx << " " << mMidiOut->GetMidiOutDeviceName(midioutOutDeviceIdx) << std::endl;
-		}
-		else
-			traceMsg << "Failed to open MIDI out " << midioutOutDeviceIdx << std::endl;
-	}
-	else if (mTrace)
-		traceMsg << "No MIDI Out." << std::endl;
-
-	LoadBank(powerUpBankIndex);
-
+	
 	if (mTrace)
 	{
+		std::strstream traceMsg;
 		traceMsg << "Load complete: bank cnt " << mBanks.size() << ", patch cnt " << mPatches.size() << std::endl << std::ends;
 		mTrace->Trace(std::string(traceMsg.str()));
 	}
 
-	return result;
+	LoadStartupBank();
+}
+
+void
+MidiControlEngine::LoadStartupBank()
+{
+	int powerUpBankIndex = -1;
+	int itIdx = 0;
+	for (Banks::iterator it = mBanks.begin();
+		it != mBanks.end();
+		++it, ++itIdx)
+	{
+		PatchBank * curItem = *it;
+		if (curItem->GetBankNumber() == mPowerUpBank)
+		{
+			powerUpBankIndex = itIdx;
+			break;
+		}
+	}
+
+	if (powerUpBankIndex == -1)
+		powerUpBankIndex = 0;
+	LoadBank(powerUpBankIndex);
 }
 
 void
@@ -177,7 +175,7 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 		else if (switchNumber == mModeSwitchNumber)
 			;
 		else if (mActiveBank)
-			mActiveBank->PatchSwitchPressed(switchNumber, mMidiOut, mMainDisplay, mSwitchDisplay);
+			mActiveBank->PatchSwitchPressed(switchNumber, mMainDisplay, mSwitchDisplay);
 		return;
 	}
 }
@@ -347,7 +345,7 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 		}
 
 		if (mActiveBank)
-			mActiveBank->PatchSwitchReleased(switchNumber, mMidiOut, mMainDisplay, mSwitchDisplay);
+			mActiveBank->PatchSwitchReleased(switchNumber, mMainDisplay, mSwitchDisplay);
 
 		return;
 	}
@@ -424,11 +422,11 @@ MidiControlEngine::LoadBank(int bankIndex)
 		return false;
 
 	if (mActiveBank)
-		mActiveBank->Unload(mMidiOut, mMainDisplay, mSwitchDisplay);
+		mActiveBank->Unload(mMainDisplay, mSwitchDisplay);
 
 	mActiveBank = bank;
 	mBankNavigationIndex = mActiveBankIndex = bankIndex;
-	mActiveBank->Load(mMidiOut, mMainDisplay, mSwitchDisplay);
+	mActiveBank->Load(mMainDisplay, mSwitchDisplay);
 	UpdateBankModeSwitchDisplay();
 	return true;
 }

@@ -10,6 +10,7 @@ Patch::Patch(int number,
 			 const std::string & name, 
 			 PatchType patchType, 
 			 int midiOutPortNumber,
+			 IMidiOut * midiOut,
 			 const std::vector<byte> & stringA, 
 			 const std::vector<byte> & stringB) : 
 	mNumber(number),
@@ -19,8 +20,10 @@ Patch::Patch(int number,
 	mByteStringB(stringB),
 	mSwitchNumber(-1),
 	mPatchIsOn(false),
-	mMidiOutPort(midiOutPortNumber)
+	mMidiOutPort(midiOutPortNumber),
+	mMidiOut(midiOut)
 {
+	_ASSERTE(midiOut);
 }
 
 Patch::~Patch()
@@ -52,30 +55,30 @@ Patch::ClearSwitch(ISwitchDisplay * switchDisplay)
 }
 
 void
-Patch::SwitchPressed(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
+Patch::SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 {
 	if (mPatchIsOn)
 	{
-		SendStringB(midiOut);
+		SendStringB();
 
 		if (ptNormal == mPatchType)
-			SendStringA(midiOut);
+			SendStringA();
 	}
 	else
 	{
-		SendStringA(midiOut);
+		SendStringA();
 	}
 
 	UpdateDisplays(mainDisplay, switchDisplay);
 }
 
 void
-Patch::SwitchReleased(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
+Patch::SwitchReleased(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 {
 	if (ptMomentary != mPatchType)
 		return;
 
-	SendStringB(midiOut);
+	SendStringB();
 	UpdateDisplays(mainDisplay, switchDisplay);
 }
 
@@ -97,18 +100,18 @@ Patch::UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay
 }
 
 void
-Patch::SendStringA(IMidiOut * midiOut)
+Patch::SendStringA()
 {
 	if (mByteStringA.size())
-		midiOut->MidiOut(mByteStringA);
+		mMidiOut->MidiOut(mByteStringA);
 	mPatchIsOn = true;
 }
 
 void
-Patch::SendStringB(IMidiOut * midiOut)
+Patch::SendStringB()
 {
 	if (mByteStringB.size())
-		midiOut->MidiOut(mByteStringB);
+		mMidiOut->MidiOut(mByteStringB);
 	mPatchIsOn = false;
 }
 

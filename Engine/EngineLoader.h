@@ -2,19 +2,20 @@
 #define EngineLoader_h__
 
 #include <string>
+#include <map>
 
 class MidiControlEngine;
 class IMainDisplay;
 class ISwitchDisplay;
 class ITraceDisplay;
-class IMidiOut;
+class IMidiOutGenerator;
 class TiXmlElement;
 
 
 class EngineLoader
 {
 public:
-	EngineLoader(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay, ITraceDisplay * traceDisplay);
+	EngineLoader(IMidiOutGenerator * midiOutGenerator, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay, ITraceDisplay * traceDisplay);
 
 	MidiControlEngine *		CreateEngine(const std::string & engineSettingsFile);
 
@@ -23,12 +24,14 @@ private:
 	void					LoadPatches(TiXmlElement * pElem);
 	void					LoadBanks(TiXmlElement * pElem);
 
+	typedef std::map<int, unsigned int> MidiOutPortToDeviceIdxMap;
+	MidiOutPortToDeviceIdxMap	mMidiOutPortToDeviceIdxMap;
+
 	MidiControlEngine *		mEngine;
 	IMainDisplay *			mMainDisplay;
-	IMidiOut *				mMidiOut;
+	IMidiOutGenerator *		mMidiOutGenerator;
 	ISwitchDisplay *		mSwitchDisplay;
 	ITraceDisplay *			mTraceDisplay;
-	int						mMidiOutDeviceIdx;
 };
 
 #endif // EngineLoader_h__

@@ -7,7 +7,10 @@
 			<switch name="decrement" id="14" />
 			<switch name="mode" id="13" />
 		</switches>
-		<midiDevice port="1" outIdx="1" />
+		<midiDevices>
+			<midiDevice port="1" outIdx="1" />
+			<midiDevice port="2" outIdx="3" />
+		</midiDevices>
 	</SystemConfig>
 	<patches>
 		<patch name="DRV TOGGLE" number="1" type="toggle" port="1">

@@ -327,6 +327,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Engine\IMidiOutGenerator.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Engine\ISwitchDisplay.h"
 				>
 			</File>

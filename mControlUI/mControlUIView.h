@@ -10,6 +10,7 @@
 #include "..\Engine\ITraceDisplay.h"
 #include "..\Engine\MidiControlEngine.h"
 #include "..\Engine\IMidiControlUi.h"
+#include "..\Engine\IMidiOutGenerator.h"
 #include "WinMidiOut.h"
 #include <atlctrls.h>
 #include "AtlLed.h"
@@ -22,11 +23,12 @@ class CMControlUIView : public CDialogImpl<CMControlUIView>,
 								IMainDisplay, 
 								ISwitchDisplay, 
 								ITraceDisplay,
-								IMidiControlUi
+								IMidiControlUi,
+								IMidiOutGenerator
 {
 public:
 	CMControlUIView();
-	~CMControlUIView();
+	virtual ~CMControlUIView();
 
 	enum { IDD = IDD_MCONTROLUI_FORM };
 	typedef CLed				SwitchLed;
@@ -39,6 +41,11 @@ public:
 
 	BOOL PreTranslateMessage(MSG* pMsg);
 	void GetPreferredSize(int & width, int & height) const {width = mPreferredWidth; height = mPreferredHeight;}
+
+public: // IMidiOutGenerator
+	virtual IMidiOut *	GetMidiOut(unsigned int deviceIdx);
+	virtual void		OpenMidiOuts();
+	virtual void		CloseMidiOuts();
 
 public: // IMainDisplay
 	virtual void TextOut(const std::string & txt);
@@ -125,7 +132,8 @@ private:
 	int							mPreferredHeight, mPreferredWidth;
 	int							mMaxSwitchId;
 	UINT						mKeyMessage;
-	WinMidiOut					mMidiOut;
+	typedef std::map<unsigned int, WinMidiOut*> MidiOuts;
+	MidiOuts					mMidiOuts;
 
 	struct SwitchTextDisplayConfig
 	{

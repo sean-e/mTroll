@@ -4,21 +4,21 @@
 #include "Patch.h"
 #include "../tinyxml/tinyxml.h"
 #include "HexStringUtils.h"
+#include "IMidiOutGenerator.h"
 
 
 static PatchBank::PatchState GetLoadState(const std::string & tmpLoad);
 
 
-EngineLoader::EngineLoader(IMidiOut * midiOut,
+EngineLoader::EngineLoader(IMidiOutGenerator * midiOutGenerator,
 						   IMainDisplay * mainDisplay,
 						   ISwitchDisplay * switchDisplay,
 						   ITraceDisplay * traceDisplay) :
 	mEngine(NULL),
-	mMidiOut(midiOut),
+	mMidiOutGenerator(midiOutGenerator),
 	mMainDisplay(mainDisplay),
 	mSwitchDisplay(switchDisplay),
-	mTraceDisplay(traceDisplay),
-	mMidiOutDeviceIdx(0)
+	mTraceDisplay(traceDisplay)
 {
 }
 
@@ -54,7 +54,8 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 	pElem = hRoot.FirstChild("banks").FirstChild().Element();
 	LoadBanks(pElem);
 
-	mEngine->CompleteInit(mMidiOutDeviceIdx);
+	mMidiOutGenerator->OpenMidiOuts();
+	mEngine->CompleteInit();
 
 	MidiControlEngine * createdEngine = mEngine;
 	mEngine = NULL;
@@ -104,12 +105,21 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 			modeSwitch = id;
 	}
 
-	// <midiDevice port="1" out="3" />
-	pChildElem = hRoot.FirstChild("midiDevice").Element();
-	if (pChildElem)
-		pChildElem->QueryIntAttribute("outIdx", &mMidiOutDeviceIdx);
+	// <midiDevice port="1" outIdx="3" />
+	pChildElem = hRoot.FirstChild("midiDevices").FirstChild().Element();
+	for ( ; pChildElem; pChildElem = pChildElem->NextSiblingElement())
+	{
+		int deviceIdx = 1;
+		int port = 1;
 
-	mEngine = new MidiControlEngine(mMidiOut, mMainDisplay, mSwitchDisplay, mTraceDisplay, incrementSwitch, decrementSwitch, modeSwitch);
+		pChildElem->QueryIntAttribute("outIdx", &deviceIdx);
+		pChildElem->QueryIntAttribute("port", &port);
+
+		mMidiOutPortToDeviceIdxMap[port] = deviceIdx;
+		mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[port]);
+	}
+
+	mEngine = new MidiControlEngine(mMainDisplay, mSwitchDisplay, mTraceDisplay, incrementSwitch, decrementSwitch, modeSwitch);
 	mEngine->SetPowerup(powerupBank, powerupPatch, powerupTimeout);
 	mEngine->FilterRedundantProgChg(filterPC ? true : false);
 	return true;
@@ -168,7 +178,12 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			Bytes bytesB;
 			retval = ::ValidateString(byteStringB, bytesB);
 			if (-1 != retval)
-				mEngine->AddPatch(patchNumber, patchName, patchType, midiOutPortNumber, bytesA, bytesB);
+			{
+				mEngine->AddPatch(patchNumber, patchName, patchType, 
+					midiOutPortNumber, 
+					mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[midiOutPortNumber]), 
+					bytesA, bytesB);
+			}
 		}
 	}
 }

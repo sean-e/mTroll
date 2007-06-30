@@ -18,8 +18,7 @@ class PatchBank;
 class MidiControlEngine : public IInput
 {
 public:
-	MidiControlEngine(IMidiOut * midiOut, 
-					  IMainDisplay * mainDisplay, 
+	MidiControlEngine(IMainDisplay * mainDisplay, 
 					  ISwitchDisplay * switchDisplay,
 					  ITraceDisplay * traceDisplay,
 					  int incrementSwitchNumber,
@@ -30,16 +29,17 @@ public:
 	// initialization
 	typedef std::map<int, Patch*> Patches;
 	PatchBank &				AddBank(int number, const std::string & name);
-	void					AddPatch(int number, const std::string & name, Patch::PatchType patchType, int midiOutPortNumber, const Bytes & stringA, const Bytes & stringB);
+	void					AddPatch(int number, const std::string & name, Patch::PatchType patchType, int midiOutPortNumber, IMidiOut * midiOut, const Bytes & stringA, const Bytes & stringB);
 	void					SetPowerup(int powerupBank, int powerupPatch, int powerupTimeout);
 	void					FilterRedundantProgChg(bool filter) {mFilterRedundantProgramChanges = filter;}
-	bool					CompleteInit(int midioutOutDeviceIdx);
+	void					CompleteInit();
 
 	// IInput
 	virtual void			SwitchPressed(int switchNumber);
 	virtual void			SwitchReleased(int switchNumber);
 
 private:
+	void					LoadStartupBank();
 	bool					NavigateBankRelative(int relativeBankIndex);
 	bool					LoadBank(int bankIndex);
 	PatchBank *				GetBank(int bankIndex);
@@ -59,7 +59,6 @@ private:
 
 private:
 	// non-retained runtime state
-	IMidiOut *				mMidiOut;
 	IMainDisplay *			mMainDisplay;
 	ITraceDisplay *			mTrace;
 	ISwitchDisplay *		mSwitchDisplay;

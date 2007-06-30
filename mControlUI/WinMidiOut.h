@@ -11,7 +11,7 @@ class WinMidiOut : public IMidiOut
 {
 public:
 	WinMidiOut(ITraceDisplay * trace);
-	~WinMidiOut();
+	virtual ~WinMidiOut();
 
 	// IMidiOut
 	virtual unsigned int GetMidiOutDeviceCount() const;

@@ -9,7 +9,6 @@
 class Patch;
 class IMainDisplay;
 class ISwitchDisplay;
-class IMidiOut;
 
 
 class PatchBank
@@ -29,13 +28,13 @@ public:
 	void AddPatchMapping(int switchNumber, int patchNumber, PatchState patchLoadState, PatchState patchUnloadState);
 	void InitPatches(const MidiControlEngine::Patches & patches);
 
-	void Load(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
-	void Unload(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
+	void Load(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
+	void Unload(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 	void DisplayInfo(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay, bool showPatchInfo);
 	void DisplayDetailedPatchInfo(int switchNumber, IMainDisplay * mainDisplay);
 
-	void PatchSwitchPressed(int switchNumber, IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
-	void PatchSwitchReleased(int switchNumber, IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
+	void PatchSwitchPressed(int switchNumber, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
+	void PatchSwitchReleased(int switchNumber, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 
 	int GetBankNumber() const {return mNumber;}
 	const std::string & GetBankName() const {return mName;}

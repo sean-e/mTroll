@@ -73,7 +73,7 @@ WinMidiOut::MidiOut(const Bytes & bytes)
 	if (!mMidiOut)
 	{
 		if (mTrace)
-			mTrace->Trace("No midiout is open.\n");
+			mTrace->Trace("midiout is not open.\n");
 		return false;
 	}
 

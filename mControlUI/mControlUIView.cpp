@@ -7,6 +7,7 @@
 #include <atlstr.h>
 #include <atlmisc.h>
 #include <algorithm>
+#include <strstream>
 
 #include "mControlUIView.h"
 #include "..\Engine\EngineLoader.h"
@@ -22,7 +23,6 @@ CMControlUIView::CMControlUIView() :
 	mPreferredHeight(0),
 	mPreferredWidth(0),
 	mMaxSwitchId(0),
-	mMidiOut(this),
 	mKeyMessage(0)
 {
 }
@@ -31,6 +31,14 @@ CMControlUIView::~CMControlUIView()
 {
 	Unload();
 }
+
+struct DeleteMidiOut
+{
+	void operator()(const std::pair<unsigned int, WinMidiOut *> & pr)
+	{
+		delete pr.second;
+	}
+};
 
 struct DeleteSwitchLed
 {
@@ -65,8 +73,7 @@ struct DeleteSwitchTextDisplay
 void
 CMControlUIView::Unload()
 {
-	if (mMidiOut.IsMidiOutOpen())
-		mMidiOut.CloseMidiOut();
+	CloseMidiOuts();
 
 	delete mEngine;
 	mEngine = NULL;
@@ -89,6 +96,9 @@ CMControlUIView::Unload()
 	
 	if (mTraceFont)
 		mTraceFont.DeleteObject();
+
+	for_each(mMidiOuts.begin(), mMidiOuts.end(), DeleteMidiOut());
+	mMidiOuts.clear();
 
 	for_each(mLeds.begin(), mLeds.end(), DeleteSwitchLed());
 	mLeds.clear();
@@ -114,17 +124,21 @@ CMControlUIView::LoadUi(const std::string & uiSettingsFile)
 	UiLoader ldr(this, uiSettingsFile);
 
 	Trace("Midi Devices:\n");
-	const int kMidiOutCnt = mMidiOut.GetMidiOutDeviceCount();
-	for (int idx = 0; idx < kMidiOutCnt; ++idx)
-		Trace(mMidiOut.GetMidiOutDeviceName(idx) + "\n");
-	Trace("\n");
+	IMidiOut * midiOut = GetMidiOut(0);
+	if (midiOut)
+	{
+		const int kMidiOutCnt = midiOut->GetMidiOutDeviceCount();
+		for (int idx = 0; idx < kMidiOutCnt; ++idx)
+			Trace(midiOut->GetMidiOutDeviceName(idx) + "\n");
+		Trace("\n");
+	}
 }
 
 void
 CMControlUIView::LoadMidiSettings(const std::string & file)
 {
 	delete mEngine;
-	EngineLoader ldr(&mMidiOut, this, this, this);
+	EngineLoader ldr(this, this, this, this);
 	mEngine = ldr.CreateEngine(file);
 	if (!mEngine)
 		TextOut("Failed to load MIDI settings.");
@@ -464,4 +478,48 @@ CMControlUIView::SetMainSize(int width,
 {
 	mPreferredHeight = height;
 	mPreferredWidth = width;
+}
+
+IMidiOut *
+CMControlUIView::GetMidiOut(unsigned int deviceIdx)
+{
+	if (!mMidiOuts[deviceIdx])
+		mMidiOuts[deviceIdx] = new WinMidiOut(this);
+	return mMidiOuts[deviceIdx];
+}
+
+void
+CMControlUIView::OpenMidiOuts()
+{
+	for (MidiOuts::iterator it = mMidiOuts.begin();
+		it != mMidiOuts.end();
+		++it)
+	{
+		IMidiOut * curOut = (*it).second;
+		if (curOut->IsMidiOutOpen())
+			continue;
+
+		std::strstream traceMsg;
+		const unsigned int kDeviceIdx = (*it).first;
+
+		if (curOut->OpenMidiOut(kDeviceIdx))
+			traceMsg << "Opened MIDI out " << kDeviceIdx << " " << curOut->GetMidiOutDeviceName(kDeviceIdx) << std::endl << std::ends;
+		else
+			traceMsg << "Failed to open MIDI out " << kDeviceIdx << std::endl << std::ends;
+
+		Trace(traceMsg.str());
+	}
+}
+
+void
+CMControlUIView::CloseMidiOuts()
+{
+	for (MidiOuts::iterator it = mMidiOuts.begin();
+		it != mMidiOuts.end();
+		++it)
+	{
+		IMidiOut * curOut = (*it).second;
+		if (curOut->IsMidiOutOpen())
+			curOut->CloseMidiOut();
+	}
 }

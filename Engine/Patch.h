@@ -19,14 +19,14 @@ public:
 		ptMomentary			// responds to SwitchPressed and SwitchReleased
 	};
 
-	Patch(int number, const std::string & name, PatchType patchType, int midiOutPortNumber, const Bytes & stringA, const Bytes & stringB);
+	Patch(int number, const std::string & name, PatchType patchType, int midiOutPortNumber, IMidiOut * midiOut, const Bytes & stringA, const Bytes & stringB);
 	~Patch();
 
 	void AssignSwitch(int switchNumber, ISwitchDisplay * switchDisplay);
 	void ClearSwitch(ISwitchDisplay * switchDisplay);
 
-	void SwitchPressed(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
-	void SwitchReleased(IMidiOut * midiOut, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
+	void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
+	void SwitchReleased(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 
 	void UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 	const std::string & GetName() const {return mName;}
@@ -35,8 +35,8 @@ public:
 	std::string GetPatchTypeStr() const;
 	PatchType GetPatchType() const {return mPatchType;}
 
-	void SendStringA(IMidiOut * midiOut);
-	void SendStringB(IMidiOut * midiOut);
+	void SendStringA();
+	void SendStringB();
 
 private:
 	const int				mNumber;	// unique across patches
@@ -49,6 +49,7 @@ private:
 // 	const Bytes				mMetaStringB;
 
 	// runtime only state
+	IMidiOut				* mMidiOut;
 	bool					mPatchIsOn;
 	int						mSwitchNumber;
 	static Patch			* sCurrentNormalPatch;
