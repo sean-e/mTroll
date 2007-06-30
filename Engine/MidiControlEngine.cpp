@@ -105,7 +105,7 @@ MidiControlEngine::SetPowerup(int powerupBank,
 // this would not need to exist if we could ensure that banks 
 // were only added after all patches had been added (AddBank 
 // would then need to maintain sort)
-void
+bool
 MidiControlEngine::CompleteInit(int midioutOutDeviceIdx)
 {
 	std::sort(mBanks.begin(), mBanks.end(), SortByBankNumber);
@@ -127,10 +127,14 @@ MidiControlEngine::CompleteInit(int midioutOutDeviceIdx)
 	ChangeMode(emBank);
 	_ASSERTE(midioutOutDeviceIdx >= 0);
 	std::strstream traceMsg;
+	bool result = false;
 	if (mMidiOut)
 	{
 		if (mMidiOut->OpenMidiOut(midioutOutDeviceIdx))
+		{
+			result = true;
 			traceMsg << "Opened MIDI out " << midioutOutDeviceIdx << " " << mMidiOut->GetMidiOutDeviceName(midioutOutDeviceIdx) << std::endl;
+		}
 		else
 			traceMsg << "Failed to open MIDI out " << midioutOutDeviceIdx << std::endl;
 	}
@@ -145,6 +149,7 @@ MidiControlEngine::CompleteInit(int midioutOutDeviceIdx)
 		mTrace->Trace(std::string(traceMsg.str()));
 	}
 
+	return result;
 }
 
 void

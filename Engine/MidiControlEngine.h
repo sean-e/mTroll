@@ -33,7 +33,7 @@ public:
 	void					AddPatch(int number, const std::string & name, Patch::PatchType patchType, int midiOutPortNumber, const Bytes & stringA, const Bytes & stringB);
 	void					SetPowerup(int powerupBank, int powerupPatch, int powerupTimeout);
 	void					FilterRedundantProgChg(bool filter) {mFilterRedundantProgramChanges = filter;}
-	void					CompleteInit(int midioutOutDeviceIdx);
+	bool					CompleteInit(int midioutOutDeviceIdx);
 
 	// IInput
 	virtual void			SwitchPressed(int switchNumber);
