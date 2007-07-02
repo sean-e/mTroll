@@ -11,6 +11,7 @@ class IMidiOut;
 class IMidiOutGenerator
 {
 public:
+	virtual IMidiOut *	CreateMidiOut(unsigned int deviceIdx, int activityIndicatorIdx) = 0;
 	virtual IMidiOut *	GetMidiOut(unsigned int deviceIdx) = 0;
 	virtual void		OpenMidiOuts() = 0;
 	virtual void		CloseMidiOuts() = 0;

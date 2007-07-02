@@ -1,5 +1,14 @@
-[get m-audio vista driver]
-http://www.m-audio.com/index.php?do=support.drivers&f=799
+[hardware]
+CREATE USB Interface
+	http://www.create.ucsb.edu/~dano/CUI/
+	17 digital i/o (+1 programming button)
+	13 a/d inputs
+	$50
+LED board
+	a second CREATE USB Interface
+	or
+	http://www.trossenrobotics.com/store/p/3415-LED64.aspx
+	$90 + LEDs + power
 
 
 [get hardware: usb to digital i/o bridge]

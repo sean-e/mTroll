@@ -100,7 +100,10 @@
       <switchLed vOffset="33" hOffset="105" />
       <switch label="&amp;Mode" vOffset="30" />
     </switchAssembly>
-    <switchAssembly number="14" top="175" left="705" >
+		<switchAssembly number="100" top="90" left="705" >
+			<switchLed vOffset="33" hOffset="105" />
+		</switchAssembly>
+		<switchAssembly number="14" top="175" left="705" >
       <switchTextDisplay />
       <switch label="&amp;Dec" vOffset="30" />
     </switchAssembly>

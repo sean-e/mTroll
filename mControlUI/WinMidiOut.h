@@ -16,6 +16,7 @@ public:
 	// IMidiOut
 	virtual unsigned int GetMidiOutDeviceCount() const;
 	virtual std::string GetMidiOutDeviceName(unsigned int deviceIdx) const;
+	virtual void SetActivityIndicator(ISwitchDisplay * activityIndicator, int activityIndicatorIdx);
 	virtual bool OpenMidiOut(unsigned int deviceIdx);
 	virtual bool IsMidiOutOpen() const {return mMidiOut != NULL;}
 	virtual bool MidiOut(const Bytes & bytes);
@@ -29,7 +30,18 @@ private:
 
 	static void CALLBACK MidiOutCallbackProc(HMIDIOUT hmo, UINT wMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2);
 
+	class ActivityIndicator
+	{
+		WinMidiOut		*mThis;
+
+	public:
+		ActivityIndicator(WinMidiOut * _this);
+		~ActivityIndicator();
+	};
+
 	ITraceDisplay				* mTrace;
+	ISwitchDisplay				* mActivityIndicator;
+	int							mActivityIndicatorIndex;
 	HMIDIOUT					mMidiOut;
 	enum {MIDIHDR_CNT = 128};
 	MIDIHDR						mMidiHdrs[MIDIHDR_CNT];

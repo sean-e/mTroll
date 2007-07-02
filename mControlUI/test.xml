@@ -8,8 +8,8 @@
 			<switch name="mode" id="13" />
 		</switches>
 		<midiDevices>
-			<midiDevice port="1" outIdx="1" />
-			<midiDevice port="2" outIdx="3" />
+			<midiDevice port="1" outIdx="1" activityIndicatorId="100" />
+			<midiDevice port="2" outIdx="3" activityIndicatorId="100" />
 		</midiDevices>
 	</SystemConfig>
 	<patches>

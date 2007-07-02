@@ -105,18 +105,20 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 			modeSwitch = id;
 	}
 
-	// <midiDevice port="1" outIdx="3" />
+	// <midiDevice port="1" outIdx="3" activityIndicatorId="100" />
 	pChildElem = hRoot.FirstChild("midiDevices").FirstChild().Element();
 	for ( ; pChildElem; pChildElem = pChildElem->NextSiblingElement())
 	{
 		int deviceIdx = 1;
 		int port = 1;
+		int activityIndicatorId = 0;
 
 		pChildElem->QueryIntAttribute("outIdx", &deviceIdx);
 		pChildElem->QueryIntAttribute("port", &port);
+		pChildElem->QueryIntAttribute("activityIndicatorId", &activityIndicatorId);
 
 		mMidiOutPortToDeviceIdxMap[port] = deviceIdx;
-		mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[port]);
+		mMidiOutGenerator->CreateMidiOut(mMidiOutPortToDeviceIdxMap[port], activityIndicatorId);
 	}
 
 	mEngine = new MidiControlEngine(mMainDisplay, mSwitchDisplay, mTraceDisplay, incrementSwitch, decrementSwitch, modeSwitch);

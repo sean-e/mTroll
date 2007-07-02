@@ -124,7 +124,7 @@ CMControlUIView::LoadUi(const std::string & uiSettingsFile)
 	UiLoader ldr(this, uiSettingsFile);
 
 	Trace("Midi Devices:\n");
-	IMidiOut * midiOut = GetMidiOut(0);
+	IMidiOut * midiOut = CreateMidiOut(0, -1);
 	if (midiOut)
 	{
 		const int kMidiOutCnt = midiOut->GetMidiOutDeviceCount();
@@ -481,10 +481,21 @@ CMControlUIView::SetMainSize(int width,
 }
 
 IMidiOut *
-CMControlUIView::GetMidiOut(unsigned int deviceIdx)
+CMControlUIView::CreateMidiOut(unsigned int deviceIdx,
+							   int activityIndicatorIdx)
 {
 	if (!mMidiOuts[deviceIdx])
 		mMidiOuts[deviceIdx] = new WinMidiOut(this);
+
+	if (activityIndicatorIdx > 0)
+		mMidiOuts[deviceIdx]->SetActivityIndicator(this, activityIndicatorIdx);
+
+	return mMidiOuts[deviceIdx];
+}
+
+IMidiOut *
+CMControlUIView::GetMidiOut(unsigned int deviceIdx)
+{
 	return mMidiOuts[deviceIdx];
 }
 

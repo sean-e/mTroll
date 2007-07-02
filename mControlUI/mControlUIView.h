@@ -43,6 +43,7 @@ public:
 	void GetPreferredSize(int & width, int & height) const {width = mPreferredWidth; height = mPreferredHeight;}
 
 public: // IMidiOutGenerator
+	virtual IMidiOut *	CreateMidiOut(unsigned int deviceIdx, int activityIndicatorIdx);
 	virtual IMidiOut *	GetMidiOut(unsigned int deviceIdx);
 	virtual void		OpenMidiOuts();
 	virtual void		CloseMidiOuts();

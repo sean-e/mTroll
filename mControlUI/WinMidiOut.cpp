@@ -1,5 +1,6 @@
 #include "WinMidiOut.h"
 #include "..\Engine\ITraceDisplay.h"
+#include "..\Engine\ISwitchDisplay.h"
 #include <atlstr.h>
 
 #pragma comment(lib, "winmm.lib")
@@ -7,11 +8,26 @@
 static std::string GetMidiErrorText(MMRESULT resultCode);
 
 
+WinMidiOut::ActivityIndicator::ActivityIndicator(WinMidiOut * _this) : mThis(_this)
+{
+	if (mThis->mActivityIndicator)
+		mThis->mActivityIndicator->SetSwitchDisplay(mThis->mActivityIndicatorIndex, true);
+}
+
+WinMidiOut::ActivityIndicator::~ActivityIndicator()
+{
+	if (mThis->mActivityIndicator)
+		mThis->mActivityIndicator->SetSwitchDisplay(mThis->mActivityIndicatorIndex, false);
+}
+
+
 WinMidiOut::WinMidiOut(ITraceDisplay * trace) : 
 	mTrace(trace), 
 	mMidiOut(NULL), 
 	mMidiOutError(false),
-	mCurMidiHdrIdx(0)
+	mCurMidiHdrIdx(0),
+	mActivityIndicator(NULL),
+	mActivityIndicatorIndex(0)
 {
 	for (int idx = 0; idx < MIDIHDR_CNT; ++idx)
 		ZeroMemory(&mMidiHdrs[idx], sizeof(MIDIHDR));
@@ -46,6 +62,14 @@ WinMidiOut::GetMidiOutDeviceName(unsigned int deviceIdx) const
 	}
 
 	return devName;
+}
+
+void
+WinMidiOut::SetActivityIndicator(ISwitchDisplay * activityIndicator, 
+								 int activityIndicatorIdx)
+{
+	mActivityIndicator = activityIndicator;
+	mActivityIndicatorIndex = activityIndicatorIdx;
 }
 
 bool
@@ -124,7 +148,10 @@ WinMidiOut::MidiOut(const Bytes & bytes)
 
 			res = ::midiOutPrepareHeader(mMidiOut, curHdr, sizeof(MIDIHDR));
 			if (MMSYSERR_NOERROR == res)
+			{
+				ActivityIndicator s(this);
 				res = ::midiOutLongMsg(mMidiOut, curHdr, sizeof(MIDIHDR));
+			}
 		}
 		else
 		{
@@ -163,6 +190,7 @@ WinMidiOut::MidiOut(const Bytes & bytes)
 				shortMsg = 0;
 			}
 
+			ActivityIndicator s(this);
 			res = ::midiOutShortMsg(mMidiOut, shortMsg);
 		}
 
@@ -211,6 +239,7 @@ WinMidiOut::MidiOutCallbackProc(HMIDIOUT hmo,
 void
 WinMidiOut::CloseMidiOut()
 {
+	mActivityIndicator = NULL;
 	if (mMidiOut)
 	{
 		MMRESULT res = ::midiOutClose(mMidiOut);
