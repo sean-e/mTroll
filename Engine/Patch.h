@@ -52,7 +52,6 @@ private:
 	IMidiOut				* mMidiOut;
 	bool					mPatchIsOn;
 	int						mSwitchNumber;
-	static Patch			* sCurrentNormalPatch;
 };
 
 #endif // Patch_h__
