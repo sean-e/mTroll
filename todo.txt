@@ -11,6 +11,16 @@ LED board
 	$90 + LEDs + power
 
 
+[pedalboard sizes]
+	FBV Longboard		27		9.75	3
+	behringer			27		8.75	2 3/8
+	Floorboard (Old)	25.625	7.875	2.875
+	2120				26		6.5		
+	pmc10				21		6.5
+	Axess FX1			18		12		1.25"FH x 3.50"RH
+	All Access			15.5	10.5	3.5
+
+
 [get hardware: usb to digital i/o bridge]
 http://www.create.ucsb.edu/~dano/CUI/
 http://eroktronix.com/index.html
