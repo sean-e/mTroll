@@ -11,17 +11,18 @@ LED board
 	$90 + LEDs + power
 
 
-[pedalboard sizes]
-	FBV Longboard		27		9.75	3
-	behringer			27		8.75	2 3/8
-	Floorboard (Old)	25.625	7.875	2.875
-	2120				26		6.5		
-	pmc10				21		6.5
-	Axess FX1			18		12		1.25"FH x 3.50"RH
-	All Access			15.5	10.5	3.5
+[pedalboard sizes]		w		d		h						area
+	FBV Longboard (2)	27		9.75	3						263.25		http://line6.com/footcontrollers/fbv.html
+	fender cyber (2)	27.25	9		2.5						245.25		http://www.fender.com/products/search.php?partno=2391000000
+	behringer (2)		27		8.75	2 3/8					236.25
+	Axess FX1			18		12		1.25"FH x 3.50"RH		216.00		http://www.axess-electronics.com/products/fx1.html
+	old Line 6 (1)		25.625	7.875	2.875					201.80
+	2120 (1)			26		6.5								169.00
+	All Access			15.5	10.5	3.5						162.75		http://www.rocktron.com/site/products/controllers/allaccessltd/ and http://www.rocktron.com/site/products/controllers/allaccess/
+	pmc10				21		6.5								136.50
 	
-	ideal				21		8		1/2 - 2
-						3 mm (.118") alum
+	ideal				21		8		1/2 - 2					168.00
+						3 mm (.118 in) alum
 						brush finish with black anodize
 
 
@@ -71,3 +72,12 @@ http://www.hobbyengineering.com/
 bank sequence
 song
 set
+
+
+[all access]
+120 presets
+presets have no B string
+
+[FX-1]
+120 presets
+presets have no B string
