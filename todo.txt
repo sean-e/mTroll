@@ -19,6 +19,10 @@ LED board
 	pmc10				21		6.5
 	Axess FX1			18		12		1.25"FH x 3.50"RH
 	All Access			15.5	10.5	3.5
+	
+	ideal				21		8		1/2 - 2
+						3 mm (.118") alum
+						brush finish with black anodize
 
 
 [get hardware: usb to digital i/o bridge]
