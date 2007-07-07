@@ -311,10 +311,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Engine\IInput.h"
-				>
-			</File>
-			<File
 				RelativePath="..\Engine\IMainDisplay.h"
 				>
 			</File>
@@ -404,6 +400,30 @@
 			</File>
 			<File
 				RelativePath=".\ui.xml"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Monome40h"
+			>
+			<File
+				RelativePath="..\Monome40h\FTD2XX.H"
+				>
+			</File>
+			<File
+				RelativePath="..\Monome40h\IMonome40h.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Monome40h\IMonome40hInputSubscriber.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Monome40h\Monome40h.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Monome40h\Monome40h.h"
 				>
 			</File>
 		</Filter>

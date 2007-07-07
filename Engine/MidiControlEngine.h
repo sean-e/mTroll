@@ -3,7 +3,7 @@
 
 #include <map>
 #include <vector>
-#include "IInput.h"
+#include "..\Monome40h\IMonome40hInputSubscriber.h"
 #include "Patch.h"
 
 
@@ -15,7 +15,7 @@ class Patch;
 class PatchBank;
 
 
-class MidiControlEngine : public IInput
+class MidiControlEngine : public IMonome40hInputSubscriber
 {
 public:
 	MidiControlEngine(IMainDisplay * mainDisplay, 
@@ -34,9 +34,10 @@ public:
 	void					FilterRedundantProgChg(bool filter) {mFilterRedundantProgramChanges = filter;}
 	void					CompleteInit();
 
-	// IInput
+	// IMonome40hInputSubscriber
 	virtual void			SwitchPressed(int switchNumber);
 	virtual void			SwitchReleased(int switchNumber);
+	virtual void			AdcValueChanged(int port, int curValue);
 
 private:
 	void					LoadStartupBank();

@@ -558,3 +558,10 @@ MidiControlEngine::UpdateBankModeSwitchDisplay()
 		mSwitchDisplay->SetSwitchText(mModeSwitchNumber, "Bank");
 	}
 }
+
+void
+MidiControlEngine::AdcValueChanged(int port, 
+								   int curValue)
+{
+
+}
