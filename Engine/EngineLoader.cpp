@@ -136,8 +136,8 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			continue;
 
 		std::string tmp;
-		std::string byteStringA;
-		std::string byteStringB;
+		std::string midiByteStringA;
+		std::string midiByteStringB;
 		int midiOutPortNumber = 1;
 
 		const std::string patchName = pElem->Attribute("name");
@@ -163,22 +163,22 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			 childElem; 
 			 childElem = childElem->NextSiblingElement())
 		{
-			if (childElem->ValueStr() != "bytestring")
+			if (childElem->ValueStr() != "midiByteString")
 				continue;
 		
 			tmp = childElem->Attribute("name");
 			if (tmp == "A")
-				byteStringA = childElem->GetText();
+				midiByteStringA = childElem->GetText();
 			else if (tmp == "B")
-				byteStringB = childElem->GetText();
+				midiByteStringB = childElem->GetText();
 		}
 
 		Bytes bytesA;
-		int retval = ::ValidateString(byteStringA, bytesA);
+		int retval = ::ValidateString(midiByteStringA, bytesA);
 		if (-1 != retval)
 		{
 			Bytes bytesB;
-			retval = ::ValidateString(byteStringB, bytesB);
+			retval = ::ValidateString(midiByteStringB, bytesB);
 			if (-1 != retval)
 			{
 				mEngine->AddPatch(patchNumber, patchName, patchType, 

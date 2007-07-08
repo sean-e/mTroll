@@ -19,7 +19,7 @@ public:
 		ptMomentary			// responds to SwitchPressed and SwitchReleased
 	};
 
-	Patch(int number, const std::string & name, PatchType patchType, int midiOutPortNumber, IMidiOut * midiOut, const Bytes & stringA, const Bytes & stringB);
+	Patch(int number, const std::string & name, PatchType patchType, int midiOutPortNumber, IMidiOut * midiOut, const Bytes & midiStringA, const Bytes & midiStringB);
 	~Patch();
 
 	void AssignSwitch(int switchNumber, ISwitchDisplay * switchDisplay);
@@ -43,8 +43,8 @@ private:
 	const std::string		mName;
 	const PatchType			mPatchType;
 	const int				mMidiOutPort;
-	const Bytes				mByteStringA;
-	const Bytes				mByteStringB;
+	const Bytes				mMidiByteStringA;
+	const Bytes				mMidiByteStringB;
 // 	const Bytes				mMetaStringA;
 // 	const Bytes				mMetaStringB;
 

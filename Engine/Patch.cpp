@@ -11,13 +11,13 @@ Patch::Patch(int number,
 			 PatchType patchType, 
 			 int midiOutPortNumber,
 			 IMidiOut * midiOut,
-			 const std::vector<byte> & stringA, 
-			 const std::vector<byte> & stringB) : 
+			 const std::vector<byte> & midiStringA, 
+			 const std::vector<byte> & midiStringB) : 
 	mNumber(number),
 	mName(name),
 	mPatchType(patchType),
-	mByteStringA(stringA),
-	mByteStringB(stringB),
+	mMidiByteStringA(midiStringA),
+	mMidiByteStringB(midiStringB),
 	mSwitchNumber(-1),
 	mPatchIsOn(false),
 	mMidiOutPort(midiOutPortNumber),
@@ -102,16 +102,16 @@ Patch::UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay
 void
 Patch::SendStringA()
 {
-	if (mByteStringA.size())
-		mMidiOut->MidiOut(mByteStringA);
+	if (mMidiByteStringA.size())
+		mMidiOut->MidiOut(mMidiByteStringA);
 	mPatchIsOn = true;
 }
 
 void
 Patch::SendStringB()
 {
-	if (mByteStringB.size())
-		mMidiOut->MidiOut(mByteStringB);
+	if (mMidiByteStringB.size())
+		mMidiOut->MidiOut(mMidiByteStringB);
 	mPatchIsOn = false;
 }
 
