@@ -391,15 +391,15 @@
 			Name="Text Files"
 			>
 			<File
-				RelativePath=".\test.xml"
+				RelativePath=".\testdata.config.xml"
+				>
+			</File>
+			<File
+				RelativePath=".\testdata.ui.xml"
 				>
 			</File>
 			<File
 				RelativePath="..\todo.txt"
-				>
-			</File>
-			<File
-				RelativePath=".\ui.xml"
 				>
 			</File>
 		</Filter>
