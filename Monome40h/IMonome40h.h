@@ -10,9 +10,7 @@ class IMonome40hInputSubscriber;
 class IMonome40h
 {
 	// monome 40h controls
-	virtual void EnableLed(int led, bool on) = 0;
 	virtual void EnableLed(int row, int col, bool on) = 0;
-	virtual void SetLedIntensity(int led, int brightness) = 0;
 	virtual void SetLedIntensity(int row, int col, int brightness) = 0;
 	virtual void EnableLedRow(int row, int columnValues) = 0;
 	virtual void EnableLedColumn(int column, int rowValues) = 0;
@@ -24,5 +22,10 @@ class IMonome40h
 	virtual bool Subscribe(IMonome40hInputSubscriber * sub) = 0;
 	virtual bool Unsubscribe(IMonome40hInputSubscriber * sub) = 0;
 };
+
+inline int RowFromOrdinal(int ord) {return ord / 8;}
+inline int ColumnFromOrdinal(int ord) {return ord % 8;}
+inline void RowColFromOrdinal(int ord, int & row, int & col) {row = RowFromOrdinal(ord); col = ColumnFromOrdinal(ord);}
+inline int OrdinalFromRowCol(int row, int col) {return (row * 8) + col;}
 
 #endif // IMonome40h_h__

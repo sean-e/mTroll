@@ -1,24 +1,24 @@
-#include "Monome40h.h"
+#include "Monome40hFtw.h"
 #include <algorithm>
 #include "IMonome40h.h"
 #include "IMonome40hInputSubscriber.h"
 #include "..\Engine\ITraceDisplay.h"
 
 
-Monome40h::Monome40h(ITraceDisplay * trace) :
+Monome40hFtw::Monome40hFtw(ITraceDisplay * trace) :
 	mTrace(trace),
 	mFtDevice(NULL),
 	mServicingSubscribers(false)
 {
 }
 
-Monome40h::~Monome40h()
+Monome40hFtw::~Monome40hFtw()
 {
 	Shutdown(true);
 }
 
 bool
-Monome40h::Subscribe(IMonome40hInputSubscriber * sub)
+Monome40hFtw::Subscribe(IMonome40hInputSubscriber * sub)
 {
 	_ASSERTE(!mServicingSubscribers);
 	InputSubscribers::iterator it = std::find(mInputSubscribers.begin(), mInputSubscribers.end(), sub);
@@ -31,7 +31,7 @@ Monome40h::Subscribe(IMonome40hInputSubscriber * sub)
 }
 
 bool
-Monome40h::Unsubscribe(IMonome40hInputSubscriber * sub)
+Monome40hFtw::Unsubscribe(IMonome40hInputSubscriber * sub)
 {
 	_ASSERTE(!mServicingSubscribers);
 	InputSubscribers::iterator it = std::find(mInputSubscribers.begin(), mInputSubscribers.end(), sub);
@@ -44,64 +44,50 @@ Monome40h::Unsubscribe(IMonome40hInputSubscriber * sub)
 }
 
 void
-Monome40h::EnableLed(int led, 
-					 bool on)
+Monome40hFtw::EnableLed(int row, 
+						int col, 
+						bool on)
 {
 
 }
 
 void
-Monome40h::EnableLed(int row, 
-					 int col, 
-					 bool on)
+Monome40hFtw::SetLedIntensity(int row, 
+							  int col, 
+							  int brightness)
 {
 
 }
 
 void
-Monome40h::SetLedIntensity(int led, 
-						   int brightness)
+Monome40hFtw::EnableLedRow(int row, 
+						   int columnValues)
 {
 
 }
 
 void
-Monome40h::SetLedIntensity(int row, 
-						   int col, 
-						   int brightness)
+Monome40hFtw::EnableLedColumn(int column, 
+							  int rowValues)
 {
 
 }
 
 void
-Monome40h::EnableLedRow(int row, 
-						int columnValues)
+Monome40hFtw::TestLed(bool on)
 {
 
 }
 
 void
-Monome40h::EnableLedColumn(int column, 
-						   int rowValues)
+Monome40hFtw::EnableAdc(int port, 
+						bool on)
 {
 
 }
 
 void
-Monome40h::TestLed(bool on)
-{
-
-}
-
-void
-Monome40h::EnableAdc(int port, 
-					 bool on)
-{
-
-}
-
-void
-Monome40h::Shutdown(bool state)
+Monome40hFtw::Shutdown(bool state)
 {
 
 }
