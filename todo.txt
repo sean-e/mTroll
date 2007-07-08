@@ -1,4 +1,10 @@
 [hardware]
+monome
+	8 x 8 matrix digital i/o matrix
+	4 analog inputs
+	http://order.monome.org/
+	$110
+	ftdi interface
 CREATE USB Interface
 	http://www.create.ucsb.edu/~dano/CUI/
 	17 digital i/o (+1 programming button)
