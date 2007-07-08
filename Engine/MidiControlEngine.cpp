@@ -31,6 +31,7 @@ SortByBankNumber(const PatchBank* lhs, const PatchBank* rhs)
 	return lhs->GetBankNumber() < rhs->GetBankNumber();
 }
 
+// bad hardcoded switch grid assumptions - these need to come from one of the xml files...
 const int kModeDefaultSwitchNumber = 0;
 const int kModeBankNavSwitchNumber = 1;
 const int kModeBankDescSwitchNumber = 2;
