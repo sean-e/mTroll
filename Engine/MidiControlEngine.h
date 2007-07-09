@@ -3,7 +3,7 @@
 
 #include <map>
 #include <vector>
-#include "..\Monome40h\IMonome40hInputSubscriber.h"
+#include "../Monome40h/IMonome40hInputSubscriber.h"
 #include "Patch.h"
 
 
