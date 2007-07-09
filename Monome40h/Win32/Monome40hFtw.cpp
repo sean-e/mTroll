@@ -119,72 +119,89 @@ Monome40hFtw::Unsubscribe(IMonome40hInputSubscriber * sub)
 	return false;
 }
 
-// output address 2
+BOOL
+Monome40hFtw::Send(const SerialProtocolData & data)
+{
+	_ASSERTE(mFtDevice && INVALID_HANDLE_VALUE != mFtDevice);
+	DWORD bytesWritten = 0;
+	BOOL retval = ::FT_W32_WriteFile(mFtDevice, (void*)data.mData, 2, &bytesWritten, NULL);
+	_ASSERTE(retval && 2 == bytesWritten);
+	return retval;
+}
+
 void
-Monome40hFtw::EnableLed(int row, 
-						int col, 
+Monome40hFtw::EnableLed(byte row, 
+						byte col, 
 						bool on)
 {
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
+	SerialProtocolData data(SerialProtocolData::setLed, on ? 1 : 0, row, col);
+	Send(data);
 }
 
-// output address 3
 void
-Monome40hFtw::SetLedIntensity(int row, 
-							  int col, 
-							  int brightness)
+Monome40hFtw::SetLedIntensity(byte brightness)
 {
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
+	SerialProtocolData data(SerialProtocolData::setLedIntensity, 0, 0, brightness);
+	Send(data);
 }
 
-// output address 4
 void
 Monome40hFtw::TestLed(bool on)
 {
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
+	SerialProtocolData data(SerialProtocolData::ledTest, 0, 0, on ? 1 : 0);
+	Send(data);
 }
 
-// output address 5
 void
-Monome40hFtw::EnableAdc(int port, 
+Monome40hFtw::EnableAdc(byte port, 
 						bool on)
 {
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
+	SerialProtocolData data(SerialProtocolData::enableAdc, 0, port, on ? 1 : 0);
+	Send(data);
 }
 
-// output address 6
 void
 Monome40hFtw::Shutdown(bool state)
 {
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
+	SerialProtocolData data(SerialProtocolData::shutdown, 0, 0, state ? 1 : 0);
+	Send(data);
 }
 
-// output address 7
 void
-Monome40hFtw::EnableLedRow(int row, 
-						   int columnValues)
+Monome40hFtw::EnableLedRow(byte row, 
+						   byte columnValues)
 {
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
+	SerialProtocolData data(SerialProtocolData::setLedRow, row);
+	data[1] = columnValues;
+	Send(data);
 }
 
-// output address 8
 void
-Monome40hFtw::EnableLedColumn(int column, 
-							  int rowValues)
+Monome40hFtw::EnableLedColumn(byte column, 
+							  byte rowValues)
 {
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
+	SerialProtocolData data(SerialProtocolData::setledColumn, column);
+	data[1] = rowValues;
+	Send(data);
 }

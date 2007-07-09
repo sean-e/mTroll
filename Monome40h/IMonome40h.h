@@ -2,6 +2,8 @@
 #define IMonome40h_h__
 
 class IMonome40hInputSubscriber;
+typedef unsigned char byte;
+
 
 // IMonome40h
 // ----------------------------------------------------------------------------
@@ -13,12 +15,12 @@ public:
 	virtual ~IMonome40h() {}
 
 	// monome 40h controls
-	virtual void EnableLed(int row, int col, bool on) = 0;
-	virtual void SetLedIntensity(int row, int col, int brightness) = 0;
-	virtual void EnableLedRow(int row, int columnValues) = 0;
-	virtual void EnableLedColumn(int column, int rowValues) = 0;
+	virtual void EnableLed(byte row, byte col, bool on) = 0;
+	virtual void SetLedIntensity(byte brightness) = 0;
+	virtual void EnableLedRow(byte row, byte columnValues) = 0;
+	virtual void EnableLedColumn(byte column, byte rowValues) = 0;
 	virtual void TestLed(bool on) = 0;
-	virtual void EnableAdc(int port, bool on) = 0;
+	virtual void EnableAdc(byte port, bool on) = 0;
 	virtual void Shutdown(bool state) = 0;
 
 	// input notification
@@ -30,9 +32,9 @@ protected:
 	IMonome40h(const IMonome40h & rhs);
 };
 
-inline int RowFromOrdinal(int ord) {return ord / 8;}
-inline int ColumnFromOrdinal(int ord) {return ord % 8;}
-inline void RowColFromOrdinal(int ord, int & row, int & col) {row = RowFromOrdinal(ord); col = ColumnFromOrdinal(ord);}
-inline int OrdinalFromRowCol(int row, int col) {return (row * 8) + col;}
+inline byte RowFromOrdinal(int ord) {return ord / 8;}
+inline byte ColumnFromOrdinal(int ord) {return ord % 8;}
+inline void RowColFromOrdinal(int ord, byte & row, byte & col) {row = RowFromOrdinal(ord); col = ColumnFromOrdinal(ord);}
+inline int OrdinalFromRowCol(byte row, byte col) {return (row * 8) + col;}
 
 #endif // IMonome40h_h__
