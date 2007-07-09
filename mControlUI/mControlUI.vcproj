@@ -421,11 +421,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Monome40h\Monome40hFtw.cpp"
+				RelativePath="..\Monome40h\Win32\Monome40hFtw.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\Monome40h\Monome40hFtw.h"
+				RelativePath="..\Monome40h\Win32\Monome40hFtw.h"
 				>
 			</File>
 		</Filter>

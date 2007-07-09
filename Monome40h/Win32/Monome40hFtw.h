@@ -1,9 +1,9 @@
 #ifndef Monome40h_h__
 #define Monome40h_h__
 
-#include "IMonome40h.h"
+#include "../IMonome40h.h"
 #include <Windows.h>
-#include "FTD2XX.H"
+#include "../FTD2XX.H"
 #include <list>
 
 class ITraceDisplay;

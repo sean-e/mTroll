@@ -1,9 +1,9 @@
 #include "Monome40hFtw.h"
 #include <strstream>
 #include <algorithm>
-#include "IMonome40h.h"
-#include "IMonome40hInputSubscriber.h"
-#include "..\Engine\ITraceDisplay.h"
+#include "../IMonome40h.h"
+#include "../IMonome40hInputSubscriber.h"
+#include "../../Engine/ITraceDisplay.h"
 
 
 Monome40hFtw::Monome40hFtw(ITraceDisplay * trace) :
