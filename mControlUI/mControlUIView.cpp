@@ -14,7 +14,7 @@
 #include "..\Engine\MidiControlEngine.h"
 #include "..\Engine\UiLoader.h"
 #include "ATLLabel.h"
-#include "..\Monome40h\Monome40hFtw.h"
+#include "..\Monome40h\Win32\Monome40hFtw.h"
 
 
 CMControlUIView::CMControlUIView() :
