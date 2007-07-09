@@ -21,7 +21,7 @@ Monome40hFtw::Monome40hFtw(ITraceDisplay * trace) :
 
 Monome40hFtw::~Monome40hFtw()
 {
-	Release();
+	ReleaseDevice();
 	::DeleteCriticalSection(&mSubscribersLock);
 }
 
@@ -64,7 +64,7 @@ Monome40hFtw::GetDeviceSerialNumber(int devIndex)
 }
 
 bool
-Monome40hFtw::Acquire(const std::string & devSerialNum)
+Monome40hFtw::AcquireDevice(const std::string & devSerialNum)
 {
 	std::strstream traceMsg;
 	mFtDevice = ::FT_W32_CreateFile(devSerialNum.c_str(), 
@@ -93,7 +93,7 @@ Monome40hFtw::Acquire(const std::string & devSerialNum)
 }
 
 void
-Monome40hFtw::Release()
+Monome40hFtw::ReleaseDevice()
 {
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;

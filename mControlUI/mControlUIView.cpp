@@ -136,7 +136,7 @@ CMControlUIView::Load(const std::string & settingsBasefile)
 	devSerial = monome->GetDeviceSerialNumber(0);
 	mHardwareUi->Subscribe(this);
 	if (!devSerial.empty())
-		monome->Acquire(devSerial);
+		monome->AcquireDevice(devSerial);
 	LoadMidiSettings(settingsBasefile + ".config.xml");
 }
 

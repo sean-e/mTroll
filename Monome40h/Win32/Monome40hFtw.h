@@ -29,8 +29,8 @@ public: // IMonome40h
 	virtual bool Unsubscribe(IMonome40hInputSubscriber * sub);
 
 	std::string GetDeviceSerialNumber(int devidx);
-	bool Acquire(const std::string & devSerialNum);
-	void Release();
+	bool AcquireDevice(const std::string & devSerialNum);
+	void ReleaseDevice();
 
 private:
 	void OnButtonChange(bool pressed, byte row, byte col);
