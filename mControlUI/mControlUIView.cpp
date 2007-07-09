@@ -15,6 +15,7 @@
 #include "..\Engine\UiLoader.h"
 #include "ATLLabel.h"
 #include "..\Monome40h\Win32\Monome40hFtw.h"
+#include "..\Monome40h\IMonome40h.h"
 
 
 CMControlUIView::CMControlUIView() :
@@ -130,13 +131,7 @@ CMControlUIView::Load(const std::string & settingsBasefile)
 {
 	Unload();
 	LoadUi(settingsBasefile + ".ui.xml");
-	Monome40hFtw * monome = new Monome40hFtw(this);
-	mHardwareUi = monome;
-	std::string devSerial;
-	devSerial = monome->GetDeviceSerialNumber(0);
-	mHardwareUi->Subscribe(this);
-	if (!devSerial.empty())
-		monome->AcquireDevice(devSerial);
+	LoadMonome();
 	LoadMidiSettings(settingsBasefile + ".config.xml");
 }
 
@@ -154,6 +149,20 @@ CMControlUIView::LoadUi(const std::string & uiSettingsFile)
 			Trace(midiOut->GetMidiOutDeviceName(idx) + "\n");
 		Trace("\n");
 	}
+}
+
+void
+CMControlUIView::LoadMonome()
+{
+	Monome40hFtw * monome = new Monome40hFtw(this);
+	const std::string devSerial(monome->GetDeviceSerialNumber(0));
+	if (!devSerial.empty() && monome->AcquireDevice(devSerial))
+	{
+		mHardwareUi = monome;
+		mHardwareUi->Subscribe(this);
+	}
+	else
+		delete monome;
 }
 
 void
@@ -202,9 +211,9 @@ CMControlUIView::ButtonPressed(const int idx)
 {
 	if (!mStupidSwitchStates[idx])
 	{
-		mStupidSwitchStates[idx] = true;
-		if (mEngine)
-			mEngine->SwitchPressed(idx);
+		byte row, col;
+		::RowColFromOrdinal(idx, row, col);
+		SwitchPressed(row, col);
 	}
 }
 
@@ -213,9 +222,9 @@ CMControlUIView::ButtonReleased(const int idx)
 {
 	if (mStupidSwitchStates[idx])
 	{
-		mStupidSwitchStates[idx] = false;
-		if (mEngine)
-			mEngine->SwitchReleased(idx);
+		byte row, col;
+		::RowColFromOrdinal(idx, row, col);
+		SwitchReleased(row, col);
 	}
 }
 
@@ -564,16 +573,23 @@ CMControlUIView::CloseMidiOuts()
 	}
 }
 
+// IMonome40hInputSubscriber
 void
 CMControlUIView::SwitchPressed(byte row, byte column)
 {
-	mEngine->SwitchPressed(::OrdinalFromRowCol(row, column));
+	const int switchNumber = ::OrdinalFromRowCol(row, column);
+	mStupidSwitchStates[switchNumber] = true;
+	if (mEngine)
+		mEngine->SwitchPressed(switchNumber);
 }
 
 void
 CMControlUIView::SwitchReleased(byte row, byte column)
 {
-	mEngine->SwitchReleased(::OrdinalFromRowCol(row, column));
+	const int switchNumber = ::OrdinalFromRowCol(row, column);
+	mStupidSwitchStates[switchNumber] = false;
+	if (mEngine)
+		mEngine->SwitchReleased(switchNumber);
 }
 
 void

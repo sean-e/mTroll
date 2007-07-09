@@ -1,10 +1,10 @@
 #ifndef Monome40h_h__
 #define Monome40h_h__
 
-#include "../IMonome40h.h"
 #include <Windows.h>
-#include "../FTD2XX.H"
 #include <list>
+#include "../IMonome40h.h"
+#include "../FTD2XX.H"
 
 class ITraceDisplay;
 class IMonome40hInputSubscriber;
@@ -36,7 +36,7 @@ private:
 	void OnButtonChange(bool pressed, byte row, byte col);
 	void OnAdcChange(int port, int value);
 
-	struct SerialProtocolData
+	struct MonomeSerialProtocolData
 	{
 		enum ProtocolCommand
 		{
@@ -50,25 +50,26 @@ private:
 			setLedRow				= 7,
 			setledColumn			= 8
 		};
+
 		byte mData[2];
 
-		SerialProtocolData(ProtocolCommand command)
+		MonomeSerialProtocolData(ProtocolCommand command)
 		{
 			mData[0] = command << 4;
 		}
 
-		SerialProtocolData(ProtocolCommand command, byte data1)
+		MonomeSerialProtocolData(ProtocolCommand command, byte data1)
 		{
 			mData[0] = (command << 4) | data1;
 		}
 
-		SerialProtocolData(ProtocolCommand command, byte data1, byte data2)
+		MonomeSerialProtocolData(ProtocolCommand command, byte data1, byte data2)
 		{
 			mData[0] = (command << 4) | data1;
 			mData[1] = data2 << 4;
 		}
 
-		SerialProtocolData(ProtocolCommand command, byte data1, byte data2, byte data3)
+		MonomeSerialProtocolData(ProtocolCommand command, byte data1, byte data2, byte data3)
 		{
 			mData[0] = (command << 4) | data1;
 			mData[1] = (data2 << 4) | data3;
@@ -77,7 +78,7 @@ private:
 		byte & operator[](int idx) {_ASSERTE(0 == idx || 1 == idx); return mData[idx];}
 	};
 
-	BOOL Send(const SerialProtocolData & data);
+	BOOL Send(const MonomeSerialProtocolData & data);
 
 	typedef std::list<IMonome40hInputSubscriber *> InputSubscribers;
 	CRITICAL_SECTION				mSubscribersLock;

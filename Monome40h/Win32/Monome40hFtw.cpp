@@ -138,7 +138,7 @@ Monome40hFtw::Unsubscribe(IMonome40hInputSubscriber * sub)
 }
 
 BOOL
-Monome40hFtw::Send(const SerialProtocolData & data)
+Monome40hFtw::Send(const MonomeSerialProtocolData & data)
 {
 	_ASSERTE(mFtDevice && INVALID_HANDLE_VALUE != mFtDevice);
 	DWORD bytesWritten = 0;
@@ -152,20 +152,22 @@ Monome40hFtw::EnableLed(byte row,
 						byte col, 
 						bool on)
 {
+	_ASSERTE(mFtDevice && INVALID_HANDLE_VALUE != mFtDevice);
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	SerialProtocolData data(SerialProtocolData::setLed, on ? 1 : 0, row, col);
+	MonomeSerialProtocolData data(MonomeSerialProtocolData::setLed, on ? 1 : 0, row, col);
 	Send(data);
 }
 
 void
 Monome40hFtw::SetLedIntensity(byte brightness)
 {
+	_ASSERTE(mFtDevice && INVALID_HANDLE_VALUE != mFtDevice);
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	SerialProtocolData data(SerialProtocolData::setLedIntensity, 0, 0, brightness);
+	MonomeSerialProtocolData data(MonomeSerialProtocolData::setLedIntensity, 0, 0, brightness);
 	Send(data);
 }
 
@@ -176,7 +178,7 @@ Monome40hFtw::TestLed(bool on)
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	SerialProtocolData data(SerialProtocolData::ledTest, 0, 0, on ? 1 : 0);
+	MonomeSerialProtocolData data(MonomeSerialProtocolData::ledTest, 0, 0, on ? 1 : 0);
 	Send(data);
 }
 
@@ -188,7 +190,7 @@ Monome40hFtw::EnableAdc(byte port,
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	SerialProtocolData data(SerialProtocolData::enableAdc, 0, port, on ? 1 : 0);
+	MonomeSerialProtocolData data(MonomeSerialProtocolData::enableAdc, 0, port, on ? 1 : 0);
 	Send(data);
 }
 
@@ -199,7 +201,7 @@ Monome40hFtw::Shutdown(bool state)
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	SerialProtocolData data(SerialProtocolData::shutdown, 0, 0, state ? 1 : 0);
+	MonomeSerialProtocolData data(MonomeSerialProtocolData::shutdown, 0, 0, state ? 1 : 0);
 	Send(data);
 }
 
@@ -211,7 +213,7 @@ Monome40hFtw::EnableLedRow(byte row,
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	SerialProtocolData data(SerialProtocolData::setLedRow, row);
+	MonomeSerialProtocolData data(MonomeSerialProtocolData::setLedRow, row);
 	data[1] = columnValues;
 	Send(data);
 }
@@ -224,7 +226,7 @@ Monome40hFtw::EnableLedColumn(byte column,
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	SerialProtocolData data(SerialProtocolData::setledColumn, column);
+	MonomeSerialProtocolData data(MonomeSerialProtocolData::setledColumn, column);
 	data[1] = rowValues;
 	Send(data);
 }
@@ -239,9 +241,25 @@ Monome40hFtw::OnButtonChange(bool pressed, byte row, byte col)
 		++it)
 	{
 		if (pressed)
+		{
 			(*it)->SwitchPressed(row, col);
+			if (mTrace)
+			{
+				std::strstream traceMsg;
+				traceMsg << "monome button press: row " << row << ", column " << col << std::endl << std::ends;
+				mTrace->Trace(traceMsg.str());
+			}
+		}
 		else
+		{
 			(*it)->SwitchReleased(row, col);
+			if (mTrace)
+			{
+				std::strstream traceMsg;
+				traceMsg << "monome button release: row " << row << ", column " << col << std::endl << std::ends;
+				mTrace->Trace(traceMsg.str());
+			}
+		}
 	}
 }
 

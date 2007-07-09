@@ -123,6 +123,7 @@ private:
 	LRESULT OnNotifyCustomDraw(int idCtrl, LPNMHDR pNotifyStruct, BOOL& /*bHandled*/);
 	LRESULT OnBnPushed(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
 	void LoadUi(const std::string & uiSettingsFile);
+	void LoadMonome();
 	void LoadMidiSettings(const std::string & file);
 
 	void ButtonReleased(const int idx);
