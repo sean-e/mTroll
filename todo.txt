@@ -1,3 +1,8 @@
+[todo]
+dynamic load and access of ftdi.dll
+thread for reads
+
+
 [hardware]
 monome
 	8 x 8 matrix digital i/o matrix
@@ -5,16 +10,6 @@ monome
 	http://order.monome.org/
 	$110
 	ftdi interface
-CREATE USB Interface
-	http://www.create.ucsb.edu/~dano/CUI/
-	17 digital i/o (+1 programming button)
-	13 a/d inputs
-	$50
-LED board
-	a second CREATE USB Interface
-	or
-	http://www.trossenrobotics.com/store/p/3415-LED64.aspx
-	$90 + LEDs + power
 
 
 [pedalboard sizes]		w		d		h			area	hspace	url
@@ -32,14 +27,6 @@ LED board
 	
 						3 mm (.118 in) alum
 						brush finish with black anodize
-
-
-[get hardware: usb to digital i/o bridge]
-http://www.create.ucsb.edu/~dano/CUI/
-http://eroktronix.com/index.html
-http://www.piengineering.com/custom/xkmatrix.php
-http://www.elexol.com/IO_Modules/
-http://www.hobbyengineering.com/
 
 
 [display sizes]

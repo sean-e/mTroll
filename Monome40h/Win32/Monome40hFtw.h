@@ -33,6 +33,9 @@ public: // IMonome40h
 	void Release();
 
 private:
+	void OnButtonChange(bool pressed, byte row, byte col);
+	void OnAdcChange(int port, int value);
+
 	struct SerialProtocolData
 	{
 		enum ProtocolCommand
@@ -77,10 +80,14 @@ private:
 	BOOL Send(const SerialProtocolData & data);
 
 	typedef std::list<IMonome40hInputSubscriber *> InputSubscribers;
+	CRITICAL_SECTION				mSubscribersLock;
 	InputSubscribers				mInputSubscribers;
 	ITraceDisplay					* mTrace;
 	FT_HANDLE						mFtDevice;
+	HANDLE							mThread;
 	bool							mServicingSubscribers;
+	bool							mIsListening;
+	bool							mShouldContinueListening;
 };
 
 #endif // Monome40h_h__

@@ -1,6 +1,9 @@
 #ifndef IInput_h__
 #define IInput_h__
 
+typedef unsigned char byte;
+
+
 // IMonome40hInputSubscriber
 // ----------------------------------------------------------------------------
 // Implement to get notification of switch press and release, and
@@ -9,10 +12,8 @@
 class IMonome40hInputSubscriber
 {
 public:
-	// input address 0 is button press/release
-	virtual void SwitchPressed(int switchNumber) = 0;
-	virtual void SwitchReleased(int switchNumber) = 0;
-	// input address 1 is adc
+	virtual void SwitchPressed(byte row, byte column) = 0;
+	virtual void SwitchReleased(byte row, byte column) = 0;
 	virtual void AdcValueChanged(int port, int curValue) = 0;
 };
 

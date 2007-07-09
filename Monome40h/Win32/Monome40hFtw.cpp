@@ -4,18 +4,25 @@
 #include "../IMonome40h.h"
 #include "../IMonome40hInputSubscriber.h"
 #include "../../Engine/ITraceDisplay.h"
+#include "../../Engine/ScopeSet.h"
+#include "AutoLockCs.h"
 
 
 Monome40hFtw::Monome40hFtw(ITraceDisplay * trace) :
 	mTrace(trace),
 	mFtDevice(INVALID_HANDLE_VALUE),
+	mIsListening(false),
+	mShouldContinueListening(true),
+	mThread(NULL),
 	mServicingSubscribers(false)
 {
+	::InitializeCriticalSection(&mSubscribersLock);
 }
 
 Monome40hFtw::~Monome40hFtw()
 {
 	Release();
+	::DeleteCriticalSection(&mSubscribersLock);
 }
 
 std::string
@@ -79,15 +86,24 @@ Monome40hFtw::Acquire(const std::string & devSerialNum)
 		mTrace->Trace(traceMsg.str());
 	}
 
+	// startup listener
+	mShouldContinueListening = true;
+
 	return true;
 }
 
 void
 Monome40hFtw::Release()
 {
-	Shutdown(true);
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
+
+	mShouldContinueListening = false;
+	Shutdown(true);
+
+	::WaitForSingleObjectEx(mThread, 250, FALSE);
+	_ASSERTE(!mIsListening);
+	mIsListening = false;
 
 	::FT_W32_CloseHandle(mFtDevice);
 	mFtDevice = INVALID_HANDLE_VALUE;
@@ -97,6 +113,7 @@ bool
 Monome40hFtw::Subscribe(IMonome40hInputSubscriber * sub)
 {
 	_ASSERTE(!mServicingSubscribers);
+	AutoLockCs lock(mSubscribersLock);
 	InputSubscribers::iterator it = std::find(mInputSubscribers.begin(), mInputSubscribers.end(), sub);
 	if (it == mInputSubscribers.end())
 	{
@@ -110,6 +127,7 @@ bool
 Monome40hFtw::Unsubscribe(IMonome40hInputSubscriber * sub)
 {
 	_ASSERTE(!mServicingSubscribers);
+	AutoLockCs lock(mSubscribersLock);
 	InputSubscribers::iterator it = std::find(mInputSubscribers.begin(), mInputSubscribers.end(), sub);
 	if (it != mInputSubscribers.end())
 	{
@@ -154,6 +172,7 @@ Monome40hFtw::SetLedIntensity(byte brightness)
 void
 Monome40hFtw::TestLed(bool on)
 {
+	_ASSERTE(mFtDevice && INVALID_HANDLE_VALUE != mFtDevice);
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
@@ -165,6 +184,7 @@ void
 Monome40hFtw::EnableAdc(byte port, 
 						bool on)
 {
+	_ASSERTE(mFtDevice && INVALID_HANDLE_VALUE != mFtDevice);
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
@@ -175,6 +195,7 @@ Monome40hFtw::EnableAdc(byte port,
 void
 Monome40hFtw::Shutdown(bool state)
 {
+	_ASSERTE(mFtDevice && INVALID_HANDLE_VALUE != mFtDevice);
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
@@ -186,6 +207,7 @@ void
 Monome40hFtw::EnableLedRow(byte row, 
 						   byte columnValues)
 {
+	_ASSERTE(mFtDevice && INVALID_HANDLE_VALUE != mFtDevice);
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
@@ -198,10 +220,40 @@ void
 Monome40hFtw::EnableLedColumn(byte column, 
 							  byte rowValues)
 {
+	_ASSERTE(mFtDevice && INVALID_HANDLE_VALUE != mFtDevice);
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
 	SerialProtocolData data(SerialProtocolData::setledColumn, column);
 	data[1] = rowValues;
 	Send(data);
+}
+
+void
+Monome40hFtw::OnButtonChange(bool pressed, byte row, byte col)
+{
+	AutoLockCs lock(mSubscribersLock);
+	ScopeSet<bool> active(&mServicingSubscribers, true);
+	for (InputSubscribers::iterator it = mInputSubscribers.begin();
+		it != mInputSubscribers.end();
+		++it)
+	{
+		if (pressed)
+			(*it)->SwitchPressed(row, col);
+		else
+			(*it)->SwitchReleased(row, col);
+	}
+}
+
+void
+Monome40hFtw::OnAdcChange(int port, int value)
+{
+	AutoLockCs lock(mSubscribersLock);
+	ScopeSet<bool> active(&mServicingSubscribers, true);
+	for (InputSubscribers::iterator it = mInputSubscribers.begin();
+		it != mInputSubscribers.end();
+		++it)
+	{
+		(*it)->AdcValueChanged(port, value);
+	}
 }

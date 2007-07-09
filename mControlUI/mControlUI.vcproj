@@ -361,6 +361,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Engine\ScopeSet.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Engine\UiLoader.cpp"
 				>
 			</File>
@@ -408,6 +412,10 @@
 		<Filter
 			Name="Monome40h"
 			>
+			<File
+				RelativePath="..\Monome40h\Win32\AutoLockCs.h"
+				>
+			</File>
 			<File
 				RelativePath="..\Monome40h\FTD2XX.H"
 				>

@@ -14,6 +14,7 @@
 #include "WinMidiOut.h"
 #include <atlctrls.h>
 #include "AtlLed.h"
+#include "../Monome40h/IMonome40hInputSubscriber.h"
 
 
 class CLabel;
@@ -25,7 +26,8 @@ class CMControlUIView : public CDialogImpl<CMControlUIView>,
 								ISwitchDisplay, 
 								ITraceDisplay,
 								IMidiControlUi,
-								IMidiOutGenerator
+								IMidiOutGenerator,
+								IMonome40hInputSubscriber
 {
 public:
 	CMControlUIView();
@@ -59,6 +61,11 @@ public: // ISwitchDisplay
 	virtual void SetSwitchDisplay(int switchNumber, bool isOn);
 	virtual void SetSwitchText(int switchNumber, const std::string & txt);
 	virtual void ClearSwitchText(int switchNumber);
+
+public: // IMonome40hInputSubscriber
+	virtual void SwitchPressed(byte row, byte column);
+	virtual void SwitchReleased(byte row, byte column);
+	virtual void AdcValueChanged(int port, int curValue);
 
 private: // IMidiControlUi
 	virtual void	SetSwitchLedConfig(int width, int height, unsigned int onColor, unsigned int offColor);

@@ -75,6 +75,9 @@ struct DeleteSwitchTextDisplay
 void
 CMControlUIView::Unload()
 {
+	if (mHardwareUi)
+		mHardwareUi->Unsubscribe(this);
+
 	CloseMidiOuts();
 
 	delete mEngine;
@@ -131,6 +134,7 @@ CMControlUIView::Load(const std::string & settingsBasefile)
 	mHardwareUi = monome;
 	std::string devSerial;
 	devSerial = monome->GetDeviceSerialNumber(0);
+	mHardwareUi->Subscribe(this);
 	if (!devSerial.empty())
 		monome->Acquire(devSerial);
 	LoadMidiSettings(settingsBasefile + ".config.xml");
@@ -260,6 +264,13 @@ CMControlUIView::Trace(const std::string & txt)
 void
 CMControlUIView::SetSwitchDisplay(int switchNumber, bool isOn)
 {
+	if (mHardwareUi)
+	{
+		byte row, col;
+		::RowColFromOrdinal(switchNumber, row, col);
+		mHardwareUi->EnableLed(row, col, isOn);
+	}
+
 	if (!mLeds[switchNumber] || !mLeds[switchNumber]->IsWindow())
 		return;
 
@@ -551,4 +562,22 @@ CMControlUIView::CloseMidiOuts()
 		if (curOut->IsMidiOutOpen())
 			curOut->CloseMidiOut();
 	}
+}
+
+void
+CMControlUIView::SwitchPressed(byte row, byte column)
+{
+	mEngine->SwitchPressed(::OrdinalFromRowCol(row, column));
+}
+
+void
+CMControlUIView::SwitchReleased(byte row, byte column)
+{
+	mEngine->SwitchReleased(::OrdinalFromRowCol(row, column));
+}
+
+void
+CMControlUIView::AdcValueChanged(int port, int curValue)
+{
+	mEngine->AdcValueChanged(port, curValue);
 }
