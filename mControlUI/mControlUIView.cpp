@@ -14,6 +14,7 @@
 #include "..\Engine\MidiControlEngine.h"
 #include "..\Engine\UiLoader.h"
 #include "ATLLabel.h"
+#include "..\Monome40h\Monome40hFtw.h"
 
 
 CMControlUIView::CMControlUIView() :
@@ -23,7 +24,8 @@ CMControlUIView::CMControlUIView() :
 	mPreferredHeight(0),
 	mPreferredWidth(0),
 	mMaxSwitchId(0),
-	mKeyMessage(0)
+	mKeyMessage(0),
+	mHardwareUi(NULL)
 {
 }
 
@@ -78,6 +80,9 @@ CMControlUIView::Unload()
 	delete mEngine;
 	mEngine = NULL;
 
+	delete mHardwareUi;
+	mHardwareUi = NULL;
+
 	if (mMainDisplay && mMainDisplay->m_hWnd && ::IsWindow(mMainDisplay->m_hWnd))
 		mMainDisplay->DestroyWindow();
 	delete mMainDisplay;
@@ -118,9 +123,22 @@ CMControlUIView::Create(HWND hWndParent, LPARAM dwInitParam /*= NULL*/)
 }
 
 void
-CMControlUIView::LoadUi(const std::string & uiSettingsFile)
+CMControlUIView::Load(const std::string & settingsBasefile)
 {
 	Unload();
+	LoadUi(settingsBasefile + ".ui.xml");
+	Monome40hFtw * monome = new Monome40hFtw(this);
+	mHardwareUi = monome;
+	std::string devSerial;
+	devSerial = monome->GetDeviceSerialNumber(0);
+	if (!devSerial.empty())
+		monome->Acquire(devSerial);
+	LoadMidiSettings(settingsBasefile + ".config.xml");
+}
+
+void
+CMControlUIView::LoadUi(const std::string & uiSettingsFile)
+{
 	UiLoader ldr(this, uiSettingsFile);
 
 	Trace("Midi Devices:\n");

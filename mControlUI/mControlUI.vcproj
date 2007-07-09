@@ -74,6 +74,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies=".\..\Monome40h\FTD2XX.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -159,6 +160,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies=".\..\Monome40h\FTD2XX.lib"
 				LinkIncremental="1"
 				SubSystem="2"
 				TargetMachine="1"

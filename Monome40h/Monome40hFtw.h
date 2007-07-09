@@ -17,23 +17,20 @@ public:
 	virtual ~Monome40hFtw();
 
 public: // IMonome40h
-	// output address 2
 	virtual void EnableLed(int row, int col, bool on);
-	// output address 3
 	virtual void SetLedIntensity(int row, int col, int brightness);
-	// output address 4
 	virtual void TestLed(bool on);
-	// output address 5
 	virtual void EnableAdc(int port, bool on);
-	// output address 6
 	virtual void Shutdown(bool state);
-	// output address 7
 	virtual void EnableLedRow(int row, int columnValues);
-	// output address 8
 	virtual void EnableLedColumn(int column, int rowValues);
 
 	virtual bool Subscribe(IMonome40hInputSubscriber * sub);
 	virtual bool Unsubscribe(IMonome40hInputSubscriber * sub);
+
+	std::string GetDeviceSerialNumber(int devidx);
+	bool Acquire(const std::string & devSerialNum);
+	void Release();
 
 private:
 	typedef std::list<IMonome40hInputSubscriber *> InputSubscribers;

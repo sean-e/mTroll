@@ -79,8 +79,7 @@ LRESULT CMainFrame::OnFileExit(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCt
 LRESULT CMainFrame::OnFileNew(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
 	::SetCursor(AtlLoadSysCursor(IDC_WAIT));
-	mView.LoadUi("testdata.ui.xml");
-	mView.LoadMidiSettings("testdata.config.xml");
+	mView.Load("testdata");
 	::SetCursor(AtlLoadSysCursor(IDC_ARROW));
 	return 0;
 }

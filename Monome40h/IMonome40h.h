@@ -9,6 +9,9 @@ class IMonome40hInputSubscriber;
 //
 class IMonome40h
 {
+public:
+	virtual ~IMonome40h() {}
+
 	// monome 40h controls
 	virtual void EnableLed(int row, int col, bool on) = 0;
 	virtual void SetLedIntensity(int row, int col, int brightness) = 0;
@@ -21,6 +24,10 @@ class IMonome40h
 	// input notification
 	virtual bool Subscribe(IMonome40hInputSubscriber * sub) = 0;
 	virtual bool Unsubscribe(IMonome40hInputSubscriber * sub) = 0;
+
+protected:
+	IMonome40h() {}
+	IMonome40h(const IMonome40h & rhs);
 };
 
 inline int RowFromOrdinal(int ord) {return ord / 8;}

@@ -17,6 +17,7 @@
 
 
 class CLabel;
+class IMonome40h;
 
 
 class CMControlUIView : public CDialogImpl<CMControlUIView>, 
@@ -36,8 +37,7 @@ public:
 	typedef CButton				Switch;
 
 	HWND Create(HWND hWndParent, LPARAM dwInitParam = NULL);
-	void LoadUi(const std::string & uiSettingsFile);
-	void LoadMidiSettings(const std::string & file);
+	void Load(const std::string & settingsBasefile);
 
 	BOOL PreTranslateMessage(MSG* pMsg);
 	void GetPreferredSize(int & width, int & height) const {width = mPreferredWidth; height = mPreferredHeight;}
@@ -115,12 +115,15 @@ private:
 //	LRESULT NotifyHandler(int /*idCtrl*/, LPNMHDR /*pnmh*/, BOOL& /*bHandled*/)
 	LRESULT OnNotifyCustomDraw(int idCtrl, LPNMHDR pNotifyStruct, BOOL& /*bHandled*/);
 	LRESULT OnBnPushed(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
+	void LoadUi(const std::string & uiSettingsFile);
+	void LoadMidiSettings(const std::string & file);
 
 	void ButtonReleased(const int idx);
 	void ButtonPressed(const int idx);
 	void Unload();
 
 private:
+	IMonome40h					* mHardwareUi;
 	MidiControlEngine			* mEngine;
 	CLabel						* mMainDisplay;
 	CEdit						* mTraceDisplay;
