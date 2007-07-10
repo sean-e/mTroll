@@ -1,6 +1,5 @@
 [todo]
 dynamic load and access of ftdi.dll
-thread for reads
 
 
 [hardware]
