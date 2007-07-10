@@ -118,7 +118,7 @@ Monome40hFtw::ReleaseDevice()
 
 	mShouldContinueListening = false;
 
-	::WaitForSingleObjectEx(mThread, 250, FALSE);
+	::WaitForSingleObjectEx(mThread, 3000, FALSE);
 	_ASSERTE(!mIsListening);
 	mIsListening = false;
 	CloseHandle(mThread);
