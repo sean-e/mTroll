@@ -147,7 +147,7 @@
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				DebugInformationFormat="0"
+				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -166,7 +166,9 @@
 				AdditionalDependencies=".\..\Monome40h\FTD2XX.lib"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames=""
+				GenerateDebugInformation="true"
 				SubSystem="2"
+				OptimizeReferences="2"
 				TargetMachine="1"
 			/>
 			<Tool
