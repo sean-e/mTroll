@@ -1,0 +1,88 @@
+<?xml version="1.0" ?>
+<MidiControlSettings>
+	<SystemConfig filterPC="0">
+		<powerup timeout="0" bank="1" patch="0" />
+		<switches>
+			<switch name="increment" id="15" />
+			<switch name="decrement" id="14" />
+			<switch name="mode" id="13" />
+		</switches>
+		<midiDevices>
+			<midiDevice port="1" outIdx="0" activityIndicatorId="20" />
+		</midiDevices>
+	</SystemConfig>
+	<patches>
+		<patch name="Toggle 1" number="1" type="toggle" port="1">
+			<midiByteString name="A">ca 00 ba 6f 29</midiByteString>
+			<midiByteString name="B">ca 02 ba 6f 7f</midiByteString>
+		</patch>
+		<patch name="Toggle 2" number="2" type="toggle" port="1">
+			<midiByteString name="A">ca 00</midiByteString>
+			<midiByteString name="B">ca 02</midiByteString>
+		</patch>
+		<patch name="Toggle 3" number="3" type="toggle" port="1">
+			<midiByteString name="A">ba 09 00</midiByteString>
+			<midiByteString name="B">ba 09 7f</midiByteString>
+		</patch>
+		<patch name="Momentary 1" number="10" type="momentary" port="1">
+			<midiByteString name="A">ba 09 00</midiByteString>
+			<midiByteString name="B">ba 09 7f</midiByteString>
+		</patch>
+		<patch name="Momentary 2" number="11" type="momentary" port="1">
+			<midiByteString name="A">ba 0a 00</midiByteString>
+			<midiByteString name="B">ba 0a 7f</midiByteString>
+		</patch>
+		<patch name="Momentary 3" number="12" type="momentary" port="1">
+			<midiByteString name="A">ba 0a 00</midiByteString>
+			<midiByteString name="B">ba 0a 7f</midiByteString>
+		</patch>
+		<patch name="Normal 1" number="20" type="normal" port="1">
+			<midiByteString name="A">b2 07 7f b2 07 00</midiByteString>
+			<midiByteString name="B">b2 07 7f b2 07 00</midiByteString>
+		</patch>
+		<patch name="Normal 2" number="21" type="normal" port="1">
+			<midiByteString name="A">b2 08 7f b2 08 00</midiByteString>
+			<midiByteString name="B">b2 08 7f b2 08 00</midiByteString>
+		</patch>
+		<patch name="Normal 3" number="22" type="normal" port="1">
+			<midiByteString name="A">b2 0a 7f b2 0a 00</midiByteString>
+			<midiByteString name="B">b2 0a 7f b2 0a 00</midiByteString>
+		</patch>
+		<patch name="Normal 4" number="23" type="normal" port="1">
+			<midiByteString name="A">b2 0b 7f b2 0b 00</midiByteString>
+			<midiByteString name="B">b2 0b 7f b2 0b 00</midiByteString>
+		</patch>
+		<patch name="Stacked patches" number="24" type="toggle" port="1">
+		</patch>
+	</patches>
+	<banks>
+		<bank name="First Bank" number="1">
+			<PatchMap switch="1" patch="1" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="2" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="3" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="10" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="11" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="12" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="20" loadState="" unloadState="" />
+			<PatchMap switch="10" patch="21" loadState="" unloadState="" />
+			<PatchMap switch="11" patch="22" loadState="" unloadState="" />
+			<PatchMap switch="12" patch="23" loadState="" unloadState="" />
+		</bank>
+		<bank name="Second Bank" number="2">
+			<PatchMap switch="1" patch="20" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="21" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="22" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="23" loadState="" unloadState="" />
+		</bank>
+		<bank name="Third Bank" number="3">
+			<PatchMap switch="5" patch="20" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="21" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="22" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="23" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="24" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="1" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="2" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="3" loadState="" unloadState="" />
+		</bank>
+	</banks>
+</MidiControlSettings>
