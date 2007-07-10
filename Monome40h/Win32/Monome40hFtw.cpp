@@ -130,7 +130,7 @@ Monome40hFtw::AcquireDevice(const std::string & devSerialNum)
 	FTTIMEOUTS ftTS;
 	ftTS.ReadIntervalTimeout = 0;
 	ftTS.ReadTotalTimeoutMultiplier = 0;
-	ftTS.ReadTotalTimeoutConstant = 200;
+	ftTS.ReadTotalTimeoutConstant = 500;
 	ftTS.WriteTotalTimeoutMultiplier = 0;
 	ftTS.WriteTotalTimeoutConstant = 200;
 	if (!::FT_W32_SetCommTimeouts(mFtDevice, &ftTS))
