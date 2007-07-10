@@ -29,6 +29,7 @@ public: // IMonome40h
 	virtual bool Subscribe(IMonome40hInputSubscriber * sub);
 	virtual bool Unsubscribe(IMonome40hInputSubscriber * sub);
 
+	int LocateMonomeDeviceIdx();
 	std::string GetDeviceSerialNumber(int devidx);
 	bool AcquireDevice(const std::string & devSerialNum);
 	void ReleaseDevice();

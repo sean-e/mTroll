@@ -27,6 +27,45 @@ Monome40hFtw::~Monome40hFtw()
 	::DeleteCriticalSection(&mSubscribersLock);
 }
 
+int
+Monome40hFtw::LocateMonomeDeviceIdx()
+{
+	std::strstream traceMsg;
+	int numDevs;
+	FT_STATUS ftStatus = ::FT_ListDevices(&numDevs, NULL, FT_LIST_NUMBER_ONLY);
+	if (FT_OK != ftStatus)
+	{
+		if (mTrace)
+		{
+			traceMsg << "ERROR: Failed to get FT device list: " << ftStatus << std::endl << std::ends;
+			mTrace->Trace(traceMsg.str());
+		}
+		return -1;
+	}
+
+	int monomeDevIdx = -1;
+	for (int idx = 0; idx < numDevs; ++idx)
+	{
+		std::string serial(GetDeviceSerialNumber(idx));
+		if (-1 == monomeDevIdx && serial.find("m40h") != -1)
+			monomeDevIdx = idx;
+
+		if (mTrace)
+		{
+			traceMsg << "FT device " << idx << " serial: " << serial << std::endl << std::ends;
+			mTrace->Trace(traceMsg.str());
+		}
+	}
+
+	if (-1 == monomeDevIdx && mTrace)
+	{
+		traceMsg << "ERROR: Failed to located monome device" << std::endl << std::ends;
+		mTrace->Trace(traceMsg.str());
+	}
+
+	return monomeDevIdx;
+}
+
 std::string
 Monome40hFtw::GetDeviceSerialNumber(int devIndex)
 {
