@@ -156,13 +156,17 @@ CMControlUIView::LoadMonome()
 {
 	Monome40hFtw * monome = new Monome40hFtw(this);
 	const std::string devSerial(monome->GetDeviceSerialNumber(0));
-	if (!devSerial.empty() && monome->AcquireDevice(devSerial))
+	if (!devSerial.empty())
 	{
-		mHardwareUi = monome;
-		mHardwareUi->Subscribe(this);
+		if (monome->AcquireDevice(devSerial))
+		{
+			mHardwareUi = monome;
+			mHardwareUi->Subscribe(this);
+			monome = NULL;
+		}
 	}
-	else
-		delete monome;
+
+	delete monome;
 }
 
 void
