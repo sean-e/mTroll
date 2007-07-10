@@ -8,6 +8,7 @@
 
 class ITraceDisplay;
 class IMonome40hInputSubscriber;
+class MonomeSerialProtocolData;
 
 
 class Monome40hFtw : public IMonome40h
@@ -35,50 +36,10 @@ public: // IMonome40h
 private:
 	void OnButtonChange(bool pressed, byte row, byte col);
 	void OnAdcChange(int port, int value);
-
-	struct MonomeSerialProtocolData
-	{
-		enum ProtocolCommand
-		{
-			getPress				= 0,
-			getAdcVal				= 1,
-			setLed					= 2,
-			setLedIntensity			= 3,
-			ledTest					= 4,
-			enableAdc				= 5,
-			shutdown				= 6,
-			setLedRow				= 7,
-			setledColumn			= 8
-		};
-
-		byte mData[2];
-
-		MonomeSerialProtocolData(ProtocolCommand command)
-		{
-			mData[0] = (command & 0x0f) << 4;
-		}
-
-		MonomeSerialProtocolData(ProtocolCommand command, byte data1)
-		{
-			mData[0] = ((command & 0x0f) << 4) | (data1 & 0x0f);
-		}
-
-		MonomeSerialProtocolData(ProtocolCommand command, byte data1, byte data2)
-		{
-			mData[0] = ((command & 0x0f) << 4) | (data1 & 0x0f);
-			mData[1] = (data2 & 0x0f) << 4;
-		}
-
-		MonomeSerialProtocolData(ProtocolCommand command, byte data1, byte data2, byte data3)
-		{
-			mData[0] = ((command & 0x0f) << 4) | (data1 & 0x0f);
-			mData[1] = ((data2 & 0x0f) << 4) | (data3 & 0x0f);
-		}
-
-		byte & operator[](int idx) {_ASSERTE(0 == idx || 1 == idx); return mData[idx];}
-	};
-
 	BOOL Send(const MonomeSerialProtocolData & data);
+	static unsigned int __stdcall ReadThread(void * _this);
+	void ReadThread();
+	void ReadInput(byte * readData);
 
 	typedef std::list<IMonome40hInputSubscriber *> InputSubscribers;
 	CRITICAL_SECTION				mSubscribersLock;

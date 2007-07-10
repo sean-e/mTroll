@@ -1,11 +1,13 @@
 #include "Monome40hFtw.h"
 #include <strstream>
 #include <algorithm>
+#include <process.h>
 #include "../IMonome40h.h"
 #include "../IMonome40hInputSubscriber.h"
+#include "../MonomeSerialProtocol.h"
 #include "../../Engine/ITraceDisplay.h"
 #include "../../Engine/ScopeSet.h"
-#include "AutoLockCs.h"
+#include "../../mControlUI/AutoLockCs.h"
 
 
 Monome40hFtw::Monome40hFtw(ITraceDisplay * trace) :
@@ -86,10 +88,26 @@ Monome40hFtw::AcquireDevice(const std::string & devSerialNum)
 		mTrace->Trace(traceMsg.str());
 	}
 
+	FTTIMEOUTS ftTS;
+	ftTS.ReadIntervalTimeout = 0;
+	ftTS.ReadTotalTimeoutMultiplier = 0;
+	ftTS.ReadTotalTimeoutConstant = 200;
+	ftTS.WriteTotalTimeoutMultiplier = 0;
+	ftTS.WriteTotalTimeoutConstant = 200;
+	if (!::FT_W32_SetCommTimeouts(mFtDevice, &ftTS))
+	{
+		if (mTrace)
+		{
+			traceMsg << "ERROR: Failed to set FT device params " << std::endl << std::ends;
+			mTrace->Trace(traceMsg.str());
+		}
+		return false;
+	}
+
 	// startup listener
 	mShouldContinueListening = true;
-
-	return true;
+	mThread = (HANDLE)_beginthreadex(NULL, 0, ReadThread, this, 0, NULL);
+	return mThread != NULL && mThread != INVALID_HANDLE_VALUE;
 }
 
 void
@@ -99,11 +117,12 @@ Monome40hFtw::ReleaseDevice()
 		return;
 
 	mShouldContinueListening = false;
-	Shutdown(true);
 
 	::WaitForSingleObjectEx(mThread, 250, FALSE);
 	_ASSERTE(!mIsListening);
 	mIsListening = false;
+	CloseHandle(mThread);
+	mThread = NULL;
 
 	::FT_W32_CloseHandle(mFtDevice);
 	mFtDevice = INVALID_HANDLE_VALUE;
@@ -142,7 +161,7 @@ Monome40hFtw::Send(const MonomeSerialProtocolData & data)
 {
 	_ASSERTE(mFtDevice && INVALID_HANDLE_VALUE != mFtDevice);
 	DWORD bytesWritten = 0;
-	BOOL retval = ::FT_W32_WriteFile(mFtDevice, (void*)data.mData, 2, &bytesWritten, NULL);
+	BOOL retval = ::FT_W32_WriteFile(mFtDevice, (void*)data.Data(), 2, &bytesWritten, NULL);
 	_ASSERTE(retval && 2 == bytesWritten);
 	return retval;
 }
@@ -150,13 +169,13 @@ Monome40hFtw::Send(const MonomeSerialProtocolData & data)
 void
 Monome40hFtw::EnableLed(byte row, 
 						byte col, 
-						bool on)
+						bool enable)
 {
 	_ASSERTE(mFtDevice && INVALID_HANDLE_VALUE != mFtDevice);
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	MonomeSerialProtocolData data(MonomeSerialProtocolData::setLed, on ? 1 : 0, row, col);
+	MonomeSetLed data(enable, row, col);
 	Send(data);
 }
 
@@ -167,30 +186,30 @@ Monome40hFtw::SetLedIntensity(byte brightness)
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	MonomeSerialProtocolData data(MonomeSerialProtocolData::setLedIntensity, 0, 0, brightness);
+	MonomeSetLedIntensity data(brightness);
 	Send(data);
 }
 
 void
-Monome40hFtw::TestLed(bool on)
+Monome40hFtw::TestLed(bool enable)
 {
 	_ASSERTE(mFtDevice && INVALID_HANDLE_VALUE != mFtDevice);
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	MonomeSerialProtocolData data(MonomeSerialProtocolData::ledTest, 0, 0, on ? 1 : 0);
+	MonomeTestLed data(enable);
 	Send(data);
 }
 
 void
 Monome40hFtw::EnableAdc(byte port, 
-						bool on)
+						bool enable)
 {
 	_ASSERTE(mFtDevice && INVALID_HANDLE_VALUE != mFtDevice);
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	MonomeSerialProtocolData data(MonomeSerialProtocolData::enableAdc, 0, port, on ? 1 : 0);
+	MonomeEnableAdc data(port, enable);
 	Send(data);
 }
 
@@ -201,7 +220,7 @@ Monome40hFtw::Shutdown(bool state)
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	MonomeSerialProtocolData data(MonomeSerialProtocolData::shutdown, 0, 0, state ? 1 : 0);
+	MonomeShutdown data(state);
 	Send(data);
 }
 
@@ -213,8 +232,7 @@ Monome40hFtw::EnableLedRow(byte row,
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	MonomeSerialProtocolData data(MonomeSerialProtocolData::setLedRow, row);
-	data[1] = columnValues;
+	MonomeSetLedRow data(row, columnValues);
 	Send(data);
 }
 
@@ -226,8 +244,7 @@ Monome40hFtw::EnableLedColumn(byte column,
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	MonomeSerialProtocolData data(MonomeSerialProtocolData::setledColumn, column);
-	data[1] = rowValues;
+	MonomeSetLedColumn data(column, rowValues);
 	Send(data);
 }
 
@@ -274,4 +291,107 @@ Monome40hFtw::OnAdcChange(int port, int value)
 	{
 		(*it)->AdcValueChanged(port, value);
 	}
+}
+
+void
+Monome40hFtw::ReadInput(byte * readData)
+{
+	const byte cmd = readData[0] >> 4;
+	switch (cmd) 
+	{
+	case MonomeSerialProtocolData::getPress:
+		{
+			byte state = readData[0] & 0x0f;
+			byte row = readData[1] >> 4;
+			byte col = readData[1] & 0x0f;
+			OnButtonChange(state ? true : false, row, col);
+		}
+		break;
+	case MonomeSerialProtocolData::getAdcVal:
+		{
+			byte port = (readData[0] & 0x0c) >> 2;
+			int value = readData[1];
+			value |= ((readData[0] & 0xfc) << 8);
+			OnAdcChange(port, value);
+		}
+		break;
+	default:
+		if (mTrace)
+		{
+			std::strstream traceMsg;
+			traceMsg << "monome IO error: unknown command " << cmd << std::endl << std::ends;
+			mTrace->Trace(traceMsg.str());
+		}
+	}
+}
+
+void
+Monome40hFtw::ReadThread()
+{
+	mIsListening = true;
+
+	const int kDataLen = 2;
+	byte readData[kDataLen];
+	DWORD bytesRead;
+
+	while (mShouldContinueListening)
+	{
+		bytesRead = 0;
+		int readRetVal = ::FT_W32_ReadFile(mFtDevice, readData, kDataLen, &bytesRead, NULL);
+		if (readRetVal)
+		{
+			if (FT_IO_ERROR == readRetVal)
+			{
+				if (mTrace)
+				{
+					std::strstream traceMsg;
+					traceMsg << "monome IO error: disconnected?" << std::endl << std::ends;
+					mTrace->Trace(traceMsg.str());
+				}
+			}
+			else if (bytesRead)
+			{
+				if (1 == bytesRead)
+				{
+					// timeout interrupted read, get the next byte
+					bytesRead = 0;
+					::FT_W32_ReadFile(mFtDevice, &readData[1], 1, &bytesRead, NULL);
+					if (bytesRead)
+						++bytesRead;
+				}
+
+				if (kDataLen == bytesRead)
+				{
+					ReadInput(readData);
+				}
+				else if (mTrace)
+				{
+					std::strstream traceMsg;
+					traceMsg << "monome read error: bytes read " << bytesRead << std::endl << std::ends;
+					mTrace->Trace(traceMsg.str());
+				}
+			}
+			else
+			{
+				// timeout
+			}
+		}
+		else if (mTrace)
+		{
+			std::strstream traceMsg;
+			traceMsg << "monome read error" << std::endl << std::ends;
+			mTrace->Trace(traceMsg.str());
+		}
+	}
+
+	mIsListening = false;
+}
+
+unsigned int __stdcall
+Monome40hFtw::ReadThread(void * _thisParam)
+{
+	Monome40hFtw * _this = static_cast<Monome40hFtw *>(_thisParam);
+	_this->ReadThread();
+	_endthreadex(0);
+	return 0;
 }

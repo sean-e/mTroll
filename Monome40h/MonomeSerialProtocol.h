@@ -4,7 +4,7 @@
 
 class MonomeSerialProtocolData
 {
-protected:
+public:
 	enum ProtocolCommand
 	{
 		getPress				= 0,
@@ -18,6 +18,7 @@ protected:
 		setledColumn			= 8
 	};
 
+protected:
 	byte mData[2];
 
 	MonomeSerialProtocolData(ProtocolCommand command)
