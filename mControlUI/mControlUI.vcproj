@@ -203,6 +203,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\AutoLockCs.h"
+				>
+			</File>
+			<File
 				RelativePath=".\MainFrm.cpp"
 				>
 			</File>
@@ -413,10 +417,6 @@
 			Name="Monome40h"
 			>
 			<File
-				RelativePath="..\Monome40h\Win32\AutoLockCs.h"
-				>
-			</File>
-			<File
 				RelativePath="..\Monome40h\FTD2XX.H"
 				>
 			</File>
@@ -434,6 +434,10 @@
 			</File>
 			<File
 				RelativePath="..\Monome40h\Win32\Monome40hFtw.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Monome40h\MonomeSerialProtocol.h"
 				>
 			</File>
 		</Filter>
