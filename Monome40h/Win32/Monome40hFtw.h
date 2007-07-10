@@ -55,24 +55,24 @@ private:
 
 		MonomeSerialProtocolData(ProtocolCommand command)
 		{
-			mData[0] = command << 4;
+			mData[0] = (command & 0x0f) << 4;
 		}
 
 		MonomeSerialProtocolData(ProtocolCommand command, byte data1)
 		{
-			mData[0] = (command << 4) | data1;
+			mData[0] = ((command & 0x0f) << 4) | (data1 & 0x0f);
 		}
 
 		MonomeSerialProtocolData(ProtocolCommand command, byte data1, byte data2)
 		{
-			mData[0] = (command << 4) | data1;
-			mData[1] = data2 << 4;
+			mData[0] = ((command & 0x0f) << 4) | (data1 & 0x0f);
+			mData[1] = (data2 & 0x0f) << 4;
 		}
 
 		MonomeSerialProtocolData(ProtocolCommand command, byte data1, byte data2, byte data3)
 		{
-			mData[0] = (command << 4) | data1;
-			mData[1] = (data2 << 4) | data3;
+			mData[0] = ((command & 0x0f) << 4) | (data1 & 0x0f);
+			mData[1] = ((data2 & 0x0f) << 4) | (data3 & 0x0f);
 		}
 
 		byte & operator[](int idx) {_ASSERTE(0 == idx || 1 == idx); return mData[idx];}
