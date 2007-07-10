@@ -30,7 +30,7 @@ public:
 
 	void Load(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 	void Unload(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
-	void DisplayInfo(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay, bool showPatchInfo);
+	void DisplayInfo(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay, bool showPatchInfo, bool temporaryDisplay);
 	void DisplayDetailedPatchInfo(int switchNumber, IMainDisplay * mainDisplay);
 
 	void PatchSwitchPressed(int switchNumber, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);

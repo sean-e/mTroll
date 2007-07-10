@@ -104,7 +104,7 @@ PatchBank::Load(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 		}
 	}
 
-	DisplayInfo(mainDisplay, switchDisplay, true);
+	DisplayInfo(mainDisplay, switchDisplay, true, false);
 }
 
 void
@@ -221,7 +221,8 @@ PatchBank::PatchSwitchReleased(int switchNumber, IMainDisplay * mainDisplay, ISw
 void
 PatchBank::DisplayInfo(IMainDisplay * mainDisplay, 
 					   ISwitchDisplay * switchDisplay,
-					   bool showPatchInfo)
+					   bool showPatchInfo,
+					   bool temporaryDisplay)
 {
 	std::ostrstream info;
 	info << "Bank:   " << std::setw(2) << mNumber << " " << mName;
@@ -248,6 +249,8 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 					once = false;
 					curItem->mPatch->AssignSwitch((*it).first, switchDisplay);
 					info << "sw " << std::setw(2) << ((*it).first + 1) << ": " << std::setw(3) << curItem->mPatch->GetNumber() << " " << curItem->mPatch->GetName() << std::endl;
+					if (temporaryDisplay)
+						curItem->mPatch->AssignSwitch(-1, NULL);
 				}
 				else
 				{

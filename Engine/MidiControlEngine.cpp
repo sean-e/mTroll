@@ -261,7 +261,7 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 			PatchBank * bank = GetBank(mBankNavigationIndex);
 			if (bank)
 			{
-				bank->DisplayInfo(mMainDisplay, mSwitchDisplay, true);
+				bank->DisplayInfo(mMainDisplay, mSwitchDisplay, true, true);
 				bank->DisplayDetailedPatchInfo(switchNumber, mMainDisplay);
 			}
 		}
@@ -385,7 +385,7 @@ MidiControlEngine::NavigateBankRelative(int relativeBankIndex)
 	if (!bank)
 		return false;
 
-	bank->DisplayInfo(mMainDisplay, mSwitchDisplay, true);
+	bank->DisplayInfo(mMainDisplay, mSwitchDisplay, true, relativeBankIndex != 0);
 	return true;
 }
 
