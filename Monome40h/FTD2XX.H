@@ -32,6 +32,7 @@ Revision History:
 	25/08/05	awm		Added FT_SetDeadmanTimeout.
 	02/12/05	awm		Removed obsolete references.
 	05/12/05	awm		Added FT_GetVersion, FT_GetVersionEx.
+	07/08/07	sean echevarria		Added more declarations.
 
 
 --*/
