@@ -19,6 +19,8 @@ private:
 	void					LoadOtherStuffAndFinalize(TiXmlElement * pElem);
 
 	IMidiControlUi			* mUi;
+	int						mPreviousAssemblyHpos;
+	int						mPreviousAssemblyVpos;
 };
 
 #endif // UiLoader_h__

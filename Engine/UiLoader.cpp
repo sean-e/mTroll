@@ -5,7 +5,9 @@
 
 UiLoader::UiLoader(IMidiControlUi * theUi,
 				   const std::string & settingsFile) :
-	mUi(theUi)
+	mUi(theUi),
+	mPreviousAssemblyHpos(0),
+	mPreviousAssemblyVpos(0)
 {
 	TiXmlDocument doc(settingsFile);
 	if (!doc.LoadFile()) 
@@ -154,13 +156,26 @@ UiLoader::LoadSwitchAssembly(TiXmlElement * pElem)
 	int top = -1;
 	int left = -1;
 
+	vOffset = hOffset = 0;
 	pElem->QueryIntAttribute("number", &idNumber);
 	pElem->QueryIntAttribute("top", &top);
 	pElem->QueryIntAttribute("left", &left);
-	if (-1 == idNumber ||
-		-1 == top ||
-		-1 == left)
+	pElem->QueryIntAttribute("incrementalVpos", &vOffset);
+	pElem->QueryIntAttribute("incrementalHpos", &hOffset);
+	if (-1 == idNumber)
 		return;
+	if (-1 == top && (-1 == vOffset || 0 == mPreviousAssemblyVpos))
+		return;
+	if (-1 == left && (-1 == hOffset || 0 == mPreviousAssemblyHpos))
+		return;
+
+	if (-1 == top)
+		top = mPreviousAssemblyVpos + vOffset;
+	mPreviousAssemblyVpos = top;
+
+	if (-1 == left)
+		left = mPreviousAssemblyHpos + hOffset;
+	mPreviousAssemblyHpos = left;
 
 	pElem = hRoot.FirstChild("switchTextDisplay").Element();
 	if (pElem)
