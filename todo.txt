@@ -2,15 +2,6 @@
 dynamic load and access of ftdi.dll
 
 
-[hardware]
-monome
-	8 x 8 matrix digital i/o matrix
-	4 analog inputs
-	http://order.monome.org/
-	$110
-	ftdi interface
-
-
 [pedalboard sizes]		w		d		h			area	hspace	url
 	FBV Longboard (2)	27		9.75	3			263.25			http://line6.com/footcontrollers/fbv.html
 	fender cyber (2)	27.25	9		2.5			245.25			http://www.fender.com/products/search.php?partno=2391000000
@@ -66,16 +57,6 @@ monome
 bank sequence
 song
 set
-
-
-[all access]
-120 presets
-presets have no B string
-
-
-[FX-1]
-120 presets
-presets have no B string
 
 
 [other hardware]
