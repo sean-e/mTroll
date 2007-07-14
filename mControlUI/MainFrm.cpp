@@ -9,6 +9,7 @@
 #include "aboutdlg.h"
 #include "mControlUIView.h"
 #include "MainFrm.h"
+#include "SEHexception.h"
 
 
 BOOL CMainFrame::PreTranslateMessage(MSG* pMsg)
@@ -27,6 +28,8 @@ BOOL CMainFrame::OnIdle()
 
 LRESULT CMainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
+	::_set_se_translator(::trans_func);
+
 	// create command bar window
 	HWND hWndCmdBar = m_CmdBar.Create(m_hWnd, rcDefault, NULL, ATL_SIMPLE_CMDBAR_PANE_STYLE);
 	// attach menu
@@ -110,4 +113,11 @@ LRESULT CMainFrame::OnAppAbout(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCt
 	CAboutDlg dlg;
 	dlg.DoModal();
 	return 0;
+}
+
+void 
+trans_func(unsigned int /*u*/, 
+		   EXCEPTION_POINTERS* /*pExp*/)
+{
+    throw SEHexception();
 }

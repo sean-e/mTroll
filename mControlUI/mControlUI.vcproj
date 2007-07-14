@@ -55,6 +55,7 @@
 				Optimization="0"
 				PreprocessorDefinitions="WIN32;_WINDOWS;STRICT;_DEBUG;TIXML_USE_STL"
 				MinimalRebuild="true"
+				ExceptionHandling="2"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
@@ -166,6 +167,7 @@
 				AdditionalDependencies=".\..\Monome40h\FTD2XX.lib"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames=""
+				DelayLoadDLLs="FTD2XX.dll;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -206,10 +208,6 @@
 			>
 			<File
 				RelativePath=".\AboutDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\AutoLockCs.h"
 				>
 			</File>
 			<File
@@ -266,6 +264,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\AutoLockCs.h"
+				>
+			</File>
+			<File
 				RelativePath=".\MainFrm.h"
 				>
 			</File>
@@ -275,6 +277,10 @@
 			</File>
 			<File
 				RelativePath=".\resource.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SEHexception.h"
 				>
 			</File>
 			<File
