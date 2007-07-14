@@ -41,6 +41,10 @@ Monome40hFtw::Monome40hFtw(ITraceDisplay * trace) :
 	mThread(NULL),
 	mServicingSubscribers(false)
 {
+	HMODULE hMod = ::LoadLibrary("FTD2XX.dll");
+	if (!hMod)
+		throw std::string("ERROR: Failed to load FTDI library\n");
+
 	::InitializeCriticalSection(&mSubscribersLock);
 }
 

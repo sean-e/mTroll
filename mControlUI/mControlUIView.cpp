@@ -16,6 +16,8 @@
 #include "ATLLabel.h"
 #include "..\Monome40h\Win32\Monome40hFtw.h"
 #include "..\Monome40h\IMonome40h.h"
+#include "SEHexception.h"
+
 
 
 CMControlUIView::CMControlUIView() :
@@ -154,20 +156,32 @@ CMControlUIView::LoadUi(const std::string & uiSettingsFile)
 void
 CMControlUIView::LoadMonome()
 {
-	Monome40hFtw * monome = new Monome40hFtw(this);
-	int devIdx = monome->LocateMonomeDeviceIdx();
-	if (-1 != devIdx)
+	Monome40hFtw * monome = NULL;
+	try
 	{
-		const std::string devSerial(monome->GetDeviceSerialNumber(devIdx));
-		if (!devSerial.empty())
+		monome = new Monome40hFtw(this);
+		int devIdx = monome->LocateMonomeDeviceIdx();
+		if (-1 != devIdx)
 		{
-			if (monome->AcquireDevice(devSerial))
+			const std::string devSerial(monome->GetDeviceSerialNumber(devIdx));
+			if (!devSerial.empty())
 			{
-				mHardwareUi = monome;
-				mHardwareUi->Subscribe(this);
-				monome = NULL;
+				if (monome->AcquireDevice(devSerial))
+				{
+					mHardwareUi = monome;
+					monome = NULL;
+					mHardwareUi->Subscribe(this);
+				}
 			}
 		}
+	}
+	catch (const std::string & e)
+	{
+		Trace(e);
+	}
+	catch (const SEHexception &)
+	{
+		Trace("ERROR: failed to load monome\n");
 	}
 
 	delete monome;
