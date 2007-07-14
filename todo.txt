@@ -1,5 +1,4 @@
 [todo]
-dynamic load and access of ftdi.dll
 
 
 [pedalboard sizes]		w		d		h			area	hspace	url
@@ -64,3 +63,14 @@ http://pedalboards.com/true%20bypass.htm
 http://www.banzai-effects.com/Pushbutton-Footswitches-Momentary-c-333.html
 http://www.hammondmfg.com/dwg16.htm
 http://www.singlecoil.com/tb-strip/tbstrip.html
+
+
+[parts list]
+20 diodes
+20 push buttons
+	29/64" diameter
+20 LEDs with surface mounts
+	20/64" or .31" diameter
+4 stereo 1/4" jacks
+	4 large washers to fit the jacks into the MIDI holes
+USB connector and short cable for inside to outside
