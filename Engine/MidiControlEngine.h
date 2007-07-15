@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include "Patch.h"
+#include "ExpressionPedals.h"
 
 
 class IMainDisplay;
@@ -31,6 +32,8 @@ public:
 	void					AddPatch(int number, const std::string & name, Patch::PatchType patchType, int midiOutPortNumber, IMidiOut * midiOut, const Bytes & midiStringA, const Bytes & midiStringB);
 	void					SetPowerup(int powerupBank, int powerupPatch, int powerupTimeout);
 	void					FilterRedundantProgChg(bool filter) {mFilterRedundantProgramChanges = filter;}
+	ExpressionPedals &		GetPedals() {return mPedals;}
+
 	void					CompleteInit();
 
 	void					SwitchPressed(int switchNumber);
@@ -84,6 +87,7 @@ private:
 	int						mModeDefaultSwitchNumber;
 	int						mModeBankNavSwitchNumber;
 	int						mModeBankDescSwitchNumber;
+	ExpressionPedals		mPedals;
 };
 
 #endif // MidiControlEngine_h__

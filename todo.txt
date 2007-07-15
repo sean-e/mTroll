@@ -1,4 +1,13 @@
 [todo]
+adc support
+	port calibration settings
+		min
+		max
+		type
+	global settings for each expr port
+	patches
+		not supported if momentary?
+		if multiple patches per switch - only first gets expr ports
 
 
 [pedalboard sizes]		w		d		h			area	hspace	url
@@ -66,11 +75,13 @@ http://www.singlecoil.com/tb-strip/tbstrip.html
 
 
 [parts list]
-20 diodes
+25 LEDs with surface mounts
+	T1 (=3mm) no more than 3.5V
+	334749
+	20/64" or .31" diameter
+20 switching diodes - 1N4148 
 20 push buttons
 	29/64" diameter
-20 LEDs with surface mounts
-	20/64" or .31" diameter
 4 stereo 1/4" jacks
-	4 large washers to fit the jacks into the MIDI holes
+	4 large washers to fit the jacks into the 2 MIDI holes
 USB connector and short cable for inside to outside

@@ -321,6 +321,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Engine\ExpressionPedals.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Engine\HexStringUtils.cpp"
 				>
 			</File>

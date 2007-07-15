@@ -352,6 +352,20 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 	}
 }
 
+void
+MidiControlEngine::AdcValueChanged(int port, 
+								   int curValue)
+{
+	// forward directly to active patch
+	Patch * curPatch = NULL;
+	if (curPatch->AdcValueChanged(mMainDisplay, port, curValue))
+	{
+		// process globals if no rejection
+		// midiport for globals?
+		mPedals.AdcValueChange(mMainDisplay, NULL, port, curValue);
+	}
+}
+
 bool
 MidiControlEngine::NavigateBankRelative(int relativeBankIndex)
 {
@@ -558,11 +572,4 @@ MidiControlEngine::UpdateBankModeSwitchDisplay()
 	{
 		mSwitchDisplay->SetSwitchText(mModeSwitchNumber, "Bank");
 	}
-}
-
-void
-MidiControlEngine::AdcValueChanged(int port, 
-								   int curValue)
-{
-
 }

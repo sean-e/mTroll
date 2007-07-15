@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "IMidiOut.h"
+#include "ExpressionPedals.h"
 
 class IMainDisplay;
 class ISwitchDisplay;
@@ -22,11 +23,14 @@ public:
 	Patch(int number, const std::string & name, PatchType patchType, int midiOutPortNumber, IMidiOut * midiOut, const Bytes & midiStringA, const Bytes & midiStringB);
 	~Patch();
 
+	ExpressionPedals & GetPedals() {return mPedals;}
+
 	void AssignSwitch(int switchNumber, ISwitchDisplay * switchDisplay);
 	void ClearSwitch(ISwitchDisplay * switchDisplay);
 
 	void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 	void SwitchReleased(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
+	bool AdcValueChanged(IMainDisplay * mainDisplay, int port, int curValue);
 
 	void UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 	const std::string & GetName() const {return mName;}
@@ -47,6 +51,7 @@ private:
 	const Bytes				mMidiByteStringB;
 // 	const Bytes				mMetaStringA;
 // 	const Bytes				mMetaStringB;
+	ExpressionPedals		mPedals;
 
 	// runtime only state
 	IMidiOut				* mMidiOut;
