@@ -1,13 +1,14 @@
 [todo]
 adc support
-	port calibration settings
-		min
-		max
-		type
-	global settings for each expr port
-	patches
-		not supported if momentary?
-		if multiple patches per switch - only first gets expr ports
+	pedal calibration mode
+		1 - 4 to select pedal, mode to escape
+		1 to record toe down - max
+		1 to record toe up - min
+		back to 1 - 4
+	load of patch pedal settings
+	load of global patch settings and midiout
+		create and store midiout for global expr in engine
+		enable/disable adc per globals
 
 
 [pedalboard sizes]		w		d		h			area	hspace	url
@@ -76,12 +77,17 @@ http://www.singlecoil.com/tb-strip/tbstrip.html
 
 [parts list]
 25 LEDs with surface mounts
-	T1 (=3mm) no more than 3.5V
-	334749
+	1.7Vf @ 20mA, 220mcd
+	turn on voltage of 3.5V and can take up to 40mA
+	no narrower than 40 degress - monome uses 70
+	Vf at or below 3.5
 	20/64" or .31" diameter
+	.005 - .007" panel thickness
+	blue leds @ jameco: 334465 (T1 3/4)
+	led panel mounts @ rat shack: 276-080 
 20 switching diodes - 1N4148 
 20 push buttons
 	29/64" diameter
-4 stereo 1/4" jacks
-	4 large washers to fit the jacks into the 2 MIDI holes
+	radio shack: 275-609 (1 red + 1 black)
+4 large plastic washers to fit the expr jacks into the 2 MIDI holes
 USB connector and short cable for inside to outside
