@@ -32,9 +32,10 @@ public:
 	void					AddPatch(int number, const std::string & name, Patch::PatchType patchType, int midiOutPortNumber, IMidiOut * midiOut, const Bytes & midiStringA, const Bytes & midiStringB);
 	void					SetPowerup(int powerupBank, int powerupPatch, int powerupTimeout);
 	void					FilterRedundantProgChg(bool filter) {mFilterRedundantProgramChanges = filter;}
-	ExpressionPedals &		GetPedals() {return mPedals;}
-
+	void					CalibrateExprSettings();
 	void					CompleteInit();
+
+	ExpressionPedals &		GetPedals() {return mPedals;}
 
 	void					SwitchPressed(int switchNumber);
 	void					SwitchReleased(int switchNumber);
@@ -70,6 +71,7 @@ private:
 	EngineMode				mMode;
 	int						mBankNavigationIndex;
 	std::string				mBankDirectNumber;
+	Patch *					mActiveNormalPatchForExprPedals;	// for ADC handling
 
 	// retained in different form
 	Patches					mPatches;		// patchNum is key
@@ -87,6 +89,7 @@ private:
 	int						mModeDefaultSwitchNumber;
 	int						mModeBankNavSwitchNumber;
 	int						mModeBankDescSwitchNumber;
+	PedalCalibration		mPedalCalibration[ExpressionPedals::PedalCount];
 	ExpressionPedals		mPedals;
 };
 

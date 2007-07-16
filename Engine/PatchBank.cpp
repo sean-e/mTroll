@@ -71,6 +71,28 @@ PatchBank::InitPatches(const MidiControlEngine::Patches & enginePatches)
 }
 
 void
+PatchBank::CalibrateExprSettings(PedalCalibration * pedalCalibration)
+{
+	for (PatchMaps::iterator it = mPatches.begin();
+		it != mPatches.end();
+		++it)
+	{
+		PatchVect & patches = (*it).second;
+		for (PatchVect::iterator it2 = patches.begin();
+			 it2 != patches.end();
+			 ++it2)
+		{
+			PatchMap * curItem = *it2;
+			if (curItem)
+			{
+				ExpressionPedals & pedals = curItem->mPatch->GetPedals();
+				pedals.Calibrate(pedalCalibration);
+			}
+		}
+	}
+}
+
+void
 PatchBank::Load(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 {
 	for (PatchMaps::iterator it = mPatches.begin();

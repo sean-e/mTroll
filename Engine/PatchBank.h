@@ -27,6 +27,7 @@ public:
 	// creation/init
 	void AddPatchMapping(int switchNumber, int patchNumber, PatchState patchLoadState, PatchState patchUnloadState);
 	void InitPatches(const MidiControlEngine::Patches & patches);
+	void CalibrateExprSettings(PedalCalibration * pedalCalibration);
 
 	void Load(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 	void Unload(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
@@ -38,6 +39,8 @@ public:
 
 	int GetBankNumber() const {return mNumber;}
 	const std::string & GetBankName() const {return mName;}
+
+	static Patch * GetActiveNormalPatch() {return sActiveNormalPatches.begin() == sActiveNormalPatches.end() ? NULL : *sActiveNormalPatches.begin();}
 
 private:
 	struct PatchMap

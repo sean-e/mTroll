@@ -115,14 +115,6 @@ Patch::SendStringB()
 	mPatchIsOn = false;
 }
 
-bool
-Patch::AdcValueChanged(IMainDisplay * mainDisplay, 
-					   int port, 
-					   int curValue)
-{
-	return mPedals.AdcValueChange(mainDisplay, mMidiOut, port, curValue);
-}
-
 std::string
 Patch::GetPatchTypeStr() const
 {

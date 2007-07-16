@@ -56,7 +56,8 @@ MidiControlEngine::MidiControlEngine(IMainDisplay * mainDisplay,
 	mIncrementSwitchNumber(incrementSwitchNumber),
 	mDecrementSwitchNumber(decrementSwitchNumber),
 	mModeSwitchNumber(modeSwitchNumber),
-	mFilterRedundantProgramChanges(false)
+	mFilterRedundantProgramChanges(false),
+	mActiveNormalPatchForExprPedals(NULL)
 {
 	mBanks.reserve(999);
 }
@@ -108,6 +109,8 @@ MidiControlEngine::CompleteInit()
 {
 	std::sort(mBanks.begin(), mBanks.end(), SortByBankNumber);
 
+	CalibrateExprSettings();
+
 	int itIdx = 0;
 	for (Banks::iterator it = mBanks.begin();
 		it != mBanks.end();
@@ -127,6 +130,20 @@ MidiControlEngine::CompleteInit()
 	}
 
 	LoadStartupBank();
+}
+
+void
+MidiControlEngine::CalibrateExprSettings()
+{
+	mPedals.Calibrate(mPedalCalibration);
+
+	for (Banks::iterator it = mBanks.begin();
+		it != mBanks.end();
+		++it)
+	{
+		PatchBank * curItem = *it;
+		curItem->CalibrateExprSettings(mPedalCalibration);
+	}
 }
 
 void
@@ -176,7 +193,10 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 		else if (switchNumber == mModeSwitchNumber)
 			;
 		else if (mActiveBank)
+		{
 			mActiveBank->PatchSwitchPressed(switchNumber, mMainDisplay, mSwitchDisplay);
+			mActiveNormalPatchForExprPedals = mActiveBank->GetActiveNormalPatch();
+		}
 		return;
 	}
 }
@@ -357,8 +377,9 @@ MidiControlEngine::AdcValueChanged(int port,
 								   int curValue)
 {
 	// forward directly to active patch
-	Patch * curPatch = NULL;
-	if (curPatch->AdcValueChanged(mMainDisplay, port, curValue))
+	_ASSERTE(port < ExpressionPedals::PedalCount);
+	if (!mActiveNormalPatchForExprPedals || 
+		mActiveNormalPatchForExprPedals->AdcValueChanged(mMainDisplay, port, curValue))
 	{
 		// process globals if no rejection
 		// midiport for globals?

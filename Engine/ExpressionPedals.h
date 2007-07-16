@@ -6,6 +6,27 @@ class IMidiOut;
 class IMainDisplay;
 
 
+struct PedalCalibration
+{
+	PedalCalibration() : 
+		mMinAdcVal(0),
+		mMaxAdcVal(10000),
+		mAdcRange(10000)
+	{ }
+
+	void Init(int minVal, int maxVal)
+	{
+		mMinAdcVal = minVal;
+		mMaxAdcVal = maxVal;
+		mAdcRange = maxVal - minVal;
+	}
+
+	int		mMinAdcVal;
+	int		mMaxAdcVal;
+	int		mAdcRange;
+};
+
+
 class ExpressionControl
 {
 public:
@@ -22,12 +43,12 @@ public:
 		mInverted = invert;
 		mChannel = channel;
 		mControlNumber = controlNumber;
-		mMinVal = minVal;
-		mMaxVal = maxVal;
-		mCurVal = mInverted ? maxVal : minVal;
+		mMinCcVal = minVal;
+		mMaxCcVal = maxVal;
+		mCurCcVal = mPrevCcVal = 255;
 	}
 
-	void AdcValueChange(IMainDisplay * mainDisplay, IMidiOut * midiOut, int newVal)
+	void Calibrate(PedalCalibration & calibrationSetting)
 	{
 		if (!mEnabled)
 			return;
@@ -35,14 +56,28 @@ public:
 		// do stuff
 	}
 
+	void AdcValueChange(IMainDisplay * mainDisplay, IMidiOut * midiOut, int newVal)
+	{
+		if (!mEnabled)
+			return;
+
+		mPrevCcVal = mCurCcVal;
+
+		byte newCcVal;
+		// do stuff
+		newCcVal = 0;
+		mCurCcVal = newCcVal;
+	}
+
 private:
-	bool	mEnabled;
-	bool	mInverted;
-	byte	mChannel;
-	byte	mControlNumber;
-	byte	mMinVal;
-	byte	mMaxVal;
-	byte	mCurVal;
+	bool				mEnabled;
+	bool				mInverted;
+	byte				mChannel;
+	byte				mControlNumber;
+	byte				mMinCcVal;
+	byte				mMaxCcVal;
+	byte				mCurCcVal;
+	byte				mPrevCcVal;
 };
 
 
@@ -65,6 +100,12 @@ public:
 		mPedalControlData[idx].Init(enable, invert, channel, controlNumber, minVal, maxVal);
 	}
 
+	void Calibrate(PedalCalibration & calibrationSetting)
+	{
+		mPedalControlData[0].Calibrate(calibrationSetting);
+		mPedalControlData[1].Calibrate(calibrationSetting);
+	}
+
 	void AdcValueChange(IMainDisplay * mainDisplay, IMidiOut * midiOut, int newVal)
 	{
 		mPedalControlData[0].AdcValueChange(mainDisplay, midiOut, newVal);
@@ -78,9 +119,9 @@ private:
 
 class ExpressionPedals
 {
+public:
 	enum {PedalCount = 4};
 
-public:
 	ExpressionPedals() 
 	{
 		int idx;
@@ -112,7 +153,16 @@ public:
 			mPedalEnables[pedal] = true;
 	}
 
-	bool AdcValueChange(IMainDisplay * mainDisplay, IMidiOut * midiOut, int pedal, int newVal)
+	void Calibrate(PedalCalibration * calibrationSetting)
+	{
+		for (int idx = 0; idx < PedalCount; ++idx)
+			mPedals[idx].Calibrate(calibrationSetting[idx]);
+	}
+
+	bool AdcValueChange(IMainDisplay * mainDisplay, 
+						IMidiOut * midiOut, 
+						int pedal, 
+						int newVal)
 	{
 		_ASSERTE(pedal < PedalCount);
 		if (mPedalEnables[pedal])
