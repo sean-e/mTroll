@@ -91,3 +91,4 @@ http://www.singlecoil.com/tb-strip/tbstrip.html
 	radio shack: 275-609 (1 red + 1 black)
 4 large plastic washers to fit the expr jacks into the 2 MIDI holes
 USB connector and short cable for inside to outside
+ribbon headers and adc connectors

@@ -48,26 +48,8 @@ public:
 		mCurCcVal = mPrevCcVal = 255;
 	}
 
-	void Calibrate(PedalCalibration & calibrationSetting)
-	{
-		if (!mEnabled)
-			return;
-
-		// do stuff
-	}
-
-	void AdcValueChange(IMainDisplay * mainDisplay, IMidiOut * midiOut, int newVal)
-	{
-		if (!mEnabled)
-			return;
-
-		mPrevCcVal = mCurCcVal;
-
-		byte newCcVal;
-		// do stuff
-		newCcVal = 0;
-		mCurCcVal = newCcVal;
-	}
+	void Calibrate(PedalCalibration & calibrationSetting);
+	void AdcValueChange(IMainDisplay * mainDisplay, IMidiOut * midiOut, int newVal);
 
 private:
 	bool				mEnabled;
