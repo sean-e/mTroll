@@ -76,7 +76,11 @@ http://www.singlecoil.com/tb-strip/tbstrip.html
 
 
 [parts list]
-25 LEDs with surface mounts
+20 push buttons
+	31/64" if notched
+	28.5/64" diameter if no notch
+	radio shack: 275-609 (1 red + 1 black)
+16 LEDs with surface mounts
 	1.7Vf @ 20mA, 220mcd
 	turn on voltage of 3.5V and can take up to 40mA
 	no narrower than 40 degress - monome uses 70
@@ -84,11 +88,9 @@ http://www.singlecoil.com/tb-strip/tbstrip.html
 	20/64" or .31" diameter
 	.005 - .007" panel thickness
 	blue leds @ jameco: 334465 (T1 3/4)
-	led panel mounts @ rat shack: 276-080 
 20 switching diodes - 1N4148 
-20 push buttons
-	29/64" diameter
-	radio shack: 275-609 (1 red + 1 black)
-4 large plastic washers to fit the expr jacks into the 2 MIDI holes
 USB connector and short cable for inside to outside
 ribbon headers and adc connectors
+drill bits
+	20/64" or .31" for 19/64" or .30" (LED holes)
+	.5" (switch holes)
