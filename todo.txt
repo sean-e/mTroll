@@ -79,7 +79,15 @@ http://www.singlecoil.com/tb-strip/tbstrip.html
 20 push buttons
 	31/64" if notched
 	28.5/64" diameter if no notch
-	radio shack: 275-609 (1 red + 1 black)
+	jameco:
+		307889
+		315580CJ or 315580PS  (looks like rad shack 275-609)
+	mouser:
+		107-SF12020-M
+		691-172
+		691-P26A-1D-RND-MTL
+		612-PS1040A-BLK
+		612-PS1024AL-BLK
 16 LEDs with surface mounts
 	1.7Vf @ 20mA, 220mcd
 	turn on voltage of 3.5V and can take up to 40mA
@@ -88,9 +96,24 @@ http://www.singlecoil.com/tb-strip/tbstrip.html
 	20/64" or .31" diameter
 	.005 - .007" panel thickness
 	blue leds @ jameco: 334465 (T1 3/4)
-20 switching diodes - 1N4148 
-USB connector and short cable for inside to outside
+20 switching diodes - 1N4148  Jameco 179215
 ribbon headers and adc connectors
+	2	ribbon cable		37671
+	4	ribbon connectors		119467
+3 single rows of straight 4 pin .1 headers
+	2 1x8 straight header 153702
+3 single row header connectors 4 pins
+	12 f contacts 224573
+USB connector and short cable for inside to outside
+	10 usb pins 159724CC
+	1 174060
+	1 230957CJ
+4 .1uH inductors
+	4 663859
+
+
 drill bits
 	20/64" or .31" for 19/64" or .30" (LED holes)
 	.5" (switch holes)
+
+http://www.futurlec.com/Connectors.shtml
