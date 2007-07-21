@@ -68,20 +68,13 @@ song
 set
 
 
-[other hardware]
-http://pedalboards.com/true%20bypass.htm
-http://www.banzai-effects.com/Pushbutton-Footswitches-Momentary-c-333.html
-http://www.hammondmfg.com/dwg16.htm
-http://www.singlecoil.com/tb-strip/tbstrip.html
-
-
 [parts list]
 20 push buttons
 	31/64" if notched
 	28.5/64" diameter if no notch
 	jameco:
-		307889
-		315580CJ or 315580PS  (looks like rad shack 275-609)
+		307889 (notched)
+		315580 (looks like rad shack 275-609)
 	mouser:
 		107-SF12020-M
 		691-172
