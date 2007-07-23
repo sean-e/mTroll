@@ -78,8 +78,8 @@ set
 	mouser:
 		107-SF12020-M
 		691-172
-		691-P26A-1D-RND-MTL
-		612-PS1040A-BLK
+		691-P26A-1D-RND-MTL try this
+		612-PS1040A-BLK compare to jameco
 		612-PS1024AL-BLK
 16 LEDs with surface mounts
 	1.7Vf @ 20mA, 220mcd
@@ -103,6 +103,16 @@ USB connector and short cable for inside to outside
 	1 230957CJ
 4 .1uH inductors
 	4 663859
+
+
+http://www.datapro.net/products/usb-panel-mount-type-b-cable.html
+http://www.frontx.com/pro/p112.html
+jameco
+	conical tip
+	braid
+	rosin
+mouser
+	4 807-1025R-94K .1uH inductors
 
 
 drill bits
