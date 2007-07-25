@@ -81,6 +81,9 @@ set
 		691-P26A-1D-RND-MTL try this
 		612-PS1040A-BLK almost rad shack identical
 		612-PS1024AL-BLK
+		
+		10PM022
+		112-R13-40A-B
 16 LEDs with surface mounts
 	1.7Vf @ 20mA, 220mcd
 	turn on voltage of 3.5V and can take up to 40mA
