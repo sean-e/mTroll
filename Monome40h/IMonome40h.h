@@ -55,6 +55,7 @@ protected:
 	IMonome40h(const IMonome40h & rhs);
 };
 
+// row = y, col = x
 inline byte RowFromOrdinal(int ord) {return ord / 8;}
 inline byte ColumnFromOrdinal(int ord) {return ord % 8;}
 inline void RowColFromOrdinal(int ord, byte & row, byte & col) {row = RowFromOrdinal(ord); col = ColumnFromOrdinal(ord);}
