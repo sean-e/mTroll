@@ -79,7 +79,7 @@ class MonomeSetLed : public MonomeSerialProtocolData
 {
 public:
 	MonomeSetLed(bool enable, byte row, byte col) : 
-		MonomeSerialProtocolData(MonomeSerialProtocolData::setLed, enable ? 1 : 0, row, col) { }
+		MonomeSerialProtocolData(MonomeSerialProtocolData::setLed, enable ? 1 : 0, col, row) { }
 };
 
 class MonomeSetLedIntensity : public MonomeSerialProtocolData 
