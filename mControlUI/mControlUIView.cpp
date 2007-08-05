@@ -83,16 +83,20 @@ CMControlUIView::Unload()
 
 	CloseMidiOuts();
 
-	// clear leds
-	for (std::map<int, bool>::iterator it = mStupidSwitchStates.begin();
-		it != mStupidSwitchStates.end();
-		++it)
-	{
-		SetSwitchDisplay((*it).first, false);
-	}
-
 	delete mEngine;
 	mEngine = NULL;
+
+	// clear leds
+	if (mHardwareUi)
+	{
+		for (std::map<int, bool>::iterator it = mStupidSwitchStates.begin();
+			it != mStupidSwitchStates.end();
+			++it)
+		{
+			SetSwitchDisplay((*it).first, false);
+		}
+	}
+	mStupidSwitchStates.clear();
 
 	delete mHardwareUi;
 	mHardwareUi = NULL;
@@ -108,7 +112,6 @@ CMControlUIView::Unload()
 	mTraceDisplay = NULL;
 
 	mMaxSwitchId = 0;
-	mStupidSwitchStates.clear();
 
 	if (mSwitchButtonFont)
 		mSwitchButtonFont.DeleteObject();

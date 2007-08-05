@@ -40,6 +40,7 @@ public:
 
 	HWND Create(HWND hWndParent, LPARAM dwInitParam = NULL);
 	void Load(const std::string & settingsBasefile);
+	void Unload();
 
 	BOOL PreTranslateMessage(MSG* pMsg);
 	void GetPreferredSize(int & width, int & height) const {width = mPreferredWidth; height = mPreferredHeight;}
@@ -128,7 +129,6 @@ private:
 
 	void ButtonReleased(const int idx);
 	void ButtonPressed(const int idx);
-	void Unload();
 
 private:
 	IMonome40h					* mHardwareUi;
