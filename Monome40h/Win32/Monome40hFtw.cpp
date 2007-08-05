@@ -260,7 +260,7 @@ Monome40hFtw::EnableLed(byte row,
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	QueueCommand(new MonomeSetLed(enable, row, col));
+	DispatchCommand(new MonomeSetLed(enable, row, col));
 }
 
 void
@@ -270,7 +270,7 @@ Monome40hFtw::SetLedIntensity(byte brightness)
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	QueueCommand(new MonomeSetLedIntensity(brightness));
+	DispatchCommand(new MonomeSetLedIntensity(brightness));
 }
 
 void
@@ -280,7 +280,7 @@ Monome40hFtw::TestLed(bool enable)
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	QueueCommand(new MonomeTestLed(enable));
+	DispatchCommand(new MonomeTestLed(enable));
 }
 
 void
@@ -291,7 +291,7 @@ Monome40hFtw::EnableAdc(byte port,
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	QueueCommand(new MonomeEnableAdc(port, enable));
+	DispatchCommand(new MonomeEnableAdc(port, enable));
 }
 
 void
@@ -301,7 +301,7 @@ Monome40hFtw::Shutdown(bool state)
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	QueueCommand(new MonomeShutdown(state));
+	DispatchCommand(new MonomeShutdown(state));
 }
 
 void
@@ -312,7 +312,7 @@ Monome40hFtw::EnableLedRow(byte row,
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	QueueCommand(new MonomeSetLedRow(row, columnValues));
+	DispatchCommand(new MonomeSetLedRow(row, columnValues));
 }
 
 void
@@ -323,14 +323,14 @@ Monome40hFtw::EnableLedColumn(byte column,
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	QueueCommand(new MonomeSetLedColumn(column, rowValues));
+	DispatchCommand(new MonomeSetLedColumn(column, rowValues));
 }
 
 void
 Monome40hFtw::OnButtonChange(bool pressed, byte row, byte col)
 {
 	AutoLockCs lock(mSubscribersLock);
-	ScopeSet<bool> active(&mServicingSubscribers, true);
+	ScopeSet<volatile bool> active(&mServicingSubscribers, true);
 	for (InputSubscribers::iterator it = mInputSubscribers.begin();
 		it != mInputSubscribers.end();
 		++it)
@@ -362,7 +362,7 @@ void
 Monome40hFtw::OnAdcChange(int port, int value)
 {
 	AutoLockCs lock(mSubscribersLock);
-	ScopeSet<bool> active(&mServicingSubscribers, true);
+	ScopeSet<volatile bool> active(&mServicingSubscribers, true);
 	for (InputSubscribers::iterator it = mInputSubscribers.begin();
 		it != mInputSubscribers.end();
 		++it)
@@ -496,21 +496,21 @@ Monome40hFtw::ServiceCommands()
 }
 
 void
-Monome40hFtw::QueueCommand(const MonomeSerialProtocolData * data)
+Monome40hFtw::DispatchCommand(const MonomeSerialProtocolData * data)
 {
 	if (mServicingSubscribers)
 	{
 		HANDLE hCurThread = ::GetCurrentThread();
 		if (hCurThread == mThread)
 		{
-			// service synchronously
+			// handle synchronously
 			Send(*data);
 			delete data;
 			return;
 		}
 	}
 
-	// service asynchronously
+	// queue to be serviced asynchronously
 	AutoLockCs lock(mOutputCommandsLock);
 	mOutputCommandQueue.push_back(data);
 }

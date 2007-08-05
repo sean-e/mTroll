@@ -65,7 +65,7 @@ private:
 	void DeviceServiceThread();
 	void ReadInput(byte * readData);
 	void ServiceCommands();
-	void QueueCommand(const MonomeSerialProtocolData * data);
+	void DispatchCommand(const MonomeSerialProtocolData * data);
 
 	typedef std::list<IMonome40hInputSubscriber *> InputSubscribers;
 	CRITICAL_SECTION				mSubscribersLock;
@@ -76,9 +76,9 @@ private:
 	ITraceDisplay					* mTrace;
 	FT_HANDLE						mFtDevice;
 	HANDLE							mThread;
-	bool							mServicingSubscribers;
-	bool							mIsListening;
-	bool							mShouldContinueListening;
+	volatile bool					mServicingSubscribers;
+	volatile bool					mIsListening;
+	volatile bool					mShouldContinueListening;
 };
 
 #endif // Monome40h_h__
