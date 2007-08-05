@@ -146,6 +146,8 @@ CMControlUIView::Load(const std::string & settingsBasefile)
 	LoadUi(settingsBasefile + ".ui.xml");
 	LoadMonome();
 	LoadMidiSettings(settingsBasefile + ".config.xml");
+	if (mHardwareUi)
+		mHardwareUi->Subscribe(this);
 }
 
 void
@@ -182,7 +184,6 @@ CMControlUIView::LoadMonome()
 				{
 					mHardwareUi = monome;
 					monome = NULL;
-					mHardwareUi->Subscribe(this);
 				}
 			}
 		}
