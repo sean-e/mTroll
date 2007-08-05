@@ -157,9 +157,9 @@ Monome40hFtw::AcquireDevice(const std::string & devSerialNum)
 	FTTIMEOUTS ftTS;
 	ftTS.ReadIntervalTimeout = 0;
 	ftTS.ReadTotalTimeoutMultiplier = 0;
-	ftTS.ReadTotalTimeoutConstant = 500;
+	ftTS.ReadTotalTimeoutConstant = 20;
 	ftTS.WriteTotalTimeoutMultiplier = 0;
-	ftTS.WriteTotalTimeoutConstant = 200;
+	ftTS.WriteTotalTimeoutConstant = 20;
 	if (!::FT_W32_SetCommTimeouts(mFtDevice, &ftTS))
 	{
 		if (mTrace)
@@ -329,7 +329,7 @@ Monome40hFtw::OnButtonChange(bool pressed, byte row, byte col)
 			if (mTrace)
 			{
 				std::strstream traceMsg;
-				traceMsg << "monome button press: row " << row << ", column " << col << std::endl << std::ends;
+				traceMsg << "monome button press: row " << (int) row << ", column " << (int) col << std::endl << std::ends;
 				mTrace->Trace(traceMsg.str());
 			}
 		}
@@ -339,7 +339,7 @@ Monome40hFtw::OnButtonChange(bool pressed, byte row, byte col)
 			if (mTrace)
 			{
 				std::strstream traceMsg;
-				traceMsg << "monome button release: row " << row << ", column " << col << std::endl << std::ends;
+				traceMsg << "monome button release: row " << (int) row << ", column " << (int) col << std::endl << std::ends;
 				mTrace->Trace(traceMsg.str());
 			}
 		}
@@ -368,8 +368,8 @@ Monome40hFtw::ReadInput(byte * readData)
 	case MonomeSerialProtocolData::getPress:
 		{
 			byte state = readData[0] & 0x0f;
-			byte row = readData[1] >> 4;
-			byte col = readData[1] & 0x0f;
+			byte col = readData[1] >> 4;
+			byte row = readData[1] & 0x0f;
 			OnButtonChange(state ? true : false, row, col);
 		}
 		break;
@@ -385,7 +385,7 @@ Monome40hFtw::ReadInput(byte * readData)
 		if (mTrace)
 		{
 			std::strstream traceMsg;
-			traceMsg << "monome IO error: unknown command " << cmd << std::endl << std::ends;
+			traceMsg << "monome IO error: unknown command " << (int) cmd << std::endl << std::ends;
 			mTrace->Trace(traceMsg.str());
 		}
 	}
@@ -433,7 +433,7 @@ Monome40hFtw::ReadThread()
 				else if (mTrace)
 				{
 					std::strstream traceMsg;
-					traceMsg << "monome read error: bytes read " << bytesRead << std::endl << std::ends;
+					traceMsg << "monome read error: bytes read " << (int) bytesRead << std::endl << std::ends;
 					mTrace->Trace(traceMsg.str());
 				}
 			}
