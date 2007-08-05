@@ -15,18 +15,23 @@ int Run(LPTSTR /*lpstrCmdLine*/ = NULL, int nCmdShow = SW_SHOWDEFAULT)
 {
 	CMessageLoop theLoop;
 	_Module.AddMessageLoop(&theLoop);
+	int nRet = 0;
 
-	CMainFrame wndMain;
-
-	if(wndMain.CreateEx() == NULL)
 	{
-		ATLTRACE(_T("Main window creation failed!\n"));
-		return 0;
+		// trying to get dtor to run
+		//   the frame dtor only runs for File|Exit (if you put a brkpt in OnFileExit)
+		CMainFrame wndMain;
+
+		if(wndMain.CreateEx() == NULL)
+		{
+			ATLTRACE(_T("Main window creation failed!\n"));
+			return 0;
+		}
+
+		wndMain.ShowWindow(nCmdShow);
+
+		nRet = theLoop.Run();
 	}
-
-	wndMain.ShowWindow(nCmdShow);
-
-	int nRet = theLoop.Run();
 
 	_Module.RemoveMessageLoop();
 	return nRet;
