@@ -83,6 +83,14 @@ CMControlUIView::Unload()
 
 	CloseMidiOuts();
 
+	// clear leds
+	for (std::map<int, bool>::iterator it = mStupidSwitchStates.begin();
+		it != mStupidSwitchStates.end();
+		++it)
+	{
+		SetSwitchDisplay((*it).first, false);
+	}
+
 	delete mEngine;
 	mEngine = NULL;
 
