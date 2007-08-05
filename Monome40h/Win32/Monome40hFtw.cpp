@@ -46,12 +46,14 @@ Monome40hFtw::Monome40hFtw(ITraceDisplay * trace) :
 		throw std::string("ERROR: Failed to load FTDI library\n");
 
 	::InitializeCriticalSection(&mSubscribersLock);
+	::InitializeCriticalSection(&mOutputCommandsLock);
 }
 
 Monome40hFtw::~Monome40hFtw()
 {
 	ReleaseDevice();
 	::DeleteCriticalSection(&mSubscribersLock);
+	::DeleteCriticalSection(&mOutputCommandsLock);
 }
 
 int
@@ -157,9 +159,9 @@ Monome40hFtw::AcquireDevice(const std::string & devSerialNum)
 	FTTIMEOUTS ftTS;
 	ftTS.ReadIntervalTimeout = 0;
 	ftTS.ReadTotalTimeoutMultiplier = 0;
-	ftTS.ReadTotalTimeoutConstant = 20;
+	ftTS.ReadTotalTimeoutConstant = 25;
 	ftTS.WriteTotalTimeoutMultiplier = 0;
-	ftTS.WriteTotalTimeoutConstant = 20;
+	ftTS.WriteTotalTimeoutConstant = 25;
 	if (!::FT_W32_SetCommTimeouts(mFtDevice, &ftTS))
 	{
 		if (mTrace)
@@ -172,7 +174,7 @@ Monome40hFtw::AcquireDevice(const std::string & devSerialNum)
 
 	// startup listener
 	mShouldContinueListening = true;
-	mThread = (HANDLE)_beginthreadex(NULL, 0, ReadThread, this, 0, NULL);
+	mThread = (HANDLE)_beginthreadex(NULL, 0, DeviceServiceThread, this, 0, NULL);
 	return mThread != NULL && mThread != INVALID_HANDLE_VALUE;
 }
 
@@ -192,6 +194,23 @@ Monome40hFtw::ReleaseDevice()
 
 	::FT_W32_CloseHandle(mFtDevice);
 	mFtDevice = INVALID_HANDLE_VALUE;
+
+	// free queued commands - there shouldn't be any...
+	if (mTrace && mOutputCommandQueue.size())
+	{
+		std::strstream traceMsg;
+		traceMsg << "WARNING: unsent monome commands still queued " << mOutputCommandQueue.size() << std::endl << std::ends;
+		mTrace->Trace(traceMsg.str());
+	}
+
+	for (OutputCommandQueue::iterator it = mOutputCommandQueue.begin();
+		it != mOutputCommandQueue.end();
+		++it)
+	{
+		delete *it;
+	}
+
+	mOutputCommandQueue.clear();
 }
 
 bool
@@ -241,8 +260,7 @@ Monome40hFtw::EnableLed(byte row,
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	MonomeSetLed data(enable, row, col);
-	Send(data);
+	QueueCommand(new MonomeSetLed(enable, row, col));
 }
 
 void
@@ -252,8 +270,7 @@ Monome40hFtw::SetLedIntensity(byte brightness)
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	MonomeSetLedIntensity data(brightness);
-	Send(data);
+	QueueCommand(new MonomeSetLedIntensity(brightness));
 }
 
 void
@@ -263,8 +280,7 @@ Monome40hFtw::TestLed(bool enable)
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	MonomeTestLed data(enable);
-	Send(data);
+	QueueCommand(new MonomeTestLed(enable));
 }
 
 void
@@ -275,8 +291,7 @@ Monome40hFtw::EnableAdc(byte port,
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	MonomeEnableAdc data(port, enable);
-	Send(data);
+	QueueCommand(new MonomeEnableAdc(port, enable));
 }
 
 void
@@ -286,8 +301,7 @@ Monome40hFtw::Shutdown(bool state)
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	MonomeShutdown data(state);
-	Send(data);
+	QueueCommand(new MonomeShutdown(state));
 }
 
 void
@@ -298,8 +312,7 @@ Monome40hFtw::EnableLedRow(byte row,
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	MonomeSetLedRow data(row, columnValues);
-	Send(data);
+	QueueCommand(new MonomeSetLedRow(row, columnValues));
 }
 
 void
@@ -310,8 +323,7 @@ Monome40hFtw::EnableLedColumn(byte column,
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	MonomeSetLedColumn data(column, rowValues);
-	Send(data);
+	QueueCommand(new MonomeSetLedColumn(column, rowValues));
 }
 
 void
@@ -392,7 +404,7 @@ Monome40hFtw::ReadInput(byte * readData)
 }
 
 void
-Monome40hFtw::ReadThread()
+Monome40hFtw::DeviceServiceThread()
 {
 	mIsListening = true;
 
@@ -402,6 +414,7 @@ Monome40hFtw::ReadThread()
 
 	while (mShouldContinueListening)
 	{
+		ServiceCommands();
 		bytesRead = 0;
 		int readRetVal = ::FT_W32_ReadFile(mFtDevice, readData, kDataLen, &bytesRead, NULL);
 		if (readRetVal)
@@ -450,14 +463,54 @@ Monome40hFtw::ReadThread()
 		}
 	}
 
+	ServiceCommands();
 	mIsListening = false;
 }
 
 unsigned int __stdcall
-Monome40hFtw::ReadThread(void * _thisParam)
+Monome40hFtw::DeviceServiceThread(void * _thisParam)
 {
 	Monome40hFtw * _this = static_cast<Monome40hFtw *>(_thisParam);
-	_this->ReadThread();
+	_this->DeviceServiceThread();
 	_endthreadex(0);
 	return 0;
+}
+
+void
+Monome40hFtw::ServiceCommands()
+{
+	AutoLockCs lock(mOutputCommandsLock);
+	if (!mOutputCommandQueue.size())
+		return;
+
+	for (OutputCommandQueue::iterator it = mOutputCommandQueue.begin();
+		it != mOutputCommandQueue.end();
+		++it)
+	{
+		const MonomeSerialProtocolData * curCmd = *it;
+		Send(*curCmd);
+		delete curCmd;
+	}
+
+	mOutputCommandQueue.clear();
+}
+
+void
+Monome40hFtw::QueueCommand(const MonomeSerialProtocolData * data)
+{
+	if (mServicingSubscribers)
+	{
+		HANDLE hCurThread = ::GetCurrentThread();
+		if (hCurThread == mThread)
+		{
+			// service synchronously
+			Send(*data);
+			delete data;
+			return;
+		}
+	}
+
+	// service asynchronously
+	AutoLockCs lock(mOutputCommandsLock);
+	mOutputCommandQueue.push_back(data);
 }

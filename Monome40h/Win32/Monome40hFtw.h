@@ -61,13 +61,18 @@ private:
 	void OnButtonChange(bool pressed, byte row, byte col);
 	void OnAdcChange(int port, int value);
 	BOOL Send(const MonomeSerialProtocolData & data);
-	static unsigned int __stdcall ReadThread(void * _this);
-	void ReadThread();
+	static unsigned int __stdcall DeviceServiceThread(void * _this);
+	void DeviceServiceThread();
 	void ReadInput(byte * readData);
+	void ServiceCommands();
+	void QueueCommand(const MonomeSerialProtocolData * data);
 
 	typedef std::list<IMonome40hInputSubscriber *> InputSubscribers;
 	CRITICAL_SECTION				mSubscribersLock;
 	InputSubscribers				mInputSubscribers;
+	typedef std::list<const MonomeSerialProtocolData *> OutputCommandQueue;
+	CRITICAL_SECTION				mOutputCommandsLock;
+	OutputCommandQueue				mOutputCommandQueue;
 	ITraceDisplay					* mTrace;
 	FT_HANDLE						mFtDevice;
 	HANDLE							mThread;
