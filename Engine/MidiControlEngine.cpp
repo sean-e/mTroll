@@ -403,7 +403,7 @@ MidiControlEngine::NavigateBankRelative(int relativeBankIndex)
 
 	if (mSwitchDisplay)
 	{
-		for (int idx = 0; idx < 32; idx++)
+		for (int idx = 0; idx < 64; idx++)
 		{
 			if (idx != mModeSwitchNumber &&
 				idx != mDecrementSwitchNumber &&
@@ -485,7 +485,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 
 	if (mSwitchDisplay)
 	{
-		for (int idx = 0; idx < 32; idx++)
+		for (int idx = 0; idx < 64; idx++)
 		{
 			mSwitchDisplay->ClearSwitchText(idx);
 			mSwitchDisplay->SetSwitchDisplay(idx, false);
