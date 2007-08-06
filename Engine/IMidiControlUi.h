@@ -11,6 +11,8 @@
 class IMidiControlUi
 {
 public:
+	virtual void	AddSwitchMapping(int switchNumber, int row, int col) = 0;
+
 	virtual void	SetSwitchLedConfig(int width, int height, unsigned int onColor, unsigned int offColor) = 0;
 	virtual void	CreateSwitchLed(int id, int top, int left) = 0;
 

@@ -14,6 +14,7 @@ public:
 
 private:
 	bool					LoadAssembyConfig(TiXmlElement * pElem);
+	void					LoadSwitchMappings(TiXmlElement * pElem);
 	void					LoadSwitchAssemblies(TiXmlElement * pElem);
 	void					LoadSwitchAssembly(TiXmlElement * pElem);
 	void					LoadOtherStuffAndFinalize(TiXmlElement * pElem);

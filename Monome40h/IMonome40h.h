@@ -56,9 +56,9 @@ protected:
 };
 
 // row = y, col = x
-inline byte RowFromOrdinal(int ord) {return ord / 8;}
-inline byte ColumnFromOrdinal(int ord) {return ord % 8;}
-inline void RowColFromOrdinal(int ord, byte & row, byte & col) {row = RowFromOrdinal(ord); col = ColumnFromOrdinal(ord);}
-inline int OrdinalFromRowCol(byte row, byte col) {return (row * 8) + col;}
+// inline byte RowFromOrdinal(int ord) {return ord / 8;}
+// inline byte ColumnFromOrdinal(int ord) {return ord % 8;}
+// inline void RowColFromOrdinal(int ord, byte & row, byte & col) {row = RowFromOrdinal(ord); col = ColumnFromOrdinal(ord);}
+// inline int OrdinalFromRowCol(byte row, byte col) {return (row * 8) + col;}
 
 #endif // IMonome40h_h__

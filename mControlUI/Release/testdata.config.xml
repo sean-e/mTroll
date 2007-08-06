@@ -3,12 +3,12 @@
 	<SystemConfig filterPC="0">
 		<powerup timeout="0" bank="1" patch="0" />
 		<switches>
-			<switch name="increment" id="15" />
-			<switch name="decrement" id="14" />
-			<switch name="mode" id="13" />
+			<switch name="mode" id="20" />
+			<switch name="increment" id="21" />
+			<switch name="decrement" id="22" />
 		</switches>
 		<midiDevices>
-			<midiDevice port="1" outIdx="0" activityIndicatorId="20" />
+			<midiDevice port="1" outIdx="0" activityIndicatorId="23" />
 		</midiDevices>
 	</SystemConfig>
 	<patches>

@@ -130,6 +130,9 @@ CMControlUIView::Unload()
 
 	for_each(mSwitchTextDisplays.begin(), mSwitchTextDisplays.end(), DeleteSwitchTextDisplay());
 	mSwitchTextDisplays.clear();
+
+	mSwitchNumberToRowCol.clear();
+	mRowColToSwitchNumber.clear();
 }
 
 HWND
@@ -248,7 +251,7 @@ CMControlUIView::ButtonPressed(const int idx)
 	if (!mStupidSwitchStates[idx])
 	{
 		byte row, col;
-		::RowColFromOrdinal(idx, row, col);
+		RowColFromSwitchNumber(idx, row, col);
 		SwitchPressed(row, col);
 	}
 }
@@ -259,7 +262,7 @@ CMControlUIView::ButtonReleased(const int idx)
 	if (mStupidSwitchStates[idx])
 	{
 		byte row, col;
-		::RowColFromOrdinal(idx, row, col);
+		RowColFromSwitchNumber(idx, row, col);
 		SwitchReleased(row, col);
 	}
 }
@@ -312,7 +315,7 @@ CMControlUIView::SetSwitchDisplay(int switchNumber, bool isOn)
 	if (mHardwareUi)
 	{
 		byte row, col;
-		::RowColFromOrdinal(switchNumber, row, col);
+		RowColFromSwitchNumber(switchNumber, row, col);
 		mHardwareUi->EnableLed(row, col, isOn);
 	}
 
@@ -360,6 +363,18 @@ CMControlUIView::OnNotifyCustomDraw(int idCtrl,
 
 
 // IMidiControlUi
+void
+CMControlUIView::AddSwitchMapping(int switchNumber, 
+								  int row, 
+								  int col)
+{
+	int rc = (row << 16) | col;
+	_ASSERTE(!mRowColToSwitchNumber[rc]);
+	mRowColToSwitchNumber[rc] = switchNumber;
+	_ASSERTE(!mSwitchNumberToRowCol[switchNumber]);
+	mSwitchNumberToRowCol[switchNumber] = rc;
+}
+
 void
 CMControlUIView::SetSwitchLedConfig(int width, 
 									int height, 
@@ -613,7 +628,7 @@ CMControlUIView::CloseMidiOuts()
 void
 CMControlUIView::SwitchPressed(byte row, byte column)
 {
-	const int switchNumber = ::OrdinalFromRowCol(row, column);
+	const int switchNumber = SwitchNumberFromRowCol(row, column);
 	mStupidSwitchStates[switchNumber] = true;
 	if (mEngine)
 		mEngine->SwitchPressed(switchNumber);
@@ -622,7 +637,7 @@ CMControlUIView::SwitchPressed(byte row, byte column)
 void
 CMControlUIView::SwitchReleased(byte row, byte column)
 {
-	const int switchNumber = ::OrdinalFromRowCol(row, column);
+	const int switchNumber = SwitchNumberFromRowCol(row, column);
 	mStupidSwitchStates[switchNumber] = false;
 	if (mEngine)
 		mEngine->SwitchReleased(switchNumber);

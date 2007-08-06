@@ -69,6 +69,7 @@ public: // IMonome40hInputSubscriber
 	virtual void AdcValueChanged(int port, int curValue);
 
 private: // IMidiControlUi
+	virtual void	AddSwitchMapping(int switchNumber, int row, int col);
 	virtual void	SetSwitchLedConfig(int width, int height, unsigned int onColor, unsigned int offColor);
 	virtual void	CreateSwitchLed(int id, int top, int left);
 	virtual void	SetSwitchConfig(int width, int height, const std::string & fontName, int fontHeight, bool bold);
@@ -131,6 +132,16 @@ private:
 	void ButtonPressed(const int idx);
 
 	void MonomeStartupSequence();
+	inline void RowColFromSwitchNumber(int ord, byte & row, byte & col)
+	{
+		int rc = mSwitchNumberToRowCol[ord];
+		col = (byte)(rc & 0xff);
+		row = (byte)((rc >> 16) & 0xff);
+	}
+	inline int SwitchNumberFromRowCol(byte row, byte col)
+	{
+		return mRowColToSwitchNumber[(row << 16) | col];
+	}
 
 private:
 	IMonome40h					* mHardwareUi;
@@ -141,6 +152,8 @@ private:
 	std::map<int, SwitchTextDisplay *>		mSwitchTextDisplays;
 	std::map<int, Switch *>		mSwitches;
 	std::map<int, bool>			mStupidSwitchStates;
+	std::map<int, int>			mSwitchNumberToRowCol;
+	std::map<int, int>			mRowColToSwitchNumber;
 	CFont						mSwitchButtonFont;
 	CFont						mTraceFont;
 	int							mPreferredHeight, mPreferredWidth;

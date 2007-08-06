@@ -31,6 +31,12 @@ UiLoader::UiLoader(IMidiControlUi * theUi,
 	else
 		return;
 
+	pElem = hRoot.FirstChild("switchMappings").Element();
+	if (pElem)
+		LoadSwitchMappings(pElem);
+	else
+		return;
+
 	pElem = hRoot.FirstChild("switchAssemblies").Element();
 	if (pElem)
 		LoadSwitchAssemblies(pElem);
@@ -113,6 +119,37 @@ UiLoader::LoadAssembyConfig(TiXmlElement * pElem)
 	mUi->SetSwitchLedConfig(width, height, (unsigned int) fgColor, (unsigned int) bgColor);
 
 	return true;
+}
+
+void
+UiLoader::LoadSwitchMappings(TiXmlElement * pElem)
+{
+/*
+	<switchMappings>
+		<switchGridMap number="0" row="1" col="0" />
+	</switchMappings>
+*/
+	TiXmlHandle hRoot(NULL);
+	hRoot = TiXmlHandle(pElem);
+
+	for (TiXmlElement * childElem = hRoot.FirstChild().Element(); 
+		 childElem; 
+		 childElem = childElem->NextSiblingElement())
+	{
+		if (childElem->ValueStr() != "switchMap")
+			continue;
+
+		int switchNumber = -1, row = -1, col = -1;
+		childElem->QueryIntAttribute("number", &switchNumber);
+		childElem->QueryIntAttribute("row", &row);
+		childElem->QueryIntAttribute("col", &col);
+		if (-1 == switchNumber ||
+			-1 == row ||
+			-1 == col)
+			continue;
+
+		mUi->AddSwitchMapping(switchNumber, row, col);
+	}
 }
 
 void
