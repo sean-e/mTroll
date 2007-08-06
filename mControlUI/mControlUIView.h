@@ -130,6 +130,8 @@ private:
 	void ButtonReleased(const int idx);
 	void ButtonPressed(const int idx);
 
+	void MonomeStartupSequence();
+
 private:
 	IMonome40h					* mHardwareUi;
 	MidiControlEngine			* mEngine;

@@ -184,6 +184,7 @@ CMControlUIView::LoadMonome()
 				{
 					mHardwareUi = monome;
 					monome = NULL;
+					MonomeStartupSequence();
 				}
 			}
 		}
@@ -631,4 +632,28 @@ void
 CMControlUIView::AdcValueChanged(int port, int curValue)
 {
 	mEngine->AdcValueChanged(port, curValue);
+}
+
+void
+CMControlUIView::MonomeStartupSequence()
+{
+	int idx;
+	byte vals = 0xff;
+	for (idx = 0; idx < 8; ++idx)
+	{
+		mHardwareUi->EnableLedRow(idx, vals);
+		Sleep(100);
+		mHardwareUi->EnableLedRow(idx, 0);
+	}
+
+	for (idx = 0; idx < 8; ++idx)
+	{
+		mHardwareUi->EnableLedColumn(idx, vals);
+		Sleep(100);
+		mHardwareUi->EnableLedColumn(idx, 0);
+	}
+
+	mHardwareUi->TestLed(true);
+	Sleep(250);
+	mHardwareUi->TestLed(false);
 }
