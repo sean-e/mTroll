@@ -1,14 +1,14 @@
 [todo]
 adc support
-	pedal calibration mode
-		1 - 4 to select pedal, mode to escape
-		1 to record toe down - max
-		1 to record toe up - min
-		back to 1 - 4
 	load of patch pedal settings
 	load of global patch settings and midiout
 		create and store midiout for global expr in engine
 		enable/disable adc per globals
+	pedal calibration mode??
+		1 - 4 to select pedal, mode to escape
+		1 to record toe down - max
+		1 to record toe up - min
+		back to 1 - 4
 
 
 [pedalboard sizes]		w		d		h			area	hspace	url
@@ -30,7 +30,7 @@ adc support
 
 [display sizes]
 	current: 
-		870 x 625
+		830 x 625
 	8.9 in:
 		1024 x 600
 					http://www.umpcportal.com/products/product.php?id=98
