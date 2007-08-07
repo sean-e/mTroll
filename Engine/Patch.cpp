@@ -6,6 +6,8 @@
 #include "ITraceDisplay.h"
 
 
+ExpressionPedals * gActivePatchPedals = NULL;
+
 Patch::Patch(int number, 
 			 const std::string & name, 
 			 PatchType patchType, 
@@ -105,6 +107,13 @@ Patch::SendStringA()
 	if (mMidiByteStringA.size())
 		mMidiOut->MidiOut(mMidiByteStringA);
 	mPatchIsOn = true;
+
+	if (ptNormal == mPatchType)
+	{
+		// do this here rather than SwitchPressed to that pedals can be
+		// set on bank load rather than only patch load
+		gActivePatchPedals = &mPedals;
+	}
 }
 
 void

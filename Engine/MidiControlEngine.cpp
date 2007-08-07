@@ -56,8 +56,7 @@ MidiControlEngine::MidiControlEngine(IMainDisplay * mainDisplay,
 	mIncrementSwitchNumber(incrementSwitchNumber),
 	mDecrementSwitchNumber(decrementSwitchNumber),
 	mModeSwitchNumber(modeSwitchNumber),
-	mFilterRedundantProgramChanges(false),
-	mActiveNormalPatchForExprPedals(NULL)
+	mFilterRedundantProgramChanges(false)
 {
 	mBanks.reserve(999);
 }
@@ -193,10 +192,7 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 		else if (switchNumber == mModeSwitchNumber)
 			;
 		else if (mActiveBank)
-		{
 			mActiveBank->PatchSwitchPressed(switchNumber, mMainDisplay, mSwitchDisplay);
-			mActiveNormalPatchForExprPedals = mActiveBank->GetActiveNormalPatch();
-		}
 		return;
 	}
 }
@@ -374,16 +370,15 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 
 void
 MidiControlEngine::AdcValueChanged(int port, 
-								   int curValue)
+								   int newValue)
 {
 	// forward directly to active patch
 	_ASSERTE(port < ExpressionPedals::PedalCount);
-	if (!mActiveNormalPatchForExprPedals || 
-		mActiveNormalPatchForExprPedals->AdcValueChanged(mMainDisplay, port, curValue))
+	if (!gActivePatchPedals || 
+		gActivePatchPedals->AdcValueChange(mMainDisplay, NULL, port, newValue))
 	{
 		// process globals if no rejection
-		// midiport for globals?
-		mPedals.AdcValueChange(mMainDisplay, NULL, port, curValue);
+		mPedals.AdcValueChange(mMainDisplay, NULL, port, newValue);
 	}
 }
 

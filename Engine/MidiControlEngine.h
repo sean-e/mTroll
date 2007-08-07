@@ -71,7 +71,6 @@ private:
 	EngineMode				mMode;
 	int						mBankNavigationIndex;
 	std::string				mBankDirectNumber;
-	Patch *					mActiveNormalPatchForExprPedals;	// for ADC handling
 
 	// retained in different form
 	Patches					mPatches;		// patchNum is key

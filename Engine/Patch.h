@@ -62,4 +62,6 @@ private:
 	int						mSwitchNumber;
 };
 
+extern ExpressionPedals * gActivePatchPedals;
+
 #endif // Patch_h__

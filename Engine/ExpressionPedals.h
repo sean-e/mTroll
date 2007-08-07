@@ -147,6 +147,7 @@ public:
 						int newVal)
 	{
 		_ASSERTE(pedal < PedalCount);
+		_ASSERTE(midiOut);
 		if (mPedalEnables[pedal])
 			mPedals[pedal].AdcValueChange(mainDisplay, midiOut, newVal);
 		return mGlobalEnables[pedal];
