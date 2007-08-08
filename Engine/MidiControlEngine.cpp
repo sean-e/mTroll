@@ -375,10 +375,10 @@ MidiControlEngine::AdcValueChanged(int port,
 	// forward directly to active patch
 	_ASSERTE(port < ExpressionPedals::PedalCount);
 	if (!gActivePatchPedals || 
-		gActivePatchPedals->AdcValueChange(mMainDisplay, NULL, port, newValue))
+		gActivePatchPedals->AdcValueChange(mMainDisplay, port, newValue))
 	{
 		// process globals if no rejection
-		mPedals.AdcValueChange(mMainDisplay, NULL, port, newValue);
+		mPedals.AdcValueChange(mMainDisplay, port, newValue);
 	}
 }
 

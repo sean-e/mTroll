@@ -30,10 +30,6 @@ public:
 
 	void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 	void SwitchReleased(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
-	bool AdcValueChanged(IMainDisplay * mainDisplay, int port, int curValue)
-	{
-		return mPedals.AdcValueChange(mainDisplay, mMidiOut, port, curValue);
-	}
 
 	void UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 	const std::string & GetName() const {return mName;}

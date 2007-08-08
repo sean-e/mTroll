@@ -104,7 +104,7 @@ class ExpressionPedals
 public:
 	enum {PedalCount = 4};
 
-	ExpressionPedals() 
+	ExpressionPedals() : mMidiOut(NULL)
 	{
 		int idx;
 		for (idx = 0; idx < PedalCount; ++idx)
@@ -142,18 +142,18 @@ public:
 	}
 
 	bool AdcValueChange(IMainDisplay * mainDisplay, 
-						IMidiOut * midiOut, 
 						int pedal, 
 						int newVal)
 	{
 		_ASSERTE(pedal < PedalCount);
-		_ASSERTE(midiOut);
+		_ASSERTE(mMidiOut);
 		if (mPedalEnables[pedal])
-			mPedals[pedal].AdcValueChange(mainDisplay, midiOut, newVal);
+			mPedals[pedal].AdcValueChange(mainDisplay, mMidiOut, newVal);
 		return mGlobalEnables[pedal];
 	}
 
 private:
+	IMidiOut				* mMidiOut;
 	bool					mGlobalEnables[PedalCount];
 	bool					mPedalEnables[PedalCount];	// true if either cc is enabled for a pedal
 	ExpressionPedal			mPedals[PedalCount];

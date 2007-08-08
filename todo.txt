@@ -3,9 +3,8 @@ adc support
 	load of patch pedal settings
 	load of global patch settings and midiout
 		create and store midiout for global expr in engine
-		enable/disable adc per globals at startup
+		enable/disable adc at load of config.xml
 	store midiOut in ExpressionPedal class
-	engine needs notification of patch loads so that it can enable/disable adc ports
 	ExpressionControl::Calibrate
 	ExpressionControl::AdcValueChange
 	pedal calibration mode??
