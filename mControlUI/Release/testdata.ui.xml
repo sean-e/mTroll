@@ -132,11 +132,11 @@
 		</switchAssembly>
 		<switchAssembly number="21" incrementalVpos="85" incrementalHpos="0" >
       <switchTextDisplay />
-      <switch label="&amp;Dec" vOffset="30" />
+      <switch label="&amp;Prev" vOffset="30" />
     </switchAssembly>
     <switchAssembly number="22" incrementalVpos="85" incrementalHpos="0" >
       <switchTextDisplay />
-      <switch label="&amp;Inc" vOffset="30" />
+      <switch label="&amp;Next" vOffset="30" />
     </switchAssembly>
   </switchAssemblies>
 </MidiControlUiSettings>

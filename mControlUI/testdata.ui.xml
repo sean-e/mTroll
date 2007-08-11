@@ -124,11 +124,11 @@
 		</switchAssembly>
 		<switchAssembly number="21" incrementalVpos="0" incrementalHpos="165" >
 			<switchTextDisplay />
-			<switch label="&amp;Dec" vOffset="30" />
+			<switch label="&amp;Prev" vOffset="30" />
 		</switchAssembly>
 		<switchAssembly number="22" incrementalVpos="0" incrementalHpos="165" >
       <switchTextDisplay />
-      <switch label="&amp;Inc" vOffset="30" />
+      <switch label="&amp;Next" vOffset="30" />
     </switchAssembly>
 
 	</switchAssemblies>
