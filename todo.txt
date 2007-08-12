@@ -6,12 +6,14 @@ adc support
 		enable/disable adc at load of config.xml
 	store midiOut in ExpressionPedal class
 	ExpressionControl::Calibrate
-	ExpressionControl::AdcValueChange
 	pedal calibration mode??
 		1 - 4 to select pedal, mode to escape
 		1 to record toe down - max
 		1 to record toe up - min
 		back to 1 - 4
+	meta patch support
+		test leds
+		reset all patches
 
 
 [pedalboard sizes]		w		d		h			area	hspace	url

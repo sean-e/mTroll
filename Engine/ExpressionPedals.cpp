@@ -1,4 +1,5 @@
 #include <string>
+#include <strstream>
 #include "ExpressionPedals.h"
 #include "IMainDisplay.h"
 #include "IMidiOut.h"
@@ -22,9 +23,18 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 		return;
 
 	mPrevCcVal = mCurCcVal;
+	mCurCcVal = (newVal * 127) / 1023;
 
-	byte newCcVal;
-	// do stuff
-	newCcVal = 0;
-	mCurCcVal = newCcVal;
+	Bytes data;
+	data.push_back(0xb0 | mChannel);
+	data.push_back(mControlNumber);
+	data.push_back(mCurCcVal);
+	midiOut->MidiOut(data);
+
+	if (mainDisplay)
+	{
+		std::strstream displayMsg;
+		displayMsg << "Adc " << (int) mChannel << ", " << (int) mControlNumber << ": " << newVal << ", " << (int) mCurCcVal << std::endl << std::ends;
+		mainDisplay->TextOut(displayMsg.str());
+	}
 }
