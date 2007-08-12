@@ -35,6 +35,7 @@ public:
 	const std::string & GetName() const {return mName;}
 	int GetNumber() const {return mNumber;}
 	bool IsOn() const {return mPatchIsOn;}
+	void SetOff(ISwitchDisplay * switchDisplay) {mPatchIsOn = false; UpdateDisplays(NULL, switchDisplay);}
 	std::string GetPatchTypeStr() const;
 	PatchType GetPatchType() const {return mPatchType;}
 
