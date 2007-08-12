@@ -20,7 +20,6 @@ Patch::Patch(int number,
 	mPatchType(patchType),
 	mMidiByteStringA(midiStringA),
 	mMidiByteStringB(midiStringB),
-	mSwitchNumber(-1),
 	mPatchIsOn(false),
 	mMidiOutPort(midiOutPortNumber),
 	mMidiOut(midiOut)
@@ -35,25 +34,31 @@ Patch::~Patch()
 void
 Patch::AssignSwitch(int switchNumber, ISwitchDisplay * switchDisplay)
 {
-	mSwitchNumber = switchNumber;
+	_ASSERTE(switchNumber != -1 && switchNumber >= 0);
+	mSwitchNumbers.push_back(switchNumber);
 	if (switchDisplay)
-		switchDisplay->SetSwitchText(mSwitchNumber, mName);
+		switchDisplay->SetSwitchText(switchNumber, mName);
 	UpdateDisplays(NULL, switchDisplay);
 }
 
 void
 Patch::ClearSwitch(ISwitchDisplay * switchDisplay)
 {
-	if (-1 == mSwitchNumber)
+	if (mSwitchNumbers.empty())
 		return;
 
 	if (switchDisplay)
 	{
-		switchDisplay->SetSwitchDisplay(mSwitchNumber, false);
-		switchDisplay->ClearSwitchText(mSwitchNumber);
+		for (std::vector<int>::iterator it = mSwitchNumbers.begin(); 
+			it != mSwitchNumbers.end();
+			++it)
+		{
+			switchDisplay->SetSwitchDisplay(*it, false);
+			switchDisplay->ClearSwitchText(*it);
+		}
 	}
 
-	mSwitchNumber = -1;
+	mSwitchNumbers.clear();
 }
 
 void
@@ -87,11 +92,18 @@ Patch::SwitchReleased(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay
 void
 Patch::UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 {
-	if (-1 == mSwitchNumber)
+	if (mSwitchNumbers.empty())
 		return;
 
 	if (switchDisplay)
-		switchDisplay->SetSwitchDisplay(mSwitchNumber, mPatchIsOn);
+	{
+		for (std::vector<int>::iterator it = mSwitchNumbers.begin(); 
+			it != mSwitchNumbers.end();
+			++it)
+		{
+			switchDisplay->SetSwitchDisplay(*it, mPatchIsOn);
+		}
+	}
 
 	if (mainDisplay)
 	{

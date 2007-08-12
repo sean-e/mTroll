@@ -55,7 +55,7 @@ private:
 	// runtime only state
 	IMidiOut				* mMidiOut;
 	bool					mPatchIsOn;
-	int						mSwitchNumber;
+	std::vector<int>		mSwitchNumbers;
 };
 
 extern ExpressionPedals * gActivePatchPedals;

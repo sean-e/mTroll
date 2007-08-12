@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <MidiControlSettings>
 	<SystemConfig filterPC="0">
-		<powerup timeout="0" bank="5" patch="0" />
+		<powerup timeout="0" patch="0" />
 		<switches>
 			<switch name="mode" id="20" />
 			<switch name="decrement" id="21" />
@@ -1055,6 +1055,37 @@
 			<PatchMap switch="7" patch="399" loadState="" unloadState="" />
 			<PatchMap switch="8" patch="401" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="400" loadState="" unloadState="" />
+		</bank>
+		<bank name="H8000 DSP B-1" number="33">
+			<PatchMap switch="1" patch="24" loadState="" unloadState="" />
+			<PatchMap switch="1" patch="25" loadState="" unloadState="" />
+			<PatchMap switch="1" patch="26" loadState="" unloadState="" />
+			<PatchMap switch="1" patch="27" loadState="" unloadState="" />
+			<PatchMap switch="1" patch="28" loadState="" unloadState="" />
+			<PatchMap switch="1" patch="29" loadState="" unloadState="" />
+			<PatchMap switch="1" patch="30" loadState="" unloadState="" />
+			<PatchMap switch="1" patch="31" loadState="" unloadState="" />
+			<PatchMap switch="1" patch="32" loadState="" unloadState="" />
+			<PatchMap switch="1" patch="33" loadState="" unloadState="" />
+			<PatchMap switch="1" patch="34" loadState="" unloadState="" />
+			<PatchMap switch="1" patch="35" loadState="" unloadState="" />
+			<PatchMap switch="1" patch="36" loadState="" unloadState="" />
+			<PatchMap switch="1" patch="37" loadState="" unloadState="" />
+			<PatchMap switch="1" patch="38" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="25" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="26" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="27" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="28" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="29" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="30" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="31" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="32" loadState="" unloadState="" />
+			<PatchMap switch="10" patch="33" loadState="" unloadState="" />
+			<PatchMap switch="11" patch="34" loadState="" unloadState="" />
+			<PatchMap switch="12" patch="35" loadState="" unloadState="" />
+			<PatchMap switch="13" patch="36" loadState="" unloadState="" />
+			<PatchMap switch="14" patch="37" loadState="" unloadState="" />
+			<PatchMap switch="15" patch="38" loadState="" unloadState="" />
 		</bank>
 	</banks>
 </MidiControlSettings>
