@@ -46,15 +46,15 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 
 	// normal 127 range is 1023
 	byte newCcVal = (newVal * 127) / 1023;
-	if (mInverted)
-	{
-		// TODO: support invert
-	}
-
 	if (newCcVal > mMaxCcVal)
 		newCcVal = mMaxCcVal;
 	else if (newCcVal < mMinCcVal)
 		newCcVal = mMinCcVal;
+
+	if (mInverted)
+	{
+		// TODO: support invert
+	}
 
 	mMidiData[2] = newCcVal;
 	midiOut->MidiOut(mMidiData);
