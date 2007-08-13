@@ -1,19 +1,25 @@
 [todo]
 adc support
 	load of patch pedal settings
+		<globalExpr inputNumber="" enable="" />
+		<localExpr inputNumber="1" assignmentNumber="1" channel="" controller="" min="" max="" invert="0" enable="" />
+			input 1-4
+			assignment 1-2
 	load of global patch settings and midiout
-		create and store midiout for global expr in engine
-		enable/disable adc at load of config.xml
-	store midiOut in ExpressionPedal class
+		<expression port="">
+			<globaExpr inputNumber="1" assignmentNumber="1" channel="" controller="" min="" max="" invert="0" enable="" />
+			<adc inputNumber="" enable="" />
+		</expression>
+	ExpressionControl::AdcValueChange support for min, max, invert
 	ExpressionControl::Calibrate
 	pedal calibration mode??
 		1 - 4 to select pedal, mode to escape
 		1 to record toe down - max
 		1 to record toe up - min
 		back to 1 - 4
-	meta patch support
-		test leds
-		reset all patches
+meta patch support
+	test leds
+	reset all patches
 
 
 [pedalboard sizes]		w		d		h			area	hspace	url

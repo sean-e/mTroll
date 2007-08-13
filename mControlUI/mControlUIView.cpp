@@ -210,7 +210,12 @@ CMControlUIView::LoadMidiSettings(const std::string & file)
 	delete mEngine;
 	EngineLoader ldr(this, this, this, this);
 	mEngine = ldr.CreateEngine(file);
-	if (!mEngine)
+	if (mEngine)
+	{
+		if (mHardwareUi)
+			ldr.InitMonome(mHardwareUi);
+	}
+	else
 		TextOut("Failed to load MIDI settings.");
 }
 

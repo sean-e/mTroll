@@ -78,7 +78,7 @@ MidiControlEngine::AddBank(int number,
 	return * pBank;
 }
 
-void
+Patch &
 MidiControlEngine::AddPatch(int number,
 							const std::string & name,
 							Patch::PatchType patchType,
@@ -88,6 +88,7 @@ MidiControlEngine::AddPatch(int number,
 							const Bytes & midiStringB)
 {
 	mPatches[number] = new Patch(number, name, patchType, midiOutPortNumber, midiOut, midiStringA, midiStringB);
+	return * mPatches[number];
 }
 
 void

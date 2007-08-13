@@ -10,6 +10,8 @@ class ISwitchDisplay;
 class ITraceDisplay;
 class IMidiOutGenerator;
 class TiXmlElement;
+class ExpressionPedals;
+class IMonome40h;
 
 
 class EngineLoader
@@ -18,14 +20,17 @@ public:
 	EngineLoader(IMidiOutGenerator * midiOutGenerator, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay, ITraceDisplay * traceDisplay);
 
 	MidiControlEngine *		CreateEngine(const std::string & engineSettingsFile);
+	void					InitMonome(IMonome40h * monome);
 
 private:
 	bool					LoadSystemConfig(TiXmlElement * pElem);
+	void					LoadExpressionPedalSettings(TiXmlElement * pElem, ExpressionPedals &pedals);
 	void					LoadPatches(TiXmlElement * pElem);
 	void					LoadBanks(TiXmlElement * pElem);
 
 	typedef std::map<int, unsigned int> MidiOutPortToDeviceIdxMap;
 	MidiOutPortToDeviceIdxMap	mMidiOutPortToDeviceIdxMap;
+	bool						mAdcEnables[4];
 
 	MidiControlEngine *		mEngine;
 	IMainDisplay *			mMainDisplay;

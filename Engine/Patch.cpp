@@ -22,7 +22,8 @@ Patch::Patch(int number,
 	mMidiByteStringB(midiStringB),
 	mPatchIsOn(false),
 	mMidiOutPort(midiOutPortNumber),
-	mMidiOut(midiOut)
+	mMidiOut(midiOut),
+	mPedals(midiOut)
 {
 	_ASSERTE(midiOut);
 }

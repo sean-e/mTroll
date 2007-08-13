@@ -2,7 +2,7 @@
 #define ExpressionPedals_h__
 
 typedef unsigned char byte;
-class IMidiOut;
+#include "IMidiOut.h"
 class IMainDisplay;
 
 
@@ -32,21 +32,11 @@ class ExpressionControl
 public:
 	ExpressionControl() : mEnabled(false) { }
 
-	void Init(bool enable, 
-			  bool invert, 
+	void Init(bool invert, 
 			  byte channel, 
 			  byte controlNumber, 
 			  byte minVal, 
-			  byte maxVal)
-	{
-		mEnabled = enable;
-		mInverted = invert;
-		mChannel = channel;
-		mControlNumber = controlNumber;
-		mMinCcVal = minVal;
-		mMaxCcVal = maxVal;
-		mCurCcVal = mPrevCcVal = 255;
-	}
+			  byte maxVal);
 
 	void Calibrate(PedalCalibration & calibrationSetting);
 	void AdcValueChange(IMainDisplay * mainDisplay, IMidiOut * midiOut, int newVal);
@@ -58,8 +48,9 @@ private:
 	byte				mControlNumber;
 	byte				mMinCcVal;
 	byte				mMaxCcVal;
-	byte				mCurCcVal;
+	byte				mCcRange;
 	byte				mPrevCcVal;
+	Bytes				mMidiData;
 };
 
 
@@ -71,7 +62,6 @@ public:
 	ExpressionPedal() { }
 
 	void Init(int idx, 
-			  bool enable, 
 			  bool invert, 
 			  byte channel, 
 			  byte controlNumber, 
@@ -79,7 +69,7 @@ public:
 			  byte maxVal)
 	{
 		_ASSERTE(idx < ccsPerPedals);
-		mPedalControlData[idx].Init(enable, invert, channel, controlNumber, minVal, maxVal);
+		mPedalControlData[idx].Init(invert, channel, controlNumber, minVal, maxVal);
 	}
 
 	void Calibrate(PedalCalibration & calibrationSetting)
@@ -104,7 +94,7 @@ class ExpressionPedals
 public:
 	enum {PedalCount = 4};
 
-	ExpressionPedals() : mMidiOut(NULL)
+	ExpressionPedals(IMidiOut * midiOut = NULL) : mMidiOut(midiOut)
 	{
 		int idx;
 		for (idx = 0; idx < PedalCount; ++idx)
@@ -119,9 +109,10 @@ public:
 		mGlobalEnables[pedal] = enable;
 	}
 
+	void InitMidiOut(IMidiOut * midiOut) {mMidiOut = midiOut;}
+
 	void Init(int pedal, 
 			  int idx, 
-			  bool enable, 
 			  bool invert, 
 			  byte channel, 
 			  byte controlNumber, 
@@ -129,10 +120,8 @@ public:
 			  byte maxVal)
 	{
 		_ASSERTE(pedal < PedalCount);
-		mPedals[pedal].Init(idx, enable, invert, channel, controlNumber, minVal, maxVal);
-
-		if (enable)
-			mPedalEnables[pedal] = true;
+		mPedals[pedal].Init(idx, invert, channel, controlNumber, minVal, maxVal);
+		mPedalEnables[pedal] = true;
 	}
 
 	void Calibrate(PedalCalibration * calibrationSetting)

@@ -5,6 +5,7 @@
 #include "../tinyxml/tinyxml.h"
 #include "HexStringUtils.h"
 #include "IMidiOutGenerator.h"
+#include "..\Monome40h\IMonome40h.h"
 
 
 static PatchBank::PatchState GetLoadState(const std::string & tmpLoad);
@@ -20,6 +21,8 @@ EngineLoader::EngineLoader(IMidiOutGenerator * midiOutGenerator,
 	mSwitchDisplay(switchDisplay),
 	mTraceDisplay(traceDisplay)
 {
+	for (int idx = 0; idx < 4; ++idx)
+		mAdcEnables[idx] = false;
 }
 
 MidiControlEngine *
@@ -120,10 +123,52 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 		mMidiOutPortToDeviceIdxMap[port] = deviceIdx;
 		mMidiOutGenerator->CreateMidiOut(mMidiOutPortToDeviceIdxMap[port], activityIndicatorId);
 	}
-
 	mEngine = new MidiControlEngine(mMainDisplay, mSwitchDisplay, mTraceDisplay, incrementSwitch, decrementSwitch, modeSwitch);
 	mEngine->SetPowerup(powerupBank, powerupPatch, powerupTimeout);
 	mEngine->FilterRedundantProgChg(filterPC ? true : false);
+
+	// <expression port="">
+	//   <globaExpr inputNumber="1" assignmentNumber="1" channel="" controller="" min="" max="" invert="0" enable="" />
+	//   <adc inputNumber="" enable="" />
+	// </expression>
+	ExpressionPedals & globalPedals = mEngine->GetPedals();
+	pChildElem = hRoot.FirstChild("expression").FirstChild().Element();
+	for ( ; pChildElem; pChildElem = pChildElem->NextSiblingElement())
+	{
+		if (pChildElem->ValueStr() == "globalExpr")
+		{
+			LoadExpressionPedalSettings(pChildElem, globalPedals);
+		}
+		else if (pChildElem->ValueStr() == "adc")
+		{
+			int exprInputNumber = -1;
+			int enable = 1;
+
+			pChildElem->QueryIntAttribute("inputNumber", &exprInputNumber);
+			pChildElem->QueryIntAttribute("enable", &enable);
+
+			if (exprInputNumber > 0 &&
+				exprInputNumber < 5)
+			{
+				mAdcEnables[exprInputNumber - 1] = !!enable;
+			}
+		}
+	}
+
+	int midiOutPortNumber = -1;
+	pChildElem = hRoot.FirstChild("expression").Element();
+	if (pChildElem)
+	{
+		pChildElem->QueryIntAttribute("port", &midiOutPortNumber);
+		if (-1 == midiOutPortNumber && mMidiOutPortToDeviceIdxMap.begin() != mMidiOutPortToDeviceIdxMap.end())
+			midiOutPortNumber = (*mMidiOutPortToDeviceIdxMap.begin()).second;
+		IMidiOut * globalExprPedalMidiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[midiOutPortNumber]);
+		if (!globalExprPedalMidiOut)
+			return false;
+
+		globalPedals.InitMidiOut(globalExprPedalMidiOut);
+	}
+
 	return true;
 }
 
@@ -159,7 +204,8 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		TiXmlHandle hRoot(NULL);
 		hRoot = TiXmlHandle(pElem);
 
-		for (TiXmlElement * childElem = hRoot.FirstChild().Element(); 
+		TiXmlElement * childElem;
+		for (childElem = hRoot.FirstChild().Element(); 
 			 childElem; 
 			 childElem = childElem->NextSiblingElement())
 		{
@@ -175,16 +221,44 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 
 		Bytes bytesA;
 		int retval = ::ValidateString(midiByteStringA, bytesA);
-		if (-1 != retval)
+		if (-1 == retval)
+			continue;
+
+		Bytes bytesB;
+		retval = ::ValidateString(midiByteStringB, bytesB);
+		if (-1 == retval)
+			continue;
+
+		Patch & newpatch = mEngine->AddPatch(patchNumber, patchName, patchType, 
+			midiOutPortNumber, 
+			mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[midiOutPortNumber]), 
+			bytesA, bytesB);
+
+		ExpressionPedals & pedals = newpatch.GetPedals();
+		for (childElem = hRoot.FirstChild().Element(); 
+			 childElem; 
+			 childElem = childElem->NextSiblingElement())
 		{
-			Bytes bytesB;
-			retval = ::ValidateString(midiByteStringB, bytesB);
-			if (-1 != retval)
+			if (childElem->ValueStr() == "localExpr")
 			{
-				mEngine->AddPatch(patchNumber, patchName, patchType, 
-					midiOutPortNumber, 
-					mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[midiOutPortNumber]), 
-					bytesA, bytesB);
+				// <localExpr inputNumber="1" assignmentNumber="1" channel="" controller="" min="" max="" invert="0" enable="" />
+				LoadExpressionPedalSettings(childElem, pedals);
+			}
+			else if (childElem->ValueStr() == "globalExpr")
+			{
+				// <globalExpr inputNumber="" enable="" />
+				int exprInputNumber = -1;
+				int enable = 1;
+
+				childElem->QueryIntAttribute("inputNumber", &exprInputNumber);
+				childElem->QueryIntAttribute("enable", &enable);
+
+				if (exprInputNumber > 0 &&
+					exprInputNumber < 5)
+				{
+					ExpressionPedals & pedals = newpatch.GetPedals();
+					pedals.EnableGlobal(exprInputNumber - 1, !!enable);
+				}
 			}
 		}
 	}
@@ -232,6 +306,49 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 			bank.AddPatchMapping(switchNumber - 1, patchNumber, loadState, unloadState);
 		}
 	}
+}
+
+void
+EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem, 
+										  ExpressionPedals &pedals)
+{
+	int exprInputNumber = -1;
+	int assignmentIndex = -1;
+	int channel = -1;
+	int controller = -1;
+	int maxVal = 127;
+	int minVal = 0;
+	int enable = 1;
+	int invert = 0;
+
+	childElem->QueryIntAttribute("inputNumber", &exprInputNumber);
+	childElem->QueryIntAttribute("assignmentNumber", &assignmentIndex);
+	childElem->QueryIntAttribute("channel", &channel);
+	childElem->QueryIntAttribute("controller", &controller);
+	childElem->QueryIntAttribute("max", &maxVal);
+	childElem->QueryIntAttribute("min", &minVal);
+	childElem->QueryIntAttribute("invert", &invert);
+	childElem->QueryIntAttribute("enable", &enable);
+
+	if (enable &&
+		exprInputNumber > 0 &&
+		exprInputNumber < 5 &&
+		assignmentIndex > 0 &&
+		assignmentIndex < 3 &&
+		channel >= 0 &&
+		channel < 16 &&
+		controller >= 0 &&
+		controller < 128)
+	{
+		pedals.Init(exprInputNumber - 1, assignmentIndex - 1, !!invert, channel - 1, controller, minVal, maxVal);
+	}
+}
+
+void
+EngineLoader::InitMonome(IMonome40h * monome)
+{
+	for (int idx = 0; idx < 4; ++idx)
+		monome->EnableAdc(idx, mAdcEnables[idx]);
 }
 
 PatchBank::PatchState

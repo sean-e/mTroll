@@ -6,6 +6,27 @@
 
 
 void
+ExpressionControl::Init(bool invert, 
+						byte channel, 
+						byte controlNumber, 
+						byte minVal, 
+						byte maxVal)
+{
+	mEnabled = true;
+	mInverted = invert;
+	mChannel = channel;
+	mControlNumber = controlNumber;
+	mMinCcVal = minVal;
+	mMaxCcVal = maxVal;
+	mPrevCcVal = 255;
+	mCcRange = mMaxCcVal - mMinCcVal;
+
+	mMidiData.push_back(0xb0 | mChannel);
+	mMidiData.push_back(mControlNumber);
+	mMidiData.push_back(0);
+}
+
+void
 ExpressionControl::Calibrate(PedalCalibration & calibrationSetting)
 {
 	if (!mEnabled)
@@ -22,19 +43,19 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 	if (!mEnabled)
 		return;
 
-	mPrevCcVal = mCurCcVal;
-	mCurCcVal = (newVal * 127) / 1023;
+	mPrevCcVal = mMidiData[2];
 
-	Bytes data;
-	data.push_back(0xb0 | mChannel);
-	data.push_back(mControlNumber);
-	data.push_back(mCurCcVal);
-	midiOut->MidiOut(data);
+	// TODO: support min, max and invert
+	// normal 127 range is 1023
+	byte newCcVal = (newVal * 127) / 1023;
+
+	mMidiData[2] = newCcVal;
+	midiOut->MidiOut(mMidiData);
 
 	if (mainDisplay)
 	{
 		std::strstream displayMsg;
-		displayMsg << "Adc " << (int) mChannel << ", " << (int) mControlNumber << ": " << newVal << ", " << (int) mCurCcVal << std::endl << std::ends;
+		displayMsg << "Adc " << (int) mChannel << ", " << (int) mControlNumber << ": " << newVal << ", " << (int) mMidiData[2] << std::endl << std::ends;
 		mainDisplay->TextOut(displayMsg.str());
 	}
 }
