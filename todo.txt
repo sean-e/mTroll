@@ -10,7 +10,7 @@ adc support
 			<globaExpr inputNumber="1" assignmentNumber="1" channel="" controller="" min="" max="" invert="0" enable="" />
 			<adc inputNumber="" enable="" />
 		</expression>
-	ExpressionControl::AdcValueChange support for min, max, invert
+	ExpressionControl::AdcValueChange support for invert
 	ExpressionControl::Calibrate
 	pedal calibration mode??
 		1 - 4 to select pedal, mode to escape
