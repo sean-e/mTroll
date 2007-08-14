@@ -22,7 +22,7 @@ EngineLoader::EngineLoader(IMidiOutGenerator * midiOutGenerator,
 	mTraceDisplay(traceDisplay)
 {
 	for (int idx = 0; idx < 4; ++idx)
-		mAdcEnables[idx] = false;
+		mAdcEnables[idx] = adc_default;
 }
 
 MidiControlEngine *
@@ -150,7 +150,10 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 			if (exprInputNumber > 0 &&
 				exprInputNumber < 5)
 			{
-				mAdcEnables[exprInputNumber - 1] = !!enable;
+				if (enable)
+					mAdcEnables[exprInputNumber - 1] = adc_forceOn;
+				else
+					mAdcEnables[exprInputNumber - 1] = adc_forceOff;
 			}
 		}
 	}
@@ -342,13 +345,22 @@ EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem,
 	{
 		pedals.Init(exprInputNumber - 1, assignmentIndex - 1, !!invert, channel - 1, controller, minVal, maxVal);
 	}
+
+	if (enable && mAdcEnables[exprInputNumber - 1] == adc_default)
+		mAdcEnables[exprInputNumber - 1] = adc_used;
 }
 
 void
 EngineLoader::InitMonome(IMonome40h * monome)
 {
 	for (int idx = 0; idx < 4; ++idx)
-		monome->EnableAdc(idx, mAdcEnables[idx]);
+	{
+		if (mAdcEnables[idx] == adc_used ||
+			mAdcEnables[idx] == adc_forceOn)
+			monome->EnableAdc(idx, true);
+		else
+			monome->EnableAdc(idx, false);
+	}
 }
 
 PatchBank::PatchState

@@ -30,7 +30,8 @@ private:
 
 	typedef std::map<int, unsigned int> MidiOutPortToDeviceIdxMap;
 	MidiOutPortToDeviceIdxMap	mMidiOutPortToDeviceIdxMap;
-	bool						mAdcEnables[4];
+	enum AdcEnableState {adc_default, adc_used, adc_forceOn, adc_forceOff};
+	AdcEnableState			mAdcEnables[4];
 
 	MidiControlEngine *		mEngine;
 	IMainDisplay *			mMainDisplay;

@@ -67,6 +67,9 @@ meta patch support
 	4.5 in:
 		1024 x 600
 					http://www.umpcportal.com/products/product.php?id=42
+	4.0 in:
+		480 x 272
+					http://www.engadget.com/2007/08/09/newmans-janky-windows-ce-pmp-does-it-all/
 	win standards:
 		640 x 480
 		800 x 600
