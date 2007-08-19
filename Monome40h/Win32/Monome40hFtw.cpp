@@ -88,7 +88,7 @@ Monome40hFtw::LocateMonomeDeviceIdx()
 
 	if (-1 == monomeDevIdx && mTrace)
 	{
-		traceMsg << "ERROR: Failed to located monome device" << std::endl << std::ends;
+		traceMsg << "ERROR: Failed to locate monome device" << std::endl << std::ends;
 		mTrace->Trace(traceMsg.str());
 	}
 
@@ -187,7 +187,6 @@ Monome40hFtw::ReleaseDevice()
 	mShouldContinueListening = false;
 
 	::WaitForSingleObjectEx(mThread, 3000, FALSE);
-	_ASSERTE(!mIsListening);
 	mIsListening = false;
 	CloseHandle(mThread);
 	mThread = NULL;
@@ -389,7 +388,7 @@ Monome40hFtw::ReadInput(byte * readData)
 		{
 			byte port = (readData[0] & 0x0c) >> 2;
 			int value = readData[1];
-			value |= ((readData[0] & 0xfc) << 8);
+			value |= ((readData[0] & 3) << 8);
 			OnAdcChange(port, value);
 		}
 		break;
