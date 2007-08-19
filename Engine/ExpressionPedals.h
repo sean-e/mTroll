@@ -48,7 +48,6 @@ private:
 	byte				mControlNumber;
 	byte				mMinCcVal;
 	byte				mMaxCcVal;
-	byte				mPrevCcVal;
 	Bytes				mMidiData;
 };
 

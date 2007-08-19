@@ -18,7 +18,6 @@ ExpressionControl::Init(bool invert,
 	mControlNumber = controlNumber;
 	mMinCcVal = minVal;
 	mMaxCcVal = maxVal;
-	mPrevCcVal = 255;
 
 	mMidiData.push_back(0xb0 | mChannel);
 	mMidiData.push_back(mControlNumber);
@@ -42,10 +41,8 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 	if (!mEnabled)
 		return;
 
-	mPrevCcVal = mMidiData[2];
-
 	// normal 127 range is 1023
-	byte newCcVal = (newVal * 127) / 1023;
+	byte newCcVal = (newVal * 127) / 319;//1023;
 	if (newCcVal > mMaxCcVal)
 		newCcVal = mMaxCcVal;
 	else if (newCcVal < mMinCcVal)
@@ -55,6 +52,9 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 	{
 		// TODO: support invert
 	}
+
+	if (mMidiData[2] == newCcVal)
+		return;
 
 	mMidiData[2] = newCcVal;
 	midiOut->MidiOut(mMidiData);
