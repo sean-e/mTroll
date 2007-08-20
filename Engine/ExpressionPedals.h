@@ -10,8 +10,8 @@ struct PedalCalibration
 {
 	PedalCalibration() : 
 		mMinAdcVal(0),
-		mMaxAdcVal(10000),
-		mAdcRange(10000)
+		mMaxAdcVal(1023),
+		mAdcRange(mMaxAdcVal - mMinAdcVal)
 	{ }
 
 	void Init(int minVal, int maxVal)
@@ -48,6 +48,8 @@ private:
 	byte				mControlNumber;
 	byte				mMinCcVal;
 	byte				mMaxCcVal;
+	int					mPrevAdcVals[2];
+	byte				mCcValRange;
 	Bytes				mMidiData;
 };
 
