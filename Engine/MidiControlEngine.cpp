@@ -171,7 +171,7 @@ MidiControlEngine::LoadStartupBank()
 void
 MidiControlEngine::SwitchPressed(int switchNumber)
 {
-	if (mTrace)
+	if (0 && mTrace)
 	{
 		std::strstream msg;
 		msg << "SwitchPressed: " << switchNumber << std::endl << std::ends;
@@ -201,7 +201,7 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 void
 MidiControlEngine::SwitchReleased(int switchNumber)
 {
-	if (mTrace)
+	if (0 && mTrace)
 	{
 		std::strstream msg;
 		msg << "SwitchReleased: " << switchNumber << std::endl << std::ends;

@@ -96,7 +96,7 @@ WinMidiOut::MidiOut(const Bytes & bytes)
 {
 	if (!mMidiOut)
 	{
-		if (mTrace)
+		if (0 && mTrace)
 			mTrace->Trace("midiout is not open.\n");
 		return false;
 	}
@@ -213,7 +213,7 @@ WinMidiOut::MidiOut(const Bytes & bytes)
 			::Sleep(kDelayTime);
 	}
 
-	if (mTrace && !mMidiOutError)
+	if (0 && mTrace && !mMidiOutError)
 		mTrace->Trace("Transmission complete.\n");
 
 	return true;
