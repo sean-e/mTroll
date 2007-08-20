@@ -1,3 +1,4 @@
+#include <strstream>
 #include "EngineLoader.h"
 #include "MidiControlEngine.h"
 #include "PatchBank.h"
@@ -5,6 +6,7 @@
 #include "../tinyxml/tinyxml.h"
 #include "HexStringUtils.h"
 #include "IMidiOutGenerator.h"
+#include "ITraceDisplay.h"
 #include "..\Monome40h\IMonome40h.h"
 
 
@@ -357,9 +359,25 @@ EngineLoader::InitMonome(IMonome40h * monome)
 	{
 		if (mAdcEnables[idx] == adc_used ||
 			mAdcEnables[idx] == adc_forceOn)
+		{
 			monome->EnableAdc(idx, true);
+			if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "  ADC port " << idx << " enabled" << std::endl << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
+		}
 		else
+		{
 			monome->EnableAdc(idx, false);
+			if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "  ADC port " << idx << " disabled" << std::endl << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
+		}
 	}
 }
 
