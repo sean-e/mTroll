@@ -39,7 +39,8 @@ Monome40hFtw::Monome40hFtw(ITraceDisplay * trace) :
 	mIsListening(false),
 	mShouldContinueListening(true),
 	mThread(NULL),
-	mServicingSubscribers(false)
+	mServicingSubscribers(false),
+	mConsecutiveReadErrors(0)
 {
 	HMODULE hMod = ::LoadLibrary("FTD2XX.dll");
 	if (!hMod)
@@ -76,13 +77,16 @@ Monome40hFtw::LocateMonomeDeviceIdx()
 	for (int idx = 0; idx < numDevs; ++idx)
 	{
 		std::string serial(GetDeviceSerialNumber(idx));
-		if (-1 == monomeDevIdx && serial.find("m40h") != -1)
-			monomeDevIdx = idx;
-
 		if (mTrace)
 		{
 			traceMsg << "FT device " << idx << " serial: " << serial << std::endl << std::ends;
 			mTrace->Trace(traceMsg.str());
+		}
+
+		if (-1 == monomeDevIdx && serial.find("m40h") != -1)
+		{
+			monomeDevIdx = idx;
+			break;
 		}
 	}
 
@@ -186,7 +190,7 @@ Monome40hFtw::ReleaseDevice()
 
 	mShouldContinueListening = false;
 
-	::WaitForSingleObjectEx(mThread, 3000, FALSE);
+	::WaitForSingleObjectEx(mThread, 6000, FALSE);
 	mIsListening = false;
 	CloseHandle(mThread);
 	mThread = NULL;
@@ -337,7 +341,7 @@ Monome40hFtw::OnButtonChange(bool pressed, byte row, byte col)
 		if (pressed)
 		{
 			(*it)->SwitchPressed(row, col);
-			if (mTrace)
+			if (0 && mTrace)
 			{
 				std::strstream traceMsg;
 				traceMsg << "monome button press: row " << (int) row << ", column " << (int) col << std::endl << std::ends;
@@ -347,7 +351,7 @@ Monome40hFtw::OnButtonChange(bool pressed, byte row, byte col)
 		else
 		{
 			(*it)->SwitchReleased(row, col);
-			if (mTrace)
+			if (0 && mTrace)
 			{
 				std::strstream traceMsg;
 				traceMsg << "monome button release: row " << (int) row << ", column " << (int) col << std::endl << std::ends;
@@ -407,6 +411,7 @@ Monome40hFtw::DeviceServiceThread()
 {
 	mIsListening = true;
 
+	bool aborted = false;
 	const int kDataLen = 2;
 	byte readData[kDataLen];
 	DWORD bytesRead;
@@ -418,6 +423,7 @@ Monome40hFtw::DeviceServiceThread()
 		int readRetVal = ::FT_W32_ReadFile(mFtDevice, readData, kDataLen, &bytesRead, NULL);
 		if (readRetVal)
 		{
+			mConsecutiveReadErrors = 0;
 			if (FT_IO_ERROR == readRetVal)
 			{
 				if (mTrace)
@@ -454,15 +460,32 @@ Monome40hFtw::DeviceServiceThread()
 				// timeout
 			}
 		}
-		else if (mTrace)
+		else
 		{
-			std::strstream traceMsg;
-			traceMsg << "monome read error" << std::endl << std::ends;
-			mTrace->Trace(traceMsg.str());
+			if (++mConsecutiveReadErrors > 10)
+			{
+				mShouldContinueListening = false;
+				aborted = true;
+				if (mTrace)
+				{
+					std::strstream traceMsg;
+					traceMsg << "aborting monome thread due to read errors" << std::endl << std::ends;
+					mTrace->Trace(traceMsg.str());
+				}
+			}
+
+			if (mTrace)
+			{
+				std::strstream traceMsg;
+				traceMsg << "monome read error" << std::endl << std::ends;
+				mTrace->Trace(traceMsg.str());
+			}
 		}
 	}
 
-	ServiceCommands();
+	if (!aborted)
+		ServiceCommands();
+
 	mIsListening = false;
 }
 

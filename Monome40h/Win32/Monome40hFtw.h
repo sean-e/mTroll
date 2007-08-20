@@ -79,6 +79,7 @@ private:
 	volatile bool					mServicingSubscribers;
 	volatile bool					mIsListening;
 	volatile bool					mShouldContinueListening;
+	int								mConsecutiveReadErrors;
 };
 
 #endif // Monome40h_h__
