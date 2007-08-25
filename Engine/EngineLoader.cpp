@@ -265,7 +265,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				childElem->QueryIntAttribute("enable", &enable);
 
 				if (exprInputNumber > 0 &&
-					exprInputNumber < 5)
+					exprInputNumber <= ExpressionPedals::PedalCount)
 				{
 					ExpressionPedals & pedals = newpatch.GetPedals();
 					pedals.EnableGlobal(exprInputNumber - 1, !!enable);

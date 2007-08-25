@@ -109,8 +109,6 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 {
 	std::sort(mBanks.begin(), mBanks.end(), SortByBankNumber);
 
-	CalibrateExprSettings(pedalCalibrationSettings);
-
 	int itIdx = 0;
 	for (Banks::iterator it = mBanks.begin();
 		it != mBanks.end();
@@ -120,6 +118,7 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 		curItem->InitPatches(mPatches);
 	}
 
+	CalibrateExprSettings(pedalCalibrationSettings);
 	ChangeMode(emBank);
 	
 	if (mTrace)
