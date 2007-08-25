@@ -105,11 +105,11 @@ MidiControlEngine::SetPowerup(int powerupBank,
 // were only added after all patches had been added (AddBank 
 // would then need to maintain sort)
 void
-MidiControlEngine::CompleteInit()
+MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSettings)
 {
 	std::sort(mBanks.begin(), mBanks.end(), SortByBankNumber);
 
-	CalibrateExprSettings();
+	CalibrateExprSettings(pedalCalibrationSettings);
 
 	int itIdx = 0;
 	for (Banks::iterator it = mBanks.begin();
@@ -133,16 +133,16 @@ MidiControlEngine::CompleteInit()
 }
 
 void
-MidiControlEngine::CalibrateExprSettings()
+MidiControlEngine::CalibrateExprSettings(const PedalCalibration * pedalCalibrationSettings)
 {
-	mPedals.Calibrate(mPedalCalibration);
+	mPedals.Calibrate(pedalCalibrationSettings);
 
 	for (Banks::iterator it = mBanks.begin();
 		it != mBanks.end();
 		++it)
 	{
 		PatchBank * curItem = *it;
-		curItem->CalibrateExprSettings(mPedalCalibration);
+		curItem->CalibrateExprSettings(pedalCalibrationSettings);
 	}
 }
 

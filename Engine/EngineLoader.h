@@ -3,6 +3,7 @@
 
 #include <string>
 #include <map>
+#include "ExpressionPedals.h"
 
 class MidiControlEngine;
 class IMainDisplay;
@@ -10,7 +11,6 @@ class ISwitchDisplay;
 class ITraceDisplay;
 class IMidiOutGenerator;
 class TiXmlElement;
-class ExpressionPedals;
 class IMonome40h;
 
 
@@ -31,7 +31,8 @@ private:
 	typedef std::map<int, unsigned int> MidiOutPortToDeviceIdxMap;
 	MidiOutPortToDeviceIdxMap	mMidiOutPortToDeviceIdxMap;
 	enum AdcEnableState {adc_default, adc_used, adc_forceOn, adc_forceOff};
-	AdcEnableState			mAdcEnables[4];
+	AdcEnableState			mAdcEnables[ExpressionPedals::PedalCount];
+	PedalCalibration		mAdcCalibration[ExpressionPedals::PedalCount];
 
 	MidiControlEngine *		mEngine;
 	IMainDisplay *			mMainDisplay;

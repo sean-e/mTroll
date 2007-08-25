@@ -32,8 +32,7 @@ public:
 	Patch &					AddPatch(int number, const std::string & name, Patch::PatchType patchType, int midiOutPortNumber, IMidiOut * midiOut, const Bytes & midiStringA, const Bytes & midiStringB);
 	void					SetPowerup(int powerupBank, int powerupPatch, int powerupTimeout);
 	void					FilterRedundantProgChg(bool filter) {mFilterRedundantProgramChanges = filter;}
-	void					CalibrateExprSettings();
-	void					CompleteInit();
+	void					CompleteInit(const PedalCalibration * pedalCalibrationSettings);
 
 	ExpressionPedals &		GetPedals() {return mPedals;}
 
@@ -48,6 +47,7 @@ private:
 	PatchBank *				GetBank(int bankIndex);
 	int						GetBankIndex(int bankNumber);
 	void					UpdateBankModeSwitchDisplay();
+	void					CalibrateExprSettings(const PedalCalibration * pedalCalibrationSettings);
 	enum EngineMode 
 	{ 
 		emCreated = -1,		// initial state - no data loaded
@@ -88,7 +88,6 @@ private:
 	int						mModeDefaultSwitchNumber;
 	int						mModeBankNavSwitchNumber;
 	int						mModeBankDescSwitchNumber;
-	PedalCalibration		mPedalCalibration[ExpressionPedals::PedalCount];
 	ExpressionPedals		mPedals;
 };
 

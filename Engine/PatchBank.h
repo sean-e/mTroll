@@ -27,7 +27,7 @@ public:
 	// creation/init
 	void AddPatchMapping(int switchNumber, int patchNumber, PatchState patchLoadState, PatchState patchUnloadState);
 	void InitPatches(const MidiControlEngine::Patches & patches);
-	void CalibrateExprSettings(PedalCalibration * pedalCalibration);
+	void CalibrateExprSettings(const PedalCalibration * pedalCalibration);
 
 	void Load(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 	void Unload(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);

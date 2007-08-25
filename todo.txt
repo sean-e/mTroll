@@ -1,5 +1,6 @@
 [todo]
 adc support
+	Raymond export support
 	load of patch pedal settings
 		<globalExpr inputNumber="" enable="" />
 		<localExpr inputNumber="1" assignmentNumber="1" channel="" controller="" min="" max="" invert="0" enable="" />
@@ -7,19 +8,14 @@ adc support
 			assignment 1-2
 	load of global patch settings and midiout
 		<expression port="">
+			<adc inputNumber="" enable="" maximumAdcVal="" minimumAdcVal="" />
 			<globalExpr inputNumber="1" assignmentNumber="1" channel="" controller="" min="" max="" invert="0" enable="" />
-			<adc inputNumber="" enable="" />
 		</expression>
-	ExpressionControl::Calibrate
-	pedal calibration mode??
-		1 - 4 to select pedal, mode to escape
-		1 to record toe down - max
-		1 to record toe up - min
-		back to 1 - 4
 put activity led on timer
 meta patch support
-	test leds
+	reset specific patches
 	reset all patches
+	reset patches in bank
 
 
 [pedalboard sizes]		w		d		h			area	hspace	url
@@ -80,6 +76,11 @@ meta patch support
 bank sequence
 song
 set
+pedal calibrate
+	1 - 4 to select pedal, mode to escape
+	1 to record toe down - max
+	1 to record toe up - min
+	back to 1 - 4
 
 
 [parts list]

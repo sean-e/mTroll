@@ -71,7 +71,7 @@ PatchBank::InitPatches(const MidiControlEngine::Patches & enginePatches)
 }
 
 void
-PatchBank::CalibrateExprSettings(PedalCalibration * pedalCalibration)
+PatchBank::CalibrateExprSettings(const PedalCalibration * pedalCalibration)
 {
 	for (PatchMaps::iterator it = mPatches.begin();
 		it != mPatches.end();

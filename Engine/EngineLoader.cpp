@@ -60,7 +60,7 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 	LoadBanks(pElem);
 
 	mMidiOutGenerator->OpenMidiOuts();
-	mEngine->CompleteInit();
+	mEngine->CompleteInit(mAdcCalibration);
 
 	MidiControlEngine * createdEngine = mEngine;
 	mEngine = NULL;
@@ -145,17 +145,23 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 		{
 			int exprInputNumber = -1;
 			int enable = 1;
+			int minVal = 0;
+			int maxVal = PedalCalibration::MaxAdcVal;
 
 			pChildElem->QueryIntAttribute("inputNumber", &exprInputNumber);
 			pChildElem->QueryIntAttribute("enable", &enable);
+			pChildElem->QueryIntAttribute("mininumAdcVal", &minVal);
+			pChildElem->QueryIntAttribute("maximumAdcVal", &maxVal);
 
 			if (exprInputNumber > 0 &&
-				exprInputNumber < 5)
+				exprInputNumber <= ExpressionPedals::PedalCount)
 			{
 				if (enable)
 					mAdcEnables[exprInputNumber - 1] = adc_forceOn;
 				else
 					mAdcEnables[exprInputNumber - 1] = adc_forceOff;
+
+				mAdcCalibration[exprInputNumber - 1].Init(minVal, maxVal);
 			}
 		}
 	}
@@ -337,7 +343,7 @@ EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem,
 
 	if (enable &&
 		exprInputNumber > 0 &&
-		exprInputNumber < 5 &&
+		exprInputNumber <= ExpressionPedals::PedalCount &&
 		assignmentIndex > 0 &&
 		assignmentIndex < 3 &&
 		channel >= 0 &&

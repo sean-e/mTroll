@@ -31,12 +31,11 @@ ExpressionControl::Init(bool invert,
 }
 
 void
-ExpressionControl::Calibrate(PedalCalibration & calibrationSetting)
+ExpressionControl::Calibrate(const PedalCalibration & calibrationSetting)
 {
-	if (!mEnabled)
-		return;
-
-	// do stuff
+	mMinAdcVal = calibrationSetting.mMinAdcVal;
+	mMaxAdcVal = calibrationSetting.mMaxAdcVal;
+	mAdcValRange = mMaxAdcVal - mMinAdcVal;
 }
 
 void
@@ -63,15 +62,12 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 	mPrevAdcVals[1] = mPrevAdcVals[0];
 	mPrevAdcVals[0] = newAdcVal;
 
-	const int kMinAdcVal = 60; // cap min 0
-	const int kMaxAdcVal = 305; // 1023; // cap max 1023
-	const int kAdcValRange = kMaxAdcVal - kMinAdcVal;
-	const int cappedAdcVal = newAdcVal < kMinAdcVal ? 
-			kMinAdcVal : 
-			(newAdcVal > kMaxAdcVal) ? kMaxAdcVal : newAdcVal;
+	const int cappedAdcVal = newAdcVal < mMinAdcVal ? 
+			mMinAdcVal : 
+			(newAdcVal > mMaxAdcVal) ? mMaxAdcVal : newAdcVal;
 
 	// normal 127 range is 1023
-	byte newCcVal = ((cappedAdcVal - kMinAdcVal) * mCcValRange) / kAdcValRange;
+	byte newCcVal = ((cappedAdcVal - mMinAdcVal) * mCcValRange) / mAdcValRange;
 	newCcVal += mMinCcVal;
 	if (newCcVal > mMaxCcVal)
 		newCcVal = mMaxCcVal;

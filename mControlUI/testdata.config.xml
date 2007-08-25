@@ -11,6 +11,16 @@
 			<midiDevice port="1" outIdx="1" activityIndicatorId="23" />
 			<midiDevice port="2" outIdx="3" activityIndicatorId="23" />
 		</midiDevices>
+		<expression port="1">
+			<adc inputNumber="1" enable="1" maximumAdcVal="0" minimumAdcVal="1023" />
+			<adc inputNumber="2" enable="1" maximumAdcVal="0" minimumAdcVal="1023" />
+			<adc inputNumber="3" enable="1" maximumAdcVal="0" minimumAdcVal="1023" />
+			<adc inputNumber="4" enable="1" maximumAdcVal="0" minimumAdcVal="1023" />
+			<globalExpr inputNumber="1" assignmentNumber="1" channel="12" controller="1" min="0" max="127" invert="0" enable="1" />
+			<globalExpr inputNumber="2" assignmentNumber="1" channel="12" controller="2" min="0" max="127" invert="0" enable="1" />
+			<globalExpr inputNumber="3" assignmentNumber="1" channel="12" controller="3" min="0" max="127" invert="0" enable="1" />
+			<globalExpr inputNumber="4" assignmentNumber="1" channel="12" controller="4" min="0" max="127" invert="0" enable="1" />
+		</expression>
 	</SystemConfig>
 	<patches>
 		<patch name="DRV TOGGLE" number="1" type="toggle" port="1">

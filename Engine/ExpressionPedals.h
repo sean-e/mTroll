@@ -1,36 +1,40 @@
 #ifndef ExpressionPedals_h__
 #define ExpressionPedals_h__
 
-typedef unsigned char byte;
 #include "IMidiOut.h"
+
 class IMainDisplay;
 
 
 struct PedalCalibration
 {
+	enum {MaxAdcVal = 1023};
+
 	PedalCalibration() : 
 		mMinAdcVal(0),
-		mMaxAdcVal(1023),
-		mAdcRange(mMaxAdcVal - mMinAdcVal)
+		mMaxAdcVal(MaxAdcVal)
 	{ }
 
 	void Init(int minVal, int maxVal)
 	{
 		mMinAdcVal = minVal;
 		mMaxAdcVal = maxVal;
-		mAdcRange = maxVal - minVal;
 	}
 
 	int		mMinAdcVal;
 	int		mMaxAdcVal;
-	int		mAdcRange;
 };
 
 
 class ExpressionControl
 {
 public:
-	ExpressionControl() : mEnabled(false) { }
+	ExpressionControl() : 
+		mEnabled(false), 
+		mMinAdcVal(0), 
+		mMaxAdcVal(PedalCalibration::MaxAdcVal), 
+		mAdcValRange(PedalCalibration::MaxAdcVal) 
+	{ }
 
 	void Init(bool invert, 
 			  byte channel, 
@@ -38,7 +42,7 @@ public:
 			  byte minVal, 
 			  byte maxVal);
 
-	void Calibrate(PedalCalibration & calibrationSetting);
+	void Calibrate(const PedalCalibration & calibrationSetting);
 	void AdcValueChange(IMainDisplay * mainDisplay, IMidiOut * midiOut, int newVal);
 
 private:
@@ -51,6 +55,10 @@ private:
 	int					mPrevAdcVals[2];
 	byte				mCcValRange;
 	Bytes				mMidiData;
+
+	int					mMinAdcVal;
+	int					mMaxAdcVal;
+	int					mAdcValRange;
 };
 
 
@@ -72,7 +80,7 @@ public:
 		mPedalControlData[idx].Init(invert, channel, controlNumber, minVal, maxVal);
 	}
 
-	void Calibrate(PedalCalibration & calibrationSetting)
+	void Calibrate(const PedalCalibration & calibrationSetting)
 	{
 		mPedalControlData[0].Calibrate(calibrationSetting);
 		mPedalControlData[1].Calibrate(calibrationSetting);
@@ -124,7 +132,7 @@ public:
 		mPedalEnables[pedal] = true;
 	}
 
-	void Calibrate(PedalCalibration * calibrationSetting)
+	void Calibrate(const PedalCalibration * calibrationSetting)
 	{
 		for (int idx = 0; idx < PedalCount; ++idx)
 			mPedals[idx].Calibrate(calibrationSetting[idx]);
