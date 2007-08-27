@@ -1,16 +1,4 @@
 [todo]
-adc support
-	Raymond export support
-	load of patch pedal settings
-		<globalExpr inputNumber="" enable="" />
-		<localExpr inputNumber="1" assignmentNumber="1" channel="" controller="" min="" max="" invert="0" enable="" />
-			input 1-4
-			assignment 1-2
-	load of global patch settings and midiout
-		<expression port="">
-			<adc inputNumber="" enable="" maximumAdcVal="" minimumAdcVal="" />
-			<globalExpr inputNumber="1" assignmentNumber="1" channel="" controller="" min="" max="" invert="0" enable="" />
-		</expression>
 put activity led on timer
 meta patch support
 	reset specific patches
