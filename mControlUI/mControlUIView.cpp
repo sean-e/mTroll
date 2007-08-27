@@ -168,6 +168,9 @@ CMControlUIView::LoadUi(const std::string & uiSettingsFile)
 		Trace("\n");
 		midiOut->CloseMidiOut();
 	}
+
+	if (mSwitches[0])
+		mSwitches[0]->SetFocus();
 }
 
 void
