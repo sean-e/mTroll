@@ -223,7 +223,7 @@
 		</patch>
 		<patch name="SLEESTAKS" number="56" type="normal" port="1">
 			<globalExpr inputNumber="2" enable="0" />
-			<localExpr inputNumber="2" assignmentNumber="1" channel="4" controller="0" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="2" assignmentNumber="1" channel="5" controller="0" min="0" max="127" invert="0" enable="1" />
 			<midiByteString name="A">ca 0e c4 17</midiByteString>
 		</patch>
 		<patch name="STRINGPAD" number="57" type="normal" port="1">
@@ -327,15 +327,15 @@
 		</patch>
 		<patch name="DHP PEDAL 2" number="90" type="normal" port="1">
 			<globalExpr inputNumber="2" enable="0" />
-			<localExpr inputNumber="2" assignmentNumber="1" channel="4" controller="0" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="2" assignmentNumber="1" channel="5" controller="0" min="0" max="127" invert="0" enable="1" />
 		</patch>
 		<patch name="SWB PEDAL 2" number="91" type="normal" port="1">
 			<globalExpr inputNumber="2" enable="0" />
-			<localExpr inputNumber="2" assignmentNumber="1" channel="10" controller="111" min="0" max="127" invert="1" enable="1" />
+			<localExpr inputNumber="2" assignmentNumber="1" channel="11" controller="111" min="0" max="127" invert="1" enable="1" />
 		</patch>
 		<patch name="H35 PEDAL 2" number="92" type="normal" port="1">
 			<globalExpr inputNumber="2" enable="0" />
-			<localExpr inputNumber="2" assignmentNumber="1" channel="5" controller="0" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="2" assignmentNumber="1" channel="6" controller="0" min="0" max="127" invert="0" enable="1" />
 		</patch>
 		<patch name="DEFAULT PEDALS" number="93" type="normal" port="1">
 		</patch>
@@ -677,15 +677,15 @@
 		</patch>
 		<patch name="FF LFO DEPTH P2" number="362" type="normal" port="1">
 			<globalExpr inputNumber="2" enable="0" />
-			<localExpr inputNumber="2" assignmentNumber="1" channel="11" controller="1" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="2" assignmentNumber="1" channel="12" controller="1" min="0" max="127" invert="0" enable="1" />
 		</patch>
 		<patch name="FF PRE-BUZZ P2" number="363" type="normal" port="1">
 			<globalExpr inputNumber="2" enable="0" />
-			<localExpr inputNumber="2" assignmentNumber="1" channel="11" controller="2" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="2" assignmentNumber="1" channel="12" controller="2" min="0" max="127" invert="0" enable="1" />
 		</patch>
 		<patch name="FF POST-BUZZ P2" number="364" type="normal" port="1">
 			<globalExpr inputNumber="2" enable="0" />
-			<localExpr inputNumber="2" assignmentNumber="1" channel="11" controller="3" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="2" assignmentNumber="1" channel="12" controller="3" min="0" max="127" invert="0" enable="1" />
 		</patch>
 		<patch name="FF BUZZ ENG" number="365" type="normal" port="1">
 			<midiByteString name="A">bb 04 7f</midiByteString>
@@ -695,15 +695,15 @@
 		</patch>
 		<patch name="FF FILT FREQ P2" number="367" type="normal" port="1">
 			<globalExpr inputNumber="2" enable="0" />
-			<localExpr inputNumber="2" assignmentNumber="1" channel="11" controller="5" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="2" assignmentNumber="1" channel="12" controller="5" min="0" max="127" invert="0" enable="1" />
 		</patch>
 		<patch name="FF WET/DRY P2" number="368" type="normal" port="1">
 			<globalExpr inputNumber="2" enable="0" />
-			<localExpr inputNumber="2" assignmentNumber="1" channel="11" controller="6" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="2" assignmentNumber="1" channel="12" controller="6" min="0" max="127" invert="0" enable="1" />
 		</patch>
 		<patch name="FF FILT RES P2" number="369" type="normal" port="1">
 			<globalExpr inputNumber="2" enable="0" />
-			<localExpr inputNumber="2" assignmentNumber="1" channel="11" controller="7" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="2" assignmentNumber="1" channel="12" controller="7" min="0" max="127" invert="0" enable="1" />
 		</patch>
 		<patch name="FF LO PASS FLTR" number="370" type="normal" port="1">
 			<midiByteString name="A">bb 08 00</midiByteString>
@@ -749,7 +749,7 @@
 		</patch>
 		<patch name="FF FILT RATE P2" number="384" type="normal" port="1">
 			<globalExpr inputNumber="2" enable="0" />
-			<localExpr inputNumber="2" assignmentNumber="1" channel="11" controller="12" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="2" assignmentNumber="1" channel="12" controller="12" min="0" max="127" invert="0" enable="1" />
 		</patch>
 		<patch name="FF LFO 1/1 DIV" number="385" type="normal" port="1">
 			<midiByteString name="A">bb 0d 00</midiByteString>
