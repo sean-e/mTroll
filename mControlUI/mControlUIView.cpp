@@ -281,13 +281,29 @@ CMControlUIView::TextOut(const std::string & txt)
 {
 	if (mMainDisplay)
 	{
-		CStringA newTxt(txt.c_str());
+		std::string * str = new std::string(txt);
+		PostMessage(WM_ASYNCTEXTOUT, (WPARAM)str);
+	}
+}
+
+LRESULT
+CMControlUIView::AsyncTextOut(UINT uMsg, WPARAM wParam, LPARAM /*lParam*/, BOOL& bHandled)
+{
+	_ASSERTE(uMsg == WM_ASYNCTEXTOUT);
+	std::string *txt = reinterpret_cast<std::string*>(wParam);
+	_ASSERTE(txt);
+	if (mMainDisplay)
+	{
+		CStringA newTxt(txt->c_str());
 		newTxt.Replace("\n", "\r\n");
 		CStringA prevTxt;
 		mMainDisplay->GetWindowText(prevTxt);
 		if (newTxt != prevTxt)
 			mMainDisplay->SetText(newTxt);
 	}
+	delete txt;
+	bHandled = TRUE;
+	return 1;
 }
 
 void

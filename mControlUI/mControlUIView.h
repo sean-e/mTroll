@@ -38,12 +38,12 @@ public:
 	typedef CLabel				SwitchTextDisplay;
 	typedef CButton				Switch;
 
-	HWND Create(HWND hWndParent, LPARAM dwInitParam = NULL);
-	void Load(const std::string & settingsBasefile);
-	void Unload();
+			HWND Create(HWND hWndParent, LPARAM dwInitParam = NULL);
+			void Load(const std::string & settingsBasefile);
+			void Unload();
 
-	BOOL PreTranslateMessage(MSG* pMsg);
-	void GetPreferredSize(int & width, int & height) const {width = mPreferredWidth; height = mPreferredHeight;}
+			BOOL PreTranslateMessage(MSG* pMsg);
+			void GetPreferredSize(int & width, int & height) const {width = mPreferredWidth; height = mPreferredHeight;}
 
 public: // IMidiOutGenerator
 	virtual IMidiOut *	CreateMidiOut(unsigned int deviceIdx, int activityIndicatorIdx);
@@ -52,36 +52,39 @@ public: // IMidiOutGenerator
 	virtual void		CloseMidiOuts();
 
 public: // IMainDisplay
-	virtual void TextOut(const std::string & txt);
-	virtual void ClearDisplay();
+	virtual void		TextOut(const std::string & txt);
+	virtual void		ClearDisplay();
 
 public: // ITraceDisplay
-	virtual void Trace(const std::string & txt);
+	virtual void		Trace(const std::string & txt);
 
 public: // ISwitchDisplay
-	virtual void SetSwitchDisplay(int switchNumber, bool isOn);
-	virtual void SetSwitchText(int switchNumber, const std::string & txt);
-	virtual void ClearSwitchText(int switchNumber);
+	virtual void		SetSwitchDisplay(int switchNumber, bool isOn);
+	virtual void		SetSwitchText(int switchNumber, const std::string & txt);
+	virtual void		ClearSwitchText(int switchNumber);
 
 public: // IMonome40hInputSubscriber
-	virtual void SwitchPressed(byte row, byte column);
-	virtual void SwitchReleased(byte row, byte column);
-	virtual void AdcValueChanged(int port, int curValue);
+	virtual void		SwitchPressed(byte row, byte column);
+	virtual void		SwitchReleased(byte row, byte column);
+	virtual	void		AdcValueChanged(int port, int curValue);
 
 private: // IMidiControlUi
-	virtual void	AddSwitchMapping(int switchNumber, int row, int col);
-	virtual void	SetSwitchLedConfig(int width, int height, unsigned int onColor, unsigned int offColor);
-	virtual void	CreateSwitchLed(int id, int top, int left);
-	virtual void	SetSwitchConfig(int width, int height, const std::string & fontName, int fontHeight, bool bold);
-	virtual void	CreateSwitch(int id, const std::string & label, int top, int left);
-	virtual void	SetSwitchTextDisplayConfig(int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor);
-	virtual void	CreateSwitchTextDisplay(int id, int top, int left);
-	virtual void	CreateMainDisplay(int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor);
-	virtual void	CreateTraceDisplay(int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold);
-	virtual void	CreateStaticLabel(const std::string & label, int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor);
-	virtual void	SetMainSize(int width, int height);
+	virtual void		AddSwitchMapping(int switchNumber, int row, int col);
+	virtual void		SetSwitchLedConfig(int width, int height, unsigned int onColor, unsigned int offColor);
+	virtual void		CreateSwitchLed(int id, int top, int left);
+	virtual void		SetSwitchConfig(int width, int height, const std::string & fontName, int fontHeight, bool bold);
+	virtual void		CreateSwitch(int id, const std::string & label, int top, int left);
+	virtual void		SetSwitchTextDisplayConfig(int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor);
+	virtual void		CreateSwitchTextDisplay(int id, int top, int left);
+	virtual void		CreateMainDisplay(int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor);
+	virtual void		CreateTraceDisplay(int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold);
+	virtual void		CreateStaticLabel(const std::string & label, int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor);
+	virtual void		SetMainSize(int width, int height);
+
+	enum {WM_ASYNCTEXTOUT = WM_USER + 1};
 
 	BEGIN_MSG_MAP(CMControlUIView)
+		MESSAGE_HANDLER(WM_ASYNCTEXTOUT, AsyncTextOut)
 		NOTIFY_CODE_HANDLER(NM_CUSTOMDRAW, OnNotifyCustomDraw)
 		COMMAND_HANDLER(0, BN_CLICKED, OnBnPushed)
 		COMMAND_HANDLER(1, BN_CLICKED, OnBnPushed)
@@ -124,6 +127,8 @@ private:
 //	LRESULT NotifyHandler(int /*idCtrl*/, LPNMHDR /*pnmh*/, BOOL& /*bHandled*/)
 	LRESULT OnNotifyCustomDraw(int idCtrl, LPNMHDR pNotifyStruct, BOOL& /*bHandled*/);
 	LRESULT OnBnPushed(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
+	LRESULT AsyncTextOut(UINT uMsg, WPARAM wParam, LPARAM /*lParam*/, BOOL& bHandled);
+
 	void LoadUi(const std::string & uiSettingsFile);
 	void LoadMonome();
 	void LoadMidiSettings(const std::string & file);
