@@ -50,7 +50,7 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 		return;
 	if (mPrevAdcVals[1] == newAdcVal)
 	{
-		if (mainDisplay)
+		if (0 && mainDisplay)
 		{
 			std::strstream displayMsg;
 			displayMsg << "adc val repeat: " << newAdcVal << std::endl << std::ends;
@@ -86,6 +86,11 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 	if (mainDisplay)
 	{
 		std::strstream displayMsg;
+		if (newCcVal == mMinCcVal)
+			displayMsg << "**MIN** ";
+		else if (newCcVal == mMaxCcVal)
+			displayMsg << "**MAX** ";
+
 		displayMsg << "Adc " << (int) mChannel << ", " << (int) mControlNumber << ": " << newAdcVal << ", " << (int) mMidiData[2] << std::endl << std::ends;
 		mainDisplay->TextOut(displayMsg.str());
 	}
