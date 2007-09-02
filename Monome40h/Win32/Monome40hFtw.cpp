@@ -39,6 +39,7 @@ Monome40hFtw::Monome40hFtw(ITraceDisplay * trace) :
 	mIsListening(false),
 	mShouldContinueListening(true),
 	mThread(NULL),
+	mThreadId(0),
 	mServicingSubscribers(false),
 	mConsecutiveReadErrors(0)
 {
@@ -178,7 +179,7 @@ Monome40hFtw::AcquireDevice(const std::string & devSerialNum)
 
 	// startup listener
 	mShouldContinueListening = true;
-	mThread = (HANDLE)_beginthreadex(NULL, 0, DeviceServiceThread, this, 0, NULL);
+	mThread = (HANDLE)_beginthreadex(NULL, 0, DeviceServiceThread, this, 0, (unsigned int*)&mThreadId);
 	return mThread != NULL && mThread != INVALID_HANDLE_VALUE;
 }
 
@@ -522,8 +523,8 @@ Monome40hFtw::DispatchCommand(const MonomeSerialProtocolData * data)
 {
 	if (mServicingSubscribers)
 	{
-		HANDLE hCurThread = ::GetCurrentThread();
-		if (hCurThread == mThread)
+		DWORD curThreadId = ::GetCurrentThreadId();
+		if (curThreadId == mThreadId)
 		{
 			// handle synchronously
 			Send(*data);

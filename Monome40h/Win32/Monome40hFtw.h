@@ -76,6 +76,7 @@ private:
 	ITraceDisplay					* mTrace;
 	FT_HANDLE						mFtDevice;
 	HANDLE							mThread;
+	DWORD							mThreadId;
 	volatile bool					mServicingSubscribers;
 	volatile bool					mIsListening;
 	volatile bool					mShouldContinueListening;
