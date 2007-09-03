@@ -70,6 +70,7 @@ private:
 	typedef std::list<IMonome40hInputSubscriber *> InputSubscribers;
 	CRITICAL_SECTION				mSubscribersLock;
 	InputSubscribers				mInputSubscribers;
+	IMonome40hInputSubscriber		* mInputSubscriber;
 	typedef std::list<const MonomeSerialProtocolData *> OutputCommandQueue;
 	CRITICAL_SECTION				mOutputCommandsLock;
 	OutputCommandQueue				mOutputCommandQueue;

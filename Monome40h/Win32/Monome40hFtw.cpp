@@ -41,6 +41,7 @@ Monome40hFtw::Monome40hFtw(ITraceDisplay * trace) :
 	mThread(NULL),
 	mThreadId(0),
 	mServicingSubscribers(false),
+	mInputSubscriber(NULL),
 	mConsecutiveReadErrors(0)
 {
 	HMODULE hMod = ::LoadLibrary("FTD2XX.dll");
@@ -228,9 +229,22 @@ Monome40hFtw::Subscribe(IMonome40hInputSubscriber * sub)
 {
 	_ASSERTE(!mServicingSubscribers);
 	AutoLockCs lock(mSubscribersLock);
+
+	if (!mInputSubscriber && !mInputSubscribers.size())
+	{
+		mInputSubscriber = sub;
+		return true;
+	}
+
 	InputSubscribers::iterator it = std::find(mInputSubscribers.begin(), mInputSubscribers.end(), sub);
 	if (it == mInputSubscribers.end())
 	{
+		if (mInputSubscriber)
+		{
+			mInputSubscribers.push_back(mInputSubscriber);
+			mInputSubscriber = NULL;
+		}
+
 		mInputSubscribers.push_back(sub);
 		return true;
 	}
@@ -242,6 +256,13 @@ Monome40hFtw::Unsubscribe(IMonome40hInputSubscriber * sub)
 {
 	_ASSERTE(!mServicingSubscribers);
 	AutoLockCs lock(mSubscribersLock);
+
+	if (mInputSubscriber == sub)
+	{
+		mInputSubscriber = NULL;
+		return true;
+	}
+
 	InputSubscribers::iterator it = std::find(mInputSubscribers.begin(), mInputSubscribers.end(), sub);
 	if (it != mInputSubscribers.end())
 	{
@@ -392,7 +413,16 @@ Monome40hFtw::ReadInput(byte * readData)
 			byte state = readData[0] & 0x0f;
 			byte col = readData[1] >> 4;
 			byte row = readData[1] & 0x0f;
-			OnButtonChange(state ? true : false, row, col);
+			if (mInputSubscriber)
+			{
+				ScopeSet<volatile bool> active(&mServicingSubscribers, true);
+				if (state)
+					mInputSubscriber->SwitchPressed(row, col);
+				else
+					mInputSubscriber->SwitchReleased(row, col);
+			}
+			else
+				OnButtonChange(state ? true : false, row, col);
 		}
 		break;
 	case MonomeSerialProtocolData::getAdcVal:
@@ -400,7 +430,13 @@ Monome40hFtw::ReadInput(byte * readData)
 			byte port = (readData[0] & 0x0c) >> 2;
 			int value = readData[1];
 			value |= ((readData[0] & 3) << 8);
-			OnAdcChange(port, value);
+			if (mInputSubscriber)
+			{
+				ScopeSet<volatile bool> active(&mServicingSubscribers, true);
+				mInputSubscriber->AdcValueChanged(port, value);
+			}
+			else
+				OnAdcChange(port, value);
 		}
 		break;
 	default:
@@ -425,7 +461,9 @@ Monome40hFtw::DeviceServiceThread()
 
 	while (mShouldContinueListening)
 	{
-		ServiceCommands();
+		if (mOutputCommandQueue.size())
+			ServiceCommands();
+
 		bytesRead = 0;
 		int readRetVal = ::FT_W32_ReadFile(mFtDevice, readData, kDataLen, &bytesRead, NULL);
 		if (readRetVal)
