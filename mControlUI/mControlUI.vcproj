@@ -143,9 +143,14 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				InlineFunctionExpansion="2"
+				FavorSizeOrSpeed="1"
+				WholeProgramOptimization="true"
 				PreprocessorDefinitions="WIN32;_WINDOWS;STRICT;NDEBUG;TIXML_USE_STL"
-				ExceptionHandling="0"
+				ExceptionHandling="2"
 				RuntimeLibrary="0"
+				BufferSecurityCheck="false"
+				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
