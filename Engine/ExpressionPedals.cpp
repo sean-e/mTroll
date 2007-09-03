@@ -25,9 +25,9 @@ ExpressionControl::Init(bool invert,
 	mCcValRange = mMaxCcVal - mMinCcVal;
 	mPrevAdcVals[0] = mPrevAdcVals[1] = -1;
 
-	mMidiData.push_back(0xb0 | mChannel);
-	mMidiData.push_back(mControlNumber);
-	mMidiData.push_back(0);
+	mMidiData[0] = (0xb0 | mChannel);
+	mMidiData[1] = mControlNumber;
+	mMidiData[2] = 0;
 }
 
 void
@@ -81,9 +81,13 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 		return;
 
 	mMidiData[2] = newCcVal;
-	midiOut->MidiOut(mMidiData);
 
-	if (mainDisplay)
+	// only fire midi indicator at top and bottom of range -
+	// easier to see that top and bottom hit on controller than on pc
+	const bool showStatus = newCcVal == mMinCcVal || newCcVal == mMaxCcVal;
+	midiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], showStatus);
+
+	if (mainDisplay && showStatus)
 	{
 		std::strstream displayMsg;
 		if (newCcVal == mMinCcVal)
