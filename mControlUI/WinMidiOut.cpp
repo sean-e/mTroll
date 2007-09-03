@@ -286,11 +286,13 @@ WinMidiOut::MidiOutCallbackProc(HMIDIOUT hmo,
 void
 WinMidiOut::IndicateActivity()
 {
-	if (sOutOnTimer)
-		sOutOnTimer->mActivityIndicator->SetSwitchDisplay(sOutOnTimer->mActivityIndicatorIndex, false);
-
 	if (!mEnableActivityIndicator)
+	{
+		if (sOutOnTimer == this)
+			TimerProc(NULL, WM_TIMER, (UINT_PTR)this, 0);
+
 		return;
+	}
 
 	mActivityIndicator->SetSwitchDisplay(mActivityIndicatorIndex, true);
 	sOutOnTimer = this;
@@ -304,10 +306,10 @@ WinMidiOut::TimerProc(HWND,
 					  DWORD)
 {
 //	WinMidiOut * whyDoesntThisWork = reinterpret_cast<WinMidiOut *>(id);
-	WinMidiOut * prev = sOutOnTimer;
+	WinMidiOut * _this = sOutOnTimer;
 	sOutOnTimer = NULL;
-	if (prev)
-		prev->mActivityIndicator->SetSwitchDisplay(prev->mActivityIndicatorIndex, false);
+	if (_this)
+		_this->mActivityIndicator->SetSwitchDisplay(_this->mActivityIndicatorIndex, false);
 }
 
 void
