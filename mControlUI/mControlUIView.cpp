@@ -191,6 +191,7 @@ CMControlUIView::LoadMonome()
 					mHardwareUi = monome;
 					monome = NULL;
 					MonomeStartupSequence();
+					mHardwareUi->SetLedIntensity(1);
 				}
 			}
 		}
