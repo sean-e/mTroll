@@ -6,19 +6,7 @@
 #pragma comment(lib, "winmm.lib")
 
 static std::string GetMidiErrorText(MMRESULT resultCode);
-
-
-WinMidiOut::ActivityIndicator::ActivityIndicator(WinMidiOut * _this) : mThis(_this)
-{
-	if (mThis->mActivityIndicator)
-		mThis->mActivityIndicator->SetSwitchDisplay(mThis->mActivityIndicatorIndex, true);
-}
-
-WinMidiOut::ActivityIndicator::~ActivityIndicator()
-{
-	if (mThis->mActivityIndicator)
-		mThis->mActivityIndicator->SetSwitchDisplay(mThis->mActivityIndicatorIndex, false);
-}
+WinMidiOut * sOutOnTimer;
 
 
 WinMidiOut::WinMidiOut(ITraceDisplay * trace) : 
@@ -27,7 +15,8 @@ WinMidiOut::WinMidiOut(ITraceDisplay * trace) :
 	mMidiOutError(false),
 	mCurMidiHdrIdx(0),
 	mActivityIndicator(NULL),
-	mActivityIndicatorIndex(0)
+	mActivityIndicatorIndex(0),
+	mEnableActivityIndicator(false)
 {
 	for (int idx = 0; idx < MIDIHDR_CNT; ++idx)
 		ZeroMemory(&mMidiHdrs[idx], sizeof(MIDIHDR));
@@ -35,6 +24,9 @@ WinMidiOut::WinMidiOut(ITraceDisplay * trace) :
 
 WinMidiOut::~WinMidiOut()
 {
+	if (sOutOnTimer == this)
+		TimerProc(NULL, WM_TIMER, (UINT_PTR)this, 0);
+
 	CloseMidiOut();
 }
 
@@ -70,6 +62,16 @@ WinMidiOut::SetActivityIndicator(ISwitchDisplay * activityIndicator,
 {
 	mActivityIndicator = activityIndicator;
 	mActivityIndicatorIndex = activityIndicatorIdx;
+	mEnableActivityIndicator = mActivityIndicator > 0 && mActivityIndicator != NULL;
+}
+
+void
+WinMidiOut::EnableActivityIndicator(bool enable)
+{
+	if (enable)
+		mEnableActivityIndicator = mActivityIndicator > 0 && mActivityIndicator != NULL;
+	else
+		mEnableActivityIndicator = false;
 }
 
 bool
@@ -104,6 +106,8 @@ WinMidiOut::MidiOut(const Bytes & bytes)
 	const size_t kDataSize = bytes.size();
 	if (!kDataSize)
 		return false;
+
+	IndicateActivity();
 
 	// number of data bytes for each status
 	static const int kMsgDataBytesLen = 23;
@@ -148,10 +152,7 @@ WinMidiOut::MidiOut(const Bytes & bytes)
 
 			res = ::midiOutPrepareHeader(mMidiOut, curHdr, sizeof(MIDIHDR));
 			if (MMSYSERR_NOERROR == res)
-			{
-				ActivityIndicator s(this);
 				res = ::midiOutLongMsg(mMidiOut, curHdr, sizeof(MIDIHDR));
-			}
 		}
 		else
 		{
@@ -190,7 +191,6 @@ WinMidiOut::MidiOut(const Bytes & bytes)
 				shortMsg = 0;
 			}
 
-			ActivityIndicator s(this);
 			res = ::midiOutShortMsg(mMidiOut, shortMsg);
 		}
 
@@ -219,6 +219,53 @@ WinMidiOut::MidiOut(const Bytes & bytes)
 	return true;
 }
 
+void
+WinMidiOut::MidiOut(byte singleByte,
+					bool useIndicator /*= true*/)
+{
+	if (!mMidiOut)
+		return;
+
+	if (useIndicator)
+		IndicateActivity();
+	const MMRESULT res = ::midiOutShortMsg(mMidiOut, singleByte);
+	if (MMSYSERR_NOERROR != res)
+		ReportMidiError(res, __LINE__);
+}
+
+void
+WinMidiOut::MidiOut(byte byte1, 
+					byte byte2,
+					bool useIndicator /*= true*/)
+{
+	if (!mMidiOut)
+		return;
+
+	if (useIndicator)
+		IndicateActivity();
+	const DWORD shortMsg = byte1 | (byte2 << 8);
+	const MMRESULT res = ::midiOutShortMsg(mMidiOut, shortMsg);
+	if (MMSYSERR_NOERROR != res)
+		ReportMidiError(res, __LINE__);
+}
+
+void
+WinMidiOut::MidiOut(byte byte1, 
+					byte byte2, 
+					byte byte3,
+					bool useIndicator /*= true*/)
+{
+	if (!mMidiOut)
+		return;
+
+	if (useIndicator)
+		IndicateActivity();
+	const DWORD shortMsg = byte1 | (byte2 << 8) | (byte3 << 16);
+	const MMRESULT res = ::midiOutShortMsg(mMidiOut, shortMsg);
+	if (MMSYSERR_NOERROR != res)
+		ReportMidiError(res, __LINE__);
+}
+
 void CALLBACK 
 WinMidiOut::MidiOutCallbackProc(HMIDIOUT hmo, 
 								UINT wMsg, 
@@ -237,8 +284,36 @@ WinMidiOut::MidiOutCallbackProc(HMIDIOUT hmo,
 }
 
 void
+WinMidiOut::IndicateActivity()
+{
+	if (sOutOnTimer)
+		sOutOnTimer->mActivityIndicator->SetSwitchDisplay(sOutOnTimer->mActivityIndicatorIndex, false);
+
+	if (!mEnableActivityIndicator)
+		return;
+
+	mActivityIndicator->SetSwitchDisplay(mActivityIndicatorIndex, true);
+	sOutOnTimer = this;
+	::SetTimer(NULL, (UINT_PTR)this, 150, TimerProc);
+}
+
+void CALLBACK
+WinMidiOut::TimerProc(HWND, 
+					  UINT, 
+					  UINT_PTR id, 
+					  DWORD)
+{
+//	WinMidiOut * whyDoesntThisWork = reinterpret_cast<WinMidiOut *>(id);
+	WinMidiOut * prev = sOutOnTimer;
+	sOutOnTimer = NULL;
+	if (prev)
+		prev->mActivityIndicator->SetSwitchDisplay(prev->mActivityIndicatorIndex, false);
+}
+
+void
 WinMidiOut::CloseMidiOut()
 {
+	mEnableActivityIndicator = false;
 	mActivityIndicator = NULL;
 	if (mMidiOut)
 	{
