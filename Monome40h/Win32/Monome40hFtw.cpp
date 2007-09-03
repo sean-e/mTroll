@@ -164,9 +164,9 @@ Monome40hFtw::AcquireDevice(const std::string & devSerialNum)
 	FTTIMEOUTS ftTS;
 	ftTS.ReadIntervalTimeout = 0;
 	ftTS.ReadTotalTimeoutMultiplier = 0;
-	ftTS.ReadTotalTimeoutConstant = 25;
+	ftTS.ReadTotalTimeoutConstant = 15;
 	ftTS.WriteTotalTimeoutMultiplier = 0;
-	ftTS.WriteTotalTimeoutConstant = 25;
+	ftTS.WriteTotalTimeoutConstant = 15;
 	if (!::FT_W32_SetCommTimeouts(mFtDevice, &ftTS))
 	{
 		if (mTrace)
@@ -180,7 +180,13 @@ Monome40hFtw::AcquireDevice(const std::string & devSerialNum)
 	// startup listener
 	mShouldContinueListening = true;
 	mThread = (HANDLE)_beginthreadex(NULL, 0, DeviceServiceThread, this, 0, (unsigned int*)&mThreadId);
-	return mThread != NULL && mThread != INVALID_HANDLE_VALUE;
+	if (mThread && mThread != INVALID_HANDLE_VALUE)
+	{
+		::SetThreadPriority(mThread, /*HIGH_PRIORITY_CLASS*/  REALTIME_PRIORITY_CLASS );
+		return true;
+	}
+
+	return false;
 }
 
 void
@@ -463,6 +469,13 @@ Monome40hFtw::DeviceServiceThread()
 		}
 		else
 		{
+			if (mTrace)
+			{
+				std::strstream traceMsg;
+				traceMsg << "monome read error" << std::endl << std::ends;
+				mTrace->Trace(traceMsg.str());
+			}
+
 			if (++mConsecutiveReadErrors > 10)
 			{
 				mShouldContinueListening = false;
@@ -473,13 +486,6 @@ Monome40hFtw::DeviceServiceThread()
 					traceMsg << "aborting monome thread due to read errors" << std::endl << std::ends;
 					mTrace->Trace(traceMsg.str());
 				}
-			}
-
-			if (mTrace)
-			{
-				std::strstream traceMsg;
-				traceMsg << "monome read error" << std::endl << std::ends;
-				mTrace->Trace(traceMsg.str());
 			}
 		}
 	}
