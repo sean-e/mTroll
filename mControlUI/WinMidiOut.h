@@ -33,6 +33,7 @@ private:
 	void ReportError(LPCSTR msg, int param1, int param2);
 
 	void IndicateActivity();
+	void TurnOffIndicator();
 	static void CALLBACK TimerProc(HWND, UINT, UINT_PTR id, DWORD);
 	static void CALLBACK MidiOutCallbackProc(HMIDIOUT hmo, UINT wMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2);
 

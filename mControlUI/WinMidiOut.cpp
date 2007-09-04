@@ -6,7 +6,7 @@
 #pragma comment(lib, "winmm.lib")
 
 static std::string GetMidiErrorText(MMRESULT resultCode);
-WinMidiOut * sOutOnTimer;
+static WinMidiOut * sOutOnTimer = NULL;
 
 
 WinMidiOut::WinMidiOut(ITraceDisplay * trace) : 
@@ -24,8 +24,13 @@ WinMidiOut::WinMidiOut(ITraceDisplay * trace) :
 
 WinMidiOut::~WinMidiOut()
 {
+	::KillTimer(NULL, (UINT_PTR)this);
+
 	if (sOutOnTimer == this)
-		TimerProc(NULL, WM_TIMER, (UINT_PTR)this, 0);
+	{
+		sOutOnTimer = NULL;
+		TurnOffIndicator();
+	}
 
 	CloseMidiOut();
 }
@@ -289,14 +294,26 @@ WinMidiOut::IndicateActivity()
 	if (!mEnableActivityIndicator)
 	{
 		if (sOutOnTimer == this)
-			TimerProc(NULL, WM_TIMER, (UINT_PTR)this, 0);
+		{
+			sOutOnTimer = NULL;
+			TurnOffIndicator();
+		}
 
 		return;
 	}
 
-	mActivityIndicator->SetSwitchDisplay(mActivityIndicatorIndex, true);
+	if (sOutOnTimer)
+		sOutOnTimer->TurnOffIndicator();
 	sOutOnTimer = this;
+	mActivityIndicator->SetSwitchDisplay(mActivityIndicatorIndex, true);
 	::SetTimer(NULL, (UINT_PTR)this, 150, TimerProc);
+}
+
+void
+WinMidiOut::TurnOffIndicator()
+{
+	if (mActivityIndicator)
+		mActivityIndicator->SetSwitchDisplay(mActivityIndicatorIndex, false);
 }
 
 void CALLBACK
@@ -305,11 +322,10 @@ WinMidiOut::TimerProc(HWND,
 					  UINT_PTR id, 
 					  DWORD)
 {
-//	WinMidiOut * whyDoesntThisWork = reinterpret_cast<WinMidiOut *>(id);
 	WinMidiOut * _this = sOutOnTimer;
 	sOutOnTimer = NULL;
 	if (_this)
-		_this->mActivityIndicator->SetSwitchDisplay(_this->mActivityIndicatorIndex, false);
+		_this->TurnOffIndicator();
 }
 
 void
