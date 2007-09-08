@@ -76,7 +76,10 @@ WinMidiOut::EnableActivityIndicator(bool enable)
 	if (enable)
 		mEnableActivityIndicator = mActivityIndicator > 0 && mActivityIndicator != NULL;
 	else
+	{
 		mEnableActivityIndicator = false;
+		TurnOffIndicator();
+	}
 }
 
 bool
