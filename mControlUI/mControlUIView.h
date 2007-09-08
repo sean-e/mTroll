@@ -132,6 +132,7 @@ private:
 	void LoadUi(const std::string & uiSettingsFile);
 	void LoadMonome();
 	void LoadMidiSettings(const std::string & file);
+	void ActivityIndicatorHack();
 
 	void ButtonReleased(const int idx);
 	void ButtonPressed(const int idx);

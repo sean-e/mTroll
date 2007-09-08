@@ -151,6 +151,7 @@ CMControlUIView::Load(const std::string & settingsBasefile)
 	LoadMidiSettings(settingsBasefile + ".config.xml");
 	if (mHardwareUi)
 		mHardwareUi->Subscribe(this);
+	ActivityIndicatorHack();
 }
 
 void
@@ -696,4 +697,23 @@ CMControlUIView::MonomeStartupSequence()
 	mHardwareUi->TestLed(true);
 	Sleep(250);
 	mHardwareUi->TestLed(false);
+}
+
+void
+CMControlUIView::ActivityIndicatorHack()
+{
+	Bytes bytes;
+	bytes.push_back(0xf0);
+	bytes.push_back(0xf7);
+
+	for (MidiOuts::iterator it = mMidiOuts.begin();
+		it != mMidiOuts.end();
+		++it)
+	{
+		IMidiOut * curOut = (*it).second;
+		if (!curOut->IsMidiOutOpen())
+			continue;
+
+		curOut->MidiOut(bytes);
+	}
 }

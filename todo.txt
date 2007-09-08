@@ -1,5 +1,4 @@
 [todo]
-fix initial state of midi activity indicator
 
 
 [pedalboard sizes]		w		d		h			area	hspace	url
