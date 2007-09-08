@@ -36,6 +36,7 @@ public:
 
 	void PatchSwitchPressed(int switchNumber, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 	void PatchSwitchReleased(int switchNumber, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
+	void ResetPatches(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 
 	int GetBankNumber() const {return mNumber;}
 	const std::string & GetBankName() const {return mName;}

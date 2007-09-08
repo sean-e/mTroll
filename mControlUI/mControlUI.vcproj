@@ -366,6 +366,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Engine\MetaPatch_ResetBankPatches.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Engine\MidiControlEngine.cpp"
 				>
 			</File>

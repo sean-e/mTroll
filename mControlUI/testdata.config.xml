@@ -805,6 +805,15 @@
 		<patch name="RPT FF TAP TMP0" number="401" type="momentary" port="1">
 			<midiByteString name="A">bb 43 7f bc 44 7f</midiByteString>
 		</patch>
+		<engineMetaPatch name="Test Meta" number="600" action="ResetBankPatches" />
+		<patch name="Toggle 1" number="601" type="toggle" port="1" />
+		<patch name="Toggle 2" number="602" type="toggle" port="1" />
+		<patch name="Toggle 3" number="603" type="toggle" port="1" />
+		<patch name="Toggle 4" number="604" type="toggle" port="1" />
+		<patch name="Normal 1" number="605" type="normal" port="1" />
+		<patch name="Normal 2" number="606" type="normal" port="1" />
+		<patch name="Normal 3" number="607" type="normal" port="1" />
+		<patch name="Normal 4" number="608" type="normal" port="1" />
 	</patches>
 	<banks>
 		<bank name="MUTING" number="1">
@@ -1118,6 +1127,46 @@
 			<PatchMap switch="13" patch="36" loadState="" unloadState="" />
 			<PatchMap switch="14" patch="37" loadState="" unloadState="" />
 			<PatchMap switch="15" patch="38" loadState="" unloadState="" />
+		</bank>
+		<bank name="H8000 DSP B-1" number="34">
+			<PatchMap switch="1" patch="600" loadState="" unloadState="" />
+			<PatchMap switch="1" patch="24" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="25" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="26" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="27" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="28" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="29" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="30" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="31" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="32" loadState="" unloadState="" />
+			<PatchMap switch="10" patch="33" loadState="" unloadState="" />
+			<PatchMap switch="11" patch="34" loadState="" unloadState="" />
+			<PatchMap switch="12" patch="35" loadState="" unloadState="" />
+			<PatchMap switch="13" patch="36" loadState="" unloadState="" />
+			<PatchMap switch="14" patch="37" loadState="" unloadState="" />
+			<PatchMap switch="15" patch="38" loadState="" unloadState="" />
+		</bank>
+		<bank name="Test Bank 1" number="35">
+			<PatchMap switch="1" patch="600" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="601" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="602" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="603" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="604" loadState="" unloadState="" />
+			<PatchMap switch="11" patch="605" loadState="" unloadState="" />
+			<PatchMap switch="12" patch="606" loadState="" unloadState="" />
+			<PatchMap switch="13" patch="607" loadState="" unloadState="" />
+			<PatchMap switch="14" patch="608" loadState="" unloadState="" />
+		</bank>
+		<bank name="Test Bank 2" number="36">
+			<PatchMap switch="1" patch="600" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="605" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="606" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="607" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="608" loadState="" unloadState="" />
+			<PatchMap switch="11" patch="601" loadState="" unloadState="" />
+			<PatchMap switch="12" patch="602" loadState="" unloadState="" />
+			<PatchMap switch="13" patch="603" loadState="" unloadState="" />
+			<PatchMap switch="14" patch="604" loadState="" unloadState="" />
 		</bank>
 	</banks>
 </MidiControlSettings>

@@ -21,15 +21,15 @@ public:
 	};
 
 	Patch(int number, const std::string & name, PatchType patchType, int midiOutPortNumber, IMidiOut * midiOut, const Bytes & midiStringA, const Bytes & midiStringB);
-	~Patch();
+	virtual ~Patch();
 
 	ExpressionPedals & GetPedals() {return mPedals;}
 
 	void AssignSwitch(int switchNumber, ISwitchDisplay * switchDisplay);
 	void ClearSwitch(ISwitchDisplay * switchDisplay);
 
-	void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
-	void SwitchReleased(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
+	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
+	virtual void SwitchReleased(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 
 	void UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 	const std::string & GetName() const {return mName;}
@@ -42,6 +42,9 @@ public:
 	void SendStringA();
 	void SendStringB();
 
+protected:
+	Patch(int number, const std::string & name, PatchType patchType);
+
 private:
 	const int				mNumber;	// unique across patches
 	const std::string		mName;
@@ -49,8 +52,6 @@ private:
 	const int				mMidiOutPort;
 	const Bytes				mMidiByteStringA;
 	const Bytes				mMidiByteStringB;
-// 	const Bytes				mMetaStringA;
-// 	const Bytes				mMetaStringB;
 	ExpressionPedals		mPedals;
 
 	// runtime only state

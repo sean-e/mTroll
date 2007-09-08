@@ -334,3 +334,32 @@ PatchBank::DisplayDetailedPatchInfo(int switchNumber, IMainDisplay * mainDisplay
 	if (mainDisplay)
 		mainDisplay->TextOut(info.str());
 }
+
+void
+PatchBank::ResetPatches(IMainDisplay * mainDisplay, 
+						ISwitchDisplay * switchDisplay)
+{
+	for (PatchMaps::iterator it = mPatches.begin();
+		it != mPatches.end();
+		++it)
+	{
+		PatchVect & patches = (*it).second;
+		for (PatchVect::iterator it2 = patches.begin();
+			 it2 != patches.end();
+			 ++it2)
+		{
+			PatchMap * curItem = *it2;
+			if (!curItem || !curItem->mPatch)
+				continue;
+
+			curItem->mPatch->SetOff(switchDisplay);
+		}
+	}
+
+	if (mainDisplay)
+	{
+		std::ostrstream info;
+		info << "Bank patches reset" << std::endl << std::ends;
+		mainDisplay->TextOut(info.str());
+	}
+}

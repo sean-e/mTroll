@@ -30,6 +30,7 @@ public:
 	typedef std::map<int, Patch*> Patches;
 	PatchBank &				AddBank(int number, const std::string & name);
 	Patch &					AddPatch(int number, const std::string & name, Patch::PatchType patchType, int midiOutPortNumber, IMidiOut * midiOut, const Bytes & midiStringA, const Bytes & midiStringB);
+	bool					AddMetaPatch(int number, const std::string & name, const std::string & metaCommand);
 	void					SetPowerup(int powerupBank, int powerupPatch, int powerupTimeout);
 	void					FilterRedundantProgChg(bool filter) {mFilterRedundantProgramChanges = filter;}
 	void					CompleteInit(const PedalCalibration * pedalCalibrationSettings);
@@ -39,6 +40,7 @@ public:
 	void					SwitchPressed(int switchNumber);
 	void					SwitchReleased(int switchNumber);
 	void					AdcValueChanged(int port, int curValue);
+	void					ResetBankPatches();
 
 private:
 	void					LoadStartupBank();

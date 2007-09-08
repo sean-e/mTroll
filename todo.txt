@@ -1,9 +1,5 @@
 [todo]
-put activity led on timer
-meta patch support
-	reset specific patches
-	reset all patches
-	reset patches in bank
+fix initial state of midi activity indicator
 
 
 [pedalboard sizes]		w		d		h			area	hspace	url

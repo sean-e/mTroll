@@ -28,6 +28,19 @@ Patch::Patch(int number,
 	_ASSERTE(midiOut);
 }
 
+Patch::Patch(int number, 
+			 const std::string & name, 
+			 PatchType patchType) :
+	mNumber(number),
+	mName(name),
+	mPatchType(patchType),
+	mPatchIsOn(false),
+	mMidiOutPort(-1),
+	mMidiOut(NULL),
+	mPedals(NULL)
+{
+}
+
 Patch::~Patch()
 {
 }

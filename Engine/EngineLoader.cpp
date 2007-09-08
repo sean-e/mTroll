@@ -188,6 +188,23 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 {
 	for ( ; pElem; pElem = pElem->NextSiblingElement())
 	{
+		if (pElem->ValueStr() == "engineMetaPatch")
+		{
+			const std::string patchName = pElem->Attribute("name");
+			int patchNumber = -1;
+			pElem->QueryIntAttribute("number", &patchNumber);
+			if (-1 == patchNumber || patchName.empty())
+				continue;
+
+			std::string tmp;
+			pElem->QueryValueAttribute("action", &tmp);
+			if (tmp.empty())
+				continue;
+
+			mEngine->AddMetaPatch(patchNumber, patchName, tmp);
+			continue;
+		}
+		
 		if (pElem->ValueStr() != "patch")
 			continue;
 

@@ -2,6 +2,7 @@
 #include <strstream>
 #include "MidiControlEngine.h"
 #include "PatchBank.h"
+#include "MetaPatch_ResetBankPatches.h"
 #include "IMainDisplay.h"
 #include "ISwitchDisplay.h"
 #include "ITraceDisplay.h"
@@ -89,6 +90,19 @@ MidiControlEngine::AddPatch(int number,
 {
 	mPatches[number] = new Patch(number, name, patchType, midiOutPortNumber, midiOut, midiStringA, midiStringB);
 	return * mPatches[number];
+}
+
+bool
+MidiControlEngine::AddMetaPatch(int number, 
+								const std::string & name, 
+								const std::string & metaCommand)
+{
+	if (metaCommand == "ResetBankPatches")
+	{
+		mPatches[number] = new MetaPatch_ResetBankPatches(this, number, name);
+		return true;
+	}
+	return false;
 }
 
 void
@@ -380,6 +394,13 @@ MidiControlEngine::AdcValueChanged(int port,
 		// process globals if no rejection
 		mPedals.AdcValueChange(mMainDisplay, port, newValue);
 	}
+}
+
+void
+MidiControlEngine::ResetBankPatches()
+{
+	if (mActiveBank)
+		mActiveBank->ResetPatches(mMainDisplay, mSwitchDisplay);
 }
 
 bool
