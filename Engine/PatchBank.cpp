@@ -269,6 +269,8 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 				if (once)
 				{
 					once = false;
+					if (temporaryDisplay)
+						curItem->mPatch->ClearSwitch(NULL);
 					curItem->mPatch->AssignSwitch((*it).first, switchDisplay);
 					info << "sw " << std::setw(2) << ((*it).first + 1) << ": " << std::setw(3) << curItem->mPatch->GetNumber() << " " << curItem->mPatch->GetName() << std::endl;
 					if (temporaryDisplay)
