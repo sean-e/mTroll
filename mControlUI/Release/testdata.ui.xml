@@ -1,142 +1,163 @@
 <?xml version="1.0" ?>
 <MidiControlUiSettings>
-	<frame height="625" width="870" />
-	<mainTextDisplay top="345" left="9" width="420" height="163" font-height="10" font-weight="bold" foregroundColor="16750848" backgroundColor="0" />
-	<traceTextDisplay top="345" left="460" width="390" height="163" font-height="8" />
+	<frame width="830" height="710" />
+	<mainTextDisplay top="430" left="9" width="400" height="163" font-height="12" font-weight="bold" foregroundColor="16750848" backgroundColor="0" />
+	<traceTextDisplay top="430" left="430" width="380" height="163" font-height="8" />
 
-  <switchAssemblyConfig>
-    <switch font-name="Tahoma" font-weight="bold" font-height="10" width="75" height="23" />
-    <switchTextDisplay font-name="Tahoma" font-height="11" foregroundColor="65280" backgroundColor="0" width="145" height="23" />
-    <switchLed width="15" height="15" onColor="16711731" offColor="150" />
-  </switchAssemblyConfig>
+	<switchAssemblyConfig>
+		<switch font-name="Tahoma" font-weight="bold" font-height="10" width="75" height="23" />
+		<switchTextDisplay font-name="Tahoma" font-height="11" foregroundColor="65280" backgroundColor="0" width="145" height="23" />
+		<switchLed width="15" height="15" onColor="16711731" offColor="150" />
+	</switchAssemblyConfig>
 
 	<switchMappings comment="this is for mapping ordinal switch numbers to monome grid coords (all are zero based)">
 		<switchMap number="0" row="0" col="0" />
 		<switchMap number="1" row="0" col="1" />
 		<switchMap number="2" row="0" col="2" />
 		<switchMap number="3" row="0" col="3" />
+		<switchMap number="4" row="0" col="4" />
 
-		<switchMap number="4" row="1" col="0" />
-		<switchMap number="5" row="1" col="1" />
-		<switchMap number="6" row="1" col="2" />
-		<switchMap number="7" row="1" col="3" />
+		<switchMap number="5" row="1" col="0" />
+		<switchMap number="6" row="1" col="1" />
+		<switchMap number="7" row="1" col="2" />
+		<switchMap number="8" row="1" col="3" />
+		<switchMap number="9" row="1" col="4" />
 
-		<switchMap number="8" row="2" col="0" />
-		<switchMap number="9" row="2" col="1" />
-		<switchMap number="10" row="2" col="2" />
-		<switchMap number="11" row="2" col="3" />
+		<switchMap number="10" row="2" col="0" />
+		<switchMap number="11" row="2" col="1" />
+		<switchMap number="12" row="2" col="2" />
+		<switchMap number="13" row="2" col="3" />
+		<switchMap number="14" row="2" col="4" />
 
-		<switchMap number="12" row="3" col="0" />
-		<switchMap number="13" row="3" col="1" />
-		<switchMap number="14" row="3" col="2" />
-		<switchMap number="15" row="3" col="3" />
+		<switchMap number="15" row="3" col="0" />
+		<switchMap number="16" row="3" col="1" />
+		<switchMap number="17" row="3" col="2" />
+		<switchMap number="18" row="3" col="3" />
+		<switchMap number="19" row="3" col="4" />
 
-		<switchMap number="20" row="0" col="5" />
-		<switchMap number="21" row="1" col="5" />
-		<switchMap number="22" row="2" col="5" />
-		<switchMap number="23" row="3" col="5" />
+		<switchMap number="20" row="4" col="0" />
+		<switchMap number="21" row="4" col="3" />
+		<switchMap number="22" row="4" col="4" />
+		<switchMap number="23" row="4" col="5" />
 	</switchMappings>
 
 	<switchAssemblies>
-    <switchAssembly number="0" top="5" left="5" >
-      <switchTextDisplay />
-      <switchLed vOffset="33" hOffset="105" />
-      <switch label="&amp;1" vOffset="30" />
-    </switchAssembly>
-    <switchAssembly number="1" incrementalVpos="0" incrementalHpos="165" >
-      <switchTextDisplay />
-      <switchLed vOffset="33" hOffset="105" />
-      <switch label="&amp;2" vOffset="30" />
-    </switchAssembly>
-    <switchAssembly number="2" incrementalVpos="0" incrementalHpos="165" >
-      <switchTextDisplay />
-      <switchLed vOffset="33" hOffset="105" />
-      <switch label="&amp;3" vOffset="30" />
-    </switchAssembly>
-    <switchAssembly number="3" incrementalVpos="0" incrementalHpos="165" >
-      <switchTextDisplay />
-      <switchLed vOffset="33" hOffset="105" />
-      <switch label="&amp;4" vOffset="30" />
-    </switchAssembly>
-
-    <switchAssembly number="4" incrementalVpos="85" left="5" >
-      <switchTextDisplay />
-      <switchLed vOffset="33" hOffset="105" />
-      <switch label="&amp;5" vOffset="30" />
-    </switchAssembly>
-    <switchAssembly number="5" incrementalVpos="0" incrementalHpos="165" >
-      <switchTextDisplay />
-      <switchLed vOffset="33" hOffset="105" />
-      <switch label="&amp;6" vOffset="30" />
-    </switchAssembly>
-    <switchAssembly number="6" incrementalVpos="0" incrementalHpos="165" >
-      <switchTextDisplay />
-      <switchLed vOffset="33" hOffset="105" />
-      <switch label="&amp;7" vOffset="30" />
-    </switchAssembly>
-    <switchAssembly number="7" incrementalVpos="0" incrementalHpos="165" >
-      <switchTextDisplay />
-      <switchLed vOffset="33" hOffset="105" />
-      <switch label="&amp;8" vOffset="30" />
-    </switchAssembly>
-
-    <switchAssembly number="8" incrementalVpos="85" left="5" >
-      <switchTextDisplay />
-      <switchLed vOffset="33" hOffset="105" />
-      <switch label="&amp;9" vOffset="30" />
-    </switchAssembly>
-    <switchAssembly number="9" incrementalVpos="0" incrementalHpos="165" >
-      <switchTextDisplay />
-      <switchLed vOffset="33" hOffset="105" />
-      <switch label="1&amp;0" vOffset="30" />
-    </switchAssembly>
-    <switchAssembly number="10" incrementalVpos="0" incrementalHpos="165" >
-      <switchTextDisplay />
-      <switchLed vOffset="33" hOffset="105" />
-      <switch label="11" vOffset="30" />
-    </switchAssembly>
-    <switchAssembly number="11" incrementalVpos="0" incrementalHpos="165" >
-      <switchTextDisplay />
-      <switchLed vOffset="33" hOffset="105" />
-      <switch label="12" vOffset="30" />
-    </switchAssembly>
-
-    <switchAssembly number="12" incrementalVpos="85" left="5" >
-      <switchTextDisplay />
-      <switchLed vOffset="33" hOffset="105" />
-      <switch label="13" vOffset="30" />
-    </switchAssembly>
-    <switchAssembly number="13" incrementalVpos="0" incrementalHpos="165" >
-      <switchTextDisplay />
-      <switchLed vOffset="33" hOffset="105" />
-      <switch label="14" vOffset="30" />
-    </switchAssembly>
-    <switchAssembly number="14" incrementalVpos="0" incrementalHpos="165" >
-      <switchTextDisplay />
-      <switchLed vOffset="33" hOffset="105" />
-      <switch label="15" vOffset="30" />
-    </switchAssembly>
-    <switchAssembly number="15" incrementalVpos="0" incrementalHpos="165" >
-      <switchTextDisplay />
-      <switchLed vOffset="33" hOffset="105" />
-      <switch label="16" vOffset="30" />
-    </switchAssembly>
-
-    <switchAssembly number="20" top="5" left="705" >
-      <switchTextDisplay />
-      <switchLed vOffset="33" hOffset="105" />
-      <switch label="&amp;Mode" vOffset="30" />
-    </switchAssembly>
-		<switchAssembly number="23" incrementalVpos="85" incrementalHpos="0" >
+		<switchAssembly number="0" top="5" left="5" >
+			<switchTextDisplay />
 			<switchLed vOffset="33" hOffset="105" />
+			<switch label="&amp;1" vOffset="30" />
 		</switchAssembly>
-		<switchAssembly number="21" incrementalVpos="85" incrementalHpos="0" >
-      <switchTextDisplay />
-      <switch label="&amp;Prev" vOffset="30" />
-    </switchAssembly>
-    <switchAssembly number="22" incrementalVpos="85" incrementalHpos="0" >
-      <switchTextDisplay />
-      <switch label="&amp;Next" vOffset="30" />
-    </switchAssembly>
-  </switchAssemblies>
+		<switchAssembly number="1" incrementalVpos="0" incrementalHpos="165" >
+			<switchTextDisplay />
+			<switchLed vOffset="33" hOffset="105" />
+			<switch label="&amp;2" vOffset="30" />
+		</switchAssembly>
+		<switchAssembly number="2" incrementalVpos="0" incrementalHpos="165" >
+			<switchTextDisplay />
+			<switchLed vOffset="33" hOffset="105" />
+			<switch label="&amp;3" vOffset="30" />
+		</switchAssembly>
+		<switchAssembly number="3" incrementalVpos="0" incrementalHpos="165" >
+			<switchTextDisplay />
+			<switchLed vOffset="33" hOffset="105" />
+			<switch label="&amp;4" vOffset="30" />
+		</switchAssembly>
+		<switchAssembly number="4" incrementalVpos="0" incrementalHpos="165" >
+			<switchTextDisplay />
+			<switchLed vOffset="33" hOffset="105" />
+			<switch label="&amp;5" vOffset="30" />
+		</switchAssembly>
+
+		<switchAssembly number="5" incrementalVpos="85" left="5" >
+			<switchTextDisplay />
+			<switchLed vOffset="33" hOffset="105" />
+			<switch label="&amp;6" vOffset="30" />
+		</switchAssembly>
+		<switchAssembly number="6" incrementalVpos="0" incrementalHpos="165" >
+			<switchTextDisplay />
+			<switchLed vOffset="33" hOffset="105" />
+			<switch label="&amp;7" vOffset="30" />
+		</switchAssembly>
+		<switchAssembly number="7" incrementalVpos="0" incrementalHpos="165" >
+			<switchTextDisplay />
+			<switchLed vOffset="33" hOffset="105" />
+			<switch label="&amp;8" vOffset="30" />
+		</switchAssembly>
+		<switchAssembly number="8" incrementalVpos="0" incrementalHpos="165" >
+			<switchTextDisplay />
+			<switchLed vOffset="33" hOffset="105" />
+			<switch label="&amp;9" vOffset="30" />
+		</switchAssembly>
+		<switchAssembly number="9" incrementalVpos="0" incrementalHpos="165" >
+			<switchTextDisplay />
+			<switchLed vOffset="33" hOffset="105" />
+			<switch label="1&amp;0" vOffset="30" />
+		</switchAssembly>
+
+		<switchAssembly number="10" incrementalVpos="85" left="5" >
+			<switchTextDisplay />
+			<switchLed vOffset="33" hOffset="105" />
+			<switch label="&amp;A" vOffset="30" />
+		</switchAssembly>
+		<switchAssembly number="11" incrementalVpos="0" incrementalHpos="165" >
+			<switchTextDisplay />
+			<switchLed vOffset="33" hOffset="105" />
+			<switch label="&amp;B" vOffset="30" />
+		</switchAssembly>
+		<switchAssembly number="12" incrementalVpos="0" incrementalHpos="165" >
+			<switchTextDisplay />
+			<switchLed vOffset="33" hOffset="105" />
+			<switch label="&amp;C" vOffset="30" />
+		</switchAssembly>
+		<switchAssembly number="13" incrementalVpos="0" incrementalHpos="165" >
+			<switchTextDisplay />
+			<switchLed vOffset="33" hOffset="105" />
+			<switch label="&amp;D" vOffset="30" />
+		</switchAssembly>
+		<switchAssembly number="14" incrementalVpos="0" incrementalHpos="165" >
+			<switchTextDisplay />
+			<switchLed vOffset="33" hOffset="105" />
+			<switch label="&amp;E" vOffset="30" />
+		</switchAssembly>
+
+		<switchAssembly number="15" incrementalVpos="85" left="5" >
+			<switchTextDisplay />
+			<switchLed vOffset="33" hOffset="105" />
+			<switch label="&amp;F" vOffset="30" />
+		</switchAssembly>
+		<switchAssembly number="16" incrementalVpos="0" incrementalHpos="165" >
+			<switchTextDisplay />
+			<switchLed vOffset="33" hOffset="105" />
+			<switch label="&amp;G" vOffset="30" />
+		</switchAssembly>
+		<switchAssembly number="17" incrementalVpos="0" incrementalHpos="165" >
+			<switchTextDisplay />
+			<switchLed vOffset="33" hOffset="105" />
+			<switch label="&amp;H" vOffset="30" />
+		</switchAssembly>
+		<switchAssembly number="18" incrementalVpos="0" incrementalHpos="165" >
+			<switchTextDisplay />
+			<switchLed vOffset="33" hOffset="105" />
+			<switch label="&amp;I" vOffset="30" />
+		</switchAssembly>
+		<switchAssembly number="19" incrementalVpos="0" incrementalHpos="165" >
+			<switchTextDisplay />
+			<switchLed vOffset="33" hOffset="105" />
+			<switch label="&amp;J" vOffset="30" />
+		</switchAssembly>
+
+		<switchAssembly number="20" incrementalVpos="110" left="5" >
+			<switchTextDisplay />
+			<switch label="&amp;Mode" vOffset="30" />
+		</switchAssembly>
+		<switchAssembly number="21" incrementalVpos="0" incrementalHpos="495" >
+			<switchTextDisplay />
+			<switch label="&amp;Prev" vOffset="30" />
+		</switchAssembly>
+		<switchAssembly number="22" incrementalVpos="0" incrementalHpos="165" >
+			<switchTextDisplay />
+			<switch label="&amp;Next" vOffset="30" />
+		</switchAssembly>
+
+	</switchAssemblies>
 </MidiControlUiSettings>
