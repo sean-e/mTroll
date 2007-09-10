@@ -1,4 +1,5 @@
 [todo]
+add sequence patch type
 
 
 [pedalboard sizes]		w		d		h			area	hspace	url
