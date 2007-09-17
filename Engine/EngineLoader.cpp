@@ -8,6 +8,11 @@
 #include "IMidiOutGenerator.h"
 #include "ITraceDisplay.h"
 #include "..\Monome40h\IMonome40h.h"
+#include "NormalPatch.h"
+#include "TogglePatch.h"
+#include "SequencePatch.h"
+#include "MomentaryPatch.h"
+#include "MetaPatch_ResetBankPatches.h"
 
 
 static PatchBank::PatchState GetLoadState(const std::string & tmpLoad);
@@ -201,7 +206,8 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			if (tmp.empty())
 				continue;
 
-			mEngine->AddMetaPatch(patchNumber, patchName, tmp);
+			if (tmp == "ResetBankPatches")
+				 mEngine->AddPatch(new MetaPatch_ResetBankPatches(mEngine, patchNumber, patchName));
 			continue;
 		}
 		
@@ -220,14 +226,6 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			continue;
 
 		pElem->QueryIntAttribute("port", &midiOutPortNumber);
-		pElem->QueryValueAttribute("type", &tmp);
-		Patch::PatchType patchType = Patch::ptNormal;
-		if (tmp == "normal")
-			patchType = Patch::ptNormal;
-		else if (tmp == "toggle")
-			patchType = Patch::ptToggle;
-		else if (tmp == "momentary")
-			patchType = Patch::ptMomentary;
 
 		TiXmlHandle hRoot(NULL);
 		hRoot = TiXmlHandle(pElem);
@@ -257,12 +255,42 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		if (-1 == retval)
 			continue;
 
-		Patch & newpatch = mEngine->AddPatch(patchNumber, patchName, patchType, 
-			midiOutPortNumber, 
-			mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[midiOutPortNumber]), 
-			bytesA, bytesB);
+		Patch * newPatch = NULL;
+		IMidiOut * midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[midiOutPortNumber]);
+		pElem->QueryValueAttribute("type", &tmp);
+		if (tmp == "normal")
+			newPatch = new NormalPatch(patchNumber, patchName, midiOutPortNumber, midiOut, bytesA, bytesB);
+		else if (tmp == "toggle")
+			newPatch = new TogglePatch(patchNumber, patchName, midiOutPortNumber, midiOut, bytesA, bytesB);
+		else if (tmp == "momentary")
+			newPatch = new MomentaryPatch(patchNumber, patchName, midiOutPortNumber, midiOut, bytesA, bytesB);
+		else if (tmp == "sequence")
+		{
+			SequencePatch * seqpatch = new SequencePatch(patchNumber, patchName, midiOutPortNumber, midiOut);
+			for (childElem = hRoot.FirstChild().Element(); 
+				 childElem && seqpatch; 
+				 childElem = childElem->NextSiblingElement())
+			{
+				if (childElem->ValueStr() != "midiByteString")
+					continue;
+			
+				midiByteStringA = childElem->GetText();
+				Bytes bytesA;
+				int retval = ::ValidateString(midiByteStringA, bytesA);
+				if (-1 == retval)
+					continue;
+					
+				seqpatch->AddString(bytesA);
+			}
+			
+			newPatch = seqpatch;
+		}
 
-		ExpressionPedals & pedals = newpatch.GetPedals();
+		if (!newPatch)
+			continue;
+
+		mEngine->AddPatch(newPatch);
+		ExpressionPedals & pedals = newPatch->GetPedals();
 		for (childElem = hRoot.FirstChild().Element(); 
 			 childElem; 
 			 childElem = childElem->NextSiblingElement())
@@ -284,7 +312,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				if (exprInputNumber > 0 &&
 					exprInputNumber <= ExpressionPedals::PedalCount)
 				{
-					ExpressionPedals & pedals = newpatch.GetPedals();
+					ExpressionPedals & pedals = newPatch->GetPedals();
 					pedals.EnableGlobal(exprInputNumber - 1, !!enable);
 				}
 			}

@@ -9,7 +9,7 @@
 #include "ITraceDisplay.h"
 
 
-std::list<Patch *>	PatchBank::sActiveNormalPatches;
+static std::list<Patch *>	sActiveVolatilePatches;
 
 
 PatchBank::PatchBank(int number, 
@@ -23,7 +23,7 @@ PatchBank::~PatchBank()
 {
 	std::for_each(mPatches.begin(), mPatches.end(), DeletePatchMaps());
 	mPatches.clear();
-	sActiveNormalPatches.clear();
+	sActiveVolatilePatches.clear();
 }
 
 template<typename T>
@@ -110,9 +110,9 @@ PatchBank::Load(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 				continue;
 
 			if (stA == curItem->mPatchStateAtLoad)
-				curItem->mPatch->SendStringA();
+				curItem->mPatch->BankTransitionActivation();
 			else if (stB == curItem->mPatchStateAtLoad)
-				curItem->mPatch->SendStringB();
+				curItem->mPatch->BankTransitionDeactivation();
 
 			// only assign a switch to the first patch (if multiple 
 			// patches are assigned to the same switch)
@@ -146,9 +146,9 @@ PatchBank::Unload(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 				continue;
 
 			if (stA == curItem->mPatchStateAtUnload)
-				curItem->mPatch->SendStringA();
+				curItem->mPatch->BankTransitionActivation();
 			else if (stB == curItem->mPatchStateAtUnload)
-				curItem->mPatch->SendStringB();
+				curItem->mPatch->BankTransitionDeactivation();
 
 			curItem->mPatch->ClearSwitch(switchDisplay);
 		}
@@ -174,7 +174,7 @@ PatchBank::PatchSwitchPressed(int switchNumber, IMainDisplay * mainDisplay, ISwi
 		if (!curSwitchItem || !curSwitchItem->mPatch)
 			continue;
 
-		if (curSwitchItem->mPatch->GetPatchType() == Patch::ptNormal)
+		if (curSwitchItem->mPatch->IsPatchVolatile())
 		{
 			curSwitchHasNormalPatch = true;
 			break;
@@ -184,17 +184,17 @@ PatchBank::PatchSwitchPressed(int switchNumber, IMainDisplay * mainDisplay, ISwi
 	if (curSwitchHasNormalPatch)
 	{
 		// do B processing
-		for (std::list<Patch*>::iterator it2 = sActiveNormalPatches.begin();
-			it2 != sActiveNormalPatches.end();
-			it2 = sActiveNormalPatches.begin())
+		for (std::list<Patch*>::iterator it2 = sActiveVolatilePatches.begin();
+			it2 != sActiveVolatilePatches.end();
+			it2 = sActiveVolatilePatches.begin())
 		{
 			Patch * curPatchItem = *it2;
-			if (curPatchItem && curPatchItem->IsOn())
+			if (curPatchItem && curPatchItem->IsActive())
 			{
-				curPatchItem->SendStringB();
+				curPatchItem->DeactivateVolatilePatch();
 				curPatchItem->UpdateDisplays(mainDisplay, switchDisplay);
 			}
-			sActiveNormalPatches.erase(it2);
+			sActiveVolatilePatches.erase(it2);
 		}
 	}
 
@@ -209,10 +209,10 @@ PatchBank::PatchSwitchPressed(int switchNumber, IMainDisplay * mainDisplay, ISwi
 			continue;
 
 		curSwitchItem->mPatch->SwitchPressed(NULL, switchDisplay);
-		if (curSwitchItem->mPatch->GetPatchType() == Patch::ptNormal)
+		if (curSwitchItem->mPatch->IsPatchVolatile())
 		{
-			_ASSERTE(std::find(sActiveNormalPatches.begin(), sActiveNormalPatches.end(), curSwitchItem->mPatch) == sActiveNormalPatches.end());
-			sActiveNormalPatches.push_back(curSwitchItem->mPatch);
+			_ASSERTE(std::find(sActiveVolatilePatches.begin(), sActiveVolatilePatches.end(), curSwitchItem->mPatch) == sActiveVolatilePatches.end());
+			sActiveVolatilePatches.push_back(curSwitchItem->mPatch);
 		}
 		msgstr << curSwitchItem->mPatch->GetNumber() << " " << curSwitchItem->mPatch->GetName() << std::endl;
 	}
@@ -323,7 +323,7 @@ PatchBank::DisplayDetailedPatchInfo(int switchNumber, IMainDisplay * mainDisplay
 // 				info << "(Hidden patches)" << std::endl;
 
 			info << std::setw(3) << curItem->mPatch->GetNumber() << " " 
-				<< (curItem->mPatch->IsOn() ? "ON     " : "off    ") 
+				<< (curItem->mPatch->IsActive() ? "ON     " : "off    ") 
 				<< std::setiosflags(std::ios::left) << std::setw(10) << curItem->mPatch->GetPatchTypeStr() 
 				<< curItem->mPatch->GetName() << std::endl;
 			++cnt;
@@ -354,7 +354,7 @@ PatchBank::ResetPatches(IMainDisplay * mainDisplay,
 			if (!curItem || !curItem->mPatch)
 				continue;
 
-			curItem->mPatch->SetOff(switchDisplay);
+			curItem->mPatch->Reset(switchDisplay);
 		}
 	}
 

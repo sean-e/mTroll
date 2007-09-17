@@ -102,7 +102,7 @@ class ExpressionPedals
 public:
 	enum {PedalCount = 4};
 
-	ExpressionPedals(IMidiOut * midiOut = NULL) : mMidiOut(midiOut)
+	ExpressionPedals(IMidiOut * midiOut = NULL) : mHasAnyNondefault(false), mMidiOut(midiOut)
 	{
 		int idx;
 		for (idx = 0; idx < PedalCount; ++idx)
@@ -111,10 +111,13 @@ public:
 			mPedalEnables[idx] = false;
 	}
 
+	bool HasAnySettings() const { return mHasAnyNondefault; }
+
 	void EnableGlobal(int pedal, bool enable)
 	{
 		_ASSERTE(pedal < PedalCount);
 		mGlobalEnables[pedal] = enable;
+		mHasAnyNondefault = true;
 	}
 
 	void InitMidiOut(IMidiOut * midiOut) {mMidiOut = midiOut;}
@@ -130,6 +133,7 @@ public:
 		_ASSERTE(pedal < PedalCount);
 		mPedals[pedal].Init(idx, invert, channel, controlNumber, minVal, maxVal);
 		mPedalEnables[pedal] = true;
+		mHasAnyNondefault = true;
 	}
 
 	void Calibrate(const PedalCalibration * calibrationSetting)
@@ -150,6 +154,7 @@ public:
 	}
 
 private:
+	bool					mHasAnyNondefault;
 	IMidiOut				* mMidiOut;
 	bool					mGlobalEnables[PedalCount];
 	bool					mPedalEnables[PedalCount];	// true if either cc is enabled for a pedal

@@ -9,16 +9,26 @@ class MetaPatch_ResetBankPatches : public Patch
 {
 public:
 	MetaPatch_ResetBankPatches(MidiControlEngine * engine, int number, const std::string & name) : 
-		Patch(number, name, ptToggle), // ptToggle so that expression pedals aren't accessed
+		Patch(number, name),
 		mEngine(engine)
 	{
 		_ASSERTE(mEngine);
 	}
 
+	virtual std::string GetPatchTypeStr() const {return "meta: resetBankPatches";}
+
 	virtual void SwitchPressed(IMainDisplay *, ISwitchDisplay *)
 	{
 		mEngine->ResetBankPatches();
 	}
+
+	virtual void SwitchReleased(IMainDisplay *, ISwitchDisplay *)
+	{
+		return;
+	}
+
+	virtual void BankTransitionActivation() {SwitchPressed(NULL, NULL);}
+	virtual void BankTransitionDeactivation() {SwitchPressed(NULL, NULL);}
 
 private:
 	MidiControlEngine	* mEngine;

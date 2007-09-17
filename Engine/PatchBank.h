@@ -41,8 +41,6 @@ public:
 	int GetBankNumber() const {return mNumber;}
 	const std::string & GetBankName() const {return mName;}
 
-	static Patch * GetActiveNormalPatch() {return sActiveNormalPatches.begin() == sActiveNormalPatches.end() ? NULL : *sActiveNormalPatches.begin();}
-
 private:
 	struct PatchMap
 	{
@@ -73,7 +71,6 @@ private:
 	// only the name of the first patch will be displayed
 	typedef std::map<int, PatchVect> PatchMaps;
 	PatchMaps					mPatches;	// switchNumber is key
-	static std::list<Patch *>	sActiveNormalPatches;	// weak refs
 };
 
 #endif // PatchBank_h__

@@ -2,7 +2,6 @@
 #include <strstream>
 #include "MidiControlEngine.h"
 #include "PatchBank.h"
-#include "MetaPatch_ResetBankPatches.h"
 #include "IMainDisplay.h"
 #include "ISwitchDisplay.h"
 #include "ITraceDisplay.h"
@@ -79,30 +78,10 @@ MidiControlEngine::AddBank(int number,
 	return * pBank;
 }
 
-Patch &
-MidiControlEngine::AddPatch(int number,
-							const std::string & name,
-							Patch::PatchType patchType,
-							int midiOutPortNumber,
-							IMidiOut * midiOut,
-							const Bytes & midiStringA,
-							const Bytes & midiStringB)
+void
+MidiControlEngine::AddPatch(Patch * patch)
 {
-	mPatches[number] = new Patch(number, name, patchType, midiOutPortNumber, midiOut, midiStringA, midiStringB);
-	return * mPatches[number];
-}
-
-bool
-MidiControlEngine::AddMetaPatch(int number, 
-								const std::string & name, 
-								const std::string & metaCommand)
-{
-	if (metaCommand == "ResetBankPatches")
-	{
-		mPatches[number] = new MetaPatch_ResetBankPatches(this, number, name);
-		return true;
-	}
-	return false;
+	mPatches[patch->GetNumber()] = patch;	
 }
 
 void

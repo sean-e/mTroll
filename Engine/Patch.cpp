@@ -9,35 +9,15 @@
 ExpressionPedals * gActivePatchPedals = NULL;
 
 Patch::Patch(int number, 
-			 const std::string & name, 
-			 PatchType patchType, 
-			 int midiOutPortNumber,
-			 IMidiOut * midiOut,
-			 const std::vector<byte> & midiStringA, 
-			 const std::vector<byte> & midiStringB) : 
+			 const std::string & name,
+			 int midiOutPortNumber /*= -1*/, 
+			 IMidiOut * midiOut /*= NULL*/) :
 	mNumber(number),
 	mName(name),
-	mPatchType(patchType),
-	mMidiByteStringA(midiStringA),
-	mMidiByteStringB(midiStringB),
-	mPatchIsOn(false),
+	mPatchIsActive(false),
 	mMidiOutPort(midiOutPortNumber),
 	mMidiOut(midiOut),
 	mPedals(midiOut)
-{
-	_ASSERTE(midiOut);
-}
-
-Patch::Patch(int number, 
-			 const std::string & name, 
-			 PatchType patchType) :
-	mNumber(number),
-	mName(name),
-	mPatchType(patchType),
-	mPatchIsOn(false),
-	mMidiOutPort(-1),
-	mMidiOut(NULL),
-	mPedals(NULL)
 {
 }
 
@@ -76,34 +56,6 @@ Patch::ClearSwitch(ISwitchDisplay * switchDisplay)
 }
 
 void
-Patch::SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
-{
-	if (mPatchIsOn)
-	{
-		SendStringB();
-
-		if (ptNormal == mPatchType)
-			SendStringA();
-	}
-	else
-	{
-		SendStringA();
-	}
-
-	UpdateDisplays(mainDisplay, switchDisplay);
-}
-
-void
-Patch::SwitchReleased(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
-{
-	if (ptMomentary != mPatchType)
-		return;
-
-	SendStringB();
-	UpdateDisplays(mainDisplay, switchDisplay);
-}
-
-void
 Patch::UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 {
 	if (mSwitchNumbers.empty())
@@ -115,7 +67,7 @@ Patch::UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay
 			it != mSwitchNumbers.end();
 			++it)
 		{
-			switchDisplay->SetSwitchDisplay(*it, mPatchIsOn);
+			switchDisplay->SetSwitchDisplay(*it, mPatchIsActive);
 		}
 	}
 
@@ -125,49 +77,4 @@ Patch::UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay
 		msgstr << mNumber << " " << mName << std::endl << std::ends;
 		mainDisplay->TextOut(msgstr.str());
 	}
-}
-
-void
-Patch::SendStringA()
-{
-	if (mMidiByteStringA.size())
-		mMidiOut->MidiOut(mMidiByteStringA);
-	mPatchIsOn = true;
-
-	if (ptNormal == mPatchType)
-	{
-		// do this here rather than SwitchPressed to that pedals can be
-		// set on bank load rather than only patch load
-		gActivePatchPedals = &mPedals;
-	}
-}
-
-void
-Patch::SendStringB()
-{
-	if (mMidiByteStringB.size())
-		mMidiOut->MidiOut(mMidiByteStringB);
-	mPatchIsOn = false;
-}
-
-std::string
-Patch::GetPatchTypeStr() const
-{
-	std::string retval;
-	switch (mPatchType)
-	{
-	case ptNormal:
-		retval = "normal";
-		break;
-	case ptToggle:
-		retval = "toggle";
-		break;
-	case ptMomentary:
-		retval = "momentary";
-		break;
-	default:
-		retval = "unknown";
-	}
-
-	return retval;
 }

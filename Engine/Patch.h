@@ -13,14 +13,6 @@ class ISwitchDisplay;
 class Patch
 {
 public:
-	enum PatchType 
-	{
-		ptNormal,			// responds to SwitchPressed; SwitchReleased does not affect patch state
-		ptToggle,			// responds to SwitchPressed; SwitchReleased does not affect patch state
-		ptMomentary			// responds to SwitchPressed and SwitchReleased
-	};
-
-	Patch(int number, const std::string & name, PatchType patchType, int midiOutPortNumber, IMidiOut * midiOut, const Bytes & midiStringA, const Bytes & midiStringB);
 	virtual ~Patch();
 
 	ExpressionPedals & GetPedals() {return mPedals;}
@@ -28,35 +20,38 @@ public:
 	void AssignSwitch(int switchNumber, ISwitchDisplay * switchDisplay);
 	void ClearSwitch(ISwitchDisplay * switchDisplay);
 
-	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
-	virtual void SwitchReleased(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
+	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) = 0;
+	virtual void SwitchReleased(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) = 0;
 
 	void UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 	const std::string & GetName() const {return mName;}
 	int GetNumber() const {return mNumber;}
-	bool IsOn() const {return mPatchIsOn;}
-	void SetOff(ISwitchDisplay * switchDisplay) {mPatchIsOn = false; UpdateDisplays(NULL, switchDisplay);}
-	std::string GetPatchTypeStr() const;
-	PatchType GetPatchType() const {return mPatchType;}
+	bool IsActive() const {return mPatchIsActive;}
+	void Reset(ISwitchDisplay * switchDisplay) {mPatchIsActive = false; UpdateDisplays(NULL, switchDisplay);}
 
-	void SendStringA();
-	void SendStringB();
+	virtual std::string GetPatchTypeStr() const = 0;
+	virtual bool IsPatchVolatile() const {return false;} // load of one volatile patch affects loaded volatile patch (typically normal mode patches)
+	virtual void DeactivateVolatilePatch() { }
+
+	virtual void BankTransitionActivation() = 0;
+	virtual void BankTransitionDeactivation() = 0;
 
 protected:
-	Patch(int number, const std::string & name, PatchType patchType);
+	Patch(int number, const std::string & name, int midiOutPortNumber = -1, IMidiOut * midiOut = NULL);
+
+private:
+	Patch();
+	Patch(const Patch &);
+
+protected:
+	ExpressionPedals		mPedals;
+	IMidiOut				* mMidiOut;
+	bool					mPatchIsActive;
 
 private:
 	const int				mNumber;	// unique across patches
 	const std::string		mName;
-	const PatchType			mPatchType;
 	const int				mMidiOutPort;
-	const Bytes				mMidiByteStringA;
-	const Bytes				mMidiByteStringB;
-	ExpressionPedals		mPedals;
-
-	// runtime only state
-	IMidiOut				* mMidiOut;
-	bool					mPatchIsOn;
 	std::vector<int>		mSwitchNumbers;
 };
 
