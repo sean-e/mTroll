@@ -238,7 +238,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			if (childElem->ValueStr() != "midiByteString")
 				continue;
 		
-			tmp = childElem->Attribute("name");
+			childElem->QueryValueAttribute("name", &tmp);
 			if (tmp == "A")
 				midiByteStringA = childElem->GetText();
 			else if (tmp == "B")
