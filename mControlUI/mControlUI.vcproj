@@ -201,6 +201,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="del release\AboutDlg.obj"
 			/>
 		</Configuration>
 	</Configurations>
@@ -378,6 +379,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Engine\MomentaryPatch.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Engine\NormalPatch.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Engine\Patch.cpp"
 				>
 			</File>
@@ -395,6 +404,18 @@
 			</File>
 			<File
 				RelativePath="..\Engine\ScopeSet.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Engine\SequencePatch.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Engine\TogglePatch.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Engine\TwoStatePatch.h"
 				>
 			</File>
 			<File

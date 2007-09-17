@@ -127,15 +127,15 @@ IDR_MAINFRAME           ICON                    "res\\mControlUI.ico"
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOGEX 0, 0, 228, 102
+IDD_ABOUTBOX DIALOGEX 0, 0, 228, 89
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,171,81,50,14
-    CTEXT           "mControlUI Application v1.0\n\nhttp://www.creepingfog.com/mControl/\n\n(c) Copyright 2007 Sean Echevarria",IDC_STATIC,15,46,142,43
-    ICON            IDR_MAINFRAME,IDC_STATIC,73,20,21,20
-    GROUPBOX        "",IDC_STATIC,7,7,156,88
+    DEFPUSHBUTTON   "OK",IDOK,171,68,50,14
+    CTEXT           "mTroll MIDI Controller\n\nhttp://www.creepingfog.com/mTroll/\n\n(c) Copyright 2007 Sean Echevarria",IDC_STATIC,15,18,142,43
+    GROUPBOX        "",IDC_STATIC,7,7,156,75
+    LTEXT           "Built 2007.09.16",IDC_BUILD_DATE,60,67,52,8
 END
 
 IDD_MCONTROLUI_FORM DIALOGEX 0, 0, 535, 282
@@ -159,7 +159,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 221
         TOPMARGIN, 7
-        BOTTOMMARGIN, 95
+        BOTTOMMARGIN, 82
     END
 
     IDD_MCONTROLUI_FORM, DIALOG
