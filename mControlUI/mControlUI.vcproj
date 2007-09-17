@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="mControlUI"
+	Name="mTroll"
 	ProjectGUID="{3D33E5B3-BA0F-45D2-AAE7-A939F9F4B985}"
-	RootNamespace="mControlUI"
+	RootNamespace="mTroll"
 	SccProjectName="Perforce Project"
 	SccLocalPath=".."
 	SccProvider="MSSCCI:Perforce SCM"
