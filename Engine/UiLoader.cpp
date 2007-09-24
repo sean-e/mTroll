@@ -25,21 +25,18 @@ UiLoader::UiLoader(IMidiControlUi * theUi,
 	TiXmlHandle hRoot(NULL);
 	hRoot = TiXmlHandle(pElem);
 
-	pElem = hRoot.FirstChild("switchAssemblyConfig").Element();
-	if (pElem)
-		LoadAssembyConfig(pElem);
-	else
-		return;
-
 	pElem = hRoot.FirstChild("switchMappings").Element();
 	if (pElem)
 		LoadSwitchMappings(pElem);
-	else
-		return;
 
-	pElem = hRoot.FirstChild("switchAssemblies").Element();
+	pElem = hRoot.FirstChild("switchAssemblyConfig").Element();
 	if (pElem)
-		LoadSwitchAssemblies(pElem);
+	{
+		LoadAssembyConfig(pElem);
+		pElem = hRoot.FirstChild("switchAssemblies").Element();
+		if (pElem)
+			LoadSwitchAssemblies(pElem);
+	}
 
 	LoadOtherStuffAndFinalize(hRoot.ToElement());
 }
