@@ -143,12 +143,13 @@ CMControlUIView::Create(HWND hWndParent, LPARAM dwInitParam /*= NULL*/)
 }
 
 void
-CMControlUIView::Load(const std::string & settingsBasefile)
+CMControlUIView::Load(const std::string & uiSettingsFile, 
+					  const std::string & configSettingsFile)
 {
 	Unload();
-	LoadUi(settingsBasefile + ".ui.xml");
+	LoadUi(uiSettingsFile);
 	LoadMonome();
-	LoadMidiSettings(settingsBasefile + ".config.xml");
+	LoadMidiSettings(configSettingsFile);
 	if (mHardwareUi)
 		mHardwareUi->Subscribe(this);
 	ActivityIndicatorHack();

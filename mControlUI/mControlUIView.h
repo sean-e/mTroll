@@ -39,7 +39,7 @@ public:
 	typedef CButton				Switch;
 
 			HWND Create(HWND hWndParent, LPARAM dwInitParam = NULL);
-			void Load(const std::string & settingsBasefile);
+			void Load(const std::string & uiSettingsFile, const std::string & configSettingsFile);
 			void Unload();
 
 			BOOL PreTranslateMessage(MSG* pMsg);
