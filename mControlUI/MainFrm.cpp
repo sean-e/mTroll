@@ -31,44 +31,40 @@ LRESULT CMainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/
 	::_set_se_translator(::trans_func);
 
 	// create command bar window
-	HWND hWndCmdBar = m_CmdBar.Create(m_hWnd, rcDefault, NULL, ATL_SIMPLE_CMDBAR_PANE_STYLE);
-	// attach menu
-	m_CmdBar.AttachMenu(GetMenu());
-	// load command bar images
-	m_CmdBar.LoadImages(IDR_MAINFRAME);
-	// remove old menu
-	SetMenu(NULL);
+// 	HWND hWndCmdBar = m_CmdBar.Create(m_hWnd, rcDefault, NULL, ATL_SIMPLE_CMDBAR_PANE_STYLE);
+// 	// attach menu
+// 	m_CmdBar.AttachMenu(GetMenu());
+// 	// load command bar images
+// 	m_CmdBar.LoadImages(IDR_MAINFRAME);
+// 	// remove old menu
+// 	SetMenu(NULL);
 
-	HWND hWndToolBar = CreateSimpleToolBarCtrl(m_hWnd, IDR_MAINFRAME, FALSE, ATL_SIMPLE_TOOLBAR_PANE_STYLE);
-
-	CreateSimpleReBar(ATL_SIMPLE_REBAR_NOBORDER_STYLE);
-	AddSimpleReBarBand(hWndCmdBar);
-	AddSimpleReBarBand(hWndToolBar, NULL, TRUE);
-
-	CreateSimpleStatusBar();
+// 	HWND hWndToolBar = CreateSimpleToolBarCtrl(m_hWnd, IDR_MAINFRAME, FALSE, ATL_SIMPLE_TOOLBAR_PANE_STYLE);
+// 
+// 	CreateSimpleReBar(ATL_SIMPLE_REBAR_NOBORDER_STYLE);
+// 	AddSimpleReBarBand(hWndCmdBar);
+// 	AddSimpleReBarBand(hWndToolBar, NULL, TRUE);
+// 
+// 	CreateSimpleStatusBar();
 
 	m_hWndClient = mView.Create(m_hWnd);
 
-	UIAddToolBar(hWndToolBar);
-	UISetCheck(ID_VIEW_TOOLBAR, 1);
-	UISetCheck(ID_VIEW_STATUS_BAR, 1);
+// 	UIAddToolBar(hWndToolBar);
+// 	UISetCheck(ID_VIEW_TOOLBAR, 1);
+// 	UISetCheck(ID_VIEW_STATUS_BAR, 1);
 
 	// register object for message filtering and idle updates
 	CMessageLoop* pLoop = _Module.GetMessageLoop();
 	ATLASSERT(pLoop != NULL);
 	pLoop->AddMessageFilter(this);
-	pLoop->AddIdleHandler(this);
+//	pLoop->AddIdleHandler(this);
+
+	// todo: read filenames for auto-open
+	mUiFilename = "testdata.ui.xml";
+	mConfigFilename = "testdata.config.xml";
 
 	BOOL dummy;
-	OnFileNew(0, 0, 0, dummy);
-
-	CRect wndRc;
-	GetWindowRect(&wndRc);
-	int width, height;
-	mView.GetPreferredSize(width, height);
-	wndRc.right = wndRc.left + width;
-	wndRc.bottom = wndRc.top + height;
-	MoveWindow(&wndRc);
+	OnRefresh(0, 0, 0, dummy);
 
 	return 0;
 }
@@ -86,10 +82,50 @@ LRESULT CMainFrame::OnFileExit(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCt
 	return 0;
 }
 
-LRESULT CMainFrame::OnFileNew(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+LRESULT CMainFrame::OnFileOpen(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
 	::SetCursor(AtlLoadSysCursor(IDC_WAIT));
-	mView.Load("testdata");
+	mView.Unload();
+	::SetCursor(AtlLoadSysCursor(IDC_ARROW));
+
+	mUiFilename.clear();
+	mConfigFilename.clear();
+
+	GetOpenFileName("Select Config Settings File", "Config files\0*.config.xml\0\0", mConfigFilename);
+	if (mConfigFilename.empty())
+		return 0;
+
+	GetOpenFileName("Select UI Settings File", "UI files\0*.ui.xml\0\0", mUiFilename);
+	if (mUiFilename.empty())
+	{
+		mConfigFilename.clear();
+		return 0;
+	}
+
+	// todo: save filenames for auto-open
+
+	BOOL dummy;
+	OnRefresh(0, 0, NULL, dummy);
+	return 0;
+}
+
+LRESULT CMainFrame::OnRefresh(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+	::SetCursor(AtlLoadSysCursor(IDC_WAIT));
+	mView.Unload();
+	mView.Load(mUiFilename, mConfigFilename);
+
+	int width, height;
+	mView.GetPreferredSize(width, height);
+	if (width && height)
+	{
+		CRect wndRc;
+		GetWindowRect(&wndRc);
+		wndRc.right = wndRc.left + width;
+		wndRc.bottom = wndRc.top + height;
+		MoveWindow(&wndRc);
+	}
+
 	::SetCursor(AtlLoadSysCursor(IDC_ARROW));
 	return 0;
 }
@@ -120,6 +156,38 @@ LRESULT CMainFrame::OnAppAbout(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCt
 	CAboutDlg dlg;
 	dlg.DoModal();
 	return 0;
+}
+
+void
+CMainFrame::GetOpenFileName(const char * const dlgTitle, 
+							const char * const fileExt, 
+							std::string & selection)
+{
+	OPENFILENAME ofn;
+	ZeroMemory(&ofn, sizeof(OPENFILENAME));
+	const int kBufLen = 512;
+	TCHAR buf[kBufLen + 1] = "";
+
+	ofn.lStructSize       = sizeof(OPENFILENAME);
+	ofn.hwndOwner         = m_hWnd;
+	ofn.hInstance         = GetModuleHandle(NULL);
+	ofn.lpstrFilter       = fileExt;
+// 	ofn.lpstrCustomFilter = ;
+// 	ofn.nMaxCustFilter    = 0;
+// 	ofn.nFilterIndex      = 0;
+	ofn.lpstrFile         = buf;
+	ofn.nMaxFile          = kBufLen;
+// 	ofn.lpstrFileTitle    = NULL;
+// 	ofn.nMaxFileTitle     = 0;
+//	ofn.lpstrInitialDir   = ;
+	ofn.lpstrTitle        = dlgTitle;
+	ofn.nFileOffset       = 0;
+	ofn.nFileExtension    = 1;
+//	ofn.lpstrDefExt       = fileExt;
+	ofn.Flags             = OFN_EXPLORER | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+	if (::GetOpenFileName(&ofn))
+		selection = ofn.lpstrFile;
 }
 
 void 
