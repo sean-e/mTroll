@@ -9,7 +9,6 @@
 		</switches>
 		<midiDevices>
 			<midiDevice port="1" outIdx="1" activityIndicatorId="23" />
-			<midiDevice port="2" outIdx="3" activityIndicatorId="23" />
 		</midiDevices>
 		<expression port="1">
 			<adc inputNumber="1" enable="1" minimumAdcVal="10" maximumAdcVal="310" />
