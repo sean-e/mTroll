@@ -1,8 +1,8 @@
 <?xml version="1.0" ?>
 <MidiControlUiSettings>
 	<frame width="830" height="625" />
-	<mainTextDisplay top="345" left="9" width="400" height="163" font-height="12" font-weight="bold" foregroundColor="16750848" backgroundColor="0" />
-	<traceTextDisplay top="345" left="430" width="380" height="163" font-height="8" />
+	<mainTextDisplay top="345" left="9" width="400" height="220" font-height="12" font-weight="bold" foregroundColor="16750848" backgroundColor="0" />
+	<traceTextDisplay top="345" left="430" width="380" height="220" font-height="8" />
 
   <switchAssemblyConfig>
     <switch font-name="Tahoma" font-weight="bold" font-height="10" width="75" height="23" />
