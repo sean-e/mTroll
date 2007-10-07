@@ -398,7 +398,7 @@ MidiControlEngine::AdcValueChanged(int port,
 		if (mMainDisplay && mPedalModePort == port)
 		{
 			std::strstream displayMsg;
-			displayMsg << "Adc port " << (int) port << " value: " << newValue << std::endl << std::ends;
+			displayMsg << "Adc port " << (int) (port+1) << " value: " << newValue << std::endl << std::ends;
 			mMainDisplay->TextOut(displayMsg.str());
 		}
 		return;
