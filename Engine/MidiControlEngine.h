@@ -34,7 +34,7 @@ public:
 	void					FilterRedundantProgChg(bool filter) {mFilterRedundantProgramChanges = filter;}
 	void					CompleteInit(const PedalCalibration * pedalCalibrationSettings);
 
-	ExpressionPedals &		GetPedals() {return mPedals;}
+	ExpressionPedals &		GetPedals() {return mGlobalPedals;}
 
 	void					SwitchPressed(int switchNumber);
 	void					SwitchReleased(int switchNumber);
@@ -57,6 +57,7 @@ private:
 		emBankNav,			// navigate banks
 		emBankDesc,			// describe switches in bank
 		emBankDirect,		// use buttons to call bank
+		emExprPedalDisplay,	// display actual adc values
 		emNotValid 
 	};
 	void					ChangeMode(EngineMode newMode);
@@ -89,7 +90,8 @@ private:
 	int						mModeDefaultSwitchNumber;
 	int						mModeBankNavSwitchNumber;
 	int						mModeBankDescSwitchNumber;
-	ExpressionPedals		mPedals;
+	ExpressionPedals		mGlobalPedals;
+	int						mPedalModePort;
 };
 
 #endif // MidiControlEngine_h__

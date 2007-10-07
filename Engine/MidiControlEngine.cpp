@@ -36,6 +36,7 @@ const int kModeDefaultSwitchNumber = 0;
 const int kModeBankNavSwitchNumber = 1;
 const int kModeBankDescSwitchNumber = 2;
 const int kModeBankDirect = 3;
+const int kModeExprPedalDisplay = 4;
 
 MidiControlEngine::MidiControlEngine(IMainDisplay * mainDisplay, 
 									 ISwitchDisplay * switchDisplay, 
@@ -56,7 +57,8 @@ MidiControlEngine::MidiControlEngine(IMainDisplay * mainDisplay,
 	mIncrementSwitchNumber(incrementSwitchNumber),
 	mDecrementSwitchNumber(decrementSwitchNumber),
 	mModeSwitchNumber(modeSwitchNumber),
-	mFilterRedundantProgramChanges(false)
+	mFilterRedundantProgramChanges(false),
+	mPedalModePort(0)
 {
 	mBanks.reserve(999);
 }
@@ -127,7 +129,7 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 void
 MidiControlEngine::CalibrateExprSettings(const PedalCalibration * pedalCalibrationSettings)
 {
-	mPedals.Calibrate(pedalCalibrationSettings);
+	mGlobalPedals.Calibrate(pedalCalibrationSettings);
 
 	for (Banks::iterator it = mBanks.begin();
 		it != mBanks.end();
@@ -170,13 +172,6 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 		mTrace->Trace(std::string(msg.str()));
 	}
 
-	if (emCreated == mMode ||
-		emBankDesc == mMode ||
-		emBankNav == mMode ||
-		emModeSelect == mMode ||
-		emBankDirect == mMode)
-		return;
-
 	if (emBank == mMode)
 	{
 		if (switchNumber == mIncrementSwitchNumber ||
@@ -203,37 +198,22 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 	if (emCreated == mMode)
 		return;
 
-	if (emModeSelect == mMode)
+	if (emBank == mMode)
 	{
 		if (switchNumber == mIncrementSwitchNumber ||
 			switchNumber == mDecrementSwitchNumber)
 		{
 			return;
 		}
-		else if (switchNumber == mModeSwitchNumber ||
-			switchNumber == kModeDefaultSwitchNumber)
+
+		if (switchNumber == mModeSwitchNumber)
 		{
-			// escape
-			ChangeMode(emBank);
-			mBankNavigationIndex = mActiveBankIndex;
-			NavigateBankRelative(0);
+			ChangeMode(emModeSelect);
+			return;
 		}
-		else if (switchNumber == kModeBankDescSwitchNumber)
-		{
-			ChangeMode(emBankDesc);
-			mBankNavigationIndex = mActiveBankIndex;
-			NavigateBankRelative(0);
-		}
-		else if (switchNumber == kModeBankNavSwitchNumber)
-		{
-			ChangeMode(emBankNav);
-			mBankNavigationIndex = mActiveBankIndex;
-			NavigateBankRelative(0);
-		}
-		else if (switchNumber == kModeBankDirect)
-		{
-			ChangeMode(emBankDirect);
-		}
+
+		if (mActiveBank)
+			mActiveBank->PatchSwitchReleased(switchNumber, mMainDisplay, mSwitchDisplay);
 
 		return;
 	}
@@ -272,6 +252,73 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 			{
 				bank->DisplayInfo(mMainDisplay, mSwitchDisplay, true, true);
 				bank->DisplayDetailedPatchInfo(switchNumber, mMainDisplay);
+			}
+		}
+
+		return;
+	}
+
+	if (emModeSelect == mMode)
+	{
+		if (switchNumber == mIncrementSwitchNumber ||
+			switchNumber == mDecrementSwitchNumber)
+		{
+			return;
+		}
+		else if (switchNumber == mModeSwitchNumber ||
+			switchNumber == kModeDefaultSwitchNumber)
+		{
+			// escape
+			ChangeMode(emBank);
+			mBankNavigationIndex = mActiveBankIndex;
+			NavigateBankRelative(0);
+		}
+		else if (switchNumber == kModeBankDescSwitchNumber)
+		{
+			ChangeMode(emBankDesc);
+			mBankNavigationIndex = mActiveBankIndex;
+			NavigateBankRelative(0);
+		}
+		else if (switchNumber == kModeBankNavSwitchNumber)
+		{
+			ChangeMode(emBankNav);
+			mBankNavigationIndex = mActiveBankIndex;
+			NavigateBankRelative(0);
+		}
+		else if (switchNumber == kModeBankDirect)
+		{
+			ChangeMode(emBankDirect);
+		}
+		else if (switchNumber == kModeExprPedalDisplay)
+		{
+			ChangeMode(emExprPedalDisplay);
+		}
+
+		return;
+	}
+
+	if (emExprPedalDisplay == mMode)
+	{
+		if (switchNumber == mIncrementSwitchNumber ||
+			switchNumber == mDecrementSwitchNumber)
+		{
+			return;
+		}
+		else if (switchNumber == mModeSwitchNumber)
+		{
+			// escape
+			ChangeMode(emBank);
+			mBankNavigationIndex = mActiveBankIndex;
+			NavigateBankRelative(0);
+		}
+		else if (switchNumber >= 0 && switchNumber <= 3)
+		{
+			mPedalModePort = switchNumber;
+			if (mMainDisplay)
+			{
+				std::strstream displayMsg;
+				displayMsg << "Displaying ADC values for port " << (int) (mPedalModePort + 1) << std::endl << std::ends;
+				mMainDisplay->TextOut(displayMsg.str());
 			}
 		}
 
@@ -339,39 +386,30 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 
 		return;
 	}
-
-	if (emBank == mMode)
-	{
-		if (switchNumber == mIncrementSwitchNumber ||
-			switchNumber == mDecrementSwitchNumber)
-		{
-			return;
-		}
-
-		if (switchNumber == mModeSwitchNumber)
-		{
-			ChangeMode(emModeSelect);
-			return;
-		}
-
-		if (mActiveBank)
-			mActiveBank->PatchSwitchReleased(switchNumber, mMainDisplay, mSwitchDisplay);
-
-		return;
-	}
 }
 
 void
 MidiControlEngine::AdcValueChanged(int port, 
 								   int newValue)
 {
-	// forward directly to active patch
 	_ASSERTE(port < ExpressionPedals::PedalCount);
+	if (emExprPedalDisplay == mMode)
+	{
+		if (mMainDisplay && mPedalModePort == port)
+		{
+			std::strstream displayMsg;
+			displayMsg << "Adc port " << (int) port << " value: " << newValue << std::endl << std::ends;
+			mMainDisplay->TextOut(displayMsg.str());
+		}
+		return;
+	}
+
+	// forward directly to active patch
 	if (!gActivePatchPedals || 
 		gActivePatchPedals->AdcValueChange(mMainDisplay, port, newValue))
 	{
 		// process globals if no rejection
-		mPedals.AdcValueChange(mMainDisplay, port, newValue);
+		mGlobalPedals.AdcValueChange(mMainDisplay, port, newValue);
 	}
 }
 
@@ -470,9 +508,11 @@ MidiControlEngine::LoadBank(int bankIndex)
 // emModeSelect -> emBankNav
 // emModeSelect -> emBankDesc
 // emModeSelect -> emBankDirect
+// emModeSelect -> emExprPedalDisplay
 // emBankNav -> emDefault
 // emBankDesc -> emDefault
 // emBankDirect -> emDefault
+// emExprPedalDisplay -> emDefault
 void
 MidiControlEngine::ChangeMode(EngineMode newMode)
 {
@@ -534,6 +574,20 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			mSwitchDisplay->SetSwitchText(kModeBankNavSwitchNumber, "Bank Navigation");
 			mSwitchDisplay->SetSwitchText(kModeBankDescSwitchNumber, "Bank Description");
 			mSwitchDisplay->SetSwitchText(kModeBankDirect, "Bank Direct");
+			mSwitchDisplay->SetSwitchText(kModeExprPedalDisplay, "Raw ADC Values");
+		}
+		break;
+	case emExprPedalDisplay:
+		msg = "Raw ADC values";
+		mPedalModePort = 0;
+		if (mSwitchDisplay)
+		{
+			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "");
+			mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "");
+			mSwitchDisplay->SetSwitchText(0, "Pedal 1");
+			mSwitchDisplay->SetSwitchText(1, "Pedal 2");
+			mSwitchDisplay->SetSwitchText(2, "Pedal 3");
+			mSwitchDisplay->SetSwitchText(3, "Pedal 4");
 		}
 		break;
 	case emBankDirect:
