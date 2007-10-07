@@ -22,6 +22,12 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
+/*
+Altered source version
+	Modified by: Sean Echevarria (www.creepingfog.com/sean) 2007.10.07
+	Added: TiXmlElement::QueryHexAttribute and TiXmlAttribute::QueryHexValue
+*/
+
 
 #ifndef TINYXML_INCLUDED
 #define TINYXML_INCLUDED
@@ -830,6 +836,7 @@ public:
 		which is the opposite of almost all other TinyXml calls.
 	*/
 	int QueryIntValue( int* _value ) const;
+	int QueryHexValue( int* _value ) const;
 	/// QueryDoubleValue examines the value string. See QueryIntValue().
 	int QueryDoubleValue( double* _value ) const;
 
@@ -987,6 +994,7 @@ public:
 		does not exist, then TIXML_NO_ATTRIBUTE is returned.
 	*/	
 	int QueryIntAttribute( const char* name, int* _value ) const;
+	int QueryHexAttribute( const char* name, int* _value ) const;
 	/// QueryDoubleAttribute examines the attribute - see QueryIntAttribute().
 	int QueryDoubleAttribute( const char* name, double* _value ) const;
 	/// QueryFloatAttribute examines the attribute - see QueryIntAttribute().
@@ -1047,6 +1055,7 @@ public:
 	const std::string* Attribute( const std::string& name, int* i ) const;
 	const std::string* Attribute( const std::string& name, double* d ) const;
 	int QueryIntAttribute( const std::string& name, int* _value ) const;
+	int QueryHexAttribute( const std::string& name, int* _value ) const;
 	int QueryDoubleAttribute( const std::string& name, double* _value ) const;
 
 	/// STL std::string form.

@@ -22,6 +22,12 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
+/*
+Altered source version
+	Modified by: Sean Echevarria (www.creepingfog.com/sean) 2007.10.07
+	Added: TiXmlElement::QueryHexAttribute and TiXmlAttribute::QueryHexValue
+*/
+
 #include <ctype.h>
 
 #ifdef TIXML_USE_STL
@@ -649,6 +655,15 @@ int TiXmlElement::QueryIntAttribute( const char* name, int* ival ) const
 }
 
 
+int TiXmlElement::QueryHexAttribute( const char* name, int* ival ) const
+{
+	const TiXmlAttribute* node = attributeSet.Find( name );
+	if ( !node )
+		return TIXML_NO_ATTRIBUTE;
+	return node->QueryHexValue( ival );
+}
+
+
 #ifdef TIXML_USE_STL
 int TiXmlElement::QueryIntAttribute( const std::string& name, int* ival ) const
 {
@@ -656,6 +671,15 @@ int TiXmlElement::QueryIntAttribute( const std::string& name, int* ival ) const
 	if ( !node )
 		return TIXML_NO_ATTRIBUTE;
 	return node->QueryIntValue( ival );
+}
+
+
+int TiXmlElement::QueryHexAttribute( const std::string& name, int* ival ) const
+{
+	const TiXmlAttribute* node = attributeSet.Find( name );
+	if ( !node )
+		return TIXML_NO_ATTRIBUTE;
+	return node->QueryHexValue( ival );
 }
 #endif
 
@@ -1240,6 +1264,13 @@ void TiXmlAttribute::Print( FILE* cfile, int /*depth*/, TIXML_STRING* str ) cons
 int TiXmlAttribute::QueryIntValue( int* ival ) const
 {
 	if ( TIXML_SSCANF( value.c_str(), "%d", ival ) == 1 )
+		return TIXML_SUCCESS;
+	return TIXML_WRONG_TYPE;
+}
+
+int TiXmlAttribute::QueryHexValue( int* ival ) const
+{
+	if ( TIXML_SSCANF( value.c_str(), "%x", ival ) == 1 )
 		return TIXML_SUCCESS;
 	return TIXML_WRONG_TYPE;
 }
