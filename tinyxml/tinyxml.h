@@ -26,6 +26,7 @@ distribution.
 Altered source version
 	Modified by: Sean Echevarria (www.creepingfog.com/sean) 2007.10.07
 	Added: TiXmlElement::QueryHexAttribute and TiXmlAttribute::QueryHexValue
+	Added: TiXmlElement::QueryAttribute<T> and TiXmlAttribute::QueryValue<T>
 */
 
 
@@ -837,6 +838,14 @@ public:
 	*/
 	int QueryIntValue( int* _value ) const;
 	int QueryHexValue( int* _value ) const;
+	template<typename T>
+	int QueryValue( T* tval, const char * scanString ) const
+	{
+		if ( TIXML_SSCANF( value.c_str(), scanString, tval ) == 1 )
+			return TIXML_SUCCESS;
+		return TIXML_WRONG_TYPE;
+	}
+
 	/// QueryDoubleValue examines the value string. See QueryIntValue().
 	int QueryDoubleValue( double* _value ) const;
 
@@ -995,6 +1004,14 @@ public:
 	*/	
 	int QueryIntAttribute( const char* name, int* _value ) const;
 	int QueryHexAttribute( const char* name, int* _value ) const;
+	template<typename T>
+	int QueryAttribute( const char* name, T* tval, const char * scanString ) const
+	{
+		const TiXmlAttribute* node = attributeSet.Find( name );
+		if ( !node )
+			return TIXML_NO_ATTRIBUTE;
+		return node->QueryValue<T>( tval, scanString );
+	}
 	/// QueryDoubleAttribute examines the attribute - see QueryIntAttribute().
 	int QueryDoubleAttribute( const char* name, double* _value ) const;
 	/// QueryFloatAttribute examines the attribute - see QueryIntAttribute().
@@ -1056,6 +1073,14 @@ public:
 	const std::string* Attribute( const std::string& name, double* d ) const;
 	int QueryIntAttribute( const std::string& name, int* _value ) const;
 	int QueryHexAttribute( const std::string& name, int* _value ) const;
+	template<typename T>
+	int QueryAttribute( const std::string& name, T* tval, const char * scanString ) const
+	{
+		const TiXmlAttribute* node = attributeSet.Find( name );
+		if ( !node )
+			return TIXML_NO_ATTRIBUTE;
+		return node->QueryValue<T>( tval, scanString );
+	}
 	int QueryDoubleAttribute( const std::string& name, double* _value ) const;
 
 	/// STL std::string form.

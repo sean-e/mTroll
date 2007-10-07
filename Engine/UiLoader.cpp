@@ -261,8 +261,8 @@ UiLoader::LoadOtherStuffAndFinalize(TiXmlElement * pElem)
 
 		int bgColor = 0;
 		int fgColor = 0xffffff;
-		pElem->QueryHexAttribute("foregroundColor", &fgColor);
-		pElem->QueryHexAttribute("backgroundColor", &bgColor);
+		pElem->QueryAttribute<int>("foregroundColor", &fgColor, "%x");
+		pElem->QueryAttribute<int>("backgroundColor", &bgColor, "%x");
 
 		int top = -1;
 		int left = -1;
