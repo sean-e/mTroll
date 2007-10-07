@@ -169,6 +169,7 @@ CMControlUIView::LoadUi(const std::string & uiSettingsFile)
 			Trace(midiOut->GetMidiOutDeviceName(idx) + "\n");
 		Trace("\n");
 		midiOut->CloseMidiOut();
+		mMidiOuts.erase(0);
 	}
 
 	if (mSwitches[0])
