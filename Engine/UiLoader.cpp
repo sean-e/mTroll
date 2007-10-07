@@ -68,8 +68,6 @@ UiLoader::LoadAssembyConfig(TiXmlElement * pElem)
 	fontname = "courier";
 	fontWeight.clear();
 	fontHeight = 10;
-	bgColor = 0;
-	fgColor = 0xffffff;
 	width = height = 0;
 
 	pElem->QueryValueAttribute("font-name", &fontname);
@@ -91,8 +89,8 @@ UiLoader::LoadAssembyConfig(TiXmlElement * pElem)
 	fgColor = 0xffffff;
 	width = height = 0;
 
-	pElem->QueryIntAttribute("foregroundColor", &fgColor);
-	pElem->QueryIntAttribute("backgroundColor", &bgColor);
+	pElem->QueryHexAttribute("foregroundColor", &fgColor);
+	pElem->QueryHexAttribute("backgroundColor", &bgColor);
 	pElem->QueryValueAttribute("font-name", &fontname);
 	pElem->QueryValueAttribute("font-weight", &fontWeight);
 	pElem->QueryIntAttribute("font-height", &fontHeight);
@@ -109,8 +107,8 @@ UiLoader::LoadAssembyConfig(TiXmlElement * pElem)
 	fgColor = 0xffffff;
 	width = height = 0;
 
-	pElem->QueryIntAttribute("onColor", &fgColor);
-	pElem->QueryIntAttribute("offColor", &bgColor);
+	pElem->QueryHexAttribute("onColor", &fgColor);
+	pElem->QueryHexAttribute("offColor", &bgColor);
 	pElem->QueryIntAttribute("height", &height);
 	pElem->QueryIntAttribute("width", &width);
 	mUi->SetSwitchLedConfig(width, height, (unsigned int) fgColor, (unsigned int) bgColor);
@@ -263,8 +261,8 @@ UiLoader::LoadOtherStuffAndFinalize(TiXmlElement * pElem)
 
 		int bgColor = 0;
 		int fgColor = 0xffffff;
-		pElem->QueryIntAttribute("foregroundColor", &fgColor);
-		pElem->QueryIntAttribute("backgroundColor", &bgColor);
+		pElem->QueryHexAttribute("foregroundColor", &fgColor);
+		pElem->QueryHexAttribute("backgroundColor", &bgColor);
 
 		int top = -1;
 		int left = -1;
