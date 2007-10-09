@@ -22,165 +22,165 @@
 		</expression>
 	</SystemConfig>
 	<patches>
-		<patch name="DRV TOGGLE" number="1" type="toggle" port="1">
+		<patch name="DRV Toggle" number="1" type="toggle" port="1">
 			<midiByteString name="A">ca 00 ba 6f 29</midiByteString>
 			<midiByteString name="B">ca 02 ba 6f 7f</midiByteString>
 		</patch>
-		<patch name="DRV TOGGLE2" number="2" type="toggle" port="1">
+		<patch name="DRV Toggle 2" number="2" type="toggle" port="1">
 			<midiByteString name="A">ca 00</midiByteString>
 			<midiByteString name="B">ca 02</midiByteString>
 		</patch>
-		<patch name="SS ALL MUTE TGL" number="3" type="toggle" port="1">
+		<patch name="SS All Mute Toggle" number="3" type="toggle" port="1">
 			<midiByteString name="A">ba 09 00</midiByteString>
 			<midiByteString name="B">ba 09 7f</midiByteString>
 		</patch>
-		<patch name="SS ALL MUTE MOM" number="4" type="momentary" port="1">
+		<patch name="SS All Mute Momentary" number="4" type="momentary" port="1">
 			<midiByteString name="A">ba 09 00</midiByteString>
 			<midiByteString name="B">ba 09 7f</midiByteString>
 		</patch>
-		<patch name="SS TA MUTE TGL" number="5" type="toggle" port="1">
+		<patch name="SS TA Mute Toggle" number="5" type="toggle" port="1">
 			<midiByteString name="A">ba 0a 00</midiByteString>
 			<midiByteString name="B">ba 0a 7f</midiByteString>
 		</patch>
-		<patch name="SS TA MUTE MOM" number="6" type="momentary" port="1">
+		<patch name="SS TA Mute Momentary" number="6" type="momentary" port="1">
 			<midiByteString name="A">ba 0a 00</midiByteString>
 			<midiByteString name="B">ba 0a 7f</midiByteString>
 		</patch>
-		<patch name="H8K A ALL OFF" number="7" type="momentary" port="1">
+		<patch name="H8K A All Off" number="7" type="momentary" port="1">
 			<midiByteString name="A">b2 05 7f b2 05 00</midiByteString>
 		</patch>
-		<patch name="H8K A TOGGLE 1" number="8" type="toggle" port="1">
+		<patch name="H8K A Toggle 1" number="8" type="toggle" port="1">
 			<midiByteString name="A">b2 07 7f b2 07 00</midiByteString>
 			<midiByteString name="B">b2 07 7f b2 07 00</midiByteString>
 		</patch>
-		<patch name="H8K A TOGGLE 2" number="9" type="toggle" port="1">
+		<patch name="H8K A Toggle 2" number="9" type="toggle" port="1">
 			<midiByteString name="A">b2 08 7f b2 08 00</midiByteString>
 			<midiByteString name="B">b2 08 7f b2 08 00</midiByteString>
 		</patch>
-		<patch name="H8K A TOGGLE 3" number="10" type="toggle" port="1">
+		<patch name="H8K A Toggle 3" number="10" type="toggle" port="1">
 			<midiByteString name="A">b2 0a 7f b2 0a 00</midiByteString>
 			<midiByteString name="B">b2 0a 7f b2 0a 00</midiByteString>
 		</patch>
-		<patch name="H8K A TOGGLE 4" number="11" type="toggle" port="1">
+		<patch name="H8K A Toggle 4" number="11" type="toggle" port="1">
 			<midiByteString name="A">b2 0b 7f b2 0b 00</midiByteString>
 			<midiByteString name="B">b2 0b 7f b2 0b 00</midiByteString>
 		</patch>
-		<patch name="H8K A TOGGLE 5" number="12" type="toggle" port="1">
+		<patch name="H8K A Toggle 5" number="12" type="toggle" port="1">
 			<midiByteString name="A">b2 10 7f b2 10 00</midiByteString>
 			<midiByteString name="B">b2 10 7f b2 10 00</midiByteString>
 		</patch>
-		<patch name="H8K A TOGGLE 6" number="13" type="toggle" port="1">
+		<patch name="H8K A Toggle 6" number="13" type="toggle" port="1">
 			<midiByteString name="A">b2 11 7f b2 11 00</midiByteString>
 			<midiByteString name="B">b2 11 7f b2 11 00</midiByteString>
 		</patch>
-		<patch name="H8K A TOGGLE 7" number="14" type="toggle" port="1">
+		<patch name="H8K A Toggle 7" number="14" type="toggle" port="1">
 			<midiByteString name="A">b2 12 7f b2 12 00</midiByteString>
 			<midiByteString name="B">b2 12 7f b2 12 00</midiByteString>
 		</patch>
-		<patch name="H8K A TOGGLE 8" number="15" type="toggle" port="1">
+		<patch name="H8K A Toggle 8" number="15" type="toggle" port="1">
 			<midiByteString name="A">b2 13 7f b2 13 00</midiByteString>
 			<midiByteString name="B">b2 13 7f b2 13 00</midiByteString>
 		</patch>
-		<patch name="H8K A TOGGLE 9" number="16" type="toggle" port="1">
+		<patch name="H8K A Toggle 9" number="16" type="toggle" port="1">
 			<midiByteString name="A">b2 40 7f b2 40 00</midiByteString>
 			<midiByteString name="B">b2 40 7f b2 40 00</midiByteString>
 		</patch>
-		<patch name="H8K A TOGGLE 10" number="17" type="toggle" port="1">
+		<patch name="H8K A Toggle 10" number="17" type="toggle" port="1">
 			<midiByteString name="A">b2 42 7f b2 42 00</midiByteString>
 			<midiByteString name="B">b2 42 7f b2 42 00</midiByteString>
 		</patch>
-		<patch name="H8K A TOGGLE 11" number="18" type="toggle" port="1">
+		<patch name="H8K A Toggle 11" number="18" type="toggle" port="1">
 			<midiByteString name="A">b2 43 7f b2 43 00</midiByteString>
 			<midiByteString name="B">b2 43 7f b2 43 00</midiByteString>
 		</patch>
-		<patch name="H8K A TOGGLE 12" number="19" type="toggle" port="1">
+		<patch name="H8K A Toggle 12" number="19" type="toggle" port="1">
 			<midiByteString name="A">b2 45 7f b2 45 00</midiByteString>
 			<midiByteString name="B">b2 45 7f b2 45 00</midiByteString>
 		</patch>
-		<patch name="H8K A TOGGLE 13" number="20" type="toggle" port="1">
+		<patch name="H8K A Toggle 13" number="20" type="toggle" port="1">
 			<midiByteString name="A">b2 50 7f b2 50 00</midiByteString>
 			<midiByteString name="B">b2 50 7f b2 50 00</midiByteString>
 		</patch>
-		<patch name="H8K A TOGGLE 14" number="21" type="toggle" port="1">
+		<patch name="H8K A Toggle 14" number="21" type="toggle" port="1">
 			<midiByteString name="A">b2 51 7f b2 51 00</midiByteString>
 			<midiByteString name="B">b2 51 7f b2 51 00</midiByteString>
 		</patch>
-		<patch name="H8K A TOGGLE 15" number="22" type="toggle" port="1">
+		<patch name="H8K A Toggle 15" number="22" type="toggle" port="1">
 			<midiByteString name="A">b2 52 7f b2 52 00</midiByteString>
 			<midiByteString name="B">b2 52 7f b2 52 00</midiByteString>
 		</patch>
-		<patch name="H8K A TOGGLE 16" number="23" type="toggle" port="1">
+		<patch name="H8K A Toggle 16" number="23" type="toggle" port="1">
 			<midiByteString name="A">b2 53 7f b2 53 00</midiByteString>
 			<midiByteString name="B">b2 53 7f b2 53 00</midiByteString>
 		</patch>
 		<patch name="H8K B ALL OFF" number="24" type="momentary" port="1">
 			<midiByteString name="A">b3 05 7f b3 05 00</midiByteString>
 		</patch>
-		<patch name="H8K B TOGGLE 1" number="25" type="toggle" port="1">
+		<patch name="H8K B Toggle 1" number="25" type="toggle" port="1">
 			<midiByteString name="A">b3 07 7f b3 07 00</midiByteString>
 			<midiByteString name="B">b3 07 7f b3 07 00</midiByteString>
 		</patch>
-		<patch name="H8K B TOGGLE 2" number="26" type="toggle" port="1">
+		<patch name="H8K B Toggle 2" number="26" type="toggle" port="1">
 			<midiByteString name="A">b3 08 7f b3 08 00</midiByteString>
 			<midiByteString name="B">b3 08 7f b3 08 00</midiByteString>
 		</patch>
-		<patch name="H8K B TOGGLE 3" number="27" type="toggle" port="1">
+		<patch name="H8K B Toggle 3" number="27" type="toggle" port="1">
 			<midiByteString name="A">b3 0a 7f b3 0a 00</midiByteString>
 			<midiByteString name="B">b3 0a 7f b3 0a 00</midiByteString>
 		</patch>
-		<patch name="H8K B TOGGLE 4" number="28" type="toggle" port="1">
+		<patch name="H8K B Toggle 4" number="28" type="toggle" port="1">
 			<midiByteString name="A">b3 0b 7f b3 0b 00</midiByteString>
 			<midiByteString name="B">b3 0b 7f b3 0b 00</midiByteString>
 		</patch>
-		<patch name="H8K B TOGGLE 5" number="29" type="toggle" port="1">
+		<patch name="H8K B Toggle 5" number="29" type="toggle" port="1">
 			<midiByteString name="A">b3 10 7f b3 10 00</midiByteString>
 			<midiByteString name="B">b3 10 7f b3 10 00</midiByteString>
 		</patch>
-		<patch name="H8K B TOGGLE 6" number="30" type="toggle" port="1">
+		<patch name="H8K B Toggle 6" number="30" type="toggle" port="1">
 			<midiByteString name="A">b3 11 7f b3 11 00</midiByteString>
 			<midiByteString name="B">b3 11 7f b3 11 00</midiByteString>
 		</patch>
-		<patch name="H8K B TOGGLE 7" number="31" type="toggle" port="1">
+		<patch name="H8K B Toggle 7" number="31" type="toggle" port="1">
 			<midiByteString name="A">b3 12 7f b3 12 00</midiByteString>
 			<midiByteString name="B">b3 12 7f b3 12 00</midiByteString>
 		</patch>
-		<patch name="H8K B TOGGLE 8" number="32" type="toggle" port="1">
+		<patch name="H8K B Toggle 8" number="32" type="toggle" port="1">
 			<midiByteString name="A">b3 13 7f b3 13 00</midiByteString>
 			<midiByteString name="B">b3 13 7f b3 13 00</midiByteString>
 		</patch>
-		<patch name="H8K B TOGGLE 9" number="33" type="toggle" port="1">
+		<patch name="H8K B Toggle 9" number="33" type="toggle" port="1">
 			<midiByteString name="A">b3 40 7f b3 40 00</midiByteString>
 			<midiByteString name="B">b3 40 7f b3 40 00</midiByteString>
 		</patch>
-		<patch name="H8K B TOGGLE 10" number="34" type="toggle" port="1">
+		<patch name="H8K B Toggle 10" number="34" type="toggle" port="1">
 			<midiByteString name="A">b3 42 7f b3 42 00</midiByteString>
 			<midiByteString name="B">b3 42 7f b3 42 00</midiByteString>
 		</patch>
-		<patch name="H8K B TOGGLE 11" number="35" type="toggle" port="1">
+		<patch name="H8K B Toggle 11" number="35" type="toggle" port="1">
 			<midiByteString name="A">b3 43 7f b3 43 00</midiByteString>
 			<midiByteString name="B">b3 43 7f b3 43 00</midiByteString>
 		</patch>
-		<patch name="H8K B TOGGLE 12" number="36" type="toggle" port="1">
+		<patch name="H8K B Toggle 12" number="36" type="toggle" port="1">
 			<midiByteString name="A">b3 45 7f b3 45 00</midiByteString>
 			<midiByteString name="B">b3 45 7f b3 45 00</midiByteString>
 		</patch>
-		<patch name="H8K B TOGGLE 13" number="37" type="toggle" port="1">
+		<patch name="H8K B Toggle 13" number="37" type="toggle" port="1">
 			<midiByteString name="A">b3 50 7f b3 50 00</midiByteString>
 			<midiByteString name="B">b3 50 7f b3 50 00</midiByteString>
 		</patch>
-		<patch name="H8K B TOGGLE 14" number="38" type="toggle" port="1">
+		<patch name="H8K B Toggle 14" number="38" type="toggle" port="1">
 			<midiByteString name="A">b3 51 7f b3 51 00</midiByteString>
 			<midiByteString name="B">b3 51 7f b3 51 00</midiByteString>
 		</patch>
-		<patch name="H8K B TOGGLE 15" number="39" type="toggle" port="1">
+		<patch name="H8K B Toggle 15" number="39" type="toggle" port="1">
 			<midiByteString name="A">b3 52 7f b3 52 00</midiByteString>
 			<midiByteString name="B">b3 52 7f b3 52 00</midiByteString>
 		</patch>
-		<patch name="H8K B TOGGLE 16" number="40" type="toggle" port="1">
+		<patch name="H8K B Toggle 16" number="40" type="toggle" port="1">
 			<midiByteString name="A">b3 53 7f b3 53 00</midiByteString>
 			<midiByteString name="B">b3 53 7f b3 53 00</midiByteString>
 		</patch>
-		<patch name="H8K B MUTE MOM" number="41" type="momentary" port="1">
+		<patch name="H8K B Mute Momentary" number="41" type="momentary" port="1">
 			<midiByteString name="A">b3 02 00</midiByteString>
 			<midiByteString name="B">b3 02 7f</midiByteString>
 		</patch>
@@ -208,72 +208,72 @@
 		<patch name="TRX L2R2" number="51" type="normal" port="1">
 			<midiByteString name="A">c1 1a</midiByteString>
 		</patch>
-		<patch name="TORN" number="52" type="normal" port="1">
+		<patch name="Torn" number="52" type="normal" port="1">
 			<midiByteString name="A">ca 04 c4 14 c5 14 c1 14</midiByteString>
 		</patch>
-		<patch name="ECHO" number="53" type="normal" port="1">
+		<patch name="Echo" number="53" type="normal" port="1">
 			<midiByteString name="A">ca 0d c5 15</midiByteString>
 		</patch>
-		<patch name="3 ON 2" number="54" type="normal" port="1">
+		<patch name="3 on 2" number="54" type="normal" port="1">
 			<midiByteString name="A">c1 14 ca 0d c5 18</midiByteString>
 		</patch>
-		<patch name="REVERSE" number="55" type="normal" port="1">
+		<patch name="Reverse" number="55" type="normal" port="1">
 			<midiByteString name="A">ca 0d c5 16</midiByteString>
 		</patch>
-		<patch name="SLEESTAKS" number="56" type="normal" port="1">
+		<patch name="Sleestaks" number="56" type="normal" port="1">
 			<globalExpr inputNumber="2" enable="0" />
 			<localExpr inputNumber="2" assignmentNumber="1" channel="5" controller="0" min="0" max="127" invert="0" enable="1" />
 			<midiByteString name="A">ca 0e c4 17</midiByteString>
 		</patch>
-		<patch name="STRINGPAD" number="57" type="normal" port="1">
+		<patch name="Stringpad" number="57" type="normal" port="1">
 			<midiByteString name="A">c5 01 c4 12 ca 04 c1 19</midiByteString>
 		</patch>
-		<patch name="DARKSONG" number="58" type="normal" port="1">
+		<patch name="darksong" number="58" type="normal" port="1">
 			<midiByteString name="A">c3 00 c4 02 c5 15 ca 04 c1 22</midiByteString>
 		</patch>
-		<patch name="G STR BEND" number="59" type="normal" port="1">
+		<patch name="G Str Bend" number="59" type="normal" port="1">
 			<midiByteString name="A">c4 18 c5 0e ca 05 c1 14</midiByteString>
 		</patch>
 		<patch name="EDP -) H3500" number="60" type="normal" port="1">
 			<midiByteString name="A">c4 12 c5 01 c2 05 c1 14</midiByteString>
 		</patch>
-		<patch name="LESSONS IN DARK" number="61" type="normal" port="1">
+		<patch name="Lessons In Darkness" number="61" type="normal" port="1">
 			<midiByteString name="A">c1 14 ca 0d c4 1e c5 1e</midiByteString>
 		</patch>
-		<patch name="LESSONS 2" number="62" type="normal" port="1">
+		<patch name="Lessons In Darkness 2" number="62" type="normal" port="1">
 			<midiByteString name="A">c4 1e c1 1a ca 0e</midiByteString>
 		</patch>
-		<patch name="FRAGMENTED ORIG" number="63" type="normal" port="1">
+		<patch name="Fragmented Origins" number="63" type="normal" port="1">
 			<midiByteString name="A">c4 59 c1 1e ca 00</midiByteString>
 		</patch>
-		<patch name="RECURSIVE LOOPS" number="64" type="normal" port="1">
+		<patch name="Recursive Loops" number="64" type="normal" port="1">
 			<midiByteString name="A">c4 1e c5 20 ca 0d c1 14</midiByteString>
 		</patch>
-		<patch name="DRY DIST" number="65" type="normal" port="1">
+		<patch name="Dry Distortion" number="65" type="normal" port="1">
 			<midiByteString name="A">c1 1a ca 00 c3 21</midiByteString>
 		</patch>
-		<patch name="A MINOR NEBULA" number="66" type="normal" port="1">
+		<patch name="A Minor Nebula" number="66" type="normal" port="1">
 			<midiByteString name="A">ca 00 c1 23 c3 22 c4 59</midiByteString>
 		</patch>
-		<patch name="ILLUSORY VISION" number="67" type="normal" port="1">
+		<patch name="Illusory Visions" number="67" type="normal" port="1">
 			<midiByteString name="A">c4 59 c1 1f ca 00 c3 24</midiByteString>
 		</patch>
-		<patch name="INTRICATE THREA" number="68" type="normal" port="1">
+		<patch name="Intricate Threads" number="68" type="normal" port="1">
 			<midiByteString name="A">c1 1a ca 0d c4 59 c5 23</midiByteString>
 		</patch>
-		<patch name="THE HORROR" number="69" type="normal" port="1">
+		<patch name="The Horror" number="69" type="normal" port="1">
 			<midiByteString name="A">c1 1e ca 00 c3 25 c4 59</midiByteString>
 		</patch>
-		<patch name="SONANCE VARIANC" number="70" type="normal" port="1">
+		<patch name="Sonance Variance" number="70" type="normal" port="1">
 			<midiByteString name="A">c1 26 ca 00 c5 28</midiByteString>
 		</patch>
-		<patch name="SONANCE 2" number="71" type="normal" port="1">
+		<patch name="Sonance Variance 2" number="71" type="normal" port="1">
 			<midiByteString name="A">c1 1a ca 0d</midiByteString>
 		</patch>
-		<patch name="SONANCE 3" number="72" type="normal" port="1">
+		<patch name="Sonance Variance 3" number="72" type="normal" port="1">
 			<midiByteString name="A">c5 2a</midiByteString>
 		</patch>
-		<patch name="SONANCE SILENCE" number="73" type="normal" port="1">
+		<patch name="Sonance Silence" number="73" type="normal" port="1">
 			<midiByteString name="A">c1 7f c2 00 c3 27 c4 00</midiByteString>
 		</patch>
 		<patch name="DISCHORD UNSET1" number="74" type="normal" port="1">
@@ -338,15 +338,15 @@
 		</patch>
 		<patch name="DEFAULT PEDALS" number="93" type="normal" port="1">
 		</patch>
-		<patch name="TRIA MUTE MOM" number="94" type="momentary" port="1">
+		<patch name="Triaxis Mute Momentary" number="94" type="momentary" port="1">
 			<midiByteString name="A">b1 01 7f</midiByteString>
 			<midiByteString name="B">b1 01 00</midiByteString>
 		</patch>
-		<patch name="SS A MUTE MOM" number="95" type="momentary" port="1">
+		<patch name="SS A Mute Momentary" number="95" type="momentary" port="1">
 			<midiByteString name="A">ba 6e 00</midiByteString>
 			<midiByteString name="B">ba 6e 7f</midiByteString>
 		</patch>
-		<patch name="SS B MUTE MOM" number="96" type="momentary" port="1">
+		<patch name="SS B Mute Momentary" number="96" type="momentary" port="1">
 			<midiByteString name="A">ba 6f 00</midiByteString>
 			<midiByteString name="B">ba 6f 7f</midiByteString>
 		</patch>
@@ -410,77 +410,77 @@
 		<patch name="H8K B MVR 10" number="119" type="normal" port="1">
 			<midiByteString name="A">b3 60 10</midiByteString>
 		</patch>
-		<patch name="EDPV PARAMETER" number="270" type="normal" port="1">
+		<patch name="EDPV Parameter" number="270" type="normal" port="1">
 			<midiByteString name="A">b6 24 7f b6 24 00</midiByteString>
 		</patch>
-		<patch name="EDPV RECORD" number="271" type="normal" port="1">
+		<patch name="EDPV Record" number="271" type="normal" port="1">
 			<midiByteString name="A">b6 26 7f b6 26 00</midiByteString>
 		</patch>
-		<patch name="EDPV OVERDUB" number="272" type="normal" port="1">
+		<patch name="EDPV Overdub" number="272" type="normal" port="1">
 			<midiByteString name="A">b6 27 7f b6 27 00</midiByteString>
 		</patch>
-		<patch name="EDPV MULTIPLY" number="273" type="normal" port="1">
+		<patch name="EDPV Multiply" number="273" type="normal" port="1">
 			<midiByteString name="A">b6 28 7f b6 28 00</midiByteString>
 		</patch>
-		<patch name="EDPV INSERT" number="274" type="normal" port="1">
+		<patch name="EDPV Insert" number="274" type="normal" port="1">
 			<midiByteString name="A">b6 29 7f b6 29 00</midiByteString>
 		</patch>
-		<patch name="EDPV MUTE" number="275" type="normal" port="1">
+		<patch name="EDPV Mute" number="275" type="normal" port="1">
 			<midiByteString name="A">b6 2a 7f b6 2a 00</midiByteString>
 		</patch>
-		<patch name="EDPV UNDO" number="276" type="normal" port="1">
+		<patch name="EDPV Undo" number="276" type="normal" port="1">
 			<midiByteString name="A">b6 2b 7f b6 2b 00</midiByteString>
 		</patch>
-		<patch name="EDPV NEXTLOOP" number="277" type="normal" port="1">
+		<patch name="EDPV NextLoop" number="277" type="normal" port="1">
 			<midiByteString name="A">b6 2c 7f b6 2c 00</midiByteString>
 		</patch>
-		<patch name="EDPV REPLACE" number="278" type="normal" port="1">
+		<patch name="EDPV Replace" number="278" type="normal" port="1">
 			<midiByteString name="A">b6 2d 7f b6 2d 00</midiByteString>
 		</patch>
-		<patch name="EDPV SUBSTITUTE" number="279" type="normal" port="1">
+		<patch name="EDPV Substitute" number="279" type="normal" port="1">
 			<midiByteString name="A">b6 2e 7f b6 2e 00</midiByteString>
 		</patch>
-		<patch name="EDPV INSERTONLY" number="280" type="normal" port="1">
+		<patch name="EDPV InsertOnly" number="280" type="normal" port="1">
 			<midiByteString name="A">b6 2f 7f b6 2f 00</midiByteString>
 		</patch>
-		<patch name="EDPV SPEED" number="281" type="normal" port="1">
+		<patch name="EDPV Speed" number="281" type="normal" port="1">
 			<midiByteString name="A">b6 30 7f b6 30 00</midiByteString>
 		</patch>
-		<patch name="EDPV REVERSE" number="282" type="normal" port="1">
+		<patch name="EDPV Reverse" number="282" type="normal" port="1">
 			<midiByteString name="A">b6 31 7f b6 31 00</midiByteString>
 		</patch>
-		<patch name="EDP SUSRECORD" number="283" type="momentary" port="1">
+		<patch name="EDP SusRecord" number="283" type="momentary" port="1">
 			<midiByteString name="A">b6 32 7f</midiByteString>
 			<midiByteString name="B">b6 32 00</midiByteString>
 		</patch>
-		<patch name="EDP SUSOVERDUB" number="284" type="momentary" port="1">
+		<patch name="EDP SusOverdub" number="284" type="momentary" port="1">
 			<midiByteString name="A">b6 33 7f</midiByteString>
 			<midiByteString name="B">b6 33 00</midiByteString>
 		</patch>
-		<patch name="EDP SUSRNDMULT" number="285" type="momentary" port="1">
+		<patch name="EDP SusRoundedMultiply" number="285" type="momentary" port="1">
 			<midiByteString name="A">b6 34 7f</midiByteString>
 			<midiByteString name="B">b6 34 00</midiByteString>
 		</patch>
-		<patch name="EDP SUSRNDINSRT" number="286" type="momentary" port="1">
+		<patch name="EDP SusRoundedInsert" number="286" type="momentary" port="1">
 			<midiByteString name="A">b6 35 7f</midiByteString>
 			<midiByteString name="B">b6 35 00</midiByteString>
 		</patch>
-		<patch name="EDP SUSMUTE" number="287" type="momentary" port="1">
+		<patch name="EDP SusMute" number="287" type="momentary" port="1">
 			<midiByteString name="A">b6 36 7f</midiByteString>
 			<midiByteString name="B">b6 36 00</midiByteString>
 		</patch>
-		<patch name="EDP SHORTUNDO" number="288" type="normal" port="1">
+		<patch name="EDP ShortUndo" number="288" type="normal" port="1">
 			<midiByteString name="A">b6 37 7f</midiByteString>
 		</patch>
-		<patch name="EDP SUSNEXTLOOP" number="289" type="momentary" port="1">
+		<patch name="EDP SusNextLoop" number="289" type="momentary" port="1">
 			<midiByteString name="A">b6 38 7f</midiByteString>
 			<midiByteString name="B">b6 38 00</midiByteString>
 		</patch>
-		<patch name="EDP SUSREPLACE" number="290" type="momentary" port="1">
+		<patch name="EDP SusReplace" number="290" type="momentary" port="1">
 			<midiByteString name="A">b6 39 7f</midiByteString>
 			<midiByteString name="B">b6 39 00</midiByteString>
 		</patch>
-		<patch name="EDP SUSSUBSTIT" number="291" type="momentary" port="1">
+		<patch name="EDP SusSubstitute" number="291" type="momentary" port="1">
 			<midiByteString name="A">b6 3a 7f</midiByteString>
 			<midiByteString name="B">b6 3a 00</midiByteString>
 		</patch>
@@ -509,7 +509,7 @@
 			<midiByteString name="A">b6 41 7f</midiByteString>
 			<midiByteString name="B">b6 41 00</midiByteString>
 		</patch>
-		<patch name="EDP SUSMUTE-RET" number="299" type="momentary" port="1">
+		<patch name="EDP SUSMute-RET" number="299" type="momentary" port="1">
 			<midiByteString name="A">b6 42 7f</midiByteString>
 			<midiByteString name="B">b6 42 00</midiByteString>
 		</patch>
@@ -537,7 +537,7 @@
 		<patch name="EDP REALIGN" number="307" type="normal" port="1">
 			<midiByteString name="A">b6 4a 7f</midiByteString>
 		</patch>
-		<patch name="EDP MUTEREALIGN" number="308" type="normal" port="1">
+		<patch name="EDP MuteREALIGN" number="308" type="normal" port="1">
 			<midiByteString name="A">b6 4b 7f</midiByteString>
 		</patch>
 		<patch name="EDP QNTSTARTSNG" number="309" type="normal" port="1">
@@ -582,7 +582,7 @@
 		<patch name="EDP LOOP 8" number="322" type="normal" port="1">
 			<midiByteString name="A">96 5b 7f</midiByteString>
 		</patch>
-		<patch name="EDP REC/MUTE" number="323" type="momentary" port="1">
+		<patch name="EDP REC/Mute" number="323" type="momentary" port="1">
 			<midiByteString name="A">b6 26 7f b6 26 00</midiByteString>
 			<midiByteString name="B">b6 2a 7f b6 2a 00</midiByteString>
 		</patch>
@@ -606,7 +606,7 @@
 			<midiByteString name="A">b6 24 7f</midiByteString>
 			<midiByteString name="B">b6 24 00 b6 24 7f b6 24 00 b6 27 7f b6 27 00 b6 27 7f b6 27 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</midiByteString>
 		</patch>
-		<patch name="EDP MUTE MOD TG" number="329" type="momentary" port="1">
+		<patch name="EDP Mute MOD TG" number="329" type="momentary" port="1">
 			<midiByteString name="A">b6 24 7f</midiByteString>
 			<midiByteString name="B">b6 24 00 b6 24 7f b6 24 00 b6 2a 7f b6 2a 00 b6 2a 7f b6 2a 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</midiByteString>
 		</patch>
@@ -642,7 +642,7 @@
 			<midiByteString name="A">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 29 7f b6 29 00</midiByteString>
 			<midiByteString name="B">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</midiByteString>
 		</patch>
-		<patch name="EDP MUTE MOD SH" number="338" type="momentary" port="1">
+		<patch name="EDP Mute MOD SH" number="338" type="momentary" port="1">
 			<midiByteString name="A">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 2a 7f b6 2a 00</midiByteString>
 			<midiByteString name="B">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</midiByteString>
 		</patch>
@@ -804,18 +804,10 @@
 		<patch name="RPT FF TAP TMP0" number="401" type="momentary" port="1">
 			<midiByteString name="A">bb 43 7f bc 44 7f</midiByteString>
 		</patch>
-		<engineMetaPatch name="Test Meta" number="600" action="ResetBankPatches" />
-		<patch name="Toggle 1" number="601" type="toggle" port="1" />
-		<patch name="Toggle 2" number="602" type="toggle" port="1" />
-		<patch name="Toggle 3" number="603" type="toggle" port="1" />
-		<patch name="Toggle 4" number="604" type="toggle" port="1" />
-		<patch name="Normal 1" number="605" type="normal" port="1" />
-		<patch name="Normal 2" number="606" type="normal" port="1" />
-		<patch name="Normal 3" number="607" type="normal" port="1" />
-		<patch name="Normal 4" number="608" type="normal" port="1" />
+		<engineMetaPatch name="Reset Patches" number="600" action="ResetBankPatches" />
 	</patches>
 	<banks>
-		<bank name="MUTING" number="1">
+		<bank name="Muting" number="1">
 			<PatchMap switch="1" patch="1" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="2" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="94" loadState="" unloadState="" />
@@ -826,7 +818,8 @@
 			<PatchMap switch="8" patch="95" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="96" loadState="" unloadState="" />
 		</bank>
-		<bank name="H8000 DSP A-1" number="2">
+		<bank name="H8000 DSP A" number="2">
+			<PatchMap switch="1" patch="600" loadState="" unloadState="" />
 			<PatchMap switch="1" patch="7" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="8" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="9" loadState="" unloadState="" />
@@ -836,19 +829,17 @@
 			<PatchMap switch="7" patch="13" loadState="" unloadState="" />
 			<PatchMap switch="8" patch="14" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="15" loadState="" unloadState="" />
+			<PatchMap switch="10" patch="16" loadState="" unloadState="" />
+			<PatchMap switch="11" patch="17" loadState="" unloadState="" />
+			<PatchMap switch="12" patch="18" loadState="" unloadState="" />
+			<PatchMap switch="13" patch="19" loadState="" unloadState="" />
+			<PatchMap switch="14" patch="20" loadState="" unloadState="" />
+			<PatchMap switch="15" patch="21" loadState="" unloadState="" />
+			<PatchMap switch="16" patch="22" loadState="" unloadState="" />
+			<PatchMap switch="17" patch="23" loadState="" unloadState="" />
 		</bank>
-		<bank name="H8000 DSP A-2" number="3">
-			<PatchMap switch="1" patch="7" loadState="" unloadState="" />
-			<PatchMap switch="2" patch="16" loadState="" unloadState="" />
-			<PatchMap switch="3" patch="17" loadState="" unloadState="" />
-			<PatchMap switch="4" patch="18" loadState="" unloadState="" />
-			<PatchMap switch="5" patch="19" loadState="" unloadState="" />
-			<PatchMap switch="6" patch="20" loadState="" unloadState="" />
-			<PatchMap switch="7" patch="21" loadState="" unloadState="" />
-			<PatchMap switch="8" patch="22" loadState="" unloadState="" />
-			<PatchMap switch="9" patch="23" loadState="" unloadState="" />
-		</bank>
-		<bank name="H8000 DSP B-1" number="4">
+		<bank name="H8000 DSP B" number="4">
+			<PatchMap switch="1" patch="600" loadState="" unloadState="" />
 			<PatchMap switch="1" patch="24" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="25" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="26" loadState="" unloadState="" />
@@ -858,19 +849,16 @@
 			<PatchMap switch="7" patch="30" loadState="" unloadState="" />
 			<PatchMap switch="8" patch="31" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="32" loadState="" unloadState="" />
+			<PatchMap switch="10" patch="33" loadState="" unloadState="" />
+			<PatchMap switch="11" patch="34" loadState="" unloadState="" />
+			<PatchMap switch="12" patch="35" loadState="" unloadState="" />
+			<PatchMap switch="13" patch="36" loadState="" unloadState="" />
+			<PatchMap switch="14" patch="37" loadState="" unloadState="" />
+			<PatchMap switch="15" patch="38" loadState="" unloadState="" />
+			<PatchMap switch="16" patch="39" loadState="" unloadState="" />
+			<PatchMap switch="17" patch="40" loadState="" unloadState="" />
 		</bank>
-		<bank name="H8000 DSP B-2" number="5">
-			<PatchMap switch="1" patch="24" loadState="" unloadState="" />
-			<PatchMap switch="2" patch="33" loadState="" unloadState="" />
-			<PatchMap switch="3" patch="34" loadState="" unloadState="" />
-			<PatchMap switch="4" patch="35" loadState="" unloadState="" />
-			<PatchMap switch="5" patch="36" loadState="" unloadState="" />
-			<PatchMap switch="6" patch="37" loadState="" unloadState="" />
-			<PatchMap switch="7" patch="38" loadState="" unloadState="" />
-			<PatchMap switch="8" patch="39" loadState="" unloadState="" />
-			<PatchMap switch="9" patch="40" loadState="" unloadState="" />
-		</bank>
-		<bank name="EDP GENERAL" number="6">
+		<bank name="EDP General" number="6">
 			<PatchMap switch="1" patch="315" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="316" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="317" loadState="" unloadState="" />
@@ -881,7 +869,7 @@
 			<PatchMap switch="8" patch="284" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="287" loadState="" unloadState="" />
 		</bank>
-		<bank name="DEDICATED PEDLS" number="7">
+		<bank name="Dedicated Pedals" number="7">
 			<PatchMap switch="1" patch="93" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="92" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="90" loadState="" unloadState="" />
@@ -909,11 +897,11 @@
 			<PatchMap switch="8" patch="117" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="118" loadState="" unloadState="" />
 		</bank>
-		<bank name="TRIAXIS CLEAN" number="10">
+		<bank name="Triaxis Clean" number="10">
 			<PatchMap switch="1" patch="44" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="45" loadState="" unloadState="" />
 		</bank>
-		<bank name="TRIAXIS DIRTY" number="11">
+		<bank name="Triaxis Dirty" number="11">
 			<PatchMap switch="1" patch="46" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="47" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="48" loadState="" unloadState="" />
@@ -922,63 +910,63 @@
 			<PatchMap switch="6" patch="50" loadState="" unloadState="" />
 			<PatchMap switch="7" patch="89" loadState="" unloadState="" />
 		</bank>
-		<bank name="CLEAN SCULPTURE" number="12">
+		<bank name="Clean Sculpture" number="12">
 			<PatchMap switch="1" patch="52" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="53" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="54" loadState="" unloadState="" />
 			<PatchMap switch="4" patch="55" loadState="" unloadState="" />
 		</bank>
-		<bank name="DIRTY SCULPTURE" number="13">
+		<bank name="Dirty Sculpture" number="13">
 			<PatchMap switch="1" patch="56" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="55" loadState="" unloadState="" />
 		</bank>
-		<bank name="TRANCE AMBIENCE" number="14">
+		<bank name="Trance Ambience" number="14">
 			<PatchMap switch="1" patch="57" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="58" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="59" loadState="" unloadState="" />
 			<PatchMap switch="4" patch="60" loadState="" unloadState="" />
 		</bank>
-		<bank name="LID FRAG LOOP" number="15">
+		<bank name="LID Fragmented Loops" number="15">
 			<PatchMap switch="1" patch="61" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="62" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="63" loadState="" unloadState="" />
 			<PatchMap switch="4" patch="64" loadState="" unloadState="" />
 			<PatchMap switch="5" patch="65" loadState="" unloadState="" />
 		</bank>
-		<bank name="NEBULOUS VISION" number="16">
+		<bank name="Nebulous Visions" number="16">
 			<PatchMap switch="1" patch="66" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="67" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="68" loadState="" unloadState="" />
 			<PatchMap switch="4" patch="69" loadState="" unloadState="" />
 		</bank>
-		<bank name="SONANCE VARIANC" number="17">
+		<bank name="Sonance Variance" number="17">
 			<PatchMap switch="1" patch="73" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="70" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="71" loadState="" unloadState="" />
 			<PatchMap switch="4" patch="72" loadState="" unloadState="" />
 		</bank>
-		<bank name="UNSETTLING ABSE" number="18">
+		<bank name="Unsettling Absence" number="18">
 			<PatchMap switch="1" patch="74" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="75" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="76" loadState="" unloadState="" />
 			<PatchMap switch="4" patch="77" loadState="" unloadState="" />
 			<PatchMap switch="5" patch="78" loadState="" unloadState="" />
 		</bank>
-		<bank name="COBWEBS IN SPAC" number="19">
+		<bank name="Cobwebs In Space" number="19">
 			<PatchMap switch="1" patch="79" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="80" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="81" loadState="" unloadState="" />
 			<PatchMap switch="4" patch="82" loadState="" unloadState="" />
 			<PatchMap switch="5" patch="83" loadState="" unloadState="" />
 		</bank>
-		<bank name="FROM DEPTHS BEL" number="20">
+		<bank name="From Depths Below" number="20">
 			<PatchMap switch="1" patch="84" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="85" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="86" loadState="" unloadState="" />
 			<PatchMap switch="4" patch="87" loadState="" unloadState="" />
 			<PatchMap switch="5" patch="88" loadState="" unloadState="" />
 		</bank>
-		<bank name="EDP DIRECTMIDI1" number="21">
+		<bank name="EDP Direct MIDI 1" number="21">
 			<PatchMap switch="1" patch="283" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="284" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="285" loadState="" unloadState="" />
@@ -989,7 +977,7 @@
 			<PatchMap switch="8" patch="290" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="291" loadState="" unloadState="" />
 		</bank>
-		<bank name="EDP DIRECTMIDI2" number="22">
+		<bank name="EDP Direct MIDI 2" number="22">
 			<PatchMap switch="1" patch="292" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="293" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="294" loadState="" unloadState="" />
@@ -1000,7 +988,7 @@
 			<PatchMap switch="8" patch="299" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="300" loadState="" unloadState="" />
 		</bank>
-		<bank name="EDP DIRECTMIDI3" number="23">
+		<bank name="EDP Direct MIDI 3" number="23">
 			<PatchMap switch="1" patch="301" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="302" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="303" loadState="" unloadState="" />
@@ -1009,7 +997,7 @@
 			<PatchMap switch="6" patch="306" loadState="" unloadState="" />
 			<PatchMap switch="7" patch="307" loadState="" unloadState="" />
 		</bank>
-		<bank name="EDP STATE MOD 1" number="24">
+		<bank name="EDP State Mod 1" number="24">
 			<PatchMap switch="1" patch="326" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="328" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="327" loadState="" unloadState="" />
@@ -1019,7 +1007,7 @@
 			<PatchMap switch="8" patch="336" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="337" loadState="" unloadState="" />
 		</bank>
-		<bank name="EDP STATE MOD 2" number="25">
+		<bank name="EDP State Mod 2" number="25">
 			<PatchMap switch="1" patch="329" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="330" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="324" loadState="" unloadState="" />
@@ -1029,11 +1017,11 @@
 			<PatchMap switch="8" patch="340" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="341" loadState="" unloadState="" />
 		</bank>
-		<bank name="EDP STATE MOD 3" number="26">
+		<bank name="EDP State Mod 3" number="26">
 			<PatchMap switch="1" patch="333" loadState="" unloadState="" />
 			<PatchMap switch="6" patch="342" loadState="" unloadState="" />
 		</bank>
-		<bank name="EDP LOOPS" number="27">
+		<bank name="EDP Loops" number="27">
 			<PatchMap switch="1" patch="315" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="316" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="317" loadState="" unloadState="" />
@@ -1044,7 +1032,7 @@
 			<PatchMap switch="8" patch="322" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="323" loadState="" unloadState="" />
 		</bank>
-		<bank name="FILTER FACTORY1" number="28">
+		<bank name="Filter Factory 1" number="28">
 			<PatchMap switch="1" patch="363" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="364" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="365" loadState="" unloadState="" />
@@ -1055,7 +1043,7 @@
 			<PatchMap switch="8" patch="362" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="368" loadState="" unloadState="" />
 		</bank>
-		<bank name="FILTER FACTORY2" number="29">
+		<bank name="Filter Factory 2" number="29">
 			<PatchMap switch="1" patch="369" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="370" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="371" loadState="" unloadState="" />
@@ -1066,7 +1054,7 @@
 			<PatchMap switch="8" patch="376" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="377" loadState="" unloadState="" />
 		</bank>
-		<bank name="FILTER FACTORY3" number="30">
+		<bank name="Filter Factory 3" number="30">
 			<PatchMap switch="1" patch="378" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="379" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="380" loadState="" unloadState="" />
@@ -1077,7 +1065,7 @@
 			<PatchMap switch="8" patch="385" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="386" loadState="" unloadState="" />
 		</bank>
-		<bank name="FILTER FACTORY4" number="31">
+		<bank name="Filter Factory 4" number="31">
 			<PatchMap switch="1" patch="387" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="388" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="389" loadState="" unloadState="" />
@@ -1088,84 +1076,13 @@
 			<PatchMap switch="8" patch="394" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="395" loadState="" unloadState="" />
 		</bank>
-		<bank name="FILTER FACTORY5" number="32">
+		<bank name="Filter Factory 5" number="32">
 			<PatchMap switch="4" patch="396" loadState="" unloadState="" />
 			<PatchMap switch="5" patch="398" loadState="" unloadState="" />
 			<PatchMap switch="6" patch="397" loadState="" unloadState="" />
 			<PatchMap switch="7" patch="399" loadState="" unloadState="" />
 			<PatchMap switch="8" patch="401" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="400" loadState="" unloadState="" />
-		</bank>
-		<bank name="H8000 DSP B-1" number="33">
-			<PatchMap switch="1" patch="24" loadState="" unloadState="" />
-			<PatchMap switch="1" patch="25" loadState="" unloadState="" />
-			<PatchMap switch="1" patch="26" loadState="" unloadState="" />
-			<PatchMap switch="1" patch="27" loadState="" unloadState="" />
-			<PatchMap switch="1" patch="28" loadState="" unloadState="" />
-			<PatchMap switch="1" patch="29" loadState="" unloadState="" />
-			<PatchMap switch="1" patch="30" loadState="" unloadState="" />
-			<PatchMap switch="1" patch="31" loadState="" unloadState="" />
-			<PatchMap switch="1" patch="32" loadState="" unloadState="" />
-			<PatchMap switch="1" patch="33" loadState="" unloadState="" />
-			<PatchMap switch="1" patch="34" loadState="" unloadState="" />
-			<PatchMap switch="1" patch="35" loadState="" unloadState="" />
-			<PatchMap switch="1" patch="36" loadState="" unloadState="" />
-			<PatchMap switch="1" patch="37" loadState="" unloadState="" />
-			<PatchMap switch="1" patch="38" loadState="" unloadState="" />
-			<PatchMap switch="2" patch="25" loadState="" unloadState="" />
-			<PatchMap switch="3" patch="26" loadState="" unloadState="" />
-			<PatchMap switch="4" patch="27" loadState="" unloadState="" />
-			<PatchMap switch="5" patch="28" loadState="" unloadState="" />
-			<PatchMap switch="6" patch="29" loadState="" unloadState="" />
-			<PatchMap switch="7" patch="30" loadState="" unloadState="" />
-			<PatchMap switch="8" patch="31" loadState="" unloadState="" />
-			<PatchMap switch="9" patch="32" loadState="" unloadState="" />
-			<PatchMap switch="10" patch="33" loadState="" unloadState="" />
-			<PatchMap switch="11" patch="34" loadState="" unloadState="" />
-			<PatchMap switch="12" patch="35" loadState="" unloadState="" />
-			<PatchMap switch="13" patch="36" loadState="" unloadState="" />
-			<PatchMap switch="14" patch="37" loadState="" unloadState="" />
-			<PatchMap switch="15" patch="38" loadState="" unloadState="" />
-		</bank>
-		<bank name="H8000 DSP B-1" number="34">
-			<PatchMap switch="1" patch="600" loadState="" unloadState="" />
-			<PatchMap switch="1" patch="24" loadState="" unloadState="" />
-			<PatchMap switch="2" patch="25" loadState="" unloadState="" />
-			<PatchMap switch="3" patch="26" loadState="" unloadState="" />
-			<PatchMap switch="4" patch="27" loadState="" unloadState="" />
-			<PatchMap switch="5" patch="28" loadState="" unloadState="" />
-			<PatchMap switch="6" patch="29" loadState="" unloadState="" />
-			<PatchMap switch="7" patch="30" loadState="" unloadState="" />
-			<PatchMap switch="8" patch="31" loadState="" unloadState="" />
-			<PatchMap switch="9" patch="32" loadState="" unloadState="" />
-			<PatchMap switch="10" patch="33" loadState="" unloadState="" />
-			<PatchMap switch="11" patch="34" loadState="" unloadState="" />
-			<PatchMap switch="12" patch="35" loadState="" unloadState="" />
-			<PatchMap switch="13" patch="36" loadState="" unloadState="" />
-			<PatchMap switch="14" patch="37" loadState="" unloadState="" />
-			<PatchMap switch="15" patch="38" loadState="" unloadState="" />
-		</bank>
-		<bank name="Test Bank 1" number="35">
-			<PatchMap switch="1" patch="600" loadState="" unloadState="" />
-			<PatchMap switch="6" patch="601" loadState="" unloadState="" />
-			<PatchMap switch="7" patch="602" loadState="" unloadState="" />
-			<PatchMap switch="8" patch="603" loadState="" unloadState="" />
-			<PatchMap switch="9" patch="604" loadState="" unloadState="" />
-			<PatchMap switch="11" patch="605" loadState="" unloadState="" />
-			<PatchMap switch="12" patch="606" loadState="" unloadState="" />
-			<PatchMap switch="13" patch="607" loadState="" unloadState="" />
-			<PatchMap switch="14" patch="608" loadState="" unloadState="" />
-		</bank>
-		<bank name="Test Bank 2" number="36">
-			<PatchMap switch="1" patch="600" loadState="" unloadState="" />
-			<PatchMap switch="6" patch="605" loadState="" unloadState="" />
-			<PatchMap switch="7" patch="606" loadState="" unloadState="" />
-			<PatchMap switch="8" patch="607" loadState="" unloadState="" />
-			<PatchMap switch="9" patch="608" loadState="" unloadState="" />
-			<PatchMap switch="11" patch="601" loadState="" unloadState="" />
-			<PatchMap switch="12" patch="602" loadState="" unloadState="" />
-			<PatchMap switch="13" patch="603" loadState="" unloadState="" />
-			<PatchMap switch="14" patch="604" loadState="" unloadState="" />
 		</bank>
 	</banks>
 </MidiControlSettings>
