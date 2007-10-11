@@ -234,7 +234,7 @@
 		<patch name="G Str Bend" number="59" type="normal" port="1">
 			<midiByteString name="A">c4 18 c5 0e ca 05 c1 14</midiByteString>
 		</patch>
-		<patch name="EDP -) H3500" number="60" type="normal" port="1">
+		<patch name="EDP -> H3500" number="60" type="normal" port="1">
 			<midiByteString name="A">c4 12 c5 01 c2 05 c1 14</midiByteString>
 		</patch>
 		<patch name="Lessons In Darkness" number="61" type="normal" port="1">
@@ -276,67 +276,67 @@
 		<patch name="Sonance Silence" number="73" type="normal" port="1">
 			<midiByteString name="A">c1 7f c2 00 c3 27 c4 00</midiByteString>
 		</patch>
-		<patch name="DISCHORD UNSET1" number="74" type="normal" port="1">
+		<patch name="Dischord Unsettling 1" number="74" type="normal" port="1">
 			<midiByteString name="A">c1 1f ca 00 c3 2c c4 00</midiByteString>
 		</patch>
-		<patch name="DISCHORD UNSET2" number="75" type="normal" port="1">
+		<patch name="Dischord Unsettling 2" number="75" type="normal" port="1">
 			<midiByteString name="A">c1 1e ca 00</midiByteString>
 		</patch>
-		<patch name="DISCHORD UNSET3" number="76" type="normal" port="1">
+		<patch name="Dischord Unsettling 3" number="76" type="normal" port="1">
 			<midiByteString name="A">c1 1a ca 00</midiByteString>
 		</patch>
-		<patch name="ABSENCE OF EXIS" number="77" type="normal" port="1">
+		<patch name="Absence Of Existence" number="77" type="normal" port="1">
 			<midiByteString name="A">c1 1a ca 00 c5 2f</midiByteString>
 		</patch>
-		<patch name="ABSENCE 2" number="78" type="normal" port="1">
+		<patch name="Absence Of Existence 2" number="78" type="normal" port="1">
 			<midiByteString name="A">ca 0d</midiByteString>
 		</patch>
-		<patch name="COBWEB SETUP" number="79" type="normal" port="1">
+		<patch name="Cobweb Setup" number="79" type="normal" port="1">
 			<midiByteString name="A">b2 07 00 ca 0e c4 31 c1 5a</midiByteString>
 		</patch>
-		<patch name="COBWEBS IN SPA1" number="80" type="normal" port="1">
+		<patch name="Cobwebs In Space 1" number="80" type="normal" port="1">
 			<midiByteString name="A">c1 19 ca 0e b2 07 01 c3 32</midiByteString>
 		</patch>
-		<patch name="COBWEBS IN SPA2" number="81" type="normal" port="1">
+		<patch name="Cobwebs In Space 2" number="81" type="normal" port="1">
 			<midiByteString name="A">c1 1e ca 00</midiByteString>
 		</patch>
-		<patch name="COBWEBS IN SPA3" number="82" type="normal" port="1">
+		<patch name="Cobwebs In Space 3" number="82" type="normal" port="1">
 			<midiByteString name="A">c1 1a ca 00 c3 34</midiByteString>
 		</patch>
-		<patch name="COBWEBS IN SPA4" number="83" type="normal" port="1">
+		<patch name="Cobwebs In Space 4" number="83" type="normal" port="1">
 			<midiByteString name="A">c1 1f ca 00</midiByteString>
 		</patch>
-		<patch name="BELOW CRUSH DE1" number="84" type="normal" port="1">
+		<patch name="Below Crush Depth 1" number="84" type="normal" port="1">
 			<midiByteString name="A">b2 07 01 c1 1a ca 00 c3 36 c4 36 c5 36</midiByteString>
 		</patch>
-		<patch name="BELOW CRUSH DE2" number="85" type="normal" port="1">
+		<patch name="Below Crush Depth 2" number="85" type="normal" port="1">
 			<midiByteString name="A">c1 22 ca 00</midiByteString>
 		</patch>
-		<patch name="BELOW CRUSH DE3" number="86" type="normal" port="1">
+		<patch name="Below Crush Depth 3" number="86" type="normal" port="1">
 			<midiByteString name="A">c1 1a ca 00</midiByteString>
 		</patch>
-		<patch name="SYSTEM OF SIRI1" number="87" type="normal" port="1">
+		<patch name="System Of Sirius 1" number="87" type="normal" port="1">
 			<midiByteString name="A">c1 16 ca 00 c5 39</midiByteString>
 		</patch>
-		<patch name="SYSTEM OF SIRI2" number="88" type="normal" port="1">
+		<patch name="System Of Sirius 2" number="88" type="normal" port="1">
 			<midiByteString name="A">ca 0d c1 20</midiByteString>
 		</patch>
-		<patch name="TRX LD1 PED 2" number="89" type="normal" port="1">
+		<patch name="Triaxis Ld1 Pedal 2" number="89" type="normal" port="1">
 			<midiByteString name="A">c1 3c</midiByteString>
 		</patch>
-		<patch name="DHP PEDAL 2" number="90" type="normal" port="1">
+		<patch name="DHP Pedal 2" number="90" type="normal" port="1">
 			<globalExpr inputNumber="2" enable="0" />
 			<localExpr inputNumber="2" assignmentNumber="1" channel="5" controller="0" min="0" max="127" invert="0" enable="1" />
 		</patch>
-		<patch name="SWB PEDAL 2" number="91" type="normal" port="1">
+		<patch name="SWB Pedal 2" number="91" type="normal" port="1">
 			<globalExpr inputNumber="2" enable="0" />
 			<localExpr inputNumber="2" assignmentNumber="1" channel="11" controller="111" min="0" max="127" invert="1" enable="1" />
 		</patch>
-		<patch name="H35 PEDAL 2" number="92" type="normal" port="1">
+		<patch name="H3500 Pedal 2" number="92" type="normal" port="1">
 			<globalExpr inputNumber="2" enable="0" />
 			<localExpr inputNumber="2" assignmentNumber="1" channel="6" controller="0" min="0" max="127" invert="0" enable="1" />
 		</patch>
-		<patch name="DEFAULT PEDALS" number="93" type="normal" port="1">
+		<patch name="Default Pedals" number="93" type="normal" port="1">
 		</patch>
 		<patch name="Triaxis Mute Momentary" number="94" type="momentary" port="1">
 			<midiByteString name="A">b1 01 7f</midiByteString>
@@ -350,103 +350,103 @@
 			<midiByteString name="A">ba 6f 00</midiByteString>
 			<midiByteString name="B">ba 6f 7f</midiByteString>
 		</patch>
-		<patch name="H8K A MVR 1" number="100" type="normal" port="1">
+		<patch name="H8K A VirtRack 1" number="100" type="normal" port="1">
 			<midiByteString name="A">b2 60 01</midiByteString>
 		</patch>
-		<patch name="H8K A MVR 2" number="101" type="normal" port="1">
+		<patch name="H8K A VirtRack 2" number="101" type="normal" port="1">
 			<midiByteString name="A">b2 60 02</midiByteString>
 		</patch>
-		<patch name="H8K A MVR 3" number="102" type="normal" port="1">
+		<patch name="H8K A VirtRack 3" number="102" type="normal" port="1">
 			<midiByteString name="A">b2 60 03</midiByteString>
 		</patch>
-		<patch name="H8K A MVR 4" number="103" type="normal" port="1">
+		<patch name="H8K A VirtRack 4" number="103" type="normal" port="1">
 			<midiByteString name="A">b2 60 04</midiByteString>
 		</patch>
-		<patch name="H8K A MVR 5" number="104" type="normal" port="1">
+		<patch name="H8K A VirtRack 5" number="104" type="normal" port="1">
 			<midiByteString name="A">b2 60 05</midiByteString>
 		</patch>
-		<patch name="H8K A MVR 6" number="105" type="normal" port="1">
+		<patch name="H8K A VirtRack 6" number="105" type="normal" port="1">
 			<midiByteString name="A">b2 60 06</midiByteString>
 		</patch>
-		<patch name="H8K A MVR 7" number="106" type="normal" port="1">
+		<patch name="H8K A VirtRack 7" number="106" type="normal" port="1">
 			<midiByteString name="A">b2 60 07</midiByteString>
 		</patch>
-		<patch name="H8K A MVR 8" number="107" type="normal" port="1">
+		<patch name="H8K A VirtRack 8" number="107" type="normal" port="1">
 			<midiByteString name="A">b2 60 08</midiByteString>
 		</patch>
-		<patch name="H8K A MVR 9" number="108" type="normal" port="1">
+		<patch name="H8K A VirtRack 9" number="108" type="normal" port="1">
 			<midiByteString name="A">b2 60 09</midiByteString>
 		</patch>
-		<patch name="H8K A MVR 10" number="109" type="normal" port="1">
+		<patch name="H8K A VirtRack 10" number="109" type="normal" port="1">
 			<midiByteString name="A">b2 60 10</midiByteString>
 		</patch>
-		<patch name="H8K B MVR 1" number="110" type="normal" port="1">
+		<patch name="H8K B VirtRack 1" number="110" type="normal" port="1">
 			<midiByteString name="A">b3 60 01</midiByteString>
 		</patch>
-		<patch name="H8K B MVR 2" number="111" type="normal" port="1">
+		<patch name="H8K B VirtRack 2" number="111" type="normal" port="1">
 			<midiByteString name="A">b3 60 02</midiByteString>
 		</patch>
-		<patch name="H8K B MVR 3" number="112" type="normal" port="1">
+		<patch name="H8K B VirtRack 3" number="112" type="normal" port="1">
 			<midiByteString name="A">b3 60 03</midiByteString>
 		</patch>
-		<patch name="H8K B MVR 4" number="113" type="normal" port="1">
+		<patch name="H8K B VirtRack 4" number="113" type="normal" port="1">
 			<midiByteString name="A">b3 60 04</midiByteString>
 		</patch>
-		<patch name="H8K B MVR 5" number="114" type="normal" port="1">
+		<patch name="H8K B VirtRack 5" number="114" type="normal" port="1">
 			<midiByteString name="A">b3 60 05</midiByteString>
 		</patch>
-		<patch name="H8K B MVR 6" number="115" type="normal" port="1">
+		<patch name="H8K B VirtRack 6" number="115" type="normal" port="1">
 			<midiByteString name="A">b3 60 06</midiByteString>
 		</patch>
-		<patch name="H8K B MVR 7" number="116" type="normal" port="1">
+		<patch name="H8K B VirtRack 7" number="116" type="normal" port="1">
 			<midiByteString name="A">b3 60 07</midiByteString>
 		</patch>
-		<patch name="H8K B MVR 8" number="117" type="normal" port="1">
+		<patch name="H8K B VirtRack 8" number="117" type="normal" port="1">
 			<midiByteString name="A">b3 60 08</midiByteString>
 		</patch>
-		<patch name="H8K B MVR 9" number="118" type="normal" port="1">
+		<patch name="H8K B VirtRack 9" number="118" type="normal" port="1">
 			<midiByteString name="A">b3 60 09</midiByteString>
 		</patch>
-		<patch name="H8K B MVR 10" number="119" type="normal" port="1">
+		<patch name="H8K B VirtRack 10" number="119" type="normal" port="1">
 			<midiByteString name="A">b3 60 10</midiByteString>
 		</patch>
-		<patch name="EDPV Parameter" number="270" type="normal" port="1">
+		<patch name="EDP V Parameter" number="270" type="normal" port="1">
 			<midiByteString name="A">b6 24 7f b6 24 00</midiByteString>
 		</patch>
-		<patch name="EDPV Record" number="271" type="normal" port="1">
+		<patch name="EDP V Record" number="271" type="normal" port="1">
 			<midiByteString name="A">b6 26 7f b6 26 00</midiByteString>
 		</patch>
-		<patch name="EDPV Overdub" number="272" type="normal" port="1">
+		<patch name="EDP V Overdub" number="272" type="normal" port="1">
 			<midiByteString name="A">b6 27 7f b6 27 00</midiByteString>
 		</patch>
-		<patch name="EDPV Multiply" number="273" type="normal" port="1">
+		<patch name="EDP V Multiply" number="273" type="normal" port="1">
 			<midiByteString name="A">b6 28 7f b6 28 00</midiByteString>
 		</patch>
-		<patch name="EDPV Insert" number="274" type="normal" port="1">
+		<patch name="EDP V Insert" number="274" type="normal" port="1">
 			<midiByteString name="A">b6 29 7f b6 29 00</midiByteString>
 		</patch>
-		<patch name="EDPV Mute" number="275" type="normal" port="1">
+		<patch name="EDP V Mute" number="275" type="normal" port="1">
 			<midiByteString name="A">b6 2a 7f b6 2a 00</midiByteString>
 		</patch>
-		<patch name="EDPV Undo" number="276" type="normal" port="1">
+		<patch name="EDP V Undo" number="276" type="normal" port="1">
 			<midiByteString name="A">b6 2b 7f b6 2b 00</midiByteString>
 		</patch>
-		<patch name="EDPV NextLoop" number="277" type="normal" port="1">
+		<patch name="EDP V NextLoop" number="277" type="normal" port="1">
 			<midiByteString name="A">b6 2c 7f b6 2c 00</midiByteString>
 		</patch>
-		<patch name="EDPV Replace" number="278" type="normal" port="1">
+		<patch name="EDP V Replace" number="278" type="normal" port="1">
 			<midiByteString name="A">b6 2d 7f b6 2d 00</midiByteString>
 		</patch>
-		<patch name="EDPV Substitute" number="279" type="normal" port="1">
+		<patch name="EDP V Substitute" number="279" type="normal" port="1">
 			<midiByteString name="A">b6 2e 7f b6 2e 00</midiByteString>
 		</patch>
-		<patch name="EDPV InsertOnly" number="280" type="normal" port="1">
+		<patch name="EDP V InsertOnly" number="280" type="normal" port="1">
 			<midiByteString name="A">b6 2f 7f b6 2f 00</midiByteString>
 		</patch>
-		<patch name="EDPV Speed" number="281" type="normal" port="1">
+		<patch name="EDP V Speed" number="281" type="normal" port="1">
 			<midiByteString name="A">b6 30 7f b6 30 00</midiByteString>
 		</patch>
-		<patch name="EDPV Reverse" number="282" type="normal" port="1">
+		<patch name="EDP V Reverse" number="282" type="normal" port="1">
 			<midiByteString name="A">b6 31 7f b6 31 00</midiByteString>
 		</patch>
 		<patch name="EDP SusRecord" number="283" type="momentary" port="1">
@@ -484,236 +484,236 @@
 			<midiByteString name="A">b6 3a 7f</midiByteString>
 			<midiByteString name="B">b6 3a 00</midiByteString>
 		</patch>
-		<patch name="EDP SUSTGL REV" number="292" type="momentary" port="1">
+		<patch name="EDP SusToggle Reverse" number="292" type="momentary" port="1">
 			<midiByteString name="A">b6 3b 7f</midiByteString>
 			<midiByteString name="B">b6 3b 00</midiByteString>
 		</patch>
-		<patch name="EDP SUSTGL SPD" number="293" type="momentary" port="1">
+		<patch name="EDP SusToggle Speed" number="293" type="momentary" port="1">
 			<midiByteString name="A">b6 3c 7f</midiByteString>
 			<midiByteString name="B">b6 3c 00</midiByteString>
 		</patch>
-		<patch name="EDP RESET" number="294" type="normal" port="1">
+		<patch name="EDP Reset" number="294" type="normal" port="1">
 			<midiByteString name="A">b6 3d 7f</midiByteString>
 		</patch>
-		<patch name="EDP GEN RESET" number="295" type="normal" port="1">
+		<patch name="EDP Gen Reset" number="295" type="normal" port="1">
 			<midiByteString name="A">b6 3e 7f</midiByteString>
 		</patch>
-		<patch name="EDP EXIT PARAMS" number="296" type="normal" port="1">
+		<patch name="EDP Exit Params" number="296" type="normal" port="1">
 			<midiByteString name="A">b6 3f 7f</midiByteString>
 		</patch>
-		<patch name="EDP SUSUNRNDMUL" number="297" type="momentary" port="1">
+		<patch name="EDP SusUnroundedMult" number="297" type="momentary" port="1">
 			<midiByteString name="A">b6 40 7f</midiByteString>
 			<midiByteString name="B">b6 40 00</midiByteString>
 		</patch>
-		<patch name="EDP SUSUNRNDINS" number="298" type="momentary" port="1">
+		<patch name="EDP SusUnroundedInsert" number="298" type="momentary" port="1">
 			<midiByteString name="A">b6 41 7f</midiByteString>
 			<midiByteString name="B">b6 41 00</midiByteString>
 		</patch>
-		<patch name="EDP SUSMute-RET" number="299" type="momentary" port="1">
+		<patch name="EDP SusMute-RET" number="299" type="momentary" port="1">
 			<midiByteString name="A">b6 42 7f</midiByteString>
 			<midiByteString name="B">b6 42 00</midiByteString>
 		</patch>
-		<patch name="EDP LONG UNDO" number="300" type="normal" port="1">
+		<patch name="EDP Long Undo" number="300" type="normal" port="1">
 			<midiByteString name="A">b6 43 7f</midiByteString>
 		</patch>
-		<patch name="EDP FORWARD" number="301" type="normal" port="1">
+		<patch name="EDP Forward" number="301" type="normal" port="1">
 			<midiByteString name="A">b6 44 7f</midiByteString>
 		</patch>
-		<patch name="EDP REVERSE" number="302" type="normal" port="1">
+		<patch name="EDP Reverse" number="302" type="normal" port="1">
 			<midiByteString name="A">b6 45 7f</midiByteString>
 		</patch>
-		<patch name="EDP FULL SPEED" number="303" type="normal" port="1">
+		<patch name="EDP Full Speed" number="303" type="normal" port="1">
 			<midiByteString name="A">b6 46 7f</midiByteString>
 		</patch>
-		<patch name="EDP HALF SPEED" number="304" type="normal" port="1">
+		<patch name="EDP Half Speed" number="304" type="normal" port="1">
 			<midiByteString name="A">b6 47 7f</midiByteString>
 		</patch>
-		<patch name="EDP PLAYSAMPLE" number="305" type="normal" port="1">
+		<patch name="EDP PlaySample" number="305" type="normal" port="1">
 			<midiByteString name="A">b6 48 7f</midiByteString>
 		</patch>
-		<patch name="EDP RETRIGGER" number="306" type="normal" port="1">
+		<patch name="EDP Retrigger" number="306" type="normal" port="1">
 			<midiByteString name="A">b6 49 7f</midiByteString>
 		</patch>
-		<patch name="EDP REALIGN" number="307" type="normal" port="1">
+		<patch name="EDP Realign" number="307" type="normal" port="1">
 			<midiByteString name="A">b6 4a 7f</midiByteString>
 		</patch>
-		<patch name="EDP MuteREALIGN" number="308" type="normal" port="1">
+		<patch name="EDP MuteRealign" number="308" type="normal" port="1">
 			<midiByteString name="A">b6 4b 7f</midiByteString>
 		</patch>
-		<patch name="EDP QNTSTARTSNG" number="309" type="normal" port="1">
+		<patch name="EDP QntStartSingle" number="309" type="normal" port="1">
 			<midiByteString name="A">b6 4c 7f</midiByteString>
 		</patch>
-		<patch name="EDP MUQNSTRTSNG" number="310" type="normal" port="1">
+		<patch name="EDP MUnqntStartSingle" number="310" type="normal" port="1">
 			<midiByteString name="A">b6 4d 7f</midiByteString>
 		</patch>
-		<patch name="EDP START POINT" number="311" type="normal" port="1">
+		<patch name="EDP Start Point" number="311" type="normal" port="1">
 			<midiByteString name="A">b6 4e 7f</midiByteString>
 		</patch>
-		<patch name="EDP QNT STRT PT" number="312" type="normal" port="1">
+		<patch name="EDP Qnt Start Point" number="312" type="normal" port="1">
 			<midiByteString name="A">b6 4f 7f</midiByteString>
 		</patch>
-		<patch name="EDP BEATTRIGSMP" number="313" type="normal" port="1">
+		<patch name="EDP BeatTrigSmp" number="313" type="normal" port="1">
 			<midiByteString name="A">b6 50 7f</midiByteString>
 		</patch>
-		<patch name="EDP MIDBEATSYNC" number="314" type="normal" port="1">
+		<patch name="EDP MIDI BeatSync" number="314" type="normal" port="1">
 			<midiByteString name="A">b6 51 7f</midiByteString>
 		</patch>
-		<patch name="EDP LOOP 1" number="315" type="normal" port="1">
+		<patch name="EDP Loop 1" number="315" type="normal" port="1">
 			<midiByteString name="A">96 54 7f</midiByteString>
 		</patch>
-		<patch name="EDP LOOP 2" number="316" type="normal" port="1">
+		<patch name="EDP Loop 2" number="316" type="normal" port="1">
 			<midiByteString name="A">96 55 7f</midiByteString>
 		</patch>
-		<patch name="EDP LOOP 3" number="317" type="normal" port="1">
+		<patch name="EDP Loop 3" number="317" type="normal" port="1">
 			<midiByteString name="A">96 56 7f</midiByteString>
 		</patch>
-		<patch name="EDP LOOP 4" number="318" type="normal" port="1">
+		<patch name="EDP Loop 4" number="318" type="normal" port="1">
 			<midiByteString name="A">96 57 7f</midiByteString>
 		</patch>
-		<patch name="EDP LOOP 5" number="319" type="normal" port="1">
+		<patch name="EDP Loop 5" number="319" type="normal" port="1">
 			<midiByteString name="A">96 58 7f</midiByteString>
 		</patch>
-		<patch name="EDP LOOP 6" number="320" type="normal" port="1">
+		<patch name="EDP Loop 6" number="320" type="normal" port="1">
 			<midiByteString name="A">96 59 7f</midiByteString>
 		</patch>
-		<patch name="EDP LOOP 7" number="321" type="normal" port="1">
+		<patch name="EDP Loop 7" number="321" type="normal" port="1">
 			<midiByteString name="A">96 5a 7f</midiByteString>
 		</patch>
-		<patch name="EDP LOOP 8" number="322" type="normal" port="1">
+		<patch name="EDP Loop 8" number="322" type="normal" port="1">
 			<midiByteString name="A">96 5b 7f</midiByteString>
 		</patch>
-		<patch name="EDP REC/Mute" number="323" type="momentary" port="1">
+		<patch name="EDP Rec/Mute" number="323" type="momentary" port="1">
 			<midiByteString name="A">b6 26 7f b6 26 00</midiByteString>
 			<midiByteString name="B">b6 2a 7f b6 2a 00</midiByteString>
 		</patch>
-		<patch name="EDP QUANTZ CYC" number="324" type="momentary" port="1">
+		<patch name="EDP Quantz Cycle" number="324" type="momentary" port="1">
 			<midiByteString name="A">b6 24 7f</midiByteString>
 			<midiByteString name="B">b6 24 00 b6 27 7f b6 27 00 b6 27 7f b6 27 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</midiByteString>
 		</patch>
-		<patch name="EDP INS MOD CYC" number="325" type="momentary" port="1">
+		<patch name="EDP Ins Mode Cycle" number="325" type="momentary" port="1">
 			<midiByteString name="A">b6 24 7f</midiByteString>
 			<midiByteString name="B">b6 24 00 b6 24 7f b6 24 00 b6 29 7f b6 29 00 b6 29 7f b6 29 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</midiByteString>
 		</patch>
-		<patch name="EDP REC MOD CYC" number="326" type="momentary" port="1">
+		<patch name="EDP Rec Mode Cycle" number="326" type="momentary" port="1">
 			<midiByteString name="A">b6 24 7f</midiByteString>
 			<midiByteString name="B">b6 24 00 b6 24 7f b6 24 00 b6 26 7f b6 26 00 b6 26 7f b6 26 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</midiByteString>
 		</patch>
-		<patch name="EDP RND MOD TGL" number="327" type="momentary" port="1">
+		<patch name="EDP Rnd Mode Toggle" number="327" type="momentary" port="1">
 			<midiByteString name="A">b6 24 7f</midiByteString>
 			<midiByteString name="B">b6 24 00 b6 24 7f b6 24 00 b6 28 7f b6 28 00 b6 28 7f b6 28 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</midiByteString>
 		</patch>
-		<patch name="EDP DUB MOD TGL" number="328" type="momentary" port="1">
+		<patch name="EDP Dub Mode Toggle" number="328" type="momentary" port="1">
 			<midiByteString name="A">b6 24 7f</midiByteString>
 			<midiByteString name="B">b6 24 00 b6 24 7f b6 24 00 b6 27 7f b6 27 00 b6 27 7f b6 27 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</midiByteString>
 		</patch>
-		<patch name="EDP Mute MOD TG" number="329" type="momentary" port="1">
+		<patch name="EDP Mute Mode Toggle" number="329" type="momentary" port="1">
 			<midiByteString name="A">b6 24 7f</midiByteString>
 			<midiByteString name="B">b6 24 00 b6 24 7f b6 24 00 b6 2a 7f b6 2a 00 b6 2a 7f b6 2a 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</midiByteString>
 		</patch>
-		<patch name="EDP SW QUANT CY" number="330" type="momentary" port="1">
+		<patch name="EDP Sw Quant Cycle" number="330" type="momentary" port="1">
 			<midiByteString name="A">b6 24 7f</midiByteString>
 			<midiByteString name="B">b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 29 7f b6 29 00 b6 29 7f b6 29 00 b6 24 7f b6 24 00</midiByteString>
 		</patch>
-		<patch name="EDP AUTOREC TGL" number="331" type="momentary" port="1">
+		<patch name="EDP AutoRec Toggle" number="331" type="momentary" port="1">
 			<midiByteString name="A">b6 24 7f</midiByteString>
 			<midiByteString name="B">b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 27 7f b6 27 00 b6 27 7f b6 27 00 b6 24 7f b6 24 00</midiByteString>
 		</patch>
-		<patch name="EDP MORELOOP CY" number="332" type="momentary" port="1">
+		<patch name="EDP MoreLoops Cycle" number="332" type="momentary" port="1">
 			<midiByteString name="A">b6 24 7f</midiByteString>
 			<midiByteString name="B">b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 26 7f b6 26 00 b6 26 7f b6 26 00 b6 24 7f b6 24 00</midiByteString>
 		</patch>
-		<patch name="EDP LOOPCPY TGL" number="333" type="momentary" port="1">
+		<patch name="EDP LoopCpy Toggle" number="333" type="momentary" port="1">
 			<midiByteString name="A">b6 24 7f</midiByteString>
 			<midiByteString name="B">b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 28 7f b6 28 00 b6 28 7f b6 28 00 b6 24 7f b6 24 00</midiByteString>
 		</patch>
-		<patch name="EDP REC MODE SH" number="334" type="momentary" port="1">
+		<patch name="EDP Rec Mode Show" number="334" type="momentary" port="1">
 			<midiByteString name="A">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 26 7f b6 26 00</midiByteString>
 			<midiByteString name="B">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</midiByteString>
 		</patch>
-		<patch name="EDP DUB MODE SH" number="335" type="momentary" port="1">
+		<patch name="EDP Dub Mode Show" number="335" type="momentary" port="1">
 			<midiByteString name="A">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 27 7f b6 27 00</midiByteString>
 			<midiByteString name="B">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</midiByteString>
 		</patch>
-		<patch name="EDP RND MODE SH" number="336" type="momentary" port="1">
+		<patch name="EDP Rnd Mode Show" number="336" type="momentary" port="1">
 			<midiByteString name="A">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 28 7f b6 28 00</midiByteString>
 			<midiByteString name="B">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</midiByteString>
 		</patch>
-		<patch name="EDP INS MODE SH" number="337" type="momentary" port="1">
+		<patch name="EDP Ins Mode Show" number="337" type="momentary" port="1">
 			<midiByteString name="A">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 29 7f b6 29 00</midiByteString>
 			<midiByteString name="B">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</midiByteString>
 		</patch>
-		<patch name="EDP Mute MOD SH" number="338" type="momentary" port="1">
+		<patch name="EDP Mute Mode Show" number="338" type="momentary" port="1">
 			<midiByteString name="A">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 2a 7f b6 2a 00</midiByteString>
 			<midiByteString name="B">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</midiByteString>
 		</patch>
-		<patch name="EDP LOP DEL SHO" number="339" type="momentary" port="1">
+		<patch name="EDP Loop Delete Show" number="339" type="momentary" port="1">
 			<midiByteString name="A">b6 24 7f b6 24 00 b6 26 7f b6 26 00</midiByteString>
 			<midiByteString name="B">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</midiByteString>
 		</patch>
-		<patch name="EDP QUANTZ SHOW" number="340" type="momentary" port="1">
+		<patch name="EDP Quantz Show" number="340" type="momentary" port="1">
 			<midiByteString name="A">b6 24 7f b6 24 00 b6 27 7f b6 27 00</midiByteString>
 			<midiByteString name="B">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</midiByteString>
 		</patch>
-		<patch name="EDP AUTOREC SHO" number="341" type="momentary" port="1">
+		<patch name="EDP AutoRec Show" number="341" type="momentary" port="1">
 			<midiByteString name="A">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 27 7f b6 27 00</midiByteString>
 			<midiByteString name="B">b6 24 7f b6 24 00</midiByteString>
 		</patch>
-		<patch name="EDP LOOPCPY SHO" number="342" type="momentary" port="1">
+		<patch name="EDP LoopCpy Show" number="342" type="momentary" port="1">
 			<midiByteString name="A">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 28 7f b6 28 00</midiByteString>
 			<midiByteString name="B">b6 24 7f b6 24 00</midiByteString>
 		</patch>
-		<patch name="EDP SW QUANT SH" number="343" type="momentary" port="1">
+		<patch name="EDP Sw Quant Show" number="343" type="momentary" port="1">
 			<midiByteString name="A">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 29 7f b6 29 00</midiByteString>
 			<midiByteString name="B">b6 24 7f b6 24 00</midiByteString>
 		</patch>
-		<patch name="FF MTRY DISENG" number="360" type="momentary" port="1">
+		<patch name="FF Momentary Disenge" number="360" type="momentary" port="1">
 			<midiByteString name="A">bb 09 00</midiByteString>
 			<midiByteString name="B">bb 09 7f</midiByteString>
 		</patch>
-		<patch name="FF MTRY ENG" number="361" type="momentary" port="1">
+		<patch name="FF Momentary Engage" number="361" type="momentary" port="1">
 			<midiByteString name="A">bb 09 7f</midiByteString>
 			<midiByteString name="B">bb 09 00</midiByteString>
 		</patch>
-		<patch name="FF LFO DEPTH P2" number="362" type="normal" port="1">
+		<patch name="FF LFO Depth P2" number="362" type="normal" port="1">
 			<globalExpr inputNumber="2" enable="0" />
 			<localExpr inputNumber="2" assignmentNumber="1" channel="12" controller="1" min="0" max="127" invert="0" enable="1" />
 		</patch>
-		<patch name="FF PRE-BUZZ P2" number="363" type="normal" port="1">
+		<patch name="FF Pre-Buzz P2" number="363" type="normal" port="1">
 			<globalExpr inputNumber="2" enable="0" />
 			<localExpr inputNumber="2" assignmentNumber="1" channel="12" controller="2" min="0" max="127" invert="0" enable="1" />
 		</patch>
-		<patch name="FF POST-BUZZ P2" number="364" type="normal" port="1">
+		<patch name="FF Post-Buzz P2" number="364" type="normal" port="1">
 			<globalExpr inputNumber="2" enable="0" />
 			<localExpr inputNumber="2" assignmentNumber="1" channel="12" controller="3" min="0" max="127" invert="0" enable="1" />
 		</patch>
-		<patch name="FF BUZZ ENG" number="365" type="normal" port="1">
+		<patch name="FF Buzz Engage" number="365" type="normal" port="1">
 			<midiByteString name="A">bb 04 7f</midiByteString>
 		</patch>
-		<patch name="FF BUZZ DISENG" number="366" type="normal" port="1">
+		<patch name="FF Buzz Disengage" number="366" type="normal" port="1">
 			<midiByteString name="A">bb 04 00</midiByteString>
 		</patch>
-		<patch name="FF FILT FREQ P2" number="367" type="normal" port="1">
+		<patch name="FF Filter Freq P2" number="367" type="normal" port="1">
 			<globalExpr inputNumber="2" enable="0" />
 			<localExpr inputNumber="2" assignmentNumber="1" channel="12" controller="5" min="0" max="127" invert="0" enable="1" />
 		</patch>
-		<patch name="FF WET/DRY P2" number="368" type="normal" port="1">
+		<patch name="FF Wet/Dry P2" number="368" type="normal" port="1">
 			<globalExpr inputNumber="2" enable="0" />
 			<localExpr inputNumber="2" assignmentNumber="1" channel="12" controller="6" min="0" max="127" invert="0" enable="1" />
 		</patch>
-		<patch name="FF FILT RES P2" number="369" type="normal" port="1">
+		<patch name="FF Filter Resonance P2" number="369" type="normal" port="1">
 			<globalExpr inputNumber="2" enable="0" />
 			<localExpr inputNumber="2" assignmentNumber="1" channel="12" controller="7" min="0" max="127" invert="0" enable="1" />
 		</patch>
-		<patch name="FF LO PASS FLTR" number="370" type="normal" port="1">
+		<patch name="FF Lo Pass Filter" number="370" type="normal" port="1">
 			<midiByteString name="A">bb 08 00</midiByteString>
 		</patch>
-		<patch name="FF HI PASS FLTR" number="371" type="normal" port="1">
+		<patch name="FF Hi Pass Filter" number="371" type="normal" port="1">
 			<midiByteString name="A">bb 08 01</midiByteString>
 		</patch>
-		<patch name="FF BND PASS FLT" number="372" type="normal" port="1">
+		<patch name="FF BND PASS Filter" number="372" type="normal" port="1">
 			<midiByteString name="A">bb 08 02</midiByteString>
 		</patch>
-		<patch name="FF NOTCH FLT" number="373" type="normal" port="1">
+		<patch name="FF NOTCH Filter" number="373" type="normal" port="1">
 			<midiByteString name="A">bb 08 03</midiByteString>
 		</patch>
 		<patch name="FF FLTR ENGAGE" number="374" type="normal" port="1">
@@ -801,9 +801,6 @@
 		<patch name="FF DEFAULT" number="400" type="normal" port="1">
 			<midiByteString name="A">bb 04 7f bb 06 7f bb 08 00 bb 09 7f bb 0a 00 bb 0b 00 bb 0d 01 bb 10 00 bb 11 7f</midiByteString>
 		</patch>
-		<patch name="RPT FF TAP TMP0" number="401" type="momentary" port="1">
-			<midiByteString name="A">bb 43 7f bc 44 7f</midiByteString>
-		</patch>
 		<engineMetaPatch name="Reset Patches" number="600" action="ResetBankPatches" />
 	</patches>
 	<banks>
@@ -875,7 +872,7 @@
 			<PatchMap switch="3" patch="90" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="360" loadState="" unloadState="" />
 		</bank>
-		<bank name="H8000 DSP A MVR" number="8">
+		<bank name="H8000 DSP A VirtRack" number="8">
 			<PatchMap switch="1" patch="100" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="101" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="102" loadState="" unloadState="" />
@@ -886,7 +883,7 @@
 			<PatchMap switch="8" patch="107" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="108" loadState="" unloadState="" />
 		</bank>
-		<bank name="H8000 DSP B MVR" number="9">
+		<bank name="H8000 DSP B VirtRack" number="9">
 			<PatchMap switch="1" patch="110" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="111" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="112" loadState="" unloadState="" />
@@ -1081,7 +1078,6 @@
 			<PatchMap switch="5" patch="398" loadState="" unloadState="" />
 			<PatchMap switch="6" patch="397" loadState="" unloadState="" />
 			<PatchMap switch="7" patch="399" loadState="" unloadState="" />
-			<PatchMap switch="8" patch="401" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="400" loadState="" unloadState="" />
 		</bank>
 	</banks>
