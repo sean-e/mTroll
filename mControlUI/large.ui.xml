@@ -7,7 +7,7 @@
   <switchAssemblyConfig>
     <switch font-name="Tahoma" font-weight="bold" font-height="10" width="75" height="23" />
     <switchTextDisplay font-name="Tahoma" font-height="20" foregroundColor="00ff00" backgroundColor="0" width="280" height="40" />
-    <switchLed width="15" height="15" onColor="ff0033" offColor="96" />
+    <switchLed width="15" height="15" onColor="ff0033" offColor="969696" />
   </switchAssemblyConfig>
 
 	<switchMappings comment="this is for mapping ordinal switch numbers to monome grid coords (all are zero based)">
