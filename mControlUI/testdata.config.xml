@@ -710,95 +710,95 @@
 		<patch name="FF Hi Pass Filter" number="371" type="normal" port="1">
 			<midiByteString name="A">bb 08 01</midiByteString>
 		</patch>
-		<patch name="FF BND PASS Filter" number="372" type="normal" port="1">
+		<patch name="FF Band Pass Filter" number="372" type="normal" port="1">
 			<midiByteString name="A">bb 08 02</midiByteString>
 		</patch>
-		<patch name="FF NOTCH Filter" number="373" type="normal" port="1">
+		<patch name="FF Notch Filter" number="373" type="normal" port="1">
 			<midiByteString name="A">bb 08 03</midiByteString>
 		</patch>
-		<patch name="FF FLTR ENGAGE" number="374" type="normal" port="1">
+		<patch name="FF Filter Engage" number="374" type="normal" port="1">
 			<midiByteString name="A">bb 09 7f</midiByteString>
 		</patch>
-		<patch name="FF FLTR DISENG" number="375" type="normal" port="1">
+		<patch name="FF Filter Disengage" number="375" type="normal" port="1">
 			<midiByteString name="A">bb 09 00</midiByteString>
 		</patch>
-		<patch name="FF LFO SAWTOOTH" number="376" type="normal" port="1">
+		<patch name="FF LFO Sawtooth" number="376" type="normal" port="1">
 			<midiByteString name="A">bb 0a 00</midiByteString>
 		</patch>
-		<patch name="FF LFO INV SAW" number="377" type="normal" port="1">
+		<patch name="FF LFO Inv Sawtooth" number="377" type="normal" port="1">
 			<midiByteString name="A">bb 0a 01</midiByteString>
 		</patch>
-		<patch name="FF LFO TRIANGLE" number="378" type="normal" port="1">
+		<patch name="FF LFO Triangle" number="378" type="normal" port="1">
 			<midiByteString name="A">bb 0a 02</midiByteString>
 		</patch>
-		<patch name="FF LFO SQUARE" number="379" type="normal" port="1">
+		<patch name="FF LFO Square" number="379" type="normal" port="1">
 			<midiByteString name="A">bb 0a 03</midiByteString>
 		</patch>
-		<patch name="FF LFO RANDOM" number="380" type="normal" port="1">
+		<patch name="FF LFO Random" number="380" type="normal" port="1">
 			<midiByteString name="A">bb 0a 04</midiByteString>
 		</patch>
-		<patch name="FF LFO ENV FOLL" number="381" type="normal" port="1">
+		<patch name="FF LFO Env Follower" number="381" type="normal" port="1">
 			<midiByteString name="A">bb 0a 05</midiByteString>
 		</patch>
-		<patch name="FF LFO SNGLSHOT" number="382" type="normal" port="1">
+		<patch name="FF LFO Singleshot" number="382" type="normal" port="1">
 			<midiByteString name="A">bb 0b 7f</midiByteString>
 		</patch>
-		<patch name="FF LFO CONTINUO" number="383" type="normal" port="1">
+		<patch name="FF LFO Continuous" number="383" type="normal" port="1">
 			<midiByteString name="A">bb 0b 00</midiByteString>
 		</patch>
-		<patch name="FF FILT RATE P2" number="384" type="normal" port="1">
+		<patch name="FF Filter Rate P2" number="384" type="normal" port="1">
 			<globalExpr inputNumber="2" enable="0" />
 			<localExpr inputNumber="2" assignmentNumber="1" channel="12" controller="12" min="0" max="127" invert="0" enable="1" />
 		</patch>
-		<patch name="FF LFO 1/1 DIV" number="385" type="normal" port="1">
+		<patch name="FF LFO 1/1 Div" number="385" type="normal" port="1">
 			<midiByteString name="A">bb 0d 00</midiByteString>
 		</patch>
-		<patch name="FF LFO 2/1 DIV" number="386" type="normal" port="1">
+		<patch name="FF LFO 2/1 Div" number="386" type="normal" port="1">
 			<midiByteString name="A">bb 0d 01</midiByteString>
 		</patch>
-		<patch name="FF LFO 3/1 DIV" number="387" type="normal" port="1">
+		<patch name="FF LFO 3/1 Div" number="387" type="normal" port="1">
 			<midiByteString name="A">bb 0d 02</midiByteString>
 		</patch>
-		<patch name="FF LFO 4/1 DIV" number="388" type="normal" port="1">
+		<patch name="FF LFO 4/1 Div" number="388" type="normal" port="1">
 			<midiByteString name="A">bb 0d 03</midiByteString>
 		</patch>
-		<patch name="FF LFO 6/1 DIV" number="389" type="normal" port="1">
+		<patch name="FF LFO 6/1 Div" number="389" type="normal" port="1">
 			<midiByteString name="A">bb 0d 04</midiByteString>
 		</patch>
-		<patch name="FF LFO 1/2 DIV" number="390" type="normal" port="1">
+		<patch name="FF LFO 1/2 Div" number="390" type="normal" port="1">
 			<midiByteString name="A">bb 0d 05</midiByteString>
 		</patch>
-		<patch name="FF LFO 1/4 DIV" number="391" type="normal" port="1">
+		<patch name="FF LFO 1/4 Div" number="391" type="normal" port="1">
 			<midiByteString name="A">bb 0d 06</midiByteString>
 		</patch>
-		<patch name="FF 2 POLE FLTR" number="392" type="normal" port="1">
+		<patch name="FF 2 Pole Filter" number="392" type="normal" port="1">
 			<midiByteString name="A">bb 10 00</midiByteString>
 		</patch>
-		<patch name="FF 4 POLE FLTR" number="393" type="normal" port="1">
+		<patch name="FF 4 Pole Filter" number="393" type="normal" port="1">
 			<midiByteString name="A">bb 10 7f</midiByteString>
 		</patch>
-		<patch name="FF BYPASS" number="394" type="normal" port="1">
+		<patch name="FF Bypass" number="394" type="normal" port="1">
 			<midiByteString name="A">bb 11 00</midiByteString>
 		</patch>
-		<patch name="FF ENGAGE" number="395" type="normal" port="1">
+		<patch name="FF Engage" number="395" type="normal" port="1">
 			<midiByteString name="A">bb 11 7f</midiByteString>
 		</patch>
-		<patch name="FF TAP TEMPO" number="396" type="momentary" port="1">
+		<patch name="FF Tap Tempo" number="396" type="momentary" port="1">
 			<midiByteString name="A">bb 43 7f</midiByteString>
 		</patch>
-		<patch name="FF FLTR ENG TGL" number="397" type="toggle" port="1">
+		<patch name="FF Filter Engage Toggle" number="397" type="toggle" port="1">
 			<midiByteString name="A">bb 09 7f</midiByteString>
 			<midiByteString name="B">bb 09 00</midiByteString>
 		</patch>
-		<patch name="FF BUZZ ENG TGL" number="398" type="toggle" port="1">
+		<patch name="FF Buzz Engage Toggle" number="398" type="toggle" port="1">
 			<midiByteString name="A">bb 04 7f</midiByteString>
 			<midiByteString name="B">bb 04 00</midiByteString>
 		</patch>
-		<patch name="FF BYPASS TGL" number="399" type="toggle" port="1">
+		<patch name="FF Bypass Toggle" number="399" type="toggle" port="1">
 			<midiByteString name="A">bb 11 7f</midiByteString>
 			<midiByteString name="B">bb 11 00</midiByteString>
 		</patch>
-		<patch name="FF DEFAULT" number="400" type="normal" port="1">
+		<patch name="FF Default" number="400" type="normal" port="1">
 			<midiByteString name="A">bb 04 7f bb 06 7f bb 08 00 bb 09 7f bb 0a 00 bb 0b 00 bb 0d 01 bb 10 00 bb 11 7f</midiByteString>
 		</patch>
 		<engineMetaPatch name="Reset Patches" number="600" action="ResetBankPatches" />
@@ -860,11 +860,12 @@
 			<PatchMap switch="2" patch="316" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="317" loadState="" unloadState="" />
 			<PatchMap switch="4" patch="318" loadState="" unloadState="" />
-			<PatchMap switch="5" patch="270" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="319" loadState="" unloadState="" />
 			<PatchMap switch="6" patch="282" loadState="" unloadState="" />
 			<PatchMap switch="7" patch="281" loadState="" unloadState="" />
 			<PatchMap switch="8" patch="284" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="287" loadState="" unloadState="" />
+			<PatchMap switch="10" patch="270" loadState="" unloadState="" />
 		</bank>
 		<bank name="Dedicated Pedals" number="7">
 			<PatchMap switch="1" patch="93" loadState="" unloadState="" />
@@ -923,47 +924,47 @@
 			<PatchMap switch="3" patch="59" loadState="" unloadState="" />
 			<PatchMap switch="4" patch="60" loadState="" unloadState="" />
 		</bank>
-		<bank name="LID Fragmented Loops" number="15">
+		<bank name="LID Fragmented Loops" number="30">
 			<PatchMap switch="1" patch="61" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="62" loadState="" unloadState="" />
-			<PatchMap switch="3" patch="63" loadState="" unloadState="" />
-			<PatchMap switch="4" patch="64" loadState="" unloadState="" />
-			<PatchMap switch="5" patch="65" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="63" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="64" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="65" loadState="" unloadState="" />
 		</bank>
-		<bank name="Nebulous Visions" number="16">
+		<bank name="Nebulous Visions" number="31">
 			<PatchMap switch="1" patch="66" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="67" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="68" loadState="" unloadState="" />
 			<PatchMap switch="4" patch="69" loadState="" unloadState="" />
 		</bank>
-		<bank name="Sonance Variance" number="17">
+		<bank name="Sonance Variance" number="32">
 			<PatchMap switch="1" patch="73" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="70" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="71" loadState="" unloadState="" />
 			<PatchMap switch="4" patch="72" loadState="" unloadState="" />
 		</bank>
-		<bank name="Unsettling Absence" number="18">
+		<bank name="Unsettling Absence" number="33">
 			<PatchMap switch="1" patch="74" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="75" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="76" loadState="" unloadState="" />
-			<PatchMap switch="4" patch="77" loadState="" unloadState="" />
-			<PatchMap switch="5" patch="78" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="77" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="78" loadState="" unloadState="" />
 		</bank>
-		<bank name="Cobwebs In Space" number="19">
+		<bank name="Cobwebs In Space" number="34">
 			<PatchMap switch="1" patch="79" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="80" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="81" loadState="" unloadState="" />
 			<PatchMap switch="4" patch="82" loadState="" unloadState="" />
 			<PatchMap switch="5" patch="83" loadState="" unloadState="" />
 		</bank>
-		<bank name="From Depths Below" number="20">
+		<bank name="From Depths Below" number="35">
 			<PatchMap switch="1" patch="84" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="85" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="86" loadState="" unloadState="" />
-			<PatchMap switch="4" patch="87" loadState="" unloadState="" />
-			<PatchMap switch="5" patch="88" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="87" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="88" loadState="" unloadState="" />
 		</bank>
-		<bank name="EDP Direct MIDI 1" number="21">
+		<bank name="EDP Direct MIDI 1" number="50">
 			<PatchMap switch="1" patch="283" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="284" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="285" loadState="" unloadState="" />
@@ -974,7 +975,7 @@
 			<PatchMap switch="8" patch="290" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="291" loadState="" unloadState="" />
 		</bank>
-		<bank name="EDP Direct MIDI 2" number="22">
+		<bank name="EDP Direct MIDI 2" number="51">
 			<PatchMap switch="1" patch="292" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="293" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="294" loadState="" unloadState="" />
@@ -985,16 +986,16 @@
 			<PatchMap switch="8" patch="299" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="300" loadState="" unloadState="" />
 		</bank>
-		<bank name="EDP Direct MIDI 3" number="23">
+		<bank name="EDP Direct MIDI 3" number="52">
 			<PatchMap switch="1" patch="301" loadState="" unloadState="" />
-			<PatchMap switch="2" patch="302" loadState="" unloadState="" />
-			<PatchMap switch="3" patch="303" loadState="" unloadState="" />
-			<PatchMap switch="4" patch="304" loadState="" unloadState="" />
-			<PatchMap switch="5" patch="305" loadState="" unloadState="" />
-			<PatchMap switch="6" patch="306" loadState="" unloadState="" />
-			<PatchMap switch="7" patch="307" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="303" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="306" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="307" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="302" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="304" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="305" loadState="" unloadState="" />
 		</bank>
-		<bank name="EDP State Mod 1" number="24">
+		<bank name="EDP State Mod 1" number="53">
 			<PatchMap switch="1" patch="326" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="328" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="327" loadState="" unloadState="" />
@@ -1004,7 +1005,7 @@
 			<PatchMap switch="8" patch="336" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="337" loadState="" unloadState="" />
 		</bank>
-		<bank name="EDP State Mod 2" number="25">
+		<bank name="EDP State Mod 2" number="54">
 			<PatchMap switch="1" patch="329" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="330" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="324" loadState="" unloadState="" />
@@ -1013,12 +1014,10 @@
 			<PatchMap switch="7" patch="343" loadState="" unloadState="" />
 			<PatchMap switch="8" patch="340" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="341" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="333" loadState="" unloadState="" />
+			<PatchMap switch="10" patch="342" loadState="" unloadState="" />
 		</bank>
-		<bank name="EDP State Mod 3" number="26">
-			<PatchMap switch="1" patch="333" loadState="" unloadState="" />
-			<PatchMap switch="6" patch="342" loadState="" unloadState="" />
-		</bank>
-		<bank name="EDP Loops" number="27">
+		<bank name="EDP Loops" number="55">
 			<PatchMap switch="1" patch="315" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="316" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="317" loadState="" unloadState="" />
@@ -1029,7 +1028,7 @@
 			<PatchMap switch="8" patch="322" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="323" loadState="" unloadState="" />
 		</bank>
-		<bank name="Filter Factory 1" number="28">
+		<bank name="Filter Factory 1" number="81">
 			<PatchMap switch="1" patch="363" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="364" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="365" loadState="" unloadState="" />
@@ -1040,7 +1039,7 @@
 			<PatchMap switch="8" patch="362" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="368" loadState="" unloadState="" />
 		</bank>
-		<bank name="Filter Factory 2" number="29">
+		<bank name="Filter Factory 2" number="82">
 			<PatchMap switch="1" patch="369" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="370" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="371" loadState="" unloadState="" />
@@ -1050,35 +1049,33 @@
 			<PatchMap switch="7" patch="375" loadState="" unloadState="" />
 			<PatchMap switch="8" patch="376" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="377" loadState="" unloadState="" />
+			<PatchMap switch="10" patch="378" loadState="" unloadState="" />
+			<PatchMap switch="11" patch="379" loadState="" unloadState="" />
+			<PatchMap switch="12" patch="380" loadState="" unloadState="" />
+			<PatchMap switch="13" patch="381" loadState="" unloadState="" />
+			<PatchMap switch="14" patch="382" loadState="" unloadState="" />
+			<PatchMap switch="15" patch="383" loadState="" unloadState="" />
 		</bank>
-		<bank name="Filter Factory 3" number="30">
-			<PatchMap switch="1" patch="378" loadState="" unloadState="" />
-			<PatchMap switch="2" patch="379" loadState="" unloadState="" />
-			<PatchMap switch="3" patch="380" loadState="" unloadState="" />
-			<PatchMap switch="4" patch="381" loadState="" unloadState="" />
-			<PatchMap switch="5" patch="382" loadState="" unloadState="" />
-			<PatchMap switch="6" patch="383" loadState="" unloadState="" />
-			<PatchMap switch="7" patch="384" loadState="" unloadState="" />
-			<PatchMap switch="8" patch="385" loadState="" unloadState="" />
-			<PatchMap switch="9" patch="386" loadState="" unloadState="" />
+		<bank name="Filter Factory 3" number="83">
+			<PatchMap switch="1" patch="384" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="385" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="386" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="387" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="388" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="389" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="390" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="391" loadState="" unloadState="" />
 		</bank>
-		<bank name="Filter Factory 4" number="31">
-			<PatchMap switch="1" patch="387" loadState="" unloadState="" />
-			<PatchMap switch="2" patch="388" loadState="" unloadState="" />
-			<PatchMap switch="3" patch="389" loadState="" unloadState="" />
-			<PatchMap switch="4" patch="390" loadState="" unloadState="" />
-			<PatchMap switch="5" patch="391" loadState="" unloadState="" />
-			<PatchMap switch="6" patch="392" loadState="" unloadState="" />
-			<PatchMap switch="7" patch="393" loadState="" unloadState="" />
-			<PatchMap switch="8" patch="394" loadState="" unloadState="" />
-			<PatchMap switch="9" patch="395" loadState="" unloadState="" />
-		</bank>
-		<bank name="Filter Factory 5" number="32">
+		<bank name="Filter Factory 4" number="84">
+			<PatchMap switch="1" patch="392" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="393" loadState="" unloadState="" />
 			<PatchMap switch="4" patch="396" loadState="" unloadState="" />
 			<PatchMap switch="5" patch="398" loadState="" unloadState="" />
-			<PatchMap switch="6" patch="397" loadState="" unloadState="" />
-			<PatchMap switch="7" patch="399" loadState="" unloadState="" />
-			<PatchMap switch="9" patch="400" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="395" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="394" loadState="" unloadState="" />
+			<PatchMap switch="11" patch="397" loadState="" unloadState="" />
+			<PatchMap switch="12" patch="399" loadState="" unloadState="" />
+			<PatchMap switch="14" patch="400" loadState="" unloadState="" />
 		</bank>
 	</banks>
 </MidiControlSettings>
