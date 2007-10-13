@@ -155,7 +155,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 
 			pChildElem->QueryIntAttribute("inputNumber", &exprInputNumber);
 			pChildElem->QueryIntAttribute("enable", &enable);
-			pChildElem->QueryIntAttribute("mininumAdcVal", &minVal);
+			pChildElem->QueryIntAttribute("minimumAdcVal", &minVal);
 			pChildElem->QueryIntAttribute("maximumAdcVal", &maxVal);
 
 			if (exprInputNumber > 0 &&
