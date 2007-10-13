@@ -72,15 +72,24 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 	const bool showStatus = newCcVal == mMinCcVal || newCcVal == mMaxCcVal;
 	midiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], showStatus);
 
-	if (mainDisplay && showStatus)
+	if (mainDisplay)
 	{
-		std::strstream displayMsg;
-		if (newCcVal == mMinCcVal)
-			displayMsg << "___ min ___   ";
-		else if (newCcVal == mMaxCcVal)
-			displayMsg << "||| MAX |||   ";
+		static bool sHadStatus = false;
+		if (showStatus || sHadStatus)
+		{
+			std::strstream displayMsg;
+			if (newCcVal == mMinCcVal)
+				displayMsg << "______ min ______" << std::endl;
+			else if (newCcVal == mMaxCcVal)
+				displayMsg << "|||||| MAX ||||||" << std::endl;
 
-		displayMsg << "adc ch(" << (int) mChannel << "), ctrl(" << (int) mControlNumber << "): " << newAdcVal << " -> " << (int) mMidiData[2] << std::endl << std::ends;
-		mainDisplay->TextOut(displayMsg.str());
+			sHadStatus = showStatus;
+			if (showStatus)
+				displayMsg << "adc ch(" << (int) mChannel << "), ctrl(" << (int) mControlNumber << "): " << newAdcVal << " -> " << (int) mMidiData[2] << std::endl << std::ends;
+			else
+				displayMsg << std::endl << std::ends; // clear display
+
+			mainDisplay->TextOut(displayMsg.str());
+		}
 	}
 }
