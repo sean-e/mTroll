@@ -24,7 +24,8 @@ distribution.
 #ifndef IMonome40h_h__
 #define IMonome40h_h__
 
-class IMonome40hInputSubscriber;
+class IMonome40hSwitchSubscriber;
+class IMonome40hAdcSubscriber;
 typedef unsigned char byte;
 
 
@@ -47,8 +48,10 @@ public:
 	virtual void Shutdown(bool state) = 0;
 
 	// input notification
-	virtual bool Subscribe(IMonome40hInputSubscriber * sub) = 0;
-	virtual bool Unsubscribe(IMonome40hInputSubscriber * sub) = 0;
+	virtual bool Subscribe(IMonome40hSwitchSubscriber * sub) = 0;
+	virtual bool Unsubscribe(IMonome40hSwitchSubscriber * sub) = 0;
+	virtual bool Subscribe(IMonome40hAdcSubscriber * sub) = 0;
+	virtual bool Unsubscribe(IMonome40hAdcSubscriber * sub) = 0;
 
 protected:
 	IMonome40h() {}

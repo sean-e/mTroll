@@ -52,7 +52,6 @@ private:
 	byte				mControlNumber;
 	byte				mMinCcVal;
 	byte				mMaxCcVal;
-	int					mPrevAdcVals[2];
 	byte				mCcValRange;
 	byte				mMidiData[3];
 

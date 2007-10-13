@@ -27,7 +27,7 @@ class CMControlUIView : public CDialogImpl<CMControlUIView>,
 								ITraceDisplay,
 								IMidiControlUi,
 								IMidiOutGenerator,
-								IMonome40hInputSubscriber
+								IMonome40hSwitchSubscriber
 {
 public:
 	CMControlUIView();
@@ -63,10 +63,9 @@ public: // ISwitchDisplay
 	virtual void		SetSwitchText(int switchNumber, const std::string & txt);
 	virtual void		ClearSwitchText(int switchNumber);
 
-public: // IMonome40hInputSubscriber
+public: // IMonome40hSwitchSubscriber
 	virtual void		SwitchPressed(byte row, byte column);
 	virtual void		SwitchReleased(byte row, byte column);
-	virtual	void		AdcValueChanged(int port, int curValue);
 
 private: // IMidiControlUi
 	virtual void		AddSwitchMapping(int switchNumber, int row, int col);

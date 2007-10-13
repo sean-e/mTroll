@@ -79,7 +79,10 @@ void
 CMControlUIView::Unload()
 {
 	if (mHardwareUi)
+	{
+		mHardwareUi->Unsubscribe(mEngine);
 		mHardwareUi->Unsubscribe(this);
+	}
 
 	CloseMidiOuts();
 
@@ -151,7 +154,10 @@ CMControlUIView::Load(const std::string & uiSettingsFile,
 	LoadMonome();
 	LoadMidiSettings(configSettingsFile);
 	if (mHardwareUi)
+	{
 		mHardwareUi->Subscribe(this);
+		mHardwareUi->Subscribe(mEngine);
+	}
 	ActivityIndicatorHack();
 }
 
@@ -656,7 +662,7 @@ CMControlUIView::CloseMidiOuts()
 	}
 }
 
-// IMonome40hInputSubscriber
+// IMonome40hSwitchSubscriber
 void
 CMControlUIView::SwitchPressed(byte row, byte column)
 {
@@ -673,12 +679,6 @@ CMControlUIView::SwitchReleased(byte row, byte column)
 	mStupidSwitchStates[switchNumber] = false;
 	if (mEngine)
 		mEngine->SwitchReleased(switchNumber);
-}
-
-void
-CMControlUIView::AdcValueChanged(int port, int curValue)
-{
-	mEngine->AdcValueChanged(port, curValue);
 }
 
 void

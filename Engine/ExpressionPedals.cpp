@@ -23,7 +23,6 @@ ExpressionControl::Init(bool invert,
 	if (mMaxCcVal > 127)
 		mMaxCcVal = 127;
 	mCcValRange = mMaxCcVal - mMinCcVal;
-	mPrevAdcVals[0] = mPrevAdcVals[1] = -1;
 
 	mMidiData[0] = (0xb0 | mChannel);
 	mMidiData[1] = mControlNumber;
@@ -46,29 +45,15 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 	if (!mEnabled)
 		return;
 
-	if (mPrevAdcVals[0] == newAdcVal)
-		return;
-	if (mPrevAdcVals[1] == newAdcVal)
-	{
-		if (0 && mainDisplay)
-		{
-			std::strstream displayMsg;
-			displayMsg << "adc val repeat: " << newAdcVal << std::endl << std::ends;
-			mainDisplay->TextOut(displayMsg.str());
-		}
-		return;
-	}
-
-	mPrevAdcVals[1] = mPrevAdcVals[0];
-	mPrevAdcVals[0] = newAdcVal;
-
 	const int cappedAdcVal = newAdcVal < mMinAdcVal ? 
 			mMinAdcVal : 
 			(newAdcVal > mMaxAdcVal) ? mMaxAdcVal : newAdcVal;
 
 	// normal 127 range is 1023
 	byte newCcVal = ((cappedAdcVal - mMinAdcVal) * mCcValRange) / mAdcValRange;
-	newCcVal += mMinCcVal;
+	if (mMinCcVal)
+		newCcVal += mMinCcVal;
+
 	if (newCcVal > mMaxCcVal)
 		newCcVal = mMaxCcVal;
 	else if (newCcVal < mMinCcVal)

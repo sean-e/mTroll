@@ -42,20 +42,23 @@ Monome40hFtw::Monome40hFtw(ITraceDisplay * trace) :
 	mThreadId(0),
 	mServicingSubscribers(false),
 	mInputSubscriber(NULL),
+	mAdcInputSubscriber(NULL),
 	mConsecutiveReadErrors(0)
 {
 	HMODULE hMod = ::LoadLibrary("FTD2XX.dll");
 	if (!hMod)
 		throw std::string("ERROR: Failed to load FTDI library\n");
 
-	::InitializeCriticalSection(&mSubscribersLock);
 	::InitializeCriticalSection(&mOutputCommandsLock);
+
+	for (int portIdx = 0; portIdx < kAdcPortCount; ++portIdx)
+		for (int histIdx = 0; histIdx < kAdcValhist; ++histIdx)
+			mPrevAdcVals[portIdx][histIdx] = -1;
 }
 
 Monome40hFtw::~Monome40hFtw()
 {
 	ReleaseDevice();
-	::DeleteCriticalSection(&mSubscribersLock);
 	::DeleteCriticalSection(&mOutputCommandsLock);
 }
 
@@ -225,37 +228,17 @@ Monome40hFtw::ReleaseDevice()
 }
 
 bool
-Monome40hFtw::Subscribe(IMonome40hInputSubscriber * sub)
+Monome40hFtw::Subscribe(IMonome40hSwitchSubscriber * sub)
 {
 	_ASSERTE(!mServicingSubscribers);
-	AutoLockCs lock(mSubscribersLock);
-
-	if (!mInputSubscriber && !mInputSubscribers.size())
-	{
-		mInputSubscriber = sub;
-		return true;
-	}
-
-	InputSubscribers::iterator it = std::find(mInputSubscribers.begin(), mInputSubscribers.end(), sub);
-	if (it == mInputSubscribers.end())
-	{
-		if (mInputSubscriber)
-		{
-			mInputSubscribers.push_back(mInputSubscriber);
-			mInputSubscriber = NULL;
-		}
-
-		mInputSubscribers.push_back(sub);
-		return true;
-	}
-	return false;
+	mInputSubscriber = sub;
+	return true;
 }
 
 bool
-Monome40hFtw::Unsubscribe(IMonome40hInputSubscriber * sub)
+Monome40hFtw::Unsubscribe(IMonome40hSwitchSubscriber * sub)
 {
 	_ASSERTE(!mServicingSubscribers);
-	AutoLockCs lock(mSubscribersLock);
 
 	if (mInputSubscriber == sub)
 	{
@@ -263,12 +246,28 @@ Monome40hFtw::Unsubscribe(IMonome40hInputSubscriber * sub)
 		return true;
 	}
 
-	InputSubscribers::iterator it = std::find(mInputSubscribers.begin(), mInputSubscribers.end(), sub);
-	if (it != mInputSubscribers.end())
+	return false;
+}
+
+bool
+Monome40hFtw::Subscribe(IMonome40hAdcSubscriber * sub)
+{
+	_ASSERTE(!mServicingSubscribers);
+	mAdcInputSubscriber = sub;
+	return true;
+}
+
+bool
+Monome40hFtw::Unsubscribe(IMonome40hAdcSubscriber * sub)
+{
+	_ASSERTE(!mServicingSubscribers);
+
+	if (mAdcInputSubscriber == sub)
 	{
-		mInputSubscribers.erase(it);
+		mAdcInputSubscriber = NULL;
 		return true;
 	}
+
 	return false;
 }
 
@@ -358,85 +357,50 @@ Monome40hFtw::EnableLedColumn(byte column,
 }
 
 void
-Monome40hFtw::OnButtonChange(bool pressed, byte row, byte col)
-{
-	AutoLockCs lock(mSubscribersLock);
-	ScopeSet<volatile bool> active(&mServicingSubscribers, true);
-	for (InputSubscribers::iterator it = mInputSubscribers.begin();
-		it != mInputSubscribers.end();
-		++it)
-	{
-		if (pressed)
-		{
-			(*it)->SwitchPressed(row, col);
-			if (0 && mTrace)
-			{
-				std::strstream traceMsg;
-				traceMsg << "monome button press: row " << (int) row << ", column " << (int) col << std::endl << std::ends;
-				mTrace->Trace(traceMsg.str());
-			}
-		}
-		else
-		{
-			(*it)->SwitchReleased(row, col);
-			if (0 && mTrace)
-			{
-				std::strstream traceMsg;
-				traceMsg << "monome button release: row " << (int) row << ", column " << (int) col << std::endl << std::ends;
-				mTrace->Trace(traceMsg.str());
-			}
-		}
-	}
-}
-
-void
-Monome40hFtw::OnAdcChange(int port, int value)
-{
-	AutoLockCs lock(mSubscribersLock);
-	ScopeSet<volatile bool> active(&mServicingSubscribers, true);
-	for (InputSubscribers::iterator it = mInputSubscribers.begin();
-		it != mInputSubscribers.end();
-		++it)
-	{
-		(*it)->AdcValueChanged(port, value);
-	}
-}
-
-void
 Monome40hFtw::ReadInput(byte * readData)
 {
 	const byte cmd = readData[0] >> 4;
 	switch (cmd) 
 	{
 	case MonomeSerialProtocolData::getPress:
+		if (mInputSubscriber)
 		{
 			byte state = readData[0] & 0x0f;
 			byte col = readData[1] >> 4;
 			byte row = readData[1] & 0x0f;
-			if (mInputSubscriber)
-			{
-				ScopeSet<volatile bool> active(&mServicingSubscribers, true);
-				if (state)
-					mInputSubscriber->SwitchPressed(row, col);
-				else
-					mInputSubscriber->SwitchReleased(row, col);
-			}
+
+			ScopeSet<volatile bool> active(&mServicingSubscribers, true);
+			if (state)
+				mInputSubscriber->SwitchPressed(row, col);
 			else
-				OnButtonChange(state ? true : false, row, col);
+				mInputSubscriber->SwitchReleased(row, col);
 		}
 		break;
 	case MonomeSerialProtocolData::getAdcVal:
+		if (mAdcInputSubscriber)
 		{
-			byte port = (readData[0] & 0x0c) >> 2;
-			int value = readData[1];
-			value |= ((readData[0] & 3) << 8);
-			if (mInputSubscriber)
+			const byte port = (readData[0] & 0x0c) >> 2;
+			if (port >= kAdcPortCount)
+				break;
+			int adcValue = readData[1];
+			adcValue |= ((readData[0] & 3) << 8);
+
+			if (mPrevAdcVals[port][0] == adcValue)
+				break;
+			if (mPrevAdcVals[port][1] == adcValue)
 			{
-				ScopeSet<volatile bool> active(&mServicingSubscribers, true);
-				mInputSubscriber->AdcValueChanged(port, value);
+				if (0 && mTrace)
+				{
+					std::strstream displayMsg;
+					displayMsg << "adc val repeat: " << adcValue << std::endl << std::ends;
+					mTrace->Trace(displayMsg.str());
+				}
+				break;
 			}
-			else
-				OnAdcChange(port, value);
+
+			mAdcInputSubscriber->AdcValueChanged(port, adcValue);
+			mPrevAdcVals[port][1] = mPrevAdcVals[port][0];
+			mPrevAdcVals[port][0] = adcValue;
 		}
 		break;
 	default:

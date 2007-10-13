@@ -21,23 +21,31 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
-#ifndef IInput_h__
-#define IInput_h__
+#ifndef IMonomeInput_h__
+#define IMonomeInput_h__
 
 typedef unsigned char byte;
 
 
-// IMonome40hInputSubscriber
+// IMonome40hSwitchSubscriber
 // ----------------------------------------------------------------------------
-// Implement to get notification of switch press and release, and
-// value change of analog port
+// Implement to get notification of switch press and release
 //
-class IMonome40hInputSubscriber
+class IMonome40hSwitchSubscriber
 {
 public:
 	virtual void SwitchPressed(byte row, byte column) = 0;
 	virtual void SwitchReleased(byte row, byte column) = 0;
+};
+
+// IMonome40hAdcSubscriber
+// ----------------------------------------------------------------------------
+// Implement to get value changes of analog ports
+//
+class IMonome40hAdcSubscriber
+{
+public:
 	virtual void AdcValueChanged(int port, int curValue) = 0;
 };
 
-#endif // IInput_h__
+#endif // IMonomeInput_h__

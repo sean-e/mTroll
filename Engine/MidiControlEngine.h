@@ -5,6 +5,7 @@
 #include <vector>
 #include "Patch.h"
 #include "ExpressionPedals.h"
+#include "../Monome40h/IMonome40hInputSubscriber.h"
 
 
 class IMainDisplay;
@@ -15,7 +16,7 @@ class Patch;
 class PatchBank;
 
 
-class MidiControlEngine
+class MidiControlEngine : public IMonome40hAdcSubscriber
 {
 public:
 	MidiControlEngine(IMainDisplay * mainDisplay, 
@@ -38,7 +39,7 @@ public:
 
 	void					SwitchPressed(int switchNumber);
 	void					SwitchReleased(int switchNumber);
-	void					AdcValueChanged(int port, int curValue);
+	virtual void			AdcValueChanged(int port, int curValue);
 	void					ResetBankPatches();
 
 private:

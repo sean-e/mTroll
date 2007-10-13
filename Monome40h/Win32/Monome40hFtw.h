@@ -30,7 +30,8 @@ distribution.
 #include "../FTD2XX.H"
 
 class ITraceDisplay;
-class IMonome40hInputSubscriber;
+class IMonome40hSwitchSubscriber;
+class IMonome40hAdcSubscriber;
 class MonomeSerialProtocolData;
 
 
@@ -49,8 +50,10 @@ public: // IMonome40h
 	virtual void EnableLedRow(byte row, byte columnValues);
 	virtual void EnableLedColumn(byte column, byte rowValues);
 
-	virtual bool Subscribe(IMonome40hInputSubscriber * sub);
-	virtual bool Unsubscribe(IMonome40hInputSubscriber * sub);
+	virtual bool Subscribe(IMonome40hSwitchSubscriber * sub);
+	virtual bool Unsubscribe(IMonome40hSwitchSubscriber * sub);
+	virtual bool Subscribe(IMonome40hAdcSubscriber * sub);
+	virtual bool Unsubscribe(IMonome40hAdcSubscriber * sub);
 
 	int LocateMonomeDeviceIdx();
 	std::string GetDeviceSerialNumber(int devidx);
@@ -58,8 +61,6 @@ public: // IMonome40h
 	void ReleaseDevice();
 
 private:
-	void OnButtonChange(bool pressed, byte row, byte col);
-	void OnAdcChange(int port, int value);
 	BOOL Send(const MonomeSerialProtocolData & data);
 	static unsigned int __stdcall DeviceServiceThread(void * _this);
 	void DeviceServiceThread();
@@ -67,10 +68,8 @@ private:
 	void ServiceCommands();
 	void DispatchCommand(const MonomeSerialProtocolData * data);
 
-	typedef std::list<IMonome40hInputSubscriber *> InputSubscribers;
-	CRITICAL_SECTION				mSubscribersLock;
-	InputSubscribers				mInputSubscribers;
-	IMonome40hInputSubscriber		* mInputSubscriber;
+	IMonome40hSwitchSubscriber		* mInputSubscriber;
+	IMonome40hAdcSubscriber			* mAdcInputSubscriber;
 	typedef std::list<const MonomeSerialProtocolData *> OutputCommandQueue;
 	CRITICAL_SECTION				mOutputCommandsLock;
 	OutputCommandQueue				mOutputCommandQueue;
@@ -82,6 +81,8 @@ private:
 	volatile bool					mIsListening;
 	volatile bool					mShouldContinueListening;
 	int								mConsecutiveReadErrors;
+	enum {kAdcPortCount = 4, kAdcValhist = 2};
+	int								mPrevAdcVals[kAdcPortCount][kAdcValhist];
 };
 
 #endif // Monome40h_h__
