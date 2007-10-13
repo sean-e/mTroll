@@ -76,11 +76,11 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 	{
 		std::strstream displayMsg;
 		if (newCcVal == mMinCcVal)
-			displayMsg << "**MIN** ";
+			displayMsg << "___ min ___   ";
 		else if (newCcVal == mMaxCcVal)
-			displayMsg << "**MAX** ";
+			displayMsg << "||| MAX |||   ";
 
-		displayMsg << "Adc " << (int) mChannel << ", " << (int) mControlNumber << ": " << newAdcVal << ", " << (int) mMidiData[2] << std::endl << std::ends;
+		displayMsg << "adc ch(" << (int) mChannel << "), ctrl(" << (int) mControlNumber << "): " << newAdcVal << " -> " << (int) mMidiData[2] << std::endl << std::ends;
 		mainDisplay->TextOut(displayMsg.str());
 	}
 }
