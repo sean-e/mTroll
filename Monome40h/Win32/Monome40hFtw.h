@@ -68,6 +68,7 @@ private:
 	void ServiceCommands();
 	void DispatchCommand(const MonomeSerialProtocolData * data);
 
+	std::string						mDevSerialNumber;
 	IMonome40hSwitchSubscriber		* mInputSubscriber;
 	IMonome40hAdcSubscriber			* mAdcInputSubscriber;
 	typedef std::list<const MonomeSerialProtocolData *> OutputCommandQueue;
@@ -78,9 +79,7 @@ private:
 	HANDLE							mThread;
 	DWORD							mThreadId;
 	volatile bool					mServicingSubscribers;
-	volatile bool					mIsListening;
 	volatile bool					mShouldContinueListening;
-	int								mConsecutiveReadErrors;
 	enum {kAdcPortCount = 4, kAdcValhist = 2};
 	int								mPrevAdcVals[kAdcPortCount][kAdcValhist];
 };

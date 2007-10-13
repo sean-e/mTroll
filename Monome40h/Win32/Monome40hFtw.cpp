@@ -36,14 +36,12 @@ distribution.
 Monome40hFtw::Monome40hFtw(ITraceDisplay * trace) :
 	mTrace(trace),
 	mFtDevice(INVALID_HANDLE_VALUE),
-	mIsListening(false),
 	mShouldContinueListening(true),
 	mThread(NULL),
 	mThreadId(0),
 	mServicingSubscribers(false),
 	mInputSubscriber(NULL),
-	mAdcInputSubscriber(NULL),
-	mConsecutiveReadErrors(0)
+	mAdcInputSubscriber(NULL)
 {
 	HMODULE hMod = ::LoadLibrary("FTD2XX.dll");
 	if (!hMod)
@@ -146,6 +144,7 @@ bool
 Monome40hFtw::AcquireDevice(const std::string & devSerialNum)
 {
 	std::strstream traceMsg;
+	mDevSerialNumber = devSerialNum;
 	mFtDevice = ::FT_W32_CreateFile(devSerialNum.c_str(), 
 		GENERIC_READ|GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 
 		FILE_ATTRIBUTE_NORMAL|FT_OPEN_BY_SERIAL_NUMBER, NULL);
@@ -201,8 +200,7 @@ Monome40hFtw::ReleaseDevice()
 
 	mShouldContinueListening = false;
 
-	::WaitForSingleObjectEx(mThread, 6000, FALSE);
-	mIsListening = false;
+	::WaitForSingleObjectEx(mThread, 3000, FALSE);
 	CloseHandle(mThread);
 	mThread = NULL;
 
@@ -416,10 +414,9 @@ Monome40hFtw::ReadInput(byte * readData)
 void
 Monome40hFtw::DeviceServiceThread()
 {
-	mIsListening = true;
-
 	bool aborted = false;
 	const int kDataLen = 2;
+	int consecutiveReadErrors = 0;
 	byte readData[kDataLen];
 	DWORD bytesRead;
 
@@ -432,7 +429,7 @@ Monome40hFtw::DeviceServiceThread()
 		int readRetVal = ::FT_W32_ReadFile(mFtDevice, readData, kDataLen, &bytesRead, NULL);
 		if (readRetVal)
 		{
-			mConsecutiveReadErrors = 0;
+			consecutiveReadErrors = 0;
 			if (FT_IO_ERROR == readRetVal)
 			{
 				if (mTrace)
@@ -471,16 +468,15 @@ Monome40hFtw::DeviceServiceThread()
 		}
 		else
 		{
-			if (mTrace)
+			if (mTrace && !consecutiveReadErrors)
 			{
 				std::strstream traceMsg;
 				traceMsg << "monome read error" << std::endl << std::ends;
 				mTrace->Trace(traceMsg.str());
 			}
 
-			if (++mConsecutiveReadErrors > 10)
+			if (++consecutiveReadErrors > 100)
 			{
-				mShouldContinueListening = false;
 				aborted = true;
 				if (mTrace)
 				{
@@ -488,14 +484,19 @@ Monome40hFtw::DeviceServiceThread()
 					traceMsg << "aborting monome thread due to read errors" << std::endl << std::ends;
 					mTrace->Trace(traceMsg.str());
 				}
+
+				ReleaseDevice();
+
+				// attempt to reacquire it
+				Sleep(5000);
+				AcquireDevice(mDevSerialNumber);
+				break;
 			}
 		}
 	}
 
 	if (!aborted)
 		ServiceCommands();
-
-	mIsListening = false;
 }
 
 unsigned int __stdcall
