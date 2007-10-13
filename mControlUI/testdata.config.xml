@@ -11,10 +11,10 @@
 			<midiDevice port="1" outIdx="1" activityIndicatorId="23" />
 		</midiDevices>
 		<expression port="1">
-			<adc inputNumber="1" enable="1" minimumAdcVal="10" maximumAdcVal="310" />
-			<adc inputNumber="2" enable="1" minimumAdcVal="10" maximumAdcVal="1015" />
-			<adc inputNumber="3" enable="1" minimumAdcVal="10" maximumAdcVal="1015" />
-			<adc inputNumber="4" enable="1" minimumAdcVal="10" maximumAdcVal="990" />
+			<adc inputNumber="1" enable="1" minimumAdcVal="15" maximumAdcVal="300" maximumAdcVal.old="310" minimumAdcVal.old="10" />
+			<adc inputNumber="2" enable="1" minimumAdcVal="100" maximumAdcVal="800" maximumAdcVal.old="1015" minimumAdcVal.old="10" />
+			<adc inputNumber="3" enable="1" minimumAdcVal="100" maximumAdcVal="800" maximumAdcVal.old="1015" minimumAdcVal.old="10" />
+			<adc inputNumber="4" enable="1" minimumAdcVal="100" maximumAdcVal="800" maximumAdcVal.old="990" minimumAdcVal.old="10" />
 			<globalExpr inputNumber="1" assignmentNumber="1" channel="7" controller="2" min="0" max="127" invert="0" enable="1" />
 			<globalExpr inputNumber="2" assignmentNumber="1" channel="4" controller="2" min="0" max="127" invert="0" enable="1" />
 			<globalExpr inputNumber="3" assignmentNumber="1" channel="11" controller="110" min="0" max="127" invert="0" enable="1" />
