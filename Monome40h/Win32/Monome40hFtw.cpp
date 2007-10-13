@@ -70,7 +70,7 @@ Monome40hFtw::LocateMonomeDeviceIdx()
 	{
 		if (mTrace)
 		{
-			traceMsg << "ERROR: Failed to get FT device list: " << ftStatus << std::endl << std::ends;
+			traceMsg << "ERROR: Failed to get FTDI device list: " << ftStatus << std::endl << std::ends;
 			mTrace->Trace(traceMsg.str());
 		}
 		return -1;
@@ -82,7 +82,7 @@ Monome40hFtw::LocateMonomeDeviceIdx()
 		std::string serial(GetDeviceSerialNumber(idx));
 		if (mTrace)
 		{
-			traceMsg << "FT device " << idx << " serial: " << serial << std::endl << std::ends;
+			traceMsg << "FTDI device " << idx << " serial: " << serial << std::endl << std::ends;
 			mTrace->Trace(traceMsg.str());
 		}
 
@@ -112,7 +112,7 @@ Monome40hFtw::GetDeviceSerialNumber(int devIndex)
 	{
 		if (mTrace)
 		{
-			traceMsg << "ERROR: Failed to get FT device list: " << ftStatus << std::endl << std::ends;
+			traceMsg << "ERROR: Failed to get FTDI device list: " << ftStatus << std::endl << std::ends;
 			mTrace->Trace(traceMsg.str());
 		}
 		return "";
@@ -122,7 +122,7 @@ Monome40hFtw::GetDeviceSerialNumber(int devIndex)
 	{
 		if (mTrace)
 		{
-			traceMsg << "ERROR: Requested FT device idx is greater than installed dev count: " << numDevs << std::endl << std::ends;
+			traceMsg << "ERROR: Requested FTDI device idx is greater than installed dev count: " << numDevs << std::endl << std::ends;
 			mTrace->Trace(traceMsg.str());
 		}
 		return "";
@@ -132,7 +132,7 @@ Monome40hFtw::GetDeviceSerialNumber(int devIndex)
 	ftStatus = ::FT_ListDevices((PVOID)devIndex, serialNo, FT_LIST_BY_INDEX|FT_OPEN_BY_SERIAL_NUMBER);
 	if (FT_OK != ftStatus)
 	{
-		traceMsg << "ERROR: Failed to get FT device " << devIndex << " serial, status: " << ftStatus << std::endl << std::ends;
+		traceMsg << "ERROR: Failed to get FTDI device " << devIndex << " serial, status: " << ftStatus << std::endl << std::ends;
 		mTrace->Trace(traceMsg.str());
 		return "";
 	}
@@ -152,7 +152,7 @@ Monome40hFtw::AcquireDevice(const std::string & devSerialNum)
 	{
 		if (mTrace)
 		{
-			traceMsg << "ERROR: Failed to open FT device " << devSerialNum << std::endl << std::ends;
+			traceMsg << "ERROR: Failed to open FTDI device " << devSerialNum << std::endl << std::ends;
 			mTrace->Trace(traceMsg.str());
 		}
 		return false;
@@ -160,7 +160,7 @@ Monome40hFtw::AcquireDevice(const std::string & devSerialNum)
 
 	if (mTrace)
 	{
-		traceMsg << "Opened FT device " << devSerialNum << std::endl << std::ends;
+		traceMsg << "Opened FTDI device " << devSerialNum << std::endl << std::ends;
 		mTrace->Trace(traceMsg.str());
 	}
 
@@ -174,7 +174,7 @@ Monome40hFtw::AcquireDevice(const std::string & devSerialNum)
 	{
 		if (mTrace)
 		{
-			traceMsg << "ERROR: Failed to set FT device params " << std::endl << std::ends;
+			traceMsg << "ERROR: Failed to set FTDI device params " << std::endl << std::ends;
 			mTrace->Trace(traceMsg.str());
 		}
 		return false;
