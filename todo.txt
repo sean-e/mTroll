@@ -56,11 +56,6 @@
 bank sequence
 song
 set
-pedal calibrate
-	1 - 4 to select pedal, mode to escape
-	1 to record toe down - max
-	1 to record toe up - min
-	back to 1 - 4
 
 
 [parts list]
