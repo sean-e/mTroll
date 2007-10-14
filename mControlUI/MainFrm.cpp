@@ -119,11 +119,25 @@ LRESULT CMainFrame::OnRefresh(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl
 	mView.GetPreferredSize(width, height);
 	if (width && height)
 	{
-		CRect wndRc;
-		GetWindowRect(&wndRc);
-		wndRc.right = wndRc.left + width;
-		wndRc.bottom = wndRc.top + height;
-		MoveWindow(&wndRc);
+		WINDOWPLACEMENT wp;
+		ZeroMemory(&wp, sizeof(WINDOWPLACEMENT));
+		GetWindowPlacement(&wp);
+
+		if (SW_SHOWMAXIMIZED == wp.showCmd ||
+			SW_SHOWMINIMIZED == wp.showCmd)
+		{
+			wp.rcNormalPosition.right = wp.rcNormalPosition.left + width;
+			wp.rcNormalPosition.bottom = wp.rcNormalPosition.top + height;
+			SetWindowPlacement(&wp);
+		}
+		else
+		{
+			CRect wndRc;
+			GetWindowRect(&wndRc);
+			wndRc.right = wndRc.left + width;
+			wndRc.bottom = wndRc.top + height;
+			MoveWindow(&wndRc);
+		}
 	}
 
 	::SetCursor(AtlLoadSysCursor(IDC_ARROW));
