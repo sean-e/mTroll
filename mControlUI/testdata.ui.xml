@@ -119,8 +119,9 @@
 			<switchLed vOffset="33" hOffset="105" />
 			<switch label="&amp;Mode" vOffset="30" />
 		</switchAssembly>
-		<switchAssembly number="23" incrementalVpos="0" incrementalHpos="330" >
-			<switchLed vOffset="33" hOffset="105" />
+		<switchAssembly number="30" incrementalVpos="0" incrementalHpos="165" />
+		<switchAssembly number="23" incrementalVpos="0" incrementalHpos="165" >
+			<switchLed vOffset="5" hOffset="70" />
 		</switchAssembly>
 		<switchAssembly number="21" incrementalVpos="0" incrementalHpos="165" >
 			<switchTextDisplay />
