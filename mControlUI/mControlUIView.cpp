@@ -136,6 +136,8 @@ CMControlUIView::Unload()
 
 	mSwitchNumberToRowCol.clear();
 	mRowColToSwitchNumber.clear();
+
+	Invalidate();
 }
 
 HWND
