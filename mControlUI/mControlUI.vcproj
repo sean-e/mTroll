@@ -451,7 +451,19 @@
 			Name="Text Files"
 			>
 			<File
+				RelativePath=".\large.ui.xml"
+				>
+			</File>
+			<File
+				RelativePath=".\Release\testdata.config.xml"
+				>
+			</File>
+			<File
 				RelativePath=".\testdata.config.xml"
+				>
+			</File>
+			<File
+				RelativePath=".\Release\testdata.ui.xml"
 				>
 			</File>
 			<File
