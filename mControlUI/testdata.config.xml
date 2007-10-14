@@ -666,7 +666,7 @@
 			<midiByteString name="A">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 29 7f b6 29 00</midiByteString>
 			<midiByteString name="B">b6 24 7f b6 24 00</midiByteString>
 		</patch>
-		<patch name="FF Momentary Disenge" number="360" type="momentary" port="1">
+		<patch name="FF Momentary Disengage" number="360" type="momentary" port="1">
 			<midiByteString name="A">bb 09 00</midiByteString>
 			<midiByteString name="B">bb 09 7f</midiByteString>
 		</patch>
