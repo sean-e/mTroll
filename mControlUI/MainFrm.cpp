@@ -1,4 +1,4 @@
-// MainFrm.cpp : implmentation of the CMainFrame class
+// MainFrm.cpp : implementation of the CMainFrame class
 //
 /////////////////////////////////////////////////////////////////////////////
 
@@ -11,6 +11,13 @@
 #include "MainFrm.h"
 #include "SEHexception.h"
 
+
+std::string GetRegValue(HKEY rootKey, const char* key, const char* name, const char * defaultValue = "");
+void SetRegValue(HKEY rootKey, LPCSTR lpSubKey, LPCSTR name, const std::string & value);
+
+#define kAppKey				"Software\\Fester\\mTroll"
+#define kActiveUiFile		"UiFile"
+#define kActiveConfigFile	"ConfigFile"
 
 BOOL CMainFrame::PreTranslateMessage(MSG* pMsg)
 {
@@ -59,9 +66,8 @@ LRESULT CMainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/
 	pLoop->AddMessageFilter(this);
 //	pLoop->AddIdleHandler(this);
 
-	// todo: read filenames for auto-open
-	mUiFilename = "testdata.ui.xml";
-	mConfigFilename = "testdata.config.xml";
+	mUiFilename = ::GetRegValue(HKEY_CURRENT_USER, kAppKey, kActiveUiFile, "testdata.ui.xml");
+	mConfigFilename = ::GetRegValue(HKEY_CURRENT_USER, kAppKey, kActiveConfigFile, "testdata.config.xml");
 
 	BOOL dummy;
 	OnRefresh(0, 0, 0, dummy);
@@ -102,7 +108,8 @@ LRESULT CMainFrame::OnFileOpen(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCt
 		return 0;
 	}
 
-	// todo: save filenames for auto-open
+	::SetRegValue(HKEY_CURRENT_USER, kAppKey, kActiveUiFile, mUiFilename);
+	::SetRegValue(HKEY_CURRENT_USER, kAppKey, kActiveConfigFile, mConfigFilename);
 
 	BOOL dummy;
 	OnRefresh(0, 0, NULL, dummy);
@@ -209,4 +216,50 @@ trans_func(unsigned int /*u*/,
 		   EXCEPTION_POINTERS* /*pExp*/)
 {
     throw SEHexception();
+}
+
+std::string
+GetRegValue(HKEY rootKey, const char* key, const char* name, const char* defaultValue /*= ""*/)
+{
+	std::string retval(defaultValue);
+	HKEY hKey;
+	DWORD err = RegOpenKeyEx(rootKey, key, 0, KEY_QUERY_VALUE, &hKey);
+	if (ERROR_SUCCESS == err)
+	{
+		DWORD dataSize = 0, dataType;
+		// get string length first
+		err = RegQueryValueEx(hKey, name, 0, &dataType, NULL, &dataSize);
+		if (ERROR_SUCCESS == err && dataSize)
+		{
+			_ASSERTE(REG_SZ == dataType);
+			// allocate a buffer
+			dataSize++;
+			LPTSTR strData = (LPTSTR)_alloca(sizeof(TCHAR)*(dataSize+1));
+
+			// get the value
+			err = RegQueryValueEx(hKey, name, 0, &dataType, (LPBYTE)strData, &dataSize);
+			if (ERROR_SUCCESS == err)
+			{
+				// added this check to prevent returning empty strings with a 
+				// length of 1 - just return an empty CString instead
+				if (!(dataSize == 1 && !strData[0]))
+					retval = std::string(strData, dataSize);
+			}
+		}
+		RegCloseKey(hKey);
+	}
+	return retval;
+}
+
+void
+SetRegValue(HKEY rootKey, LPCSTR lpSubKey, LPCSTR name, const std::string & value)
+{
+    HKEY hKey;
+    DWORD ignore;
+	
+	DWORD err = RegCreateKeyEx(rootKey, lpSubKey, 0, "", REG_OPTION_NON_VOLATILE, 
+		KEY_QUERY_VALUE|KEY_WRITE, NULL, &hKey, &ignore);
+	if (ERROR_SUCCESS == err)
+		err = RegSetValueEx(hKey, name, 0, REG_SZ, (LPBYTE)value.c_str(), value.size());
+	RegCloseKey(hKey);
 }
