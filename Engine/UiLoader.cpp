@@ -329,4 +329,15 @@ UiLoader::LoadOtherStuffAndFinalize(TiXmlElement * pElem)
 		if (!(-1 == height || -1 == width))
 			mUi->SetMainSize(width, height);
 	}
+
+	// <hardware ledBrightness="0" />
+	pElem = hRoot.FirstChild("hardware").Element();
+	if (pElem)
+	{
+		int ledBrightness = -1;
+		pElem->QueryIntAttribute("ledBrightness", &ledBrightness);
+
+		if (-1 != ledBrightness)
+			mUi->SetHardwareLedIntensity(ledBrightness);
+	}
 }

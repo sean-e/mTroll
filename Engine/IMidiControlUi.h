@@ -27,6 +27,7 @@ public:
 	virtual void	CreateStaticLabel(const std::string & label, int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor) = 0;
 
 	virtual void	SetMainSize(int width, int height) = 0;
+	virtual void	SetHardwareLedIntensity(short brightness) = 0;
 };
 
 #endif // IMidiControlUi_h__

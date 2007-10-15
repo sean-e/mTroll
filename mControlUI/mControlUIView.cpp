@@ -28,7 +28,8 @@ CMControlUIView::CMControlUIView() :
 	mPreferredWidth(0),
 	mMaxSwitchId(0),
 	mKeyMessage(0),
-	mHardwareUi(NULL)
+	mHardwareUi(NULL),
+	mLedIntensity(0)
 {
 }
 
@@ -206,7 +207,7 @@ CMControlUIView::LoadMonome()
 					mHardwareUi = monome;
 					monome = NULL;
 					MonomeStartupSequence();
-					mHardwareUi->SetLedIntensity(0);
+					mHardwareUi->SetLedIntensity(mLedIntensity);
 				}
 			}
 		}
