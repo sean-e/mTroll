@@ -80,6 +80,7 @@ private:
 	DWORD							mThreadId;
 	volatile bool					mServicingSubscribers;
 	volatile bool					mShouldContinueListening;
+	int								mLedBrightness;
 	enum {kAdcPortCount = 4, kAdcValhist = 2};
 	int								mPrevAdcVals[kAdcPortCount][kAdcValhist];
 };

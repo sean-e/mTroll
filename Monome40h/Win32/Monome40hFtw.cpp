@@ -41,7 +41,8 @@ Monome40hFtw::Monome40hFtw(ITraceDisplay * trace) :
 	mThreadId(0),
 	mServicingSubscribers(false),
 	mInputSubscriber(NULL),
-	mAdcInputSubscriber(NULL)
+	mAdcInputSubscriber(NULL),
+	mLedBrightness(10)
 {
 	HMODULE hMod = ::LoadLibrary("FTD2XX.dll");
 	if (!hMod)
@@ -186,6 +187,7 @@ Monome40hFtw::AcquireDevice(const std::string & devSerialNum)
 	if (mThread && mThread != INVALID_HANDLE_VALUE)
 	{
 		::SetThreadPriority(mThread, /*HIGH_PRIORITY_CLASS*/  REALTIME_PRIORITY_CLASS );
+		SetLedIntensity(mLedBrightness);
 		return true;
 	}
 
@@ -298,7 +300,14 @@ Monome40hFtw::SetLedIntensity(byte brightness)
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 		return;
 
-	DispatchCommand(new MonomeSetLedIntensity(brightness));
+	if (0 > brightness)
+		mLedBrightness = 0;
+	else if (10 < brightness)
+		mLedBrightness = 10;
+	else
+		mLedBrightness = brightness;
+
+	DispatchCommand(new MonomeSetLedIntensity(mLedBrightness));
 }
 
 void
