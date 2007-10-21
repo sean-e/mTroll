@@ -79,6 +79,14 @@
 // 
 //
 /////////////////////////////////////////////////////////////////////////////
+// CLabel Version 1.6
+//
+// A. Allow left and right margins to be set (Sean Echevarria htttp://www.creepingfog.com/sean/) 2007.06.16
+// B. Don't require subclass / allow creation of AtlLabel window (Sean Echevarria htttp://www.creepingfog.com/sean/) 2007.06.16
+// C. Fix flicker - store text in class, not in hwnd (Sean Echevarria htttp://www.creepingfog.com/sean/) 2007.10.21
+// 
+//
+/////////////////////////////////////////////////////////////////////////////
 
 #if !defined(ATL_LABEL_H)
 #define ATL_LABEL_H
@@ -234,17 +242,15 @@ public:
 	// =============================================================================================
 	virtual CLabel& SetText(const ATL::CString& strText)
 	{
-		SetWindowText(strText);
+		m_strText = strText;
 		UpdateSurface();
-
 		return *this;
 	}
 
 	virtual CLabel& SetText(const std::string& strText)
 	{
-		SetWindowText(strText.c_str());
+		m_strText = strText.c_str();
 		UpdateSurface();
-
 		return *this;
 	}
 
@@ -256,7 +262,6 @@ public:
 	// =============================================================================================
 	virtual CLabel& SetFontBold(BOOL bBold)
 	{	
-
 		m_lf.lfWeight = bBold ? FW_BOLD : FW_NORMAL;
 		ReconstructFont();
 		UpdateSurface();
@@ -566,6 +571,17 @@ public:
 
 	void SetMargin(int margin) {mSideMargin = margin;}
 
+	static ATL::CWndClassInfo& GetWndClassInfo()
+	{
+		static ATL::CWndClassInfo wc =
+		{
+			{ sizeof(WNDCLASSEX), CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, StartWindowProc,
+			  0, 0, NULL, NULL, NULL, NULL, NULL, _T("Fester12"), NULL },
+			NULL, NULL, IDC_ARROW, TRUE, 0, _T("")
+		};
+		return wc;
+	}
+
 protected:
 	
 	// =============================================================================================
@@ -578,11 +594,6 @@ protected:
 		CRect (rc);
 		GetWindowRect(rc);
 		RedrawWindow();
-
-// 		CWindow parent(GetParent());
-// 		parent.ScreenToClient(rc);
-// 		parent.InvalidateRect(rc,TRUE);
-// 		parent.UpdateWindow();
 	}
 
 	// =============================================================================================
@@ -725,9 +736,6 @@ protected:
 
 		CRect rc;
 		GetClientRect(rc);
-		TCHAR cValue[1000];
-		GetWindowText(cValue, sizeof(cValue));
-		ATL::CString strText(cValue);
 		CBitmap bmp;
 
 		// Set up for double buffering...	
@@ -820,7 +828,7 @@ protected:
 			dwFlags = DT_CENTER;
 
 			// Apply 
-			if (strText.Find(_T("\r\n")) == -1)
+			if (m_strText.Find(_T("\r\n")) == -1)
 			{
 				dwFlags |= DT_VCENTER;
 
@@ -844,14 +852,14 @@ protected:
 			CPoint pt;
 			GetViewportOrgEx (pDCMem->m_hDC,&pt) ;
 			SetViewportOrgEx (pDCMem->m_hDC,rc.Width() / 2, rc.Height() / 2, NULL) ;
-			pDCMem->TextOut (0, 0, strText) ;
+			pDCMem->TextOut (0, 0, m_strText) ;
 			SetViewportOrgEx (pDCMem->m_hDC,pt.x / 2, pt.y / 2, NULL) ;
 			pDCMem->SetTextAlign (nAlign);
 		}
 		else
 		{
 			rc.DeflateRect(mSideMargin, 0);
-			pDCMem->DrawText(cValue, -1,rc,dwFlags);
+			pDCMem->DrawText(m_strText, -1,rc,dwFlags);
 			rc.InflateRect(mSideMargin, 0);
 			if (m_bFont3d)
 			{
@@ -862,7 +870,7 @@ protected:
 				else
 					rc.OffsetRect(1,1);
 
-				pDCMem->DrawText(cValue, -1, rc,dwFlags);
+				pDCMem->DrawText(m_strText, -1, rc,dwFlags);
 				m_3dType;
 			}
 		}
@@ -935,10 +943,7 @@ protected:
 
 		if (!m_bNotifyParent) // Fix
 		{
-			TCHAR cValue[1000];
-			GetWindowText(cValue, sizeof(cValue));
-			ATL::CString strLink(cValue);
-			ShellExecute(NULL,_T("open"),strLink,NULL,NULL,SW_SHOWNORMAL);
+			ShellExecute(NULL,_T("open"),m_strText,NULL,NULL,SW_SHOWNORMAL);
 		}
 		else
 		{
