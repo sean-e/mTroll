@@ -302,8 +302,8 @@ Monome40hFtw::SetLedIntensity(byte brightness)
 
 	if (0 > brightness)
 		mLedBrightness = 0;
-	else if (10 < brightness)
-		mLedBrightness = 10;
+	else if (15 < brightness)
+		mLedBrightness = 15;
 	else
 		mLedBrightness = brightness;
 
