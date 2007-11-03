@@ -25,8 +25,8 @@
 #include "types.h"
 
 #define kAdcFilterNumAdcs         4
-#define kAdcFilterNumBuckets      16
-#define kAdcFilterRightShiftValue 4
+#define kAdcFilterNumBuckets      4 // 4 8 16
+#define kAdcFilterRightShiftValue 2 // 2 3 4
 
 typedef struct _adc_filter {
     uint16 bucket[kAdcFilterNumBuckets];  // ring buffer for storing adc frames

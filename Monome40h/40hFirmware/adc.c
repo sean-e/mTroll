@@ -153,18 +153,21 @@ void initAdcFilters(void)
        
 void adcAddNextValue(uint8 adc, uint16 value)
 {
-    gAdcFilters[adc].accum -= gAdcFilters[adc].bucket[gAdcFilters[adc].index];
-    gAdcFilters[adc].accum += value;
-    gAdcFilters[adc].bucket[gAdcFilters[adc].index] = value;
+	if (!(gAdcEnableState & (1 << adc)))
+		return;
 
-    gAdcFilters[adc].last_value = gAdcFilters[adc].value;
-    gAdcFilters[adc].value = gAdcFilters[adc].accum >> kAdcFilterRightShiftValue;
+	t_adc_filter * curAdcFilter = &gAdcFilters[adc];
+    curAdcFilter->accum -= curAdcFilter->bucket[curAdcFilter->index];
+    curAdcFilter->accum += value;
+    curAdcFilter->bucket[curAdcFilter->index] = value;
 
-    gAdcFilters[adc].index++;
-    adcFilterCheckBucketIndex(gAdcFilters[adc].index);
+    curAdcFilter->last_value = curAdcFilter->value;
+    curAdcFilter->value = curAdcFilter->accum >> kAdcFilterRightShiftValue; // accum divided by kAdcFilterNumBuckets
+    if (curAdcFilter->value != curAdcFilter->last_value)
+	    curAdcFilter->dirty = true;
 
-    if ((gAdcEnableState & (1 << adc)) && (gAdcFilters[adc].value) != (gAdcFilters[adc].last_value))
-        gAdcFilters[adc].dirty = true;
+    curAdcFilter->index++;
+	adcFilterCheckBucketIndex(curAdcFilter->index);
 }
 
 
