@@ -51,8 +51,11 @@ Monome40hFtw::Monome40hFtw(ITraceDisplay * trace) :
 	::InitializeCriticalSection(&mOutputCommandsLock);
 
 	for (int portIdx = 0; portIdx < kAdcPortCount; ++portIdx)
+	{
+		mPrevAdcValsIndex[portIdx] = 0;
 		for (int histIdx = 0; histIdx < kAdcValhist; ++histIdx)
 			mPrevAdcVals[portIdx][histIdx] = -1;
+	}
 }
 
 Monome40hFtw::~Monome40hFtw()
@@ -392,22 +395,34 @@ Monome40hFtw::ReadInput(byte * readData)
 			int adcValue = readData[1];
 			adcValue |= ((readData[0] & 3) << 8);
 
-			if (mPrevAdcVals[port][0] == adcValue)
-				break;
-			if (mPrevAdcVals[port][1] == adcValue)
+			// standard monome firmware does filtering and smoothing using 16 buckets (via averaging)
+			// modified firmware uses 4 buckets - basically smoothing
+			// if using modified firmware, do filtering here (using hard compares instead of averaging)
+			// otherwise set kDoFiltering to false
+			const bool kDoFiltering = true;
+			if (kDoFiltering)
 			{
-				if (0 && mTrace)
+				int * prevValsForCurPort = mPrevAdcVals[port];
+				for (int idx = 0; idx < kAdcValhist; ++idx)
 				{
-					std::strstream displayMsg;
-					displayMsg << "adc val repeat: " << adcValue << std::endl << std::ends;
-					mTrace->Trace(displayMsg.str());
+					if (prevValsForCurPort[idx] == adcValue)
+					{
+						if (0 && mTrace)
+						{
+							std::strstream displayMsg;
+							displayMsg << "adc val repeat: " << adcValue << std::endl << std::ends;
+							mTrace->Trace(displayMsg.str());
+						}
+						return;
+					}
 				}
-				break;
+
+				prevValsForCurPort[mPrevAdcValsIndex[port]++] = adcValue;
+				if (mPrevAdcValsIndex[port] >= kAdcValhist)
+					mPrevAdcValsIndex[port] = 0;
 			}
 
 			mAdcInputSubscriber->AdcValueChanged(port, adcValue);
-			mPrevAdcVals[port][1] = mPrevAdcVals[port][0];
-			mPrevAdcVals[port][0] = adcValue;
 		}
 		break;
 	default:

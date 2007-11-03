@@ -81,8 +81,11 @@ private:
 	volatile bool					mServicingSubscribers;
 	volatile bool					mShouldContinueListening;
 	int								mLedBrightness;
-	enum {kAdcPortCount = 4, kAdcValhist = 2};
+
+	// these members are for adc port filtering of jitter
+	enum {kAdcPortCount = 4, kAdcValhist = 3};
 	int								mPrevAdcVals[kAdcPortCount][kAdcValhist];
+	int								mPrevAdcValsIndex[kAdcPortCount];
 };
 
 #endif // Monome40h_h__
