@@ -17,7 +17,7 @@ OBJECTS	      = 40h.o \
 		message.o \
 		button.o
 
-TARGET=40h
+TARGET=monome40h
 
 
 ####### Implicit rules
@@ -51,6 +51,13 @@ fuses:
 
 pro: $(TARGET).hex
 	avarice --erase --program --file $(TARGET).hex --jtag /dev/tty.usbserial-1B1 --jtag-bitrate 500KHz --write-fuses ee00ee
+
+clean:
+	rm *.o
+	rm $(TARGET).hex
+	rm $(TARGET).elf
+	rm $(TARGET).map
+	rm $(TARGET)
 
 
 ####### Compile
