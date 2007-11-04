@@ -19,6 +19,13 @@
  *  $Id: adc.c,v. 1.1.1.1 2006/05/02 1:01:22
  */
 
+/*
+Altered source version
+	Modified by: Sean Echevarria (http://www.creepingfog.com/sean/) 2007.11.03
+	changed implementation of adcAddNextValue
+*/
+
+
 #include <avr/io.h>
 //#include <avr/signal.h>
 #include <avr/interrupt.h>

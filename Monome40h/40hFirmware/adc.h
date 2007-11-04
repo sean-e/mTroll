@@ -19,6 +19,12 @@
  *  $Id: adc.h,v. 1.1.1.1 2006/05/02 1:01:22
  */
 
+/*
+Altered source version
+	Modified by: Sean Echevarria (http://www.creepingfog.com/sean/) 2007.11.03
+	changed kAdcFilterNumBuckets and kAdcFilterRightShiftValue
+*/
+
 #ifndef __ADC_H__
 #define __ADC_H__
 
