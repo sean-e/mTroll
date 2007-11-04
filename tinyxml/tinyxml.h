@@ -24,7 +24,7 @@ distribution.
 
 /*
 Altered source version
-	Modified by: Sean Echevarria (www.creepingfog.com/sean) 2007.10.07
+	Modified by: Sean Echevarria (http://www.creepingfog.com/sean/) 2007.10.07
 	Added: TiXmlElement::QueryHexAttribute and TiXmlAttribute::QueryHexValue
 	Added: TiXmlElement::QueryAttribute<T> and TiXmlAttribute::QueryValue<T>
 */
