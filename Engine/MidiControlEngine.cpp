@@ -49,7 +49,6 @@ MidiControlEngine::MidiControlEngine(IMainDisplay * mainDisplay,
 	mTrace(traceDisplay),
 	mMode(emCreated),
 	mActiveBank(NULL),
-	mDefaultsBank(NULL),
 	mActiveBankIndex(0),
 	mBankNavigationIndex(0),
 	mPowerUpTimeout(0),
@@ -77,8 +76,6 @@ MidiControlEngine::AddBank(int number,
 						   const std::string & name)
 {
 	PatchBank * pBank = new PatchBank(number, name);
-	if (0 == number)
-		mDefaultsBank = pBank;
 	mBanks.push_back(pBank);
 	return * pBank;
 }
@@ -99,13 +96,21 @@ MidiControlEngine::SetPowerup(int powerupBank,
 	mPowerUpTimeout = powerupTimeout;
 }
 
-// this would not need to exist if we could ensure that banks 
-// were only added after all patches had been added (AddBank 
-// would then need to maintain sort)
 void
 MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSettings)
 {
 	std::sort(mBanks.begin(), mBanks.end(), SortByBankNumber);
+
+	PatchBank * defaultsBank = NULL;
+	if (mBanks.begin() != mBanks.end())
+	{
+		defaultsBank = *mBanks.begin();
+		// bank number 0 is used as the bank with the default mappings
+		if (0 == defaultsBank->GetBankNumber())
+			defaultsBank->InitPatches(mPatches); // init before calling SetDefaultMapping
+		else
+			defaultsBank = NULL;
+	}
 
 	int itIdx = 0;
 	for (Banks::iterator it = mBanks.begin();
@@ -114,6 +119,8 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 	{
 		PatchBank * curItem = *it;
 		curItem->InitPatches(mPatches);
+		if (defaultsBank)
+			curItem->SetDefaultMappings(*defaultsBank);
 	}
 
 	CalibrateExprSettings(pedalCalibrationSettings);
@@ -497,10 +504,6 @@ MidiControlEngine::LoadBank(int bankIndex)
 		mActiveBank->Unload(mMainDisplay, mSwitchDisplay);
 
 	mActiveBank = bank;
-	// fill defaults from mDefaultsBank
-	if (mDefaultsBank)
-		mActiveBank->SetDefaultMappings(*mDefaultsBank);
-
 	mBankNavigationIndex = mActiveBankIndex = bankIndex;
 	mActiveBank->Load(mMainDisplay, mSwitchDisplay);
 	UpdateBankModeSwitchDisplay();

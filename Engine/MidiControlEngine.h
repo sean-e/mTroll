@@ -70,7 +70,6 @@ private:
 	ISwitchDisplay *		mSwitchDisplay;
 
 	PatchBank *				mActiveBank;
-	PatchBank *				mDefaultsBank;
 	int						mActiveBankIndex;
 	EngineMode				mMode;
 	int						mBankNavigationIndex;
