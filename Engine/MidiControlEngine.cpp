@@ -49,6 +49,7 @@ MidiControlEngine::MidiControlEngine(IMainDisplay * mainDisplay,
 	mTrace(traceDisplay),
 	mMode(emCreated),
 	mActiveBank(NULL),
+	mDefaultsBank(NULL),
 	mActiveBankIndex(0),
 	mBankNavigationIndex(0),
 	mPowerUpTimeout(0),
@@ -76,6 +77,8 @@ MidiControlEngine::AddBank(int number,
 						   const std::string & name)
 {
 	PatchBank * pBank = new PatchBank(number, name);
+	if (0 == number)
+		mDefaultsBank = pBank;
 	mBanks.push_back(pBank);
 	return * pBank;
 }
@@ -494,6 +497,10 @@ MidiControlEngine::LoadBank(int bankIndex)
 		mActiveBank->Unload(mMainDisplay, mSwitchDisplay);
 
 	mActiveBank = bank;
+	// fill defaults from mDefaultsBank
+	if (mDefaultsBank)
+		mActiveBank->SetDefaultMappings(*mDefaultsBank);
+
 	mBankNavigationIndex = mActiveBankIndex = bankIndex;
 	mActiveBank->Load(mMainDisplay, mSwitchDisplay);
 	UpdateBankModeSwitchDisplay();

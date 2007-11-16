@@ -28,6 +28,7 @@ public:
 	void AddPatchMapping(int switchNumber, int patchNumber, PatchState patchLoadState, PatchState patchUnloadState);
 	void InitPatches(const MidiControlEngine::Patches & patches);
 	void CalibrateExprSettings(const PedalCalibration * pedalCalibration);
+	void SetDefaultMappings(const PatchBank & defaultMapping);
 
 	void Load(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 	void Unload(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
@@ -56,6 +57,14 @@ private:
 			mPatch(NULL)
 		{
 		}
+
+		PatchMap(const PatchMap & rhs) :
+			mPatchNumber(rhs.mPatchNumber),
+			mPatchStateAtLoad(rhs.mPatchStateAtLoad),
+			mPatchStateAtUnload(rhs.mPatchStateAtUnload),
+			mPatch(rhs.mPatch)
+		{
+		}
 	};
 	typedef std::vector<PatchMap*> PatchVect;
 
@@ -71,6 +80,7 @@ private:
 	// only the name of the first patch will be displayed
 	typedef std::map<int, PatchVect> PatchMaps;
 	PatchMaps					mPatches;	// switchNumber is key
+	bool						mDefaultsAdded;
 };
 
 #endif // PatchBank_h__
