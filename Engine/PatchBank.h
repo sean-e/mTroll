@@ -80,7 +80,6 @@ private:
 	// only the name of the first patch will be displayed
 	typedef std::map<int, PatchVect> PatchMaps;
 	PatchMaps					mPatches;	// switchNumber is key
-	bool						mDefaultsAdded;
 };
 
 #endif // PatchBank_h__

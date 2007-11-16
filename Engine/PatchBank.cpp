@@ -15,8 +15,7 @@ static std::list<Patch *>	sActiveVolatilePatches;
 PatchBank::PatchBank(int number, 
 					 const std::string & name) :
 	mNumber(number),
-	mName(name),
-	mDefaultsAdded(false)
+	mName(name)
 {
 }
 
@@ -51,9 +50,6 @@ PatchBank::AddPatchMapping(int switchNumber, int patchNumber, PatchState patchLo
 void
 PatchBank::SetDefaultMappings(const PatchBank & defaultMapping)
 {
-	if (mDefaultsAdded)
-		return;
-
 	for (PatchMaps::const_iterator it = defaultMapping.mPatches.begin();
 		it != defaultMapping.mPatches.end();
 		++it)
@@ -72,8 +68,6 @@ PatchBank::SetDefaultMappings(const PatchBank & defaultMapping)
 			curPatches.push_back(new PatchMap(*curItem));
 		}
 	}
-
-	mDefaultsAdded = true;
 }
 
 void
