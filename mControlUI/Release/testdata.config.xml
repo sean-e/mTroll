@@ -80,9 +80,19 @@
 			<midiByteString>b2 0a 14</midiByteString>
 			<midiByteString>b2 0a 15</midiByteString>
 		</patch>
+		<patch name="Default Toggle" number="30" type="toggle" port="1">
+			<midiByteString name="A">ca 00 ba 6f 29</midiByteString>
+			<midiByteString name="B">ca 02 ba 6f 7f</midiByteString>
+		</patch>
+		<patch name="Default Toggle 2" number="31" type="toggle" port="1">
+		</patch>
 		<engineMetaPatch name="Reset bank (meta)" number="50" action="ResetBankPatches" />
 	</patches>
 	<banks>
+		<bank name="These are the defaults" number="0">
+			<PatchMap switch="16" patch="30" />
+			<PatchMap switch="20" patch="31" />
+		</bank>
 		<bank name="First Bank" number="1">
 			<PatchMap switch="1" patch="1" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="2" loadState="" unloadState="" />
