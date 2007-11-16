@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <MidiControlSettings>
 	<SystemConfig filterPC="0">
-		<powerup timeout="0" patch="0" />
+		<powerup timeout="0" patch="0" bank="1" />
 		<switches>
 			<switch name="mode" id="20" />
 			<switch name="decrement" id="21" />
@@ -804,6 +804,11 @@
 		<engineMetaPatch name="Reset Patches" number="600" action="ResetBankPatches" />
 	</patches>
 	<banks>
+		<bank name="Defaults" number="0">
+			<PatchMap switch="11" patch="6" loadState="" unloadState="" />
+			<PatchMap switch="12" patch="5" loadState="" unloadState="" />
+			<PatchMap switch="13" patch="94" loadState="" unloadState="" />
+		</bank>
 		<bank name="Muting" number="1">
 			<PatchMap switch="1" patch="1" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="2" loadState="" unloadState="" />
