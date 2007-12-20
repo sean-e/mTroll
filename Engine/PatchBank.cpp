@@ -221,6 +221,29 @@ PatchBank::PatchSwitchPressed(int switchNumber, IMainDisplay * mainDisplay, ISwi
 		}
 	}
 
+	Group * grp = mGroupFromSwitch[switchNumber];
+	if (grp)
+	{
+		// turn off previous group switch
+		if (grp->mActiveSwitch != -1)
+		{
+			PatchVect & prevPatches = mPatches[grp->mActiveSwitch];
+			for (it = prevPatches.begin();
+				 it != prevPatches.end();
+				 ++it)
+			{
+				PatchMap * curSwitchItem = *it;
+				if (!curSwitchItem || !curSwitchItem->mPatch)
+					continue;
+
+				curSwitchItem->mPatch->SwitchPressed(mainDisplay, switchDisplay);
+				curSwitchItem->mPatch->SwitchReleased(mainDisplay, switchDisplay);
+			}
+		}
+
+		grp->mActiveSwitch = switchNumber;
+	}
+
 	// do standard pressed processing (send A)
 	std::strstream msgstr;
 	for (it = curPatches.begin();

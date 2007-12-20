@@ -4,6 +4,8 @@
 #include <map>
 #include <list>
 #include <string>
+#include <set>
+#include <list>
 #include "MidiControlEngine.h"
 
 class Patch;
@@ -80,6 +82,22 @@ private:
 	// only the name of the first patch will be displayed
 	typedef std::map<int, PatchVect> PatchMaps;
 	PatchMaps					mPatches;	// switchNumber is key
+
+	// support for exclusive switch groups
+	typedef std::set<int>			GroupSwitches;			// contains the switches for an exclusive group
+	struct Group
+	{
+		int				mActiveSwitch;
+		GroupSwitches	mSwitches;
+
+		Group() : mActiveSwitch(-1) { }
+		Group(int sw) : mActiveSwitch(sw) { }
+	};
+	typedef std::list<Group>		Groups;	// contains all of the GroupSwitches
+	typedef std::map<int, Group *>	SwitchToGroupMap;	// weak ref to GroupSwitches
+
+	Groups				mGroups;					// this is just a store
+	SwitchToGroupMap	mGroupFromSwitch;
 };
 
 #endif // PatchBank_h__
