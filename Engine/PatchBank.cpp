@@ -221,13 +221,19 @@ PatchBank::PatchSwitchPressed(int switchNumber, IMainDisplay * mainDisplay, ISwi
 		}
 	}
 
-	Group * grp = mGroupFromSwitch[switchNumber];
+	GroupSwitches * grp = mGroupFromSwitch[switchNumber];
 	if (grp)
 	{
-		// turn off previous group switch
-		if (grp->mActiveSwitch != -1)
+		// turn off any in group that are active
+		for (GroupSwitches::iterator switchIt = grp->begin();
+			switchIt != grp->end();
+			++switchIt)
 		{
-			PatchVect & prevPatches = mPatches[grp->mActiveSwitch];
+			const int kCurSwitchNumber = *switchIt;
+			if (kCurSwitchNumber == switchNumber)
+				continue; // don't deactivate if pressing the same switch multiple times
+
+			PatchVect & prevPatches = mPatches[kCurSwitchNumber];
 			for (it = prevPatches.begin();
 				 it != prevPatches.end();
 				 ++it)
@@ -236,12 +242,9 @@ PatchBank::PatchSwitchPressed(int switchNumber, IMainDisplay * mainDisplay, ISwi
 				if (!curSwitchItem || !curSwitchItem->mPatch)
 					continue;
 
-				curSwitchItem->mPatch->SwitchPressed(mainDisplay, switchDisplay);
-				curSwitchItem->mPatch->SwitchReleased(mainDisplay, switchDisplay);
+				curSwitchItem->mPatch->Deactivate(mainDisplay, switchDisplay);
 			}
 		}
-
-		grp->mActiveSwitch = switchNumber;
 	}
 
 	// do standard pressed processing (send A)

@@ -35,6 +35,22 @@ public:
 		SendStringB();
 		UpdateDisplays(mainDisplay, switchDisplay);
 	}
+
+	virtual void Activate(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
+	{
+		if (IsActive())
+			return;
+
+		SwitchPressed(mainDisplay, switchDisplay);
+	}
+
+	virtual void Deactivate(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
+	{
+		if (!IsActive())
+			return;
+
+		SwitchReleased(mainDisplay, switchDisplay);
+	}
 };
 
 #endif // MomentaryPatch_h__

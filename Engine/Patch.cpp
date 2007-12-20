@@ -78,3 +78,23 @@ Patch::UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay
 		mainDisplay->TextOut(msgstr.str());
 	}
 }
+
+void
+Patch::Activate(IMainDisplay * mainDisplay, 
+				ISwitchDisplay * switchDisplay)
+{
+	if (IsActive())
+		return;
+
+	SwitchPressed(mainDisplay, switchDisplay);
+}
+
+void
+Patch::Deactivate(IMainDisplay * mainDisplay, 
+				  ISwitchDisplay * switchDisplay)
+{
+	if (!IsActive())
+		return;
+
+	SwitchPressed(mainDisplay, switchDisplay);
+}

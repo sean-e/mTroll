@@ -84,17 +84,9 @@ private:
 	PatchMaps					mPatches;	// switchNumber is key
 
 	// support for exclusive switch groups
-	typedef std::set<int>			GroupSwitches;			// contains the switches for an exclusive group
-	struct Group
-	{
-		int				mActiveSwitch;
-		GroupSwitches	mSwitches;
-
-		Group() : mActiveSwitch(-1) { }
-		Group(int sw) : mActiveSwitch(sw) { }
-	};
-	typedef std::list<Group>		Groups;	// contains all of the GroupSwitches
-	typedef std::map<int, Group *>	SwitchToGroupMap;	// weak ref to GroupSwitches
+	typedef std::set<int>				GroupSwitches;			// contains the switches for an exclusive group
+	typedef std::list<GroupSwitches>	Groups;					// contains all of the GroupSwitches for the current bank
+	typedef std::map<int, GroupSwitches *> SwitchToGroupMap;	// weak ref to GroupSwitches - lookup group from switchnumber
 
 	Groups				mGroups;					// this is just a store
 	SwitchToGroupMap	mGroupFromSwitch;

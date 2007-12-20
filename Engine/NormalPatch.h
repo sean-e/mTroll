@@ -37,11 +37,6 @@ public:
 
 		UpdateDisplays(mainDisplay, switchDisplay);
 	}
-
-	virtual void SwitchReleased(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
-	{
-		return;
-	}
 };
 
 #endif // NormalPatch_h__

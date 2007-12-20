@@ -45,11 +45,6 @@ public:
 		UpdateDisplays(mainDisplay, switchDisplay);
 	}
 
-	virtual void SwitchReleased(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
-	{
-		return;
-	}
-
 	virtual void BankTransitionActivation()
 	{
 		mCurIndex = 0;
@@ -60,6 +55,24 @@ public:
 	{
 		mPatchIsActive = false;
 		mCurIndex = 0;
+	}
+
+	virtual void Activate(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
+	{
+		if (IsActive() && 0 == mCurIndex)
+			return;
+
+		mCurIndex = 0;
+		SwitchPressed(mainDisplay, switchDisplay);
+	}
+
+	virtual void Deactivate(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
+	{
+		if (!IsActive() || 0 != mCurIndex)
+			return;
+
+		mCurIndex = mMidiByteStrings.size() + 1;
+		SwitchPressed(mainDisplay, switchDisplay);
 	}
 
 			void AddString(const Bytes & midiString) { mMidiByteStrings.push_back(midiString); }

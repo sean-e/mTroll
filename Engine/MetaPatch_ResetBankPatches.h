@@ -22,11 +22,6 @@ public:
 		mEngine->ResetBankPatches();
 	}
 
-	virtual void SwitchReleased(IMainDisplay *, ISwitchDisplay *)
-	{
-		return;
-	}
-
 	virtual void BankTransitionActivation() {SwitchPressed(NULL, NULL);}
 	virtual void BankTransitionDeactivation() {SwitchPressed(NULL, NULL);}
 
