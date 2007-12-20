@@ -41,6 +41,7 @@ public:
 	void					SwitchReleased(int switchNumber);
 	virtual void			AdcValueChanged(int port, int curValue);
 	void					ResetBankPatches();
+	void					LoadBankByNumber(int bankNumber);
 
 private:
 	void					LoadStartupBank();

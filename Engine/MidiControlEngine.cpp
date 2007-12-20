@@ -467,6 +467,17 @@ MidiControlEngine::NavigateBankRelative(int relativeBankIndex)
 	return true;
 }
 
+void
+MidiControlEngine::LoadBankByNumber(int bankNumber)
+{
+	int bankidx = GetBankIndex(bankNumber);
+	if (-1 == bankidx)
+		return;
+
+	ChangeMode(emBank);
+	LoadBank(bankidx);
+}
+
 int
 MidiControlEngine::GetBankIndex(int bankNumber)
 {
