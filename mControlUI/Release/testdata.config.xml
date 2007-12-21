@@ -87,6 +87,9 @@
 		<patch name="Default Toggle 2" number="31" type="toggle" port="1">
 		</patch>
 		<engineMetaPatch name="Reset bank (meta)" number="50" action="ResetBankPatches" />
+		<engineMetaPatch name="Load bank 1 (meta)" number="51" action="LoadBank" bankNumber="1" />
+		<engineMetaPatch name="Load bank 2 (meta)" number="52" action="LoadBank" bankNumber="2" />
+		<engineMetaPatch name="Load bank 3 (meta)" number="53" action="LoadBank" bankNumber="3" />
 	</patches>
 	<banks>
 		<bank name="These are the defaults" number="0">
@@ -126,6 +129,13 @@
 			<PatchMap switch="16" patch="1" loadState="" unloadState="" />
 			<PatchMap switch="17" patch="2" loadState="" unloadState="" />
 			<PatchMap switch="18" patch="3" loadState="" unloadState="" />
+		</bank>
+		<bank name="Fourth Bank" number="4">
+			<ExclusiveSwitchGroup>2 7 12</ExclusiveSwitchGroup>
+			<PatchMap switch="2" patch="1" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="2" loadState="" unloadState="" />
+			<PatchMap switch="12" patch="3" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="52" loadState="" unloadState="" />
 		</bank>
 	</banks>
 </MidiControlSettings>
