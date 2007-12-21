@@ -23,6 +23,8 @@ public:
 		mEngine->LoadBankByNumber(mBankNumber);
 	}
 
+	virtual bool UpdateMainDisplayOnPress() const {return false;}
+
 	virtual void BankTransitionActivation() {SwitchPressed(NULL, NULL);}
 	virtual void BankTransitionDeactivation() {SwitchPressed(NULL, NULL);}
 

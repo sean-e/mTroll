@@ -28,6 +28,7 @@ public:
 	int GetNumber() const {return mNumber;}
 	bool IsActive() const {return mPatchIsActive;}
 	void Reset(ISwitchDisplay * switchDisplay) {mPatchIsActive = false; UpdateDisplays(NULL, switchDisplay);}
+	virtual bool UpdateMainDisplayOnPress() const {return true;}
 
 	virtual void Activate(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 	virtual void Deactivate(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);

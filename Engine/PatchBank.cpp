@@ -252,6 +252,8 @@ PatchBank::PatchSwitchPressed(int switchNumber, IMainDisplay * mainDisplay, ISwi
 		}
 	}
 
+	bool doDisplayUpdate = true;
+
 	// do standard pressed processing (send A)
 	std::strstream msgstr;
 	for (it = curPatches.begin();
@@ -268,10 +270,14 @@ PatchBank::PatchSwitchPressed(int switchNumber, IMainDisplay * mainDisplay, ISwi
 			_ASSERTE(std::find(sActiveVolatilePatches.begin(), sActiveVolatilePatches.end(), curSwitchItem->mPatch) == sActiveVolatilePatches.end());
 			sActiveVolatilePatches.push_back(curSwitchItem->mPatch);
 		}
-		msgstr << curSwitchItem->mPatch->GetNumber() << " " << curSwitchItem->mPatch->GetName() << std::endl;
+
+		if (curSwitchItem->mPatch->UpdateMainDisplayOnPress())
+			msgstr << curSwitchItem->mPatch->GetNumber() << " " << curSwitchItem->mPatch->GetName() << std::endl;
+		else
+			doDisplayUpdate = false;
 	}
 
-	if (mainDisplay)
+	if (mainDisplay && doDisplayUpdate)
 	{
 		msgstr << std::ends;
 		mainDisplay->TextOut(msgstr.str());

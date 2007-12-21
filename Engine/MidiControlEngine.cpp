@@ -476,6 +476,12 @@ MidiControlEngine::LoadBankByNumber(int bankNumber)
 
 	ChangeMode(emBank);
 	LoadBank(bankidx);
+
+	PatchBank * bank = GetBank(bankidx);
+	if (!bank)
+		return;
+
+	bank->DisplayInfo(mMainDisplay, mSwitchDisplay, true, false);
 }
 
 int
