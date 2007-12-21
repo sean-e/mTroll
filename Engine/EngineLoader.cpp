@@ -371,12 +371,23 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 			else if (childElem->ValueStr() == "ExclusiveSwitchGroup")
 			{
 				std::string switchesStr(childElem->GetText());
-				PatchBank::GroupSwitches switches;
+				PatchBank::GroupSwitches * switches = new PatchBank::GroupSwitches;
 
 				// split switchesStr - space token
+				while (switchesStr.size())
+				{
+					const int curSwitch = ::atoi(switchesStr.c_str());
+					if (curSwitch)
+						switches->insert(curSwitch - 1);
 
-				if (switches.size())
-					bank.CreateExclusiveGroup(switches);
+					const int spacePos = switchesStr.find(' ');
+					if (std::string::npos == spacePos)
+						break;
+
+					switchesStr = switchesStr.substr(spacePos + 1);
+				}
+
+				bank.CreateExclusiveGroup(switches);
 			}
 		}
 	}

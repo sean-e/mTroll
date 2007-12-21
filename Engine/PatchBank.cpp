@@ -11,6 +11,15 @@
 
 static std::list<Patch *>	sActiveVolatilePatches;
 
+template<typename T>
+struct DeletePtr
+{
+	void operator()(const T * ptr)
+	{
+		delete ptr;
+	}
+};
+
 
 PatchBank::PatchBank(int number, 
 					 const std::string & name) :
@@ -21,19 +30,15 @@ PatchBank::PatchBank(int number,
 
 PatchBank::~PatchBank()
 {
+	mGroupFromSwitch.clear();
+	std::for_each(mGroups.begin(), mGroups.end(), DeletePtr<GroupSwitches>());
+	mGroups.clear();
+
 	std::for_each(mPatches.begin(), mPatches.end(), DeletePatchMaps());
 	mPatches.clear();
+
 	sActiveVolatilePatches.clear();
 }
-
-template<typename T>
-struct DeletePtr
-{
-	void operator()(const T * ptr)
-	{
-		delete ptr;
-	}
-};
 
 void PatchBank::DeletePatchMaps::operator()(const std::pair<int, PatchVect> & pr)
 {
@@ -416,16 +421,15 @@ PatchBank::ResetPatches(IMainDisplay * mainDisplay,
 }
 
 void
-PatchBank::CreateExclusiveGroup(GroupSwitches switches)
+PatchBank::CreateExclusiveGroup(GroupSwitches * switches)
 {
 	mGroups.push_front(switches);
-	GroupSwitches * newGrp = &(*mGroups.begin());
 
-	for (GroupSwitches::iterator switchIt = newGrp->begin();
-		switchIt != newGrp->end();
+	for (GroupSwitches::iterator switchIt = switches->begin();
+		switchIt != switches->end();
 		++switchIt)
 	{
 		const int kCurSwitchNumber = *switchIt;
-		mGroupFromSwitch[kCurSwitchNumber] = newGrp;
+		mGroupFromSwitch[kCurSwitchNumber] = switches;
 	}
 }

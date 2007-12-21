@@ -46,7 +46,7 @@ public:
 
 	// support for exclusive switch groups
 	typedef std::set<int> GroupSwitches;			// contains the switches for an exclusive group
-	void CreateExclusiveGroup(GroupSwitches switches);
+	void CreateExclusiveGroup(GroupSwitches * switches);
 
 private:
 	struct PatchMap
@@ -88,10 +88,10 @@ private:
 	PatchMaps					mPatches;	// switchNumber is key
 
 	// support for exclusive switch groups
-	typedef std::list<GroupSwitches>	Groups;					// contains all of the GroupSwitches for the current bank
-	typedef std::map<int, GroupSwitches *> SwitchToGroupMap;	// weak ref to GroupSwitches - lookup group from switchnumber
+	typedef std::list<GroupSwitches*>	Groups;					// contains all of the GroupSwitches for the current bank
+	typedef std::map<int, GroupSwitches *> SwitchToGroupMap;	// weak ref to GroupSwitches - lookup group from switchnumber - many to one
 
-	Groups				mGroups;					// this is just a store
+	Groups				mGroups;					// this is just a store - for freeing GroupSwitches
 	SwitchToGroupMap	mGroupFromSwitch;
 };
 
