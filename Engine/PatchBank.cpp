@@ -414,3 +414,18 @@ PatchBank::ResetPatches(IMainDisplay * mainDisplay,
 		mainDisplay->TextOut(info.str());
 	}
 }
+
+void
+PatchBank::CreateExclusiveGroup(GroupSwitches switches)
+{
+	mGroups.push_front(switches);
+	GroupSwitches * newGrp = &(*mGroups.begin());
+
+	for (GroupSwitches::iterator switchIt = newGrp->begin();
+		switchIt != newGrp->end();
+		++switchIt)
+	{
+		const int kCurSwitchNumber = *switchIt;
+		mGroupFromSwitch[kCurSwitchNumber] = newGrp;
+	}
+}

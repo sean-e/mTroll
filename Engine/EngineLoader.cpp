@@ -13,6 +13,7 @@
 #include "SequencePatch.h"
 #include "MomentaryPatch.h"
 #include "MetaPatch_ResetBankPatches.h"
+#include "MetaPatch_LoadBank.h"
 
 
 static PatchBank::PatchState GetLoadState(const std::string & tmpLoad);
@@ -208,6 +209,13 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 
 			if (tmp == "ResetBankPatches")
 				 mEngine->AddPatch(new MetaPatch_ResetBankPatches(mEngine, patchNumber, patchName));
+			else if (tmp == "LoadBank")
+			{
+				int bankNumber = -1;
+				pElem->QueryIntAttribute("bankNumber", &bankNumber);
+				if (-1 != bankNumber)
+					mEngine->AddPatch(new MetaPatch_LoadBank(mEngine, patchNumber, patchName, bankNumber));
+			}
 			continue;
 		}
 		
@@ -343,23 +351,33 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 			 childElem; 
 			 childElem = childElem->NextSiblingElement())
 		{
-			if (childElem->ValueStr() != "PatchMap")
-				continue;
+			if (childElem->ValueStr() == "PatchMap")
+			{
+				int switchNumber = -1;
+				childElem->QueryIntAttribute("switch", &switchNumber);
+				int patchNumber = -1;
+				childElem->Attribute("patch", &patchNumber);
+				if (switchNumber <= 0|| -1 == patchNumber)
+					continue;
 
-			int switchNumber = -1;
-			childElem->QueryIntAttribute("switch", &switchNumber);
-			int patchNumber = -1;
-			childElem->Attribute("patch", &patchNumber);
-			if (switchNumber <= 0|| -1 == patchNumber)
-				continue;
+				std::string tmp;
+				childElem->QueryValueAttribute("loadState", &tmp);
+				const PatchBank::PatchState loadState = GetLoadState(tmp);
+				childElem->QueryValueAttribute("unloadState", &tmp);
+				const PatchBank::PatchState unloadState = GetLoadState(tmp);
 
-			std::string tmp;
-			childElem->QueryValueAttribute("loadState", &tmp);
-			const PatchBank::PatchState loadState = GetLoadState(tmp);
-			childElem->QueryValueAttribute("unloadState", &tmp);
-			const PatchBank::PatchState unloadState = GetLoadState(tmp);
+				bank.AddPatchMapping(switchNumber - 1, patchNumber, loadState, unloadState);
+			}
+			else if (childElem->ValueStr() == "ExclusiveSwitchGroup")
+			{
+				std::string switchesStr(childElem->GetText());
+				PatchBank::GroupSwitches switches;
 
-			bank.AddPatchMapping(switchNumber - 1, patchNumber, loadState, unloadState);
+				// split switchesStr - space token
+
+				if (switches.size())
+					bank.CreateExclusiveGroup(switches);
+			}
 		}
 	}
 }
