@@ -1,8 +1,8 @@
 <?xml version="1.0" ?>
 <MidiControlUiSettings>
-	<frame width="830" height="625" />
-	<mainTextDisplay top="345" left="9" width="400" height="220" font-height="12" font-weight="bold" foregroundColor="ffcc00" backgroundColor="0" />
-	<traceTextDisplay top="345" left="430" width="380" height="220" font-height="8" />
+	<frame width="830" height="710" />
+	<mainTextDisplay top="430" left="9" width="400" height="220" font-height="12" font-weight="bold" foregroundColor="ffcc00" backgroundColor="0" />
+	<traceTextDisplay top="430" left="430" width="380" height="220" font-height="8" />
 	<hardware ledBrightness="1" />
 
 	<switchAssemblyConfig>
@@ -29,6 +29,12 @@
 		<switchMap number="12" row="2" col="2" />
 		<switchMap number="13" row="2" col="3" />
 		<switchMap number="14" row="2" col="4" />
+
+		<switchMap number="15" row="4" col="0" />
+		<switchMap number="16" row="4" col="1" />
+		<switchMap number="17" row="4" col="2" />
+		<switchMap number="18" row="4" col="3" />
+		<switchMap number="19" row="4" col="4" />
 
 		<switchMap number="20" row="3" col="0" />
 		<switchMap number="21" row="3" col="3" />
@@ -114,6 +120,32 @@
       <switchLed vOffset="33" hOffset="112" />
       <switch label="&amp;E" vOffset="30" />
     </switchAssembly>
+
+		<switchAssembly number="15" incrementalVpos="85" left="5" >
+			<switchTextDisplay />
+			<switchLed vOffset="33" hOffset="112" />
+			<switch label="Aux1" vOffset="30" />
+		</switchAssembly>
+		<switchAssembly number="16" incrementalVpos="0" incrementalHpos="165" >
+			<switchTextDisplay />
+			<switchLed vOffset="33" hOffset="112" />
+			<switch label="Aux2" vOffset="30" />
+		</switchAssembly>
+		<switchAssembly number="17" incrementalVpos="0" incrementalHpos="165" >
+			<switchTextDisplay />
+			<switchLed vOffset="33" hOffset="112" />
+			<switch label="Aux3" vOffset="30" />
+		</switchAssembly>
+		<switchAssembly number="18" incrementalVpos="0" incrementalHpos="165" >
+			<switchTextDisplay />
+			<switchLed vOffset="33" hOffset="112" />
+			<switch label="Aux4" vOffset="30" />
+		</switchAssembly>
+		<switchAssembly number="19" incrementalVpos="0" incrementalHpos="165" >
+			<switchTextDisplay />
+			<switchLed vOffset="33" hOffset="112" />
+			<switch label="Aux5" vOffset="30" />
+		</switchAssembly>
 
 		<switchAssembly number="20" incrementalVpos="110" left="5" >
 			<switchTextDisplay />
