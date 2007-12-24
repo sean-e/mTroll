@@ -159,7 +159,7 @@
 			<switchLed vOffset="53" hOffset="105" />
 			<switch label="Aux4" vOffset="50" />
 		</switchAssembly>
-		<switchAssembly number="18" incrementalVpos="0" incrementalHpos="280" >
+		<switchAssembly number="19" incrementalVpos="0" incrementalHpos="280" >
 			<switchTextDisplay />
 			<switchLed vOffset="53" hOffset="105" />
 			<switch label="Aux5" vOffset="50" />
