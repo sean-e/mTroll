@@ -80,6 +80,7 @@ private: // IMidiControlUi
 	virtual void		CreateStaticLabel(const std::string & label, int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor);
 	virtual void		SetMainSize(int width, int height);
 	virtual void		SetHardwareLedIntensity(short brightness) { mLedIntensity = brightness; }
+	virtual void		SetLedDisplayState(bool invert) { mInvertLeds = invert; }
 
 	enum {WM_ASYNCTEXTOUT = WM_USER + 1};
 
@@ -168,6 +169,7 @@ private:
 	typedef std::map<unsigned int, WinMidiOut*> MidiOuts;
 	MidiOuts					mMidiOuts;
 	int							mLedIntensity;
+	bool						mInvertLeds;
 
 	struct SwitchTextDisplayConfig
 	{

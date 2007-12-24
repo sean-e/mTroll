@@ -28,6 +28,7 @@ public:
 
 	virtual void	SetMainSize(int width, int height) = 0;
 	virtual void	SetHardwareLedIntensity(short brightness) = 0;
+	virtual void	SetLedDisplayState(bool invert) = 0;
 };
 
 #endif // IMidiControlUi_h__

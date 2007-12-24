@@ -29,7 +29,8 @@ CMControlUIView::CMControlUIView() :
 	mMaxSwitchId(0),
 	mKeyMessage(0),
 	mHardwareUi(NULL),
-	mLedIntensity(0)
+	mLedIntensity(0),
+	mInvertLeds(false)
 {
 }
 
@@ -163,6 +164,9 @@ CMControlUIView::Load(const std::string & uiSettingsFile,
 		mHardwareUi->Subscribe(mEngine);
 	}
 	ActivityIndicatorHack();
+
+	for (int idx = 0; mInvertLeds && idx < 64; ++idx)
+		SetSwitchDisplay(idx, false);
 }
 
 void
@@ -354,6 +358,9 @@ CMControlUIView::Trace(const std::string & txt)
 void
 CMControlUIView::SetSwitchDisplay(int switchNumber, bool isOn)
 {
+	if (mInvertLeds)
+		isOn = !isOn;
+
 	if (mHardwareUi)
 	{
 		byte row, col;

@@ -330,7 +330,7 @@ UiLoader::LoadOtherStuffAndFinalize(TiXmlElement * pElem)
 			mUi->SetMainSize(width, height);
 	}
 
-	// <hardware ledBrightness="0" />
+	// <hardware ledBrightness="0" invertLeds="0" />
 	pElem = hRoot.FirstChild("hardware").Element();
 	if (pElem)
 	{
@@ -339,5 +339,9 @@ UiLoader::LoadOtherStuffAndFinalize(TiXmlElement * pElem)
 
 		if (-1 != ledBrightness)
 			mUi->SetHardwareLedIntensity(ledBrightness);
+
+		int invertLeds = 0;
+		pElem->QueryIntAttribute("invertLeds", &invertLeds);
+		mUi->SetLedDisplayState(!!invertLeds);
 	}
 }
