@@ -1,3 +1,18 @@
+// 2002.07.29:
+// This class is derived from the following article:
+// Dynamic LED Control By VGirish ( http://www.geocities.com/contactgirish/AboutMe.html )
+// http://www.codeproject.com/KB/static/dynled.aspx
+//
+// 2005.06.27:
+// It was rewritten by Peter B. per the comment in the above article dated 2005.06.27
+//
+// 2007.06.17:
+// Both of those versions were written for MFC.
+// This version is my WTL port of their combined efforts with a reduced feature-set.
+// I removed the timer-based blinking (among other things).
+// Sean Echevarria ( http://www.creepingfog.com/sean/ )
+//
+
 #pragma once
 
 #include <atlmisc.h>
