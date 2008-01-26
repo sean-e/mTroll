@@ -79,7 +79,17 @@
 // 
 //
 /////////////////////////////////////////////////////////////////////////////
-// CLabel Version 1.6
+// CLabel Version 1.5b
+//
+// version 1.5a from: http://www.codeproject.com/wtl/atllabel.asp
+// which was based on version 1.5: http://www.codeproject.com/KB/static/clabel.aspx
+// Per board message 2007.05.16 from the original author:
+//		I'm the author of this control, please use it freely without any restrictions at all.
+// 
+//		Norm Almond
+//		Software Kinetics 
+//
+// 1.5b changes by Sean Echevarria:
 //
 // A. Allow left and right margins to be set (Sean Echevarria htttp://www.creepingfog.com/sean/) 2007.06.16
 // B. Don't require subclass / allow creation of AtlLabel window (Sean Echevarria htttp://www.creepingfog.com/sean/) 2007.06.16
