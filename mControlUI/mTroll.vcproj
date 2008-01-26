@@ -459,19 +459,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\testdata.config.xml"
-				>
-			</File>
-			<File
 				RelativePath=".\Release\testdata.config.xml"
 				>
 			</File>
 			<File
-				RelativePath=".\testdata.ui.xml"
+				RelativePath=".\testdata.config.xml"
 				>
 			</File>
 			<File
 				RelativePath=".\Release\testdata.ui.xml"
+				>
+			</File>
+			<File
+				RelativePath=".\testdata.ui.xml"
 				>
 			</File>
 			<File
