@@ -274,6 +274,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\KeepDisplayOn.h"
+				>
+			</File>
+			<File
 				RelativePath=".\MainFrm.h"
 				>
 			</File>
@@ -459,19 +463,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Release\testdata.config.xml"
-				>
-			</File>
-			<File
 				RelativePath=".\testdata.config.xml"
 				>
 			</File>
 			<File
-				RelativePath=".\Release\testdata.ui.xml"
+				RelativePath=".\Release\testdata.config.xml"
 				>
 			</File>
 			<File
 				RelativePath=".\testdata.ui.xml"
+				>
+			</File>
+			<File
+				RelativePath=".\Release\testdata.ui.xml"
 				>
 			</File>
 			<File
