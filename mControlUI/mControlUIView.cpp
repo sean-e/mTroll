@@ -30,7 +30,8 @@ CMControlUIView::CMControlUIView() :
 	mKeyMessage(0),
 	mHardwareUi(NULL),
 	mLedIntensity(0),
-	mInvertLeds(false)
+	mInvertLeds(false),
+	mSystemPowerOverride(NULL)
 {
 }
 
@@ -141,6 +142,9 @@ CMControlUIView::Unload()
 
 	if (m_hWnd)
 		Invalidate();
+
+	delete mSystemPowerOverride;
+	mSystemPowerOverride = NULL;
 }
 
 HWND
@@ -162,7 +166,24 @@ CMControlUIView::Load(const std::string & uiSettingsFile,
 	{
 		mHardwareUi->Subscribe(this);
 		mHardwareUi->Subscribe(mEngine);
+
+		bool anyMidiOutOpen = false;
+		for (MidiOuts::iterator it = mMidiOuts.begin();
+			it != mMidiOuts.end();
+			++it)
+		{
+			IMidiOut * curOut = (*it).second;
+			if (curOut->IsMidiOutOpen())
+			{
+				anyMidiOutOpen = true;
+				break;
+			}
+		}
+
+		if (anyMidiOutOpen)
+			mSystemPowerOverride = new KeepDisplayOn;
 	}
+
 	ActivityIndicatorHack();
 
 	for (int idx = 0; mInvertLeds && idx < 64; ++idx)

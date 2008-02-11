@@ -15,6 +15,7 @@
 #include <atlctrls.h>
 #include "AtlLed.h"
 #include "../Monome40h/IMonome40hInputSubscriber.h"
+#include "KeepDisplayOn.h"
 
 
 class CLabel;
@@ -170,6 +171,7 @@ private:
 	MidiOuts					mMidiOuts;
 	int							mLedIntensity;
 	bool						mInvertLeds;
+	KeepDisplayOn				* mSystemPowerOverride;
 
 	struct SwitchTextDisplayConfig
 	{
