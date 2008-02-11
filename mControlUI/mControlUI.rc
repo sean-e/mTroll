@@ -114,9 +114,9 @@ CAPTION "About"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,171,68,50,14
-    CTEXT           "mTroll MIDI Controller\n\nhttp://www.creepingfog.com/mTroll/\n\n(c) Copyright 2007 Sean Echevarria",IDC_STATIC,15,18,142,43
+    CTEXT           "mTroll MIDI Controller\n\nhttp://www.creepingfog.com/mTroll/\n\n(c) Copyright 2007-2008 Sean Echevarria",IDC_STATIC,15,18,142,43
     GROUPBOX        "",IDC_STATIC,7,7,156,75
-    LTEXT           "Built 2007.09.16",IDC_BUILD_DATE,60,67,52,8
+    LTEXT           "Built 9999.99.99",IDC_BUILD_DATE,60,67,52,8
 END
 
 IDD_MCONTROLUI_FORM DIALOGEX 0, 0, 535, 282
