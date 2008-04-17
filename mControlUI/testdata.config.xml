@@ -22,14 +22,6 @@
 		</expression>
 	</SystemConfig>
 	<patches>
-		<patch name="DRV Toggle" number="1" type="toggle" port="1">
-			<midiByteString name="A">ca 00 ba 6f 29</midiByteString>
-			<midiByteString name="B">ca 02 ba 6f 7f</midiByteString>
-		</patch>
-		<patch name="DRV Toggle 2" number="2" type="toggle" port="1">
-			<midiByteString name="A">ca 00</midiByteString>
-			<midiByteString name="B">ca 02</midiByteString>
-		</patch>
 		<patch name="SS All Mute Toggle" number="3" type="toggle" port="1">
 			<midiByteString name="A">ba 09 00</midiByteString>
 			<midiByteString name="B">ba 09 7f</midiByteString>
@@ -349,6 +341,15 @@
 		<patch name="SS B Mute Momentary" number="96" type="momentary" port="1">
 			<midiByteString name="A">ba 6f 00</midiByteString>
 			<midiByteString name="B">ba 6f 7f</midiByteString>
+		</patch>
+		<patch name="SS A Unmute" number="97" type="normal" port="1">
+			<midiByteString name="A">ba 6e 7f</midiByteString>
+		</patch>
+		<patch name="SS 50%" number="98" type="normal" port="1">
+			<midiByteString name="A">ba 6e 3f ba 6f 3f</midiByteString>
+		</patch>
+		<patch name="SS Unmute" number="99" type="normal" port="1">
+			<midiByteString name="A">ba 6e 7f ba 6f 7f</midiByteString>
 		</patch>
 		<patch name="H8K A VirtRack 1" number="100" type="normal" port="1">
 			<midiByteString name="A">b2 60 01</midiByteString>
@@ -801,24 +802,84 @@
 		<patch name="FF Default" number="400" type="normal" port="1">
 			<midiByteString name="A">bb 04 7f bb 06 7f bb 08 00 bb 09 7f bb 0a 00 bb 0b 00 bb 0d 01 bb 10 00 bb 11 7f</midiByteString>
 		</patch>
+		
+		<patch name="DRV Toggle" number="500" type="toggle" port="1">
+			<midiByteString name="A">ca 05</midiByteString>
+			<midiByteString name="B">ca 03</midiByteString>
+		</patch>
+		<patch name="H3500 Toggle" number="501" type="toggle" port="1">
+			<midiByteString name="A">ca 06</midiByteString>
+			<midiByteString name="B">ca 03</midiByteString>
+		</patch>
+		<patch name="DHP Toggle" number="502" type="toggle" port="1">
+			<midiByteString name="A">ca 07</midiByteString>
+			<midiByteString name="B">ca 03</midiByteString>
+		</patch>
+		<patch name="Tri || DHP Toggle" number="503" type="toggle" port="1">
+			<midiByteString name="A">ca 08</midiByteString>
+			<midiByteString name="B">ca 03</midiByteString>
+		</patch>
+		<patch name="Tri || DHP || H35 Toggle" number="504" type="toggle" port="1">
+			<midiByteString name="A">ca 09</midiByteString>
+			<midiByteString name="B">ca 03</midiByteString>
+		</patch>
+		<patch name="DHP || H35 Toggle" number="505" type="toggle" port="1">
+			<midiByteString name="A">ca 0a</midiByteString>
+			<midiByteString name="B">ca 03</midiByteString>
+		</patch>
+		<patch name="DRV || DHP || H35 Toggle" number="506" type="toggle" port="1">
+			<midiByteString name="A">ca 0b</midiByteString>
+			<midiByteString name="B">ca 03</midiByteString>
+		</patch>
+		<patch name="DRV to DHP || H35 Toggle" number="507" type="toggle" port="1">
+			<midiByteString name="A">ca 0c</midiByteString>
+			<midiByteString name="B">ca 03</midiByteString>
+		</patch>
+		<patch name="old DRV Toggle" number="1" type="toggle" port="1">
+			<midiByteString name="A">ca 00 ba 6f 29</midiByteString>
+			<midiByteString name="B">ca 02 ba 6f 7f</midiByteString>
+		</patch>
+		
 		<engineMetaPatch name="Reset Patches" number="600" action="ResetBankPatches" />
+		<engineMetaPatch name="Load Routing Toggles" number="601" action="LoadBank" bankNumber="101" />
+		<engineMetaPatch name="Load H8000 Toggles" number="602" action="LoadBank" bankNumber="4" />
+		<engineMetaPatch name="Load EDP General" number="603" action="LoadBank" bankNumber="6" />
+		<engineMetaPatch name="Load Startup" number="604" action="LoadBank" bankNumber="1" />
 	</patches>
 	<banks>
 		<bank name="Defaults" number="0">
 			<PatchMap switch="11" patch="6" loadState="" unloadState="" />
 			<PatchMap switch="12" patch="5" loadState="" unloadState="" />
 			<PatchMap switch="13" patch="94" loadState="" unloadState="" />
+			<PatchMap switch="15" patch="604" loadState="" unloadState="" />
 		</bank>
-		<bank name="Muting" number="1">
-			<PatchMap switch="1" patch="1" loadState="" unloadState="" />
-			<PatchMap switch="2" patch="2" loadState="" unloadState="" />
-			<PatchMap switch="3" patch="94" loadState="" unloadState="" />
-			<PatchMap switch="4" patch="5" loadState="" unloadState="" />
-			<PatchMap switch="5" patch="3" loadState="" unloadState="" />
-			<PatchMap switch="6" patch="6" loadState="" unloadState="" />
-			<PatchMap switch="7" patch="4" loadState="" unloadState="" />
-			<PatchMap switch="8" patch="95" loadState="" unloadState="" />
-			<PatchMap switch="9" patch="96" loadState="" unloadState="" />
+		<bank name="Muting" number="100">
+			<PatchMap switch="1" patch="94" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="5" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="3" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="6" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="4" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="95" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="96" loadState="" unloadState="" />
+		</bank>
+		<bank name="Routing Toggles" number="101">
+			<PatchMap switch="1" patch="500" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="501" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="502" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="503" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="504" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="505" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="506" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="507" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="98" loadState="" unloadState="" />
+			<PatchMap switch="10" patch="99" loadState="" unloadState="" />
+		</bank>
+		<bank name="Startup" number="1">
+			<PatchMap switch="1" patch="601" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="602" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="603" loadState="" unloadState="" />
+			<PatchMap switch="14" patch="98" loadState="" unloadState="" />
+			<PatchMap switch="15" patch="99" loadState="" unloadState="" />
 		</bank>
 		<bank name="H8000 DSP A" number="2">
 			<PatchMap switch="1" patch="600" loadState="" unloadState="" />
