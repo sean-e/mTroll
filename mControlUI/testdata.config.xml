@@ -22,21 +22,29 @@
 		</expression>
 	</SystemConfig>
 	<patches>
-		<patch name="SS All Mute Toggle" number="3" type="toggle" port="1">
+		<patch name="SS All Mute Toggle" number="1" type="toggle" port="1">
 			<midiByteString name="A">ba 09 00</midiByteString>
 			<midiByteString name="B">ba 09 7f</midiByteString>
 		</patch>
-		<patch name="SS All Mute Momentary" number="4" type="momentary" port="1">
+		<patch name="SS All Mute Momentary" number="2" type="momentary" port="1">
 			<midiByteString name="A">ba 09 00</midiByteString>
 			<midiByteString name="B">ba 09 7f</midiByteString>
 		</patch>
-		<patch name="SS TA Mute Toggle" number="5" type="toggle" port="1">
+		<patch name="SS H8K Mute Toggle" number="3" type="toggle" port="1">
 			<midiByteString name="A">ba 0a 00</midiByteString>
 			<midiByteString name="B">ba 0a 7f</midiByteString>
 		</patch>
-		<patch name="SS TA Mute Momentary" number="6" type="momentary" port="1">
+		<patch name="SS H8K Mute Momentary" number="4" type="momentary" port="1">
 			<midiByteString name="A">ba 0a 00</midiByteString>
 			<midiByteString name="B">ba 0a 7f</midiByteString>
+		</patch>
+		<patch name="SS Tri Mute Toggle" number="5" type="toggle" port="1">
+			<midiByteString name="A">ba 14 00</midiByteString>
+			<midiByteString name="B">ba 14 7f</midiByteString>
+		</patch>
+		<patch name="SS H3500 Mute Toggle" number="6" type="toggle" port="1">
+			<midiByteString name="A">ba 2a 00</midiByteString>
+			<midiByteString name="B">ba 2a 7f</midiByteString>
 		</patch>
 		<patch name="H8K A All Off" number="7" type="momentary" port="1">
 			<midiByteString name="A">b2 05 7f b2 05 00</midiByteString>
@@ -105,7 +113,7 @@
 			<midiByteString name="A">b2 53 7f b2 53 00</midiByteString>
 			<midiByteString name="B">b2 53 7f b2 53 00</midiByteString>
 		</patch>
-		<patch name="H8K B ALL OFF" number="24" type="momentary" port="1">
+		<patch name="H8K B All Off" number="24" type="momentary" port="1">
 			<midiByteString name="A">b3 05 7f b3 05 00</midiByteString>
 		</patch>
 		<patch name="H8K B Toggle 1" number="25" type="toggle" port="1">
@@ -848,19 +856,21 @@
 	</patches>
 	<banks>
 		<bank name="Defaults" number="0">
-			<PatchMap switch="11" patch="6" loadState="" unloadState="" />
-			<PatchMap switch="12" patch="5" loadState="" unloadState="" />
+			<PatchMap switch="11" patch="4" loadState="" unloadState="" />
+			<PatchMap switch="12" patch="3" loadState="" unloadState="" />
 			<PatchMap switch="13" patch="94" loadState="" unloadState="" />
 			<PatchMap switch="15" patch="604" loadState="" unloadState="" />
 		</bank>
 		<bank name="Muting" number="100">
 			<PatchMap switch="1" patch="94" loadState="" unloadState="" />
-			<PatchMap switch="2" patch="5" loadState="" unloadState="" />
-			<PatchMap switch="3" patch="3" loadState="" unloadState="" />
-			<PatchMap switch="4" patch="6" loadState="" unloadState="" />
-			<PatchMap switch="5" patch="4" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="3" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="1" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="4" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="2" loadState="" unloadState="" />
 			<PatchMap switch="6" patch="95" loadState="" unloadState="" />
 			<PatchMap switch="7" patch="96" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="5" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="6" loadState="" unloadState="" />
 		</bank>
 		<bank name="Routing Toggles" number="101">
 			<PatchMap switch="1" patch="500" loadState="" unloadState="" />
