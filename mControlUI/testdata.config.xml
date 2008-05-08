@@ -859,6 +859,7 @@
 			<PatchMap switch="11" patch="4" loadState="" unloadState="" />
 			<PatchMap switch="12" patch="3" loadState="" unloadState="" />
 			<PatchMap switch="13" patch="94" loadState="" unloadState="" />
+			<PatchMap switch="14" patch="2" loadState="" unloadState="" />
 			<PatchMap switch="15" patch="604" loadState="" unloadState="" />
 		</bank>
 		<bank name="Muting" number="100">
