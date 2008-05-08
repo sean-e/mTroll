@@ -3,6 +3,7 @@
 
 #include <map>
 #include <vector>
+#include <stack>
 #include "Patch.h"
 #include "ExpressionPedals.h"
 #include "../Monome40h/IMonome40hInputSubscriber.h"
@@ -43,6 +44,10 @@ public:
 	void					ResetBankPatches();
 	void					LoadBankByNumber(int bankNumber);
 
+	void					HistoryBackward();
+	void					HistoryForward();
+	void					HistoryRecall();
+
 private:
 	void					LoadStartupBank();
 	bool					NavigateBankRelative(int relativeBankIndex);
@@ -75,6 +80,10 @@ private:
 	EngineMode				mMode;
 	int						mBankNavigationIndex;
 	std::string				mBankDirectNumber;
+	bool					mInHistoryNav;
+	std::stack<int>			mBackHistory;
+	std::stack<int>			mForwardHistory;
+	int						mBankRecallHistory[2];
 
 	// retained in different form
 	Patches					mPatches;		// patchNum is key

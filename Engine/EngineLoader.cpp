@@ -14,6 +14,7 @@
 #include "MomentaryPatch.h"
 #include "MetaPatch_ResetBankPatches.h"
 #include "MetaPatch_LoadBank.h"
+#include "MetaPatch_BankHistory.h"
 
 
 static PatchBank::PatchState GetLoadState(const std::string & tmpLoad);
@@ -216,6 +217,12 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				if (-1 != bankNumber)
 					mEngine->AddPatch(new MetaPatch_LoadBank(mEngine, patchNumber, patchName, bankNumber));
 			}
+			else if (tmp == "BankHistoryBackward")
+				 mEngine->AddPatch(new MetaPatch_BankHistoryBackward(mEngine, patchNumber, patchName));
+			else if (tmp == "BankHistoryForward")
+				 mEngine->AddPatch(new MetaPatch_BankHistoryForward(mEngine, patchNumber, patchName));
+			else if (tmp == "BankHistoryRecall")
+				 mEngine->AddPatch(new MetaPatch_BankHistoryRecall(mEngine, patchNumber, patchName));
 			continue;
 		}
 		

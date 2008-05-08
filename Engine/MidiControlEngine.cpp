@@ -58,8 +58,10 @@ MidiControlEngine::MidiControlEngine(IMainDisplay * mainDisplay,
 	mDecrementSwitchNumber(decrementSwitchNumber),
 	mModeSwitchNumber(modeSwitchNumber),
 	mFilterRedundantProgramChanges(false),
-	mPedalModePort(0)
+	mPedalModePort(0),
+	mInHistoryNav(false)
 {
+	mBankRecallHistory[0] = mBankRecallHistory[1] = 0;
 	mBanks.reserve(999);
 }
 
@@ -169,6 +171,9 @@ MidiControlEngine::LoadStartupBank()
 
 	if (powerUpBankIndex == -1)
 		powerUpBankIndex = 0;
+
+	mBankRecallHistory[0] = powerUpBankIndex;
+	mBankRecallHistory[1] = powerUpBankIndex;
 	LoadBank(powerUpBankIndex);
 }
 
@@ -521,10 +526,78 @@ MidiControlEngine::LoadBank(int bankIndex)
 		mActiveBank->Unload(mMainDisplay, mSwitchDisplay);
 
 	mActiveBank = bank;
+
+	mBankRecallHistory[0] = bankIndex;
+	mBankRecallHistory[1] = mActiveBankIndex;
+
+	if (!mInHistoryNav)
+	{
+		// record bank load for Back
+		if (mBackHistory.empty() || mBackHistory.top() != mActiveBankIndex)
+		{
+			mBackHistory.push(mActiveBankIndex);
+
+			// invalidate Forward hist
+			while (!mForwardHistory.empty())
+				mForwardHistory.pop();
+		}
+	}
+
 	mBankNavigationIndex = mActiveBankIndex = bankIndex;
 	mActiveBank->Load(mMainDisplay, mSwitchDisplay);
 	UpdateBankModeSwitchDisplay();
+	
 	return true;
+}
+
+void
+MidiControlEngine::HistoryBackward()
+{
+	if (mBackHistory.empty())
+		return;
+
+	const int bankIdx = mBackHistory.top();
+	mBackHistory.pop();
+	mForwardHistory.push(mActiveBankIndex);
+
+	mInHistoryNav = true;
+	LoadBank(bankIdx);
+	mInHistoryNav = false;
+
+	PatchBank * bank = GetBank(bankIdx);
+	if (!bank)
+		return;
+
+	bank->DisplayInfo(mMainDisplay, mSwitchDisplay, true, false);
+}
+
+void
+MidiControlEngine::HistoryForward()
+{
+	if (mForwardHistory.empty())
+		return;
+	
+	const int bankIdx = mForwardHistory.top();
+	mForwardHistory.pop();
+	mBackHistory.push(mActiveBankIndex);
+
+	mInHistoryNav = true;
+	LoadBank(bankIdx);
+	mInHistoryNav = false;
+
+	PatchBank * bank = GetBank(bankIdx);
+	if (!bank)
+		return;
+
+	bank->DisplayInfo(mMainDisplay, mSwitchDisplay, true, false);
+}
+
+void
+MidiControlEngine::HistoryRecall()
+{
+	mInHistoryNav = true;
+	LoadBank(mBankRecallHistory[1]);
+	mInHistoryNav = false;
 }
 
 // possible mode transitions:

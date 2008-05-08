@@ -853,6 +853,9 @@
 		<engineMetaPatch name="Load H8000 Toggles" number="602" action="LoadBank" bankNumber="4" />
 		<engineMetaPatch name="Load EDP General" number="603" action="LoadBank" bankNumber="6" />
 		<engineMetaPatch name="Load Startup" number="604" action="LoadBank" bankNumber="1" />
+		<engineMetaPatch name="Backward" number="605" action="BankHistoryBackward" />
+		<engineMetaPatch name="Forward" number="606" action="BankHistoryForward" />
+		<engineMetaPatch name="Bank Recall" number="607" action="BankHistoryRecall" />
 	</patches>
 	<banks>
 		<bank name="Defaults" number="0">
@@ -861,6 +864,9 @@
 			<PatchMap switch="13" patch="94" loadState="" unloadState="" />
 			<PatchMap switch="14" patch="2" loadState="" unloadState="" />
 			<PatchMap switch="15" patch="604" loadState="" unloadState="" />
+			<PatchMap switch="16" patch="605" loadState="" unloadState="" />
+			<PatchMap switch="17" patch="606" loadState="" unloadState="" />
+			<PatchMap switch="18" patch="607" loadState="" unloadState="" />
 		</bank>
 		<bank name="Muting" number="100">
 			<PatchMap switch="1" patch="94" loadState="" unloadState="" />
