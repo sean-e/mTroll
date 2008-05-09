@@ -59,9 +59,8 @@ MidiControlEngine::MidiControlEngine(IMainDisplay * mainDisplay,
 	mModeSwitchNumber(modeSwitchNumber),
 	mFilterRedundantProgramChanges(false),
 	mPedalModePort(0),
-	mInHistoryNav(false)
+	mHistoryNavMode(hmNone)
 {
-	mBankRecallHistory[0] = mBankRecallHistory[1] = 0;
 	mBanks.reserve(999);
 }
 
@@ -172,8 +171,6 @@ MidiControlEngine::LoadStartupBank()
 	if (powerUpBankIndex == -1)
 		powerUpBankIndex = 0;
 
-	mBankRecallHistory[0] = powerUpBankIndex;
-	mBankRecallHistory[1] = powerUpBankIndex;
 	LoadBank(powerUpBankIndex);
 }
 
@@ -527,10 +524,14 @@ MidiControlEngine::LoadBank(int bankIndex)
 
 	mActiveBank = bank;
 
-	mBankRecallHistory[0] = bankIndex;
-	mBankRecallHistory[1] = mActiveBankIndex;
+	if (hmWentBack == mHistoryNavMode || 
+		hmWentForward == mHistoryNavMode)
+	{
+		// leave recall mode
+		mHistoryNavMode = hmNone;
+	}
 
-	if (!mInHistoryNav)
+	if (hmNone == mHistoryNavMode)
 	{
 		// record bank load for Back
 		if (mBackHistory.empty() || mBackHistory.top() != mActiveBankIndex)
@@ -560,9 +561,9 @@ MidiControlEngine::HistoryBackward()
 	mBackHistory.pop();
 	mForwardHistory.push(mActiveBankIndex);
 
-	mInHistoryNav = true;
+	mHistoryNavMode = hmBack;
 	LoadBank(bankIdx);
-	mInHistoryNav = false;
+	mHistoryNavMode = hmWentBack;
 
 	PatchBank * bank = GetBank(bankIdx);
 	if (!bank)
@@ -581,9 +582,9 @@ MidiControlEngine::HistoryForward()
 	mForwardHistory.pop();
 	mBackHistory.push(mActiveBankIndex);
 
-	mInHistoryNav = true;
+	mHistoryNavMode = hmForward;
 	LoadBank(bankIdx);
-	mInHistoryNav = false;
+	mHistoryNavMode = hmWentForward;
 
 	PatchBank * bank = GetBank(bankIdx);
 	if (!bank)
@@ -595,9 +596,20 @@ MidiControlEngine::HistoryForward()
 void
 MidiControlEngine::HistoryRecall()
 {
-	mInHistoryNav = true;
-	LoadBank(mBankRecallHistory[1]);
-	mInHistoryNav = false;
+	switch (mHistoryNavMode)
+	{
+	case hmNone:
+	case hmWentForward:
+		HistoryBackward();
+		break;
+	case hmWentBack:
+		HistoryForward();
+	    break;
+	case hmBack:
+	case hmForward:
+		_ASSERTE(!"invalid history nav mode");
+		break;
+	}
 }
 
 // possible mode transitions:

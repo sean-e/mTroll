@@ -80,10 +80,10 @@ private:
 	EngineMode				mMode;
 	int						mBankNavigationIndex;
 	std::string				mBankDirectNumber;
-	bool					mInHistoryNav;
 	std::stack<int>			mBackHistory;
 	std::stack<int>			mForwardHistory;
-	int						mBankRecallHistory[2];
+	enum HistoryNavMode		{ hmNone, hmBack, hmForward, hmWentBack, hmWentForward};
+	HistoryNavMode			mHistoryNavMode;
 
 	// retained in different form
 	Patches					mPatches;		// patchNum is key
