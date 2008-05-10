@@ -864,9 +864,9 @@
 			<PatchMap switch="13" patch="94" loadState="" unloadState="" />
 			<PatchMap switch="14" patch="2" loadState="" unloadState="" />
 			<PatchMap switch="15" patch="604" loadState="" unloadState="" />
-			<PatchMap switch="16" patch="605" loadState="" unloadState="" />
-			<PatchMap switch="17" patch="606" loadState="" unloadState="" />
-			<PatchMap switch="18" patch="607" loadState="" unloadState="" />
+			<PatchMap switch="18" patch="605" loadState="" unloadState="" />
+			<PatchMap switch="19" patch="606" loadState="" unloadState="" />
+			<PatchMap switch="20" patch="607" loadState="" unloadState="" />
 		</bank>
 		<bank name="Muting" number="100">
 			<PatchMap switch="1" patch="94" loadState="" unloadState="" />
@@ -895,7 +895,6 @@
 			<PatchMap switch="1" patch="601" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="602" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="603" loadState="" unloadState="" />
-			<PatchMap switch="14" patch="98" loadState="" unloadState="" />
 			<PatchMap switch="15" patch="99" loadState="" unloadState="" />
 		</bank>
 		<bank name="H8000 DSP A" number="2">
