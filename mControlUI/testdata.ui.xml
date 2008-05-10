@@ -124,27 +124,27 @@
 		<switchAssembly number="15" incrementalVpos="85" left="5" >
 			<switchTextDisplay />
 			<switchLed vOffset="33" hOffset="112" />
-			<switch label="Aux1" vOffset="30" />
+			<switch label="Aux&amp;V" vOffset="30" />
 		</switchAssembly>
 		<switchAssembly number="16" incrementalVpos="0" incrementalHpos="165" >
 			<switchTextDisplay />
 			<switchLed vOffset="33" hOffset="112" />
-			<switch label="Aux2" vOffset="30" />
+			<switch label="Aux&amp;W" vOffset="30" />
 		</switchAssembly>
 		<switchAssembly number="17" incrementalVpos="0" incrementalHpos="165" >
 			<switchTextDisplay />
 			<switchLed vOffset="33" hOffset="112" />
-			<switch label="Aux3" vOffset="30" />
+			<switch label="Aux&amp;X" vOffset="30" />
 		</switchAssembly>
 		<switchAssembly number="18" incrementalVpos="0" incrementalHpos="165" >
 			<switchTextDisplay />
 			<switchLed vOffset="33" hOffset="112" />
-			<switch label="Aux4" vOffset="30" />
+			<switch label="Aux&amp;Y" vOffset="30" />
 		</switchAssembly>
 		<switchAssembly number="19" incrementalVpos="0" incrementalHpos="165" >
 			<switchTextDisplay />
 			<switchLed vOffset="33" hOffset="112" />
-			<switch label="Aux5" vOffset="30" />
+			<switch label="Aux&amp;Z" vOffset="30" />
 		</switchAssembly>
 
 		<switchAssembly number="20" incrementalVpos="110" left="5" >
