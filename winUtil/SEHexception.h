@@ -1,6 +1,9 @@
 #ifndef SEHexception_h__
 #define SEHexception_h__
 
+#include <Windows.h>
+#include <WinNT.h>
+
 
 struct SEHexception
 {
