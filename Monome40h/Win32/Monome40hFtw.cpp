@@ -44,7 +44,7 @@ Monome40hFtw::Monome40hFtw(ITraceDisplay * trace) :
 	mAdcInputSubscriber(NULL),
 	mLedBrightness(10)
 {
-	HMODULE hMod = ::LoadLibrary("FTD2XX.dll");
+	HMODULE hMod = ::LoadLibraryW(L"FTD2XX.dll");
 	if (!hMod)
 		throw std::string("ERROR: Failed to load FTDI library\n");
 
