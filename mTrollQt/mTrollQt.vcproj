@@ -213,23 +213,23 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm"
 			>
 			<File
-				RelativePath=".\AboutDlg.cpp"
+				RelativePath=".\oldWtl\AboutDlg.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\MainFrm.cpp"
+				RelativePath=".\oldWtl\MainFrm.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\mControlUI.cpp"
+				RelativePath=".\oldWtl\mControlUI.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\mControlUIView.cpp"
+				RelativePath=".\oldWtl\mControlUIView.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\stdafx.cpp"
+				RelativePath=".\oldWtl\stdafx.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -258,15 +258,7 @@
 			Filter="h;hpp;hxx;hm;inl;inc"
 			>
 			<File
-				RelativePath=".\AboutDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\atllabel.h"
-				>
-			</File>
-			<File
-				RelativePath=".\AtlLed.h"
+				RelativePath=".\oldWtl\AboutDlg.h"
 				>
 			</File>
 			<File
@@ -274,15 +266,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MainFrm.h"
+				RelativePath=".\oldWtl\MainFrm.h"
 				>
 			</File>
 			<File
-				RelativePath=".\mControlUIView.h"
+				RelativePath=".\oldWtl\mControlUIView.h"
 				>
 			</File>
 			<File
-				RelativePath=".\resource.h"
+				RelativePath=".\win\resource.h"
 				>
 			</File>
 			<File
@@ -290,7 +282,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\stdafx.h"
+				RelativePath=".\oldWtl\stdafx.h"
 				>
 			</File>
 			<File
@@ -303,15 +295,11 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;jpg;jpeg;jpe;manifest"
 			>
 			<File
-				RelativePath=".\res\mControlUI.ico"
+				RelativePath=".\win\mTrollQt.ico"
 				>
 			</File>
 			<File
-				RelativePath=".\mTrollQt.rc"
-				>
-			</File>
-			<File
-				RelativePath=".\res\toolbar.bmp"
+				RelativePath=".\win\mTrollQt.rc"
 				>
 			</File>
 		</Filter>
