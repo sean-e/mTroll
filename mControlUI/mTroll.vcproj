@@ -249,7 +249,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\WinMidiOut.cpp"
+				RelativePath=".\..\midi\WinMidiOut.cpp"
 				>
 			</File>
 		</Filter>
@@ -270,11 +270,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\AutoLockCs.h"
+				RelativePath=".\..\winUtil\AutoLockCs.h"
 				>
 			</File>
 			<File
-				RelativePath=".\KeepDisplayOn.h"
+				RelativePath=".\..\winUtil\KeepDisplayOn.h"
+				>
+			</File>
+			<File
+				RelativePath=".\..\winUtil\Library.h"
 				>
 			</File>
 			<File
@@ -290,7 +294,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SEHexception.h"
+				RelativePath=".\..\winUtil\SEHexception.h"
 				>
 			</File>
 			<File
@@ -298,7 +302,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\WinMidiOut.h"
+				RelativePath=".\..\midi\WinMidiOut.h"
 				>
 			</File>
 		</Filter>

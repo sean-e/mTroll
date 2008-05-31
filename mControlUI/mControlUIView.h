@@ -11,11 +11,11 @@
 #include "..\Engine\MidiControlEngine.h"
 #include "..\Engine\IMidiControlUi.h"
 #include "..\Engine\IMidiOutGenerator.h"
-#include "WinMidiOut.h"
+#include "..\midi\WinMidiOut.h"
 #include <atlctrls.h>
 #include "AtlLed.h"
 #include "../Monome40h/IMonome40hInputSubscriber.h"
-#include "KeepDisplayOn.h"
+#include "..\winUtil\KeepDisplayOn.h"
 
 
 class CLabel;

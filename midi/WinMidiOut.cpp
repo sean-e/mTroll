@@ -1,4 +1,4 @@
-#include "WinMidiOut.h"
+#include "..\midi\WinMidiOut.h"
 #include "..\Engine\ITraceDisplay.h"
 #include "..\Engine\ISwitchDisplay.h"
 #include <atlstr.h>

@@ -16,7 +16,7 @@
 #include "ATLLabel.h"
 #include "..\Monome40h\Win32\Monome40hFtw.h"
 #include "..\Monome40h\IMonome40h.h"
-#include "SEHexception.h"
+#include "..\winUtil\SEHexception.h"
 
 
 

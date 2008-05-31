@@ -30,7 +30,7 @@ distribution.
 #include "../MonomeSerialProtocol.h"
 #include "../../Engine/ITraceDisplay.h"
 #include "../../Engine/ScopeSet.h"
-#include "../../mControlUI/AutoLockCs.h"
+#include "../../winUtil/AutoLockCs.h"
 
 
 Monome40hFtw::Monome40hFtw(ITraceDisplay * trace) :

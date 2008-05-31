@@ -9,7 +9,7 @@
 #include "aboutdlg.h"
 #include "mControlUIView.h"
 #include "MainFrm.h"
-#include "SEHexception.h"
+#include "..\winUtil\SEHexception.h"
 
 
 std::string GetRegValue(HKEY rootKey, const char* key, const char* name, const char * defaultValue = "");
