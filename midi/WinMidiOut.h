@@ -3,6 +3,7 @@
 #include "..\Engine\IMidiOut.h"
 #include <Windows.h>
 #include <MMSystem.h>
+#include <tchar.h>
 
 class ITraceDisplay;
 
@@ -28,9 +29,9 @@ public:
 
 private:
 	void ReportMidiError(MMRESULT resultCode, unsigned int lineNumber);
-	void ReportError(LPCSTR msg);
-	void ReportError(LPCSTR msg, int param1);
-	void ReportError(LPCSTR msg, int param1, int param2);
+	void ReportError(LPCTSTR msg);
+	void ReportError(LPCTSTR msg, int param1);
+	void ReportError(LPCTSTR msg, int param1, int param2);
 
 	void IndicateActivity();
 	void TurnOffIndicator();
