@@ -1,0 +1,17 @@
+[qt project settings]
+no mfc / no atl
+addl inc dirs dbg: "..\..\..\include\QtCore","..\..\..\include\QtCore","..\..\..\include\QtGui","..\..\..\include\QtGui","..\..\..\include","c:\Users\sean.e\src\qt\include\ActiveQt","tmp\moc\debug_shared",".",..\..\..\mkspecs\win32-msvc2005
+			  rel: "..\..\..\include\QtCore","..\..\..\include\QtCore","..\..\..\include\QtGui","..\..\..\include\QtGui","..\..\..\include","c:\Users\sean.e\src\qt\include\ActiveQt","tmp\moc\release_shared",".",..\..\..\mkspecs\win32-msvc2005
+C/C++ preproc dbg: _WINDOWS,UNICODE,WIN32,QT_LARGEFILE_SUPPORT,QT_DLL,QT_GUI_LIB,QT_CORE_LIB,QT_THREAD_SUPPORT
+			  rel: QT_NO_DEBUG,NDEBUG,_WINDOWS,UNICODE,WIN32,QT_LARGEFILE_SUPPORT,QT_DLL,QT_GUI_LIB,QT_CORE_LIB,QT_THREAD_SUPPORT
+code gen: C++ exceptions, run-time type info, no wchar_t built-in
+linker addl lib dirs: c:\Users\sean.e\src\qt\lib
+linker: ignore import lib
+link addl dependencies dbg: c:\Users\sean.e\src\qt\lib\qtmaind.lib c:\Users\sean.e\src\qt\lib\QtGuid4.lib c:\Users\sean.e\src\qt\lib\QtCored4.lib
+					   rel: c:\Users\sean.e\src\qt\lib\qtmain.lib c:\Users\sean.e\src\qt\lib\QtGui4.lib c:\Users\sean.e\src\qt\lib\QtCore4.lib
+
+[qt moc Custom Build Steps]
+cmd line:	C:\Users\sean.e\src\qt\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"c:\Users\sean.e\src\qt\include\ActiveQt" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2005 -D_MSC_VER=1400 -DWIN32 window.h -o tmp\moc\debug_shared\moc_window.cpp
+desc:		MOC window.h
+Outputs:	tmp\moc\debug_shared\moc_window.cpp
+add deps:	C:\Users\sean.e\src\qt\bin\moc.exe;window.h
