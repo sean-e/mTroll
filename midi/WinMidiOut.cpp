@@ -5,7 +5,7 @@
 
 #pragma comment(lib, "winmm.lib")
 
-static std::string GetMidiErrorText(MMRESULT resultCode);
+static CString GetMidiErrorText(MMRESULT resultCode);
 static WinMidiOut * sOutOnTimer = NULL;
 
 
@@ -46,16 +46,16 @@ std::string
 WinMidiOut::GetMidiOutDeviceName(unsigned int deviceIdx) const
 {
 	std::string devName;
-	MIDIOUTCAPS outCaps;
-	MMRESULT res = ::midiOutGetDevCaps(deviceIdx, &outCaps, sizeof(MIDIOUTCAPS));
+	MIDIOUTCAPSA outCaps;
+	MMRESULT res = ::midiOutGetDevCapsA(deviceIdx, &outCaps, sizeof(MIDIOUTCAPSA));
 	if (res == MMSYSERR_NOERROR)
 		devName = outCaps.szPname;
 	else
 	{
-		std::string errMsg(::GetMidiErrorText(res));
+		CString errMsg(::GetMidiErrorText(res));
 		CString msg;
-		msg.Format(_T("Error getting name of out device %d: %s"), deviceIdx, errMsg.c_str());
-		devName = msg;
+		msg.Format(_T("Error getting name of out device %d: %s"), deviceIdx, errMsg);
+		devName = CStringA(msg);
 	}
 
 	return devName;
@@ -171,14 +171,14 @@ WinMidiOut::MidiOut(const Bytes & bytes)
 
 			if (statusByteIdx < 0)
 			{
-				ReportError("Status byte handling error at byte %d (%x).\n", idx+1, dataPtr[idx]);
+				ReportError(_T("Status byte handling error at byte %d (%x).\n"), idx+1, dataPtr[idx]);
 				break;
 			}
 
 			curMsgLen = statusByteIdx >= kMsgDataBytesLen ? 1 : kMsgDataBytes[statusByteIdx] + 1;
 			if ((idx + curMsgLen) > kDataSize)
 			{
-				ReportError("Data string consistency error at byte %d.  Missing data byte.\n", idx+1);
+				ReportError(_T("Data string consistency error at byte %d.  Missing data byte.\n"), idx+1);
 				break;
 			}
 
@@ -350,25 +350,25 @@ void
 WinMidiOut::ReportMidiError(MMRESULT resultCode, 
 							unsigned int lineNumber)
 {
-	std::string errMsg(::GetMidiErrorText(resultCode));
+	CString errMsg(::GetMidiErrorText(resultCode));
 	CString msg;
 
 	mMidiOutError = true;
-	msg.Format(_T("Error: %s\nError location: %s (%d)\n"), errMsg.c_str(), __FILE__, lineNumber);
+	msg.Format(_T("Error: %s\nError location: %s (%d)\n"), errMsg, CString(__FILE__), lineNumber);
 	if (mTrace)
-		mTrace->Trace(std::string(msg));
+		mTrace->Trace(std::string(CStringA(msg)));
 }
 
 void
-WinMidiOut::ReportError(LPCSTR msg)
+WinMidiOut::ReportError(LPCTSTR msg)
 {
 	mMidiOutError = true;
 	if (mTrace)
-		mTrace->Trace(msg);
+		mTrace->Trace(std::string(CStringA(CString(msg))));
 }
 
 void
-WinMidiOut::ReportError(LPCSTR msg, 
+WinMidiOut::ReportError(LPCTSTR msg, 
 						int param1)
 {
 	CString errMsg;
@@ -377,7 +377,7 @@ WinMidiOut::ReportError(LPCSTR msg,
 }
 
 void
-WinMidiOut::ReportError(LPCSTR msg, 
+WinMidiOut::ReportError(LPCTSTR msg, 
 						int param1, 
 						int param2)
 {
@@ -386,7 +386,7 @@ WinMidiOut::ReportError(LPCSTR msg,
 	ReportError(errMsg);
 }
 
-std::string
+CString
 GetMidiErrorText(MMRESULT resultCode)
 {
 	TCHAR	errMsg[MAXERRORLENGTH];
