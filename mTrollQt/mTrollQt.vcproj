@@ -25,7 +25,7 @@
 			ConfigurationType="1"
 			UseOfATL="1"
 			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -54,7 +54,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="WIN32;_WINDOWS;STRICT;_DEBUG;TIXML_USE_STL"
+				AdditionalIncludeDirectories="&quot;..\..\..\include\QtCore&quot;,&quot;..\..\..\include\QtCore&quot;,&quot;..\..\..\include\QtGui&quot;,&quot;..\..\..\include\QtGui&quot;,&quot;..\..\..\include&quot;,&quot;c:\Users\sean.e\src\qt\include\ActiveQt&quot;,&quot;tmp\moc\debug_shared&quot;,&quot;.&quot;,..\..\..\mkspecs\win32-msvc2005"
+				PreprocessorDefinitions="_DEBUG;_WINDOWS;UNICODE;WIN32;QT_LARGEFILE_SUPPORT;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;STRICT;TIXML_USE_STL"
 				MinimalRebuild="true"
 				ExceptionHandling="2"
 				BasicRuntimeChecks="3"
@@ -77,8 +78,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies=".\..\Monome40h\FTD2XX.lib"
+				IgnoreImportLibrary="true"
+				AdditionalDependencies=".\..\Monome40h\FTD2XX.lib c:\Users\sean.e\src\qt\lib\qtmaind.lib c:\Users\sean.e\src\qt\lib\QtGuid4.lib c:\Users\sean.e\src\qt\lib\QtCored4.lib"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="c:\Users\sean.e\src\qt\lib"
 				DelayLoadDLLs="FTD2XX.dll;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -115,7 +118,7 @@
 			ConfigurationType="1"
 			UseOfATL="1"
 			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -146,11 +149,12 @@
 				InlineFunctionExpansion="2"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				PreprocessorDefinitions="WIN32;_WINDOWS;STRICT;NDEBUG;TIXML_USE_STL"
+				AdditionalIncludeDirectories="&quot;..\..\..\include\QtCore&quot;,&quot;..\..\..\include\QtCore&quot;,&quot;..\..\..\include\QtGui&quot;,&quot;..\..\..\include\QtGui&quot;,&quot;..\..\..\include&quot;,&quot;c:\Users\sean.e\src\qt\include\ActiveQt&quot;,&quot;tmp\moc\release_shared&quot;,&quot;.&quot;,..\..\..\mkspecs\win32-msvc2005"
+				PreprocessorDefinitions="QT_NO_DEBUG;NDEBUG;_WINDOWS;UNICODE;WIN32;QT_LARGEFILE_SUPPORT;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;STRICT;TIXML_USE_STL"
 				ExceptionHandling="2"
 				RuntimeLibrary="0"
 				BufferSecurityCheck="false"
-				RuntimeTypeInfo="false"
+				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
@@ -169,8 +173,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies=".\..\Monome40h\FTD2XX.lib"
+				IgnoreImportLibrary="true"
+				AdditionalDependencies=".\..\Monome40h\FTD2XX.lib c:\Users\sean.e\src\qt\lib\qtmain.lib c:\Users\sean.e\src\qt\lib\QtGui4.lib c:\Users\sean.e\src\qt\lib\QtCore4.lib"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="c:\Users\sean.e\src\qt\lib"
 				IgnoreDefaultLibraryNames=""
 				DelayLoadDLLs="FTD2XX.dll;"
 				GenerateDebugInformation="true"
@@ -211,6 +217,10 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm"
 			>
+			<File
+				RelativePath=".\main.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -382,19 +392,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\mControlUI\Release\testdata.config.xml"
-				>
-			</File>
-			<File
 				RelativePath="..\mControlUI\testdata.config.xml"
 				>
 			</File>
 			<File
-				RelativePath="..\mControlUI\Release\testdata.ui.xml"
+				RelativePath="..\mControlUI\Release\testdata.config.xml"
 				>
 			</File>
 			<File
 				RelativePath="..\mControlUI\testdata.ui.xml"
+				>
+			</File>
+			<File
+				RelativePath="..\mControlUI\Release\testdata.ui.xml"
 				>
 			</File>
 			<File
