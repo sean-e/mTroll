@@ -23,7 +23,7 @@
 			OutputDirectory="Debug"
 			IntermediateDirectory="Debug"
 			ConfigurationType="1"
-			UseOfATL="1"
+			UseOfATL="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="1"
 			>
@@ -60,6 +60,7 @@
 				ExceptionHandling="2"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
+				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
@@ -82,6 +83,7 @@
 				AdditionalDependencies=".\..\Monome40h\FTD2XX.lib c:\Users\sean.e\src\qt\lib\qtmaind.lib c:\Users\sean.e\src\qt\lib\QtGuid4.lib c:\Users\sean.e\src\qt\lib\QtCored4.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="c:\Users\sean.e\src\qt\lib"
+				IgnoreDefaultLibraryNames="msvcrtd.lib"
 				DelayLoadDLLs="FTD2XX.dll;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -116,9 +118,10 @@
 			OutputDirectory="Release"
 			IntermediateDirectory="Release"
 			ConfigurationType="1"
-			UseOfATL="1"
+			UseOfATL="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="1"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -177,7 +180,7 @@
 				AdditionalDependencies=".\..\Monome40h\FTD2XX.lib c:\Users\sean.e\src\qt\lib\qtmain.lib c:\Users\sean.e\src\qt\lib\QtGui4.lib c:\Users\sean.e\src\qt\lib\QtCore4.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="c:\Users\sean.e\src\qt\lib"
-				IgnoreDefaultLibraryNames=""
+				IgnoreDefaultLibraryNames="msvcrt.lib"
 				DelayLoadDLLs="FTD2XX.dll;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -392,19 +395,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\mControlUI\testdata.config.xml"
-				>
-			</File>
-			<File
 				RelativePath="..\mControlUI\Release\testdata.config.xml"
 				>
 			</File>
 			<File
-				RelativePath="..\mControlUI\testdata.ui.xml"
+				RelativePath="..\mControlUI\testdata.config.xml"
 				>
 			</File>
 			<File
 				RelativePath="..\mControlUI\Release\testdata.ui.xml"
+				>
+			</File>
+			<File
+				RelativePath="..\mControlUI\testdata.ui.xml"
 				>
 			</File>
 			<File
