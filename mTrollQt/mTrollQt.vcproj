@@ -221,7 +221,19 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm"
 			>
 			<File
+				RelativePath=".\AboutDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BuildDate.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\main.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MainTrollWindow.cpp"
 				>
 			</File>
 		</Filter>
@@ -229,6 +241,25 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc"
 			>
+			<File
+				RelativePath=".\AboutDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MainTrollWindow.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="MOC MainTrollWindow.h"
+						CommandLine="$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;..\..\..\include\QtCore&quot; -I&quot;..\..\..\include\QtCore&quot; -I&quot;..\..\..\include\QtGui&quot; -I&quot;..\..\..\include\QtGui&quot; -I&quot;..\..\..\include&quot; -I&quot;c:\Users\sean.e\src\qt\include\ActiveQt&quot; -I&quot;tmp\moc\debug_shared&quot; -I&quot;.&quot; -I..\..\..\mkspecs\win32-msvc2005 -D_MSC_VER=1400 -DWIN32 MainTrollWindow.h -o debug\moc_MainTrollWindow.cpp&#x0D;&#x0A;"
+						AdditionalDependencies="$(QTDIR)\bin\moc.exe;MainTrollWindow.h"
+						Outputs="debug\moc_MainTrollWindow.cpp"
+					/>
+				</FileConfiguration>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
@@ -399,19 +430,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\mControlUI\testdata.config.xml"
-				>
-			</File>
-			<File
 				RelativePath="..\mControlUI\Release\testdata.config.xml"
 				>
 			</File>
 			<File
-				RelativePath="..\mControlUI\testdata.ui.xml"
+				RelativePath="..\mControlUI\testdata.config.xml"
 				>
 			</File>
 			<File
 				RelativePath="..\mControlUI\Release\testdata.ui.xml"
+				>
+			</File>
+			<File
+				RelativePath="..\mControlUI\testdata.ui.xml"
 				>
 			</File>
 			<File
@@ -463,86 +494,6 @@
 			Name="oldWtl"
 			>
 			<File
-				RelativePath=".\oldWtl\AboutDlg.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\oldWtl\AboutDlg.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\oldWtl\MainFrm.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\oldWtl\MainFrm.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath=".\oldWtl\mControlUIView.cpp"
 				>
 				<FileConfiguration
@@ -582,46 +533,6 @@
 					/>
 				</FileConfiguration>
 			</File>
-			<File
-				RelativePath=".\oldWtl\stdafx.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\oldWtl\stdafx.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
 		</Filter>
 		<Filter
 			Name="winUtils"
@@ -632,6 +543,14 @@
 			</File>
 			<File
 				RelativePath=".\..\winUtil\SEHexception.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Moc Generated Source"
+			>
+			<File
+				RelativePath=".\Debug\moc_MainTrollWindow.cpp"
 				>
 			</File>
 		</Filter>

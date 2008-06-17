@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <qdebug.h>
+#include "MainTrollWindow.h"
 
 #if defined(_WINDOWS)
 #include "..\winUtil\SEHexception.h"
@@ -12,13 +13,9 @@ int main(int argc, char **argv)
 	::_set_se_translator(::trans_func);
 #endif // _WINDOWS
 	QApplication app(argc, argv);
-// 	QMap<QString, QSize> customSizeHints = parseCustomSizeHints(argc, argv);
-// 	MainWindow mainWin(customSizeHints);
-// 	mainWin.resize(800, 600);
-// 	mainWin.show();
-	app.aboutQt();
-	return 1;
-//	return app.exec();
+	MainTrollWindow mainWin;
+	mainWin.show();
+	return app.exec();
 }
 
 
