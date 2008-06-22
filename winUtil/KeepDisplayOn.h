@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Windows.h>
+
 // KeepDisplayOn 
 // -----------------------------------------------------------------------------
 // This class should be used sparingly.  It violates the policies set in place
