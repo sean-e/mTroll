@@ -48,3 +48,5 @@ private:
 	int							mCurMidiHdrIdx;
 	bool						mMidiOutError;
 };
+
+typedef WinMidiOut	TMidiOut;
