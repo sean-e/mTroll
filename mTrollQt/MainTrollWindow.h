@@ -1,4 +1,5 @@
 #include <QMainWindow>
+#include "ControlUi.h"
 
 class QMenu;
 
@@ -21,4 +22,6 @@ private:
 
 	QString		mConfigFilename;
 	QString		mUiFilename;
+
+	ControlUi	mUi;
 };

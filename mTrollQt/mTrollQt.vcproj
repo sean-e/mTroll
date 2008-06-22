@@ -229,6 +229,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ControlUi.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\main.cpp"
 				>
 			</File>
@@ -243,6 +247,10 @@
 			>
 			<File
 				RelativePath=".\AboutDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ControlUi.h"
 				>
 			</File>
 			<File
@@ -430,19 +438,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\mControlUI\Release\testdata.config.xml"
-				>
-			</File>
-			<File
 				RelativePath="..\mControlUI\testdata.config.xml"
 				>
 			</File>
 			<File
-				RelativePath="..\mControlUI\Release\testdata.ui.xml"
+				RelativePath="..\mControlUI\Release\testdata.config.xml"
 				>
 			</File>
 			<File
 				RelativePath="..\mControlUI\testdata.ui.xml"
+				>
+			</File>
+			<File
+				RelativePath="..\mControlUI\Release\testdata.ui.xml"
 				>
 			</File>
 			<File

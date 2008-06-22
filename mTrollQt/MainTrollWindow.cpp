@@ -15,7 +15,7 @@
 #define kActiveConfigFile	QString("ConfigFile")
 
 
-MainTrollWindow::MainTrollWindow() : QMainWindow()
+MainTrollWindow::MainTrollWindow() : QMainWindow(), mUi(this)
 {
 	QCoreApplication::setOrganizationName(kOrganizationKey);
 	QCoreApplication::setOrganizationDomain(kOrganizationDomain);
@@ -36,14 +36,12 @@ MainTrollWindow::MainTrollWindow() : QMainWindow()
 	mUiFilename = settings.value(kActiveUiFile, "testdata.ui.xml").value<QString>();
 	mConfigFilename = settings.value(kActiveConfigFile, "testdata.config.xml").value<QString>();
 
-//	m_hWndClient = mView.Create(m_hWnd);
-
 	Refresh();
 }
 
 MainTrollWindow::~MainTrollWindow()
 {
-//	mView.Unload();
+	mUi.Unload();
 
 	delete mFileMenu;
 	delete mHelpMenu;
@@ -60,7 +58,7 @@ void
 MainTrollWindow::OpenFile()
 {
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-// 	mView.Unload();
+	mUi.Unload();
 	QApplication::restoreOverrideCursor();
 
 	QString fileSelection;
@@ -91,11 +89,11 @@ void
 MainTrollWindow::Refresh()
 {
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-// 	mView.Unload();
-// 	mView.Load(mUiFilename, mConfigFilename);
+	mUi.Unload();
+	mUi.Load(mUiFilename.toStdString(), mConfigFilename.toStdString());
 
 	int width, height;
-// 	mView.GetPreferredSize(width, height);
+	mUi.GetPreferredSize(width, height);
 	if (width && height)
 	{
 // 		WINDOWPLACEMENT wp;
