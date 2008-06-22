@@ -88,6 +88,4 @@ private:
 	int								mPrevAdcValsIndex[kAdcPortCount];
 };
 
-typedef Monome40hFtw TMonome40h;
-
 #endif // Monome40h_h__
