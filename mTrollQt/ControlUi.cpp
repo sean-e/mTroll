@@ -4,6 +4,7 @@
 #include <qthread.h>
 #include <QLabel>
 #include <QTextEdit>
+#include <QPushButton>
 
 #include "ControlUi.h"
 #include "../Engine/EngineLoader.h"
@@ -12,9 +13,13 @@
 #include "../Monome40h/IMonome40h.h"
 
 #ifdef _WINDOWS
-#include "../Monome40h/Win32/Monome40hFtw.h"
-#include "../winUtil/SEHexception.h"
-#endif // _WINDOWS
+	#include "../winUtil/SEHexception.h"
+	#include "../Monome40h/Win32/Monome40hFtw.h"
+	typedef Monome40hFtw XMonome40h;
+#else
+	#error "include the monome header file for this platform"
+	typedef YourMonome40h	XMonome40h;
+#endif
 
 
 ControlUi::ControlUi(QWidget * parent) :
@@ -39,7 +44,7 @@ ControlUi::~ControlUi()
 
 struct DeleteMidiOut
 {
-	void operator()(const std::pair<unsigned int, ControlUi::TMidiOut *> & pr)
+	void operator()(const std::pair<unsigned int, XMidiOut *> & pr)
 	{
 		delete pr.second;
 	}
@@ -49,8 +54,6 @@ struct DeleteSwitchLed
 {
 	void operator()(const std::pair<int, ControlUi::SwitchLed *> & pr)
 	{
-		if (pr.second && pr.second->m_hWnd && ::IsWindow(pr.second->m_hWnd))
-			pr.second->DestroyWindow();
 		delete pr.second;
 	}
 };
@@ -59,8 +62,6 @@ struct DeleteSwitch
 {
 	void operator()(const std::pair<int, ControlUi::Switch *> & pr)
 	{
-		if (pr.second && pr.second->m_hWnd && ::IsWindow(pr.second->m_hWnd))
-			pr.second->DestroyWindow();
 		delete pr.second;
 	}
 };
@@ -69,8 +70,6 @@ struct DeleteSwitchTextDisplay
 {
 	void operator()(const std::pair<int, ControlUi::SwitchTextDisplay *> & pr)
 	{
-		if (pr.second && pr.second->m_hWnd && ::IsWindow(pr.second->m_hWnd))
-			pr.second->DestroyWindow();
 		delete pr.second;
 	}
 };
@@ -104,23 +103,19 @@ ControlUi::Unload()
 	delete mHardwareUi;
 	mHardwareUi = NULL;
 
-	if (mMainDisplay && mMainDisplay->m_hWnd && ::IsWindow(mMainDisplay->m_hWnd))
-		mMainDisplay->DestroyWindow();
 	delete mMainDisplay;
-
 	mMainDisplay = NULL;
-	if (mTraceDisplay && mTraceDisplay->m_hWnd && ::IsWindow(mTraceDisplay->m_hWnd))
-		mTraceDisplay->DestroyWindow();
+
 	delete mTraceDisplay;
 	mTraceDisplay = NULL;
 
 	mMaxSwitchId = 0;
 
-	if (mSwitchButtonFont)
-		mSwitchButtonFont.DeleteObject();
-	
-	if (mTraceFont)
-		mTraceFont.DeleteObject();
+// 	if (mSwitchButtonFont)
+// 		mSwitchButtonFont.DeleteObject();
+// 	
+// 	if (mTraceFont)
+// 		mTraceFont.DeleteObject();
 
 	for_each(mMidiOuts.begin(), mMidiOuts.end(), DeleteMidiOut());
 	mMidiOuts.clear();
@@ -137,8 +132,7 @@ ControlUi::Unload()
 	mSwitchNumberToRowCol.clear();
 	mRowColToSwitchNumber.clear();
 
-	if (m_hWnd)
-		Invalidate();
+	repaint();
 
 	delete mSystemPowerOverride;
 	mSystemPowerOverride = NULL;
@@ -202,16 +196,16 @@ ControlUi::LoadUi(const std::string & uiSettingsFile)
 	}
 
 	if (mSwitches[0])
-		mSwitches[0]->SetFocus();
+		mSwitches[0]->setFocus();
 }
 
 void
 ControlUi::LoadMonome()
 {
-	TMonome40h * monome = NULL;
+	XMonome40h * monome = NULL;
 	try
 	{
-		monome = new TMonome40h(this);
+		monome = new XMonome40h(this);
 		int devIdx = monome->LocateMonomeDeviceIdx();
 		if (-1 != devIdx)
 		{
@@ -285,29 +279,25 @@ ControlUi::TextOut(const std::string & txt)
 {
 	if (mMainDisplay)
 	{
-		std::string * str = new std::string(txt);
-		PostMessage(WM_ASYNCTEXTOUT, (WPARAM)str);
+		QString * str = new QString(txt.c_str());
+		AsyncTextOut(str);
+//		PostMessage(WM_ASYNCTEXTOUT, (WPARAM)str);
 	}
 }
 
-LRESULT
-ControlUi::AsyncTextOut(UINT uMsg, WPARAM wParam, LPARAM /*lParam*/, BOOL& bHandled)
+void
+ControlUi::AsyncTextOut(void * wParam)
 {
-	_ASSERTE(uMsg == WM_ASYNCTEXTOUT);
-	std::string *txt = reinterpret_cast<std::string*>(wParam);
-	_ASSERTE(txt);
+	QString *newTxt= reinterpret_cast<QString*>(wParam);
+	_ASSERTE(newTxt);
 	if (mMainDisplay)
 	{
-		CStringA newTxt(txt->c_str());
-		newTxt.Replace("\n", "\r\n");
-		CStringA prevTxt;
-		mMainDisplay->GetWindowText(prevTxt);
-		if (newTxt != prevTxt)
-			mMainDisplay->SetText(newTxt);
+//		newTxt->replace("\n", "\r\n");
+		const QString prevTxt(mMainDisplay->text());
+		if (prevTxt != newTxt)
+			mMainDisplay->setText(*newTxt);
 	}
-	delete txt;
-	bHandled = TRUE;
-	return 1;
+	delete newTxt;
 }
 
 void
@@ -315,10 +305,9 @@ ControlUi::ClearDisplay()
 {
 	if (mMainDisplay)
 	{
-		CStringA prevTxt;
-		mMainDisplay->GetWindowText(prevTxt);
-		if (!prevTxt.IsEmpty())
-			mMainDisplay->SetWindowText("");
+		const QString prevTxt(mMainDisplay->text());
+		if (!prevTxt.isEmpty())
+			mMainDisplay->setText("");
 	}
 }
 
@@ -329,9 +318,9 @@ ControlUi::Trace(const std::string & txt)
 {
 	if (mTraceDisplay)
 	{
-		ATL::CString newTxt(txt.c_str());
-		newTxt.Replace("\n", "\r\n");
-		mTraceDisplay->AppendText(newTxt);
+		QString newTxt(txt.c_str());
+//		newTxt.replace("\n", "\r\n");
+		mTraceDisplay->append(newTxt);
 	}
 }
 
@@ -351,20 +340,20 @@ ControlUi::SetSwitchDisplay(int switchNumber,
 		mHardwareUi->EnableLed(row, col, isOn);
 	}
 
-	if (!mLeds[switchNumber] || !mLeds[switchNumber]->IsWindow())
+	if (!mLeds[switchNumber] || !mLeds[switchNumber]->isEnabled())
 		return;
 
-	mLeds[switchNumber]->SetOnOff(isOn);
+//	mLeds[switchNumber]->SetOnOff(isOn);
 }
 
 void
 ControlUi::SetSwitchText(int switchNumber, 
 						 const std::string & txt)
 {
-	if (!mSwitchTextDisplays[switchNumber] || !mSwitchTextDisplays[switchNumber]->IsWindow())
+	if (!mSwitchTextDisplays[switchNumber] || !mSwitchTextDisplays[switchNumber]->isEnabled())
 		return;
 
-	mSwitchTextDisplays[switchNumber]->SetText(txt);
+	mSwitchTextDisplays[switchNumber]->setText(txt.c_str());
 }
 
 void
@@ -405,14 +394,10 @@ ControlUi::CreateSwitchLed(int id,
 						   int left)
 {
 	SwitchLed * curSwitchLed = new SwitchLed;
-	RECT rc;
-	rc.top = top;
-	rc.left = left;
-	rc.bottom = top + mLedConfig.mHeight;
-	rc.right = left + mLedConfig.mWidth;
-	curSwitchLed->SetShape(ID_SHAPE_SQUARE);
-	curSwitchLed->SetColor(mLedConfig.mOnColor, mLedConfig.mOffColor);
-	curSwitchLed->Create(m_hWnd, rc, NULL, WS_VISIBLE | WS_CHILDWINDOW, WS_EX_NOPARENTNOTIFY);
+	QRect rc(left, top, mLedConfig.mWidth, mLedConfig.mHeight);
+//	curSwitchLed->SetShape(ID_SHAPE_SQUARE);
+//	curSwitchLed->SetColor(mLedConfig.mOnColor, mLedConfig.mOffColor);
+//	curSwitchLed->Create(m_hWnd, rc, NULL, WS_VISIBLE | WS_CHILDWINDOW, WS_EX_NOPARENTNOTIFY);
 	_ASSERTE(!mLeds[id]);
 	mLeds[id] = curSwitchLed;
 }
@@ -426,10 +411,10 @@ ControlUi::SetSwitchConfig(int width,
 {
 	mSwitchConfig.mWidth = width;
 	mSwitchConfig.mHeight = height;
-	mSwitchConfig.mFontname = fontName;
+	mSwitchConfig.mFontname = fontName.c_str();
 	mSwitchConfig.mFontHeight = fontHeight;
 	mSwitchConfig.mBold = bold;
-	mSwitchButtonFont.CreatePointFont(mSwitchConfig.mFontHeight * 10, mSwitchConfig.mFontname.c_str(), NULL, mSwitchConfig.mBold);
+//	mSwitchButtonFont.CreatePointFont(mSwitchConfig.mFontHeight * 10, mSwitchConfig.mFontname.c_str(), NULL, mSwitchConfig.mBold);
 }
 
 void
@@ -439,16 +424,12 @@ ControlUi::CreateSwitch(int id,
 						int left)
 {
 	Switch * curSwitch = new Switch;
-	RECT rc;
-	rc.top = top;
-	rc.left = left;
-	rc.bottom = top + mSwitchConfig.mHeight;
-	rc.right = left + mSwitchConfig.mWidth;
-	curSwitch->Create(m_hWnd, rc, label.c_str(), 
-		WS_VISIBLE | WS_CHILDWINDOW | BS_PUSHBUTTON | BS_TEXT | WS_TABSTOP, 
-		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY,
-		id);
-	curSwitch->SetFont(mSwitchButtonFont);
+	QRect rc(left, top, mSwitchConfig.mWidth, mSwitchConfig.mHeight);
+// 	curSwitch->Create(m_hWnd, rc, label.c_str(), 
+// 		WS_VISIBLE | WS_CHILDWINDOW | BS_PUSHBUTTON | BS_TEXT | WS_TABSTOP, 
+// 		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY,
+// 		id);
+//	curSwitch->SetFont(mSwitchButtonFont);
 	_ASSERTE(!mSwitches[id]);
 	mSwitches[id] = curSwitch;
 	if (id > mMaxSwitchId)
@@ -466,7 +447,7 @@ ControlUi::SetSwitchTextDisplayConfig(int width,
 {
 	mSwitchTextDisplayConfig.mHeight = height;
 	mSwitchTextDisplayConfig.mWidth = width;
-	mSwitchTextDisplayConfig.mFontname = fontName;
+	mSwitchTextDisplayConfig.mFontname = fontName.c_str();
 	mSwitchTextDisplayConfig.mFontHeight = fontHeight;
 	mSwitchTextDisplayConfig.mBold = bold;
 	mSwitchTextDisplayConfig.mFgColor = fgColor;
@@ -479,23 +460,19 @@ ControlUi::CreateSwitchTextDisplay(int id,
 								   int left)
 {
 	SwitchTextDisplay * curSwitchDisplay = new SwitchTextDisplay;
-	RECT rc;
-	rc.top = top;
-	rc.left = left;
-	rc.bottom = top + mSwitchTextDisplayConfig.mHeight;
-	rc.right = left + mSwitchTextDisplayConfig.mWidth;
-	curSwitchDisplay->Create(m_hWnd, rc, NULL, 
-		/*ES_AUTOHSCROLL |*/ ES_READONLY | WS_VISIBLE | WS_CHILDWINDOW | SS_LEFTNOWORDWRAP /*SS_CENTERIMAGE*/, 
-		/*WS_EX_LEFT |*/ WS_EX_LTRREADING /*| WS_EX_CLIENTEDGE*/);
-	curSwitchDisplay->Created();
-	curSwitchDisplay->SetMargin(2);
-	curSwitchDisplay->SetSunken(true);
+	QRect rc(left, top, mSwitchTextDisplayConfig.mWidth, mSwitchTextDisplayConfig.mHeight);
+// 	curSwitchDisplay->Create(m_hWnd, rc, NULL, 
+// 		/*ES_AUTOHSCROLL |*/ ES_READONLY | WS_VISIBLE | WS_CHILDWINDOW | SS_LEFTNOWORDWRAP /*SS_CENTERIMAGE*/, 
+// 		/*WS_EX_LEFT |*/ WS_EX_LTRREADING /*| WS_EX_CLIENTEDGE*/);
+// 	curSwitchDisplay->Created();
+// 	curSwitchDisplay->SetMargin(2);
+// 	curSwitchDisplay->SetSunken(true);
 
-	curSwitchDisplay->SetFontName(mSwitchTextDisplayConfig.mFontname);
-	curSwitchDisplay->SetFontSize(mSwitchTextDisplayConfig.mFontHeight);
-	curSwitchDisplay->SetFontBold(mSwitchTextDisplayConfig.mBold);
-	curSwitchDisplay->SetBkColor(mSwitchTextDisplayConfig.mBgColor);
-	curSwitchDisplay->SetTextColor(mSwitchTextDisplayConfig.mFgColor);
+//	curSwitchDisplay->SetFontName(mSwitchTextDisplayConfig.mFontname);
+//	curSwitchDisplay->SetFontSize(mSwitchTextDisplayConfig.mFontHeight);
+//	curSwitchDisplay->SetFontBold(mSwitchTextDisplayConfig.mBold);
+//	curSwitchDisplay->SetBkColor(mSwitchTextDisplayConfig.mBgColor);
+//	curSwitchDisplay->SetTextColor(mSwitchTextDisplayConfig.mFgColor);
 
 	_ASSERTE(!mSwitchTextDisplays[id]);
 	mSwitchTextDisplays[id] = curSwitchDisplay;
@@ -513,25 +490,21 @@ ControlUi::CreateMainDisplay(int top,
 							 unsigned int fgColor)
 {
 	_ASSERTE(!mMainDisplay);
-	mMainDisplay = new CLabel;
-	RECT rc;
-	rc.top = top;
-	rc.left = left;
-	rc.bottom = top + height;
-	rc.right = left + width;
-	mMainDisplay->Create(m_hWnd, rc, NULL, 
-		ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_READONLY | WS_VISIBLE | WS_CHILDWINDOW /*| WS_VSCROLL | ES_LEFT | ES_MULTILINE*/, 
-		WS_EX_NOPARENTNOTIFY /*| WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | | WS_EX_CLIENTEDGE*/);
+	mMainDisplay = new QLabel;
+	QRect rc(left, top, width, height);
+// 	mMainDisplay->Create(m_hWnd, rc, NULL, 
+// 		ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_READONLY | WS_VISIBLE | WS_CHILDWINDOW /*| WS_VSCROLL | ES_LEFT | ES_MULTILINE*/, 
+// 		WS_EX_NOPARENTNOTIFY /*| WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | | WS_EX_CLIENTEDGE*/);
 
-	mMainDisplay->Created();
-	mMainDisplay->SetMargin(2);
-	mMainDisplay->SetSunken(true);
+//	mMainDisplay->Created();
+//	mMainDisplay->SetMargin(2);
+//	mMainDisplay->SetSunken(true);
 
-	mMainDisplay->SetFontName(fontName);
-	mMainDisplay->SetFontSize(fontHeight);
-	mMainDisplay->SetFontBold(bold);
-	mMainDisplay->SetBkColor(bgColor);
-	mMainDisplay->SetTextColor(fgColor);
+//	mMainDisplay->SetFontName(fontName);
+//	mMainDisplay->SetFontSize(fontHeight);
+//	mMainDisplay->SetFontBold(bold);
+//	mMainDisplay->SetBkColor(bgColor);
+//	mMainDisplay->SetTextColor(fgColor);
 }
 
 void
@@ -544,18 +517,14 @@ ControlUi::CreateTraceDisplay(int top,
 							  bool bold)
 {
 	_ASSERTE(!mTraceDisplay);
-	mTraceDisplay = new CEdit;
-	RECT rc;
-	rc.top = top;
-	rc.left = left;
-	rc.bottom = top + height;
-	rc.right = left + width;
-	mTraceDisplay->Create(m_hWnd, rc, NULL, 
-		WS_VSCROLL | ES_LEFT | ES_MULTILINE | ES_AUTOHSCROLL | ES_READONLY | WS_VISIBLE | WS_CHILDWINDOW, 
-		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_NOPARENTNOTIFY | WS_EX_CLIENTEDGE);
-
-	mTraceFont.CreatePointFont(fontHeight * 10, fontName.c_str(), NULL, bold);
-	mTraceDisplay->SetFont(mTraceFont);
+	mTraceDisplay = new QTextEdit;
+	QRect rc(left, top, width, height);
+// 	mTraceDisplay->Create(m_hWnd, rc, NULL, 
+// 		WS_VSCROLL | ES_LEFT | ES_MULTILINE | ES_AUTOHSCROLL | ES_READONLY | WS_VISIBLE | WS_CHILDWINDOW, 
+// 		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_NOPARENTNOTIFY | WS_EX_CLIENTEDGE);
+// 
+// 	mTraceFont.CreatePointFont(fontHeight * 10, fontName.c_str(), NULL, bold);
+//	mTraceDisplay->SetFont(mTraceFont);
 }
 
 void
@@ -586,7 +555,7 @@ ControlUi::CreateMidiOut(unsigned int deviceIdx,
 						 int activityIndicatorIdx)
 {
 	if (!mMidiOuts[deviceIdx])
-		mMidiOuts[deviceIdx] = new TMidiOut(this);
+		mMidiOuts[deviceIdx] = new XMidiOut(this);
 
 	if (activityIndicatorIdx > 0)
 		mMidiOuts[deviceIdx]->SetActivityIndicator(this, activityIndicatorIdx);
@@ -663,19 +632,19 @@ ControlUi::MonomeStartupSequence()
 	for (idx = 0; idx < 8; ++idx)
 	{
 		mHardwareUi->EnableLedRow(idx, vals);
-		QThread::msleep(100);
+		Sleep(100);
 		mHardwareUi->EnableLedRow(idx, 0);
 	}
 
 	for (idx = 0; idx < 8; ++idx)
 	{
 		mHardwareUi->EnableLedColumn(idx, vals);
-		QThread::msleep(100);
+		Sleep(100);
 		mHardwareUi->EnableLedColumn(idx, 0);
 	}
 
 	mHardwareUi->TestLed(true);
-	QThread::msleep(250);
+	Sleep(250);
 	mHardwareUi->TestLed(false);
 }
 
