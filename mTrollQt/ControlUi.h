@@ -91,113 +91,105 @@ private: // IMidiControlUi
 	virtual void		SetLedDisplayState(bool invert) { mInvertLeds = invert; }
 
 private slots:
-#define UiButtonClickedHandler(x) \
-	virtual void UiButtonClicked_##x(bool checked = false) { ButtonPressed(x); ButtonReleased(x); }
+	// sigh... the one time that I would use a macro but the Qt MOC doesn't support it (or the use of tokenization)!!
+	virtual void UiButtonClicked_00(bool checked = false) { ButtonPressed(0); ButtonReleased(0); }
+	virtual void UiButtonClicked_01(bool checked = false) { ButtonPressed(1); ButtonReleased(1); }
+	virtual void UiButtonClicked_02(bool checked = false) { ButtonPressed(2); ButtonReleased(2); }
+	virtual void UiButtonClicked_03(bool checked = false) { ButtonPressed(3); ButtonReleased(3); }
+	virtual void UiButtonClicked_04(bool checked = false) { ButtonPressed(4); ButtonReleased(4); }
+	virtual void UiButtonClicked_05(bool checked = false) { ButtonPressed(5); ButtonReleased(5); }
+	virtual void UiButtonClicked_06(bool checked = false) { ButtonPressed(6); ButtonReleased(6); }
+	virtual void UiButtonClicked_07(bool checked = false) { ButtonPressed(7); ButtonReleased(7); }
+	virtual void UiButtonClicked_08(bool checked = false) { ButtonPressed(8); ButtonReleased(8); }
+	virtual void UiButtonClicked_09(bool checked = false) { ButtonPressed(9); ButtonReleased(9); }
+	virtual void UiButtonClicked_10(bool checked = false) { ButtonPressed(10); ButtonReleased(10); }
+	virtual void UiButtonClicked_11(bool checked = false) { ButtonPressed(11); ButtonReleased(11); }
+	virtual void UiButtonClicked_12(bool checked = false) { ButtonPressed(12); ButtonReleased(12); }
+	virtual void UiButtonClicked_13(bool checked = false) { ButtonPressed(13); ButtonReleased(13); }
+	virtual void UiButtonClicked_14(bool checked = false) { ButtonPressed(14); ButtonReleased(14); }
+	virtual void UiButtonClicked_15(bool checked = false) { ButtonPressed(15); ButtonReleased(15); }
+	virtual void UiButtonClicked_16(bool checked = false) { ButtonPressed(16); ButtonReleased(16); }
+	virtual void UiButtonClicked_17(bool checked = false) { ButtonPressed(17); ButtonReleased(17); }
+	virtual void UiButtonClicked_18(bool checked = false) { ButtonPressed(18); ButtonReleased(18); }
+	virtual void UiButtonClicked_19(bool checked = false) { ButtonPressed(19); ButtonReleased(19); }
+	virtual void UiButtonClicked_20(bool checked = false) { ButtonPressed(20); ButtonReleased(20); }
+	virtual void UiButtonClicked_21(bool checked = false) { ButtonPressed(21); ButtonReleased(21); }
+	virtual void UiButtonClicked_22(bool checked = false) { ButtonPressed(22); ButtonReleased(22); }
+	virtual void UiButtonClicked_23(bool checked = false) { ButtonPressed(23); ButtonReleased(23); }
+	virtual void UiButtonClicked_24(bool checked = false) { ButtonPressed(24); ButtonReleased(24); }
+	virtual void UiButtonClicked_25(bool checked = false) { ButtonPressed(25); ButtonReleased(25); }
+	virtual void UiButtonClicked_26(bool checked = false) { ButtonPressed(26); ButtonReleased(26); }
+	virtual void UiButtonClicked_27(bool checked = false) { ButtonPressed(27); ButtonReleased(27); }
+	virtual void UiButtonClicked_28(bool checked = false) { ButtonPressed(28); ButtonReleased(28); }
+	virtual void UiButtonClicked_29(bool checked = false) { ButtonPressed(29); ButtonReleased(29); }
+	virtual void UiButtonClicked_30(bool checked = false) { ButtonPressed(30); ButtonReleased(30); }
+	virtual void UiButtonClicked_31(bool checked = false) { ButtonPressed(31); ButtonReleased(31); }
 
-	UiButtonClickedHandler(1);
-	UiButtonClickedHandler(2);
-	UiButtonClickedHandler(3);
-	UiButtonClickedHandler(4);
-	UiButtonClickedHandler(5);
-	UiButtonClickedHandler(6);
-	UiButtonClickedHandler(7);
-	UiButtonClickedHandler(8);
-	UiButtonClickedHandler(9);
-	UiButtonClickedHandler(10);
-	UiButtonClickedHandler(11);
-	UiButtonClickedHandler(12);
-	UiButtonClickedHandler(13);
-	UiButtonClickedHandler(14);
-	UiButtonClickedHandler(15);
-	UiButtonClickedHandler(16);
-	UiButtonClickedHandler(17);
-	UiButtonClickedHandler(18);
-	UiButtonClickedHandler(19);
-	UiButtonClickedHandler(20);
-	UiButtonClickedHandler(21);
-	UiButtonClickedHandler(22);
-	UiButtonClickedHandler(23);
-	UiButtonClickedHandler(24);
-	UiButtonClickedHandler(25);
-	UiButtonClickedHandler(26);
-	UiButtonClickedHandler(27);
-	UiButtonClickedHandler(28);
-	UiButtonClickedHandler(29);
-	UiButtonClickedHandler(30);
-	UiButtonClickedHandler(31);
-	UiButtonClickedHandler(32);
+	virtual void UiButtonPressed_00() { ButtonPressed(0); }
+	virtual void UiButtonPressed_01() { ButtonPressed(1); }
+	virtual void UiButtonPressed_02() { ButtonPressed(2); }
+	virtual void UiButtonPressed_03() { ButtonPressed(3); }
+	virtual void UiButtonPressed_04() { ButtonPressed(4); }
+	virtual void UiButtonPressed_05() { ButtonPressed(5); }
+	virtual void UiButtonPressed_06() { ButtonPressed(6); }
+	virtual void UiButtonPressed_07() { ButtonPressed(7); }
+	virtual void UiButtonPressed_08() { ButtonPressed(8); }
+	virtual void UiButtonPressed_09() { ButtonPressed(9); }
+	virtual void UiButtonPressed_10() { ButtonPressed(10); }
+	virtual void UiButtonPressed_11() { ButtonPressed(11); }
+	virtual void UiButtonPressed_12() { ButtonPressed(12); }
+	virtual void UiButtonPressed_13() { ButtonPressed(13); }
+	virtual void UiButtonPressed_14() { ButtonPressed(14); }
+	virtual void UiButtonPressed_15() { ButtonPressed(15); }
+	virtual void UiButtonPressed_16() { ButtonPressed(16); }
+	virtual void UiButtonPressed_17() { ButtonPressed(17); }
+	virtual void UiButtonPressed_18() { ButtonPressed(18); }
+	virtual void UiButtonPressed_19() { ButtonPressed(19); }
+	virtual void UiButtonPressed_20() { ButtonPressed(20); }
+	virtual void UiButtonPressed_21() { ButtonPressed(21); }
+	virtual void UiButtonPressed_22() { ButtonPressed(22); }
+	virtual void UiButtonPressed_23() { ButtonPressed(23); }
+	virtual void UiButtonPressed_24() { ButtonPressed(24); }
+	virtual void UiButtonPressed_25() { ButtonPressed(25); }
+	virtual void UiButtonPressed_26() { ButtonPressed(26); }
+	virtual void UiButtonPressed_27() { ButtonPressed(27); }
+	virtual void UiButtonPressed_28() { ButtonPressed(28); }
+	virtual void UiButtonPressed_29() { ButtonPressed(29); }
+	virtual void UiButtonPressed_30() { ButtonPressed(30); }
+	virtual void UiButtonPressed_31() { ButtonPressed(31); }
 
-#define UiButtonPressedHandler(x) \
-	virtual void UiButtonPressed_##x() { ButtonPressed(x); }
-
-	UiButtonPressedHandler(1);
-	UiButtonPressedHandler(2);
-	UiButtonPressedHandler(3);
-	UiButtonPressedHandler(4);
-	UiButtonPressedHandler(5);
-	UiButtonPressedHandler(6);
-	UiButtonPressedHandler(7);
-	UiButtonPressedHandler(8);
-	UiButtonPressedHandler(9);
-	UiButtonPressedHandler(10);
-	UiButtonPressedHandler(11);
-	UiButtonPressedHandler(12);
-	UiButtonPressedHandler(13);
-	UiButtonPressedHandler(14);
-	UiButtonPressedHandler(15);
-	UiButtonPressedHandler(16);
-	UiButtonPressedHandler(17);
-	UiButtonPressedHandler(18);
-	UiButtonPressedHandler(19);
-	UiButtonPressedHandler(20);
-	UiButtonPressedHandler(21);
-	UiButtonPressedHandler(22);
-	UiButtonPressedHandler(23);
-	UiButtonPressedHandler(24);
-	UiButtonPressedHandler(25);
-	UiButtonPressedHandler(26);
-	UiButtonPressedHandler(27);
-	UiButtonPressedHandler(28);
-	UiButtonPressedHandler(29);
-	UiButtonPressedHandler(30);
-	UiButtonPressedHandler(31);
-	UiButtonPressedHandler(32);
-
-#define UiButtonReleasedHandler(x) \
-	virtual void UiButtonReleased_##x() { ButtonReleased(x); }
-
-	UiButtonReleasedHandler(1);
-	UiButtonReleasedHandler(2);
-	UiButtonReleasedHandler(3);
-	UiButtonReleasedHandler(4);
-	UiButtonReleasedHandler(5);
-	UiButtonReleasedHandler(6);
-	UiButtonReleasedHandler(7);
-	UiButtonReleasedHandler(8);
-	UiButtonReleasedHandler(9);
-	UiButtonReleasedHandler(10);
-	UiButtonReleasedHandler(11);
-	UiButtonReleasedHandler(12);
-	UiButtonReleasedHandler(13);
-	UiButtonReleasedHandler(14);
-	UiButtonReleasedHandler(15);
-	UiButtonReleasedHandler(16);
-	UiButtonReleasedHandler(17);
-	UiButtonReleasedHandler(18);
-	UiButtonReleasedHandler(19);
-	UiButtonReleasedHandler(20);
-	UiButtonReleasedHandler(21);
-	UiButtonReleasedHandler(22);
-	UiButtonReleasedHandler(23);
-	UiButtonReleasedHandler(24);
-	UiButtonReleasedHandler(25);
-	UiButtonReleasedHandler(26);
-	UiButtonReleasedHandler(27);
-	UiButtonReleasedHandler(28);
-	UiButtonReleasedHandler(29);
-	UiButtonReleasedHandler(30);
-	UiButtonReleasedHandler(31);
-	UiButtonReleasedHandler(32);
+	virtual void UiButtonReleased_00() { ButtonReleased(0); }
+	virtual void UiButtonReleased_01() { ButtonReleased(1); }
+	virtual void UiButtonReleased_02() { ButtonReleased(2); }
+	virtual void UiButtonReleased_03() { ButtonReleased(3); }
+	virtual void UiButtonReleased_04() { ButtonReleased(4); }
+	virtual void UiButtonReleased_05() { ButtonReleased(5); }
+	virtual void UiButtonReleased_06() { ButtonReleased(6); }
+	virtual void UiButtonReleased_07() { ButtonReleased(7); }
+	virtual void UiButtonReleased_08() { ButtonReleased(8); }
+	virtual void UiButtonReleased_09() { ButtonReleased(9); }
+	virtual void UiButtonReleased_10() { ButtonReleased(10); }
+	virtual void UiButtonReleased_11() { ButtonReleased(11); }
+	virtual void UiButtonReleased_12() { ButtonReleased(12); }
+	virtual void UiButtonReleased_13() { ButtonReleased(13); }
+	virtual void UiButtonReleased_14() { ButtonReleased(14); }
+	virtual void UiButtonReleased_15() { ButtonReleased(15); }
+	virtual void UiButtonReleased_16() { ButtonReleased(16); }
+	virtual void UiButtonReleased_17() { ButtonReleased(17); }
+	virtual void UiButtonReleased_18() { ButtonReleased(18); }
+	virtual void UiButtonReleased_19() { ButtonReleased(19); }
+	virtual void UiButtonReleased_20() { ButtonReleased(20); }
+	virtual void UiButtonReleased_21() { ButtonReleased(21); }
+	virtual void UiButtonReleased_22() { ButtonReleased(22); }
+	virtual void UiButtonReleased_23() { ButtonReleased(23); }
+	virtual void UiButtonReleased_24() { ButtonReleased(24); }
+	virtual void UiButtonReleased_25() { ButtonReleased(25); }
+	virtual void UiButtonReleased_26() { ButtonReleased(26); }
+	virtual void UiButtonReleased_27() { ButtonReleased(27); }
+	virtual void UiButtonReleased_28() { ButtonReleased(28); }
+	virtual void UiButtonReleased_29() { ButtonReleased(29); }
+	virtual void UiButtonReleased_30() { ButtonReleased(30); }
+	virtual void UiButtonReleased_31() { ButtonReleased(31); }
 
 private:
 	void AsyncTextOut(void * wParam);
