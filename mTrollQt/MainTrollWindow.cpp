@@ -6,6 +6,7 @@
 #include <qcoreapplication.h>
 #include <QFileDialog>
 #include "AboutDlg.h"
+#include "ControlUi.h"
 
 
 #define kOrganizationKey	QString("Fester")
@@ -15,7 +16,8 @@
 #define kActiveConfigFile	QString("ConfigFile")
 
 
-MainTrollWindow::MainTrollWindow() : QMainWindow(), mUi(this)
+MainTrollWindow::MainTrollWindow() : 
+	QMainWindow()
 {
 	QCoreApplication::setOrganizationName(kOrganizationKey);
 	QCoreApplication::setOrganizationDomain(kOrganizationDomain);
@@ -41,8 +43,6 @@ MainTrollWindow::MainTrollWindow() : QMainWindow(), mUi(this)
 
 MainTrollWindow::~MainTrollWindow()
 {
-	mUi.Unload();
-
 	delete mFileMenu;
 	delete mHelpMenu;
 }
@@ -57,26 +57,22 @@ MainTrollWindow::About()
 void
 MainTrollWindow::OpenFile()
 {
-	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-	mUi.Unload();
-	QApplication::restoreOverrideCursor();
-
-	QString fileSelection;
-	fileSelection = QFileDialog::getOpenFileName(this, 
+	const QString cfgFleSelection = QFileDialog::getOpenFileName(this, 
 			tr("Select Config Settings File"),
 			mConfigFilename,
 			tr("Config files (*.config.xml)"));
-	if (fileSelection.isEmpty())
+	if (cfgFleSelection.isEmpty())
 		return;
-	mConfigFilename = fileSelection;
 
-	fileSelection = QFileDialog::getOpenFileName(this, 
+	const QString uiFileSelection = QFileDialog::getOpenFileName(this, 
 			tr("Select UI Settings File"),
 			mUiFilename,
 			tr("UI files (*.ui.xml)"));
-	if (fileSelection.isEmpty())
+	if (uiFileSelection.isEmpty())
 		return;
-	mUiFilename = fileSelection;
+
+	mConfigFilename = cfgFleSelection;
+	mUiFilename = uiFileSelection;
 
 	QSettings settings;
 	settings.setValue(kActiveUiFile, mUiFilename);
@@ -89,15 +85,17 @@ void
 MainTrollWindow::Refresh()
 {
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-	mUi.Unload();
+	ControlUi * newUi = new ControlUi(this);
+	setCentralWidget(newUi);	// Qt deletes the previous central widget
+
 	QByteArray tmp(mUiFilename.toAscii());
 	const std::string uiFile(tmp.constData(), tmp.count());
 	tmp = mConfigFilename.toAscii();
 	const std::string cfgFile(tmp.constData(), tmp.count());
-	mUi.Load(uiFile, cfgFile);
+	newUi->Load(uiFile, cfgFile);
 
 	int width, height;
-	mUi.GetPreferredSize(width, height);
+	newUi->GetPreferredSize(width, height);
 	if (width && height)
 	{
 // 		WINDOWPLACEMENT wp;

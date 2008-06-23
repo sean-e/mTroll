@@ -2,7 +2,6 @@
 #define MainTrollWindow_h__
 
 #include <QMainWindow>
-#include "ControlUi.h"
 
 class QMenu;
 
@@ -20,13 +19,11 @@ private slots:
 	void Refresh();
 
 private:
-	QMenu	*mFileMenu;
-	QMenu	*mHelpMenu;
+	QMenu		*mFileMenu;
+	QMenu		*mHelpMenu;
 
 	QString		mConfigFilename;
 	QString		mUiFilename;
-
-	ControlUi	mUi;
 };
 
 #endif // MainTrollWindow_h__

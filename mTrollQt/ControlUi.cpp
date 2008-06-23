@@ -130,8 +130,6 @@ ControlUi::Unload()
 	mSwitchNumberToRowCol.clear();
 	mRowColToSwitchNumber.clear();
 
-	repaint();
-
 	delete mSystemPowerOverride;
 	mSystemPowerOverride = NULL;
 }
@@ -394,7 +392,7 @@ ControlUi::CreateSwitchLed(int id,
 						   int top, 
 						   int left)
 {
-	SwitchLed * curSwitchLed = new SwitchLed(parentWidget());
+	SwitchLed * curSwitchLed = new SwitchLed(this);
 //	curSwitchLed->SetShape(ID_SHAPE_SQUARE);
 //	curSwitchLed->SetColor(mLedConfig.mOnColor, mLedConfig.mOffColor);
 
@@ -436,7 +434,7 @@ ControlUi::CreateSwitch(int id,
 						int top, 
 						int left)
 {
-	Switch * curSwitch = new Switch(label.c_str(), parentWidget());
+	Switch * curSwitch = new Switch(label.c_str(), this);
 	curSwitch->setFont(mSwitchButtonFont);
 	curSwitch->move(left, top);
 	curSwitch->resize(mSwitchConfig.mWidth, mSwitchConfig.mHeight);
@@ -480,7 +478,7 @@ ControlUi::CreateSwitchTextDisplay(int id,
 								   int top, 
 								   int left)
 {
-	SwitchTextDisplay * curSwitchDisplay = new SwitchTextDisplay(parentWidget());
+	SwitchTextDisplay * curSwitchDisplay = new SwitchTextDisplay(this);
 	curSwitchDisplay->setMargin(2);
 	curSwitchDisplay->setFrameShape(QFrame::Panel);
 	curSwitchDisplay->setFrameShadow(QFrame::Sunken);
@@ -512,7 +510,7 @@ ControlUi::CreateMainDisplay(int top,
 							 unsigned int fgColor)
 {
 	_ASSERTE(!mMainDisplay);
-	mMainDisplay = new QLabel(parentWidget());
+	mMainDisplay = new QLabel(this);
 	mMainDisplay->setFrameShape(QFrame::Panel);
 	mMainDisplay->setFrameShadow(QFrame::Sunken);
 	mMainDisplay->setAutoFillBackground(true);
@@ -539,7 +537,7 @@ ControlUi::CreateTraceDisplay(int top,
 							  bool bold)
 {
 	_ASSERTE(!mTraceDisplay);
-	mTraceDisplay = new QTextEdit(parentWidget());
+	mTraceDisplay = new QTextEdit(this);
 	mTraceDisplay->setFrameShape(QFrame::Panel);
 	mTraceDisplay->setFrameShadow(QFrame::Sunken);
 	mTraceDisplay->setReadOnly(true);
