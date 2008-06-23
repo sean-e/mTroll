@@ -1,3 +1,6 @@
+#ifndef MainTrollWindow_h__
+#define MainTrollWindow_h__
+
 #include <QMainWindow>
 #include "ControlUi.h"
 
@@ -25,3 +28,5 @@ private:
 
 	ControlUi	mUi;
 };
+
+#endif // MainTrollWindow_h__

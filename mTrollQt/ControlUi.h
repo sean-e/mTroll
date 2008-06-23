@@ -1,8 +1,9 @@
-#pragma once
+#ifndef ControlUi_h__
+#define ControlUi_h__
 
+#include <map>
 #include <QWidget>
 #include <QFont>
-#include <map>
 
 #include "../Engine/IMainDisplay.h"
 #include "../Engine/ISwitchDisplay.h"
@@ -13,11 +14,14 @@
 #include "../Monome40h/IMonome40hInputSubscriber.h"
 
 #ifdef _WINDOWS
-#include "../midi/WinMidiOut.h"
-#include "../winUtil/KeepDisplayOn.h"
+	#include "../winUtil/KeepDisplayOn.h"
+	#include "../midi/WinMidiOut.h"
+	typedef WinMidiOut	XMidiOut;
+	#undef TextOut		// Win A/W preprocessing hoses IMainDisplay::TextOut impl
 #else
-#error "include the midiout header file for this platform"
-struct KeepDisplayOn {};
+	struct KeepDisplayOn {};
+	#error "include the midiout header file for this platform"
+	typedef YourMidiOut	XMidiOut;
 #endif
 
 
@@ -196,7 +200,7 @@ private slots:
 	UiButtonReleasedHandler(32);
 
 private:
-	LRESULT AsyncTextOut(UINT uMsg, WPARAM wParam, LPARAM /*lParam*/, BOOL& bHandled);
+	void AsyncTextOut(void * wParam);
 
 	void LoadUi(const std::string & uiSettingsFile);
 	void LoadMonome();
@@ -233,7 +237,7 @@ private:
 	QFont						mTraceFont;
 	int							mPreferredHeight, mPreferredWidth;
 	int							mMaxSwitchId;
-	typedef std::map<unsigned int, TMidiOut*> MidiOuts;
+	typedef std::map<unsigned int, XMidiOut*> MidiOuts;
 	MidiOuts					mMidiOuts;
 	int							mLedIntensity;
 	bool						mInvertLeds;
@@ -270,3 +274,5 @@ private:
 	};
 	LedConfig					mLedConfig;
 };
+
+#endif // ControlUi_h__

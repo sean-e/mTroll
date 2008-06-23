@@ -1,3 +1,6 @@
+#ifndef AboutDlg_h__
+#define AboutDlg_h__
+
 #include <qdialog>
 #include <QLabel>
 #include <QLayout>
@@ -15,3 +18,5 @@ private:
 	QBoxLayout	* mLayout;
 	QPushButton	* mExitButton;
 };
+
+#endif // AboutDlg_h__
