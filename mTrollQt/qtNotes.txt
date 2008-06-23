@@ -29,7 +29,12 @@ link input addl dependencies dbg: c:\Users\sean.e\src\qt\lib\qtmaind.lib c:\User
 							 rel: c:\Users\sean.e\src\qt\lib\qtmain.lib c:\Users\sean.e\src\qt\lib\QtGui4.lib c:\Users\sean.e\src\qt\lib\QtCore4.lib
 
 [qt moc Custom Build Steps for QT_OBJECT header file]
-cmd line:	$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"c:\Users\sean.e\src\qt\include\ActiveQt" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2005 -D_MSC_VER=1400 -DWIN32 window.h -o debug\moc_window.cpp
-desc:		MOC window.h
-Outputs:	debug\moc_window.cpp
-add deps:	$(QTDIR)\bin\moc.exe;window.h
+cmd line:	$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"c:\Users\sean.e\src\qt\include\ActiveQt" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2005 -D_MSC_VER=1400 -DWIN32 ControlUi.h -o debug\moc_ControlUi.cpp
+desc:		MOC ControlUi.h
+Outputs:	debug\moc_ControlUi.cpp
+add deps:	$(QTDIR)\bin\moc.exe;ControlUi.h
+
+cmd line:	$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"c:\Users\sean.e\src\qt\include\ActiveQt" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2005 -D_MSC_VER=1400 -DWIN32 ControlUi.h -o release\moc_ControlUi.cpp
+desc:		MOC ControlUi.h
+Outputs:	release\moc_ControlUi.cpp
+add deps:	$(QTDIR)\bin\moc.exe;ControlUi.h
