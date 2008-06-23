@@ -1,11 +1,7 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by mControlUI.rc
+// Used by mTrollQt.rc
 //
-#define IDD_ABOUTBOX                    100
-#define IDR_MAINFRAME                   128
-#define IDD_MCONTROLUI_FORM             129
-#define IDC_BUILD_DATE                  1004
 
 // Next default values for new objects
 // 

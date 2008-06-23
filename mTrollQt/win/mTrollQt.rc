@@ -48,99 +48,6 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Menu
-//
-
-IDR_MAINFRAME MENU 
-BEGIN
-    POPUP "&File"
-    BEGIN
-        MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
-        MENUITEM "&Refresh\tF5",                ID_VIEW_REFRESH
-        MENUITEM SEPARATOR
-        MENUITEM "E&xit",                       ID_APP_EXIT
-    END
-    POPUP "&Help"
-    BEGIN
-        MENUITEM "&About mTroll...",            ID_APP_ABOUT
-    END
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Icon
-//
-
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
-IDR_MAINFRAME           ICON                    "mTrollQt.ico"
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Dialog
-//
-
-IDD_ABOUTBOX DIALOGEX 0, 0, 228, 89
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "About"
-FONT 8, "MS Sans Serif", 0, 0, 0x0
-BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,171,68,50,14
-    CTEXT           "mTroll MIDI Controller\n\nhttp://www.creepingfog.com/mTroll/\n\n(c) Copyright 2007-2008 Sean Echevarria",IDC_STATIC,15,18,142,43
-    GROUPBOX        "",IDC_STATIC,7,7,156,75
-    LTEXT           "Built 9999.99.99",IDC_BUILD_DATE,60,67,52,8
-END
-
-IDD_MCONTROLUI_FORM DIALOGEX 0, 0, 535, 282
-STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN
-EXSTYLE WS_EX_CLIENTEDGE
-FONT 8, "MS Sans Serif", 0, 0, 0x1
-BEGIN
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
-BEGIN
-    IDD_ABOUTBOX, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 221
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 82
-    END
-
-    IDD_MCONTROLUI_FORM, DIALOG
-    BEGIN
-        LEFTMARGIN, 5
-        RIGHTMARGIN, 530
-        TOPMARGIN, 5
-        BOTTOMMARGIN, 277
-    END
-END
-#endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Accelerator
-//
-
-IDR_MAINFRAME ACCELERATORS 
-BEGIN
-    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
-    VK_F5,          ID_VIEW_REFRESH,        VIRTKEY, NOINVERT
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // Version
 //
 
@@ -165,7 +72,7 @@ BEGIN
             VALUE "FileDescription", "mTroll MIDI Controller"
             VALUE "FileVersion", "1, 0, 0, 0"
             VALUE "InternalName", "mTroll"
-            VALUE "LegalCopyright", "Copyright 2007 Sean Echevarria"
+            VALUE "LegalCopyright", "Copyright 2007-2008 Sean Echevarria"
             VALUE "OriginalFilename", "mTroll.exe"
             VALUE "ProductName", "mTroll"
             VALUE "ProductVersion", "1, 0, 0, 0"
@@ -175,73 +82,6 @@ BEGIN
     BEGIN
         VALUE "Translation", 0x409, 1200
     END
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// String Table
-//
-
-STRINGTABLE 
-BEGIN
-    IDR_MAINFRAME           "mTroll"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_FILE_NEW             "Create a new document\nNew"
-    ID_FILE_OPEN            "Open an existing document\nOpen"
-    ID_FILE_CLOSE           "Close the active document\nClose"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_APP_ABOUT            "Display program information, version number and copyright\nAbout"
-    ID_APP_EXIT             "Quit the application; prompts to save documents\nExit"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_WINDOW_NEW           "Open another window for the active document\nNew Window"
-    ID_WINDOW_ARRANGE       "Arrange icons at the bottom of the window\nArrange Icons"
-    ID_WINDOW_CASCADE       "Arrange windows so they overlap\nCascade Windows"
-    ID_WINDOW_TILE_HORZ     "Arrange windows as non-overlapping tiles\nTile Windows"
-    ID_WINDOW_TILE_VERT     "Arrange windows as non-overlapping tiles\nTile Windows"
-    ID_WINDOW_SPLIT         "Split the active window into panes\nSplit"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_VIEW_TOOLBAR         "Show or hide the toolbar\nToggle ToolBar"
-END
-
-STRINGTABLE 
-BEGIN
-    ATL_IDS_SCSIZE          "Change the window size"
-    ATL_IDS_SCMOVE          "Change the window position"
-    ATL_IDS_SCMINIMIZE      "Reduce the window to an icon"
-    ATL_IDS_SCMAXIMIZE      "Enlarge the window to full size"
-    ATL_IDS_SCNEXTWINDOW    "Switch to the next document window"
-    ATL_IDS_SCPREVWINDOW    "Switch to the previous document window"
-    ATL_IDS_SCCLOSE         "Close the active window and prompts to save the documents"
-END
-
-STRINGTABLE 
-BEGIN
-    ATL_IDS_SCRESTORE       "Restore the window to normal size"
-    ATL_IDS_SCTASKLIST      "Activate Task List"
-    ATL_IDS_MDICHILD        "Activate this window"
-END
-
-STRINGTABLE 
-BEGIN
-    ATL_IDS_IDLEMESSAGE     "Ready"
-END
-
-STRINGTABLE 
-BEGIN
-    ATL_IDS_MRU_FILE        "Open this document"
 END
 
 #endif    // English (U.S.) resources

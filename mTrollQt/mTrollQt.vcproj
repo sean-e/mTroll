@@ -307,10 +307,6 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;jpg;jpeg;jpe;manifest"
 			>
 			<File
-				RelativePath=".\win\mTrollQt.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\win\mTrollQt.rc"
 				>
 			</File>
@@ -471,19 +467,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\mControlUI\testdata.config.xml"
-				>
-			</File>
-			<File
 				RelativePath="..\mControlUI\Release\testdata.config.xml"
 				>
 			</File>
 			<File
-				RelativePath="..\mControlUI\testdata.ui.xml"
+				RelativePath="..\mControlUI\testdata.config.xml"
 				>
 			</File>
 			<File
 				RelativePath="..\mControlUI\Release\testdata.ui.xml"
+				>
+			</File>
+			<File
+				RelativePath="..\mControlUI\testdata.ui.xml"
 				>
 			</File>
 			<File
