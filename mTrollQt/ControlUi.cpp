@@ -35,6 +35,7 @@ ControlUi::ControlUi(QWidget * parent) :
 	mInvertLeds(false),
 	mSystemPowerOverride(NULL)
 {
+//	setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 }
 
 ControlUi::~ControlUi()
@@ -111,11 +112,8 @@ ControlUi::Unload()
 
 	mMaxSwitchId = 0;
 
-// 	if (mSwitchButtonFont)
-// 		mSwitchButtonFont.DeleteObject();
-// 	
-// 	if (mTraceFont)
-// 		mTraceFont.DeleteObject();
+	QFont tmp;
+	mTraceFont = mSwitchButtonFont = tmp;
 
 	for_each(mMidiOuts.begin(), mMidiOuts.end(), DeleteMidiOut());
 	mMidiOuts.clear();
@@ -344,6 +342,9 @@ ControlUi::SetSwitchDisplay(int switchNumber,
 		return;
 
 //	mLeds[switchNumber]->SetOnOff(isOn);
+	QPalette pal;
+	pal.setColor(QPalette::Window, isOn ? mLedConfig.mOnColor : mLedConfig.mOffColor);
+	mLeds[switchNumber]->setPalette(pal);
 }
 
 void
@@ -393,11 +394,20 @@ ControlUi::CreateSwitchLed(int id,
 						   int top, 
 						   int left)
 {
-	SwitchLed * curSwitchLed = new SwitchLed;
-	QRect rc(left, top, mLedConfig.mWidth, mLedConfig.mHeight);
+	SwitchLed * curSwitchLed = new SwitchLed(parentWidget());
 //	curSwitchLed->SetShape(ID_SHAPE_SQUARE);
 //	curSwitchLed->SetColor(mLedConfig.mOnColor, mLedConfig.mOffColor);
-//	curSwitchLed->Create(m_hWnd, rc, NULL, WS_VISIBLE | WS_CHILDWINDOW, WS_EX_NOPARENTNOTIFY);
+
+	curSwitchLed->setFrameShape(QFrame::Panel);
+	curSwitchLed->setFrameShadow(QFrame::Sunken);
+	curSwitchLed->setAutoFillBackground(true);
+	curSwitchLed->move(left, top);
+	curSwitchLed->resize(mLedConfig.mWidth, mLedConfig.mHeight);
+
+	QPalette pal;
+	pal.setColor(QPalette::Window, mLedConfig.mOffColor);
+	curSwitchLed->setPalette(pal);
+
 	_ASSERTE(!mLeds[id]);
 	mLeds[id] = curSwitchLed;
 }
@@ -414,7 +424,10 @@ ControlUi::SetSwitchConfig(int width,
 	mSwitchConfig.mFontname = fontName.c_str();
 	mSwitchConfig.mFontHeight = fontHeight;
 	mSwitchConfig.mBold = bold;
-//	mSwitchButtonFont.CreatePointFont(mSwitchConfig.mFontHeight * 10, mSwitchConfig.mFontname.c_str(), NULL, mSwitchConfig.mBold);
+
+	mSwitchButtonFont.setFamily(mSwitchConfig.mFontname);
+	mSwitchButtonFont.setPointSize(mSwitchConfig.mFontHeight);
+	mSwitchButtonFont.setBold(mSwitchConfig.mBold);
 }
 
 void
@@ -423,13 +436,21 @@ ControlUi::CreateSwitch(int id,
 						int top, 
 						int left)
 {
-	Switch * curSwitch = new Switch;
-	QRect rc(left, top, mSwitchConfig.mWidth, mSwitchConfig.mHeight);
-// 	curSwitch->Create(m_hWnd, rc, label.c_str(), 
-// 		WS_VISIBLE | WS_CHILDWINDOW | BS_PUSHBUTTON | BS_TEXT | WS_TABSTOP, 
-// 		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY,
-// 		id);
-//	curSwitch->SetFont(mSwitchButtonFont);
+	Switch * curSwitch = new Switch(label.c_str(), parentWidget());
+	curSwitch->setFont(mSwitchButtonFont);
+	curSwitch->move(left, top);
+	curSwitch->resize(mSwitchConfig.mWidth, mSwitchConfig.mHeight);
+
+	char slt[100];
+	::sprintf(slt, "1UiButtonPressed_%d()", id);
+	connect(curSwitch, SIGNAL(pressed()), slt);
+
+	::sprintf(slt, "1UiButtonReleased_%d()", id);
+	connect(curSwitch, SIGNAL(released()), slt);
+
+	// todo: create connection mnemonic so that Alt key does not need
+	// to be held down (like Win dialog accel)
+	
 	_ASSERTE(!mSwitches[id]);
 	mSwitches[id] = curSwitch;
 	if (id > mMaxSwitchId)
@@ -459,20 +480,21 @@ ControlUi::CreateSwitchTextDisplay(int id,
 								   int top, 
 								   int left)
 {
-	SwitchTextDisplay * curSwitchDisplay = new SwitchTextDisplay;
-	QRect rc(left, top, mSwitchTextDisplayConfig.mWidth, mSwitchTextDisplayConfig.mHeight);
-// 	curSwitchDisplay->Create(m_hWnd, rc, NULL, 
-// 		/*ES_AUTOHSCROLL |*/ ES_READONLY | WS_VISIBLE | WS_CHILDWINDOW | SS_LEFTNOWORDWRAP /*SS_CENTERIMAGE*/, 
-// 		/*WS_EX_LEFT |*/ WS_EX_LTRREADING /*| WS_EX_CLIENTEDGE*/);
-// 	curSwitchDisplay->Created();
-// 	curSwitchDisplay->SetMargin(2);
-// 	curSwitchDisplay->SetSunken(true);
+	SwitchTextDisplay * curSwitchDisplay = new SwitchTextDisplay(parentWidget());
+	curSwitchDisplay->setMargin(2);
+	curSwitchDisplay->setFrameShape(QFrame::Panel);
+	curSwitchDisplay->setFrameShadow(QFrame::Sunken);
+	curSwitchDisplay->setAutoFillBackground(true);
+	curSwitchDisplay->move(left, top);
+	curSwitchDisplay->resize(mSwitchTextDisplayConfig.mWidth, mSwitchTextDisplayConfig.mHeight);
 
-//	curSwitchDisplay->SetFontName(mSwitchTextDisplayConfig.mFontname);
-//	curSwitchDisplay->SetFontSize(mSwitchTextDisplayConfig.mFontHeight);
-//	curSwitchDisplay->SetFontBold(mSwitchTextDisplayConfig.mBold);
-//	curSwitchDisplay->SetBkColor(mSwitchTextDisplayConfig.mBgColor);
-//	curSwitchDisplay->SetTextColor(mSwitchTextDisplayConfig.mFgColor);
+	QFont font(mSwitchTextDisplayConfig.mFontname, mSwitchTextDisplayConfig.mFontHeight, mSwitchTextDisplayConfig.mBold ? QFont::Bold : QFont::Normal);
+    curSwitchDisplay->setFont(font);
+
+	QPalette pal;
+	pal.setColor(QPalette::Window, mSwitchTextDisplayConfig.mBgColor);
+	pal.setColor(QPalette::WindowText, mSwitchTextDisplayConfig.mFgColor);
+	curSwitchDisplay->setPalette(pal);
 
 	_ASSERTE(!mSwitchTextDisplays[id]);
 	mSwitchTextDisplays[id] = curSwitchDisplay;
@@ -490,21 +512,21 @@ ControlUi::CreateMainDisplay(int top,
 							 unsigned int fgColor)
 {
 	_ASSERTE(!mMainDisplay);
-	mMainDisplay = new QLabel;
-	QRect rc(left, top, width, height);
-// 	mMainDisplay->Create(m_hWnd, rc, NULL, 
-// 		ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_READONLY | WS_VISIBLE | WS_CHILDWINDOW /*| WS_VSCROLL | ES_LEFT | ES_MULTILINE*/, 
-// 		WS_EX_NOPARENTNOTIFY /*| WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | | WS_EX_CLIENTEDGE*/);
+	mMainDisplay = new QLabel(parentWidget());
+	mMainDisplay->setFrameShape(QFrame::Panel);
+	mMainDisplay->setFrameShadow(QFrame::Sunken);
+	mMainDisplay->setAutoFillBackground(true);
+	mMainDisplay->setAlignment(Qt::AlignLeft);
+	mMainDisplay->move(left, top);
+	mMainDisplay->resize(width, height);
 
-//	mMainDisplay->Created();
-//	mMainDisplay->SetMargin(2);
-//	mMainDisplay->SetSunken(true);
+	QFont font(fontName.c_str(), fontHeight, bold ? QFont::Bold : QFont::Normal);
+    mMainDisplay->setFont(font);
 
-//	mMainDisplay->SetFontName(fontName);
-//	mMainDisplay->SetFontSize(fontHeight);
-//	mMainDisplay->SetFontBold(bold);
-//	mMainDisplay->SetBkColor(bgColor);
-//	mMainDisplay->SetTextColor(fgColor);
+	QPalette pal;
+	pal.setColor(QPalette::Window, bgColor);
+	pal.setColor(QPalette::WindowText, fgColor);
+	mMainDisplay->setPalette(pal);
 }
 
 void
@@ -517,14 +539,21 @@ ControlUi::CreateTraceDisplay(int top,
 							  bool bold)
 {
 	_ASSERTE(!mTraceDisplay);
-	mTraceDisplay = new QTextEdit;
-	QRect rc(left, top, width, height);
-// 	mTraceDisplay->Create(m_hWnd, rc, NULL, 
-// 		WS_VSCROLL | ES_LEFT | ES_MULTILINE | ES_AUTOHSCROLL | ES_READONLY | WS_VISIBLE | WS_CHILDWINDOW, 
-// 		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_NOPARENTNOTIFY | WS_EX_CLIENTEDGE);
-// 
-// 	mTraceFont.CreatePointFont(fontHeight * 10, fontName.c_str(), NULL, bold);
-//	mTraceDisplay->SetFont(mTraceFont);
+	mTraceDisplay = new QTextEdit(parentWidget());
+	mTraceDisplay->setFrameShape(QFrame::Panel);
+	mTraceDisplay->setFrameShadow(QFrame::Sunken);
+	mTraceDisplay->setReadOnly(true);
+	mTraceDisplay->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+	mTraceDisplay->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+	mTraceDisplay->setAcceptRichText(false);
+	mTraceDisplay->setLineWrapMode(QTextEdit::NoWrap);
+	mTraceDisplay->move(left, top);
+	mTraceDisplay->resize(width, height);
+
+	mTraceFont.setFamily(fontName.c_str());
+	mTraceFont.setPointSize(fontHeight);
+	mTraceFont.setBold(bold);
+	mTraceDisplay->setFont(mTraceFont);
 }
 
 void
