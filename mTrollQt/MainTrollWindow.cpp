@@ -90,7 +90,11 @@ MainTrollWindow::Refresh()
 {
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 	mUi.Unload();
-	mUi.Load(mUiFilename.toStdString(), mConfigFilename.toStdString());
+	QByteArray tmp(mUiFilename.toAscii());
+	const std::string uiFile(tmp.constData(), tmp.count());
+	tmp = mConfigFilename.toAscii();
+	const std::string cfgFile(tmp.constData(), tmp.count());
+	mUi.Load(uiFile, cfgFile);
 
 	int width, height;
 	mUi.GetPreferredSize(width, height);
