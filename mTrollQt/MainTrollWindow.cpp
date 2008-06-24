@@ -98,24 +98,22 @@ MainTrollWindow::Refresh()
 	newUi->GetPreferredSize(width, height);
 	if (width && height)
 	{
-// 		WINDOWPLACEMENT wp;
-// 		ZeroMemory(&wp, sizeof(WINDOWPLACEMENT));
-// 		GetWindowPlacement(&wp);
-
-		if (isMaximized() || isMinimized())
+		if (isMaximized())
 		{
-// 			wp.rcNormalPosition.right = wp.rcNormalPosition.left + width;
-// 			wp.rcNormalPosition.bottom = wp.rcNormalPosition.top + height;
-// 			SetWindowPlacement(&wp);
+#ifdef _WINDOWS
+			// don't resize if maximized, but do change the size that
+			// will be used when it becomes unmaximized.
+			// Is there a way to do this with Qt?
+			WINDOWPLACEMENT wp;
+			::ZeroMemory(&wp, sizeof(WINDOWPLACEMENT));
+			::GetWindowPlacement(effectiveWinId(), &wp);
+			wp.rcNormalPosition.right = wp.rcNormalPosition.left + width;
+			wp.rcNormalPosition.bottom = wp.rcNormalPosition.top + height;
+			::SetWindowPlacement(effectiveWinId(), &wp);
+#endif
 		}
 		else
-		{
-// 			CRect wndRc;
-// 			GetWindowRect(&wndRc);
-// 			wndRc.right = wndRc.left + width;
-// 			wndRc.bottom = wndRc.top + height;
-// 			MoveWindow(&wndRc);
-		}
+			resize(width, height);
 	}
 
 	QApplication::restoreOverrideCursor();
