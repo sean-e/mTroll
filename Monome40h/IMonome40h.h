@@ -53,6 +53,11 @@ public:
 	virtual bool Subscribe(IMonome40hAdcSubscriber * sub) = 0;
 	virtual bool Unsubscribe(IMonome40hAdcSubscriber * sub) = 0;
 
+	// device identification and acquisition
+	virtual int LocateMonomeDeviceIdx() = 0;
+	virtual std::string GetDeviceSerialNumber(int devidx) = 0;
+	virtual bool AcquireDevice(const std::string & devSerialNum) = 0;
+
 protected:
 	IMonome40h() {}
 	IMonome40h(const IMonome40h & rhs);
