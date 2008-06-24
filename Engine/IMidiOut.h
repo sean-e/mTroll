@@ -16,6 +16,8 @@ class ISwitchDisplay;
 class IMidiOut
 {
 public:
+	virtual ~IMidiOut() {}
+
 	virtual unsigned int GetMidiOutDeviceCount() const = 0;
 	virtual std::string GetMidiOutDeviceName(unsigned int deviceIdx) const = 0;
 	virtual void SetActivityIndicator(ISwitchDisplay * activityIndicator, int activityIndicatorIdx) = 0;
