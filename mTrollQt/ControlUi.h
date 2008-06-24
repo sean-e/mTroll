@@ -15,13 +15,9 @@
 
 #ifdef _WINDOWS
 	#include "../winUtil/KeepDisplayOn.h"
-	#include "../midi/WinMidiOut.h"
-	typedef WinMidiOut	XMidiOut;
 	#undef TextOut		// Win A/W preprocessing hoses IMainDisplay::TextOut impl
 #else
 	struct KeepDisplayOn {};
-	#error "include the midiout header file for this platform"
-	typedef YourMidiOut	XMidiOut;
 #endif
 
 
@@ -263,7 +259,7 @@ private:
 	QFont						mTraceFont;
 	int							mPreferredHeight, mPreferredWidth;
 	int							mMaxSwitchId;
-	typedef std::map<unsigned int, XMidiOut*> MidiOuts;
+	typedef std::map<unsigned int, IMidiOut*> MidiOuts;
 	MidiOuts					mMidiOuts;
 	int							mLedIntensity;
 	bool						mInvertLeds;
