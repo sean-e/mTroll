@@ -2,9 +2,10 @@
 #define AboutDlg_h__
 
 #include <qdialog>
-#include <QLabel>
-#include <QLayout>
-#include <QPushButton>
+
+class QLabel;
+class QBoxLayout;
+class QPushButton;
 
 
 class AboutDlg : public QDialog

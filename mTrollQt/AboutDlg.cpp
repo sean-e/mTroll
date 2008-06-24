@@ -1,4 +1,9 @@
 #include "AboutDlg.h"
+#include <QLabel>
+#include <QLayout>
+#include <QPushButton>
+#include <QFrame>
+#include <QGroupBox>
 
 extern QString GetBuildDate();
 
@@ -13,16 +18,23 @@ AboutDlg::AboutDlg()
 	labelTxt += "Built " + ::GetBuildDate();
 	labelTxt += "</body></html>";
 
-	mLayout = new QBoxLayout(QBoxLayout::LeftToRight, this);
 	mExitButton = new QPushButton("&Close", this);
-	mLabel = new QLabel(labelTxt, this);
 
+	mLabel = new QLabel(labelTxt, this);
 	mLabel->setAlignment(Qt::AlignCenter);
 	mLabel->setTextInteractionFlags(Qt::LinksAccessibleByMouse);
 	mLabel->setOpenExternalLinks(true);
 
+	QVBoxLayout *vbox = new QVBoxLayout;
+	vbox->addWidget(mLabel);
+	vbox->addStretch(1);
+
+	QGroupBox *groupBox = new QGroupBox("");
+	groupBox->setLayout(vbox);
+
+	mLayout = new QBoxLayout(QBoxLayout::LeftToRight, this);
 	mLayout->setSizeConstraint(QLayout::SetFixedSize);
-	mLayout->addWidget(mLabel, 0, Qt::AlignCenter);
+	mLayout->addWidget(groupBox, 0, Qt::AlignCenter);
 	mLayout->addWidget(mExitButton, 0, Qt::AlignBottom);
 
 	connect(mExitButton, SIGNAL(clicked()), SLOT(reject()));
@@ -32,4 +44,5 @@ AboutDlg::~AboutDlg()
 {
 	delete mLayout;
 	delete mLabel;
+	delete mExitButton;
 }
