@@ -92,142 +92,142 @@ private: // IMidiControlUi
 	virtual void		SetLedDisplayState(bool invert) { mInvertLeds = invert; }
 
 private slots:
-	// sigh... the one time that I would use a macro but the Qt MOC doesn't support it (or the use of tokenization)!!
-	virtual void UiButtonPressed_0() { ButtonPressed(0); }
-	virtual void UiButtonPressed_1() { ButtonPressed(1); }
-	virtual void UiButtonPressed_2() { ButtonPressed(2); }
-	virtual void UiButtonPressed_3() { ButtonPressed(3); }
-	virtual void UiButtonPressed_4() { ButtonPressed(4); }
-	virtual void UiButtonPressed_5() { ButtonPressed(5); }
-	virtual void UiButtonPressed_6() { ButtonPressed(6); }
-	virtual void UiButtonPressed_7() { ButtonPressed(7); }
-	virtual void UiButtonPressed_8() { ButtonPressed(8); }
-	virtual void UiButtonPressed_9() { ButtonPressed(9); }
-	virtual void UiButtonPressed_10() { ButtonPressed(10); }
-	virtual void UiButtonPressed_11() { ButtonPressed(11); }
-	virtual void UiButtonPressed_12() { ButtonPressed(12); }
-	virtual void UiButtonPressed_13() { ButtonPressed(13); }
-	virtual void UiButtonPressed_14() { ButtonPressed(14); }
-	virtual void UiButtonPressed_15() { ButtonPressed(15); }
-	virtual void UiButtonPressed_16() { ButtonPressed(16); }
-	virtual void UiButtonPressed_17() { ButtonPressed(17); }
-	virtual void UiButtonPressed_18() { ButtonPressed(18); }
-	virtual void UiButtonPressed_19() { ButtonPressed(19); }
-	virtual void UiButtonPressed_20() { ButtonPressed(20); }
-	virtual void UiButtonPressed_21() { ButtonPressed(21); }
-	virtual void UiButtonPressed_22() { ButtonPressed(22); }
-	virtual void UiButtonPressed_23() { ButtonPressed(23); }
-	virtual void UiButtonPressed_24() { ButtonPressed(24); }
-	virtual void UiButtonPressed_25() { ButtonPressed(25); }
-	virtual void UiButtonPressed_26() { ButtonPressed(26); }
-	virtual void UiButtonPressed_27() { ButtonPressed(27); }
-	virtual void UiButtonPressed_28() { ButtonPressed(28); }
-	virtual void UiButtonPressed_29() { ButtonPressed(29); }
-	virtual void UiButtonPressed_30() { ButtonPressed(30); }
-	virtual void UiButtonPressed_31() { ButtonPressed(31); }
-	virtual void UiButtonPressed_32() { ButtonPressed(32); }
-	virtual void UiButtonPressed_33() { ButtonPressed(33); }
-	virtual void UiButtonPressed_34() { ButtonPressed(34); }
-	virtual void UiButtonPressed_35() { ButtonPressed(35); }
-	virtual void UiButtonPressed_36() { ButtonPressed(36); }
-	virtual void UiButtonPressed_37() { ButtonPressed(37); }
-	virtual void UiButtonPressed_38() { ButtonPressed(38); }
-	virtual void UiButtonPressed_39() { ButtonPressed(39); }
-	virtual void UiButtonPressed_40() { ButtonPressed(40); }
-	virtual void UiButtonPressed_41() { ButtonPressed(41); }
-	virtual void UiButtonPressed_42() { ButtonPressed(42); }
-	virtual void UiButtonPressed_43() { ButtonPressed(43); }
-	virtual void UiButtonPressed_44() { ButtonPressed(44); }
-	virtual void UiButtonPressed_45() { ButtonPressed(45); }
-	virtual void UiButtonPressed_46() { ButtonPressed(46); }
-	virtual void UiButtonPressed_47() { ButtonPressed(47); }
-	virtual void UiButtonPressed_48() { ButtonPressed(48); }
-	virtual void UiButtonPressed_49() { ButtonPressed(49); }
-	virtual void UiButtonPressed_50() { ButtonPressed(50); }
-	virtual void UiButtonPressed_51() { ButtonPressed(51); }
-	virtual void UiButtonPressed_52() { ButtonPressed(52); }
-	virtual void UiButtonPressed_53() { ButtonPressed(53); }
-	virtual void UiButtonPressed_54() { ButtonPressed(54); }
-	virtual void UiButtonPressed_55() { ButtonPressed(55); }
-	virtual void UiButtonPressed_56() { ButtonPressed(56); }
-	virtual void UiButtonPressed_57() { ButtonPressed(57); }
-	virtual void UiButtonPressed_58() { ButtonPressed(58); }
-	virtual void UiButtonPressed_59() { ButtonPressed(59); }
-	virtual void UiButtonPressed_60() { ButtonPressed(60); }
-	virtual void UiButtonPressed_61() { ButtonPressed(61); }
-	virtual void UiButtonPressed_62() { ButtonPressed(62); }
-	virtual void UiButtonPressed_63() { ButtonPressed(63); }
-	virtual void UiButtonPressed_64() { ButtonPressed(64); }
+	void AsyncMainTextOut();
 
-	virtual void UiButtonReleased_0() { ButtonReleased(0); }
-	virtual void UiButtonReleased_1() { ButtonReleased(1); }
-	virtual void UiButtonReleased_2() { ButtonReleased(2); }
-	virtual void UiButtonReleased_3() { ButtonReleased(3); }
-	virtual void UiButtonReleased_4() { ButtonReleased(4); }
-	virtual void UiButtonReleased_5() { ButtonReleased(5); }
-	virtual void UiButtonReleased_6() { ButtonReleased(6); }
-	virtual void UiButtonReleased_7() { ButtonReleased(7); }
-	virtual void UiButtonReleased_8() { ButtonReleased(8); }
-	virtual void UiButtonReleased_9() { ButtonReleased(9); }
-	virtual void UiButtonReleased_10() { ButtonReleased(10); }
-	virtual void UiButtonReleased_11() { ButtonReleased(11); }
-	virtual void UiButtonReleased_12() { ButtonReleased(12); }
-	virtual void UiButtonReleased_13() { ButtonReleased(13); }
-	virtual void UiButtonReleased_14() { ButtonReleased(14); }
-	virtual void UiButtonReleased_15() { ButtonReleased(15); }
-	virtual void UiButtonReleased_16() { ButtonReleased(16); }
-	virtual void UiButtonReleased_17() { ButtonReleased(17); }
-	virtual void UiButtonReleased_18() { ButtonReleased(18); }
-	virtual void UiButtonReleased_19() { ButtonReleased(19); }
-	virtual void UiButtonReleased_20() { ButtonReleased(20); }
-	virtual void UiButtonReleased_21() { ButtonReleased(21); }
-	virtual void UiButtonReleased_22() { ButtonReleased(22); }
-	virtual void UiButtonReleased_23() { ButtonReleased(23); }
-	virtual void UiButtonReleased_24() { ButtonReleased(24); }
-	virtual void UiButtonReleased_25() { ButtonReleased(25); }
-	virtual void UiButtonReleased_26() { ButtonReleased(26); }
-	virtual void UiButtonReleased_27() { ButtonReleased(27); }
-	virtual void UiButtonReleased_28() { ButtonReleased(28); }
-	virtual void UiButtonReleased_29() { ButtonReleased(29); }
-	virtual void UiButtonReleased_30() { ButtonReleased(30); }
-	virtual void UiButtonReleased_31() { ButtonReleased(31); }
-	virtual void UiButtonReleased_32() { ButtonReleased(32); }
-	virtual void UiButtonReleased_33() { ButtonReleased(33); }
-	virtual void UiButtonReleased_34() { ButtonReleased(34); }
-	virtual void UiButtonReleased_35() { ButtonReleased(35); }
-	virtual void UiButtonReleased_36() { ButtonReleased(36); }
-	virtual void UiButtonReleased_37() { ButtonReleased(37); }
-	virtual void UiButtonReleased_38() { ButtonReleased(38); }
-	virtual void UiButtonReleased_39() { ButtonReleased(39); }
-	virtual void UiButtonReleased_40() { ButtonReleased(40); }
-	virtual void UiButtonReleased_41() { ButtonReleased(41); }
-	virtual void UiButtonReleased_42() { ButtonReleased(42); }
-	virtual void UiButtonReleased_43() { ButtonReleased(43); }
-	virtual void UiButtonReleased_44() { ButtonReleased(44); }
-	virtual void UiButtonReleased_45() { ButtonReleased(45); }
-	virtual void UiButtonReleased_46() { ButtonReleased(46); }
-	virtual void UiButtonReleased_47() { ButtonReleased(47); }
-	virtual void UiButtonReleased_48() { ButtonReleased(48); }
-	virtual void UiButtonReleased_49() { ButtonReleased(49); }
-	virtual void UiButtonReleased_50() { ButtonReleased(50); }
-	virtual void UiButtonReleased_51() { ButtonReleased(51); }
-	virtual void UiButtonReleased_52() { ButtonReleased(52); }
-	virtual void UiButtonReleased_53() { ButtonReleased(53); }
-	virtual void UiButtonReleased_54() { ButtonReleased(54); }
-	virtual void UiButtonReleased_55() { ButtonReleased(55); }
-	virtual void UiButtonReleased_56() { ButtonReleased(56); }
-	virtual void UiButtonReleased_57() { ButtonReleased(57); }
-	virtual void UiButtonReleased_58() { ButtonReleased(58); }
-	virtual void UiButtonReleased_59() { ButtonReleased(59); }
-	virtual void UiButtonReleased_60() { ButtonReleased(60); }
-	virtual void UiButtonReleased_61() { ButtonReleased(61); }
-	virtual void UiButtonReleased_62() { ButtonReleased(62); }
-	virtual void UiButtonReleased_63() { ButtonReleased(63); }
-	virtual void UiButtonReleased_64() { ButtonReleased(64); }
+	// sigh... the one time that I would use a macro but the Qt MOC doesn't support it (or the use of tokenization)!!
+	void UiButtonPressed_0() { ButtonPressed(0); }
+	void UiButtonPressed_1() { ButtonPressed(1); }
+	void UiButtonPressed_2() { ButtonPressed(2); }
+	void UiButtonPressed_3() { ButtonPressed(3); }
+	void UiButtonPressed_4() { ButtonPressed(4); }
+	void UiButtonPressed_5() { ButtonPressed(5); }
+	void UiButtonPressed_6() { ButtonPressed(6); }
+	void UiButtonPressed_7() { ButtonPressed(7); }
+	void UiButtonPressed_8() { ButtonPressed(8); }
+	void UiButtonPressed_9() { ButtonPressed(9); }
+	void UiButtonPressed_10() { ButtonPressed(10); }
+	void UiButtonPressed_11() { ButtonPressed(11); }
+	void UiButtonPressed_12() { ButtonPressed(12); }
+	void UiButtonPressed_13() { ButtonPressed(13); }
+	void UiButtonPressed_14() { ButtonPressed(14); }
+	void UiButtonPressed_15() { ButtonPressed(15); }
+	void UiButtonPressed_16() { ButtonPressed(16); }
+	void UiButtonPressed_17() { ButtonPressed(17); }
+	void UiButtonPressed_18() { ButtonPressed(18); }
+	void UiButtonPressed_19() { ButtonPressed(19); }
+	void UiButtonPressed_20() { ButtonPressed(20); }
+	void UiButtonPressed_21() { ButtonPressed(21); }
+	void UiButtonPressed_22() { ButtonPressed(22); }
+	void UiButtonPressed_23() { ButtonPressed(23); }
+	void UiButtonPressed_24() { ButtonPressed(24); }
+	void UiButtonPressed_25() { ButtonPressed(25); }
+	void UiButtonPressed_26() { ButtonPressed(26); }
+	void UiButtonPressed_27() { ButtonPressed(27); }
+	void UiButtonPressed_28() { ButtonPressed(28); }
+	void UiButtonPressed_29() { ButtonPressed(29); }
+	void UiButtonPressed_30() { ButtonPressed(30); }
+	void UiButtonPressed_31() { ButtonPressed(31); }
+	void UiButtonPressed_32() { ButtonPressed(32); }
+	void UiButtonPressed_33() { ButtonPressed(33); }
+	void UiButtonPressed_34() { ButtonPressed(34); }
+	void UiButtonPressed_35() { ButtonPressed(35); }
+	void UiButtonPressed_36() { ButtonPressed(36); }
+	void UiButtonPressed_37() { ButtonPressed(37); }
+	void UiButtonPressed_38() { ButtonPressed(38); }
+	void UiButtonPressed_39() { ButtonPressed(39); }
+	void UiButtonPressed_40() { ButtonPressed(40); }
+	void UiButtonPressed_41() { ButtonPressed(41); }
+	void UiButtonPressed_42() { ButtonPressed(42); }
+	void UiButtonPressed_43() { ButtonPressed(43); }
+	void UiButtonPressed_44() { ButtonPressed(44); }
+	void UiButtonPressed_45() { ButtonPressed(45); }
+	void UiButtonPressed_46() { ButtonPressed(46); }
+	void UiButtonPressed_47() { ButtonPressed(47); }
+	void UiButtonPressed_48() { ButtonPressed(48); }
+	void UiButtonPressed_49() { ButtonPressed(49); }
+	void UiButtonPressed_50() { ButtonPressed(50); }
+	void UiButtonPressed_51() { ButtonPressed(51); }
+	void UiButtonPressed_52() { ButtonPressed(52); }
+	void UiButtonPressed_53() { ButtonPressed(53); }
+	void UiButtonPressed_54() { ButtonPressed(54); }
+	void UiButtonPressed_55() { ButtonPressed(55); }
+	void UiButtonPressed_56() { ButtonPressed(56); }
+	void UiButtonPressed_57() { ButtonPressed(57); }
+	void UiButtonPressed_58() { ButtonPressed(58); }
+	void UiButtonPressed_59() { ButtonPressed(59); }
+	void UiButtonPressed_60() { ButtonPressed(60); }
+	void UiButtonPressed_61() { ButtonPressed(61); }
+	void UiButtonPressed_62() { ButtonPressed(62); }
+	void UiButtonPressed_63() { ButtonPressed(63); }
+	void UiButtonPressed_64() { ButtonPressed(64); }
+
+	void UiButtonReleased_0() { ButtonReleased(0); }
+	void UiButtonReleased_1() { ButtonReleased(1); }
+	void UiButtonReleased_2() { ButtonReleased(2); }
+	void UiButtonReleased_3() { ButtonReleased(3); }
+	void UiButtonReleased_4() { ButtonReleased(4); }
+	void UiButtonReleased_5() { ButtonReleased(5); }
+	void UiButtonReleased_6() { ButtonReleased(6); }
+	void UiButtonReleased_7() { ButtonReleased(7); }
+	void UiButtonReleased_8() { ButtonReleased(8); }
+	void UiButtonReleased_9() { ButtonReleased(9); }
+	void UiButtonReleased_10() { ButtonReleased(10); }
+	void UiButtonReleased_11() { ButtonReleased(11); }
+	void UiButtonReleased_12() { ButtonReleased(12); }
+	void UiButtonReleased_13() { ButtonReleased(13); }
+	void UiButtonReleased_14() { ButtonReleased(14); }
+	void UiButtonReleased_15() { ButtonReleased(15); }
+	void UiButtonReleased_16() { ButtonReleased(16); }
+	void UiButtonReleased_17() { ButtonReleased(17); }
+	void UiButtonReleased_18() { ButtonReleased(18); }
+	void UiButtonReleased_19() { ButtonReleased(19); }
+	void UiButtonReleased_20() { ButtonReleased(20); }
+	void UiButtonReleased_21() { ButtonReleased(21); }
+	void UiButtonReleased_22() { ButtonReleased(22); }
+	void UiButtonReleased_23() { ButtonReleased(23); }
+	void UiButtonReleased_24() { ButtonReleased(24); }
+	void UiButtonReleased_25() { ButtonReleased(25); }
+	void UiButtonReleased_26() { ButtonReleased(26); }
+	void UiButtonReleased_27() { ButtonReleased(27); }
+	void UiButtonReleased_28() { ButtonReleased(28); }
+	void UiButtonReleased_29() { ButtonReleased(29); }
+	void UiButtonReleased_30() { ButtonReleased(30); }
+	void UiButtonReleased_31() { ButtonReleased(31); }
+	void UiButtonReleased_32() { ButtonReleased(32); }
+	void UiButtonReleased_33() { ButtonReleased(33); }
+	void UiButtonReleased_34() { ButtonReleased(34); }
+	void UiButtonReleased_35() { ButtonReleased(35); }
+	void UiButtonReleased_36() { ButtonReleased(36); }
+	void UiButtonReleased_37() { ButtonReleased(37); }
+	void UiButtonReleased_38() { ButtonReleased(38); }
+	void UiButtonReleased_39() { ButtonReleased(39); }
+	void UiButtonReleased_40() { ButtonReleased(40); }
+	void UiButtonReleased_41() { ButtonReleased(41); }
+	void UiButtonReleased_42() { ButtonReleased(42); }
+	void UiButtonReleased_43() { ButtonReleased(43); }
+	void UiButtonReleased_44() { ButtonReleased(44); }
+	void UiButtonReleased_45() { ButtonReleased(45); }
+	void UiButtonReleased_46() { ButtonReleased(46); }
+	void UiButtonReleased_47() { ButtonReleased(47); }
+	void UiButtonReleased_48() { ButtonReleased(48); }
+	void UiButtonReleased_49() { ButtonReleased(49); }
+	void UiButtonReleased_50() { ButtonReleased(50); }
+	void UiButtonReleased_51() { ButtonReleased(51); }
+	void UiButtonReleased_52() { ButtonReleased(52); }
+	void UiButtonReleased_53() { ButtonReleased(53); }
+	void UiButtonReleased_54() { ButtonReleased(54); }
+	void UiButtonReleased_55() { ButtonReleased(55); }
+	void UiButtonReleased_56() { ButtonReleased(56); }
+	void UiButtonReleased_57() { ButtonReleased(57); }
+	void UiButtonReleased_58() { ButtonReleased(58); }
+	void UiButtonReleased_59() { ButtonReleased(59); }
+	void UiButtonReleased_60() { ButtonReleased(60); }
+	void UiButtonReleased_61() { ButtonReleased(61); }
+	void UiButtonReleased_62() { ButtonReleased(62); }
+	void UiButtonReleased_63() { ButtonReleased(63); }
+	void UiButtonReleased_64() { ButtonReleased(64); }
 
 private:
-	void AsyncTextOut(void * wParam);
-
 	void LoadUi(const std::string & uiSettingsFile);
 	void LoadMonome();
 	void LoadMidiSettings(const std::string & file);
@@ -268,6 +268,7 @@ private:
 	int							mLedIntensity;
 	bool						mInvertLeds;
 	KeepDisplayOn				* mSystemPowerOverride;
+	QString						mMainDisplayQueuedText;
 
 	struct SwitchTextDisplayConfig
 	{

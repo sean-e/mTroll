@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QTextEdit>
 #include <QPushButton>
+#include <qtimer.h>
 
 #include "ControlUi.h"
 #include "../Engine/EngineLoader.h"
@@ -273,38 +274,34 @@ ControlUi::ButtonReleased(const int idx)
 void
 ControlUi::TextOut(const std::string & txt)
 {
-	if (mMainDisplay)
-	{
-		QString * str = new QString(txt.c_str());
-		AsyncTextOut(str);
-//		PostMessage(WM_ASYNCTEXTOUT, (WPARAM)str);
-	}
+	if (!mMainDisplay)
+		return;
+
+	mMainDisplayQueuedText = txt.c_str();
+	QTimer::singleShot(10, this, SLOT(AsyncMainTextOut()));
 }
 
 void
-ControlUi::AsyncTextOut(void * wParam)
+ControlUi::AsyncMainTextOut()
 {
-	QString *newTxt= reinterpret_cast<QString*>(wParam);
-	_ASSERTE(newTxt);
-	if (mMainDisplay)
-	{
-//		newTxt->replace("\n", "\r\n");
-		const QString prevTxt(mMainDisplay->text());
-		if (prevTxt != newTxt)
-			mMainDisplay->setText(*newTxt);
-	}
-	delete newTxt;
+	if (!mMainDisplay)
+		return;
+
+//	mMainDisplayQueuedText.replace("\n", "\r\n");
+	const QString prevTxt(mMainDisplay->text());
+	if (prevTxt != mMainDisplayQueuedText)
+		mMainDisplay->setText(mMainDisplayQueuedText);
 }
 
 void
 ControlUi::ClearDisplay()
 {
-	if (mMainDisplay)
-	{
-		const QString prevTxt(mMainDisplay->text());
-		if (!prevTxt.isEmpty())
-			mMainDisplay->setText("");
-	}
+	if (!mMainDisplay)
+		return;
+
+	const QString prevTxt(mMainDisplay->text());
+	if (!prevTxt.isEmpty())
+		mMainDisplay->setText("");
 }
 
 
