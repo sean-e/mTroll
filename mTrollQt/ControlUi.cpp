@@ -17,9 +17,13 @@
 	#include "../winUtil/SEHexception.h"
 	#include "../Monome40h/Win32/Monome40hFtw.h"
 	typedef Monome40hFtw XMonome40h;
+	#include "../midi/WinMidiOut.h"
+	typedef WinMidiOut	XMidiOut;
 #else
 	#error "include the monome header file for this platform"
 	typedef YourMonome40h	XMonome40h;
+	#error "include the midiOut header file for this platform"
+	typedef YourMidiOut		XMidiOut;
 #endif
 
 
@@ -36,7 +40,6 @@ ControlUi::ControlUi(QWidget * parent) :
 	mInvertLeds(false),
 	mSystemPowerOverride(NULL)
 {
-//	setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 }
 
 ControlUi::~ControlUi()
@@ -46,7 +49,7 @@ ControlUi::~ControlUi()
 
 struct DeleteMidiOut
 {
-	void operator()(const std::pair<unsigned int, XMidiOut *> & pr)
+	void operator()(const std::pair<unsigned int, IMidiOut *> & pr)
 	{
 		delete pr.second;
 	}
@@ -199,7 +202,7 @@ ControlUi::LoadUi(const std::string & uiSettingsFile)
 void
 ControlUi::LoadMonome()
 {
-	XMonome40h * monome = NULL;
+	IMonome40h * monome = NULL;
 	try
 	{
 		monome = new XMonome40h(this);
