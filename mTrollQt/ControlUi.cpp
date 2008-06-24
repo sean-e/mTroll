@@ -439,15 +439,22 @@ ControlUi::CreateSwitch(int id,
 	curSwitch->move(left, top);
 	curSwitch->resize(mSwitchConfig.mWidth, mSwitchConfig.mHeight);
 
-	char slt[100];
-	::sprintf(slt, "1UiButtonPressed_%d()", id);
-	connect(curSwitch, SIGNAL(pressed()), slt);
+	QString qSlot;
 
-	::sprintf(slt, "1UiButtonReleased_%d()", id);
-	connect(curSwitch, SIGNAL(released()), slt);
+	qSlot = QString("1UiButtonPressed_%1()").arg(id);
+	connect(curSwitch, SIGNAL(pressed()), qSlot.toAscii().constData());
 
-	// todo: create connection mnemonic so that Alt key does not need
-	// to be held down (like Win dialog accel)
+	qSlot = QString("1UiButtonReleased_%1()").arg(id);
+	connect(curSwitch, SIGNAL(released()), qSlot.toAscii().constData());
+
+	std::string::size_type pos = label.find("&");
+	if (std::string::npos != pos && pos+1 < label.length())
+	{
+		// override default shortcut so that Alt key does 
+		// not need to be held down
+		const QString shortCutKey = label[pos + 1];
+		curSwitch->setShortcut(QKeySequence(shortCutKey));
+	}
 	
 	_ASSERTE(!mSwitches[id]);
 	mSwitches[id] = curSwitch;
