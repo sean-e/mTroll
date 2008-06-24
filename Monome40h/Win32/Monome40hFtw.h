@@ -55,12 +55,12 @@ public: // IMonome40h
 	virtual bool Subscribe(IMonome40hAdcSubscriber * sub);
 	virtual bool Unsubscribe(IMonome40hAdcSubscriber * sub);
 
-	int LocateMonomeDeviceIdx();
-	std::string GetDeviceSerialNumber(int devidx);
-	bool AcquireDevice(const std::string & devSerialNum);
-	void ReleaseDevice();
+	virtual int LocateMonomeDeviceIdx();
+	virtual std::string GetDeviceSerialNumber(int devidx);
+	virtual bool AcquireDevice(const std::string & devSerialNum);
 
 private:
+	void ReleaseDevice();
 	BOOL Send(const MonomeSerialProtocolData & data);
 	static unsigned int __stdcall DeviceServiceThread(void * _this);
 	void DeviceServiceThread();
