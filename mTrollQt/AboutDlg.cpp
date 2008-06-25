@@ -25,16 +25,16 @@ AboutDlg::AboutDlg()
 	mLabel->setTextInteractionFlags(Qt::LinksAccessibleByMouse);
 	mLabel->setOpenExternalLinks(true);
 
-	QVBoxLayout *vbox = new QVBoxLayout;
-	vbox->addWidget(mLabel);
-	vbox->addStretch(1);
+	QVBoxLayout * labelLayout = new QVBoxLayout;
+	labelLayout->addWidget(mLabel);
+	labelLayout->addStretch(1);
 
-	QGroupBox *groupBox = new QGroupBox("");
-	groupBox->setLayout(vbox);
+	mLabelGroupBox = new QGroupBox("", this);
+	mLabelGroupBox->setLayout(labelLayout); // takes ownership
 
 	mLayout = new QBoxLayout(QBoxLayout::LeftToRight, this);
 	mLayout->setSizeConstraint(QLayout::SetFixedSize);
-	mLayout->addWidget(groupBox, 0, Qt::AlignCenter);
+	mLayout->addWidget(mLabelGroupBox, 0, Qt::AlignCenter);
 	mLayout->addWidget(mExitButton, 0, Qt::AlignBottom);
 
 	connect(mExitButton, SIGNAL(clicked()), SLOT(reject()));
@@ -42,7 +42,8 @@ AboutDlg::AboutDlg()
 
 AboutDlg::~AboutDlg()
 {
-	delete mLayout;
-	delete mLabel;
 	delete mExitButton;
+	delete mLabel;
+	delete mLabelGroupBox;
+	delete mLayout;
 }

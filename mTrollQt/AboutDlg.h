@@ -6,6 +6,7 @@
 class QLabel;
 class QBoxLayout;
 class QPushButton;
+class QGroupBox;
 
 
 class AboutDlg : public QDialog
@@ -18,6 +19,7 @@ private:
 	QLabel		* mLabel;
 	QBoxLayout	* mLayout;
 	QPushButton	* mExitButton;
+	QGroupBox	* mLabelGroupBox;
 };
 
 #endif // AboutDlg_h__
