@@ -25,14 +25,14 @@ MainTrollWindow::MainTrollWindow() :
 
 	setWindowTitle(tr("mTroll MIDI Controller"));
 
-	mFileMenu = menuBar()->addMenu(tr("&File"));
-	mFileMenu->addAction(tr("&Open..."), this, SLOT(OpenFile()), QKeySequence(tr("Ctrl+O")));
-	mFileMenu->addAction(tr("&Refresh"), this, SLOT(Refresh()), QKeySequence(tr("F5")));
-	mFileMenu->addSeparator();
-	mFileMenu->addAction(tr("E&xit"), this, SLOT(close()));
+	QMenu * fileMenu = menuBar()->addMenu(tr("&File"));
+	fileMenu->addAction(tr("&Open..."), this, SLOT(OpenFile()), QKeySequence(tr("Ctrl+O")));
+	fileMenu->addAction(tr("&Refresh"), this, SLOT(Refresh()), QKeySequence(tr("F5")));
+	fileMenu->addSeparator();
+	fileMenu->addAction(tr("E&xit"), this, SLOT(close()));
 
-	mHelpMenu = menuBar()->addMenu(tr("&Help"));
-	mHelpMenu->addAction(tr("&About mTroll..."), this, SLOT(About()));
+	QMenu * helpMenu = menuBar()->addMenu(tr("&Help"));
+	helpMenu->addAction(tr("&About mTroll..."), this, SLOT(About()));
 
 	QSettings settings;
 	mUiFilename = settings.value(kActiveUiFile, "testdata.ui.xml").value<QString>();
@@ -43,8 +43,6 @@ MainTrollWindow::MainTrollWindow() :
 
 MainTrollWindow::~MainTrollWindow()
 {
-	delete mFileMenu;
-	delete mHelpMenu;
 }
 
 void

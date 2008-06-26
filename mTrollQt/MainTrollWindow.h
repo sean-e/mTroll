@@ -3,8 +3,6 @@
 
 #include <QMainWindow>
 
-class QMenu;
-
 
 class MainTrollWindow : public QMainWindow
 {
@@ -19,9 +17,6 @@ private slots:
 	void Refresh();
 
 private:
-	QMenu		*mFileMenu;
-	QMenu		*mHelpMenu;
-
 	QString		mConfigFilename;
 	QString		mUiFilename;
 };
