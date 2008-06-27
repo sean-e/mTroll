@@ -316,7 +316,8 @@ ControlUi::Trace(const std::string & txt)
 	{
 		QString newTxt(txt.c_str());
 //		newTxt.replace("\n", "\r\n");
-		mTraceDisplay->append(newTxt);
+		mTraceDisplay->moveCursor(QTextCursor::End, QTextCursor::MoveAnchor);
+		mTraceDisplay->insertPlainText(newTxt);
 	}
 }
 
