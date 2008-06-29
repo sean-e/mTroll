@@ -7,7 +7,7 @@
 #include "HexStringUtils.h"
 #include "IMidiOutGenerator.h"
 #include "ITraceDisplay.h"
-#include "..\Monome40h\IMonome40h.h"
+#include "../Monome40h/IMonome40h.h"
 #include "NormalPatch.h"
 #include "TogglePatch.h"
 #include "SequencePatch.h"
