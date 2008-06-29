@@ -309,7 +309,7 @@ WinMidiOut::IndicateActivity()
 		sOutOnTimer->TurnOffIndicator();
 	sOutOnTimer = this;
 	mActivityIndicator->SetSwitchDisplay(mActivityIndicatorIndex, true);
-	::SetTimer(NULL, (UINT_PTR)this, 150, TimerProc);
+	::SetTimer(NULL, (UINT_PTR)this, 200, TimerProc);
 }
 
 void
@@ -326,7 +326,6 @@ WinMidiOut::TimerProc(HWND,
 					  DWORD)
 {
 	WinMidiOut * _this = sOutOnTimer;
-	sOutOnTimer = NULL;
 	if (_this)
 		_this->TurnOffIndicator();
 }
