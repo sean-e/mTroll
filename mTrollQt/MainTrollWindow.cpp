@@ -17,7 +17,8 @@
 
 
 MainTrollWindow::MainTrollWindow() : 
-	QMainWindow()
+	QMainWindow(),
+	mUi(NULL)
 {
 	QCoreApplication::setOrganizationName(kOrganizationKey);
 	QCoreApplication::setOrganizationDomain(kOrganizationDomain);
@@ -28,6 +29,7 @@ MainTrollWindow::MainTrollWindow() :
 	QMenu * fileMenu = menuBar()->addMenu(tr("&File"));
 	fileMenu->addAction(tr("&Open..."), this, SLOT(OpenFile()), QKeySequence(tr("Ctrl+O")));
 	fileMenu->addAction(tr("&Refresh"), this, SLOT(Refresh()), QKeySequence(tr("F5")));
+	fileMenu->addAction(tr("Re&connect to monome device"), this, SLOT(Reconnect()), QKeySequence(tr("Ctrl+R")));
 	fileMenu->addSeparator();
 	fileMenu->addAction(tr("E&xit"), this, SLOT(close()));
 
@@ -83,17 +85,17 @@ void
 MainTrollWindow::Refresh()
 {
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-	ControlUi * newUi = new ControlUi(this);
-	setCentralWidget(newUi);	// Qt deletes the previous central widget
+	mUi = new ControlUi(this);
+	setCentralWidget(mUi);	// Qt deletes the previous central widget
 
 	QByteArray tmp(mUiFilename.toAscii());
 	const std::string uiFile(tmp.constData(), tmp.count());
 	tmp = mConfigFilename.toAscii();
 	const std::string cfgFile(tmp.constData(), tmp.count());
-	newUi->Load(uiFile, cfgFile);
+	mUi->Load(uiFile, cfgFile);
 
 	int width, height;
-	newUi->GetPreferredSize(width, height);
+	mUi->GetPreferredSize(width, height);
 	if (width && height)
 	{
 		if (isMaximized())
@@ -115,4 +117,11 @@ MainTrollWindow::Refresh()
 	}
 
 	QApplication::restoreOverrideCursor();
+}
+
+void
+MainTrollWindow::Reconnect()
+{
+	if (mUi)
+		mUi->Reconnect();
 }

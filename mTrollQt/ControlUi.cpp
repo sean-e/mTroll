@@ -13,18 +13,17 @@
 #include "../Engine/MidiControlEngine.h"
 #include "../Engine/UiLoader.h"
 #include "../Monome40h/IMonome40h.h"
+#include "../Monome40h/qt/Monome40hFtqt.h"
 
 #ifdef _WINDOWS
 	#include "../winUtil/SEHexception.h"
-	#include "../Monome40h/Win32/Monome40hFtw.h"
-	typedef Monome40hFtw XMonome40h;
 	#include "../midi/WinMidiOut.h"
 	typedef WinMidiOut	XMidiOut;
+	#define SLEEP	Sleep
 #else
-	#error "include the monome header file for this platform"
-	typedef YourMonome40h	XMonome40h;
 	#error "include the midiOut header file for this platform"
 	typedef YourMidiOut		XMidiOut;
+	#define SLEEP	sleep
 #endif
 
 
@@ -80,6 +79,15 @@ struct DeleteSwitchTextDisplay
 	}
 };
 
+class ControlUiEvent : public QEvent
+{
+public:
+	ControlUiEvent(QEvent::Type t) : QEvent(t) {}
+	virtual ~ControlUiEvent() {}
+
+	virtual void exec() = 0;
+};
+
 void
 ControlUi::Unload()
 {
@@ -104,7 +112,8 @@ ControlUi::Unload()
 			SetSwitchDisplay((*it).first, false);
 		}
 	}
-	QCoreApplication::sendPostedEvents(this, QEvent::User);
+
+	QCoreApplication::removePostedEvents(this, QEvent::User);
 	mStupidSwitchStates.clear();
 
 	delete mHardwareUi;
@@ -146,8 +155,9 @@ ControlUi::Load(const std::string & uiSettingsFile,
 {
 	Unload();
 	LoadUi(uiSettingsFile);
-	LoadMonome();
+	LoadMonome(true);
 	LoadMidiSettings(configSettingsFile);
+
 	if (mHardwareUi)
 	{
 		mHardwareUi->Subscribe(this);
@@ -202,12 +212,12 @@ ControlUi::LoadUi(const std::string & uiSettingsFile)
 }
 
 void
-ControlUi::LoadMonome()
+ControlUi::LoadMonome(bool displayStartSequence)
 {
 	IMonome40h * monome = NULL;
 	try
 	{
-		monome = new XMonome40h(this);
+		monome = new Monome40hFtqt(this);
 		int devIdx = monome->LocateMonomeDeviceIdx();
 		if (-1 != devIdx)
 		{
@@ -218,7 +228,8 @@ ControlUi::LoadMonome()
 				{
 					mHardwareUi = monome;
 					monome = NULL;
-					MonomeStartupSequence();
+					if (displayStartSequence)
+						MonomeStartupSequence();
 					mHardwareUi->SetLedIntensity(mLedIntensity);
 				}
 			}
@@ -275,20 +286,20 @@ ControlUi::ButtonReleased(const int idx)
 	}
 }
 
-class LabelTextOutEvent : public QEvent
+class LabelTextOutEvent : public ControlUiEvent
 {
 	QLabel *mLabel;
 	QString mText;
 
 public:
 	LabelTextOutEvent(QLabel * label, const QString & text) : 
-		QEvent(User),
+		ControlUiEvent(User),
 		mText(text),
 		mLabel(label)
 	{
 	}
 
-	virtual ~LabelTextOutEvent()
+	virtual void exec()
 	{
 		const QString prevTxt(mLabel->text());
 		if (prevTxt != mText)
@@ -322,20 +333,20 @@ ControlUi::ClearDisplay()
 void
 ControlUi::Trace(const std::string & txt)
 {
-	class TextEditAppend : public QEvent
+	class TextEditAppend : public ControlUiEvent
 	{
 		QTextEdit *mTextEdit;
 		QString mText;
 
 	public:
 		TextEditAppend(QTextEdit * txtEdit, const QString & text) : 
-			QEvent(User),
+			ControlUiEvent(User),
 			mText(text),
 			mTextEdit(txtEdit)
 		{
 		}
 
-		virtual ~TextEditAppend()
+		virtual void exec()
 		{
 			mTextEdit->moveCursor(QTextCursor::End, QTextCursor::MoveAnchor);
 			mTextEdit->insertPlainText(mText);
@@ -369,20 +380,20 @@ ControlUi::SetSwitchDisplay(int switchNumber,
 		return;
 
 
-	class UpdateSwitchDisplayEvent : public QEvent
+	class UpdateSwitchDisplayEvent : public ControlUiEvent
 	{
 		ControlUi::SwitchLed * mLed;
 		DWORD mColor;
 
 	public:
 		UpdateSwitchDisplayEvent(ControlUi::SwitchLed * led, DWORD color) : 
-			QEvent(User),
+			ControlUiEvent(User),
 			mLed(led),
 			mColor(color)
 		{
 		}
 
-		virtual ~UpdateSwitchDisplayEvent()
+		virtual void exec()
 		{
 			QPalette pal;
 			pal.setColor(QPalette::Window, mColor);
@@ -711,24 +722,27 @@ ControlUi::SwitchReleased(byte row, byte column)
 void
 ControlUi::MonomeStartupSequence()
 {
+	if (!mHardwareUi)
+		return;
+
 	int idx;
 	byte vals = 0xff;
 	for (idx = 0; idx < 8; ++idx)
 	{
 		mHardwareUi->EnableLedRow(idx, vals);
-		Sleep(100);
+		SLEEP(100);
 		mHardwareUi->EnableLedRow(idx, 0);
 	}
 
 	for (idx = 0; idx < 8; ++idx)
 	{
 		mHardwareUi->EnableLedColumn(idx, vals);
-		Sleep(100);
+		SLEEP(100);
 		mHardwareUi->EnableLedColumn(idx, 0);
 	}
 
 	mHardwareUi->TestLed(true);
-	Sleep(250);
+	SLEEP(250);
 	mHardwareUi->TestLed(false);
 }
 
@@ -749,4 +763,38 @@ ControlUi::ActivityIndicatorHack()
 
 		curOut->MidiOut(bytes);
 	}
+}
+
+void
+ControlUi::Reconnect()
+{
+	if (mHardwareUi)
+	{
+		mHardwareUi->Unsubscribe(mEngine);
+		mHardwareUi->Unsubscribe(this);
+		delete mHardwareUi;
+		mHardwareUi = NULL;
+	}
+
+	LoadMonome(false);
+
+	if (mHardwareUi)
+	{
+		mHardwareUi->Subscribe(this);
+		mHardwareUi->Subscribe(mEngine);
+	}
+}
+
+bool 
+ControlUi::event(QEvent* event)
+{
+	if (QEvent::User == event->type())
+	{
+		ControlUiEvent * evt = static_cast<ControlUiEvent*>(event);
+		evt->exec();
+		evt->accept();
+		return true;
+	}
+
+	return QWidget::event(event);
 }

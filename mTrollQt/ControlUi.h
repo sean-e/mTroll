@@ -47,6 +47,7 @@ public:
 
 			void Load(const std::string & uiSettingsFile, const std::string & configSettingsFile);
 			void Unload();
+			void Reconnect();
 
 			void GetPreferredSize(int & width, int & height) const {width = mPreferredWidth; height = mPreferredHeight;}
 
@@ -222,8 +223,9 @@ private slots:
 	void UiButtonReleased_64() { ButtonReleased(64); }
 
 private:
+    virtual bool		event(QEvent *);
 	void LoadUi(const std::string & uiSettingsFile);
-	void LoadMonome();
+	void LoadMonome(bool displayStartSequence);
 	void LoadMidiSettings(const std::string & file);
 	void ActivityIndicatorHack();
 

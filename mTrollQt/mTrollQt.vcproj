@@ -503,11 +503,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Monome40h\Win32\Monome40hFtw.cpp"
+				RelativePath="..\Monome40h\qt\Monome40hFtqt.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\Monome40h\Win32\Monome40hFtw.h"
+				RelativePath="..\Monome40h\qt\Monome40hFtqt.h"
 				>
 			</File>
 			<File

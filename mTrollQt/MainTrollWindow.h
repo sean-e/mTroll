@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+class ControlUi;
+
 
 class MainTrollWindow : public QMainWindow
 {
@@ -15,8 +17,10 @@ private slots:
 	void About();
 	void OpenFile();
 	void Refresh();
+	void Reconnect();
 
 private:
+	ControlUi	* mUi;
 	QString		mConfigFilename;
 	QString		mUiFilename;
 };
