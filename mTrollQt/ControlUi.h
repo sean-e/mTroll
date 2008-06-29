@@ -88,8 +88,6 @@ private: // IMidiControlUi
 	virtual void		SetLedDisplayState(bool invert) { mInvertLeds = invert; }
 
 private slots:
-	void AsyncMainTextOut();
-
 	// sigh... the one time that I would use a macro but the Qt MOC doesn't support it (or the use of tokenization)!!
 	void UiButtonPressed_0() { ButtonPressed(0); }
 	void UiButtonPressed_1() { ButtonPressed(1); }
@@ -264,7 +262,6 @@ private:
 	int							mLedIntensity;
 	bool						mInvertLeds;
 	KeepDisplayOn				* mSystemPowerOverride;
-	QString						mMainDisplayQueuedText;
 
 	struct SwitchTextDisplayConfig
 	{

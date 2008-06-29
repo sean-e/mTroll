@@ -1,11 +1,12 @@
 #include <algorithm>
 #include <strstream>
 
+#include <QApplication>
 #include <qthread.h>
 #include <QLabel>
 #include <QTextEdit>
 #include <QPushButton>
-#include <qtimer.h>
+#include <QtEvents>
 
 #include "ControlUi.h"
 #include "../Engine/EngineLoader.h"
@@ -103,6 +104,7 @@ ControlUi::Unload()
 			SetSwitchDisplay((*it).first, false);
 		}
 	}
+	QCoreApplication::sendPostedEvents(this, QEvent::User);
 	mStupidSwitchStates.clear();
 
 	delete mHardwareUi;
@@ -273,6 +275,27 @@ ControlUi::ButtonReleased(const int idx)
 	}
 }
 
+class LabelTextOutEvent : public QEvent
+{
+	QLabel *mLabel;
+	QString mText;
+
+public:
+	LabelTextOutEvent(QLabel * label, const QString & text) : 
+		QEvent(User),
+		mText(text),
+		mLabel(label)
+	{
+	}
+
+	virtual ~LabelTextOutEvent()
+	{
+		const QString prevTxt(mLabel->text());
+		if (prevTxt != mText)
+			mLabel->setText(mText);
+	}
+};
+
 // IMainDisplay
 void
 ControlUi::TextOut(const std::string & txt)
@@ -280,20 +303,8 @@ ControlUi::TextOut(const std::string & txt)
 	if (!mMainDisplay)
 		return;
 
-	mMainDisplayQueuedText = txt.c_str();
-	QTimer::singleShot(10, this, SLOT(AsyncMainTextOut()));
-}
-
-void
-ControlUi::AsyncMainTextOut()
-{
-	if (!mMainDisplay)
-		return;
-
-//	mMainDisplayQueuedText.replace("\n", "\r\n");
-	const QString prevTxt(mMainDisplay->text());
-	if (prevTxt != mMainDisplayQueuedText)
-		mMainDisplay->setText(mMainDisplayQueuedText);
+	QCoreApplication::postEvent(this, 
+		new LabelTextOutEvent(mMainDisplay, txt.c_str()));
 }
 
 void
@@ -302,9 +313,8 @@ ControlUi::ClearDisplay()
 	if (!mMainDisplay)
 		return;
 
-	const QString prevTxt(mMainDisplay->text());
-	if (!prevTxt.isEmpty())
-		mMainDisplay->setText("");
+	QCoreApplication::postEvent(this, 
+		new LabelTextOutEvent(mMainDisplay, ""));
 }
 
 
@@ -312,12 +322,30 @@ ControlUi::ClearDisplay()
 void
 ControlUi::Trace(const std::string & txt)
 {
+	class TextEditAppend : public QEvent
+	{
+		QTextEdit *mTextEdit;
+		QString mText;
+
+	public:
+		TextEditAppend(QTextEdit * txtEdit, const QString & text) : 
+			QEvent(User),
+			mText(text),
+			mTextEdit(txtEdit)
+		{
+		}
+
+		virtual ~TextEditAppend()
+		{
+			mTextEdit->moveCursor(QTextCursor::End, QTextCursor::MoveAnchor);
+			mTextEdit->insertPlainText(mText);
+		}
+	};
+
 	if (mTraceDisplay)
 	{
-		QString newTxt(txt.c_str());
-//		newTxt.replace("\n", "\r\n");
-		mTraceDisplay->moveCursor(QTextCursor::End, QTextCursor::MoveAnchor);
-		mTraceDisplay->insertPlainText(newTxt);
+		QCoreApplication::postEvent(this, 
+			new TextEditAppend(mTraceDisplay, txt.c_str()));
 	}
 }
 
@@ -340,10 +368,30 @@ ControlUi::SetSwitchDisplay(int switchNumber,
 	if (!mLeds[switchNumber] || !mLeds[switchNumber]->isEnabled())
 		return;
 
-//	mLeds[switchNumber]->SetOnOff(isOn);
-	QPalette pal;
-	pal.setColor(QPalette::Window, isOn ? mLedConfig.mOnColor : mLedConfig.mOffColor);
-	mLeds[switchNumber]->setPalette(pal);
+
+	class UpdateSwitchDisplayEvent : public QEvent
+	{
+		ControlUi::SwitchLed * mLed;
+		DWORD mColor;
+
+	public:
+		UpdateSwitchDisplayEvent(ControlUi::SwitchLed * led, DWORD color) : 
+			QEvent(User),
+			mLed(led),
+			mColor(color)
+		{
+		}
+
+		virtual ~UpdateSwitchDisplayEvent()
+		{
+			QPalette pal;
+			pal.setColor(QPalette::Window, mColor);
+			mLed->setPalette(pal);
+		}
+	};
+
+	QCoreApplication::postEvent(this, 
+		new UpdateSwitchDisplayEvent(mLeds[switchNumber], isOn ? mLedConfig.mOnColor : mLedConfig.mOffColor));
 }
 
 void
@@ -353,7 +401,8 @@ ControlUi::SetSwitchText(int switchNumber,
 	if (!mSwitchTextDisplays[switchNumber] || !mSwitchTextDisplays[switchNumber]->isEnabled())
 		return;
 
-	mSwitchTextDisplays[switchNumber]->setText(txt.c_str());
+	QCoreApplication::postEvent(this, 
+		new LabelTextOutEvent(mSwitchTextDisplays[switchNumber], txt.c_str()));
 }
 
 void
