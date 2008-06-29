@@ -149,14 +149,14 @@ Monome40hFtw::AcquireDevice(const std::string & devSerialNum)
 {
 	std::strstream traceMsg;
 	mDevSerialNumber = devSerialNum;
-	mFtDevice = ::FT_W32_CreateFile(devSerialNum.c_str(), 
+	mFtDevice = ::FT_W32_CreateFile(mDevSerialNumber.c_str(), 
 		GENERIC_READ|GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 
 		FILE_ATTRIBUTE_NORMAL|FT_OPEN_BY_SERIAL_NUMBER, NULL);
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 	{
 		if (mTrace)
 		{
-			traceMsg << "ERROR: Failed to open FTDI device " << devSerialNum << std::endl << std::ends;
+			traceMsg << "ERROR: Failed to open FTDI device " << mDevSerialNumber << std::endl << std::ends;
 			mTrace->Trace(traceMsg.str());
 		}
 		return false;
@@ -164,7 +164,7 @@ Monome40hFtw::AcquireDevice(const std::string & devSerialNum)
 
 	if (mTrace)
 	{
-		traceMsg << "Opened FTDI device " << devSerialNum << std::endl << std::ends;
+		traceMsg << "Opened FTDI device " << mDevSerialNumber << std::endl << std::ends;
 		mTrace->Trace(traceMsg.str());
 	}
 
@@ -189,7 +189,7 @@ Monome40hFtw::AcquireDevice(const std::string & devSerialNum)
 	mThread = (HANDLE)_beginthreadex(NULL, 0, DeviceServiceThread, this, 0, (unsigned int*)&mThreadId);
 	if (mThread && mThread != INVALID_HANDLE_VALUE)
 	{
-		::SetThreadPriority(mThread, /*HIGH_PRIORITY_CLASS*/  REALTIME_PRIORITY_CLASS );
+		::SetThreadPriority(mThread, /*HIGH_PRIORITY_CLASS*/  REALTIME_PRIORITY_CLASS);
 		SetLedIntensity(mLedBrightness);
 		return true;
 	}
@@ -280,7 +280,21 @@ Monome40hFtw::Send(const MonomeSerialProtocolData & data)
 	_ASSERTE(mFtDevice && INVALID_HANDLE_VALUE != mFtDevice);
 	DWORD bytesWritten = 0;
 	BOOL retval = ::FT_W32_WriteFile(mFtDevice, (void*)data.Data(), 2, &bytesWritten, NULL);
-	_ASSERTE(retval && 2 == bytesWritten);
+	if (retval && 2 > bytesWritten)
+	{
+		// timeout
+		if (1 == bytesWritten)
+		{
+			retval = ::FT_W32_WriteFile(mFtDevice, (void*)(data.Data()+1), 1, &bytesWritten, NULL);
+			_ASSERTE(retval && 1 == bytesWritten);
+		}
+		else
+		{
+			retval = ::FT_W32_WriteFile(mFtDevice, (void*)data.Data(), 2, &bytesWritten, NULL);
+			_ASSERTE(retval && 2 == bytesWritten);
+		}
+	}
+	_ASSERTE(retval);
 	return retval;
 }
 
@@ -443,6 +457,7 @@ Monome40hFtw::DeviceServiceThread()
 	int consecutiveReadErrors = 0;
 	byte readData[kDataLen];
 	DWORD bytesRead;
+	std::strstream traceMsg;
 
 	while (mShouldContinueListening)
 	{
@@ -458,7 +473,6 @@ Monome40hFtw::DeviceServiceThread()
 			{
 				if (mTrace)
 				{
-					std::strstream traceMsg;
 					traceMsg << "monome IO error: disconnected?" << std::endl << std::ends;
 					mTrace->Trace(traceMsg.str());
 				}
@@ -480,7 +494,6 @@ Monome40hFtw::DeviceServiceThread()
 				}
 				else if (mTrace)
 				{
-					std::strstream traceMsg;
 					traceMsg << "monome read error: bytes read " << (int) bytesRead << std::endl << std::ends;
 					mTrace->Trace(traceMsg.str());
 				}
@@ -494,7 +507,6 @@ Monome40hFtw::DeviceServiceThread()
 		{
 			if (mTrace && !consecutiveReadErrors)
 			{
-				std::strstream traceMsg;
 				traceMsg << "monome read error" << std::endl << std::ends;
 				mTrace->Trace(traceMsg.str());
 			}
@@ -502,24 +514,25 @@ Monome40hFtw::DeviceServiceThread()
 			if (++consecutiveReadErrors > 100)
 			{
 				aborted = true;
-				if (mTrace)
-				{
-					std::strstream traceMsg;
-					traceMsg << "aborting monome thread due to read errors" << std::endl << std::ends;
-					mTrace->Trace(traceMsg.str());
-				}
-
-				ReleaseDevice();
-
-				// attempt to reacquire it
-				Sleep(5000);
-				AcquireDevice(mDevSerialNumber);
 				break;
 			}
 		}
 	}
 
-	if (!aborted)
+	if (aborted)
+	{
+		if (mTrace)
+		{
+			traceMsg << "aborting monome thread due to read errors" << std::endl << std::ends;
+			mTrace->Trace(traceMsg.str());
+		}
+		ReleaseDevice();
+
+		// attempt to reacquire it
+		Sleep(5000);
+		AcquireDevice(mDevSerialNumber);
+	}
+	else
 		ServiceCommands();
 }
 
