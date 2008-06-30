@@ -106,10 +106,10 @@ MainTrollWindow::Refresh()
 			// Is there a way to do this with Qt?
 			WINDOWPLACEMENT wp;
 			::ZeroMemory(&wp, sizeof(WINDOWPLACEMENT));
-			::GetWindowPlacement(effectiveWinId(), &wp);
+			::GetWindowPlacement(winId(), &wp);
 			wp.rcNormalPosition.right = wp.rcNormalPosition.left + width;
 			wp.rcNormalPosition.bottom = wp.rcNormalPosition.top + height;
-			::SetWindowPlacement(effectiveWinId(), &wp);
+			::SetWindowPlacement(winId(), &wp);
 #endif
 		}
 		else
