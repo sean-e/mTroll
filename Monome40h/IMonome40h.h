@@ -58,6 +58,8 @@ public:
 	virtual std::string GetDeviceSerialNumber(int devidx) = 0;
 	virtual bool AcquireDevice(const std::string & devSerialNum) = 0;
 
+	virtual bool IsAdcEnabled(int portIdx) const = 0;
+
 protected:
 	IMonome40h() {}
 	IMonome40h(const IMonome40h & rhs);

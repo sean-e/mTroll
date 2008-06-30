@@ -48,6 +48,7 @@ Monome40hFtqt::Monome40hFtqt(ITraceDisplay * trace) :
 
 	for (int portIdx = 0; portIdx < kAdcPortCount; ++portIdx)
 	{
+		mAdcEnable[portIdx] = false;
 		mPrevAdcValsIndex[portIdx] = 0;
 		for (int histIdx = 0; histIdx < kAdcValhist; ++histIdx)
 			mPrevAdcVals[portIdx][histIdx] = -1;
@@ -333,6 +334,7 @@ void
 Monome40hFtqt::EnableAdc(byte port, 
 						 bool enable)
 {
+	mAdcEnable[port] = enable;
 	DispatchCommand(new MonomeEnableAdc(port, enable));
 }
 
@@ -554,4 +556,13 @@ Monome40hFtqt::DispatchCommand(const MonomeSerialProtocolData * data)
 	// queue to be serviced asynchronously
 	QMutexLocker lock(&mOutputCommandsLock);
 	mOutputCommandQueue.push_back(data);
+}
+
+bool
+Monome40hFtqt::IsAdcEnabled(int portIdx) const
+{
+	if (portIdx < 0 || portIdx >= kAdcPortCount)
+		return false;
+
+	return mAdcEnable[portIdx];
 }

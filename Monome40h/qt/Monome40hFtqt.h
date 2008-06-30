@@ -35,6 +35,7 @@ public: // IMonome40h
 	virtual int LocateMonomeDeviceIdx();
 	virtual std::string GetDeviceSerialNumber(int devidx);
 	virtual bool AcquireDevice(const std::string & devSerialNum);
+	virtual bool IsAdcEnabled(int portIdx) const;
 
 	void DeviceServiceThread();
 
@@ -60,9 +61,10 @@ private:
 	volatile bool					mServicingSubscribers;
 	volatile bool					mShouldContinueListening;
 	int								mLedBrightness;
+	enum {kAdcPortCount = 4, kAdcValhist = 3};
+	bool							mAdcEnable[kAdcPortCount];
 
 	// these members are for adc port filtering of jitter
-	enum {kAdcPortCount = 4, kAdcValhist = 3};
 	int								mPrevAdcVals[kAdcPortCount][kAdcValhist];
 	int								mPrevAdcValsIndex[kAdcPortCount];
 };
