@@ -747,6 +747,8 @@ ControlUi::MonomeStartupSequence()
 void
 ControlUi::Reconnect()
 {
+	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+
 	const int kPorts = 4;
 	bool adcEnables[kPorts] = {false, false, false, false};
 
@@ -770,6 +772,8 @@ ControlUi::Reconnect()
 		mHardwareUi->Subscribe(this);
 		mHardwareUi->Subscribe(mEngine);
 	}
+
+	QApplication::restoreOverrideCursor();
 }
 
 bool 
