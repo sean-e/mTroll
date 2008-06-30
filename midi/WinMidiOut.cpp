@@ -16,15 +16,19 @@ WinMidiOut::WinMidiOut(ITraceDisplay * trace) :
 	mCurMidiHdrIdx(0),
 	mActivityIndicator(NULL),
 	mActivityIndicatorIndex(0),
-	mEnableActivityIndicator(false)
+	mEnableActivityIndicator(false),
+	mTimerEventCount(0),
+	mTimerId(0)
 {
 	for (int idx = 0; idx < MIDIHDR_CNT; ++idx)
 		ZeroMemory(&mMidiHdrs[idx], sizeof(MIDIHDR));
+
+	mTimerId = ::SetTimer(NULL, mTimerId, 150, TimerProc);
 }
 
 WinMidiOut::~WinMidiOut()
 {
-	::KillTimer(NULL, (UINT_PTR)this);
+	::KillTimer(NULL, mTimerId);
 
 	if (sOutOnTimer == this)
 	{
@@ -74,7 +78,10 @@ void
 WinMidiOut::EnableActivityIndicator(bool enable)
 {
 	if (enable)
+	{
 		mEnableActivityIndicator = mActivityIndicator > 0 && mActivityIndicator != NULL;
+		mTimerEventCount = 0;
+	}
 	else
 	{
 		mEnableActivityIndicator = false;
@@ -305,11 +312,23 @@ WinMidiOut::IndicateActivity()
 		return;
 	}
 
+	LONG prevCount = ::InterlockedIncrement(&mTimerEventCount);
 	if (sOutOnTimer)
+	{
 		sOutOnTimer->TurnOffIndicator();
-	sOutOnTimer = this;
+		if (prevCount > 1)
+		{
+			if (!::InterlockedDecrement(&mTimerEventCount))
+			{
+				// whoops - don't go to 0 else the timer will go negative
+				::InterlockedIncrement(&mTimerEventCount);
+			}
+		}
+	}
+
 	mActivityIndicator->SetSwitchDisplay(mActivityIndicatorIndex, true);
-	::SetTimer(NULL, (UINT_PTR)this, 200, TimerProc);
+	mTimerId = ::SetTimer(NULL, mTimerId, 150, TimerProc);
+	sOutOnTimer = this;
 }
 
 void
@@ -327,7 +346,12 @@ WinMidiOut::TimerProc(HWND,
 {
 	WinMidiOut * _this = sOutOnTimer;
 	if (_this)
+	{
+		if (!::InterlockedDecrement(&_this->mTimerEventCount))
+			sOutOnTimer = NULL;
+
 		_this->TurnOffIndicator();
+	}
 }
 
 void
@@ -335,6 +359,7 @@ WinMidiOut::CloseMidiOut()
 {
 	mEnableActivityIndicator = false;
 	mActivityIndicator = NULL;
+	mTimerEventCount = 0;
 	if (mMidiOut)
 	{
 		MMRESULT res = ::midiOutClose(mMidiOut);

@@ -227,7 +227,6 @@ private:
 	void LoadUi(const std::string & uiSettingsFile);
 	void LoadMonome(bool displayStartSequence);
 	void LoadMidiSettings(const std::string & file);
-	void ActivityIndicatorHack();
 
 	void ButtonReleased(const int idx);
 	void ButtonPressed(const int idx);

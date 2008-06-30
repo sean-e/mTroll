@@ -47,4 +47,6 @@ private:
 	MIDIHDR						mMidiHdrs[MIDIHDR_CNT];
 	int							mCurMidiHdrIdx;
 	bool						mMidiOutError;
+	UINT_PTR					mTimerId;
+	LONG						mTimerEventCount;
 };
