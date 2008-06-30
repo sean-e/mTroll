@@ -180,8 +180,6 @@ ControlUi::Load(const std::string & uiSettingsFile,
 			mSystemPowerOverride = new KeepDisplayOn;
 	}
 
-	ActivityIndicatorHack();
-
 	for (int idx = 0; mInvertLeds && idx < 64; ++idx)
 		SetSwitchDisplay(idx, false);
 }
@@ -747,31 +745,17 @@ ControlUi::MonomeStartupSequence()
 }
 
 void
-ControlUi::ActivityIndicatorHack()
-{
-	Bytes bytes;
-	bytes.push_back(0xf0);
-	bytes.push_back(0xf7);
-
-	for (MidiOuts::iterator it = mMidiOuts.begin();
-		it != mMidiOuts.end();
-		++it)
-	{
-		IMidiOut * curOut = (*it).second;
-		if (!curOut->IsMidiOutOpen())
-			continue;
-
-		curOut->MidiOut(bytes);
-	}
-}
-
-void
 ControlUi::Reconnect()
 {
+	const int kPorts = 4;
+	bool adcEnables[kPorts] = {false, false, false, false};
+
 	if (mHardwareUi)
 	{
 		mHardwareUi->Unsubscribe(mEngine);
 		mHardwareUi->Unsubscribe(this);
+		for (int idx = 0; idx < kPorts; ++idx)
+			adcEnables[idx] = mHardwareUi->IsAdcEnabled(idx);
 		delete mHardwareUi;
 		mHardwareUi = NULL;
 	}
@@ -780,6 +764,9 @@ ControlUi::Reconnect()
 
 	if (mHardwareUi)
 	{
+		for (int idx = 0; idx < kPorts; ++idx)
+			mHardwareUi->EnableAdc(idx, adcEnables[idx]);
+
 		mHardwareUi->Subscribe(this);
 		mHardwareUi->Subscribe(mEngine);
 	}
