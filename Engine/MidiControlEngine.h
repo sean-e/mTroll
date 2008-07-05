@@ -98,9 +98,6 @@ private:
 	int						mDecrementSwitchNumber;
 	int						mModeSwitchNumber;
 	bool					mFilterRedundantProgramChanges;
-	int						mModeDefaultSwitchNumber;
-	int						mModeBankNavSwitchNumber;
-	int						mModeBankDescSwitchNumber;
 	ExpressionPedals		mGlobalPedals;
 	int						mPedalModePort;
 };

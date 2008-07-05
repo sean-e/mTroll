@@ -32,6 +32,7 @@ SortByBankNumber(const PatchBank* lhs, const PatchBank* rhs)
 }
 
 // bad hardcoded switch grid assumptions - these need to come from one of the xml files...
+// These are the switch numbers used in "Mode Select" mode
 const int kModeDefaultSwitchNumber = 0;
 const int kModeBankNavSwitchNumber = 1;
 const int kModeBankDescSwitchNumber = 2;
