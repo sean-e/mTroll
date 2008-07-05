@@ -1,5 +1,5 @@
 /*
-Original code copyright (c) 2007 Sean Echevarria ( http://www.creepingfog.com/sean/ )
+Original code copyright (c) 2007-2008 Sean Echevarria ( http://www.creepingfog.com/sean/ )
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any
