@@ -371,6 +371,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Engine\MetaPatch_BankNav.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Engine\MetaPatch_LoadBank.h"
 				>
 			</File>
@@ -467,19 +471,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\mControlUI\Release\testdata.config.xml"
-				>
-			</File>
-			<File
 				RelativePath="..\mControlUI\testdata.config.xml"
 				>
 			</File>
 			<File
-				RelativePath="..\mControlUI\Release\testdata.ui.xml"
+				RelativePath="..\mControlUI\Release\testdata.config.xml"
 				>
 			</File>
 			<File
 				RelativePath="..\mControlUI\testdata.ui.xml"
+				>
+			</File>
+			<File
+				RelativePath="..\mControlUI\Release\testdata.ui.xml"
 				>
 			</File>
 			<File
@@ -545,10 +549,50 @@
 			<File
 				RelativePath=".\Debug\moc_ControlUi.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+				>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\Debug\moc_MainTrollWindow.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+				>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\Release\moc_ControlUi.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\Release\moc_MainTrollWindow.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 	</Files>
