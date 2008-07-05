@@ -44,6 +44,7 @@ public:
 	void					ResetBankPatches();
 	void					LoadBankByNumber(int bankNumber);
 
+	void					EnterNavMode() { ChangeMode(emBankNav); }
 	void					HistoryBackward();
 	void					HistoryForward();
 	void					HistoryRecall();

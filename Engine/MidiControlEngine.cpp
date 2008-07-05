@@ -5,6 +5,7 @@
 #include "IMainDisplay.h"
 #include "ISwitchDisplay.h"
 #include "ITraceDisplay.h"
+#include "MetaPatch_BankNav.h"
 
 
 
@@ -38,6 +39,9 @@ const int kModeBankNavSwitchNumber = 1;
 const int kModeBankDescSwitchNumber = 2;
 const int kModeBankDirect = 3;
 const int kModeExprPedalDisplay = 4;
+
+const int kBankNavNextPatchNumber = -2; // reserved patch number
+const int kBankNavPrevPatchNumber = -3; // reserved patch number
 
 MidiControlEngine::MidiControlEngine(IMainDisplay * mainDisplay, 
 									 ISwitchDisplay * switchDisplay, 
@@ -114,6 +118,21 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 			defaultsBank = NULL;
 	}
 
+	// this is how we allow users to override Next and Prev switches in their banks
+	// while at the same time reserving them for use by our modes (other than emBank).
+	// If their default bank specifies a mapping for mIncrementSwitchNumber or 
+	// mDecrementSwitchNumber, they will not get Next or Prev at all.
+	PatchBank tmpDefaultBank(0, "nav default");
+	AddPatch(new MetaPatch_BankNavNext(this, kBankNavNextPatchNumber, "Next Bank"));
+	AddPatch(new MetaPatch_BankNavPrevious(this, kBankNavPrevPatchNumber, "Prev Bank"));
+	tmpDefaultBank.AddPatchMapping(mIncrementSwitchNumber, kBankNavNextPatchNumber, PatchBank::stIgnore, PatchBank::stIgnore);
+	tmpDefaultBank.AddPatchMapping(mDecrementSwitchNumber, kBankNavPrevPatchNumber, PatchBank::stIgnore, PatchBank::stIgnore);
+
+	if (defaultsBank)
+		defaultsBank->SetDefaultMappings(tmpDefaultBank);  // add Next and Prev to their default bank
+	else
+		defaultsBank = &tmpDefaultBank; // no default bank specified, use our manufactured one
+
 	int itIdx = 0;
 	for (Banks::iterator it = mBanks.begin();
 		it != mBanks.end();
@@ -121,8 +140,7 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 	{
 		PatchBank * curItem = *it;
 		curItem->InitPatches(mPatches);
-		if (defaultsBank)
-			curItem->SetDefaultMappings(*defaultsBank);
+		curItem->SetDefaultMappings(*defaultsBank);
 	}
 
 	CalibrateExprSettings(pedalCalibrationSettings);
@@ -187,15 +205,12 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 
 	if (emBank == mMode)
 	{
-		if (switchNumber == mIncrementSwitchNumber ||
-			switchNumber == mDecrementSwitchNumber)
-			ChangeMode(emBankNav);
-		else if (switchNumber == mModeSwitchNumber)
-			;
-		else if (mActiveBank)
+		if (mActiveBank)
 			mActiveBank->PatchSwitchPressed(switchNumber, mMainDisplay, mSwitchDisplay);
 		return;
 	}
+
+	// no other mode responds to SwitchPressed
 }
 
 void
@@ -213,12 +228,6 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 
 	if (emBank == mMode)
 	{
-		if (switchNumber == mIncrementSwitchNumber ||
-			switchNumber == mDecrementSwitchNumber)
-		{
-			return;
-		}
-
 		if (switchNumber == mModeSwitchNumber)
 		{
 			ChangeMode(emModeSelect);
@@ -273,12 +282,7 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 
 	if (emModeSelect == mMode)
 	{
-		if (switchNumber == mIncrementSwitchNumber ||
-			switchNumber == mDecrementSwitchNumber)
-		{
-			return;
-		}
-		else if (switchNumber == mModeSwitchNumber ||
+		if (switchNumber == mModeSwitchNumber ||
 			switchNumber == kModeDefaultSwitchNumber)
 		{
 			// escape
@@ -312,12 +316,7 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 
 	if (emExprPedalDisplay == mMode)
 	{
-		if (switchNumber == mIncrementSwitchNumber ||
-			switchNumber == mDecrementSwitchNumber)
-		{
-			return;
-		}
-		else if (switchNumber == mModeSwitchNumber)
+		if (switchNumber == mModeSwitchNumber)
 		{
 			// escape
 			ChangeMode(emBank);
@@ -451,9 +450,7 @@ MidiControlEngine::NavigateBankRelative(int relativeBankIndex)
 	{
 		for (int idx = 0; idx < 64; idx++)
 		{
-			if (idx != mModeSwitchNumber &&
-				idx != mDecrementSwitchNumber &&
-				idx != mIncrementSwitchNumber)
+			if (idx != mModeSwitchNumber)
 			{
 				mSwitchDisplay->ClearSwitchText(idx);
 				mSwitchDisplay->SetSwitchDisplay(idx, false);
@@ -646,12 +643,6 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 	{
 	case emBank:
 		msg = "Bank";
-		if (mSwitchDisplay)
-		{
-			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Next Bank");
-			mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "Prev Bank");
-		}
-
 		if (mActiveBank)
 		{
 			// caller changing to emBank will update mainDisplay - reduce flicker
@@ -667,6 +658,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			showModeInMainDisplay = false;
 		if (mSwitchDisplay)
 		{
+			// override possible user override in this mode
 			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Next Bank");
 			mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "Prev Bank");
 		}
@@ -675,6 +667,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		msg = "Bank and Switch Description";
 		if (mSwitchDisplay)
 		{
+			// override possible user override in this mode
 			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Next Bank");
 			mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "Prev Bank");
 		}
