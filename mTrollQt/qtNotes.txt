@@ -38,3 +38,9 @@ cmd line:	$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DL
 desc:		MOC ControlUi.h
 Outputs:	release\moc_ControlUi.cpp
 add deps:	$(QTDIR)\bin\moc.exe;ControlUi.h
+
+Add release\moc_ControlUi.cpp to Moc Generated Source folder
+exclude from debug config build
+
+Add debug\moc_ControlUi.cpp to Moc Generated Source folder
+exclude from release config build
