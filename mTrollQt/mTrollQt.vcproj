@@ -463,7 +463,7 @@
 			Name="Text Files"
 			>
 			<File
-				RelativePath="..\mControlUI\large.ui.xml"
+				RelativePath="..\data\largesean.ui.xml"
 				>
 			</File>
 			<File
@@ -471,19 +471,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\mControlUI\testdata.config.xml"
+				RelativePath="..\data\sean.config.xml"
 				>
 			</File>
 			<File
-				RelativePath="..\mControlUI\Release\testdata.config.xml"
+				RelativePath="..\data\sean.ui.xml"
 				>
 			</File>
 			<File
-				RelativePath="..\mControlUI\testdata.ui.xml"
+				RelativePath="..\data\testdata.config.xml"
 				>
 			</File>
 			<File
-				RelativePath="..\mControlUI\Release\testdata.ui.xml"
+				RelativePath="..\data\testdata.ui.xml"
 				>
 			</File>
 			<File
@@ -547,30 +547,6 @@
 			Name="Moc Generated Source"
 			>
 			<File
-				RelativePath=".\Debug\moc_ControlUi.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-				>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\Debug\moc_MainTrollWindow.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-				>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath=".\Release\moc_ControlUi.cpp"
 				>
 				<FileConfiguration
@@ -583,10 +559,34 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\Debug\moc_ControlUi.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath=".\Release\moc_MainTrollWindow.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\Debug\moc_MainTrollWindow.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
