@@ -210,6 +210,18 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 		return;
 	}
 
+	if (emBankDirect == mMode)
+	{
+		if (mSwitchDisplay)
+		{
+			if ((switchNumber >= 0 && switchNumber <= 9) ||
+				switchNumber == mDecrementSwitchNumber || 
+				switchNumber == mIncrementSwitchNumber)
+				mSwitchDisplay->SetSwitchDisplay(switchNumber, true);
+		}
+		return;
+	}
+
 	// no other mode responds to SwitchPressed
 }
 
@@ -325,7 +337,12 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 		}
 		else if (switchNumber >= 0 && switchNumber <= 3)
 		{
+			if (mSwitchDisplay)
+				mSwitchDisplay->SetSwitchDisplay(mPedalModePort, false);
 			mPedalModePort = switchNumber;
+			if (mSwitchDisplay)
+				mSwitchDisplay->SetSwitchDisplay(mPedalModePort, true);
+
 			if (mMainDisplay)
 			{
 				std::strstream displayMsg;
@@ -379,6 +396,14 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 			else if (mMainDisplay)
 				mMainDisplay->TextOut("Invalid bank number");
 			updateMainDisplay = false;
+		}
+
+		if (mSwitchDisplay)
+		{
+			if ((switchNumber >= 0 && switchNumber <= 9) ||
+				switchNumber == mDecrementSwitchNumber || 
+				switchNumber == mIncrementSwitchNumber)
+				mSwitchDisplay->SetSwitchDisplay(switchNumber, false);
 		}
 
 		if (mMainDisplay && updateMainDisplay)
@@ -677,10 +702,15 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		if (mSwitchDisplay)
 		{
 			mSwitchDisplay->SetSwitchText(kModeDefaultSwitchNumber, "Bank");
+			mSwitchDisplay->SetSwitchDisplay(kModeDefaultSwitchNumber, true);
 			mSwitchDisplay->SetSwitchText(kModeBankNavSwitchNumber, "Bank Navigation");
+			mSwitchDisplay->SetSwitchDisplay(kModeBankNavSwitchNumber, true);
 			mSwitchDisplay->SetSwitchText(kModeBankDescSwitchNumber, "Bank Description");
+			mSwitchDisplay->SetSwitchDisplay(kModeBankDescSwitchNumber, true);
 			mSwitchDisplay->SetSwitchText(kModeBankDirect, "Bank Direct");
+			mSwitchDisplay->SetSwitchDisplay(kModeBankDirect, true);
 			mSwitchDisplay->SetSwitchText(kModeExprPedalDisplay, "Raw ADC Values");
+			mSwitchDisplay->SetSwitchDisplay(kModeExprPedalDisplay, true);
 		}
 		break;
 	case emExprPedalDisplay:
@@ -691,6 +721,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "");
 			mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "");
 			mSwitchDisplay->SetSwitchText(0, "Pedal 1");
+			mSwitchDisplay->SetSwitchDisplay(0, true);
 			mSwitchDisplay->SetSwitchText(1, "Pedal 2");
 			mSwitchDisplay->SetSwitchText(2, "Pedal 3");
 			mSwitchDisplay->SetSwitchText(3, "Pedal 4");
@@ -726,7 +757,11 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 	if (mSwitchDisplay)
 	{
 		if (!msg.empty())
+		{
+			if (emBank != mMode)
+				msg = "Cancel " + msg;
 			mSwitchDisplay->SetSwitchText(mModeSwitchNumber, msg);
+		}
 		mSwitchDisplay->SetSwitchDisplay(mModeSwitchNumber, mMode == emBank ? true : false);
 	}
 }
