@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KeepDisplayOn_h__
+#define KeepDisplayOn_h__
 
 #include <Windows.h>
 
@@ -40,3 +41,5 @@ private:
 	UINT				mPrevScreenSaver;
 	EXECUTION_STATE		mPrevExecState;
 };
+
+#endif // KeepDisplayOn_h__

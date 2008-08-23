@@ -1,4 +1,5 @@
-#pragma once
+#ifndef WinMidiOut_h__
+#define WinMidiOut_h__
 
 #include "..\Engine\IMidiOut.h"
 #include <Windows.h>
@@ -50,3 +51,5 @@ private:
 	UINT_PTR					mTimerId;
 	LONG						mTimerEventCount;
 };
+
+#endif // WinMidiOut_h__
