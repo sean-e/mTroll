@@ -2,7 +2,6 @@
 
 // This file is always rebuilt in release configurations since
 // it sets the date of the build when this file is compiled.
-// This is required for license expiration to work correctly.
 
 
 static int 
