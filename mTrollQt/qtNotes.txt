@@ -1,9 +1,10 @@
 [Qt 4.4 GPL version build notes]
-open vs command prompt
+download and extract build from ftp://ftp.trolltech.com/qt/source/
+open vs 2008 command prompt
 set QTDIR=C:\Users\sean.e\src\qt
 add Qt\bin to path
 cd qt
-configure -platform win32-msvc2005
+configure -platform win32-msvc2008
 nmake
 
 [VS directory settings changes]
