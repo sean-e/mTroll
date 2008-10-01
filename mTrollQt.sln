@@ -6,10 +6,10 @@ EndProject
 Global
 	GlobalSection(SourceCodeControl) = preSolution
 		SccNumberOfProjects = 2
+		SccProjectUniqueName0 = mTrollQt\\mTrollQt.vcproj
 		SccLocalPath0 = .
-		SccProjectUniqueName1 = mTrollQt\\mTrollQt.vcproj
+		SccProjectFilePathRelativizedFromConnection0 = mTrollQt\\
 		SccLocalPath1 = .
-		SccProjectFilePathRelativizedFromConnection1 = mTrollQt\\
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
