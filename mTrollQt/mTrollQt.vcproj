@@ -80,7 +80,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
-				AdditionalDependencies=".\..\Monome40h\FTD2XX.lib c:\Users\sean.e\src\qt\lib\qtmaind.lib c:\Users\sean.e\src\qt\lib\QtGuid4.lib c:\Users\sean.e\src\qt\lib\QtCored4.lib"
+				AdditionalDependencies=".\..\Monome40h\FTD2XX.lib $(QTDIR)\lib\qtmaind.lib $(QTDIR)\lib\QtGuid4.lib $(QTDIR)\lib\QtCored4.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="c:\Users\sean.e\src\qt\lib"
 				IgnoreDefaultLibraryNames="msvcrtd.lib"
@@ -177,7 +177,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
-				AdditionalDependencies=".\..\Monome40h\FTD2XX.lib c:\Users\sean.e\src\qt\lib\qtmain.lib c:\Users\sean.e\src\qt\lib\QtGui4.lib c:\Users\sean.e\src\qt\lib\QtCore4.lib"
+				AdditionalDependencies=".\..\Monome40h\FTD2XX.lib $(QTDIR)\lib\qtmain.lib $(QTDIR)\lib\QtGui4.lib $(QTDIR)\lib\QtCore4.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="c:\Users\sean.e\src\qt\lib"
 				IgnoreDefaultLibraryNames="msvcrt.lib"
