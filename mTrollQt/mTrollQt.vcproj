@@ -5,9 +5,6 @@
 	Name="mTrollQt"
 	ProjectGUID="{3D33E5B3-BA0F-45D2-AAE7-A939F9F4B985}"
 	RootNamespace="mTrollQt"
-	SccProjectName="Perforce Project"
-	SccLocalPath=".."
-	SccProvider="MSSCCI:Perforce SCM"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
@@ -551,18 +548,6 @@
 			Name="Moc Generated Source"
 			>
 			<File
-				RelativePath=".\Release\moc_ControlUi.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath=".\Debug\moc_ControlUi.cpp"
 				>
 				<FileConfiguration
@@ -575,7 +560,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\Release\moc_MainTrollWindow.cpp"
+				RelativePath=".\Release\moc_ControlUi.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -591,6 +576,18 @@
 				>
 				<FileConfiguration
 					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\Release\moc_MainTrollWindow.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
