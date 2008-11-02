@@ -47,7 +47,7 @@
 
 class QLabel;
 class QPushButton;
-class QTextEdit;
+class QPlainTextEdit;
 class QFrame;
 class IMonome40h;
 
@@ -270,8 +270,8 @@ private:
 private:
 	IMonome40h					* mHardwareUi;
 	MidiControlEngine			* mEngine;
-	QLabel						* mMainDisplay;
-	QTextEdit					* mTraceDisplay;
+	QPlainTextEdit				* mMainDisplay;
+	QPlainTextEdit				* mTraceDisplay;
 	std::map<int, SwitchLed*>	mLeds;
 	std::map<int, SwitchTextDisplay *>		mSwitchTextDisplays;
 	std::map<int, Switch *>		mSwitches;

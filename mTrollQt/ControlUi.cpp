@@ -28,7 +28,7 @@
 #include <QApplication>
 #include <qthread.h>
 #include <QLabel>
-#include <QTextEdit>
+#include <QPlainTextEdit>
 #include <QPushButton>
 #include <QtEvents>
 
@@ -308,6 +308,27 @@ ControlUi::ButtonReleased(const int idx)
 	}
 }
 
+class LabelTextOutEvent2 : public ControlUiEvent
+{
+	QPlainTextEdit *mLabel;
+	QString mText;
+
+public:
+	LabelTextOutEvent2(QPlainTextEdit* label, const QString & text) : 
+		ControlUiEvent(User),
+		mText(text),
+		mLabel(label)
+	{
+	}
+
+	virtual void exec()
+	{
+		const QString prevTxt(mLabel->toPlainText());
+		if (prevTxt != mText)
+			mLabel->setPlainText(mText);
+	}
+};
+
 class LabelTextOutEvent : public ControlUiEvent
 {
 	QLabel *mLabel;
@@ -337,7 +358,7 @@ ControlUi::TextOut(const std::string & txt)
 		return;
 
 	QCoreApplication::postEvent(this, 
-		new LabelTextOutEvent(mMainDisplay, txt.c_str()));
+		new LabelTextOutEvent2(mMainDisplay, txt.c_str()));
 }
 
 void
@@ -347,7 +368,7 @@ ControlUi::ClearDisplay()
 		return;
 
 	QCoreApplication::postEvent(this, 
-		new LabelTextOutEvent(mMainDisplay, ""));
+		new LabelTextOutEvent2(mMainDisplay, ""));
 }
 
 
@@ -357,11 +378,11 @@ ControlUi::Trace(const std::string & txt)
 {
 	class TextEditAppend : public ControlUiEvent
 	{
-		QTextEdit *mTextEdit;
+		QPlainTextEdit *mTextEdit;
 		QString mText;
 
 	public:
-		TextEditAppend(QTextEdit * txtEdit, const QString & text) : 
+		TextEditAppend(QPlainTextEdit * txtEdit, const QString & text) : 
 			ControlUiEvent(User),
 			mText(text),
 			mTextEdit(txtEdit)
@@ -600,11 +621,13 @@ ControlUi::CreateMainDisplay(int top,
 							 unsigned int fgColor)
 {
 	_ASSERTE(!mMainDisplay);
-	mMainDisplay = new QLabel(this);
+	mMainDisplay = new QPlainTextEdit(this);
 	mMainDisplay->setFrameShape(QFrame::Panel);
 	mMainDisplay->setFrameShadow(QFrame::Sunken);
-	mMainDisplay->setAutoFillBackground(true);
-	mMainDisplay->setAlignment(Qt::AlignLeft);
+	mMainDisplay->setReadOnly(true);
+	mMainDisplay->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+	mMainDisplay->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+	mMainDisplay->setLineWrapMode(QPlainTextEdit::NoWrap);
 	mMainDisplay->move(left, top);
 	mMainDisplay->resize(width, height);
 
@@ -614,6 +637,8 @@ ControlUi::CreateMainDisplay(int top,
 	QPalette pal;
 	pal.setColor(QPalette::Window, bgColor);
 	pal.setColor(QPalette::WindowText, fgColor);
+	pal.setColor(QPalette::Text, fgColor);
+	pal.setColor(QPalette::Base, bgColor);
 	mMainDisplay->setPalette(pal);
 }
 
@@ -627,14 +652,13 @@ ControlUi::CreateTraceDisplay(int top,
 							  bool bold)
 {
 	_ASSERTE(!mTraceDisplay);
-	mTraceDisplay = new QTextEdit(this);
+	mTraceDisplay = new QPlainTextEdit(this);
 	mTraceDisplay->setFrameShape(QFrame::Panel);
 	mTraceDisplay->setFrameShadow(QFrame::Sunken);
 	mTraceDisplay->setReadOnly(true);
 	mTraceDisplay->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 	mTraceDisplay->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-	mTraceDisplay->setAcceptRichText(false);
-	mTraceDisplay->setLineWrapMode(QTextEdit::NoWrap);
+	mTraceDisplay->setLineWrapMode(QPlainTextEdit::NoWrap);
 	mTraceDisplay->move(left, top);
 	mTraceDisplay->resize(width, height);
 
