@@ -331,7 +331,7 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 					   bool temporaryDisplay)
 {
 	std::ostrstream info;
-	info << "Bank:   " << std::setw(2) << mNumber << " " << mName;
+	info << mNumber << " " << mName;
 
 	if (showPatchInfo)
 	{
