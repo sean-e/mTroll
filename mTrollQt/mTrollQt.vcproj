@@ -83,6 +83,7 @@
 				AdditionalDependencies=".\..\Monome40h\FTD2XX.lib $(QTDIR)\lib\qtmaind.lib $(QTDIR)\lib\QtGuid4.lib $(QTDIR)\lib\QtCored4.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="c:\Users\sean.e\src\qt\lib"
+				GenerateManifest="false"
 				IgnoreDefaultLibraryNames="msvcrtd.lib"
 				DelayLoadDLLs="FTD2XX.dll;"
 				GenerateDebugInformation="true"
@@ -149,6 +150,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="3"
 				InlineFunctionExpansion="2"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
@@ -180,6 +182,7 @@
 				AdditionalDependencies=".\..\Monome40h\FTD2XX.lib $(QTDIR)\lib\qtmain.lib $(QTDIR)\lib\QtGui4.lib $(QTDIR)\lib\QtCore4.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="c:\Users\sean.e\src\qt\lib"
+				GenerateManifest="false"
 				IgnoreDefaultLibraryNames="msvcrt.lib"
 				DelayLoadDLLs="FTD2XX.dll;"
 				GenerateDebugInformation="true"
@@ -551,18 +554,6 @@
 			Name="Moc Generated Source"
 			>
 			<File
-				RelativePath=".\Release\moc_ControlUi.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath=".\Debug\moc_ControlUi.cpp"
 				>
 				<FileConfiguration
@@ -575,7 +566,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\Release\moc_MainTrollWindow.cpp"
+				RelativePath=".\Release\moc_ControlUi.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -591,6 +582,18 @@
 				>
 				<FileConfiguration
 					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\Release\moc_MainTrollWindow.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
