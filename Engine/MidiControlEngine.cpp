@@ -370,7 +370,7 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 			if (mMainDisplay)
 			{
 				std::strstream displayMsg;
-				displayMsg << "Displaying ADC values for port " << (int) (mPedalModePort + 1) << std::endl << std::ends;
+				displayMsg << "ADC port " << (int) (mPedalModePort + 1) << " monitor" << std::endl << std::ends;
 				mMainDisplay->TextOut(displayMsg.str());
 			}
 		}
