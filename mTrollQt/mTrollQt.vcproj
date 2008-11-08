@@ -466,6 +466,10 @@
 			Name="Text Files"
 			>
 			<File
+				RelativePath="..\data\1024x600.ui.xml"
+				>
+			</File>
+			<File
 				RelativePath="..\COPYING"
 				>
 			</File>
@@ -491,6 +495,10 @@
 			</File>
 			<File
 				RelativePath="..\data\testdata.ui.xml"
+				>
+			</File>
+			<File
+				RelativePath="..\data\testdata2.ui.xml"
 				>
 			</File>
 			<File
@@ -554,18 +562,6 @@
 			Name="Moc Generated Source"
 			>
 			<File
-				RelativePath=".\Debug\moc_ControlUi.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath=".\Release\moc_ControlUi.cpp"
 				>
 				<FileConfiguration
@@ -578,7 +574,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\Debug\moc_MainTrollWindow.cpp"
+				RelativePath=".\Debug\moc_ControlUi.cpp"
 				>
 				<FileConfiguration
 					Name="Release|Win32"
@@ -594,6 +590,18 @@
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\Debug\moc_MainTrollWindow.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
