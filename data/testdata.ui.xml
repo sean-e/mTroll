@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <MidiControlUiSettings>
-	<frame width="830" height="655" />
+	<frame width="815" height="625" />
 	<mainTextDisplay top="430" left="9" width="400" height="163" font-height="12" font-weight="bold" foregroundColor="ff9900" backgroundColor="0" />
 	<traceTextDisplay top="430" left="430" width="380" height="163" font-height="8" />
 	<hardware ledBrightness="2" invertLeds="0" />
