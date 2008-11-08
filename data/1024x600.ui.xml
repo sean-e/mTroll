@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <MidiControlUiSettings>
-	<frame width="830" height="710" />
+	<frame width="1024" height="590" />
 	<mainTextDisplay top="330" left="2" width="745" height="230" font-name="Lucida Console" font-height="45" foregroundColor="ffcc00" backgroundColor="0" />
 	<traceTextDisplay top="330" left="750" width="270" height="230" font-height="8" />
 	<hardware ledBrightness="1" />
