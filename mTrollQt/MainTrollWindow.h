@@ -42,6 +42,7 @@ private slots:
 	void OpenFile();
 	void Refresh();
 	void Reconnect();
+	void ToggleTraceWindow();
 
 private:
 	ControlUi	* mUi;

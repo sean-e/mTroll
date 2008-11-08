@@ -54,6 +54,7 @@ MainTrollWindow::MainTrollWindow() :
 	fileMenu->addAction(tr("&Open..."), this, SLOT(OpenFile()), QKeySequence(tr("Ctrl+O")));
 	fileMenu->addAction(tr("&Refresh"), this, SLOT(Refresh()), QKeySequence(tr("F5")));
 	fileMenu->addAction(tr("Re&connect to monome device"), this, SLOT(Reconnect()), QKeySequence(tr("Ctrl+R")));
+	fileMenu->addAction(tr("&Toggle trace window visibility"), this, SLOT(ToggleTraceWindow()), QKeySequence(tr("Ctrl+T")));
 	fileMenu->addSeparator();
 	fileMenu->addAction(tr("E&xit"), this, SLOT(close()));
 
@@ -148,4 +149,11 @@ MainTrollWindow::Reconnect()
 {
 	if (mUi)
 		mUi->Reconnect();
+}
+
+void
+MainTrollWindow::ToggleTraceWindow()
+{
+	if (mUi)
+		mUi->ToggleTraceWindow();
 }

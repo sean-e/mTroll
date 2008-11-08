@@ -628,6 +628,8 @@ ControlUi::CreateMainDisplay(int top,
 	mMainDisplay->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 	mMainDisplay->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 	mMainDisplay->setLineWrapMode(QPlainTextEdit::NoWrap);
+	mMainDisplayRc.setTopLeft(QPoint(left, top));
+	mMainDisplayRc.setBottomRight(QPoint(left+width, top+height));
 	mMainDisplay->move(left, top);
 	mMainDisplay->resize(width, height);
 
@@ -659,6 +661,8 @@ ControlUi::CreateTraceDisplay(int top,
 	mTraceDisplay->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 	mTraceDisplay->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 	mTraceDisplay->setLineWrapMode(QPlainTextEdit::NoWrap);
+	mTraceDiplayRc.setTopLeft(QPoint(left, top));
+	mTraceDiplayRc.setBottomRight(QPoint(left+width, top+height));
 	mTraceDisplay->move(left, top);
 	mTraceDisplay->resize(width, height);
 
@@ -822,6 +826,48 @@ ControlUi::Reconnect()
 	}
 
 	QApplication::restoreOverrideCursor();
+}
+
+void
+ControlUi::ToggleTraceWindow()
+{
+	if (!mTraceDisplay)
+		return;
+
+	if (mTraceDisplay->isVisible())
+	{
+		mTraceDisplay->hide();
+		QRect mainRc(mMainDisplayRc);
+
+		if (mTraceDiplayRc.top() >= mMainDisplayRc.top() &&
+			mTraceDiplayRc.bottom() <= mMainDisplayRc.bottom())
+		{
+			// change width of main display to use space vacated by trace display
+			if (mMainDisplayRc.left() > mTraceDiplayRc.left())
+				mainRc.setLeft(mTraceDiplayRc.left());
+			else if (mMainDisplayRc.right() < mTraceDiplayRc.right())
+				mainRc.setRight(mTraceDiplayRc.left() + mTraceDiplayRc.width());
+		}
+
+		if (mTraceDiplayRc.left() >= mMainDisplayRc.left() &&
+			mTraceDiplayRc.right() <= mMainDisplayRc.right())
+		{
+			// change height of main display to use space vacated by trace display
+			if (mMainDisplayRc.top() > mTraceDiplayRc.top())
+				mainRc.setTop(mTraceDiplayRc.top());
+			else if (mMainDisplayRc.bottom() < mTraceDiplayRc.bottom())
+				mainRc.setBottom(mTraceDiplayRc.top() + mTraceDiplayRc.height());
+		}
+
+		mMainDisplay->move(mainRc.left(), mainRc.top());
+		mMainDisplay->resize(mainRc.width(), mainRc.height());
+	}
+	else
+	{
+		mMainDisplay->move(mMainDisplayRc.left(), mMainDisplayRc.top());
+		mMainDisplay->resize(mMainDisplayRc.width(), mMainDisplayRc.height());
+		mTraceDisplay->show();
+	}
 }
 
 bool 

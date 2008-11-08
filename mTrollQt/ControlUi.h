@@ -72,6 +72,7 @@ public:
 			void Load(const std::string & uiSettingsFile, const std::string & configSettingsFile);
 			void Unload();
 			void Reconnect();
+			void ToggleTraceWindow();
 
 			void GetPreferredSize(int & width, int & height) const {width = mPreferredWidth; height = mPreferredHeight;}
 
@@ -287,6 +288,8 @@ private:
 	int							mLedIntensity;
 	bool						mInvertLeds;
 	KeepDisplayOn				* mSystemPowerOverride;
+	QRect						mMainDisplayRc;
+	QRect						mTraceDiplayRc;
 
 	struct SwitchTextDisplayConfig
 	{
