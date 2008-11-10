@@ -452,10 +452,10 @@
 		<patch name="EDP V InsertOnly" number="280" type="normal" port="1">
 			<midiByteString name="A">b6 2f 7f b6 2f 00</midiByteString>
 		</patch>
-		<patch name="EDP V Speed" number="281" type="normal" port="1">
+		<patch name="EDP V Speed" number="281" type="toggle" port="1">
 			<midiByteString name="A">b6 30 7f b6 30 00</midiByteString>
 		</patch>
-		<patch name="EDP V Reverse" number="282" type="normal" port="1">
+		<patch name="EDP V Reverse" number="282" type="toggle" port="1">
 			<midiByteString name="A">b6 31 7f b6 31 00</midiByteString>
 		</patch>
 		<patch name="EDP SusRecord" number="283" type="momentary" port="1">
@@ -567,28 +567,28 @@
 		<patch name="EDP MIDI BeatSync" number="314" type="normal" port="1">
 			<midiByteString name="A">b6 51 7f</midiByteString>
 		</patch>
-		<patch name="EDP Loop 1" number="315" type="normal" port="1">
+		<patch name="EDP Loop 1" number="315" type="toggle" port="1">
 			<midiByteString name="A">96 54 7f</midiByteString>
 		</patch>
-		<patch name="EDP Loop 2" number="316" type="normal" port="1">
+		<patch name="EDP Loop 2" number="316" type="toggle" port="1">
 			<midiByteString name="A">96 55 7f</midiByteString>
 		</patch>
-		<patch name="EDP Loop 3" number="317" type="normal" port="1">
+		<patch name="EDP Loop 3" number="317" type="toggle" port="1">
 			<midiByteString name="A">96 56 7f</midiByteString>
 		</patch>
-		<patch name="EDP Loop 4" number="318" type="normal" port="1">
+		<patch name="EDP Loop 4" number="318" type="toggle" port="1">
 			<midiByteString name="A">96 57 7f</midiByteString>
 		</patch>
-		<patch name="EDP Loop 5" number="319" type="normal" port="1">
+		<patch name="EDP Loop 5" number="319" type="toggle" port="1">
 			<midiByteString name="A">96 58 7f</midiByteString>
 		</patch>
-		<patch name="EDP Loop 6" number="320" type="normal" port="1">
+		<patch name="EDP Loop 6" number="320" type="toggle" port="1">
 			<midiByteString name="A">96 59 7f</midiByteString>
 		</patch>
-		<patch name="EDP Loop 7" number="321" type="normal" port="1">
+		<patch name="EDP Loop 7" number="321" type="toggle" port="1">
 			<midiByteString name="A">96 5a 7f</midiByteString>
 		</patch>
-		<patch name="EDP Loop 8" number="322" type="normal" port="1">
+		<patch name="EDP Loop 8" number="322" type="toggle" port="1">
 			<midiByteString name="A">96 5b 7f</midiByteString>
 		</patch>
 		<patch name="EDP Rec/Mute" number="323" type="momentary" port="1">
@@ -938,6 +938,7 @@
 			<PatchMap switch="17" patch="40" loadState="" unloadState="" />
 		</bank>
 		<bank name="EDP General" number="6">
+			<ExclusiveSwitchGroup>1 2 3 4 5</ExclusiveSwitchGroup>  
 			<PatchMap switch="1" patch="315" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="316" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="317" loadState="" unloadState="" />
