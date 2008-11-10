@@ -157,7 +157,7 @@
 				AdditionalIncludeDirectories="&quot;..\..\..\include\QtCore&quot;,&quot;..\..\..\include\QtCore&quot;,&quot;..\..\..\include\QtGui&quot;,&quot;..\..\..\include\QtGui&quot;,&quot;..\..\..\include&quot;,&quot;c:\Users\sean.e\src\qt\include\ActiveQt&quot;,&quot;tmp\moc\release_shared&quot;,&quot;.&quot;,..\..\..\mkspecs\win32-msvc2005"
 				PreprocessorDefinitions="QT_NO_DEBUG;NDEBUG;_WINDOWS;UNICODE;WIN32;QT_LARGEFILE_SUPPORT;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;STRICT;TIXML_USE_STL"
 				ExceptionHandling="2"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				BufferSecurityCheck="false"
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="0"
@@ -182,8 +182,8 @@
 				AdditionalDependencies=".\..\Monome40h\FTD2XX.lib $(QTDIR)\lib\qtmain.lib $(QTDIR)\lib\QtGui4.lib $(QTDIR)\lib\QtCore4.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="c:\Users\sean.e\src\qt\lib"
-				GenerateManifest="false"
-				IgnoreDefaultLibraryNames="msvcrt.lib"
+				GenerateManifest="true"
+				IgnoreDefaultLibraryNames=""
 				DelayLoadDLLs="FTD2XX.dll;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -562,18 +562,6 @@
 			Name="Moc Generated Source"
 			>
 			<File
-				RelativePath=".\Release\moc_ControlUi.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath=".\Debug\moc_ControlUi.cpp"
 				>
 				<FileConfiguration
@@ -586,7 +574,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\Release\moc_MainTrollWindow.cpp"
+				RelativePath=".\Release\moc_ControlUi.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -602,6 +590,18 @@
 				>
 				<FileConfiguration
 					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\Release\moc_MainTrollWindow.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
