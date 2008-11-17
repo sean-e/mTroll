@@ -16,7 +16,7 @@
 			<adc inputNumber="3" enable="1" minimumAdcVal="10" maximumAdcVal="1015" />
 			<adc inputNumber="4" enable="1" minimumAdcVal="50" maximumAdcVal="990" />
 			<globalExpr inputNumber="1" assignmentNumber="1" channel="7" controller="2" min="0" max="127" invert="0" enable="1" />
-			<globalExpr inputNumber="2" assignmentNumber="1" channel="4" controller="2" min="0" max="127" invert="0" enable="1" />
+			<globalExpr inputNumber="2" assignmentNumber="1" channel="2" controller="1" min="0" max="127" invert="0" enable="1" />
 			<globalExpr inputNumber="3" assignmentNumber="1" channel="11" controller="110" min="0" max="127" invert="0" enable="1" />
 			<globalExpr inputNumber="4" assignmentNumber="1" channel="11" controller="111" min="0" max="127" invert="0" enable="1" />
 		</expression>
