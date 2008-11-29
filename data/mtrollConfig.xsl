@@ -4,55 +4,27 @@
 	<html>
 		<head>
 			<style type="text/css">
-				table.showMe { display:none; }
-				div.TableDiv:hover table.showMe { display:block; }
+				table.PatchMapTableCls { display:none; }
+				div.TableDiv:hover table.PatchMapTableCls { display:block; }
+				table { border:0; }
+				th { text-align:left; }
+				td { vertical-align:top; }
 			</style>
 		</head>
 		<body>
-			<h4>Banks</h4>
-			<table border="0">
+			<h4>Contents</h4>
+			<div>
+				<a href="#banks">Banks</a><br />
+				<a href="#patches">Patches</a><br />
+				<a href="#metapatches">Meta Patches</a><br />
+			</div>
+			
+			<h4><a name="patches">Patches</a></h4>
+			<table>
 				<tr bgcolor="#9acd32">
-					<th align="left">Number</th>
-					<th align="left">Name</th>
-					<th align="left">Patch Mappings (Switch - Patch - Patch Name)</th>
-				</tr>
-				<xsl:for-each select="MidiControlSettings/banks/bank">
-					<tr>
-						<td valign="top"><xsl:value-of select="@number"/></td>
-						<td valign="top"><xsl:value-of select="@name"/></td>
-						<td valign="top">
-							<div class="TableDiv">
-								<xsl:text>&#160;</xsl:text>
-							<table class="showMe" border="0">
-								<xsl:for-each select="PatchMap">
-									<tr>
-										<xsl:variable name="patchNumber" select="@patch"/>
-										<td><xsl:value-of select="@switch"/><xsl:text>&#160;&#160;</xsl:text></td>
-										<td><xsl:value-of select="@patch"/></td>
-										<td><xsl:element name="a">
-											<xsl:attribute name="href">
-												<xsl:text>#p</xsl:text>
-												<xsl:value-of select="@patch"/>
-											</xsl:attribute>
-											<!--<xsl:text>&#160;</xsl:text>-->
-											<xsl:value-of select="/MidiControlSettings/patches/patch[@number=$patchNumber]/@name"/>
-										</xsl:element>
-										</td>
-									</tr>
-								</xsl:for-each>
-							</table>
-							</div>
-						</td>
-					</tr>
-				</xsl:for-each>
-			</table>
-
-			<h4>Patches</h4>
-			<table border="0">
-				<tr bgcolor="#9acd32">
-					<th align="left">Number</th>
-					<th align="left">Name</th>
-					<th align="left">Type</th>
+					<th>Number</th>
+					<th>Name</th>
+					<th>Type</th>
 				</tr>
 				<xsl:for-each select="MidiControlSettings/patches/patch">
 					<tr>
@@ -70,13 +42,15 @@
 					</tr>
 				</xsl:for-each>
 			</table>
+			<br />
+			<br />
 
-			<h4>Meta Patches</h4>
-			<table border="0">
+			<h4><a name="metapatches">Meta Patches</a></h4>
+			<table>
 				<tr bgcolor="#9acd32">
-					<th align="left">Number</th>
-					<th align="left">Name</th>
-					<th align="left">Action</th>
+					<th>Number</th>
+					<th>Name</th>
+					<th>Action</th>
 				</tr>
 				<xsl:for-each select="MidiControlSettings/patches/engineMetaPatch">
 					<tr>
@@ -94,6 +68,47 @@
 					</tr>
 				</xsl:for-each>
 			</table>
+			<br />
+			<br />
+
+			<h4><a name="banks">Banks</a></h4>
+			<table>
+				<tr bgcolor="#9acd32">
+					<th>Number</th>
+					<th>Name</th>
+					<th>Patch Mappings (Switch - Patch - Patch Name)</th>
+				</tr>
+				<xsl:for-each select="MidiControlSettings/banks/bank">
+					<tr>
+						<td><xsl:value-of select="@number"/></td>
+						<td><xsl:value-of select="@name"/></td>
+						<td>
+							<div class="TableDiv">
+								<span>[view]</span>
+								<table class="PatchMapTableCls">
+									<xsl:for-each select="PatchMap">
+										<tr>
+											<xsl:variable name="patchNumber" select="@patch"/>
+											<td><xsl:value-of select="@switch"/><xsl:text>&#160;&#160;</xsl:text></td>
+											<td><xsl:value-of select="@patch"/></td>
+											<td><xsl:element name="a">
+												<xsl:attribute name="href">
+													<xsl:text>#p</xsl:text>
+													<xsl:value-of select="@patch"/>
+												</xsl:attribute>
+												<!--<xsl:text>&#160;</xsl:text>-->
+												<xsl:value-of select="/MidiControlSettings/patches/patch[@number=$patchNumber]/@name"/>
+											</xsl:element>
+											</td>
+										</tr>
+									</xsl:for-each>
+								</table>
+							</div>
+						</td>
+					</tr>
+				</xsl:for-each>
+			</table>
+
 		</body>
 	</html>
 </xsl:template>
