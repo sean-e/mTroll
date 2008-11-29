@@ -96,8 +96,15 @@
 													<xsl:text>#p</xsl:text>
 													<xsl:value-of select="@patch"/>
 												</xsl:attribute>
-												<!--<xsl:text>&#160;</xsl:text>-->
-												<xsl:value-of select="/MidiControlSettings/patches/patch[@number=$patchNumber]/@name"/>
+												<xsl:variable name="patchName" select="/MidiControlSettings/patches/patch[@number=$patchNumber]/@name"/>
+												<xsl:choose>
+													<xsl:when test="$patchName != ''">
+														<xsl:value-of select="$patchName" />
+													</xsl:when>
+														<xsl:otherwise>
+															<xsl:value-of select="/MidiControlSettings/patches/engineMetaPatch[@number=$patchNumber]/@name"/>
+														</xsl:otherwise>
+												</xsl:choose>
 											</xsl:element>
 											</td>
 										</tr>
