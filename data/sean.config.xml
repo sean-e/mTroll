@@ -420,6 +420,72 @@
 		<patch name="H8K B VirtRack 10" number="119" type="normal" port="1">
 			<midiByteString name="A">b3 60 10</midiByteString>
 		</patch>
+
+		<patch name="H8K Ext 1" number="120" type="normal" port="1">
+			<globalExpr inputNumber="1" enable="0" />
+			<localExpr inputNumber="1" assignmentNumber="1" channel="3" controller="30" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="H8K Ext 2" number="121" type="normal" port="1">
+			<globalExpr inputNumber="1" enable="0" />
+			<localExpr inputNumber="1" assignmentNumber="1" channel="3" controller="31" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="H8K Ext 3" number="122" type="normal" port="1">
+			<globalExpr inputNumber="1" enable="0" />
+			<localExpr inputNumber="1" assignmentNumber="1" channel="3" controller="32" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="H8K Ext 4" number="123" type="normal" port="1">
+			<globalExpr inputNumber="1" enable="0" />
+			<localExpr inputNumber="1" assignmentNumber="1" channel="3" controller="33" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="H8K Ext 5" number="124" type="normal" port="1">
+			<globalExpr inputNumber="1" enable="0" />
+			<localExpr inputNumber="1" assignmentNumber="1" channel="3" controller="34" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="H8K Ext 6" number="125" type="normal" port="1">
+			<globalExpr inputNumber="1" enable="0" />
+			<localExpr inputNumber="1" assignmentNumber="1" channel="3" controller="35" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="H8K Ext 7" number="126" type="normal" port="1">
+			<globalExpr inputNumber="1" enable="0" />
+			<localExpr inputNumber="1" assignmentNumber="1" channel="3" controller="36" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="H8K Ext 8 (tap)" number="127" type="momentary" port="1">
+			<midiByteString name="A">b3 37 7f</midiByteString>
+		</patch>
+
+		<patch name="H8K Group 1" number="128" type="normal" port="1">
+			<globalExpr inputNumber="1" enable="0" />
+			<localExpr inputNumber="1" assignmentNumber="1" channel="3" controller="38" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="H8K Group 2" number="129" type="normal" port="1">
+			<globalExpr inputNumber="1" enable="0" />
+			<localExpr inputNumber="1" assignmentNumber="1" channel="3" controller="39" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="H8K Group 3" number="130" type="normal" port="1">
+			<globalExpr inputNumber="1" enable="0" />
+			<localExpr inputNumber="1" assignmentNumber="1" channel="3" controller="40" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="H8K Group 4" number="131" type="normal" port="1">
+			<globalExpr inputNumber="1" enable="0" />
+			<localExpr inputNumber="1" assignmentNumber="1" channel="3" controller="41" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="H8K Group 5" number="132" type="normal" port="1">
+			<globalExpr inputNumber="1" enable="0" />
+			<localExpr inputNumber="1" assignmentNumber="1" channel="3" controller="42" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="H8K Group 6" number="133" type="normal" port="1">
+			<globalExpr inputNumber="1" enable="0" />
+			<localExpr inputNumber="1" assignmentNumber="1" channel="3" controller="43" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="H8K Group 7" number="134" type="normal" port="1">
+			<globalExpr inputNumber="1" enable="0" />
+			<localExpr inputNumber="1" assignmentNumber="1" channel="3" controller="44" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="H8K Group 8" number="135" type="normal" port="1">
+			<globalExpr inputNumber="1" enable="0" />
+			<localExpr inputNumber="1" assignmentNumber="1" channel="3" controller="45" min="0" max="127" invert="0" enable="1" />
+		</patch>
+
 		<patch name="EDP V Parameter" number="270" type="normal" port="1">
 			<midiByteString name="A">b6 24 7f b6 24 00</midiByteString>
 		</patch>
@@ -844,7 +910,7 @@
 			<midiByteString name="A">ca 0c</midiByteString>
 			<midiByteString name="B">ca 03</midiByteString>
 		</patch>
-		<patch name="old DRV Toggle" number="1" type="toggle" port="1">
+		<patch name="old DRV Toggle" number="508" type="toggle" port="1">
 			<midiByteString name="A">ca 00 ba 6f 29</midiByteString>
 			<midiByteString name="B">ca 02 ba 6f 7f</midiByteString>
 		</patch>
@@ -918,7 +984,7 @@
 			<PatchMap switch="16" patch="22" loadState="" unloadState="" />
 			<PatchMap switch="17" patch="23" loadState="" unloadState="" />
 		</bank>
-		<bank name="H8000 DSP B" number="4">
+		<bank name="H8000 DSP B" number="3">
 			<PatchMap switch="1" patch="600" loadState="" unloadState="" />
 			<PatchMap switch="1" patch="24" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="25" loadState="" unloadState="" />
@@ -937,6 +1003,26 @@
 			<PatchMap switch="15" patch="38" loadState="" unloadState="" />
 			<PatchMap switch="16" patch="39" loadState="" unloadState="" />
 			<PatchMap switch="17" patch="40" loadState="" unloadState="" />
+		</bank>
+		<bank name="H8000 Externals" number="4">
+			<PatchMap switch="1" patch="120" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="121" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="122" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="123" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="124" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="125" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="126" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="127" loadState="" unloadState="" />
+		</bank>
+		<bank name="H8000 MIDI Groups" number="5">
+			<PatchMap switch="1" patch="128" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="129" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="130" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="131" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="132" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="133" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="134" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="135" loadState="" unloadState="" />
 		</bank>
 		<bank name="EDP General" number="6">
 			<ExclusiveSwitchGroup>1 2 3 4 5</ExclusiveSwitchGroup>  
