@@ -449,7 +449,7 @@
 			<globalExpr inputNumber="1" enable="0" />
 			<localExpr inputNumber="1" assignmentNumber="1" channel="3" controller="36" min="0" max="127" invert="0" enable="1" />
 		</patch>
-		<patch name="H8K Ext 8 (tap)" number="127" type="momentary" port="1">
+		<patch name="H8K Ext 8 (tap)" number="127" type="normal" port="1">
 			<midiByteString name="A">b3 37 7f</midiByteString>
 		</patch>
 
@@ -917,12 +917,14 @@
 		
 		<engineMetaPatch name="Reset Patches" number="600" action="ResetBankPatches" />
 		<engineMetaPatch name="Load Routing Toggles" number="601" action="LoadBank" bankNumber="101" />
-		<engineMetaPatch name="Load H8000 Toggles" number="602" action="LoadBank" bankNumber="4" />
+		<engineMetaPatch name="Load H8000 B Toggles" number="602" action="LoadBank" bankNumber="3" />
 		<engineMetaPatch name="Load EDP General" number="603" action="LoadBank" bankNumber="6" />
 		<engineMetaPatch name="Load Startup" number="604" action="LoadBank" bankNumber="1" />
 		<engineMetaPatch name="Backward" number="605" action="BankHistoryBackward" />
 		<engineMetaPatch name="Forward" number="606" action="BankHistoryForward" />
 		<engineMetaPatch name="Bank Recall" number="607" action="BankHistoryRecall" />
+		<engineMetaPatch name="Load H8000 Externals" number="608" action="LoadBank" bankNumber="4" />
+		<engineMetaPatch name="Load H8000 Group" number="609" action="LoadBank" bankNumber="5" />
 	</patches>
 	<banks>
 		<bank name="Defaults" number="0">
@@ -959,9 +961,11 @@
 			<PatchMap switch="10" patch="99" loadState="" unloadState="" />
 		</bank>
 		<bank name="Startup" number="1">
-			<PatchMap switch="1" patch="601" loadState="" unloadState="" />
+			<PatchMap switch="1" patch="603" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="602" loadState="" unloadState="" />
-			<PatchMap switch="3" patch="603" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="608" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="609" loadState="" unloadState="" />
+			<PatchMap switch="10" patch="601" loadState="" unloadState="" />
 			<PatchMap switch="15" patch="99" loadState="" unloadState="" />
 		</bank>
 		<bank name="H8000 DSP A" number="2">
@@ -1009,6 +1013,7 @@
 			<PatchMap switch="2" patch="121" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="122" loadState="" unloadState="" />
 			<PatchMap switch="4" patch="123" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="93" loadState="" unloadState="" />
 			<PatchMap switch="6" patch="124" loadState="" unloadState="" />
 			<PatchMap switch="7" patch="125" loadState="" unloadState="" />
 			<PatchMap switch="8" patch="126" loadState="" unloadState="" />
@@ -1019,6 +1024,7 @@
 			<PatchMap switch="2" patch="129" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="130" loadState="" unloadState="" />
 			<PatchMap switch="4" patch="131" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="93" loadState="" unloadState="" />
 			<PatchMap switch="6" patch="132" loadState="" unloadState="" />
 			<PatchMap switch="7" patch="133" loadState="" unloadState="" />
 			<PatchMap switch="8" patch="134" loadState="" unloadState="" />
@@ -1065,11 +1071,11 @@
 			<PatchMap switch="8" patch="117" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="118" loadState="" unloadState="" />
 		</bank>
-		<bank name="Triaxis Clean" number="10">
+		<bank name="Triaxis Clean" number="20">
 			<PatchMap switch="1" patch="44" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="45" loadState="" unloadState="" />
 		</bank>
-		<bank name="Triaxis Dirty" number="11">
+		<bank name="Triaxis Dirty" number="21">
 			<PatchMap switch="1" patch="46" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="47" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="48" loadState="" unloadState="" />
@@ -1078,17 +1084,17 @@
 			<PatchMap switch="6" patch="50" loadState="" unloadState="" />
 			<PatchMap switch="7" patch="89" loadState="" unloadState="" />
 		</bank>
-		<bank name="Clean Sculpture" number="12">
+		<bank name="Clean Sculpture" number="22">
 			<PatchMap switch="1" patch="52" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="53" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="54" loadState="" unloadState="" />
 			<PatchMap switch="4" patch="55" loadState="" unloadState="" />
 		</bank>
-		<bank name="Dirty Sculpture" number="13">
+		<bank name="Dirty Sculpture" number="23">
 			<PatchMap switch="1" patch="56" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="55" loadState="" unloadState="" />
 		</bank>
-		<bank name="Trance Ambience" number="14">
+		<bank name="Trance Ambience" number="24">
 			<PatchMap switch="1" patch="57" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="58" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="59" loadState="" unloadState="" />
