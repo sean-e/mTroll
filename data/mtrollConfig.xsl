@@ -2,6 +2,12 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 <xsl:template match="/">
 	<html>
+		<head>
+			<style type="text/css">
+				table.showMe { display:none; }
+				div.TableDiv:hover table.showMe { display:block; }
+			</style>
+		</head>
 		<body>
 			<h4>Banks</h4>
 			<table border="0">
@@ -15,7 +21,9 @@
 						<td valign="top"><xsl:value-of select="@number"/></td>
 						<td valign="top"><xsl:value-of select="@name"/></td>
 						<td valign="top">
-							<table border="0">
+							<div class="TableDiv">
+								<xsl:text>&#160;</xsl:text>
+							<table class="showMe" border="0">
 								<xsl:for-each select="PatchMap">
 									<tr>
 										<xsl:variable name="patchNumber" select="@patch"/>
@@ -33,6 +41,7 @@
 									</tr>
 								</xsl:for-each>
 							</table>
+							</div>
 						</td>
 					</tr>
 				</xsl:for-each>
