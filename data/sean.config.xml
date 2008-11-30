@@ -536,6 +536,52 @@
 			<globalExpr inputNumber="4" enable="0" />
 			<localExpr inputNumber="4" assignmentNumber="1" channel="7" controller="2" min="0" max="127" invert="0" enable="1" />
 		</patch>
+		<patch name="No Pedals" number="154" type="normal" port="1">
+			<globalExpr inputNumber="1" enable="0" />
+			<globalExpr inputNumber="2" enable="0" />
+			<globalExpr inputNumber="3" enable="0" />
+			<globalExpr inputNumber="4" enable="0" />
+		</patch>
+		<patch name="H8K Ext 1-4" number="155" type="normal" port="1">
+			<globalExpr inputNumber="1" enable="0" />
+			<globalExpr inputNumber="2" enable="0" />
+			<globalExpr inputNumber="3" enable="0" />
+			<globalExpr inputNumber="4" enable="0" />
+			<localExpr inputNumber="1" assignmentNumber="1" channel="3" controller="30" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="2" assignmentNumber="1" channel="3" controller="31" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="3" assignmentNumber="1" channel="3" controller="32" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="4" assignmentNumber="1" channel="3" controller="33" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="H8K Ext 4-8" number="156" type="normal" port="1">
+			<globalExpr inputNumber="1" enable="0" />
+			<globalExpr inputNumber="2" enable="0" />
+			<globalExpr inputNumber="3" enable="0" />
+			<globalExpr inputNumber="4" enable="0" />
+			<localExpr inputNumber="1" assignmentNumber="1" channel="3" controller="34" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="2" assignmentNumber="1" channel="3" controller="35" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="3" assignmentNumber="1" channel="3" controller="36" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="4" assignmentNumber="1" channel="3" controller="37" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="H8K Grp 1-4" number="157" type="normal" port="1">
+			<globalExpr inputNumber="1" enable="0" />
+			<globalExpr inputNumber="2" enable="0" />
+			<globalExpr inputNumber="3" enable="0" />
+			<globalExpr inputNumber="4" enable="0" />
+			<localExpr inputNumber="1" assignmentNumber="1" channel="3" controller="38" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="2" assignmentNumber="1" channel="3" controller="39" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="3" assignmentNumber="1" channel="3" controller="3a" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="4" assignmentNumber="1" channel="3" controller="3b" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="H8K Grp 4-8" number="158" type="normal" port="1">
+			<globalExpr inputNumber="1" enable="0" />
+			<globalExpr inputNumber="2" enable="0" />
+			<globalExpr inputNumber="3" enable="0" />
+			<globalExpr inputNumber="4" enable="0" />
+			<localExpr inputNumber="1" assignmentNumber="1" channel="3" controller="3c" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="2" assignmentNumber="1" channel="3" controller="3d" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="3" assignmentNumber="1" channel="3" controller="3e" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="4" assignmentNumber="1" channel="3" controller="3f" min="0" max="127" invert="0" enable="1" />
+		</patch>
 
 		<patch name="EDP V Parameter" number="270" type="normal" port="1">
 			<midiByteString name="A">b6 24 7f b6 24 00</midiByteString>
@@ -977,6 +1023,7 @@
 		<engineMetaPatch name="Load H8K Externals" number="608" action="LoadBank" bankNumber="4" />
 		<engineMetaPatch name="Load H8K Group Pedals" number="609" action="LoadBank" bankNumber="5" />
 		<engineMetaPatch name="Load H8K Group Toggles" number="610" action="LoadBank" bankNumber="10" />
+		<engineMetaPatch name="Load Dedicated Pedals" number="611" action="LoadBank" bankNumber="7" />
 	</patches>
 	<banks>
 		<bank name="Defaults" number="0">
@@ -1021,6 +1068,7 @@
 			<PatchMap switch="3" patch="608" loadState="" unloadState="" />
 			<PatchMap switch="4" patch="609" loadState="" unloadState="" />
 			<PatchMap switch="5" patch="610" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="611" loadState="" unloadState="" />
 			<PatchMap switch="10" patch="601" loadState="" unloadState="" />
 			<PatchMap switch="11" patch="99" loadState="" unloadState="" />
 			<!--<PatchMap switch="22" patch="-3" loadState="" unloadState="" />-->
@@ -1103,13 +1151,18 @@
 		</bank>
 		<bank name="Dedicated Pedals" number="7">
 			<PatchMap switch="1" patch="93" loadState="" unloadState="" />
-			<PatchMap switch="2" patch="92" loadState="" unloadState="" />
-			<PatchMap switch="3" patch="90" loadState="" unloadState="" />
-			<PatchMap switch="4" patch="153" loadState="" unloadState="" />
-			<PatchMap switch="5" patch="152" loadState="" unloadState="" />
-			<PatchMap switch="6" patch="150" loadState="" unloadState="" />
-			<PatchMap switch="7" patch="151" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="154" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="92" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="90" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="153" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="152" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="150" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="151" loadState="" unloadState="" />
 			<PatchMap switch="10" patch="360" loadState="" unloadState="" />
+			<PatchMap switch="11" patch="155" loadState="" unloadState="" />
+			<PatchMap switch="12" patch="156" loadState="" unloadState="" />
+			<PatchMap switch="13" patch="157" loadState="" unloadState="" />
+			<PatchMap switch="14" patch="158" loadState="" unloadState="" />
 		</bank>
 		<bank name="H8000 DSP A VirtRack" number="8">
 			<PatchMap switch="1" patch="100" loadState="" unloadState="" />
