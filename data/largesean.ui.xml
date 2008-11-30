@@ -2,7 +2,7 @@
 <MidiControlUiSettings>
 	<frame width="1400" height="900" />
 	<mainTextDisplay top="460" left="9" width="800" height="385" font-name="Consolas" font-height="22" font-weight="bold" foregroundColor="00ccff" backgroundColor="0" />
-	<traceTextDisplay top="500" left="820" width="500" height="345" font-height="11" />
+	<traceTextDisplay top="500" left="820" width="585" height="345" font-height="11" />
 	<hardware ledBrightness="1" invertLeds="0" />
 
 	<switchAssemblyConfig>
