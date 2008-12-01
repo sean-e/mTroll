@@ -51,6 +51,7 @@ ExpressionControl::Init(bool invert,
 	mMidiData[0] = (0xb0 | mChannel);
 	mMidiData[1] = mControlNumber;
 	mMidiData[2] = 0;
+	mMidiData[3] = 0;
 }
 
 void
@@ -95,6 +96,8 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 	// easier to see that top and bottom hit on controller than on pc
 	const bool showStatus = newCcVal == mMinCcVal || newCcVal == mMaxCcVal;
 	midiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], showStatus);
+	if (0)
+		midiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[3], showStatus);
 
 	if (mainDisplay)
 	{

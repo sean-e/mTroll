@@ -77,7 +77,7 @@ private:
 	byte				mMinCcVal;
 	byte				mMaxCcVal;
 	byte				mCcValRange;
-	byte				mMidiData[3];
+	byte				mMidiData[4];
 
 	int					mMinAdcVal;
 	int					mMaxAdcVal;
