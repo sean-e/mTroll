@@ -322,14 +322,14 @@
 		<patch name="System Of Sirius 2" number="88" type="normal" port="1">
 			<midiByteString name="A">ca 0d c1 20</midiByteString>
 		</patch>
-		<patch name="Triaxis Ld1 Pedal 2" number="89" type="normal" port="1">
+		<patch name="Triaxis Ld1 Pedal" number="89" type="normal" port="1">
 			<midiByteString name="A">c1 3c</midiByteString>
 		</patch>
-		<patch name="DHP Pedal 2" number="90" type="normal" port="1">
+		<patch name="DHP Pedal" number="90" type="normal" port="1">
 			<globalExpr inputNumber="4" enable="0" />
 			<localExpr inputNumber="4" assignmentNumber="1" channel="5" controller="0" min="0" max="127" invert="0" enable="1" />
 		</patch>
-		<patch name="H3500 Pedal 2" number="92" type="normal" port="1">
+		<patch name="H3500 Pedal" number="92" type="normal" port="1">
 			<globalExpr inputNumber="4" enable="0" />
 			<localExpr inputNumber="4" assignmentNumber="1" channel="6" controller="0" min="0" max="127" invert="0" enable="1" />
 		</patch>
@@ -483,11 +483,11 @@
 			<localExpr inputNumber="4" assignmentNumber="1" channel="3" controller="45" min="0" max="127" invert="0" enable="1" />
 		</patch>
 
-		<patch name="SWB Pedal B" number="150" type="normal" port="1">
+		<patch name="SWB Pedal B" number="151" type="normal" port="1">
 			<globalExpr inputNumber="4" enable="0" />
 			<localExpr inputNumber="4" assignmentNumber="1" channel="11" controller="110" min="0" max="127" invert="0" enable="1" />
 		</patch>
-		<patch name="SWB Pedal A" number="151" type="normal" port="1">
+		<patch name="SWB Pedal A" number="150" type="normal" port="1">
 			<globalExpr inputNumber="4" enable="0" />
 			<localExpr inputNumber="4" assignmentNumber="1" channel="11" controller="111" min="0" max="127" invert="0" enable="1" />
 		</patch>
