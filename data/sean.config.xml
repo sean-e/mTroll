@@ -20,10 +20,6 @@
 			<globalExpr inputNumber="2" assignmentNumber="1" channel="2" controller="1" min="0" max="127" invert="0" enable="1" />
 			<globalExpr inputNumber="3" assignmentNumber="1" channel="3" controller="30" min="0" max="127" invert="0" enable="1" />
 			<globalExpr inputNumber="4" assignmentNumber="1" channel="3" controller="31" min="0" max="127" invert="0" enable="1" />
-			<!--<globalExpr inputNumber="1" assignmentNumber="1" channel="7" controller="2" min="0" max="127" invert="0" enable="1" />-->
-			<!--<globalExpr inputNumber="2" assignmentNumber="1" channel="2" controller="1" min="0" max="127" invert="0" enable="1" />-->
-			<!--<globalExpr inputNumber="3" assignmentNumber="1" channel="11" controller="110" min="0" max="127" invert="0" enable="1" />-->
-			<!--<globalExpr inputNumber="4" assignmentNumber="1" channel="11" controller="111" min="0" max="127" invert="0" enable="1" />-->
 		</expression>
 	</SystemConfig>
 	<patches>
@@ -487,39 +483,6 @@
 			<localExpr inputNumber="4" assignmentNumber="1" channel="3" controller="45" min="0" max="127" invert="0" enable="1" />
 		</patch>
 
-		<patch name="H8K Group 1 Toggle" number="136" type="toggle" port="1">
-			<midiByteString name="A">b2 30 7f b2 30 00</midiByteString>
-			<midiByteString name="B">b2 30 7f b2 30 00</midiByteString>
-		</patch>
-		<patch name="H8K Group 2 Toggle" number="137" type="toggle" port="1">
-			<midiByteString name="A">b2 31 7f b2 31 00</midiByteString>
-			<midiByteString name="B">b2 31 7f b2 31 00</midiByteString>
-		</patch>
-		<patch name="H8K Group 3 Toggle" number="138" type="toggle" port="1">
-			<midiByteString name="A">b2 32 7f b2 32 00</midiByteString>
-			<midiByteString name="B">b2 32 7f b2 32 00</midiByteString>
-		</patch>
-		<patch name="H8K Group 4 Toggle" number="139" type="toggle" port="1">
-			<midiByteString name="A">b2 33 7f b2 33 00</midiByteString>
-			<midiByteString name="B">b2 33 7f b2 33 00</midiByteString>
-		</patch>
-		<patch name="H8K Group 5 Toggle" number="140" type="toggle" port="1">
-			<midiByteString name="A">b2 34 7f b2 34 00</midiByteString>
-			<midiByteString name="B">b2 34 7f b2 34 00</midiByteString>
-		</patch>
-		<patch name="H8K Group 6 Toggle" number="141" type="toggle" port="1">
-			<midiByteString name="A">b2 35 7f b2 35 00</midiByteString>
-			<midiByteString name="B">b2 35 7f b2 35 00</midiByteString>
-		</patch>
-		<patch name="H8K Group 7 Toggle" number="142" type="toggle" port="1">
-			<midiByteString name="A">b2 36 7f b2 36 00</midiByteString>
-			<midiByteString name="B">b2 36 7f b2 36 00</midiByteString>
-		</patch>
-		<patch name="H8K Group 8 Toggle" number="143" type="toggle" port="1">
-			<midiByteString name="A">b2 37 7f b2 37 00</midiByteString>
-			<midiByteString name="B">b2 37 7f b2 37 00</midiByteString>
-		</patch>
-
 		<patch name="SWB Pedal B" number="150" type="normal" port="1">
 			<globalExpr inputNumber="4" enable="0" />
 			<localExpr inputNumber="4" assignmentNumber="1" channel="11" controller="110" min="0" max="127" invert="0" enable="1" />
@@ -569,18 +532,18 @@
 			<globalExpr inputNumber="4" enable="0" />
 			<localExpr inputNumber="1" assignmentNumber="1" channel="3" controller="38" min="0" max="127" invert="0" enable="1" />
 			<localExpr inputNumber="2" assignmentNumber="1" channel="3" controller="39" min="0" max="127" invert="0" enable="1" />
-			<localExpr inputNumber="3" assignmentNumber="1" channel="3" controller="3a" min="0" max="127" invert="0" enable="1" />
-			<localExpr inputNumber="4" assignmentNumber="1" channel="3" controller="3b" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="3" assignmentNumber="1" channel="3" controller="40" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="4" assignmentNumber="1" channel="3" controller="41" min="0" max="127" invert="0" enable="1" />
 		</patch>
 		<patch name="H8K Grp 4-8" number="158" type="normal" port="1">
 			<globalExpr inputNumber="1" enable="0" />
 			<globalExpr inputNumber="2" enable="0" />
 			<globalExpr inputNumber="3" enable="0" />
 			<globalExpr inputNumber="4" enable="0" />
-			<localExpr inputNumber="1" assignmentNumber="1" channel="3" controller="3c" min="0" max="127" invert="0" enable="1" />
-			<localExpr inputNumber="2" assignmentNumber="1" channel="3" controller="3d" min="0" max="127" invert="0" enable="1" />
-			<localExpr inputNumber="3" assignmentNumber="1" channel="3" controller="3e" min="0" max="127" invert="0" enable="1" />
-			<localExpr inputNumber="4" assignmentNumber="1" channel="3" controller="3f" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="1" assignmentNumber="1" channel="3" controller="42" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="2" assignmentNumber="1" channel="3" controller="43" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="3" assignmentNumber="1" channel="3" controller="44" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="4" assignmentNumber="1" channel="3" controller="45" min="0" max="127" invert="0" enable="1" />
 		</patch>
 
 		<patch name="EDP V Parameter" number="270" type="normal" port="1">
@@ -1022,7 +985,6 @@
 		<engineMetaPatch name="Bank Recall" number="607" action="BankHistoryRecall" />
 		<engineMetaPatch name="Load H8K Externals" number="608" action="LoadBank" bankNumber="4" />
 		<engineMetaPatch name="Load H8K Group Pedals" number="609" action="LoadBank" bankNumber="5" />
-		<engineMetaPatch name="Load H8K Group Toggles" number="610" action="LoadBank" bankNumber="10" />
 		<engineMetaPatch name="Load Dedicated Pedals" number="611" action="LoadBank" bankNumber="7" />
 	</patches>
 	<banks>
@@ -1067,8 +1029,7 @@
 			<PatchMap switch="2" patch="602" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="608" loadState="" unloadState="" />
 			<PatchMap switch="4" patch="609" loadState="" unloadState="" />
-			<PatchMap switch="5" patch="610" loadState="" unloadState="" />
-			<PatchMap switch="6" patch="611" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="611" loadState="" unloadState="" />
 			<PatchMap switch="10" patch="601" loadState="" unloadState="" />
 			<PatchMap switch="11" patch="99" loadState="" unloadState="" />
 			<!--<PatchMap switch="22" patch="-3" loadState="" unloadState="" />-->
@@ -1185,17 +1146,6 @@
 			<PatchMap switch="7" patch="116" loadState="" unloadState="" />
 			<PatchMap switch="8" patch="117" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="118" loadState="" unloadState="" />
-		</bank>
-		<bank name="H8000 Group Toggles" number="10">
-			<PatchMap switch="1" patch="136" loadState="" unloadState="" />
-			<PatchMap switch="2" patch="137" loadState="" unloadState="" />
-			<PatchMap switch="3" patch="138" loadState="" unloadState="" />
-			<PatchMap switch="4" patch="139" loadState="" unloadState="" />
-			<PatchMap switch="5" patch="93" loadState="" unloadState="" />
-			<PatchMap switch="6" patch="140" loadState="" unloadState="" />
-			<PatchMap switch="7" patch="141" loadState="" unloadState="" />
-			<PatchMap switch="8" patch="142" loadState="" unloadState="" />
-			<PatchMap switch="9" patch="143" loadState="" unloadState="" />
 		</bank>
 		<bank name="Triaxis Clean" number="20">
 			<PatchMap switch="1" patch="44" loadState="" unloadState="" />
