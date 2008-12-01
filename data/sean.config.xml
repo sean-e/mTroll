@@ -14,8 +14,8 @@
 		<expression port="1">
 			<adc inputNumber="1" enable="1" minimumAdcVal="50" maximumAdcVal="990" />
 			<adc inputNumber="2" enable="1" minimumAdcVal="3" maximumAdcVal="315" />
-			<adc inputNumber="3" enable="1" minimumAdcVal="10" maximumAdcVal="1015" />
-			<adc inputNumber="4" enable="1" minimumAdcVal="10" maximumAdcVal="1015" />
+			<adc inputNumber="3" enable="0" minimumAdcVal="10" maximumAdcVal="1015" />
+			<adc inputNumber="4" enable="0" minimumAdcVal="10" maximumAdcVal="1015" />
 			<globalExpr inputNumber="1" assignmentNumber="1" channel="11" controller="110" min="0" max="127" invert="0" enable="1" />
 			<globalExpr inputNumber="2" assignmentNumber="1" channel="2" controller="1" min="0" max="127" invert="0" enable="1" />
 			<globalExpr inputNumber="3" assignmentNumber="1" channel="3" controller="30" min="0" max="127" invert="0" enable="1" />
@@ -445,7 +445,7 @@
 			<globalExpr inputNumber="4" enable="0" />
 			<localExpr inputNumber="4" assignmentNumber="1" channel="3" controller="36" min="0" max="127" invert="0" enable="1" />
 		</patch>
-		<patch name="H8K Ext 8 (tap)" number="127" type="momentary" port="1">
+		<patch name="H8K Tap Tempo (Ext 8)" number="127" type="momentary" port="1">
 			<midiByteString name="A">b2 25 7f</midiByteString>
 			<midiByteString name="B">b2 25 00</midiByteString>
 		</patch>
@@ -1032,6 +1032,7 @@
 			<PatchMap switch="5" patch="611" loadState="" unloadState="" />
 			<PatchMap switch="10" patch="601" loadState="" unloadState="" />
 			<PatchMap switch="11" patch="99" loadState="" unloadState="" />
+			<PatchMap switch="13" patch="127" loadState="" unloadState="" />
 			<!--<PatchMap switch="22" patch="-3" loadState="" unloadState="" />-->
 			<PatchMap switch="23" patch="-2" loadState="" unloadState="" />
 		</bank>
