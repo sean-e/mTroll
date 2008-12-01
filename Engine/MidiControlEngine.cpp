@@ -137,7 +137,7 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 		defaultsBank = *mBanks.begin();
 		// bank number 0 is used as the bank with the default mappings
 		if (0 == defaultsBank->GetBankNumber())
-			defaultsBank->InitPatches(mPatches); // init before calling SetDefaultMapping
+			defaultsBank->InitPatches(mPatches, mTrace); // init before calling SetDefaultMapping
 		else
 			defaultsBank = NULL;
 	}
@@ -163,7 +163,7 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 		++it, ++itIdx)
 	{
 		PatchBank * curItem = *it;
-		curItem->InitPatches(mPatches);
+		curItem->InitPatches(mPatches, mTrace);
 		curItem->SetDefaultMappings(*defaultsBank);
 	}
 
@@ -521,14 +521,30 @@ MidiControlEngine::LoadBankByNumber(int bankNumber)
 {
 	int bankidx = GetBankIndex(bankNumber);
 	if (-1 == bankidx)
+	{
+		if (mTrace)
+		{
+			std::strstream traceMsg;
+			traceMsg << "Bank " << bankNumber << " does not exist" << std::endl << std::ends;
+			mTrace->Trace(std::string(traceMsg.str()));
+		}
 		return;
+	}
 
 	ChangeMode(emBank);
 	LoadBank(bankidx);
 
 	PatchBank * bank = GetBank(bankidx);
 	if (!bank)
+	{
+		if (mTrace)
+		{
+			std::strstream traceMsg;
+			traceMsg << "Bank " << bankNumber << " does not exist" << std::endl << std::ends;
+			mTrace->Trace(std::string(traceMsg.str()));
+		}
 		return;
+	}
 
 	bank->DisplayInfo(mMainDisplay, mSwitchDisplay, true, false);
 }

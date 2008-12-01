@@ -52,7 +52,7 @@ public:
 
 	// creation/init
 	void AddPatchMapping(int switchNumber, int patchNumber, PatchState patchLoadState, PatchState patchUnloadState);
-	void InitPatches(const MidiControlEngine::Patches & patches);
+	void InitPatches(const MidiControlEngine::Patches & patches, ITraceDisplay * traceDisp);
 	void CalibrateExprSettings(const PedalCalibration * pedalCalibration);
 	void SetDefaultMappings(const PatchBank & defaultMapping);
 

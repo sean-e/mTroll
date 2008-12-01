@@ -100,7 +100,8 @@ PatchBank::SetDefaultMappings(const PatchBank & defaultMapping)
 }
 
 void
-PatchBank::InitPatches(const MidiControlEngine::Patches & enginePatches)
+PatchBank::InitPatches(const MidiControlEngine::Patches & enginePatches,
+					   ITraceDisplay * traceDisp)
 {
 	for (PatchMaps::iterator it = mPatches.begin();
 		it != mPatches.end();
@@ -109,15 +110,34 @@ PatchBank::InitPatches(const MidiControlEngine::Patches & enginePatches)
 		PatchVect & patches = (*it).second;
 		for (PatchVect::iterator it2 = patches.begin();
 			 it2 != patches.end();
-			 ++it2)
+			 )
 		{
+			bool inc = true;
 			PatchMap * curItem = *it2;
 			if (curItem)
 			{
 				MidiControlEngine::Patches::const_iterator patchIt = enginePatches.find(curItem->mPatchNumber);
-				Patch * thePatch = (*patchIt).second;
-				curItem->mPatch = thePatch;
+				if (patchIt == enginePatches.end())
+				{
+					if (traceDisp)
+					{
+						std::strstream traceMsg;
+						traceMsg << "Patch " << curItem->mPatchNumber << " referenced in bank " << mName << " (" << mNumber << ") does not exist!" << std::endl << std::ends;
+						traceDisp->Trace(std::string(traceMsg.str()));
+					}
+
+					inc = false;
+					it2 = patches.erase(it2);
+				}
+				else
+				{
+					Patch * thePatch = (*patchIt).second;
+					curItem->mPatch = thePatch;
+				}
 			}
+
+			if (inc)
+				++it2;
 		}
 	}
 }
