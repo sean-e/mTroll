@@ -356,65 +356,35 @@
 		<patch name="SS Unmute" number="99" type="normal" port="1">
 			<midiByteString name="A">ba 6e 7f ba 6f 7f</midiByteString>
 		</patch>
-		<patch name="H8K A VirtRack 1" number="100" type="normal" port="1">
-			<midiByteString name="A">b2 60 01</midiByteString>
+		<patch name="H8K Tweak 1" number="100" type="normal" port="1">
+			<midiByteString name="A">b2 20 01</midiByteString>
 		</patch>
-		<patch name="H8K A VirtRack 2" number="101" type="normal" port="1">
-			<midiByteString name="A">b2 60 02</midiByteString>
+		<patch name="H8K Tweak 2" number="101" type="normal" port="1">
+			<midiByteString name="A">b2 20 02</midiByteString>
 		</patch>
-		<patch name="H8K A VirtRack 3" number="102" type="normal" port="1">
-			<midiByteString name="A">b2 60 03</midiByteString>
+		<patch name="H8K Tweak 3" number="102" type="normal" port="1">
+			<midiByteString name="A">b2 20 03</midiByteString>
 		</patch>
-		<patch name="H8K A VirtRack 4" number="103" type="normal" port="1">
-			<midiByteString name="A">b2 60 04</midiByteString>
+		<patch name="H8K Tweak 4" number="103" type="normal" port="1">
+			<midiByteString name="A">b2 20 04</midiByteString>
 		</patch>
-		<patch name="H8K A VirtRack 5" number="104" type="normal" port="1">
-			<midiByteString name="A">b2 60 05</midiByteString>
+		<patch name="H8K Tweak 5" number="104" type="normal" port="1">
+			<midiByteString name="A">b2 20 05</midiByteString>
 		</patch>
-		<patch name="H8K A VirtRack 6" number="105" type="normal" port="1">
-			<midiByteString name="A">b2 60 06</midiByteString>
+		<patch name="H8K Tweak 6" number="105" type="normal" port="1">
+			<midiByteString name="A">b2 20 06</midiByteString>
 		</patch>
-		<patch name="H8K A VirtRack 7" number="106" type="normal" port="1">
-			<midiByteString name="A">b2 60 07</midiByteString>
+		<patch name="H8K Tweak 7" number="106" type="normal" port="1">
+			<midiByteString name="A">b2 20 07</midiByteString>
 		</patch>
-		<patch name="H8K A VirtRack 8" number="107" type="normal" port="1">
-			<midiByteString name="A">b2 60 08</midiByteString>
+		<patch name="H8K Tweak 8" number="107" type="normal" port="1">
+			<midiByteString name="A">b2 20 08</midiByteString>
 		</patch>
-		<patch name="H8K A VirtRack 9" number="108" type="normal" port="1">
-			<midiByteString name="A">b2 60 09</midiByteString>
+		<patch name="H8K Tweak 9" number="108" type="normal" port="1">
+			<midiByteString name="A">b2 20 09</midiByteString>
 		</patch>
-		<patch name="H8K A VirtRack 10" number="109" type="normal" port="1">
-			<midiByteString name="A">b2 60 10</midiByteString>
-		</patch>
-		<patch name="H8K B VirtRack 1" number="110" type="normal" port="1">
-			<midiByteString name="A">b3 60 01</midiByteString>
-		</patch>
-		<patch name="H8K B VirtRack 2" number="111" type="normal" port="1">
-			<midiByteString name="A">b3 60 02</midiByteString>
-		</patch>
-		<patch name="H8K B VirtRack 3" number="112" type="normal" port="1">
-			<midiByteString name="A">b3 60 03</midiByteString>
-		</patch>
-		<patch name="H8K B VirtRack 4" number="113" type="normal" port="1">
-			<midiByteString name="A">b3 60 04</midiByteString>
-		</patch>
-		<patch name="H8K B VirtRack 5" number="114" type="normal" port="1">
-			<midiByteString name="A">b3 60 05</midiByteString>
-		</patch>
-		<patch name="H8K B VirtRack 6" number="115" type="normal" port="1">
-			<midiByteString name="A">b3 60 06</midiByteString>
-		</patch>
-		<patch name="H8K B VirtRack 7" number="116" type="normal" port="1">
-			<midiByteString name="A">b3 60 07</midiByteString>
-		</patch>
-		<patch name="H8K B VirtRack 8" number="117" type="normal" port="1">
-			<midiByteString name="A">b3 60 08</midiByteString>
-		</patch>
-		<patch name="H8K B VirtRack 9" number="118" type="normal" port="1">
-			<midiByteString name="A">b3 60 09</midiByteString>
-		</patch>
-		<patch name="H8K B VirtRack 10" number="119" type="normal" port="1">
-			<midiByteString name="A">b3 60 10</midiByteString>
+		<patch name="H8K Tweak 10" number="109" type="normal" port="1">
+			<midiByteString name="A">b2 20 0a</midiByteString>
 		</patch>
 
 		<patch name="H8K Ext 1" number="120" type="normal" port="1">
@@ -985,6 +955,7 @@
 		<engineMetaPatch name="Bank Recall" number="607" action="BankHistoryRecall" />
 		<engineMetaPatch name="Load H8K Externals" number="608" action="LoadBank" bankNumber="4" />
 		<engineMetaPatch name="Load H8K Group Pedals" number="609" action="LoadBank" bankNumber="5" />
+		<engineMetaPatch name="Load H8K Tweaks" number="610" action="LoadBank" bankNumber="8" />
 		<engineMetaPatch name="Load Dedicated Pedals" number="611" action="LoadBank" bankNumber="7" />
 	</patches>
 	<banks>
@@ -1030,6 +1001,7 @@
 			<PatchMap switch="3" patch="608" loadState="" unloadState="" />
 			<PatchMap switch="4" patch="609" loadState="" unloadState="" />
 			<PatchMap switch="5" patch="611" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="610" loadState="" unloadState="" />
 			<PatchMap switch="10" patch="601" loadState="" unloadState="" />
 			<PatchMap switch="11" patch="99" loadState="" unloadState="" />
 			<PatchMap switch="13" patch="127" loadState="" unloadState="" />
@@ -1126,7 +1098,7 @@
 			<PatchMap switch="13" patch="157" loadState="" unloadState="" />
 			<PatchMap switch="14" patch="158" loadState="" unloadState="" />
 		</bank>
-		<bank name="H8000 DSP A VirtRack" number="8">
+		<bank name="H8000 VirtRack Tweaks" number="8">
 			<PatchMap switch="1" patch="100" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="101" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="102" loadState="" unloadState="" />
@@ -1136,17 +1108,7 @@
 			<PatchMap switch="7" patch="106" loadState="" unloadState="" />
 			<PatchMap switch="8" patch="107" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="108" loadState="" unloadState="" />
-		</bank>
-		<bank name="H8000 DSP B VirtRack" number="9">
-			<PatchMap switch="1" patch="110" loadState="" unloadState="" />
-			<PatchMap switch="2" patch="111" loadState="" unloadState="" />
-			<PatchMap switch="3" patch="112" loadState="" unloadState="" />
-			<PatchMap switch="4" patch="113" loadState="" unloadState="" />
-			<PatchMap switch="5" patch="114" loadState="" unloadState="" />
-			<PatchMap switch="6" patch="115" loadState="" unloadState="" />
-			<PatchMap switch="7" patch="116" loadState="" unloadState="" />
-			<PatchMap switch="8" patch="117" loadState="" unloadState="" />
-			<PatchMap switch="9" patch="118" loadState="" unloadState="" />
+			<PatchMap switch="10" patch="109" loadState="" unloadState="" />
 		</bank>
 		<bank name="Triaxis Clean" number="20">
 			<PatchMap switch="1" patch="44" loadState="" unloadState="" />

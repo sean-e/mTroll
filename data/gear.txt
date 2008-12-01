@@ -55,7 +55,8 @@ b	11
 53	83
 
 [H8K Virt Rack Tweaks CCs hex/dec]
-60	96
+(by default use assign 3)
+20	32
 
 [H8K Externals CCs hex/dec]
 1e	30
