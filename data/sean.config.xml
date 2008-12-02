@@ -14,11 +14,11 @@
 		<expression port="1">
 			<adc inputNumber="1" enable="1" minimumAdcVal="50" maximumAdcVal="990" />
 			<adc inputNumber="2" enable="1" minimumAdcVal="3" maximumAdcVal="315" />
-			<adc inputNumber="3" enable="1" minimumAdcVal="10" maximumAdcVal="1015" />
+			<adc inputNumber="3" enable="1" minimumAdcVal="75" maximumAdcVal="1015" />
 			<adc inputNumber="4" enable="1" minimumAdcVal="10" maximumAdcVal="1015" />
 			<globalExpr inputNumber="1" assignmentNumber="1" channel="11" controller="110" min="0" max="127" invert="0" enable="1" />
 			<globalExpr inputNumber="2" assignmentNumber="1" channel="2" controller="1" min="0" max="127" invert="0" enable="1" />
-			<globalExpr inputNumber="3" assignmentNumber="1" channel="3" controller="30" min="0" max="127" invert="0" enable="1" />
+			<globalExpr inputNumber="3" assignmentNumber="1" channel="3" controller="30" min="0" max="16383" invert="0" enable="1" doubleByte="1" />
 			<globalExpr inputNumber="4" assignmentNumber="1" channel="3" controller="31" min="0" max="127" invert="0" enable="1" />
 		</expression>
 	</SystemConfig>
