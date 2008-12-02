@@ -436,6 +436,7 @@ EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem,
 	int minVal = 0;
 	int enable = 1;
 	int invert = 0;
+	int isDoubleByte = 0;
 
 	childElem->QueryIntAttribute("inputNumber", &exprInputNumber);
 	childElem->QueryIntAttribute("assignmentNumber", &assignmentIndex);
@@ -445,6 +446,7 @@ EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem,
 	childElem->QueryIntAttribute("min", &minVal);
 	childElem->QueryIntAttribute("invert", &invert);
 	childElem->QueryIntAttribute("enable", &enable);
+	childElem->QueryIntAttribute("doubleByte", &isDoubleByte);
 
 	if (enable &&
 		exprInputNumber > 0 &&
@@ -456,7 +458,7 @@ EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem,
 		controller >= 0 &&
 		controller < 128)
 	{
-		pedals.Init(exprInputNumber - 1, assignmentIndex - 1, !!invert, channel - 1, controller, minVal, maxVal);
+		pedals.Init(exprInputNumber - 1, assignmentIndex - 1, !!invert, channel - 1, controller, minVal, maxVal, !!isDoubleByte);
 	}
 
 	if (enable && mAdcEnables[exprInputNumber - 1] == adc_default)

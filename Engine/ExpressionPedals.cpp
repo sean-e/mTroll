@@ -33,8 +33,9 @@ void
 ExpressionControl::Init(bool invert, 
 						byte channel, 
 						byte controlNumber, 
-						byte minVal, 
-						byte maxVal)
+						int minVal, 
+						int maxVal,
+						bool doubleByte)
 {
 	mEnabled = true;
 	mInverted = invert;
@@ -44,8 +45,20 @@ ExpressionControl::Init(bool invert,
 	if (mMinCcVal < 0)
 		mMinCcVal = 0;
 	mMaxCcVal = maxVal > minVal ? maxVal : minVal;
-	if (mMaxCcVal > 127)
+
+	// http://www.midi.org/techspecs/midimessages.php
+	if (doubleByte && controlNumber >= 0 && controlNumber < 32)
+	{
+		mIsDoubleByte = true;
+		if (mMaxCcVal > 16383)
+			mMaxCcVal = 16383;
+	}
+	else
+		mIsDoubleByte = false;
+	
+	if (!mIsDoubleByte && mMaxCcVal > 127)
 		mMaxCcVal = 127;
+
 	mCcValRange = mMaxCcVal - mMinCcVal;
 
 	mMidiData[0] = (0xb0 | mChannel);
@@ -75,7 +88,7 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 			(newAdcVal > mMaxAdcVal) ? mMaxAdcVal : newAdcVal;
 
 	// normal 127 range is 1023
-	byte newCcVal = ((cappedAdcVal - mMinAdcVal) * mCcValRange) / mAdcValRange;
+	int newCcVal = ((cappedAdcVal - mMinAdcVal) * mCcValRange) / mAdcValRange;
 	if (mMinCcVal)
 		newCcVal += mMinCcVal;
 
@@ -84,20 +97,37 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 	else if (newCcVal < mMinCcVal)
 		newCcVal = mMinCcVal;
 
-	if (mInverted)
-		newCcVal = 127 - newCcVal;
+	if (mIsDoubleByte)
+	{
+		if (mInverted)
+			newCcVal = 16383 - newCcVal;
 
-	if (mMidiData[2] == newCcVal)
-		return;
+		byte newCoarseCcVal = (newCcVal >> 7) & 0x7f; // MSB
+		byte newFineCcVal = newCcVal & 0x7F; // LSB
 
-	mMidiData[2] = newCcVal;
+		if (mMidiData[2] == newCoarseCcVal && mMidiData[3] == newFineCcVal)
+			return;
+
+		mMidiData[2] = newCoarseCcVal;
+		mMidiData[3] = newFineCcVal;
+	}
+	else
+	{
+		if (mInverted)
+			newCcVal = 127 - newCcVal;
+
+		if (mMidiData[2] == newCcVal)
+			return;
+
+		mMidiData[2] = newCcVal;
+	}
 
 	// only fire midi indicator at top and bottom of range -
 	// easier to see that top and bottom hit on controller than on pc
 	const bool showStatus = newCcVal == mMinCcVal || newCcVal == mMaxCcVal;
 	midiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], showStatus);
-	if (0)
-		midiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[3], showStatus);
+	if (mIsDoubleByte)
+		midiOut->MidiOut(mMidiData[0], mMidiData[1] + 32, mMidiData[3], showStatus);
 
 	if (mainDisplay)
 	{
@@ -112,7 +142,15 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 
 			sHadStatus = showStatus;
 			if (showStatus)
-				displayMsg << "adc ch(" << (int) mChannel << "), ctrl(" << (int) mControlNumber << "): " << newAdcVal << " -> " << (int) mMidiData[2] << std::endl << std::ends;
+			{
+				if (mIsDoubleByte)
+				{
+					displayMsg << "adc ch(" << (int) mChannel << "), ctrl(" << (int) mControlNumber << "): " << newAdcVal << " -> " << (int) mMidiData[2] << std::endl;
+					displayMsg << "adc ch(" << (int) mChannel << "), ctrl(" << ((int) mControlNumber) + 31 << "): " << newAdcVal << " -> " << (int) mMidiData[3] << std::endl << std::ends;
+				}
+				else
+					displayMsg << "adc ch(" << (int) mChannel << "), ctrl(" << (int) mControlNumber << "): " << newAdcVal << " -> " << (int) mMidiData[2] << std::endl << std::ends;
+			}
 			else
 				displayMsg << std::endl << std::ends; // clear display
 

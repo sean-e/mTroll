@@ -63,8 +63,9 @@ public:
 	void Init(bool invert, 
 			  byte channel, 
 			  byte controlNumber, 
-			  byte minVal, 
-			  byte maxVal);
+			  int minVal, 
+			  int maxVal,
+			  bool doubleByte);
 
 	void Calibrate(const PedalCalibration & calibrationSetting);
 	void AdcValueChange(IMainDisplay * mainDisplay, IMidiOut * midiOut, int newVal);
@@ -72,11 +73,12 @@ public:
 private:
 	bool				mEnabled;
 	bool				mInverted;
+	bool				mIsDoubleByte;
 	byte				mChannel;
 	byte				mControlNumber;
-	byte				mMinCcVal;
-	byte				mMaxCcVal;
-	byte				mCcValRange;
+	int					mMinCcVal;
+	int					mMaxCcVal;
+	int					mCcValRange;
 	byte				mMidiData[4];
 
 	int					mMinAdcVal;
@@ -96,11 +98,12 @@ public:
 			  bool invert, 
 			  byte channel, 
 			  byte controlNumber, 
-			  byte minVal, 
-			  byte maxVal)
+			  int minVal, 
+			  int maxVal,
+			  bool doubleByte)
 	{
 		_ASSERTE(idx < ccsPerPedals);
-		mPedalControlData[idx].Init(invert, channel, controlNumber, minVal, maxVal);
+		mPedalControlData[idx].Init(invert, channel, controlNumber, minVal, maxVal, doubleByte);
 	}
 
 	void Calibrate(const PedalCalibration & calibrationSetting)
@@ -150,11 +153,12 @@ public:
 			  bool invert, 
 			  byte channel, 
 			  byte controlNumber, 
-			  byte minVal, 
-			  byte maxVal)
+			  int minVal, 
+			  int maxVal,
+			  bool doubleByte)
 	{
 		_ASSERTE(pedal < PedalCount);
-		mPedals[pedal].Init(idx, invert, channel, controlNumber, minVal, maxVal);
+		mPedals[pedal].Init(idx, invert, channel, controlNumber, minVal, maxVal, doubleByte);
 		mPedalEnables[pedal] = true;
 		mHasAnyNondefault = true;
 	}
