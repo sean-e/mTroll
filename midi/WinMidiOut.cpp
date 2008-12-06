@@ -237,7 +237,7 @@ WinMidiOut::MidiOut(const Bytes & bytes)
 		{
 			if (MIDIERR_NOTREADY == res) 
 			{
-				Sleep(50);
+				Sleep(10);
 				continue;
 			}
 			else
@@ -265,11 +265,7 @@ WinMidiOut::MidiOut(byte singleByte,
 	if (!mMidiOut)
 		return;
 
-	const MMRESULT res = ::midiOutShortMsg(mMidiOut, singleByte);
-	if (MMSYSERR_NOERROR != res)
-		ReportMidiError(res, __LINE__);
-	else if (useIndicator)
-		IndicateActivity();
+	MidiOut(singleByte, useIndicator);
 }
 
 void
@@ -281,11 +277,7 @@ WinMidiOut::MidiOut(byte byte1,
 		return;
 
 	const DWORD shortMsg = byte1 | (byte2 << 8);
-	const MMRESULT res = ::midiOutShortMsg(mMidiOut, shortMsg);
-	if (MMSYSERR_NOERROR != res)
-		ReportMidiError(res, __LINE__);
-	else if (useIndicator)
-		IndicateActivity();
+	MidiOut(shortMsg, useIndicator);
 }
 
 void
@@ -298,11 +290,32 @@ WinMidiOut::MidiOut(byte byte1,
 		return;
 
 	const DWORD shortMsg = byte1 | (byte2 << 8) | (byte3 << 16);
-	const MMRESULT res = ::midiOutShortMsg(mMidiOut, shortMsg);
-	if (MMSYSERR_NOERROR != res)
-		ReportMidiError(res, __LINE__);
-	else if (useIndicator)
-		IndicateActivity();
+	MidiOut(shortMsg, useIndicator);
+}
+
+void
+WinMidiOut::MidiOut(DWORD shortMsg, 
+					bool useIndicator /*= true*/)
+{
+	for (;;)
+	{
+		const MMRESULT res = ::midiOutShortMsg(mMidiOut, shortMsg);
+		if (MMSYSERR_NOERROR != res)
+		{
+			if (MIDIERR_NOTREADY == res) 
+			{
+				Sleep(10);
+				continue;
+			}
+			else
+			{
+				ReportMidiError(res, __LINE__);
+			}
+		}
+		else if (useIndicator)
+			IndicateActivity();
+		break;
+	}
 }
 
 void CALLBACK 

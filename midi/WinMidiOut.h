@@ -58,6 +58,7 @@ private:
 	void ReportError(LPCTSTR msg, int param1);
 	void ReportError(LPCTSTR msg, int param1, int param2);
 
+	void MidiOut(DWORD shortMsg, bool useIndicator = true);
 	void IndicateActivity();
 	void TurnOffIndicator();
 	static void CALLBACK TimerProc(HWND, UINT, UINT_PTR id, DWORD);
