@@ -97,16 +97,65 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 	else if (newCcVal < mMinCcVal)
 		newCcVal = mMinCcVal;
 
+	// only fire midi indicator at top and bottom of range -
+	// easier to see that top and bottom hit on controller than on pc
+	const bool showStatus = newCcVal == mMinCcVal || newCcVal == mMaxCcVal;
+
 	if (mIsDoubleByte)
 	{
 		if (mInverted)
 			newCcVal = 16383 - newCcVal;
 
-		byte newCoarseCcVal = (newCcVal >> 7) & 0x7f; // MSB
 		byte newFineCcVal = newCcVal & 0x7F; // LSB
+		byte newCoarseCcVal = (newCcVal >> 7) & 0x7f; // MSB
 
 		if (mMidiData[2] == newCoarseCcVal && mMidiData[3] == newFineCcVal)
 			return;
+#if 0
+		byte coarseCh = mMidiData[1];
+		byte fineCh = coarseCh + 32;
+
+		byte oldCoarseCcVal = mMidiData[2];
+		byte oldFineCcVal = mMidiData[3];
+		
+		static const int kFineIncVal = 64;
+
+		while (oldCoarseCcVal != newCoarseCcVal)
+		{
+			if (oldCoarseCcVal < newCoarseCcVal)
+			{
+				for (oldFineCcVal += kFineIncVal; oldFineCcVal < 127; oldFineCcVal += kFineIncVal)
+					midiOut->MidiOut(mMidiData[0], fineCh, oldFineCcVal, false);
+
+				oldFineCcVal = 0;
+				midiOut->MidiOut(mMidiData[0], coarseCh, ++oldCoarseCcVal, false);
+			}
+			else
+			{
+				for (oldFineCcVal -= kFineIncVal; oldFineCcVal > 0 && oldFineCcVal < 127; oldFineCcVal -= kFineIncVal)
+					midiOut->MidiOut(mMidiData[0], fineCh, oldFineCcVal, false);
+
+				oldFineCcVal = 127;
+				midiOut->MidiOut(mMidiData[0], coarseCh, --oldCoarseCcVal, false);
+			}
+		}
+
+		if (oldFineCcVal < newFineCcVal)
+		{
+			for (oldFineCcVal += kFineIncVal; oldFineCcVal < newFineCcVal; oldFineCcVal += kFineIncVal)
+				midiOut->MidiOut(mMidiData[0], fineCh, oldFineCcVal, false);
+		}
+		else if (oldFineCcVal > newFineCcVal)
+		{
+			for (oldFineCcVal -= kFineIncVal; oldFineCcVal > newFineCcVal && oldFineCcVal < 127; oldFineCcVal -= kFineIncVal)
+				midiOut->MidiOut(mMidiData[0], fineCh, oldFineCcVal, false);
+		}
+
+		midiOut->MidiOut(mMidiData[0], fineCh, newFineCcVal, showStatus);
+#else
+		midiOut->MidiOut(mMidiData[0], mMidiData[1], newCoarseCcVal, showStatus);
+		midiOut->MidiOut(mMidiData[0], mMidiData[1] + 32, newFineCcVal, showStatus);
+#endif
 
 		mMidiData[2] = newCoarseCcVal;
 		mMidiData[3] = newFineCcVal;
@@ -120,14 +169,8 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 			return;
 
 		mMidiData[2] = newCcVal;
+		midiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], showStatus);
 	}
-
-	// only fire midi indicator at top and bottom of range -
-	// easier to see that top and bottom hit on controller than on pc
-	const bool showStatus = newCcVal == mMinCcVal || newCcVal == mMaxCcVal;
-	midiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], showStatus);
-	if (mIsDoubleByte)
-		midiOut->MidiOut(mMidiData[0], mMidiData[1] + 32, mMidiData[3], showStatus);
 
 	if (mainDisplay)
 	{
