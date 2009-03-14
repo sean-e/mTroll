@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008 Sean Echevarria
+ * Copyright (C) 2007-2009 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -69,10 +69,11 @@ public:
 	typedef QLabel				SwitchTextDisplay;
 	typedef QPushButton			Switch;
 
-			void Load(const std::string & uiSettingsFile, const std::string & configSettingsFile);
+			void Load(const std::string & uiSettingsFile, const std::string & configSettingsFile, const bool adcOverrides[ExpressionPedals::PedalCount]);
 			void Unload();
 			void Reconnect();
 			void ToggleTraceWindow();
+			void UpdateAdcs(const bool adcOverrides[ExpressionPedals::PedalCount]);
 
 			void GetPreferredSize(int & width, int & height) const {width = mPreferredWidth; height = mPreferredHeight;}
 
@@ -251,7 +252,7 @@ private:
     virtual bool		event(QEvent *);
 	void LoadUi(const std::string & uiSettingsFile);
 	void LoadMonome(bool displayStartSequence);
-	void LoadMidiSettings(const std::string & file);
+	void LoadMidiSettings(const std::string & file, const bool adcOverrides[ExpressionPedals::PedalCount]);
 
 	void ButtonReleased(const int idx);
 	void ButtonPressed(const int idx);
@@ -290,6 +291,7 @@ private:
 	KeepDisplayOn				* mSystemPowerOverride;
 	QRect						mMainDisplayRc;
 	QRect						mTraceDiplayRc;
+	bool						mUserAdcSettings[ExpressionPedals::PedalCount];
 
 	struct SwitchTextDisplayConfig
 	{

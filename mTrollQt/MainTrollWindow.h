@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008 Sean Echevarria
+ * Copyright (C) 2007-2009 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -26,8 +26,10 @@
 #define MainTrollWindow_h__
 
 #include <QMainWindow>
+#include "..\Engine\ExpressionPedals.h"
 
 class ControlUi;
+class QAction;
 
 
 class MainTrollWindow : public QMainWindow
@@ -43,11 +45,20 @@ private slots:
 	void Refresh();
 	void Reconnect();
 	void ToggleTraceWindow();
+	void ToggleAdc0Override(bool checked) { ToggleAdcOverride(0, checked); }
+	void ToggleAdc1Override(bool checked) { ToggleAdcOverride(1, checked); }
+	void ToggleAdc2Override(bool checked) { ToggleAdcOverride(2, checked); }
+	void ToggleAdc3Override(bool checked) { ToggleAdcOverride(3, checked); }
 
 private:
 	ControlUi	* mUi;
 	QString		mConfigFilename;
 	QString		mUiFilename;
+	bool		mAdcForceDisable[ExpressionPedals::PedalCount];
+	QAction		* mAdcOverrideActions[ExpressionPedals::PedalCount];
+
+private:
+	void ToggleAdcOverride(int adc, bool checked);
 };
 
 #endif // MainTrollWindow_h__

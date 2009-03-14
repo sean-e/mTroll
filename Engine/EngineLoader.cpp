@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008 Sean Echevarria
+ * Copyright (C) 2007-2009 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -466,30 +466,20 @@ EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem,
 }
 
 void
-EngineLoader::InitMonome(IMonome40h * monome)
+EngineLoader::InitMonome(IMonome40h * monome, 
+						 const bool adcOverrides[ExpressionPedals::PedalCount],
+						 bool userAdcSettings[ExpressionPedals::PedalCount])
 {
-	for (int idx = 0; idx < 4; ++idx)
+	for (int idx = 0; idx < ExpressionPedals::PedalCount; ++idx)
 	{
-		if (mAdcEnables[idx] == adc_used ||
-			mAdcEnables[idx] == adc_forceOn)
+		userAdcSettings[idx] = (mAdcEnables[idx] == adc_used || mAdcEnables[idx] == adc_forceOn);
+		const bool enable = !adcOverrides[idx] && userAdcSettings[idx];
+		monome->EnableAdc(idx, enable);
+		if (mTraceDisplay)
 		{
-			monome->EnableAdc(idx, true);
-			if (mTraceDisplay)
-			{
-				std::strstream traceMsg;
-				traceMsg << "  ADC port " << idx << " enabled" << std::endl << std::ends;
-				mTraceDisplay->Trace(std::string(traceMsg.str()));
-			}
-		}
-		else
-		{
-			monome->EnableAdc(idx, false);
-			if (mTraceDisplay)
-			{
-				std::strstream traceMsg;
-				traceMsg << "  ADC port " << idx << " disabled" << std::endl << std::ends;
-				mTraceDisplay->Trace(std::string(traceMsg.str()));
-			}
+			std::strstream traceMsg;
+			traceMsg << "  ADC port " << idx << (enable ? " enabled" : " disabled") << std::endl << std::ends;
+			mTraceDisplay->Trace(std::string(traceMsg.str()));
 		}
 	}
 }

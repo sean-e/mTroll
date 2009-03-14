@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008 Sean Echevarria
+ * Copyright (C) 2007-2009 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -31,6 +31,7 @@
 #include <QFileDialog>
 #include "AboutDlg.h"
 #include "ControlUi.h"
+#include "..\Engine\ScopeSet.h"
 
 
 #define kOrganizationKey	QString("Fester")
@@ -38,6 +39,7 @@
 #define kAppKey				QString("mTroll")
 #define kActiveUiFile		QString("UiFile")
 #define kActiveConfigFile	QString("ConfigFile")
+#define kAdcOverride		QString("AdcOverride%1")
 
 
 MainTrollWindow::MainTrollWindow() : 
@@ -49,6 +51,7 @@ MainTrollWindow::MainTrollWindow() :
 	QCoreApplication::setApplicationName(kAppKey);
 
 	setWindowTitle(tr("mTroll MIDI Controller"));
+	QSettings settings;
 
 	QMenu * fileMenu = menuBar()->addMenu(tr("&File"));
 	fileMenu->addAction(tr("&Open..."), this, SLOT(OpenFile()), QKeySequence(tr("Ctrl+O")));
@@ -58,10 +61,22 @@ MainTrollWindow::MainTrollWindow() :
 	fileMenu->addSeparator();
 	fileMenu->addAction(tr("E&xit"), this, SLOT(close()));
 
+	QString slotName;
+	QMenu * adcMenu = menuBar()->addMenu(tr("&Pedal Overrides"));
+	for (int idx = 0; idx < ExpressionPedals::PedalCount; ++idx)
+	{
+		mAdcForceDisable[idx] = settings.value(kAdcOverride.arg(idx), false).toBool();
+		mAdcOverrideActions[idx] = new QAction(tr("Disable ADC &%1").arg(idx), this);
+		mAdcOverrideActions[idx]->setCheckable(true);
+		mAdcOverrideActions[idx]->setChecked(mAdcForceDisable[idx]);
+		slotName = QString("1ToggleAdc%1Override(bool)").arg(idx);
+		connect(mAdcOverrideActions[idx], SIGNAL(toggled(bool)), this, slotName.toAscii().constData());
+		adcMenu->addAction(mAdcOverrideActions[idx]);
+	}
+
 	QMenu * helpMenu = menuBar()->addMenu(tr("&Help"));
 	helpMenu->addAction(tr("&About mTroll..."), this, SLOT(About()));
 
-	QSettings settings;
 	mUiFilename = settings.value(kActiveUiFile, "testdata.ui.xml").value<QString>();
 	mConfigFilename = settings.value(kActiveConfigFile, "testdata.config.xml").value<QString>();
 
@@ -117,7 +132,7 @@ MainTrollWindow::Refresh()
 	const std::string uiFile(tmp.constData(), tmp.count());
 	tmp = mConfigFilename.toAscii();
 	const std::string cfgFile(tmp.constData(), tmp.count());
-	mUi->Load(uiFile, cfgFile);
+	mUi->Load(uiFile, cfgFile, mAdcForceDisable);
 
 	int width, height;
 	mUi->GetPreferredSize(width, height);
@@ -156,4 +171,48 @@ MainTrollWindow::ToggleTraceWindow()
 {
 	if (mUi)
 		mUi->ToggleTraceWindow();
+}
+
+void
+MainTrollWindow::ToggleAdcOverride(int adc, 
+								   bool checked)
+{
+	static bool sHandlingToggle = false; // handle recursion
+	if (sHandlingToggle)
+		return;
+
+	ScopeSet<bool> s(&sHandlingToggle, true);
+	mAdcForceDisable[adc] = checked;
+
+	if (checked)
+	{
+		// if 2 is disabled, then 3 and 4 also need to be disabled
+		for (int idx = adc + 1; idx < ExpressionPedals::PedalCount; ++idx)
+		{
+			if (!mAdcForceDisable[idx])
+			{
+				mAdcForceDisable[idx] = true;
+				mAdcOverrideActions[idx]->setChecked(true);
+			}
+		}
+	}
+	else
+	{
+		// if 2 is enabled, then 0 and 1 also need to be enabled
+		for (int idx = 0; idx < adc; ++idx)
+		{
+			if (mAdcForceDisable[idx])
+			{
+				mAdcForceDisable[idx] = false;
+				mAdcOverrideActions[idx]->setChecked(false);
+			}
+		}
+	}
+
+	if (mUi)
+		mUi->UpdateAdcs(mAdcForceDisable);
+
+	QSettings settings;
+	for (int idx = 0; idx < ExpressionPedals::PedalCount; ++idx)
+		settings.setValue(kAdcOverride.arg(idx), mAdcForceDisable[idx]);
 }

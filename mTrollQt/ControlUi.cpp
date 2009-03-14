@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008 Sean Echevarria
+ * Copyright (C) 2007-2009 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -175,12 +175,17 @@ ControlUi::Unload()
 
 void
 ControlUi::Load(const std::string & uiSettingsFile, 
-				const std::string & configSettingsFile)
+				const std::string & configSettingsFile,
+				const bool adcOverrides[ExpressionPedals::PedalCount])
 {
 	Unload();
+
+	for (int idx = 0; idx < ExpressionPedals::PedalCount; ++idx)
+		mUserAdcSettings[idx] = false;
+
 	LoadUi(uiSettingsFile);
 	LoadMonome(true);
-	LoadMidiSettings(configSettingsFile);
+	LoadMidiSettings(configSettingsFile, adcOverrides);
 
 	if (mHardwareUi)
 	{
@@ -272,7 +277,8 @@ ControlUi::LoadMonome(bool displayStartSequence)
 }
 
 void
-ControlUi::LoadMidiSettings(const std::string & file)
+ControlUi::LoadMidiSettings(const std::string & file, 
+							const bool adcOverrides[ExpressionPedals::PedalCount])
 {
 	delete mEngine;
 	EngineLoader ldr(this, this, this, this);
@@ -280,7 +286,7 @@ ControlUi::LoadMidiSettings(const std::string & file)
 	if (mEngine)
 	{
 		if (mHardwareUi)
-			ldr.InitMonome(mHardwareUi);
+			ldr.InitMonome(mHardwareUi, adcOverrides, mUserAdcSettings);
 	}
 	else
 		TextOut("Failed to load MIDI settings.");
@@ -801,7 +807,8 @@ ControlUi::Reconnect()
 {
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
-	const int kPorts = 4;
+	const int kPorts = ExpressionPedals::PedalCount;
+	// temporaries - possibly different than startup state due to interactive override
 	bool adcEnables[kPorts] = {false, false, false, false};
 
 	if (mHardwareUi)
@@ -882,4 +889,24 @@ ControlUi::event(QEvent* event)
 	}
 
 	return QWidget::event(event);
+}
+
+void
+ControlUi::UpdateAdcs(const bool adcOverrides[ExpressionPedals::PedalCount])
+{
+	if (!mHardwareUi)
+		return;
+
+	// handle in reverse order using (idx - 1)
+	for (int idx = ExpressionPedals::PedalCount; idx; --idx)
+	{
+		const bool enable = !adcOverrides[idx - 1] && mUserAdcSettings[idx - 1];
+		mHardwareUi->EnableAdc(idx - 1, enable);
+		if (mTraceDisplay)
+		{
+			std::strstream traceMsg;
+			traceMsg << "  ADC port " << idx << (enable ? " enabled" : " disabled") << std::endl << std::ends;
+			Trace(std::string(traceMsg.str()));
+		}
+	}
 }

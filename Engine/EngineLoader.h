@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008 Sean Echevarria
+ * Copyright (C) 2007-2009 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -44,7 +44,9 @@ public:
 	EngineLoader(IMidiOutGenerator * midiOutGenerator, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay, ITraceDisplay * traceDisplay);
 
 	MidiControlEngine *		CreateEngine(const std::string & engineSettingsFile);
-	void					InitMonome(IMonome40h * monome);
+	void					InitMonome(IMonome40h * monome, 
+										const bool adcOverrides[ExpressionPedals::PedalCount],
+										bool userAdcSettings[ExpressionPedals::PedalCount]);
 
 private:
 	bool					LoadSystemConfig(TiXmlElement * pElem);
