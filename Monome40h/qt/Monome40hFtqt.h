@@ -67,7 +67,7 @@ private:
 	bool AcquireDevice();
 	void ReleaseDevice();
 	int Send(const MonomeSerialProtocolData & data);
-	void ReadInput(byte * readData);
+	bool ReadInput(byte * readData);
 	void ServiceCommands();
 	void DispatchCommand(const MonomeSerialProtocolData * data);
 
