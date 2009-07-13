@@ -957,6 +957,7 @@
 		<engineMetaPatch name="Load H8K Group Pedals" number="609" action="LoadBank" bankNumber="5" />
 		<engineMetaPatch name="Load H8K Tweaks" number="610" action="LoadBank" bankNumber="8" />
 		<engineMetaPatch name="Load Dedicated Pedals" number="611" action="LoadBank" bankNumber="7" />
+		<engineMetaPatch name="Load EDP Glitch" number="612" action="LoadBank" bankNumber="9" />
 	</patches>
 	<banks>
 		<bank name="Defaults" number="0">
@@ -1002,6 +1003,7 @@
 			<PatchMap switch="4" patch="609" loadState="" unloadState="" />
 			<PatchMap switch="5" patch="611" loadState="" unloadState="" />
 			<PatchMap switch="6" patch="610" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="612" loadState="" unloadState="" />
 			<PatchMap switch="10" patch="601" loadState="" unloadState="" />
 			<PatchMap switch="11" patch="99" loadState="" unloadState="" />
 			<PatchMap switch="13" patch="127" loadState="" unloadState="" />
@@ -1081,7 +1083,6 @@
 			<PatchMap switch="7" patch="281" loadState="" unloadState="" />
 			<PatchMap switch="8" patch="284" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="287" loadState="" unloadState="" />
-			<PatchMap switch="10" patch="270" loadState="" unloadState="" />
 		</bank>
 		<bank name="Dedicated Pedals" number="7">
 			<PatchMap switch="1" patch="93" loadState="" unloadState="" />
@@ -1109,6 +1110,17 @@
 			<PatchMap switch="8" patch="107" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="108" loadState="" unloadState="" />
 			<PatchMap switch="10" patch="109" loadState="" unloadState="" />
+		</bank>
+		<bank name="EDP Glitching" number="9">
+			<ExclusiveSwitchGroup>1 2</ExclusiveSwitchGroup>
+			<PatchMap switch="1" patch="315" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="316" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="324" loadState="" unloadState="" />
+			<PatchMap switch="10" patch="325" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="282" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="281" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="290" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="291" loadState="" unloadState="" />
 		</bank>
 		<bank name="Triaxis Clean" number="20">
 			<PatchMap switch="1" patch="44" loadState="" unloadState="" />
