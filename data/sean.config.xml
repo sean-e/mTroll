@@ -772,6 +772,23 @@
 			<midiByteString name="A">b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 29 7f b6 29 00</midiByteString>
 			<midiByteString name="B">b6 24 7f b6 24 00</midiByteString>
 		</patch>
+
+		<patch name="EDP Preset 1" number="345" type="normal" port="1">
+			<midiByteString name="A">c6 00</midiByteString>
+		</patch>
+		<patch name="EDP Preset 2" number="346" type="normal" port="1">
+			<midiByteString name="A">c6 01</midiByteString>
+		</patch>
+		<patch name="EDP Preset 3" number="347" type="normal" port="1">
+			<midiByteString name="A">c6 02</midiByteString>
+		</patch>
+		<patch name="EDP Preset 4" number="348" type="normal" port="1">
+			<midiByteString name="A">c6 03</midiByteString>
+		</patch>
+		<patch name="EDP Preset 5" number="349" type="normal" port="1">
+			<midiByteString name="A">c6 04</midiByteString>
+		</patch>
+
 		<patch name="FF Momentary Disengage" number="360" type="momentary" port="1">
 			<midiByteString name="A">bb 09 00</midiByteString>
 			<midiByteString name="B">bb 09 7f</midiByteString>
@@ -1083,6 +1100,7 @@
 			<PatchMap switch="7" patch="281" loadState="" unloadState="" />
 			<PatchMap switch="8" patch="284" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="287" loadState="" unloadState="" />
+			<PatchMap switch="10" patch="270" loadState="" unloadState="" />
 		</bank>
 		<bank name="Dedicated Pedals" number="7">
 			<PatchMap switch="1" patch="93" loadState="" unloadState="" />
@@ -1115,12 +1133,16 @@
 			<ExclusiveSwitchGroup>1 2</ExclusiveSwitchGroup>
 			<PatchMap switch="1" patch="315" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="316" loadState="" unloadState="" />
-			<PatchMap switch="5" patch="324" loadState="" unloadState="" />
-			<PatchMap switch="10" patch="325" loadState="" unloadState="" />
-			<PatchMap switch="6" patch="282" loadState="" unloadState="" />
-			<PatchMap switch="7" patch="281" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="290" loadState="" unloadState="" />
 			<PatchMap switch="4" patch="291" loadState="" unloadState="" />
+			<PatchMap switch="5" patch="324" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="282" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="281" loadState="" unloadState="" />
+			<PatchMap switch="10" patch="325" loadState="" unloadState="" />
+			<PatchMap switch="11" patch="345" loadState="" unloadState="" />
+			<PatchMap switch="12" patch="346" loadState="" unloadState="" />
+			<PatchMap switch="13" patch="347" loadState="" unloadState="" />
+			<PatchMap switch="14" patch="348" loadState="" unloadState="" />
 		</bank>
 		<bank name="Triaxis Clean" number="20">
 			<PatchMap switch="1" patch="44" loadState="" unloadState="" />
