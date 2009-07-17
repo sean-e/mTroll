@@ -998,9 +998,9 @@
 		<engineMetaPatch name="Bank Recall" number="607" action="BankHistoryRecall" />
 		<engineMetaPatch name="Load H8K Externals" number="608" action="LoadBank" bankNumber="4" />
 		<engineMetaPatch name="Load H8K Group Pedals" number="609" action="LoadBank" bankNumber="5" />
-		<engineMetaPatch name="Load H8K Tweaks" number="610" action="LoadBank" bankNumber="8" />
-		<engineMetaPatch name="Load Dedicated Pedals" number="611" action="LoadBank" bankNumber="7" />
-		<engineMetaPatch name="Load EDP Glitch" number="612" action="LoadBank" bankNumber="9" />
+		<engineMetaPatch name="Load H8K Tweaks" number="610" action="LoadBank" bankNumber="9" />
+		<engineMetaPatch name="Load Dedicated Pedals" number="611" action="LoadBank" bankNumber="8" />
+		<engineMetaPatch name="Load EDP Glitch" number="612" action="LoadBank" bankNumber="7" />
 	</patches>
 	<banks>
 		<bank name="Defaults" number="0">
