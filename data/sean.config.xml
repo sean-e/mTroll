@@ -31,15 +31,15 @@
 			<midiByteString name="A">ba 09 00</midiByteString>
 			<midiByteString name="B">ba 09 7f</midiByteString>
 		</patch>
-		<patch name="SS H8K Mute Toggle" number="3" type="toggle" port="1">
+		<patch name="SS H8K1 In Mute Toggle" number="3" type="toggle" port="1">
 			<midiByteString name="A">ba 0a 00</midiByteString>
 			<midiByteString name="B">ba 0a 7f</midiByteString>
 		</patch>
-		<patch name="SS H8K Mute Momentary" number="4" type="momentary" port="1">
+		<patch name="SS H8K1 In Mute Momentary" number="4" type="momentary" port="1">
 			<midiByteString name="A">ba 0a 00</midiByteString>
 			<midiByteString name="B">ba 0a 7f</midiByteString>
 		</patch>
-		<patch name="SS Tri Mute Toggle" number="5" type="toggle" port="1">
+		<patch name="SS Tri Bypass Toggle" number="5" type="toggle" port="1">
 			<midiByteString name="A">ba 14 00</midiByteString>
 			<midiByteString name="B">ba 14 7f</midiByteString>
 		</patch>
@@ -516,27 +516,27 @@
 			<localExpr inputNumber="4" assignmentNumber="1" channel="3" controller="45" min="0" max="127" invert="0" enable="1" />
 		</patch>
 
-		<patch name="SS H8K 2 Mute Toggle" number="159" type="toggle" port="1">
+		<patch name="SS H8K2 In Mute Toggle" number="159" type="toggle" port="1">
 			<midiByteString name="A">ba 0d 00</midiByteString>
 			<midiByteString name="B">ba 0d 7f</midiByteString>
 		</patch>
-		<patch name="SS H8K 2 Mute Momentary" number="160" type="momentary" port="1">
+		<patch name="SS H8K2 In Mute Momentary" number="160" type="momentary" port="1">
 			<midiByteString name="A">ba 0d 00</midiByteString>
 			<midiByteString name="B">ba 0d 7f</midiByteString>
 		</patch>
-		<patch name="SS EDP Mute Toggle" number="161" type="toggle" port="1">
+		<patch name="SS EDP Bypass Toggle" number="161" type="toggle" port="1">
 			<midiByteString name="A">ba 0b 00</midiByteString>
 			<midiByteString name="B">ba 0b 7f</midiByteString>
 		</patch>
-		<patch name="SS EDP Mute Momentary" number="162" type="momentary" port="1">
+		<patch name="SS EDP Bypass Momentary" number="162" type="momentary" port="1">
 			<midiByteString name="A">ba 0b 00</midiByteString>
 			<midiByteString name="B">ba 0b 7f</midiByteString>
 		</patch>
-		<patch name="SS H8K 3/4 Mute Toggle" number="163" type="toggle" port="1">
+		<patch name="SS H8K3/4 In Mute Toggle" number="163" type="toggle" port="1">
 			<midiByteString name="A">ba 0e 00</midiByteString>
 			<midiByteString name="B">ba 0e 7f</midiByteString>
 		</patch>
-		<patch name="SS H8K 3/4 Mute Momentary" number="164" type="momentary" port="1">
+		<patch name="SS H8K3/4 In Mute Momentary" number="164" type="momentary" port="1">
 			<midiByteString name="A">ba 0e 00</midiByteString>
 			<midiByteString name="B">ba 0e 7f</midiByteString>
 		</patch>
@@ -1046,6 +1046,7 @@
 			<PatchMap switch="5" patch="611" loadState="" unloadState="" />
 			<PatchMap switch="6" patch="610" loadState="" unloadState="" />
 			<PatchMap switch="7" patch="612" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="161" loadState="" unloadState="" />
 			<PatchMap switch="10" patch="601" loadState="" unloadState="" />
 			<PatchMap switch="11" patch="99" loadState="" unloadState="" />
 			<PatchMap switch="13" patch="127" loadState="" unloadState="" />
