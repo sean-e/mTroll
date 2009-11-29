@@ -952,35 +952,35 @@
 		</patch>
 		
 		<patch name="DRV Toggle" number="500" type="toggle" port="1">
-			<midiByteString name="A">ca 05</midiByteString>
-			<midiByteString name="B">ca 03</midiByteString>
-		</patch>
-		<patch name="H3500 Toggle" number="501" type="toggle" port="1">
-			<midiByteString name="A">ca 06</midiByteString>
-			<midiByteString name="B">ca 03</midiByteString>
-		</patch>
-		<patch name="DHP Toggle" number="502" type="toggle" port="1">
-			<midiByteString name="A">ca 07</midiByteString>
-			<midiByteString name="B">ca 03</midiByteString>
-		</patch>
-		<patch name="Tri || DHP Toggle" number="503" type="toggle" port="1">
-			<midiByteString name="A">ca 08</midiByteString>
-			<midiByteString name="B">ca 03</midiByteString>
-		</patch>
-		<patch name="Tri || DHP || H35 Toggle" number="504" type="toggle" port="1">
-			<midiByteString name="A">ca 09</midiByteString>
-			<midiByteString name="B">ca 03</midiByteString>
-		</patch>
-		<patch name="DHP || H35 Toggle" number="505" type="toggle" port="1">
 			<midiByteString name="A">ca 0a</midiByteString>
 			<midiByteString name="B">ca 03</midiByteString>
 		</patch>
-		<patch name="DRV || DHP || H35 Toggle" number="506" type="toggle" port="1">
+		<patch name="H3500 Toggle" number="501" type="toggle" port="1">
 			<midiByteString name="A">ca 0b</midiByteString>
 			<midiByteString name="B">ca 03</midiByteString>
 		</patch>
-		<patch name="DRV to DHP || H35 Toggle" number="507" type="toggle" port="1">
+		<patch name="DHP Toggle" number="502" type="toggle" port="1">
 			<midiByteString name="A">ca 0c</midiByteString>
+			<midiByteString name="B">ca 03</midiByteString>
+		</patch>
+		<patch name="Tri || DHP Toggle" number="503" type="toggle" port="1">
+			<midiByteString name="A">ca 0d</midiByteString>
+			<midiByteString name="B">ca 03</midiByteString>
+		</patch>
+		<patch name="Tri || DHP || H35 Toggle" number="504" type="toggle" port="1">
+			<midiByteString name="A">ca 0e</midiByteString>
+			<midiByteString name="B">ca 03</midiByteString>
+		</patch>
+		<patch name="DHP || H35 Toggle" number="505" type="toggle" port="1">
+			<midiByteString name="A">ca 0f</midiByteString>
+			<midiByteString name="B">ca 03</midiByteString>
+		</patch>
+		<patch name="DRV || DHP || H35 Toggle" number="506" type="toggle" port="1">
+			<midiByteString name="A">ca 10</midiByteString>
+			<midiByteString name="B">ca 03</midiByteString>
+		</patch>
+		<patch name="DRV to DHP || H35 Toggle" number="507" type="toggle" port="1">
+			<midiByteString name="A">ca 11</midiByteString>
 			<midiByteString name="B">ca 03</midiByteString>
 		</patch>
 		<patch name="old DRV Toggle" number="508" type="toggle" port="1">
