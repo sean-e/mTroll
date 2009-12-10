@@ -183,8 +183,8 @@
 			<midiByteString name="B">b3 53 7f b3 53 00</midiByteString>
 		</patch>
 		<patch name="H8K B Input Mute" number="41" type="momentary" port="1">
-			<midiByteString name="A">b3 50 00</midiByteString>
-			<midiByteString name="B">b3 50 7f</midiByteString>
+			<midiByteString name="A">b3 50 00 b3 50 7f</midiByteString>
+			<midiByteString name="B">b3 50 00 b3 50 7f</midiByteString>
 		</patch>
 		<patch name="TRX RG1" number="44" type="normal" port="1">
 			<midiByteString name="A">c1 14</midiByteString>
