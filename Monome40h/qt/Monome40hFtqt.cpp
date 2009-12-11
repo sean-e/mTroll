@@ -511,7 +511,7 @@ Monome40hFtqt::DeviceServiceThread()
 							++bytesRead;
 							break;
 						}
-						else if (mTrace)
+						else if (cnt && mTrace)
 						{
 							const byte n1 = readData[0] >> 4;
 							const byte n2 = readData[0] & 0x0f;
