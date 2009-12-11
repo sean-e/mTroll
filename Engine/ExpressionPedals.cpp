@@ -201,3 +201,38 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 		}
 	}
 }
+
+void
+ExpressionControl::Refire(IMainDisplay * mainDisplay,
+						  IMidiOut * midiOut)
+{
+	if (!mEnabled)
+		return;
+
+	if (mIsDoubleByte)
+	{
+		midiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], true);
+		midiOut->MidiOut(mMidiData[0], mMidiData[1] + 32, mMidiData[3], true);
+	}
+	else
+		midiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], true);
+
+	if (mainDisplay && (mMidiData[2] == mMinCcVal || mMidiData[2] == mMaxCcVal))
+	{
+		std::strstream displayMsg;
+		if (mMidiData[2] == mMinCcVal)
+			displayMsg << "______ min ______" << std::endl;
+		else if (mMidiData[2] == mMaxCcVal)
+			displayMsg << "|||||| MAX ||||||" << std::endl;
+
+		if (mIsDoubleByte)
+		{
+			displayMsg << "adc ch(" << (int) mChannel << "), ctrl(" << (int) mControlNumber << "): " << (int) mMidiData[2] << std::endl;
+			displayMsg << "adc ch(" << (int) mChannel << "), ctrl(" << ((int) mControlNumber) + 31 << "): " << (int) mMidiData[3] << std::endl << std::ends;
+		}
+		else
+			displayMsg << "adc ch(" << (int) mChannel << "), ctrl(" << (int) mControlNumber << "): " << (int) mMidiData[2] << std::endl << std::ends;
+
+		mainDisplay->TextOut(displayMsg.str());
+	}
+}

@@ -69,6 +69,7 @@ public:
 
 	void Calibrate(const PedalCalibration & calibrationSetting);
 	void AdcValueChange(IMainDisplay * mainDisplay, IMidiOut * midiOut, int newVal);
+	void Refire(IMainDisplay * mainDisplay, IMidiOut * midiOut);
 
 private:
 	bool				mEnabled;
@@ -116,6 +117,12 @@ public:
 	{
 		mPedalControlData[0].AdcValueChange(mainDisplay, midiOut, newVal);
 		mPedalControlData[1].AdcValueChange(mainDisplay, midiOut, newVal);
+	}
+
+	void Refire(IMainDisplay * mainDisplay, IMidiOut * midiOut)
+	{
+		mPedalControlData[0].Refire(mainDisplay, midiOut);
+		mPedalControlData[1].Refire(mainDisplay, midiOut);
 	}
 
 private:
@@ -177,6 +184,16 @@ public:
 		_ASSERTE(mMidiOut);
 		if (mPedalEnables[pedal])
 			mPedals[pedal].AdcValueChange(mainDisplay, mMidiOut, newVal);
+		return mGlobalEnables[pedal];
+	}
+
+	bool Refire(IMainDisplay * mainDisplay, 
+				int pedal)
+	{
+		_ASSERTE(pedal < PedalCount);
+		_ASSERTE(mMidiOut);
+		if (mPedalEnables[pedal])
+			mPedals[pedal].Refire(mainDisplay, mMidiOut);
 		return mGlobalEnables[pedal];
 	}
 
