@@ -62,8 +62,8 @@
 			<globalExpr inputNumber="2" enable="0" />
 			<localExpr inputNumber="2" assignmentNumber="1" channel="12" controller="1" min="0" max="127" invert="0" enable="1" />
 			<localExpr inputNumber="2" assignmentNumber="2" channel="12" controller="2" min="0" max="127" invert="1" enable="1" />
-			<midiByteString name="A">b2 0b 7f b2 0b 00</midiByteString>
-			<midiByteString name="B">b2 0b 7f b2 0b 00</midiByteString>
+			<midiByteString group="A">b2 0b 7f b2 0b 00</midiByteString>
+			<midiByteString group="B">b2 0b 7f b2 0b 00</midiByteString>
 		</patch>
 		<patch name="Stacked toggles" number="24" type="toggle" port="1" />
 		<patch name="Sequence 1" number="25" type="sequence" port="1">
