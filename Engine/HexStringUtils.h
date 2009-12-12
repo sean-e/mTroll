@@ -1,5 +1,5 @@
 /*
-Original code copyright (c) 2007-2008 Sean Echevarria ( http://www.creepingfog.com/sean/ )
+Original code copyright (c) 2007-2009 Sean Echevarria ( http://www.creepingfog.com/sean/ )
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any
@@ -34,7 +34,7 @@ typedef std::vector<byte> Bytes;
 byte CharToByte(const char ch);
 byte CharsToByte(const char ch1, const char ch2);
 byte CharsToByte(const char chrs[2]);
-int ValidateString(std::string inString, Bytes & outBytes);
+int ValidateString(const std::string & inString, Bytes & outBytes);
 std::string GetAsciiHexStr(const Bytes & inBytes, bool format /*= true*/);
 
 #endif // HexStringUtils_h__
