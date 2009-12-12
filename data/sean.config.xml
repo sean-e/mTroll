@@ -36,32 +36,32 @@
 	</DeviceChannelMap>
 	<patches>
 		<patch name="SS All Mute Toggle" number="1" type="toggle" port="1">
-			<midiByteString name="A">ba 09 00</midiByteString>
-			<midiByteString name="B">ba 09 7f</midiByteString>
+			<midiByteString group="A">ba 09 00</midiByteString>
+			<midiByteString group="B">ba 09 7f</midiByteString>
 		</patch>
 		<patch name="SS All Mute Momentary" number="2" type="momentary" port="1">
-			<midiByteString name="A">ba 09 00</midiByteString>
-			<midiByteString name="B">ba 09 7f</midiByteString>
+			<midiByteString group="A">ba 09 00</midiByteString>
+			<midiByteString group="B">ba 09 7f</midiByteString>
 		</patch>
 		<patch name="SS H8K1 In Mute Toggle" number="3" type="toggle" port="1">
-			<midiByteString name="A">ba 0a 00</midiByteString>
-			<midiByteString name="B">ba 0a 7f</midiByteString>
+			<midiByteString group="A">ba 0a 00</midiByteString>
+			<midiByteString group="B">ba 0a 7f</midiByteString>
 		</patch>
 		<patch name="SS H8K1 In Mute Momentary" number="4" type="momentary" port="1">
-			<midiByteString name="A">ba 0a 00</midiByteString>
-			<midiByteString name="B">ba 0a 7f</midiByteString>
+			<midiByteString group="A">ba 0a 00</midiByteString>
+			<midiByteString group="B">ba 0a 7f</midiByteString>
 		</patch>
 		<patch name="SS Tri Bypass Toggle" number="5" type="toggle" port="1">
 			<!--this is no good since it routes guitar input to power amp-->
-			<midiByteString name="A">ba 14 00</midiByteString>
-			<midiByteString name="B">ba 14 7f</midiByteString>
+			<midiByteString group="A">ba 14 00</midiByteString>
+			<midiByteString group="B">ba 14 7f</midiByteString>
 		</patch>
 		<patch name="SS H3500 Mute Toggle" number="6" type="toggle" port="1">
-			<midiByteString name="A">ba 2a 00</midiByteString>
-			<midiByteString name="B">ba 2a 7f</midiByteString>
+			<midiByteString group="A">ba 2a 00</midiByteString>
+			<midiByteString group="B">ba 2a 7f</midiByteString>
 		</patch>
 		<patch name="H8K A All Off" number="7" type="momentary" port="1">
-			<midiByteString name="A">b2 05 7f b2 05 00</midiByteString>
+			<midiByteString group="A">b2 05 7f b2 05 00</midiByteString>
 		</patch>
 		<patch name="H8K A Toggle 1" number="8" type="toggle" port="1">
 			<midiByteString name="A">b2 07 7f b2 07 00</midiByteString>
@@ -128,75 +128,75 @@
 			<midiByteString name="B">b2 53 7f b2 53 00</midiByteString>
 		</patch>
 		<patch name="H8K B All Off" number="24" type="momentary" port="1">
-			<midiByteString name="A">b3 05 7f b3 05 00</midiByteString>
+			<midiByteString group="A">b3 05 7f b3 05 00</midiByteString>
 		</patch>
 		<patch name="H8K B Toggle 1" number="25" type="toggle" port="1">
-			<midiByteString name="A">b3 07 7f b3 07 00</midiByteString>
-			<midiByteString name="B">b3 07 7f b3 07 00</midiByteString>
+			<midiByteString group="A">b3 07 7f b3 07 00</midiByteString>
+			<midiByteString group="B">b3 07 7f b3 07 00</midiByteString>
 		</patch>
 		<patch name="H8K B Toggle 2" number="26" type="toggle" port="1">
-			<midiByteString name="A">b3 08 7f b3 08 00</midiByteString>
-			<midiByteString name="B">b3 08 7f b3 08 00</midiByteString>
+			<midiByteString group="A">b3 08 7f b3 08 00</midiByteString>
+			<midiByteString group="B">b3 08 7f b3 08 00</midiByteString>
 		</patch>
 		<patch name="H8K B Toggle 3" number="27" type="toggle" port="1">
-			<midiByteString name="A">b3 0a 7f b3 0a 00</midiByteString>
-			<midiByteString name="B">b3 0a 7f b3 0a 00</midiByteString>
+			<midiByteString group="A">b3 0a 7f b3 0a 00</midiByteString>
+			<midiByteString group="B">b3 0a 7f b3 0a 00</midiByteString>
 		</patch>
 		<patch name="H8K B Toggle 4" number="28" type="toggle" port="1">
-			<midiByteString name="A">b3 0b 7f b3 0b 00</midiByteString>
-			<midiByteString name="B">b3 0b 7f b3 0b 00</midiByteString>
+			<midiByteString group="A">b3 0b 7f b3 0b 00</midiByteString>
+			<midiByteString group="B">b3 0b 7f b3 0b 00</midiByteString>
 		</patch>
 		<patch name="H8K B Toggle 5" number="29" type="toggle" port="1">
-			<midiByteString name="A">b3 10 7f b3 10 00</midiByteString>
-			<midiByteString name="B">b3 10 7f b3 10 00</midiByteString>
+			<midiByteString group="A">b3 10 7f b3 10 00</midiByteString>
+			<midiByteString group="B">b3 10 7f b3 10 00</midiByteString>
 		</patch>
 		<patch name="H8K B Toggle 6" number="30" type="toggle" port="1">
-			<midiByteString name="A">b3 11 7f b3 11 00</midiByteString>
-			<midiByteString name="B">b3 11 7f b3 11 00</midiByteString>
+			<midiByteString group="A">b3 11 7f b3 11 00</midiByteString>
+			<midiByteString group="B">b3 11 7f b3 11 00</midiByteString>
 		</patch>
 		<patch name="H8K B Toggle 7" number="31" type="toggle" port="1">
-			<midiByteString name="A">b3 12 7f b3 12 00</midiByteString>
-			<midiByteString name="B">b3 12 7f b3 12 00</midiByteString>
+			<midiByteString group="A">b3 12 7f b3 12 00</midiByteString>
+			<midiByteString group="B">b3 12 7f b3 12 00</midiByteString>
 		</patch>
 		<patch name="H8K B Toggle 8" number="32" type="toggle" port="1">
-			<midiByteString name="A">b3 13 7f b3 13 00</midiByteString>
-			<midiByteString name="B">b3 13 7f b3 13 00</midiByteString>
+			<midiByteString group="A">b3 13 7f b3 13 00</midiByteString>
+			<midiByteString group="B">b3 13 7f b3 13 00</midiByteString>
 		</patch>
 		<patch name="H8K B Toggle 9" number="33" type="toggle" port="1">
-			<midiByteString name="A">b3 40 7f b3 40 00</midiByteString>
-			<midiByteString name="B">b3 40 7f b3 40 00</midiByteString>
+			<midiByteString group="A">b3 40 7f b3 40 00</midiByteString>
+			<midiByteString group="B">b3 40 7f b3 40 00</midiByteString>
 		</patch>
 		<patch name="H8K B Toggle 10" number="34" type="toggle" port="1">
-			<midiByteString name="A">b3 42 7f b3 42 00</midiByteString>
-			<midiByteString name="B">b3 42 7f b3 42 00</midiByteString>
+			<midiByteString group="A">b3 42 7f b3 42 00</midiByteString>
+			<midiByteString group="B">b3 42 7f b3 42 00</midiByteString>
 		</patch>
 		<patch name="H8K B Toggle 11" number="35" type="toggle" port="1">
-			<midiByteString name="A">b3 43 7f b3 43 00</midiByteString>
-			<midiByteString name="B">b3 43 7f b3 43 00</midiByteString>
+			<midiByteString group="A">b3 43 7f b3 43 00</midiByteString>
+			<midiByteString group="B">b3 43 7f b3 43 00</midiByteString>
 		</patch>
 		<patch name="H8K B Toggle 12" number="36" type="toggle" port="1">
-			<midiByteString name="A">b3 45 7f b3 45 00</midiByteString>
-			<midiByteString name="B">b3 45 7f b3 45 00</midiByteString>
+			<midiByteString group="A">b3 45 7f b3 45 00</midiByteString>
+			<midiByteString group="B">b3 45 7f b3 45 00</midiByteString>
 		</patch>
 		<patch name="H8K B Toggle 13" number="37" type="toggle" port="1">
-			<midiByteString name="A">b3 50 7f b3 50 00</midiByteString>
-			<midiByteString name="B">b3 50 7f b3 50 00</midiByteString>
+			<midiByteString group="A">b3 50 7f b3 50 00</midiByteString>
+			<midiByteString group="B">b3 50 7f b3 50 00</midiByteString>
 		</patch>
 		<patch name="H8K B Toggle 14" number="38" type="toggle" port="1">
-			<midiByteString name="A">b3 51 7f b3 51 00</midiByteString>
-			<midiByteString name="B">b3 51 7f b3 51 00</midiByteString>
+			<midiByteString group="A">b3 51 7f b3 51 00</midiByteString>
+			<midiByteString group="B">b3 51 7f b3 51 00</midiByteString>
 		</patch>
 		<patch name="H8K B Toggle 15" number="39" type="toggle" port="1">
-			<midiByteString name="A">b3 52 7f b3 52 00</midiByteString>
-			<midiByteString name="B">b3 52 7f b3 52 00</midiByteString>
+			<midiByteString group="A">b3 52 7f b3 52 00</midiByteString>
+			<midiByteString group="B">b3 52 7f b3 52 00</midiByteString>
 		</patch>
 		<patch name="H8K B Toggle 16" number="40" type="toggle" port="1">
-			<midiByteString name="A">b3 53 7f b3 53 00</midiByteString>
-			<midiByteString name="B">b3 53 7f b3 53 00</midiByteString>
+			<midiByteString group="A">b3 53 7f b3 53 00</midiByteString>
+			<midiByteString group="B">b3 53 7f b3 53 00</midiByteString>
 		</patch>
 		<patch name="H8K B Input Mute" number="41" type="momentary" port="1">
-			<midiByteString name="A">b3 50 00 b3 50 7f</midiByteString>
-			<midiByteString name="B">b3 50 00 b3 50 7f</midiByteString>
+			<midiByteString group="A">b3 50 00 b3 50 7f</midiByteString>
+			<midiByteString group="B">b3 50 00 b3 50 7f</midiByteString>
 		</patch>
 		<patch name="TRX RG1" number="44" type="normal" port="1">
 			<midiByteString name="A">c1 14</midiByteString>
