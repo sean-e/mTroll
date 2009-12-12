@@ -67,24 +67,54 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 	if (!doc.LoadFile()) 
 	{
 		std::string err = doc.ErrorDesc();
+		if (mTraceDisplay)
+		{
+			std::strstream traceMsg;
+			traceMsg << "Error loading config file: failed to load file " << err << std::endl << std::ends;
+			mTraceDisplay->Trace(std::string(traceMsg.str()));
+		}
 		return mEngine;
 	}
 
 	TiXmlHandle hDoc(&doc);
 	TiXmlElement* pElem = hDoc.FirstChildElement().Element();
-	// should always have a valid root but handle gracefully if it does
+	// should always have a valid root but handle gracefully if it doesn't
 	if (!pElem) 
+	{
+		if (mTraceDisplay)
+		{
+			std::strstream traceMsg;
+			traceMsg << "Error loading config file: invalid config file" << std::endl << std::ends;
+			mTraceDisplay->Trace(std::string(traceMsg.str()));
+		}
 		return mEngine;
+	}
 
 	if (pElem->ValueStr() != "MidiControlSettings")
+	{
+		if (mTraceDisplay)
+		{
+			std::strstream traceMsg;
+			traceMsg << "Error loading config file: invalid config file" << std::endl << std::ends;
+			mTraceDisplay->Trace(std::string(traceMsg.str()));
+		}
 		return mEngine;
+	}
 
 	TiXmlHandle hRoot(NULL);
 	hRoot = TiXmlHandle(pElem);
 
 	pElem = hRoot.FirstChild("SystemConfig").Element();
 	if (!LoadSystemConfig(pElem))
+	{
+		if (mTraceDisplay)
+		{
+			std::strstream traceMsg;
+			traceMsg << "Error loading config file: invalid SystemConfig" << std::endl << std::ends;
+			mTraceDisplay->Trace(std::string(traceMsg.str()));
+		}
 		return mEngine;
+	}
 
 	pElem = hRoot.FirstChild("DeviceChannelMap").FirstChild().Element();
 	if (pElem)
@@ -225,18 +255,36 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 {
 	for ( ; pElem; pElem = pElem->NextSiblingElement())
 	{
+		std::string patchName;
 		if (pElem->ValueStr() == "engineMetaPatch")
 		{
-			const std::string patchName = pElem->Attribute("name");
+			if (pElem->Attribute("name"))
+				patchName = pElem->Attribute("name");
 			int patchNumber = -1;
 			pElem->QueryIntAttribute("number", &patchNumber);
 			if (-1 == patchNumber || patchName.empty())
+			{
+				if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: engineMetaPatch missing number or name" << std::endl << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
 				continue;
+			}
 
 			std::string tmp;
 			pElem->QueryValueAttribute("action", &tmp);
 			if (tmp.empty())
+			{
+				if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: engineMetaPatch " << patchName << " missing action" << std::endl << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
 				continue;
+			}
 
 			if (tmp == "ResetBankPatches")
 				 mEngine->AddPatch(new MetaPatch_ResetBankPatches(mEngine, patchNumber, patchName));
@@ -245,7 +293,15 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				int bankNumber = -1;
 				pElem->QueryIntAttribute("bankNumber", &bankNumber);
 				if (-1 != bankNumber)
+				{
 					mEngine->AddPatch(new MetaPatch_LoadBank(mEngine, patchNumber, patchName, bankNumber));
+				}
+				else if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: engineMetaPatch " << patchName << " missing LoadBank target" << std::endl << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
 			}
 			else if (tmp == "BankHistoryBackward")
 				 mEngine->AddPatch(new MetaPatch_BankHistoryBackward(mEngine, patchNumber, patchName));
@@ -253,19 +309,45 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				 mEngine->AddPatch(new MetaPatch_BankHistoryForward(mEngine, patchNumber, patchName));
 			else if (tmp == "BankHistoryRecall")
 				 mEngine->AddPatch(new MetaPatch_BankHistoryRecall(mEngine, patchNumber, patchName));
+			else
+			{
+				if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: engineMetaPatch " << patchName << " unknown action " << tmp << std::endl << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
+			}
 			continue;
 		}
 
 		if (pElem->ValueStr() != "patch")
+		{
+			if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: unrecognized Patches item" << std::endl << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
 			continue;
+		}
 
 		int midiOutPortNumber = 1;
 
-		const std::string patchName = pElem->Attribute("name");
+		if (pElem->Attribute("name"))
+			patchName = pElem->Attribute("name");
 		int patchNumber = -1;
 		pElem->QueryIntAttribute("number", &patchNumber);
 		if (-1 == patchNumber || patchName.empty())
+		{
+			if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: patch missing number or name" << std::endl << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
 			continue;
+		}
 
 		std::string patchType;
 		pElem->QueryValueAttribute("type", &patchType);
@@ -296,7 +378,15 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			{
 				const std::string patchCommandString(childElem->GetText());
 				if (-1 == ::ValidateString(patchCommandString, bytes))
+				{
+					if (mTraceDisplay)
+					{
+						std::strstream traceMsg;
+						traceMsg << "Error loading config file: invalid midiByteString in patch " << patchName << std::endl << std::ends;
+						mTraceDisplay->Trace(std::string(traceMsg.str()));
+					}
 					continue;
+				}
 			}
 			else if (patchElement == "RefirePedal")
 			{
@@ -310,6 +400,18 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 						cmds.push_back(new RefirePedalCommand(mEngine, pedalNumber));
 					else if (group == "B")
 						cmds2.push_back(new RefirePedalCommand(mEngine, pedalNumber));
+					else if (mTraceDisplay)
+					{
+						std::strstream traceMsg;
+						traceMsg << "Error loading config file: invalid Group for " << patchName << std::endl << std::ends;
+						mTraceDisplay->Trace(std::string(traceMsg.str()));
+					}
+				}
+				else if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: invalid pedal specified in RefirePedal in patch " << patchName << std::endl << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
 				}
 				continue;
 			}
@@ -319,59 +421,94 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				continue;
 			else
 			{
-				int data1 = 0, data2 = 0;
 				std::string chStr;
-
 				childElem->QueryValueAttribute("channel", &chStr);
 				if (chStr.empty())
 				{
 					std::string device;
-					childElem->QueryValueAttribute("device", &device);
+					if (childElem->Attribute("device"))
+						device = childElem->Attribute("device");
 					if (!device.empty())
 						chStr = mDevices[device];
 					if (chStr.empty())
+					{
+						if (mTraceDisplay)
+						{
+							std::strstream traceMsg;
+							traceMsg << "Error loading config file: command missing channel in patch " << patchName << std::endl << std::ends;
+							mTraceDisplay->Trace(std::string(traceMsg.str()));
+						}
 						continue;
+					}
 				}
 
 				const int ch = ::atoi(chStr.c_str()) - 1;
 				if (ch < 0 || ch > 15)
+				{
+					if (mTraceDisplay)
+					{
+						std::strstream traceMsg;
+						traceMsg << "Error loading config file: invalid command channel in patch " << patchName << std::endl << std::ends;
+						mTraceDisplay->Trace(std::string(traceMsg.str()));
+					}
 					continue;
+				}
 
 				byte cmdByte = 0;
+				int data1 = 0, data2 = 0;
+				bool useDataByte2 = true;
 
 				if (patchElement == "ProgramChange")
 				{
-					// <ProgramChange name="B" channel="0" program="0" />
+					// <ProgramChange group="A" channel="0" program="0" />
 					childElem->QueryIntAttribute("program", &data1);
 					cmdByte = 0xc0;
+					useDataByte2 = false;
 				}
 				else if (patchElement == "ControlChange")
 				{
-					// <ControlChange name="B" channel="0" controller="0" value="0" />
+					// <ControlChange group="A" channel="0" controller="0" value="0" />
 					childElem->QueryIntAttribute("controller", &data1);
 					childElem->QueryIntAttribute("value", &data2);
 					cmdByte = 0xb0;
 				}
 				else if (patchElement == "NoteOn")
 				{
-					// <NoteOn name="B" channel="0" note="0" velocity="0" />
+					// <NoteOn group="B" channel="0" note="0" velocity="0" />
 					childElem->QueryIntAttribute("note", &data1);
 					childElem->QueryIntAttribute("velocity", &data2);
 					cmdByte = 0x90;
 				}
 				else if (patchElement == "NoteOff")
 				{
-					// <NoteOff name="B" channel="0" note="0" velocity="0" />
+					// <NoteOff group="B" channel="0" note="0" velocity="0" />
 					childElem->QueryIntAttribute("note", &data1);
 					childElem->QueryIntAttribute("velocity", &data2);
 					cmdByte = 0x80;
 				}
+				else if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: unrecognized command in patch " << patchName << std::endl << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
 
 				if (cmdByte)
 				{
+					if ((data1 > 0xff) || (useDataByte2 && data2 > 0xff))
+					{
+						if (mTraceDisplay)
+						{
+							std::strstream traceMsg;
+							traceMsg << "Error loading config file: too large a value specified for command in patch " << patchName << std::endl << std::ends;
+							mTraceDisplay->Trace(std::string(traceMsg.str()));
+						}
+						continue;
+					}
+
 					bytes.push_back(cmdByte | ch);
 					bytes.push_back(data1);
-					if (cmdByte != 0xc0)
+					if (useDataByte2)
 						bytes.push_back(data2);
 				}
 			}
@@ -382,6 +519,12 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 					cmds.push_back(new MidiCommandString(midiOut, bytes));
 				else if (group == "B")
 					cmds2.push_back(new MidiCommandString(midiOut, bytes));
+				else if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: invalid Group for " << patchName << std::endl << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
 			}
 		}
 
@@ -394,6 +537,12 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			newPatch = new MomentaryPatch(patchNumber, patchName, midiOut, cmds, cmds2);
 		else if (patchType == "sequence")
 			newPatch = new SequencePatch(patchNumber, patchName, midiOut, cmds);
+		else if (mTraceDisplay)
+		{
+			std::strstream traceMsg;
+			traceMsg << "Error loading config file: invalid patch type specified for patch " << patchName << std::endl << std::ends;
+			mTraceDisplay->Trace(std::string(traceMsg.str()));
+		}
 
 		if (!newPatch)
 			continue;
@@ -436,13 +585,31 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 	for ( ; pElem; pElem = pElem->NextSiblingElement())
 	{
 		if (pElem->ValueStr() != "bank")
+		{
+			if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: unrecognized Banks item" << std::endl << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
 			continue;
+		}
 
-		const std::string bankName = pElem->Attribute("name");
+		std::string bankName;
+		if (pElem->Attribute("name"))
+			bankName = pElem->Attribute("name");
 		int bankNumber = -1;
 		pElem->QueryIntAttribute("number", &bankNumber);
 		if (-1 == bankNumber || bankName.empty())
+		{
+			if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: bank missing number or name" << std::endl << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
 			continue;
+		}
 
 		PatchBank & bank = mEngine->AddBank(bankNumber, bankName);
 
@@ -458,9 +625,17 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 				int switchNumber = -1;
 				childElem->QueryIntAttribute("switch", &switchNumber);
 				int patchNumber = -1;
-				childElem->Attribute("patch", &patchNumber);
+				childElem->QueryIntAttribute("patch", &patchNumber);
 				if (switchNumber <= 0|| -1 == patchNumber)
+				{
+					if (mTraceDisplay)
+					{
+						std::strstream traceMsg;
+						traceMsg << "Error loading config file: invalid switch or patch number in PatchMap for bank " << bankName << std::endl << std::ends;
+						mTraceDisplay->Trace(std::string(traceMsg.str()));
+					}
 					continue;
+				}
 
 				std::string tmp;
 				childElem->QueryValueAttribute("loadState", &tmp);
@@ -490,6 +665,12 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 				}
 
 				bank.CreateExclusiveGroup(switches);
+			} 
+			else if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: unrecognized element in bank " << bankName << std::endl << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
 			}
 		}
 	}
@@ -564,19 +745,44 @@ EngineLoader::LoadDeviceChannelMap(TiXmlElement * pElem)
 		<device channel="1">H8000</>
 	</DeviceChannelMap>
  */
-	std::string dev, ch;
+	std::string dev;
 	for ( ; pElem; pElem = pElem->NextSiblingElement())
 	{
 		if (pElem->ValueStr() != "Device")
+		{
+			if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: unrecognized element in DeviceChannelMap" << std::endl << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
 			continue;
+		}
 
+		if (!pElem->GetText())
+		{
+			if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: missing device name in DeviceChannelMap" << std::endl << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
+			continue;
+		}
 		dev = pElem->GetText();
-		if (dev.empty())
-			continue;
 
+		std::string ch;
 		pElem->QueryValueAttribute("channel", &ch);
 		if (ch.empty())
+		{
+			if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: missing channel name in DeviceChannelMap" << std::endl << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
 			continue;
+		}
 
 		mDevices[dev] = ch;
 	}
