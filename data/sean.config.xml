@@ -30,33 +30,39 @@
 		<Device channel="5">H8000 Routings</Device>
 		<Device channel="6">H3500</Device>
 		<Device channel="7">EDP</Device>
+		<!-- <Device channel="8"></Device> -->
+		<!-- <Device channel="9"></Device> -->
+		<!-- <Device channel="10"></Device> -->
 		<Device channel="11">Switchblade</Device>
 		<Device channel="12">Filter Factory</Device>
+		<!-- <Device channel="13"></Device> -->
 		<Device channel="14">Warp9</Device>
+		<!-- <Device channel="15"></Device> -->
+		<!-- <Device channel="16"></Device> -->
 	</DeviceChannelMap>
 	<patches>
-		<patch name="SS All Mute Toggle" number="1" type="toggle" port="1">
+		<patch name="SS All Mute Toggle (Smart Insert)" number="1" type="toggle" port="1">
 			<midiByteString group="A">ba 09 00</midiByteString>
 			<midiByteString group="B">ba 09 7f</midiByteString>
 		</patch>
-		<patch name="SS All Mute Momentary" number="2" type="momentary" port="1">
+		<patch name="SS All Mute Momentary (Smart Insert)" number="2" type="momentary" port="1">
 			<midiByteString group="A">ba 09 00</midiByteString>
 			<midiByteString group="B">ba 09 7f</midiByteString>
 		</patch>
-		<patch name="SS H8K1 In Mute Toggle" number="3" type="toggle" port="1">
-			<midiByteString group="A">ba 0a 00</midiByteString>
-			<midiByteString group="B">ba 0a 7f</midiByteString>
+		<patch name="SS Input Mute Toggle" number="3" type="toggle" port="1">
+			<ControlChange group="A" device="Switchblade" controller="110" value="0" />
+			<RefirePedal group="B" pedal="1" />
 		</patch>
-		<patch name="SS H8K1 In Mute Momentary" number="4" type="momentary" port="1">
-			<midiByteString group="A">ba 0a 00</midiByteString>
-			<midiByteString group="B">ba 0a 7f</midiByteString>
+		<patch name="SS Input Mute Momentary" number="4" type="momentary" port="1">
+			<ControlChange group="A" device="Switchblade" controller="110" value="0" />
+			<RefirePedal group="B" pedal="1" />
 		</patch>
-		<patch name="SS Tri Bypass Toggle" number="5" type="toggle" port="1">
+		<patch name="SS Tri Bypass Toggle (Smart Insert)" number="5" type="toggle" port="1">
 			<!--this is no good since it routes guitar input to power amp-->
 			<midiByteString group="A">ba 14 00</midiByteString>
 			<midiByteString group="B">ba 14 7f</midiByteString>
 		</patch>
-		<patch name="SS H3500 Mute Toggle" number="6" type="toggle" port="1">
+		<patch name="SS H3500 Mute Toggle (Smart Insert)" number="6" type="toggle" port="1">
 			<midiByteString group="A">ba 2a 00</midiByteString>
 			<midiByteString group="B">ba 2a 7f</midiByteString>
 		</patch>
@@ -529,33 +535,45 @@
 			<localExpr inputNumber="4" assignmentNumber="1" channel="3" controller="45" min="0" max="127" invert="0" enable="1" />
 		</patch>
 
-		<patch name="SS H8K2 In Mute Toggle" number="159" type="toggle" port="1">
+		<patch name="SS H8K2 In Mute Toggle (Smart Insert)" number="159" type="toggle" port="1">
 			<midiByteString name="A">ba 0d 00</midiByteString>
 			<midiByteString name="B">ba 0d 7f</midiByteString>
 		</patch>
-		<patch name="SS H8K2 In Mute Momentary" number="160" type="momentary" port="1">
+		<patch name="SS H8K2 In Mute Momentary (Smart Insert)" number="160" type="momentary" port="1">
 			<midiByteString name="A">ba 0d 00</midiByteString>
 			<midiByteString name="B">ba 0d 7f</midiByteString>
 		</patch>
-		<patch name="SS EDP Bypass Toggle" number="161" type="toggle" port="1">
+		<patch name="SS EDP Bypass Toggle (Smart Insert)" number="161" type="toggle" port="1">
 			<midiByteString name="A">ba 0b 00</midiByteString>
 			<midiByteString name="B">ba 0b 7f</midiByteString>
 		</patch>
-		<patch name="SS EDP Bypass Momentary" number="162" type="momentary" port="1">
+		<patch name="SS EDP Bypass Momentary (Smart Insert)" number="162" type="momentary" port="1">
 			<midiByteString name="A">ba 0b 00</midiByteString>
 			<midiByteString name="B">ba 0b 7f</midiByteString>
 		</patch>
-		<patch name="SS H8K3/4 In Mute Toggle" number="163" type="toggle" port="1">
+		<patch name="SS H8K3/4 In Mute Toggle (Smart Insert)" number="163" type="toggle" port="1">
 			<midiByteString name="A">ba 0e 00</midiByteString>
 			<midiByteString name="B">ba 0e 7f</midiByteString>
 		</patch>
-		<patch name="SS H8K3/4 In Mute Momentary" number="164" type="momentary" port="1">
+		<patch name="SS H8K3/4 In Mute Momentary (Smart Insert)" number="164" type="momentary" port="1">
 			<midiByteString name="A">ba 0e 00</midiByteString>
 			<midiByteString name="B">ba 0e 7f</midiByteString>
 		</patch>
-		<patch name="SS Mute Momentary" number="165" type="momentary" port="1">
-			<ControlChange name="A" device="Switchblade" controller="110" value="00" />
-			<RefirePedal name="B" pedal="1" />
+		<patch name="SS H8K1 In Mute Momentary (Smart Insert)" number="165" type="momentary" port="1">
+			<midiByteString group="A">ba 0a 00</midiByteString>
+			<midiByteString group="B">ba 0a 7f</midiByteString>
+		</patch>
+		<patch name="SS H8K1 In Mute Toggle (Smart Insert)" number="166" type="toggle" port="1">
+			<midiByteString group="A">ba 0a 00</midiByteString>
+			<midiByteString group="B">ba 0a 7f</midiByteString>
+		</patch>
+		<patch name="SS Output Mute Toggle" number="167" type="toggle" port="1">
+			<ControlChange group="A" device="Switchblade" controller="111" value="0" />
+			<RefirePedal group="B" pedal="2" />
+		</patch>
+		<patch name="SS Output Mute Momentary" number="168" type="momentary" port="1">
+			<ControlChange group="A" device="Switchblade" controller="111" value="0" />
+			<RefirePedal group="B" pedal="2" />
 		</patch>
 
 		<patch name="EDP V Parameter" number="270" type="normal" port="1">
@@ -1088,7 +1106,7 @@
 			<PatchMap switch="11" patch="17" loadState="" unloadState="" />
 			<PatchMap switch="12" patch="18" loadState="" unloadState="" />
 			<PatchMap switch="13" patch="19" loadState="" unloadState="" />
-			<PatchMap switch="14" patch="20" loadState="" unloadState="" />
+			<!-- <PatchMap switch="14" patch="20" loadState="" unloadState="" /> -->
 			<!--<PatchMap switch="15" patch="21" loadState="" unloadState="" />-->
 			<!--<PatchMap switch="16" patch="22" loadState="" unloadState="" />-->
 			<!--<PatchMap switch="17" patch="23" loadState="" unloadState="" />-->
@@ -1108,7 +1126,7 @@
 			<PatchMap switch="11" patch="34" loadState="" unloadState="" />
 			<PatchMap switch="12" patch="35" loadState="" unloadState="" />
 			<PatchMap switch="13" patch="36" loadState="" unloadState="" />
-			<PatchMap switch="14" patch="165" loadState="" unloadState="" />
+			<!-- <PatchMap switch="14" patch="137" loadState="" unloadState="" /> -->
 			<!--<PatchMap switch="15" patch="38" loadState="" unloadState="" />-->
 			<!--<PatchMap switch="16" patch="39" loadState="" unloadState="" />-->
 			<!--<PatchMap switch="17" patch="40" loadState="" unloadState="" />-->
