@@ -50,6 +50,7 @@ public:
 
 private:
 	bool					LoadSystemConfig(TiXmlElement * pElem);
+	void					LoadDeviceChannelMap(TiXmlElement * pElem);
 	void					LoadExpressionPedalSettings(TiXmlElement * pElem, ExpressionPedals &pedals);
 	void					LoadPatches(TiXmlElement * pElem);
 	void					LoadBanks(TiXmlElement * pElem);
@@ -65,6 +66,7 @@ private:
 	IMidiOutGenerator *		mMidiOutGenerator;
 	ISwitchDisplay *		mSwitchDisplay;
 	ITraceDisplay *			mTraceDisplay;
+	std::map<std::string, std::string> mDevices;
 };
 
 #endif // EngineLoader_h__

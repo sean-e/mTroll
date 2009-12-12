@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008 Sean Echevarria
+ * Copyright (C) 2007-2009 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -25,7 +25,10 @@
 #ifndef SequencePatch_h__
 #define SequencePatch_h__
 
-#include "TwoStatePatch.h"
+#include "IMidiOut.h"
+#include "IPatchCommand.h"
+#include <algorithm>
+#include "DeletePtr.h"
 
 
 // SequencePatch
@@ -36,29 +39,35 @@
 class SequencePatch : public Patch
 {
 public:
-	SequencePatch(int number, const std::string & name, int midiOutPortNumber, IMidiOut * midiOut) :
-		Patch(number, name, midiOutPortNumber, midiOut),
+	SequencePatch(int number, const std::string & name, IMidiOut * midiOut, PatchCommands & cmds) :
+		Patch(number, name, midiOut),
 		mCurIndex(0)
 	{
+		mCmds.swap(cmds);
+	}
+
+	~SequencePatch()
+	{
+		std::for_each(mCmds.begin(), mCmds.end(), DeletePtr<IPatchCommand>());
 	}
 	
 	virtual std::string GetPatchTypeStr() const { return "sequence"; }
 
 	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 	{
-		if (mCurIndex < mMidiByteStrings.size())
+		if (mCurIndex < mCmds.size())
 		{
 			mPatchIsActive = true;
-			const Bytes & curBytes = mMidiByteStrings[mCurIndex++];
-			if (curBytes.size() && mMidiOut)
-				mMidiOut->MidiOut(curBytes);
+			IPatchCommand * curCmd = mCmds[mCurIndex++];
+			if (curCmd)
+				curCmd->Exec();
 
 // should SequencePatches be able to use expr pedals?
 // 			if (mMidiByteStrings.size() > 1)
 // 				gActivePatchPedals = &mPedals;
 		}
 
-		if (mCurIndex >= mMidiByteStrings.size())
+		if (mCurIndex >= mCmds.size())
 		{
 			mPatchIsActive = false;
 			mCurIndex = 0;
@@ -95,15 +104,13 @@ public:
 		if (!IsActive() || 0 != mCurIndex)
 			return;
 
-		mCurIndex = mMidiByteStrings.size() + 1;
+		mCurIndex = mCmds.size() + 1;
 		SwitchPressed(mainDisplay, switchDisplay);
 	}
 
-			void AddString(const Bytes & midiString) { mMidiByteStrings.push_back(midiString); }
-
 private:
 	size_t					mCurIndex;
-	std::vector<Bytes>		mMidiByteStrings;
+	PatchCommands			mCmds;
 };
 
 #endif // SequencePatch_h__

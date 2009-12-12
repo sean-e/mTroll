@@ -39,6 +39,8 @@
 #include "MetaPatch_ResetBankPatches.h"
 #include "MetaPatch_LoadBank.h"
 #include "MetaPatch_BankHistory.h"
+#include "MidiCommandString.h"
+#include "RefirePedalCommand.h"
 
 
 static PatchBank::PatchState GetLoadState(const std::string & tmpLoad);
@@ -83,6 +85,10 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 	pElem = hRoot.FirstChild("SystemConfig").Element();
 	if (!LoadSystemConfig(pElem))
 		return mEngine;
+
+	pElem = hRoot.FirstChild("DeviceChannelMap").FirstChild().Element();
+	if (pElem)
+		LoadDeviceChannelMap(pElem);
 
 	pElem = hRoot.FirstChild("patches").FirstChild().Element();
 	LoadPatches(pElem);
@@ -249,13 +255,12 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				 mEngine->AddPatch(new MetaPatch_BankHistoryRecall(mEngine, patchNumber, patchName));
 			continue;
 		}
-		
+
 		if (pElem->ValueStr() != "patch")
 			continue;
 
 		std::string tmp;
-		std::string midiByteStringA;
-		std::string midiByteStringB;
+		std::string patchCommandString;
 		int midiOutPortNumber = 1;
 
 		const std::string patchName = pElem->Attribute("name");
@@ -264,7 +269,12 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		if (-1 == patchNumber || patchName.empty())
 			continue;
 
+		std::string patchType;
+		pElem->QueryValueAttribute("type", &patchType);
+		const bool isSeq = patchType == "sequence";
 		pElem->QueryIntAttribute("port", &midiOutPortNumber);
+		IMidiOut * midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[midiOutPortNumber]);
+		PatchCommands cmds, cmds2;
 
 		TiXmlHandle hRoot(NULL);
 		hRoot = TiXmlHandle(pElem);
@@ -274,56 +284,113 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			 childElem; 
 			 childElem = childElem->NextSiblingElement())
 		{
-			if (childElem->ValueStr() != "midiByteString")
-				continue;
-		
+			Bytes bytes;
+			const std::string patchElement = childElem->ValueStr();
 			childElem->QueryValueAttribute("name", &tmp);
-			if (tmp == "A")
-				midiByteStringA = childElem->GetText();
-			else if (tmp == "B")
-				midiByteStringB = childElem->GetText();
+
+			if (patchElement == "midiByteString")
+			{
+				patchCommandString = childElem->GetText();
+				if (-1 == ::ValidateString(patchCommandString, bytes))
+					continue;
+			}
+			else if (patchElement == "RefirePedal")
+			{
+				int pedalNumber = -1;
+				// pedal values are 1-4
+				childElem->QueryIntAttribute("pedal", &pedalNumber);
+				pedalNumber--;  // but used internally 0-based
+				if (-1 < pedalNumber)
+				{
+					if (tmp == "A" || isSeq)
+						cmds.push_back(new RefirePedalCommand(mEngine, pedalNumber));
+					else if (tmp == "B")
+						cmds2.push_back(new RefirePedalCommand(mEngine, pedalNumber));
+				}
+				continue;
+			}
+			else if (patchElement == "localExpr")
+				continue;
+			else if (patchElement == "globalExpr")
+				continue;
+			else
+			{
+				int data1 = 0, data2 = 0;
+				std::string chStr;
+				patchCommandString.clear();
+
+				childElem->QueryValueAttribute("channel", &chStr);
+				if (chStr.empty())
+				{
+					std::string device;
+					childElem->QueryValueAttribute("device", &device);
+					if (!device.empty())
+						chStr = mDevices[device];
+					if (chStr.empty())
+						continue;
+				}
+
+				const int ch = ::atoi(chStr.c_str()) - 1;
+				if (ch < 0 || ch > 15)
+					continue;
+
+				byte cmdByte = 0;
+
+				if (patchElement == "ProgramChange")
+				{
+					// <ProgramChange name="B" channel="0" program="0" />
+					childElem->QueryIntAttribute("program", &data1);
+					cmdByte = 0xc0;
+				}
+				else if (patchElement == "ControlChange")
+				{
+					// <ControlChange name="B" channel="0" controller="0" value="0" />
+					childElem->QueryIntAttribute("controller", &data1);
+					childElem->QueryIntAttribute("value", &data2);
+					cmdByte = 0xb0;
+				}
+				else if (patchElement == "NoteOn")
+				{
+					// <NoteOn name="B" channel="0" note="0" velocity="0" />
+					childElem->QueryIntAttribute("note", &data1);
+					childElem->QueryIntAttribute("velocity", &data2);
+					cmdByte = 0x90;
+				}
+				else if (patchElement == "NoteOff")
+				{
+					// <NoteOff name="B" channel="0" note="0" velocity="0" />
+					childElem->QueryIntAttribute("note", &data1);
+					childElem->QueryIntAttribute("velocity", &data2);
+					cmdByte = 0x80;
+				}
+
+				if (cmdByte)
+				{
+					bytes.push_back(cmdByte | ch);
+					bytes.push_back(data1);
+					if (cmdByte != 0xc0)
+						bytes.push_back(data2);
+				}
+			}
+
+			if (bytes.size())
+			{
+				if (tmp == "A" || isSeq)
+					cmds.push_back(new MidiCommandString(midiOut, bytes));
+				else if (tmp == "B")
+					cmds2.push_back(new MidiCommandString(midiOut, bytes));
+			}
 		}
-
-		Bytes bytesA;
-		int retval = ::ValidateString(midiByteStringA, bytesA);
-		if (-1 == retval)
-			continue;
-
-		Bytes bytesB;
-		retval = ::ValidateString(midiByteStringB, bytesB);
-		if (-1 == retval)
-			continue;
 
 		Patch * newPatch = NULL;
-		IMidiOut * midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[midiOutPortNumber]);
-		pElem->QueryValueAttribute("type", &tmp);
-		if (tmp == "normal")
-			newPatch = new NormalPatch(patchNumber, patchName, midiOutPortNumber, midiOut, bytesA, bytesB);
-		else if (tmp == "toggle")
-			newPatch = new TogglePatch(patchNumber, patchName, midiOutPortNumber, midiOut, bytesA, bytesB);
-		else if (tmp == "momentary")
-			newPatch = new MomentaryPatch(patchNumber, patchName, midiOutPortNumber, midiOut, bytesA, bytesB);
-		else if (tmp == "sequence")
-		{
-			SequencePatch * seqpatch = new SequencePatch(patchNumber, patchName, midiOutPortNumber, midiOut);
-			for (childElem = hRoot.FirstChild().Element(); 
-				 childElem && seqpatch; 
-				 childElem = childElem->NextSiblingElement())
-			{
-				if (childElem->ValueStr() != "midiByteString")
-					continue;
-			
-				midiByteStringA = childElem->GetText();
-				Bytes bytesA;
-				int retval = ::ValidateString(midiByteStringA, bytesA);
-				if (-1 == retval)
-					continue;
-					
-				seqpatch->AddString(bytesA);
-			}
-			
-			newPatch = seqpatch;
-		}
+		if (patchType == "normal")
+			newPatch = new NormalPatch(patchNumber, patchName, midiOut, cmds, cmds2);
+		else if (patchType == "toggle")
+			newPatch = new TogglePatch(patchNumber, patchName, midiOut, cmds, cmds2);
+		else if (patchType == "momentary")
+			newPatch = new MomentaryPatch(patchNumber, patchName, midiOut, cmds, cmds2);
+		else if (patchType == "sequence")
+			newPatch = new SequencePatch(patchNumber, patchName, midiOut, cmds);
 
 		if (!newPatch)
 			continue;
@@ -334,12 +401,13 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			 childElem; 
 			 childElem = childElem->NextSiblingElement())
 		{
-			if (childElem->ValueStr() == "localExpr")
+			const std::string patchElement = childElem->ValueStr();
+			if (patchElement == "localExpr")
 			{
 				// <localExpr inputNumber="1" assignmentNumber="1" channel="" controller="" min="" max="" invert="0" enable="" />
 				LoadExpressionPedalSettings(childElem, pedals);
 			}
-			else if (childElem->ValueStr() == "globalExpr")
+			else if (patchElement == "globalExpr")
 			{
 				// <globalExpr inputNumber="" enable="" />
 				int exprInputNumber = -1;
@@ -481,6 +549,33 @@ EngineLoader::InitMonome(IMonome40h * monome,
 			traceMsg << "  ADC port " << idx << (enable ? " enabled" : " disabled") << std::endl << std::ends;
 			mTraceDisplay->Trace(std::string(traceMsg.str()));
 		}
+	}
+}
+
+void
+EngineLoader::LoadDeviceChannelMap(TiXmlElement * pElem)
+{
+/*
+	<DeviceChannelMap>
+		<device channel="0">EDP</>
+		<device channel="1">H8000</>
+	</DeviceChannelMap>
+ */
+	std::string dev, ch;
+	for ( ; pElem; pElem = pElem->NextSiblingElement())
+	{
+		if (pElem->ValueStr() != "Device")
+			continue;
+
+		dev = pElem->GetText();
+		if (dev.empty())
+			continue;
+
+		pElem->QueryValueAttribute("channel", &ch);
+		if (ch.empty())
+			continue;
+
+		mDevices[dev] = ch;
 	}
 }
 

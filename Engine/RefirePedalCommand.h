@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2009 Sean Echevarria
+ * Copyright (C) 2009 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -22,40 +22,36 @@
  * Contact Sean: "fester" at the domain of the original project site
  */
 
-#ifndef TogglePatch_h__
-#define TogglePatch_h__
+#ifndef RefirePedalCommand_h__
+#define RefirePedalCommand_h__
 
-#include "TwoStatePatch.h"
+#include "IPatchCommand.h"
+#include "IMidiOut.h"
+
+class MidiControlEngine;
 
 
-// TogglePatch
-// -----------------------------------------------------------------------------
-// responds to SwitchPressed; SwitchReleased does not affect patch state
-// supports expression pedals (psAllowOnlyActive) - but should it?
-//
-class TogglePatch : public TwoStatePatch
+class RefirePedalCommand : public IPatchCommand
 {
 public:
-	TogglePatch(int number, 
-				const std::string & name, 
-				IMidiOut * midiOut, 
-				PatchCommands & cmdsA, 
-				PatchCommands & cmdsB) :
-		TwoStatePatch(number, name, midiOut, cmdsA, cmdsB, psAllowOnlyActive)
+	RefirePedalCommand(MidiControlEngine * eng, 
+					   int pedalNumber) :
+		mEngine(eng),
+		mPedalNumber(pedalNumber)
 	{
 	}
 
-	virtual std::string GetPatchTypeStr() const { return "toggle"; }
-
-	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
+	void Exec()
 	{
-		if (mPatchIsActive)
-			ExecCommandsB();
-		else
-			ExecCommandsA();
-
-		UpdateDisplays(mainDisplay, switchDisplay);
+		mEngine->RefirePedal(mPedalNumber);
 	}
+
+private:
+	RefirePedalCommand();
+
+private:
+	MidiControlEngine	*mEngine;
+	int			mPedalNumber;
 };
 
-#endif // TogglePatch_h__
+#endif // RefirePedalCommand_h__

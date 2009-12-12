@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008 Sean Echevarria
+ * Copyright (C) 2007-2009 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -37,27 +37,26 @@ class NormalPatch : public TwoStatePatch
 public:
 	NormalPatch(int number, 
 				const std::string & name, 
-				int midiOutPortNumber, 
 				IMidiOut * midiOut, 
-				const Bytes & midiStringA, 
-				const Bytes & midiStringB) :
-		TwoStatePatch(number, name, midiOutPortNumber, midiOut, midiStringA, midiStringB, psAllow)
+				PatchCommands & cmdsA, 
+				PatchCommands & cmdsB) :
+		TwoStatePatch(number, name, midiOut, cmdsA, cmdsB, psAllow)
 	{
 	}
 
 	virtual std::string GetPatchTypeStr() const { return "normal"; }
 	virtual bool IsPatchVolatile() const { return true; }
-	virtual void DeactivateVolatilePatch() { SendStringB(); }
+	virtual void DeactivateVolatilePatch() { ExecCommandsB(); }
 
 	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 	{
 		if (mPatchIsActive)
 		{
-			SendStringB();
-			SendStringA();
+			ExecCommandsB();
+			ExecCommandsA();
 		}
 		else
-			SendStringA();
+			ExecCommandsA();
 
 		UpdateDisplays(mainDisplay, switchDisplay);
 	}

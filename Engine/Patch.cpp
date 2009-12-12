@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008 Sean Echevarria
+ * Copyright (C) 2007-2009 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -34,13 +34,10 @@ ExpressionPedals * gActivePatchPedals = NULL;
 
 Patch::Patch(int number, 
 			 const std::string & name,
-			 int midiOutPortNumber /*= -1*/, 
 			 IMidiOut * midiOut /*= NULL*/) :
 	mNumber(number),
 	mName(name),
 	mPatchIsActive(false),
-	mMidiOutPort(midiOutPortNumber),
-	mMidiOut(midiOut),
 	mPedals(midiOut)
 {
 }

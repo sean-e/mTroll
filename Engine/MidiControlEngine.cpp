@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008 Sean Echevarria
+ * Copyright (C) 2007-2009 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -30,17 +30,9 @@
 #include "ISwitchDisplay.h"
 #include "ITraceDisplay.h"
 #include "MetaPatch_BankNav.h"
+#include "DeletePtr.h"
 
 
-
-template<typename T>
-struct DeletePtr
-{
-	void operator()(const T * ptr)
-	{
-		delete ptr;
-	}
-};
 
 struct DeletePatch
 {
@@ -471,6 +463,20 @@ MidiControlEngine::AdcValueChanged(int port,
 	{
 		// process globals if no rejection
 		mGlobalPedals.AdcValueChange(mMainDisplay, port, newValue);
+	}
+}
+
+void
+MidiControlEngine::RefirePedal(int pedal)
+{
+	// pedal is really the adcPort
+	_ASSERTE(pedal < ExpressionPedals::PedalCount);
+	// forward directly to active patch
+	if (!gActivePatchPedals || 
+		gActivePatchPedals->Refire(mMainDisplay, pedal))
+	{
+		// process globals if no rejection
+		mGlobalPedals.Refire(mMainDisplay, pedal);
 	}
 }
 

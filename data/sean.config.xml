@@ -22,6 +22,18 @@
 			<globalExpr inputNumber="4" assignmentNumber="1" channel="3" controller="31" min="0" max="127" invert="0" enable="1" />
 		</expression>
 	</SystemConfig>
+	<DeviceChannelMap>
+		<Device channel="1">Guest</Device>
+		<Device channel="2">Triaxis</Device>
+		<Device channel="3">H8000 DspA</Device>
+		<Device channel="4">H8000 DspB</Device>
+		<Device channel="5">H8000 Routings</Device>
+		<Device channel="6">H3500</Device>
+		<Device channel="7">EDP</Device>
+		<Device channel="11">Switchblade</Device>
+		<Device channel="12">Filter Factory</Device>
+		<Device channel="14">Warp9</Device>
+	</DeviceChannelMap>
 	<patches>
 		<patch name="SS All Mute Toggle" number="1" type="toggle" port="1">
 			<midiByteString name="A">ba 09 00</midiByteString>
@@ -540,6 +552,10 @@
 		<patch name="SS H8K3/4 In Mute Momentary" number="164" type="momentary" port="1">
 			<midiByteString name="A">ba 0e 00</midiByteString>
 			<midiByteString name="B">ba 0e 7f</midiByteString>
+		</patch>
+		<patch name="SS Mute Momentary" number="165" type="momentary" port="1">
+			<ControlChange name="A" device="Switchblade" controller="110" value="00" />
+			<RefirePedal name="B" pedal="1" />
 		</patch>
 
 		<patch name="EDP V Parameter" number="270" type="normal" port="1">
@@ -1092,7 +1108,7 @@
 			<PatchMap switch="11" patch="34" loadState="" unloadState="" />
 			<PatchMap switch="12" patch="35" loadState="" unloadState="" />
 			<PatchMap switch="13" patch="36" loadState="" unloadState="" />
-			<PatchMap switch="14" patch="41" loadState="" unloadState="" />
+			<PatchMap switch="14" patch="165" loadState="" unloadState="" />
 			<!--<PatchMap switch="15" patch="38" loadState="" unloadState="" />-->
 			<!--<PatchMap switch="16" patch="39" loadState="" unloadState="" />-->
 			<!--<PatchMap switch="17" patch="40" loadState="" unloadState="" />-->

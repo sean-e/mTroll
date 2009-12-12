@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008 Sean Echevarria
+ * Copyright (C) 2007-2009 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -27,11 +27,11 @@
 
 #include <string>
 #include <vector>
-#include "IMidiOut.h"
 #include "ExpressionPedals.h"
 
 class IMainDisplay;
 class ISwitchDisplay;
+class IMidiOut;
 
 
 class Patch
@@ -65,7 +65,7 @@ public:
 	virtual void BankTransitionDeactivation() = 0;
 
 protected:
-	Patch(int number, const std::string & name, int midiOutPortNumber = -1, IMidiOut * midiOut = NULL);
+	Patch(int number, const std::string & name, IMidiOut * midiOut = NULL);
 
 private:
 	Patch();
@@ -73,13 +73,11 @@ private:
 
 protected:
 	ExpressionPedals		mPedals;
-	IMidiOut				* mMidiOut;
 	bool					mPatchIsActive;
 
 private:
 	const int				mNumber;	// unique across patches
 	const std::string		mName;
-	const int				mMidiOutPort;
 	std::vector<int>		mSwitchNumbers;
 };
 

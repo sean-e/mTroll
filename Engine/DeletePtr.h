@@ -22,40 +22,17 @@
  * Contact Sean: "fester" at the domain of the original project site
  */
 
-#ifndef TogglePatch_h__
-#define TogglePatch_h__
-
-#include "TwoStatePatch.h"
+#ifndef DeletePtr_h__
+#define DeletePtr_h__
 
 
-// TogglePatch
-// -----------------------------------------------------------------------------
-// responds to SwitchPressed; SwitchReleased does not affect patch state
-// supports expression pedals (psAllowOnlyActive) - but should it?
-//
-class TogglePatch : public TwoStatePatch
+template<typename T>
+struct DeletePtr
 {
-public:
-	TogglePatch(int number, 
-				const std::string & name, 
-				IMidiOut * midiOut, 
-				PatchCommands & cmdsA, 
-				PatchCommands & cmdsB) :
-		TwoStatePatch(number, name, midiOut, cmdsA, cmdsB, psAllowOnlyActive)
+	void operator()(const T * ptr)
 	{
-	}
-
-	virtual std::string GetPatchTypeStr() const { return "toggle"; }
-
-	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
-	{
-		if (mPatchIsActive)
-			ExecCommandsB();
-		else
-			ExecCommandsA();
-
-		UpdateDisplays(mainDisplay, switchDisplay);
+		delete ptr;
 	}
 };
 
-#endif // TogglePatch_h__
+#endif // DeletePtr_h__

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008 Sean Echevarria
+ * Copyright (C) 2007-2009 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -25,12 +25,15 @@
 #ifndef TwoStatePatch_h__
 #define TwoStatePatch_h__
 
+#include "IMidiOut.h"
 #include "Patch.h"
+#include "IPatchCommand.h"
+#include <algorithm>
+#include "DeletePtr.h"
 
 
 // TwoStatePatch
 // -----------------------------------------------------------------------------
-// Is it two states or two strings?  both.
 // Base class for classic pmc10 patch types.
 //
 class TwoStatePatch : public Patch
@@ -40,25 +43,29 @@ protected:
 
 	TwoStatePatch(int number, 
 				  const std::string & name, 
-				  int midiOutPortNumber, 
 				  IMidiOut * midiOut, 
-				  const Bytes & midiStringA, 
-				  const Bytes & midiStringB, 
+				  PatchCommands & cmdsA, 
+				  PatchCommands & cmdsB, 
 				  PedalSupport pedalSupport) :
-		Patch(number, name, midiOutPortNumber, midiOut),
-		mMidiByteStringA(midiStringA),
-		mMidiByteStringB(midiStringB),
+		Patch(number, name, midiOut),
 		mPedalSupport(pedalSupport)
 	{
+		mCmdsA.swap(cmdsA);
+		mCmdsB.swap(cmdsB);
 	}
 
-	virtual void BankTransitionActivation() { SendStringA(); }
-	virtual void BankTransitionDeactivation() { SendStringB(); }
-
-	void SendStringA()
+	~TwoStatePatch()
 	{
-		if (mMidiByteStringA.size())
-			mMidiOut->MidiOut(mMidiByteStringA);
+		std::for_each(mCmdsA.begin(), mCmdsA.end(), DeletePtr<IPatchCommand>());
+		std::for_each(mCmdsB.begin(), mCmdsB.end(), DeletePtr<IPatchCommand>());
+	}
+
+	virtual void BankTransitionActivation() { ExecCommandsA(); }
+	virtual void BankTransitionDeactivation() { ExecCommandsB(); }
+
+	void ExecCommandsA()
+	{
+		std::for_each(mCmdsA.begin(), mCmdsA.end(), std::mem_fun(&IPatchCommand::Exec));
 		mPatchIsActive = true;
 
 		if (psDisallow != mPedalSupport)
@@ -74,10 +81,9 @@ protected:
 		}
 	}
 
-	void SendStringB()
+	void ExecCommandsB()
 	{
-		if (mMidiByteStringB.size())
-			mMidiOut->MidiOut(mMidiByteStringB);
+		std::for_each(mCmdsB.begin(), mCmdsB.end(), std::mem_fun(&IPatchCommand::Exec));
 		mPatchIsActive = false;
 
 		if (psAllowOnlyActive == mPedalSupport && gActivePatchPedals == &mPedals)
@@ -89,8 +95,8 @@ private:
 	TwoStatePatch(const TwoStatePatch &);
 
 protected:
-	const Bytes			mMidiByteStringA;
-	const Bytes			mMidiByteStringB;
+	PatchCommands	mCmdsA;
+	PatchCommands	mCmdsB;
 	const PedalSupport	mPedalSupport;
 };
 
