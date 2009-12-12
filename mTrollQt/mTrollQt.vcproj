@@ -197,6 +197,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				EmbedManifest="false"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -578,18 +579,6 @@
 			Name="Moc Generated Source"
 			>
 			<File
-				RelativePath=".\Release\moc_ControlUi.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath=".\Debug\moc_ControlUi.cpp"
 				>
 				<FileConfiguration
@@ -602,7 +591,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\Release\moc_MainTrollWindow.cpp"
+				RelativePath=".\Release\moc_ControlUi.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -618,6 +607,18 @@
 				>
 				<FileConfiguration
 					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\Release\moc_MainTrollWindow.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
