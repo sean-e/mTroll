@@ -259,8 +259,6 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		if (pElem->ValueStr() != "patch")
 			continue;
 
-		std::string tmp;
-		std::string patchCommandString;
 		int midiOutPortNumber = 1;
 
 		const std::string patchName = pElem->Attribute("name");
@@ -286,11 +284,17 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		{
 			Bytes bytes;
 			const std::string patchElement = childElem->ValueStr();
-			childElem->QueryValueAttribute("name", &tmp);
+			std::string group;
+			childElem->QueryValueAttribute("group", &group);
+			if (group.empty())
+			{
+				// 'group' was formerly 'name' (when only a single A and B were supported)
+				childElem->QueryValueAttribute("name", &group);
+			}
 
 			if (patchElement == "midiByteString")
 			{
-				patchCommandString = childElem->GetText();
+				const std::string patchCommandString(childElem->GetText());
 				if (-1 == ::ValidateString(patchCommandString, bytes))
 					continue;
 			}
@@ -302,9 +306,9 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				pedalNumber--;  // but used internally 0-based
 				if (-1 < pedalNumber)
 				{
-					if (tmp == "A" || isSeq)
+					if (group == "A" || isSeq)
 						cmds.push_back(new RefirePedalCommand(mEngine, pedalNumber));
-					else if (tmp == "B")
+					else if (group == "B")
 						cmds2.push_back(new RefirePedalCommand(mEngine, pedalNumber));
 				}
 				continue;
@@ -317,7 +321,6 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			{
 				int data1 = 0, data2 = 0;
 				std::string chStr;
-				patchCommandString.clear();
 
 				childElem->QueryValueAttribute("channel", &chStr);
 				if (chStr.empty())
@@ -375,9 +378,9 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 
 			if (bytes.size())
 			{
-				if (tmp == "A" || isSeq)
+				if (group == "A" || isSeq)
 					cmds.push_back(new MidiCommandString(midiOut, bytes));
-				else if (tmp == "B")
+				else if (group == "B")
 					cmds2.push_back(new MidiCommandString(midiOut, bytes));
 			}
 		}
