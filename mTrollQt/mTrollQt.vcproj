@@ -197,7 +197,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				EmbedManifest="false"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -495,6 +494,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\data\mtrollConfig.xsl"
+				>
+			</File>
+			<File
 				RelativePath=".\qtNotes.txt"
 				>
 			</File>
@@ -516,6 +519,14 @@
 			</File>
 			<File
 				RelativePath="..\data\testdata2.ui.xml"
+				>
+			</File>
+			<File
+				RelativePath="..\data\testdataWithErrors.config.xml"
+				>
+			</File>
+			<File
+				RelativePath="..\data\testdataWithXsl.config.xml"
 				>
 			</File>
 			<File
