@@ -575,6 +575,15 @@
 			<ControlChange group="A" device="Switchblade" controller="111" value="0" />
 			<RefirePedal group="B" pedal="2" />
 		</patch>
+		<patch name="SS SC H8 H8->EDP" number="169" type="normal" port="1">
+			<ProgramChange group="A" device="Switchblade" program="9" />
+		</patch>
+		<patch name="SS SC H8 EDP H8" number="170" type="normal" port="1">
+			<ProgramChange group="A" device="Switchblade" program="4" />
+		</patch>
+		<patch name="SS SC H8 EDP" number="171" type="normal" port="1">
+			<ProgramChange group="A" device="Switchblade" program="3" />
+		</patch>
 
 		<patch name="EDP V Parameter" number="270" type="normal" port="1">
 			<midiByteString name="A">b6 24 7f b6 24 00</midiByteString>
@@ -1041,8 +1050,8 @@
 			<PatchMap switch="23" patch="604" loadState="" unloadState="" />
 			<!-- <PatchMap switch="11" patch="94" loadState="" unloadState="" /> -->
 			<!-- <PatchMap switch="12" patch="2" loadState="" unloadState="" /> -->
-			<PatchMap switch="13" patch="127" loadState="" unloadState="" />
-			<PatchMap switch="14" patch="161" loadState="" unloadState="" />
+			<PatchMap switch="14" patch="127" loadState="" unloadState="" />
+			<!-- <PatchMap switch="14" patch="161" loadState="" unloadState="" /> -->
 			<!-- <PatchMap switch="15" patch="604" loadState="" unloadState="" /> -->
 			<PatchMap switch="15" patch="4" loadState="" unloadState="" />
 			<!-- <PatchMap switch="16" patch="1" loadState="" unloadState="" /> -->
@@ -1164,6 +1173,9 @@
 			<PatchMap switch="9" patch="287" loadState="" unloadState="" />
 			<PatchMap switch="10" patch="270" loadState="" unloadState="" />
 			<PatchMap switch="11" patch="164" loadState="" unloadState="" />
+			<PatchMap switch="12" patch="169" loadState="" unloadState="" />
+			<PatchMap switch="13" patch="170" loadState="" unloadState="" />
+			<PatchMap switch="14" patch="171" loadState="" unloadState="" />
 		</bank>
 		<bank name="EDP Glitching" number="7">
 			<ExclusiveSwitchGroup>1 2</ExclusiveSwitchGroup>
@@ -1178,6 +1190,9 @@
 			<PatchMap switch="9" patch="347" loadState="" unloadState="" />
 			<PatchMap switch="10" patch="348" loadState="" unloadState="" />
 			<PatchMap switch="11" patch="164" loadState="" unloadState="" />
+			<PatchMap switch="12" patch="169" loadState="" unloadState="" />
+			<PatchMap switch="13" patch="170" loadState="" unloadState="" />
+			<PatchMap switch="14" patch="171" loadState="" unloadState="" />
 		</bank>
 		<bank name="Dedicated Pedals" number="8">
 			<PatchMap switch="1" patch="93" loadState="" unloadState="" />
