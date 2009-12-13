@@ -65,6 +65,7 @@ ExpressionControl::Init(bool invert,
 	mMidiData[1] = mControlNumber;
 	mMidiData[2] = 0;
 	mMidiData[3] = 0;
+	mMidiData[4] = 0;
 }
 
 void
@@ -109,7 +110,7 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 		byte newFineCcVal = newCcVal & 0x7F; // LSB
 		byte newCoarseCcVal = (newCcVal >> 7) & 0x7f; // MSB
 
-		if (mMidiData[2] == newCoarseCcVal && mMidiData[3] == newFineCcVal)
+		if (mMidiData[2] == newCoarseCcVal && (mMidiData[3] == newFineCcVal || mMidiData[4] == newFineCcVal))
 			return;
 #if 0
 		byte coarseCh = mMidiData[1];
@@ -157,17 +158,27 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 		midiOut->MidiOut(mMidiData[0], mMidiData[1] + 32, newFineCcVal, showStatus);
 #endif
 
-		mMidiData[2] = newCoarseCcVal;
+		mMidiData[4] = mMidiData[3];
 		mMidiData[3] = newFineCcVal;
+		mMidiData[2] = newCoarseCcVal;
 	}
 	else
 	{
 		if (mInverted)
 			newCcVal = 127 - newCcVal;
 
-		if (mMidiData[2] == newCcVal)
+		if (mMidiData[2] == newCcVal || mMidiData[3] == newCcVal)
+		{
+			if (mainDisplay)
+			{
+				std::strstream displayMsg;
+				displayMsg << "jitter: " << newAdcVal << " -> " << (int) newCcVal << std::endl << std::ends;
+				mainDisplay->TextOut(displayMsg.str());
+			}
 			return;
+		}
 
+		mMidiData[3] = mMidiData[2];
 		mMidiData[2] = newCcVal;
 		midiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], showStatus);
 	}

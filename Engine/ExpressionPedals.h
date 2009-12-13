@@ -80,7 +80,10 @@ private:
 	int					mMinCcVal;
 	int					mMaxCcVal;
 	int					mCcValRange;
-	byte				mMidiData[4];
+	// 4 bytes used for single byte controllers
+	// 5 bytes used for double byte controllers
+	// each get one extra byte to reduce adc jitter
+	byte				mMidiData[5];
 
 	int					mMinAdcVal;
 	int					mMaxAdcVal;
