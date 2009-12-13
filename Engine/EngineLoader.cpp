@@ -104,6 +104,11 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 	TiXmlHandle hRoot(NULL);
 	hRoot = TiXmlHandle(pElem);
 
+	// load DeviceChannelMap before SystemConfig so that pedals can use Devices
+	pElem = hRoot.FirstChild("DeviceChannelMap").FirstChild().Element();
+	if (pElem)
+		LoadDeviceChannelMap(pElem);
+
 	pElem = hRoot.FirstChild("SystemConfig").Element();
 	if (!LoadSystemConfig(pElem))
 	{
@@ -115,10 +120,6 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 		}
 		return mEngine;
 	}
-
-	pElem = hRoot.FirstChild("DeviceChannelMap").FirstChild().Element();
-	if (pElem)
-		LoadDeviceChannelMap(pElem);
 
 	pElem = hRoot.FirstChild("patches").FirstChild().Element();
 	LoadPatches(pElem);
@@ -693,6 +694,19 @@ EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem,
 	childElem->QueryIntAttribute("inputNumber", &exprInputNumber);
 	childElem->QueryIntAttribute("assignmentNumber", &assignmentIndex);
 	childElem->QueryIntAttribute("channel", &channel);
+	if (-1 == channel)
+	{
+		std::string tmp;
+		if (childElem->Attribute("device"))
+			tmp = childElem->Attribute("device");
+		if (!tmp.empty())
+		{
+			tmp = mDevices[tmp];
+			if (!tmp.empty())
+				channel = ::atoi(tmp.c_str());
+		}
+	}
+
 	childElem->QueryIntAttribute("controller", &controller);
 	childElem->QueryIntAttribute("max", &maxVal);
 	childElem->QueryIntAttribute("min", &minVal);
@@ -705,8 +719,8 @@ EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem,
 		exprInputNumber <= ExpressionPedals::PedalCount &&
 		assignmentIndex > 0 &&
 		assignmentIndex < 3 &&
-		channel >= 0 &&
-		channel < 16 &&
+		channel > 0 &&
+		channel < 17 &&
 		controller >= 0 &&
 		controller < 128)
 	{
