@@ -16,10 +16,10 @@
 			<adc inputNumber="2" enable="1" minimumAdcVal="3" maximumAdcVal="315" />
 			<adc inputNumber="3" enable="1" minimumAdcVal="75" maximumAdcVal="1015" />
 			<adc inputNumber="4" enable="1" minimumAdcVal="10" maximumAdcVal="1015" />
-			<globalExpr inputNumber="1" assignmentNumber="1" device="Switchblade" controller="110" min="0" max="127" invert="0" enable="1" />
-			<globalExpr inputNumber="2" assignmentNumber="1" device="Switchblade" controller="111" min="0" max="127" invert="0" enable="1" />
-			<globalExpr inputNumber="3" assignmentNumber="1" device="H8000 DspA" controller="30" min="0" max="16383" invert="0" enable="1" />
-			<globalExpr inputNumber="4" assignmentNumber="1" device="H8000 DspA" controller="31" min="0" max="127" invert="0" enable="1" />
+			<globalExpr inputNumber="1" assignmentNumber="1" device="Switchblade" comment="bottom" controller="110" min="0" max="127" invert="0" enable="1" />
+			<globalExpr inputNumber="2" assignmentNumber="1" device="Switchblade" comment="top" controller="111" min="0" max="127" invert="0" enable="1" />
+			<globalExpr inputNumber="3" assignmentNumber="1" device="H8000 DspA" comment="Ext 1" controller="30" min="0" max="16383" invert="0" enable="1" />
+			<globalExpr inputNumber="4" assignmentNumber="1" device="H8000 DspA" comment="Ext 2" controller="31" min="0" max="127" invert="0" enable="1" />
 		</expression>
 	</SystemConfig>
 	<DeviceChannelMap>
@@ -1186,8 +1186,8 @@
 			<PatchMap switch="4" patch="90" loadState="" unloadState="" />
 			<PatchMap switch="5" patch="153" loadState="" unloadState="" />
 			<PatchMap switch="6" patch="152" loadState="" unloadState="" />
-			<PatchMap switch="7" patch="150" loadState="" unloadState="" />
-			<PatchMap switch="8" patch="151" loadState="" unloadState="" />
+			<!-- <PatchMap switch="7" patch="150" loadState="" unloadState="" /> -->
+			<!-- <PatchMap switch="8" patch="151" loadState="" unloadState="" /> -->
 			<PatchMap switch="10" patch="360" loadState="" unloadState="" />
 			<PatchMap switch="11" patch="155" loadState="" unloadState="" />
 			<PatchMap switch="12" patch="156" loadState="" unloadState="" />
