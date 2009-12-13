@@ -726,6 +726,15 @@ EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem,
 	{
 		pedals.Init(exprInputNumber - 1, assignmentIndex - 1, !!invert, channel - 1, controller, minVal, maxVal, !!isDoubleByte);
 	}
+	else if (enable)
+	{
+		if (mTraceDisplay)
+		{
+			std::strstream traceMsg;
+			traceMsg << "Error loading config file: expression pedal settings error" << std::endl << std::ends;
+			mTraceDisplay->Trace(std::string(traceMsg.str()));
+		}
+	}
 
 	if (enable && mAdcEnables[exprInputNumber - 1] == adc_default)
 		mAdcEnables[exprInputNumber - 1] = adc_used;
