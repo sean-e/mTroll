@@ -168,15 +168,7 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 			newCcVal = 127 - newCcVal;
 
 		if (mMidiData[2] == newCcVal || mMidiData[3] == newCcVal)
-		{
-			if (mainDisplay)
-			{
-				std::strstream displayMsg;
-				displayMsg << "jitter: " << newAdcVal << " -> " << (int) newCcVal << std::endl << std::ends;
-				mainDisplay->TextOut(displayMsg.str());
-			}
 			return;
-		}
 
 		mMidiData[3] = mMidiData[2];
 		mMidiData[2] = newCcVal;
