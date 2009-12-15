@@ -764,8 +764,8 @@ EngineLoader::LoadDeviceChannelMap(TiXmlElement * pElem)
 {
 /*
 	<DeviceChannelMap>
-		<device channel="0">EDP</>
-		<device channel="1">H8000</>
+		<device channel="1">EDP</>
+		<device channel="2">H8000</>
 	</DeviceChannelMap>
  */
 	std::string dev;
