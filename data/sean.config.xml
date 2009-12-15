@@ -376,34 +376,34 @@
 			<midiByteString name="A">ba 6e 7f ba 6f 7f</midiByteString>
 		</patch>
 		<patch name="H8K Tweak 1" number="100" type="normal" port="1">
-			<midiByteString name="A">b2 20 01</midiByteString>
+			<ControlChange group="A" device="H8000 DspA" controller="32" value="1" />
 		</patch>
 		<patch name="H8K Tweak 2" number="101" type="normal" port="1">
-			<midiByteString name="A">b2 20 02</midiByteString>
+			<ControlChange group="A" device="H8000 DspA" controller="32" value="2" />
 		</patch>
 		<patch name="H8K Tweak 3" number="102" type="normal" port="1">
-			<midiByteString name="A">b2 20 03</midiByteString>
+			<ControlChange group="A" device="H8000 DspA" controller="32" value="3" />
 		</patch>
 		<patch name="H8K Tweak 4" number="103" type="normal" port="1">
-			<midiByteString name="A">b2 20 04</midiByteString>
+			<ControlChange group="A" device="H8000 DspA" controller="32" value="4" />
 		</patch>
 		<patch name="H8K Tweak 5" number="104" type="normal" port="1">
-			<midiByteString name="A">b2 20 05</midiByteString>
+			<ControlChange group="A" device="H8000 DspA" controller="32" value="5" />
 		</patch>
 		<patch name="H8K Tweak 6" number="105" type="normal" port="1">
-			<midiByteString name="A">b2 20 06</midiByteString>
+			<ControlChange group="A" device="H8000 DspA" controller="32" value="6" />
 		</patch>
 		<patch name="H8K Tweak 7" number="106" type="normal" port="1">
-			<midiByteString name="A">b2 20 07</midiByteString>
+			<ControlChange group="A" device="H8000 DspA" controller="32" value="7" />
 		</patch>
 		<patch name="H8K Tweak 8" number="107" type="normal" port="1">
-			<midiByteString name="A">b2 20 08</midiByteString>
+			<ControlChange group="A" device="H8000 DspA" controller="32" value="8" />
 		</patch>
 		<patch name="H8K Tweak 9" number="108" type="normal" port="1">
-			<midiByteString name="A">b2 20 09</midiByteString>
+			<ControlChange group="A" device="H8000 DspA" controller="32" value="9" />
 		</patch>
 		<patch name="H8K Tweak 10" number="109" type="normal" port="1">
-			<midiByteString name="A">b2 20 0a</midiByteString>
+			<ControlChange group="A" device="H8000 DspA" controller="32" value="10" />
 		</patch>
 
 		<patch name="H8K Ext 1" number="120" type="normal" port="1">
@@ -1047,10 +1047,9 @@
 	</patches>
 	<banks>
 		<bank name="Defaults" number="0">
-			<PatchMap switch="23" patch="604" loadState="" unloadState="" />
+			<PatchMap switch="14" patch="127" loadState="" unloadState="" />
 			<!-- <PatchMap switch="11" patch="94" loadState="" unloadState="" /> -->
 			<!-- <PatchMap switch="12" patch="2" loadState="" unloadState="" /> -->
-			<PatchMap switch="14" patch="127" loadState="" unloadState="" />
 			<!-- <PatchMap switch="14" patch="161" loadState="" unloadState="" /> -->
 			<!-- <PatchMap switch="15" patch="604" loadState="" unloadState="" /> -->
 			<PatchMap switch="15" patch="4" loadState="" unloadState="" />
@@ -1059,6 +1058,7 @@
 			<PatchMap switch="19" patch="606" loadState="" unloadState="" />
 			<PatchMap switch="20" patch="607" loadState="" unloadState="" />
 			<PatchMap switch="22" patch="607" loadState="" unloadState="" />
+			<PatchMap switch="23" patch="604" loadState="" unloadState="" />
 		</bank>
 		<bank name="Muting" number="100">
 			<PatchMap switch="1" patch="94" loadState="" unloadState="" />
