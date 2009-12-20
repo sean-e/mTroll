@@ -41,6 +41,7 @@
 #include "MetaPatch_BankHistory.h"
 #include "MidiCommandString.h"
 #include "RefirePedalCommand.h"
+#include "SleepCommand.h"
 
 
 static PatchBank::PatchState GetLoadState(const std::string & tmpLoad);
@@ -377,7 +378,9 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 
 			if (patchElement == "midiByteString")
 			{
-				const std::string patchCommandString(childElem->GetText());
+				std::string patchCommandString;
+				if (childElem->GetText())
+					patchCommandString = childElem->GetText();
 				if (-1 == ::ValidateString(patchCommandString, bytes))
 				{
 					if (mTraceDisplay)
@@ -397,21 +400,36 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				pedalNumber--;  // but used internally 0-based
 				if (-1 < pedalNumber)
 				{
-					if (group == "A" || isSeq)
-						cmds.push_back(new RefirePedalCommand(mEngine, pedalNumber));
-					else if (group == "B")
+					if (group == "B")
 						cmds2.push_back(new RefirePedalCommand(mEngine, pedalNumber));
-					else if (mTraceDisplay)
-					{
-						std::strstream traceMsg;
-						traceMsg << "Error loading config file: invalid Group for " << patchName << std::endl << std::ends;
-						mTraceDisplay->Trace(std::string(traceMsg.str()));
-					}
+					else
+						cmds.push_back(new RefirePedalCommand(mEngine, pedalNumber));
 				}
 				else if (mTraceDisplay)
 				{
 					std::strstream traceMsg;
 					traceMsg << "Error loading config file: invalid pedal specified in RefirePedal in patch " << patchName << std::endl << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
+				continue;
+			}
+			else if (patchElement == "Sleep")
+			{
+				std::string sleepAmtStr;
+				if (childElem->GetText())
+					sleepAmtStr = childElem->GetText();
+				const int sleepAmt = ::atoi(sleepAmtStr.c_str());
+				if (0 < sleepAmt)
+				{
+					if (group == "B")
+						cmds2.push_back(new SleepCommand(sleepAmt));
+					else
+						cmds.push_back(new SleepCommand(sleepAmt));
+				}
+				else if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: no (or invalid) time specified in Sleep in patch " << patchName << std::endl << std::ends;
 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 				}
 				continue;
@@ -516,16 +534,10 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 
 			if (bytes.size())
 			{
-				if (group == "A" || isSeq)
-					cmds.push_back(new MidiCommandString(midiOut, bytes));
-				else if (group == "B")
+				if (group == "B")
 					cmds2.push_back(new MidiCommandString(midiOut, bytes));
-				else if (mTraceDisplay)
-				{
-					std::strstream traceMsg;
-					traceMsg << "Error loading config file: invalid Group for " << patchName << std::endl << std::ends;
-					mTraceDisplay->Trace(std::string(traceMsg.str()));
-				}
+				else
+					cmds.push_back(new MidiCommandString(midiOut, bytes));
 			}
 		}
 
@@ -648,7 +660,9 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 			}
 			else if (childElem->ValueStr() == "ExclusiveSwitchGroup")
 			{
-				std::string switchesStr(childElem->GetText());
+				std::string switchesStr;
+				if (childElem->GetText())
+					switchesStr = childElem->GetText();
 				PatchBank::GroupSwitches * switches = new PatchBank::GroupSwitches;
 
 				// split switchesStr - space token

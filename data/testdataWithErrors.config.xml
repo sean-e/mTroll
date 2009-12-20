@@ -109,6 +109,8 @@
 		<patch name="Invalid Bytes" number="63" type="toggle" port="1">
 			<midiByteString name="A">XY</midiByteString>
 			<midiByteString name="B">ca2 ba 6f 7f</midiByteString>
+			<midiByteString name="B"></midiByteString>
+			<midiByteString name="B" />
 		</patch>
 		<patch name="Bad Refire - No Pedal" number="64" type="toggle" port="1">
 			<RefirePedal group="A" />
@@ -130,6 +132,10 @@
 			<ProgramChange device="Guest" group="A" program="1" />
 			<ControlChange device="Guest" group="A" controller="2" value="65535" />
 			<ControlChange device="Guest" group="A" controller="2" value="12" />
+		</patch>
+		<patch name="Bad Sleep" number="68" type="toggle" port="1">
+			<Sleep />
+			<Sleep>25</Sleep>
 		</patch>
 	</patches>
 	<banks>
@@ -158,6 +164,8 @@
 			<PatchMap switch="12" patch="26" loadState="" unloadState="B" />
 		</bank>
 		<bank name="Third Bank" number="3">
+			<ExclusiveSwitchGroup></ExclusiveSwitchGroup>
+			<ExclusiveSwitchGroup />
 			<PatchMap switch="1" patch="50" loadState="" unloadState="" />
 			<PatchMap switch="6" patch="20" loadState="" unloadState="" />
 			<PatchMap switch="7" patch="21" loadState="" unloadState="" />
@@ -177,6 +185,7 @@
 			<PatchMap patch="2" loadState="" unloadState="" />
 			<PatchMap switch="12" loadState="" unloadState="" />
 			<PatchMap switch="5" patch="52" loadState="" unloadState="" />
+			<PatchMap switch="6" patch="68" loadState="" unloadState="" />
 			<AnotherThing />
 		</bank>
 		<bank name="No Number" >
