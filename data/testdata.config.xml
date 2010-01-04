@@ -1,5 +1,13 @@
 <?xml version="1.0" ?>
 <MidiControlSettings>
+	<DeviceChannelMap>
+		<Device channel="1">Synth</Device>
+		<Device channel="2">Efx Unit</Device>
+		<Device channel="3">HAL CPU</Device>
+		<!-- Any place that channel is used as an attribute below, can be replaced with device if it has been mapped here -->
+		<!-- channel values are 1 - 16 -->
+		<!-- Same channel can be mapped to multiple names -->
+	</DeviceChannelMap>
 	<SystemConfig filterPC="0">
 		<powerup timeout="0" bank="1" patch="0" />
 		<switches>
@@ -17,7 +25,7 @@
 			<adc inputNumber="4" enable="0" minimumAdcVal="10" maximumAdcVal="1015" />
 			<globalExpr inputNumber="1" assignmentNumber="1" channel="7" controller="2" min="0" max="127" invert="0" enable="1" />
 			<globalExpr inputNumber="2" assignmentNumber="1" channel="4" controller="2" min="0" max="127" invert="0" enable="1" />
-			<globalExpr inputNumber="3" assignmentNumber="1" channel="11" controller="110" min="0" max="127" invert="0" enable="1" />
+			<globalExpr inputNumber="3" assignmentNumber="1" device="Synth" controller="110" min="0" max="127" invert="0" enable="1" />
 			<globalExpr inputNumber="4" assignmentNumber="1" channel="11" controller="111" min="0" max="127" invert="0" enable="1" />
 		</expression>
 	</SystemConfig>
@@ -86,6 +94,14 @@
 		</patch>
 		<patch name="Default Toggle 2" number="31" type="toggle" port="1">
 		</patch>
+		<patch name="New and Multiple commands" number="32" type="toggle" port="1">
+			<ProgramChange group="A" device="HAL CPU" program="0" />
+			<ControlChange group="A" device="Efx Unit" controller="0" value="127" />
+			<!-- use channel or device but not both -->
+			<NoteOn group="A" channel="16" note="64" velocity="127" />
+			<!-- name is still supported, but group makes better sense; it's the new way -->
+			<NoteOff group="B" channel="16" note="64" velocity="0" />
+		</patch>
 		<engineMetaPatch name="Reset bank (meta)" number="50" action="ResetBankPatches" />
 		<engineMetaPatch name="Load bank 1 (meta)" number="51" action="LoadBank" bankNumber="1" />
 		<engineMetaPatch name="Load bank 2 (meta)" number="52" action="LoadBank" bankNumber="2" />
@@ -107,6 +123,7 @@
 			<PatchMap switch="12" patch="21" loadState="" unloadState="" />
 			<PatchMap switch="13" patch="22" loadState="" unloadState="" />
 			<PatchMap switch="14" patch="23" loadState="" unloadState="" />
+			<PatchMap switch="15" patch="32" loadState="" unloadState="" />
 		</bank>
 		<bank name="Second Bank" number="2">
 			<PatchMap switch="1" patch="20" loadState="" unloadState="" />
