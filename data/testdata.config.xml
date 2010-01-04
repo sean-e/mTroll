@@ -26,7 +26,7 @@
 			<globalExpr inputNumber="1" assignmentNumber="1" channel="7" controller="2" min="0" max="127" invert="0" enable="1" />
 			<globalExpr inputNumber="2" assignmentNumber="1" channel="4" controller="2" min="0" max="127" invert="0" enable="1" />
 			<globalExpr inputNumber="3" assignmentNumber="1" device="Synth" controller="110" min="0" max="127" invert="0" enable="1" />
-			<globalExpr inputNumber="4" assignmentNumber="1" channel="11" controller="111" min="0" max="127" invert="0" enable="1" />
+			<globalExpr inputNumber="4" assignmentNumber="1" device="Efx Unit" controller="111" min="0" max="127" invert="0" enable="1" />
 		</expression>
 	</SystemConfig>
 	<patches>
@@ -102,6 +102,10 @@
 			<!-- name is still supported, but group makes better sense; it's the new way -->
 			<NoteOff group="B" channel="16" note="64" velocity="0" />
 		</patch>
+		<patch name="Momentary off and then Refire" number="33" type="momentary" port="1">
+			<ControlChange group="A" device="Efx Unit" controller="111" value="0" />
+			<RefirePedal group="B" pedal="4" />
+		</patch>
 		<engineMetaPatch name="Reset bank (meta)" number="50" action="ResetBankPatches" />
 		<engineMetaPatch name="Load bank 1 (meta)" number="51" action="LoadBank" bankNumber="1" />
 		<engineMetaPatch name="Load bank 2 (meta)" number="52" action="LoadBank" bankNumber="2" />
@@ -132,6 +136,7 @@
 			<PatchMap switch="4" patch="23" loadState="" unloadState="" />
 			<PatchMap switch="11" patch="25" loadState="A" unloadState="" />
 			<PatchMap switch="12" patch="26" loadState="" unloadState="B" />
+			<PatchMap switch="13" patch="33" loadState="" unloadState="" />
 		</bank>
 		<bank name="Third Bank" number="3">
 			<PatchMap switch="1" patch="50" loadState="" unloadState="" />
