@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2009 Sean Echevarria
+ * Copyright (C) 2007-2010 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -38,7 +38,7 @@ AboutDlg::AboutDlg()
 	QString labelTxt =
 		"<html><body>mTroll MIDI Controller<br><br>"
 		"<a href=\"http://www.creepingfog.com/mTroll/\">http://www.creepingfog.com/mTroll/</a><br><br>"
-		"&copy; copyright 2007-2009 Sean Echevarria<br><br>";
+		"&copy; copyright 2007-2010 Sean Echevarria<br><br>";
 	labelTxt += "Built " + ::GetBuildDate();
 	labelTxt += "</body></html>";
 
