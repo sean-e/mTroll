@@ -10,6 +10,7 @@
 		</switches>
 		<midiDevices>
 			<midiDevice port="1" outIdx="1" activityIndicatorId="23" />
+			<!-- outIdx="1" on eeek / outIdx="5" on silencio /> -->
 		</midiDevices>
 		<expression port="1">
 			<adc inputNumber="1" enable="1" minimumAdcVal="50" maximumAdcVal="990" />
@@ -204,28 +205,28 @@
 			<midiByteString group="A">b3 50 00 b3 50 7f</midiByteString>
 			<midiByteString group="B">b3 50 00 b3 50 7f</midiByteString>
 		</patch>
-		<patch name="TRX RG1" number="44" type="normal" port="1">
+		<patch name="Trx RG1" number="44" type="normal" port="1">
 			<midiByteString name="A">c1 14</midiByteString>
 		</patch>
-		<patch name="TRX RY1" number="45" type="normal" port="1">
+		<patch name="Trx RY1" number="45" type="normal" port="1">
 			<midiByteString name="A">c1 19</midiByteString>
 		</patch>
-		<patch name="TRX L1R1" number="46" type="normal" port="1">
+		<patch name="Trx L1R1" number="46" type="normal" port="1">
 			<midiByteString name="A">c1 15</midiByteString>
 		</patch>
-		<patch name="TRX L2R1" number="47" type="normal" port="1">
+		<patch name="Trx L2R1" number="47" type="normal" port="1">
 			<midiByteString name="A">c1 16</midiByteString>
 		</patch>
-		<patch name="TRX L1R2" number="48" type="normal" port="1">
+		<patch name="Trx L1R2" number="48" type="normal" port="1">
 			<midiByteString name="A">c1 18</midiByteString>
 		</patch>
-		<patch name="TRX L1R3" number="49" type="normal" port="1">
+		<patch name="Trx L1R3" number="49" type="normal" port="1">
 			<midiByteString name="A">c1 1c</midiByteString>
 		</patch>
-		<patch name="TRX L2R3" number="50" type="normal" port="1">
+		<patch name="Trx L2R3" number="50" type="normal" port="1">
 			<midiByteString name="A">c1 1b</midiByteString>
 		</patch>
-		<patch name="TRX L2R2" number="51" type="normal" port="1">
+		<patch name="Trx L2R2" number="51" type="normal" port="1">
 			<midiByteString name="A">c1 1a</midiByteString>
 		</patch>
 		<patch name="Torn" number="52" type="normal" port="1">
@@ -583,6 +584,43 @@
 		</patch>
 		<patch name="SS SC H8 EDP" number="171" type="normal" port="1">
 			<ProgramChange group="A" device="Switchblade" program="3" />
+		</patch>
+		<patch name="SS Simple" number="172" type="normal" port="1">
+			<ProgramChange group="A" device="Switchblade" program="0" />
+		</patch>
+		<patch name="SS SC H8" number="173" type="normal" port="1">
+			<ProgramChange group="A" device="Switchblade" program="1" />
+		</patch>
+		<patch name="SS EDP" number="174" type="normal" port="1">
+			<ProgramChange group="A" device="Switchblade" program="2" />
+		</patch>
+		<patch name="SS SC H8 B2A E1" number="175" type="normal" port="1">
+			<ProgramChange group="A" device="Switchblade" program="5" />
+		</patch>
+		<patch name="SS SC H8 B2A E2" number="176" type="normal" port="1">
+			<ProgramChange group="A" device="Switchblade" program="6" />
+		</patch>
+		<patch name="SS SC H8 B2A 1" number="177" type="normal" port="1">
+			<ProgramChange group="A" device="Switchblade" program="7" />
+		</patch>
+		<patch name="SS SC H8 B2A 2" number="178" type="normal" port="1">
+			<ProgramChange group="A" device="Switchblade" program="8" />
+		</patch>
+
+		<patch name="H8B X Main" number="190" type="normal" port="1">
+			<ProgramChange group="A" device="H8000 DspB" program="1" />
+		</patch>
+		<patch name="H8B X Overflow" number="191" type="normal" port="1">
+			<ProgramChange group="A" device="H8000 DspB" program="2" />
+		</patch>
+		<patch name="H8B X Clean Sculpture" number="192" type="normal" port="1">
+			<ProgramChange group="A" device="H8000 DspB" program="3" />
+		</patch>
+		<patch name="H8B X Dirty Sculpture" number="193" type="normal" port="1">
+			<ProgramChange group="A" device="H8000 DspB" program="4" />
+		</patch>
+		<patch name="H8B Dark Song" number="194" type="normal" port="1">
+			<ProgramChange group="A" device="H8000 DspB" program="5" />
 		</patch>
 
 		<patch name="EDP V Parameter" number="270" type="normal" port="1">
@@ -993,7 +1031,92 @@
 		<patch name="FF Default" number="400" type="normal" port="1">
 			<midiByteString name="A">bb 04 7f bb 06 7f bb 08 00 bb 09 7f bb 0a 00 bb 0b 00 bb 0d 01 bb 10 00 bb 11 7f</midiByteString>
 		</patch>
-		
+
+		<patch name="Trx 30" number="430" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="29" />
+		</patch>
+		<patch name="Trx 31" number="431" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="30" />
+		</patch>
+		<patch name="Trx 32" number="432" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="31" />
+		</patch>
+		<patch name="Trx 33" number="433" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="32" />
+		</patch>
+		<patch name="Trx 34" number="434" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="33" />
+		</patch>
+		<patch name="Trx 35" number="435" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="34" />
+		</patch>
+		<patch name="Trx 36" number="436" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="35" />
+		</patch>
+		<patch name="Trx 37" number="437" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="36" />
+		</patch>
+		<patch name="Trx 38" number="438" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="37" />
+		</patch>
+		<patch name="Trx 39" number="439" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="38" />
+		</patch>
+		<patch name="Trx Silent 40" number="440" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="39" />
+		</patch>
+		<patch name="Trx Clean 41" number="441" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="40" />
+		</patch>
+		<patch name="Trx Clean 42" number="442" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="41" />
+		</patch>
+		<patch name="Trx Clean 43" number="443" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="42" />
+		</patch>
+		<patch name="Trx 44" number="444" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="43" />
+		</patch>
+		<patch name="Trx Lead 45" number="445" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="44" />
+		</patch>
+		<patch name="Trx Clean 46" number="446" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="45" />
+		</patch>
+		<patch name="Trx Lead 47" number="447" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="46" />
+		</patch>
+		<patch name="Trx Silent 48" number="448" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="47" />
+		</patch>
+		<patch name="Trx Silent 49" number="449" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="48" />
+		</patch>
+		<patch name="Trx Silent 50" number="450" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="49" />
+		</patch>
+		<patch name="Trx 51 Single Coil Clean" number="451" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="50" />
+		</patch>
+		<patch name="Trx 52 Single Coil Lead" number="452" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="51" />
+		</patch>
+		<patch name="Trx OLP Clean 1 60" number="460" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="59" />
+		</patch>
+		<patch name="Trx OLP Clean 2 61" number="461" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="60" />
+		</patch>
+		<patch name="Trx OLP Pushed 62" number="462" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="61" />
+		</patch>
+		<patch name="Trx OLP Lead 1 63" number="463" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="62" />
+		</patch>
+		<patch name="Trx OLP Lead 2 64" number="464" type="normal" port="1">
+			<ProgramChange group="A" device="Triaxis" program="63" />
+		</patch>
+
 		<patch name="DRV Toggle" number="500" type="toggle" port="1">
 			<midiByteString name="A">ca 0a</midiByteString>
 			<midiByteString name="B">ca 03</midiByteString>
@@ -1035,7 +1158,7 @@
 		<engineMetaPatch name="Load H8K Routing Toggles" number="601" action="LoadBank" bankNumber="101" />
 		<engineMetaPatch name="Load H8K B Toggles" number="602" action="LoadBank" bankNumber="3" />
 		<engineMetaPatch name="Load EDP General" number="603" action="LoadBank" bankNumber="6" />
-		<engineMetaPatch name="Load Startup" number="604" action="LoadBank" bankNumber="1" />
+		<engineMetaPatch name="Load Directory" number="604" action="LoadBank" bankNumber="1" />
 		<engineMetaPatch name="Backward" number="605" action="BankHistoryBackward" />
 		<engineMetaPatch name="Forward" number="606" action="BankHistoryForward" />
 		<engineMetaPatch name="Bank Recall" number="607" action="BankHistoryRecall" />
@@ -1044,16 +1167,23 @@
 		<engineMetaPatch name="Load H8K Tweaks" number="610" action="LoadBank" bankNumber="9" />
 		<engineMetaPatch name="Load Dedicated Pedals" number="611" action="LoadBank" bankNumber="8" />
 		<engineMetaPatch name="Load EDP Glitch" number="612" action="LoadBank" bankNumber="7" />
+		<engineMetaPatch name="Load Quick Change" number="613" action="LoadBank" bankNumber="10" />
+		<engineMetaPatch name="Load Triaxis OLP" number="614" action="LoadBank" bankNumber="11" />
+		<engineMetaPatch name="Load Triaxis Main" number="615" action="LoadBank" bankNumber="12" />
+		<engineMetaPatch name="Next Bank" number="616" action="BankNavigationNext" />
+		<engineMetaPatch name="Previous Bank" number="617" action="BankNavigationPrevious" />
 	</patches>
 	<banks>
 		<bank name="Defaults" number="0">
+			<PatchMap switch="11" patch="440" />
 			<PatchMap switch="14" patch="127" loadState="" unloadState="" />
 			<!-- <PatchMap switch="11" patch="94" loadState="" unloadState="" /> -->
 			<!-- <PatchMap switch="12" patch="2" loadState="" unloadState="" /> -->
 			<!-- <PatchMap switch="14" patch="161" loadState="" unloadState="" /> -->
 			<!-- <PatchMap switch="15" patch="604" loadState="" unloadState="" /> -->
 			<PatchMap switch="15" patch="4" loadState="" unloadState="" />
-			<!-- <PatchMap switch="16" patch="1" loadState="" unloadState="" /> -->
+			<PatchMap switch="16" patch="616" loadState="" unloadState="" />
+			<PatchMap switch="17" patch="617" loadState="" unloadState="" />
 			<PatchMap switch="18" patch="605" loadState="" unloadState="" />
 			<PatchMap switch="19" patch="606" loadState="" unloadState="" />
 			<PatchMap switch="20" patch="607" loadState="" unloadState="" />
@@ -1085,16 +1215,19 @@
 			<PatchMap switch="9" patch="98" loadState="" unloadState="" />
 			<PatchMap switch="10" patch="99" loadState="" unloadState="" />
 		</bank>
-		<bank name="Startup" number="1">
+		<bank name="Directory" number="1">
 			<PatchMap switch="1" patch="603" loadState="" unloadState="" />
-			<PatchMap switch="2" patch="602" loadState="" unloadState="" />
-			<PatchMap switch="3" patch="608" loadState="" unloadState="" />
-			<PatchMap switch="4" patch="609" loadState="" unloadState="" />
+			<PatchMap switch="2" patch="613" loadState="" unloadState="" />
+			<PatchMap switch="3" patch="602" loadState="" unloadState="" />
+			<PatchMap switch="4" patch="608" loadState="" unloadState="" />
 			<PatchMap switch="5" patch="611" loadState="" unloadState="" />
-			<PatchMap switch="7" patch="610" loadState="" unloadState="" />
 			<PatchMap switch="6" patch="612" loadState="" unloadState="" />
+			<PatchMap switch="12" patch="614" loadState="" unloadState="" />
+			<PatchMap switch="8" patch="610" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="609" loadState="" unloadState="" />
 			<PatchMap switch="10" patch="601" loadState="" unloadState="" />
 			<PatchMap switch="11" patch="99" loadState="" unloadState="" />
+			<PatchMap switch="7" patch="615" loadState="" unloadState="" />
 			<!--<PatchMap switch="22" patch="-3" loadState="" unloadState="" />-->
 			<PatchMap switch="23" patch="-2" loadState="" unloadState="" />
 		</bank>
@@ -1221,6 +1354,50 @@
 			<PatchMap switch="9" patch="108" loadState="" unloadState="" />
 			<PatchMap switch="10" patch="109" loadState="" unloadState="" />
 		</bank>
+		<bank name="Quick Change" number="10">
+			<PatchMap switch="1" patch="190" />
+			<PatchMap switch="1" patch="602" loadState="" unloadState="" />
+
+			<PatchMap switch="2" patch="191" />
+			<PatchMap switch="2" patch="602" loadState="" unloadState="" />
+			
+			<PatchMap switch="3" patch="192" />
+			<PatchMap switch="3" patch="602" loadState="" unloadState="" />
+			
+			<PatchMap switch="4" patch="193" />
+			<PatchMap switch="4" patch="602" loadState="" unloadState="" />
+			
+			<PatchMap switch="5" patch="194" />
+			<PatchMap switch="6" patch="170" />
+			<PatchMap switch="7" patch="171" />
+			<PatchMap switch="8" patch="169" />
+			<PatchMap switch="9" patch="176" />
+			<PatchMap switch="10" patch="178" />
+
+			<PatchMap switch="11" patch="615" />
+			<PatchMap switch="12" patch="614" />
+		</bank>
+		<bank name="Triaxis OLP" number="11">
+			<PatchMap switch="1" patch="460" />
+			<PatchMap switch="2" patch="461" />
+			<PatchMap switch="3" patch="462" />
+			<PatchMap switch="4" patch="463" />
+			<PatchMap switch="5" patch="464" />
+		</bank>
+		<bank name="Triaxis Main" number="12">
+			<PatchMap switch="1" patch="441" />
+			<PatchMap switch="2" patch="442" />
+			<PatchMap switch="3" patch="443" />
+			<PatchMap switch="4" patch="444" />
+			<PatchMap switch="5" patch="445" />
+			<PatchMap switch="6" patch="446" />
+			<PatchMap switch="7" patch="447" />
+			<!-- <PatchMap switch="8" patch="448" /> -->
+			<!-- <PatchMap switch="9" patch="449" /> -->
+			<PatchMap switch="12" patch="451" />
+			<PatchMap switch="13" patch="452" />
+		</bank>
+
 		<bank name="Triaxis Clean" number="20">
 			<PatchMap switch="1" patch="44" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="45" loadState="" unloadState="" />
