@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2009 Sean Echevarria
+ * Copyright (C) 2007-2010 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -242,6 +242,8 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 		pChildElem->QueryIntAttribute("port", &midiOutPortNumber);
 		if (-1 == midiOutPortNumber && mMidiOutPortToDeviceIdxMap.begin() != mMidiOutPortToDeviceIdxMap.end())
 			midiOutPortNumber = (*mMidiOutPortToDeviceIdxMap.begin()).second;
+		if (-1 == midiOutPortNumber)
+			return false;
 		IMidiOut * globalExprPedalMidiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[midiOutPortNumber]);
 		if (!globalExprPedalMidiOut)
 			return false;
