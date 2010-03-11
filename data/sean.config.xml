@@ -1170,8 +1170,6 @@
 		<engineMetaPatch name="Load Quick Change" number="613" action="LoadBank" bankNumber="10" />
 		<engineMetaPatch name="Load Triaxis OLP" number="614" action="LoadBank" bankNumber="11" />
 		<engineMetaPatch name="Load Triaxis Main" number="615" action="LoadBank" bankNumber="12" />
-		<engineMetaPatch name="Next Bank" number="616" action="BankNavigationNext" />
-		<engineMetaPatch name="Previous Bank" number="617" action="BankNavigationPrevious" />
 	</patches>
 	<banks>
 		<bank name="Defaults" number="0">
@@ -1182,8 +1180,6 @@
 			<!-- <PatchMap switch="14" patch="161" loadState="" unloadState="" /> -->
 			<!-- <PatchMap switch="15" patch="604" loadState="" unloadState="" /> -->
 			<PatchMap switch="15" patch="4" loadState="" unloadState="" />
-			<PatchMap switch="16" patch="616" loadState="" unloadState="" />
-			<PatchMap switch="17" patch="617" loadState="" unloadState="" />
 			<PatchMap switch="18" patch="605" loadState="" unloadState="" />
 			<PatchMap switch="19" patch="606" loadState="" unloadState="" />
 			<PatchMap switch="20" patch="607" loadState="" unloadState="" />
