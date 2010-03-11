@@ -42,7 +42,6 @@
 #include "MidiCommandString.h"
 #include "RefirePedalCommand.h"
 #include "SleepCommand.h"
-#include "MetaPatch_BankNav.h"
 
 
 static PatchBank::PatchState GetLoadState(const std::string & tmpLoad);
@@ -314,10 +313,6 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				 mEngine->AddPatch(new MetaPatch_BankHistoryForward(mEngine, patchNumber, patchName));
 			else if (tmp == "BankHistoryRecall")
 				 mEngine->AddPatch(new MetaPatch_BankHistoryRecall(mEngine, patchNumber, patchName));
-			else if (tmp == "BankNavigationNext")
-				 mEngine->AddPatch(new MetaPatch_BankNavNext(mEngine, patchNumber, patchName));
-			else if (tmp == "BankNavigationPrevious")
-				 mEngine->AddPatch(new MetaPatch_BankNavPrevious(mEngine, patchNumber, patchName));
 			else
 			{
 				if (mTraceDisplay)
