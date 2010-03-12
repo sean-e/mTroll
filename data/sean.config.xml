@@ -1222,8 +1222,8 @@
 			<PatchMap switch="8" patch="610" loadState="" unloadState="" />
 			<PatchMap switch="9" patch="609" loadState="" unloadState="" />
 			<PatchMap switch="10" patch="601" loadState="" unloadState="" />
-			<PatchMap switch="11" patch="99" loadState="" unloadState="" />
-			<PatchMap switch="7" patch="615" loadState="" unloadState="" />
+			<PatchMap switch="16" patch="99" loadState="" unloadState="" />
+			<PatchMap switch="11" patch="615" loadState="" unloadState="" />
 			<!--<PatchMap switch="22" patch="-3" loadState="" unloadState="" />-->
 			<PatchMap switch="23" patch="-2" loadState="" unloadState="" />
 		</bank>
@@ -1379,6 +1379,7 @@
 			<PatchMap switch="3" patch="462" />
 			<PatchMap switch="4" patch="463" />
 			<PatchMap switch="5" patch="464" />
+			<PatchMap switch="10" patch="615" />
 		</bank>
 		<bank name="Triaxis Main" number="12">
 			<PatchMap switch="1" patch="441" />
@@ -1390,6 +1391,7 @@
 			<PatchMap switch="7" patch="447" />
 			<!-- <PatchMap switch="8" patch="448" /> -->
 			<!-- <PatchMap switch="9" patch="449" /> -->
+			<PatchMap switch="10" patch="614" />
 			<PatchMap switch="12" patch="451" />
 			<PatchMap switch="13" patch="452" />
 		</bank>
