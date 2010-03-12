@@ -1175,10 +1175,6 @@
 		<bank name="Defaults" number="0">
 			<PatchMap switch="11" patch="440" />
 			<PatchMap switch="14" patch="127" loadState="" unloadState="" />
-			<!-- <PatchMap switch="11" patch="94" loadState="" unloadState="" /> -->
-			<!-- <PatchMap switch="12" patch="2" loadState="" unloadState="" /> -->
-			<!-- <PatchMap switch="14" patch="161" loadState="" unloadState="" /> -->
-			<!-- <PatchMap switch="15" patch="604" loadState="" unloadState="" /> -->
 			<PatchMap switch="15" patch="4" loadState="" unloadState="" />
 			<PatchMap switch="18" patch="605" loadState="" unloadState="" />
 			<PatchMap switch="19" patch="606" loadState="" unloadState="" />
@@ -1242,10 +1238,6 @@
 			<PatchMap switch="11" patch="17" loadState="" unloadState="" />
 			<PatchMap switch="12" patch="18" loadState="" unloadState="" />
 			<PatchMap switch="13" patch="19" loadState="" unloadState="" />
-			<!-- <PatchMap switch="14" patch="20" loadState="" unloadState="" /> -->
-			<!--<PatchMap switch="15" patch="21" loadState="" unloadState="" />-->
-			<!--<PatchMap switch="16" patch="22" loadState="" unloadState="" />-->
-			<!--<PatchMap switch="17" patch="23" loadState="" unloadState="" />-->
 		</bank>
 		<bank name="H8000 DSP B" number="3">
 			<PatchMap switch="1" patch="600" loadState="" unloadState="" />
@@ -1262,10 +1254,6 @@
 			<PatchMap switch="11" patch="34" loadState="" unloadState="" />
 			<PatchMap switch="12" patch="35" loadState="" unloadState="" />
 			<PatchMap switch="13" patch="36" loadState="" unloadState="" />
-			<!-- <PatchMap switch="14" patch="137" loadState="" unloadState="" /> -->
-			<!--<PatchMap switch="15" patch="38" loadState="" unloadState="" />-->
-			<!--<PatchMap switch="16" patch="39" loadState="" unloadState="" />-->
-			<!--<PatchMap switch="17" patch="40" loadState="" unloadState="" />-->
 		</bank>
 		<bank name="H8000 Externals" number="4">
 			<PatchMap switch="1" patch="120" loadState="" unloadState="" />
@@ -1330,8 +1318,6 @@
 			<PatchMap switch="4" patch="90" loadState="" unloadState="" />
 			<PatchMap switch="5" patch="153" loadState="" unloadState="" />
 			<PatchMap switch="6" patch="152" loadState="" unloadState="" />
-			<!-- <PatchMap switch="7" patch="150" loadState="" unloadState="" /> -->
-			<!-- <PatchMap switch="8" patch="151" loadState="" unloadState="" /> -->
 			<PatchMap switch="10" patch="360" loadState="" unloadState="" />
 			<PatchMap switch="11" patch="155" loadState="" unloadState="" />
 			<PatchMap switch="12" patch="156" loadState="" unloadState="" />
