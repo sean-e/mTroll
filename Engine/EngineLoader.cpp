@@ -106,7 +106,7 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 	hRoot = TiXmlHandle(pElem);
 
 	// load DeviceChannelMap before SystemConfig so that pedals can use Devices
-	pElem = hRoot.FirstChild("DeviceChannelMap").FirstChild().Element();
+	pElem = hRoot.FirstChild("DeviceChannelMap").FirstChildElement().Element();
 	if (pElem)
 		LoadDeviceChannelMap(pElem);
 
@@ -122,10 +122,10 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 		return mEngine;
 	}
 
-	pElem = hRoot.FirstChild("patches").FirstChild().Element();
+	pElem = hRoot.FirstChild("patches").FirstChildElement().Element();
 	LoadPatches(pElem);
 
-	pElem = hRoot.FirstChild("banks").FirstChild().Element();
+	pElem = hRoot.FirstChild("banks").FirstChildElement().Element();
 	LoadBanks(pElem);
 
 	mMidiOutGenerator->OpenMidiOuts();
@@ -163,7 +163,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 		pChildElem->QueryIntAttribute("patch", &powerupPatch);
 	}
 
-	pChildElem = hRoot.FirstChild("switches").FirstChild().Element();
+	pChildElem = hRoot.FirstChild("switches").FirstChildElement().Element();
 	for ( ; pChildElem; pChildElem = pChildElem->NextSiblingElement())
 	{
 		std::string name;
@@ -180,7 +180,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 	}
 
 	// <midiDevice port="1" outIdx="3" activityIndicatorId="100" />
-	pChildElem = hRoot.FirstChild("midiDevices").FirstChild().Element();
+	pChildElem = hRoot.FirstChild("midiDevices").FirstChildElement().Element();
 	for ( ; pChildElem; pChildElem = pChildElem->NextSiblingElement())
 	{
 		int deviceIdx = 1;
@@ -203,7 +203,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 	//   <adc inputNumber="" enable="" />
 	// </expression>
 	ExpressionPedals & globalPedals = mEngine->GetPedals();
-	pChildElem = hRoot.FirstChild("expression").FirstChild().Element();
+	pChildElem = hRoot.FirstChild("expression").FirstChildElement().Element();
 	for ( ; pChildElem; pChildElem = pChildElem->NextSiblingElement())
 	{
 		if (pChildElem->ValueStr() == "globalExpr")
@@ -364,7 +364,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		hRoot = TiXmlHandle(pElem);
 
 		TiXmlElement * childElem;
-		for (childElem = hRoot.FirstChild().Element(); 
+		for (childElem = hRoot.FirstChildElement().Element(); 
 			 childElem; 
 			 childElem = childElem->NextSiblingElement())
 		{
@@ -564,7 +564,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 
 		mEngine->AddPatch(newPatch);
 		ExpressionPedals & pedals = newPatch->GetPedals();
-		for (childElem = hRoot.FirstChild().Element(); 
+		for (childElem = hRoot.FirstChildElement().Element(); 
 			 childElem; 
 			 childElem = childElem->NextSiblingElement())
 		{
@@ -631,7 +631,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 		TiXmlHandle hRoot(NULL);
 		hRoot = TiXmlHandle(pElem);
 
-		for (TiXmlElement * childElem = hRoot.FirstChild().Element(); 
+		for (TiXmlElement * childElem = hRoot.FirstChildElement().Element(); 
 			 childElem; 
 			 childElem = childElem->NextSiblingElement())
 		{
