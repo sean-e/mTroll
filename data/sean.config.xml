@@ -1077,13 +1077,13 @@
 		<patch name="Trx 44" number="444" type="normal" port="1">
 			<ProgramChange group="A" device="Triaxis" program="43" />
 		</patch>
-		<patch name="Trx Lead 45" number="445" type="normal" port="1">
+		<patch name="Trx Bright Lead 45" number="445" type="normal" port="1">
 			<ProgramChange group="A" device="Triaxis" program="44" />
 		</patch>
 		<patch name="Trx Clean 46" number="446" type="normal" port="1">
 			<ProgramChange group="A" device="Triaxis" program="45" />
 		</patch>
-		<patch name="Trx Lead 47" number="447" type="normal" port="1">
+		<patch name="Trx Dark Lead 47" number="447" type="normal" port="1">
 			<ProgramChange group="A" device="Triaxis" program="46" />
 		</patch>
 		<patch name="Trx Silent 48" number="448" type="normal" port="1">
@@ -1168,8 +1168,8 @@
 		<engineMetaPatch name="Load Dedicated Pedals" number="611" action="LoadBank" bankNumber="8" />
 		<engineMetaPatch name="Load EDP Glitch" number="612" action="LoadBank" bankNumber="7" />
 		<engineMetaPatch name="Load Quick Change" number="613" action="LoadBank" bankNumber="10" />
-		<engineMetaPatch name="Load Triaxis OLP" number="614" action="LoadBank" bankNumber="11" />
-		<engineMetaPatch name="Load Triaxis Main" number="615" action="LoadBank" bankNumber="12" />
+		<engineMetaPatch name="Load Triaxis OLP" number="614" action="LoadBank" bankNumber="12" />
+		<engineMetaPatch name="Load Triaxis Main" number="615" action="LoadBank" bankNumber="11" />
 	</patches>
 	<banks>
 		<bank name="Defaults" number="0">
@@ -1359,15 +1359,7 @@
 			<PatchMap switch="11" patch="615" />
 			<PatchMap switch="12" patch="614" />
 		</bank>
-		<bank name="Triaxis OLP" number="11">
-			<PatchMap switch="1" patch="460" />
-			<PatchMap switch="2" patch="461" />
-			<PatchMap switch="3" patch="462" />
-			<PatchMap switch="4" patch="463" />
-			<PatchMap switch="5" patch="464" />
-			<PatchMap switch="10" patch="615" />
-		</bank>
-		<bank name="Triaxis Main" number="12">
+		<bank name="Triaxis Main" number="11">
 			<PatchMap switch="1" patch="441" />
 			<PatchMap switch="2" patch="442" />
 			<PatchMap switch="3" patch="443" />
@@ -1380,6 +1372,14 @@
 			<PatchMap switch="10" patch="614" />
 			<PatchMap switch="12" patch="451" />
 			<PatchMap switch="13" patch="452" />
+		</bank>
+		<bank name="Triaxis OLP" number="12">
+			<PatchMap switch="1" patch="460" />
+			<PatchMap switch="2" patch="461" />
+			<PatchMap switch="3" patch="462" />
+			<PatchMap switch="4" patch="463" />
+			<PatchMap switch="5" patch="464" />
+			<PatchMap switch="10" patch="615" />
 		</bank>
 
 		<bank name="Triaxis Clean" number="20">
