@@ -205,28 +205,28 @@
 			<midiByteString group="A">b3 50 00 b3 50 7f</midiByteString>
 			<midiByteString group="B">b3 50 00 b3 50 7f</midiByteString>
 		</patch>
-		<patch name="Trx RG1" number="44" type="normal" port="1">
+		<patch name="Trx RG1 Clean 21" number="44" type="normal" port="1">
 			<midiByteString name="A">c1 14</midiByteString>
 		</patch>
-		<patch name="Trx RY1" number="45" type="normal" port="1">
+		<patch name="Trx RY1 Clean 26" number="45" type="normal" port="1">
 			<midiByteString name="A">c1 19</midiByteString>
 		</patch>
-		<patch name="Trx L1R1" number="46" type="normal" port="1">
+		<patch name="Trx L1R1 Dist 22" number="46" type="normal" port="1">
 			<midiByteString name="A">c1 15</midiByteString>
 		</patch>
-		<patch name="Trx L2R1" number="47" type="normal" port="1">
+		<patch name="Trx L2R1 Dist 23" number="47" type="normal" port="1">
 			<midiByteString name="A">c1 16</midiByteString>
 		</patch>
-		<patch name="Trx L1R2" number="48" type="normal" port="1">
+		<patch name="Trx L1R2 Dist 25" number="48" type="normal" port="1">
 			<midiByteString name="A">c1 18</midiByteString>
 		</patch>
-		<patch name="Trx L1R3" number="49" type="normal" port="1">
+		<patch name="Trx L1R3 Dist 29" number="49" type="normal" port="1">
 			<midiByteString name="A">c1 1c</midiByteString>
 		</patch>
-		<patch name="Trx L2R3" number="50" type="normal" port="1">
+		<patch name="Trx L2R3 Dist 28" number="50" type="normal" port="1">
 			<midiByteString name="A">c1 1b</midiByteString>
 		</patch>
-		<patch name="Trx L2R2" number="51" type="normal" port="1">
+		<patch name="Trx L2R2 Dist 27" number="51" type="normal" port="1">
 			<midiByteString name="A">c1 1a</midiByteString>
 		</patch>
 		<patch name="Torn" number="52" type="normal" port="1">
@@ -1364,11 +1364,11 @@
 			<PatchMap switch="2" patch="442" />
 			<PatchMap switch="3" patch="443" />
 			<PatchMap switch="4" patch="444" />
-			<PatchMap switch="5" patch="445" />
-			<PatchMap switch="6" patch="446" />
+			<PatchMap switch="6" patch="445" />
+			<PatchMap switch="5" patch="446" />
 			<PatchMap switch="7" patch="447" />
-			<!-- <PatchMap switch="8" patch="448" /> -->
-			<!-- <PatchMap switch="9" patch="449" /> -->
+			<PatchMap switch="8" patch="44" />
+			<PatchMap switch="9" patch="45" />
 			<PatchMap switch="10" patch="614" />
 			<PatchMap switch="12" patch="451" />
 			<PatchMap switch="13" patch="452" />
@@ -1385,6 +1385,7 @@
 		<bank name="Triaxis Clean" number="20">
 			<PatchMap switch="1" patch="44" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="45" loadState="" unloadState="" />
+			<PatchMap switch="10" patch="615" />
 		</bank>
 		<bank name="Triaxis Dirty" number="21">
 			<PatchMap switch="1" patch="46" loadState="" unloadState="" />
@@ -1394,6 +1395,7 @@
 			<PatchMap switch="5" patch="49" loadState="" unloadState="" />
 			<PatchMap switch="6" patch="50" loadState="" unloadState="" />
 			<PatchMap switch="7" patch="89" loadState="" unloadState="" />
+			<PatchMap switch="10" patch="615" />
 		</bank>
 		<bank name="Clean Sculpture" number="22">
 			<PatchMap switch="1" patch="52" loadState="" unloadState="" />
