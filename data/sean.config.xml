@@ -1074,7 +1074,7 @@
 		<patch name="Trx Clean 43" number="443" type="normal" port="1">
 			<ProgramChange group="A" device="Triaxis" program="42" />
 		</patch>
-		<patch name="Trx 44" number="444" type="normal" port="1">
+		<patch name="Trx Really Pushed 44" number="444" type="normal" port="1">
 			<ProgramChange group="A" device="Triaxis" program="43" />
 		</patch>
 		<patch name="Trx Bright Lead 45" number="445" type="normal" port="1">
@@ -1382,12 +1382,7 @@
 			<PatchMap switch="10" patch="615" />
 		</bank>
 
-		<bank name="Triaxis Clean" number="20">
-			<PatchMap switch="1" patch="44" loadState="" unloadState="" />
-			<PatchMap switch="2" patch="45" loadState="" unloadState="" />
-			<PatchMap switch="10" patch="615" />
-		</bank>
-		<bank name="Triaxis Dirty" number="21">
+		<bank name="Triaxis (old)" number="21">
 			<PatchMap switch="1" patch="46" loadState="" unloadState="" />
 			<PatchMap switch="2" patch="47" loadState="" unloadState="" />
 			<PatchMap switch="3" patch="48" loadState="" unloadState="" />
@@ -1396,6 +1391,8 @@
 			<PatchMap switch="6" patch="50" loadState="" unloadState="" />
 			<PatchMap switch="7" patch="89" loadState="" unloadState="" />
 			<PatchMap switch="10" patch="615" />
+			<PatchMap switch="12" patch="44" loadState="" unloadState="" />
+			<PatchMap switch="13" patch="45" loadState="" unloadState="" />
 		</bank>
 		<bank name="Clean Sculpture" number="22">
 			<PatchMap switch="1" patch="52" loadState="" unloadState="" />
