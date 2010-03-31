@@ -494,23 +494,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\data\largesean.ui.xml"
-				>
-			</File>
-			<File
 				RelativePath="..\data\mtrollConfig.xsl"
 				>
 			</File>
 			<File
 				RelativePath=".\qtNotes.txt"
-				>
-			</File>
-			<File
-				RelativePath="..\data\sean.config.xml"
-				>
-			</File>
-			<File
-				RelativePath="..\data\sean.ui.xml"
 				>
 			</File>
 			<File
@@ -594,18 +582,6 @@
 			Name="Moc Generated Source"
 			>
 			<File
-				RelativePath=".\Release\moc_ControlUi.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath=".\Debug\moc_ControlUi.cpp"
 				>
 				<FileConfiguration
@@ -618,7 +594,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\Release\moc_MainTrollWindow.cpp"
+				RelativePath=".\Release\moc_ControlUi.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -634,6 +610,18 @@
 				>
 				<FileConfiguration
 					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\Release\moc_MainTrollWindow.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
