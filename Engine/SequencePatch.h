@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2009 Sean Echevarria
+ * Copyright (C) 2007-2010 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -88,15 +88,6 @@ public:
 	{
 		mPatchIsActive = false;
 		mCurIndex = 0;
-	}
-
-	virtual void Activate(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
-	{
-		if (IsActive() && 0 == mCurIndex)
-			return;
-
-		mCurIndex = 0;
-		SwitchPressed(mainDisplay, switchDisplay);
 	}
 
 	virtual void Deactivate(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)

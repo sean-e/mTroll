@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2009 Sean Echevarria
+ * Copyright (C) 2007-2010 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -98,16 +98,6 @@ Patch::UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay
 		msgstr << mNumber << " " << mName << std::endl << std::ends;
 		mainDisplay->TextOut(msgstr.str());
 	}
-}
-
-void
-Patch::Activate(IMainDisplay * mainDisplay, 
-				ISwitchDisplay * switchDisplay)
-{
-	if (IsActive())
-		return;
-
-	SwitchPressed(mainDisplay, switchDisplay);
 }
 
 void
