@@ -158,6 +158,8 @@
 			<PatchMap switch="7" patch="2" loadState="" unloadState="" />
 			<PatchMap switch="12" patch="3" loadState="" unloadState="" />
 			<PatchMap switch="5" patch="52" loadState="" unloadState="" />
+			<PatchMap switch="9" patch="25" />
+			<PatchMap switch="10" patch="26" />
 		</bank>
 	</banks>
 </MidiControlSettings>
