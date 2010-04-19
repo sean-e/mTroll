@@ -170,6 +170,10 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 	}
 
 	LoadStartupBank();
+
+	// init pedals on the wire
+	for (int idx = 0; idx < ExpressionPedals::PedalCount; ++idx)
+		RefirePedal(idx);
 }
 
 void
