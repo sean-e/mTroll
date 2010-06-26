@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2009 Sean Echevarria
+ * Copyright (C) 2009-2010 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -30,6 +30,7 @@
 #ifdef _WINDOWS
 #include <windows.h>
 	#define SLEEP	Sleep
+	#undef TextOut		// stupid unicode support defines TextOut to TextOutW
 #else
 	#define SLEEP	sleep
 #endif // _WINDOWS
