@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2009 Sean Echevarria
+ * Copyright (C) 2007-2010 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -31,7 +31,8 @@
 #include "ITraceDisplay.h"
 #include "MetaPatch_BankNav.h"
 #include "DeletePtr.h"
-
+#include "SleepCommand.h"
+#include "ITrollApplication.h"
 
 
 struct DeletePatch
@@ -50,21 +51,32 @@ SortByBankNumber(const PatchBank* lhs, const PatchBank* rhs)
 
 // bad hardcoded switch grid assumptions - these need to come from one of the xml files...
 // These are the switch numbers used in "Mode Select" mode
-const int kModeDefaultSwitchNumber = 0;
-const int kModeBankNavSwitchNumber = 1;
-const int kModeBankDescSwitchNumber = 2;
-const int kModeBankDirect = 3;
-const int kModeExprPedalDisplay = 4;
+enum HardCodedSwitchNumbers
+{
+	kModeDefaultSwitchNumber = 0,
+	kModeBankNavSwitchNumber,
+	kModeBankDescSwitchNumber,
+	kModeBankDirect,
+	kModeExprPedalDisplay,
+	kModeRefresh,
+	kModeReconnect,
+	kModeStartupSequence,
+	kModeToggleLedInversion,
+	kModeAdcOverride,
+	kModeToggleTraceWindow
+};
 
 const int kBankNavNextPatchNumber = -2; // reserved patch number
 const int kBankNavPrevPatchNumber = -3; // reserved patch number
 
-MidiControlEngine::MidiControlEngine(IMainDisplay * mainDisplay, 
+MidiControlEngine::MidiControlEngine(ITrollApplication * app,
+									 IMainDisplay * mainDisplay, 
 									 ISwitchDisplay * switchDisplay, 
 									 ITraceDisplay * traceDisplay,
 									 int incrementSwitchNumber,
 									 int decrementSwitchNumber,
 									 int modeSwitchNumber) :
+	mApplication(app),
 	mMainDisplay(mainDisplay),
 	mSwitchDisplay(switchDisplay),
 	mTrace(traceDisplay),
@@ -287,10 +299,7 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 		}
 		else if (switchNumber == mModeSwitchNumber)
 		{
-			// escape
-			ChangeMode(emBank);
-			mBankNavigationIndex = mActiveBankIndex;
-			NavigateBankRelative(0);
+			EscapeToDefaultMode();
 		}
 		else if (emBankNav == mMode)
 		{
@@ -314,33 +323,50 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 
 	if (emModeSelect == mMode)
 	{
-		if (switchNumber == mModeSwitchNumber ||
-			switchNumber == kModeDefaultSwitchNumber)
+		if (switchNumber == mModeSwitchNumber)
+			EscapeToDefaultMode();
+		else
 		{
-			// escape
-			ChangeMode(emBank);
-			mBankNavigationIndex = mActiveBankIndex;
-			NavigateBankRelative(0);
-		}
-		else if (switchNumber == kModeBankDescSwitchNumber)
-		{
-			ChangeMode(emBankDesc);
-			mBankNavigationIndex = mActiveBankIndex;
-			NavigateBankRelative(0);
-		}
-		else if (switchNumber == kModeBankNavSwitchNumber)
-		{
-			ChangeMode(emBankNav);
-			mBankNavigationIndex = mActiveBankIndex;
-			NavigateBankRelative(0);
-		}
-		else if (switchNumber == kModeBankDirect)
-		{
-			ChangeMode(emBankDirect);
-		}
-		else if (switchNumber == kModeExprPedalDisplay)
-		{
-			ChangeMode(emExprPedalDisplay);
+			switch (switchNumber)
+			{
+			case kModeDefaultSwitchNumber:
+				EscapeToDefaultMode();
+				break;
+			case kModeBankDescSwitchNumber:
+				ChangeMode(emBankDesc);
+				mBankNavigationIndex = mActiveBankIndex;
+				NavigateBankRelative(0);
+				break;
+			case kModeBankNavSwitchNumber:
+				ChangeMode(emBankNav);
+				mBankNavigationIndex = mActiveBankIndex;
+				NavigateBankRelative(0);
+				break;
+			case kModeBankDirect:
+				ChangeMode(emBankDirect);
+				break;
+			case kModeExprPedalDisplay:
+				ChangeMode(emExprPedalDisplay);
+				break;
+			case kModeToggleLedInversion:
+				mSwitchDisplay->InvertLeds(!mSwitchDisplay->IsInverted());
+				EscapeToDefaultMode();
+				break;
+			case kModeRefresh:
+				mApplication->Refresh();
+				break;
+			case kModeReconnect:
+				mApplication->Reconnect();
+				EscapeToDefaultMode();
+				break;
+			case kModeStartupSequence:
+				mSwitchDisplay->TestLeds();
+				EscapeToDefaultMode();
+				break;
+			case kModeToggleTraceWindow:
+				mApplication->ToggleTraceWindow();
+				break;
+			}
 		}
 
 		return;
@@ -350,10 +376,7 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 	{
 		if (switchNumber == mModeSwitchNumber)
 		{
-			// escape
-			ChangeMode(emBank);
-			mBankNavigationIndex = mActiveBankIndex;
-			NavigateBankRelative(0);
+			EscapeToDefaultMode();
 		}
 		else if (switchNumber >= 0 && switchNumber <= 3)
 		{
@@ -393,10 +416,7 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 
 		if (switchNumber == mModeSwitchNumber)
 		{
-			// escape
-			ChangeMode(emBank);
-			mBankNavigationIndex = mActiveBankIndex;
-			NavigateBankRelative(0);
+			EscapeToDefaultMode();
 			updateMainDisplay = false;
 		}
 		else if (switchNumber == mDecrementSwitchNumber)
@@ -761,6 +781,16 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			mSwitchDisplay->SetSwitchDisplay(kModeBankDirect, true);
 			mSwitchDisplay->SetSwitchText(kModeExprPedalDisplay, "Raw ADC Values");
 			mSwitchDisplay->SetSwitchDisplay(kModeExprPedalDisplay, true);
+			mSwitchDisplay->SetSwitchText(kModeStartupSequence, "Test LEDs");
+			mSwitchDisplay->SetSwitchDisplay(kModeStartupSequence, true);
+			mSwitchDisplay->SetSwitchText(kModeToggleLedInversion, "Toggle LED Inversion");
+			mSwitchDisplay->SetSwitchDisplay(kModeToggleLedInversion, true);
+			mSwitchDisplay->SetSwitchText(kModeRefresh, "Refresh");
+			mSwitchDisplay->SetSwitchDisplay(kModeRefresh, true);
+			mSwitchDisplay->SetSwitchText(kModeReconnect, "Reconnect to Monome");
+			mSwitchDisplay->SetSwitchDisplay(kModeReconnect, true);
+			mSwitchDisplay->SetSwitchText(kModeToggleTraceWindow, "Toggle Trace Window");
+			mSwitchDisplay->SetSwitchDisplay(kModeToggleTraceWindow, true);
 		}
 		break;
 	case emExprPedalDisplay:
@@ -833,4 +863,12 @@ MidiControlEngine::UpdateBankModeSwitchDisplay()
 	{
 		mSwitchDisplay->SetSwitchText(mModeSwitchNumber, "Bank");
 	}
+}
+
+void
+MidiControlEngine::EscapeToDefaultMode()
+{
+	ChangeMode(emBank);
+	mBankNavigationIndex = mActiveBankIndex;
+	NavigateBankRelative(0);
 }

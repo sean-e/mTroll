@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2009 Sean Echevarria
+ * Copyright (C) 2007-2010 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -33,6 +33,7 @@
 #include "../Monome40h/IMonome40hInputSubscriber.h"
 
 
+class ITrollApplication;
 class IMainDisplay;
 class ISwitchDisplay;
 class ITraceDisplay;
@@ -44,7 +45,8 @@ class PatchBank;
 class MidiControlEngine : public IMonome40hAdcSubscriber
 {
 public:
-	MidiControlEngine(IMainDisplay * mainDisplay, 
+	MidiControlEngine(ITrollApplication * app,
+					  IMainDisplay * mainDisplay, 
 					  ISwitchDisplay * switchDisplay,
 					  ITraceDisplay * traceDisplay,
 					  int incrementSwitchNumber,
@@ -82,6 +84,7 @@ private:
 	int						GetBankIndex(int bankNumber);
 	void					UpdateBankModeSwitchDisplay();
 	void					CalibrateExprSettings(const PedalCalibration * pedalCalibrationSettings);
+	void					EscapeToDefaultMode();
 	enum EngineMode 
 	{ 
 		emCreated = -1,		// initial state - no data loaded
@@ -97,6 +100,7 @@ private:
 
 private:
 	// non-retained runtime state
+	ITrollApplication *		mApplication;
 	IMainDisplay *			mMainDisplay;
 	ITraceDisplay *			mTrace;
 	ISwitchDisplay *		mSwitchDisplay;
