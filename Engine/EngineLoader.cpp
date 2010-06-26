@@ -47,11 +47,13 @@
 static PatchBank::PatchState GetLoadState(const std::string & tmpLoad);
 
 
-EngineLoader::EngineLoader(IMidiOutGenerator * midiOutGenerator,
+EngineLoader::EngineLoader(ITrollApplication * app,
+						   IMidiOutGenerator * midiOutGenerator,
 						   IMainDisplay * mainDisplay,
 						   ISwitchDisplay * switchDisplay,
 						   ITraceDisplay * traceDisplay) :
 	mEngine(NULL),
+	mApp(app),
 	mMidiOutGenerator(midiOutGenerator),
 	mMainDisplay(mainDisplay),
 	mSwitchDisplay(switchDisplay),
@@ -194,7 +196,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 		mMidiOutPortToDeviceIdxMap[port] = deviceIdx;
 		mMidiOutGenerator->CreateMidiOut(mMidiOutPortToDeviceIdxMap[port], activityIndicatorId);
 	}
-	mEngine = new MidiControlEngine(mMainDisplay, mSwitchDisplay, mTraceDisplay, incrementSwitch, decrementSwitch, modeSwitch);
+	mEngine = new MidiControlEngine(mApp, mMainDisplay, mSwitchDisplay, mTraceDisplay, incrementSwitch, decrementSwitch, modeSwitch);
 	mEngine->SetPowerup(powerupBank, powerupPatch, powerupTimeout);
 	mEngine->FilterRedundantProgChg(filterPC ? true : false);
 

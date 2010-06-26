@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2009 Sean Echevarria
+ * Copyright (C) 2007-2010 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -27,12 +27,13 @@
 
 #include <QMainWindow>
 #include "..\Engine\ExpressionPedals.h"
+#include "..\Engine\ITrollApplication.h"
 
 class ControlUi;
 class QAction;
 
 
-class MainTrollWindow : public QMainWindow
+class MainTrollWindow : public QMainWindow, ITrollApplication
 {
 	Q_OBJECT;
 public:
@@ -42,9 +43,9 @@ public:
 private slots:
 	void About();
 	void OpenFile();
-	void Refresh();
-	void Reconnect();
-	void ToggleTraceWindow();
+	virtual void Refresh();
+	virtual void Reconnect();
+	virtual void ToggleTraceWindow();
 	void ToggleAdc0Override(bool checked) { ToggleAdcOverride(0, checked); }
 	void ToggleAdc1Override(bool checked) { ToggleAdcOverride(1, checked); }
 	void ToggleAdc2Override(bool checked) { ToggleAdcOverride(2, checked); }

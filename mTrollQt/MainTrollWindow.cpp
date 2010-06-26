@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2009 Sean Echevarria
+ * Copyright (C) 2007-2010 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -125,7 +125,7 @@ void
 MainTrollWindow::Refresh()
 {
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-	mUi = new ControlUi(this);
+	mUi = new ControlUi(this, this);
 	setCentralWidget(mUi);	// Qt deletes the previous central widget
 
 	QByteArray tmp(mUiFilename.toAscii());

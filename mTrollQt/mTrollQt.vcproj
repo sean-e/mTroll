@@ -378,6 +378,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Engine\ITrollApplication.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Engine\MetaPatch_BankHistory.h"
 				>
 			</File>
@@ -582,18 +586,6 @@
 			Name="Moc Generated Source"
 			>
 			<File
-				RelativePath=".\Debug\moc_ControlUi.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath=".\Release\moc_ControlUi.cpp"
 				>
 				<FileConfiguration
@@ -606,7 +598,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\Debug\moc_MainTrollWindow.cpp"
+				RelativePath=".\Debug\moc_ControlUi.cpp"
 				>
 				<FileConfiguration
 					Name="Release|Win32"
@@ -622,6 +614,18 @@
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\Debug\moc_MainTrollWindow.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool

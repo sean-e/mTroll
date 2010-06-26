@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2009 Sean Echevarria
+ * Copyright (C) 2007-2010 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -30,6 +30,7 @@
 #include "ExpressionPedals.h"
 
 class MidiControlEngine;
+class ITrollApplication;
 class IMainDisplay;
 class ISwitchDisplay;
 class ITraceDisplay;
@@ -41,7 +42,7 @@ class IMonome40h;
 class EngineLoader
 {
 public:
-	EngineLoader(IMidiOutGenerator * midiOutGenerator, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay, ITraceDisplay * traceDisplay);
+	EngineLoader(ITrollApplication * app, IMidiOutGenerator * midiOutGenerator, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay, ITraceDisplay * traceDisplay);
 
 	MidiControlEngine *		CreateEngine(const std::string & engineSettingsFile);
 	void					InitMonome(IMonome40h * monome, 
@@ -62,6 +63,7 @@ private:
 	PedalCalibration		mAdcCalibration[ExpressionPedals::PedalCount];
 
 	MidiControlEngine *		mEngine;
+	ITrollApplication *		mApp;
 	IMainDisplay *			mMainDisplay;
 	IMidiOutGenerator *		mMidiOutGenerator;
 	ISwitchDisplay *		mSwitchDisplay;
