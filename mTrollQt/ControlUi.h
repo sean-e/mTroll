@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2009 Sean Echevarria
+ * Copyright (C) 2007-2010 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -50,6 +50,7 @@ class QPushButton;
 class QPlainTextEdit;
 class QFrame;
 class IMonome40h;
+class ITrollApplication;
 
 
 class ControlUi : public QWidget, 
@@ -62,7 +63,7 @@ class ControlUi : public QWidget,
 {
 	Q_OBJECT;
 public:
-	ControlUi(QWidget * parent);
+	ControlUi(QWidget * parent, ITrollApplication * app);
 	virtual ~ControlUi();
 
 	typedef QFrame				SwitchLed;
@@ -71,7 +72,6 @@ public:
 
 			void Load(const std::string & uiSettingsFile, const std::string & configSettingsFile, const bool adcOverrides[ExpressionPedals::PedalCount]);
 			void Unload();
-			void Reconnect();
 			void ToggleTraceWindow();
 			void UpdateAdcs(const bool adcOverrides[ExpressionPedals::PedalCount]);
 
@@ -94,6 +94,10 @@ public: // ISwitchDisplay
 	virtual void		SetSwitchDisplay(int switchNumber, bool isOn);
 	virtual void		SetSwitchText(int switchNumber, const std::string & txt);
 	virtual void		ClearSwitchText(int switchNumber);
+	virtual void		InvertLeds(bool invert);
+	virtual bool		IsInverted() const { return mInvertLeds; }
+	virtual	void		Reconnect();
+	virtual void		TestLeds();
 
 public: // IMonome40hSwitchSubscriber
 	virtual void		SwitchPressed(byte row, byte column);
@@ -270,6 +274,7 @@ private:
 	}
 
 private:
+	ITrollApplication			* mApp;
 	IMonome40h					* mHardwareUi;
 	MidiControlEngine			* mEngine;
 	QPlainTextEdit				* mMainDisplay;

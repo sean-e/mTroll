@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008 Sean Echevarria
+ * Copyright (C) 2007-2008,2010 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -38,6 +38,9 @@ public:
 	virtual void SetSwitchDisplay(int switchNumber, bool isOn) = 0;
 	virtual void SetSwitchText(int switchNumber, const std::string & txt) = 0;
 	virtual void ClearSwitchText(int switchNumber) = 0;
+	virtual void InvertLeds(bool invert) = 0;
+	virtual bool IsInverted() const = 0;
+	virtual void TestLeds() = 0;
 };
 
 #endif // ISwitchDisplay_h__

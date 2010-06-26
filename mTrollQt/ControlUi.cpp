@@ -50,9 +50,12 @@
 	#define SLEEP	sleep
 #endif
 
+const int kMaxRows = 8, kMaxCols = 8;
+const int kMaxButtons = kMaxRows * kMaxCols;
 
-ControlUi::ControlUi(QWidget * parent) :
+ControlUi::ControlUi(QWidget * parent, ITrollApplication * app) :
 	QWidget(parent),
+	mApp(app),
 	mEngine(NULL),
 	mMainDisplay(NULL),
 	mTraceDisplay(NULL),
@@ -209,7 +212,7 @@ ControlUi::Load(const std::string & uiSettingsFile,
 			mSystemPowerOverride = new KeepDisplayOn;
 	}
 
-	for (int idx = 0; mInvertLeds && idx < 64; ++idx)
+	for (int idx = 0; mInvertLeds && idx < kMaxButtons; ++idx)
 		SetSwitchDisplay(idx, false);
 }
 
@@ -281,7 +284,7 @@ ControlUi::LoadMidiSettings(const std::string & file,
 							const bool adcOverrides[ExpressionPedals::PedalCount])
 {
 	delete mEngine;
-	EngineLoader ldr(this, this, this, this);
+	EngineLoader ldr(mApp, this, this, this, this);
 	mEngine = ldr.CreateEngine(file);
 	if (mEngine)
 	{
@@ -415,6 +418,7 @@ void
 ControlUi::SetSwitchDisplay(int switchNumber, 
 							bool isOn)
 {
+	_ASSERTE(switchNumber < kMaxButtons);
 	if (mInvertLeds)
 		isOn = !isOn;
 
@@ -458,6 +462,7 @@ void
 ControlUi::SetSwitchText(int switchNumber, 
 						 const std::string & txt)
 {
+	_ASSERTE(switchNumber < kMaxButtons);
 	if (!mSwitchTextDisplays[switchNumber] || !mSwitchTextDisplays[switchNumber]->isEnabled())
 		return;
 
@@ -516,6 +521,7 @@ ControlUi::CreateSwitchLed(int id,
 	pal.setColor(QPalette::Window, mLedConfig.mOffColor);
 	curSwitchLed->setPalette(pal);
 
+	_ASSERTE(id < kMaxButtons);
 	_ASSERTE(!mLeds[id]);
 	mLeds[id] = curSwitchLed;
 }
@@ -566,6 +572,7 @@ ControlUi::CreateSwitch(int id,
 		curSwitch->setShortcut(QKeySequence(shortCutKey));
 	}
 	
+	_ASSERTE(id < kMaxButtons);
 	_ASSERTE(!mSwitches[id]);
 	mSwitches[id] = curSwitch;
 	if (id > mMaxSwitchId)
@@ -611,6 +618,7 @@ ControlUi::CreateSwitchTextDisplay(int id,
 	pal.setColor(QPalette::WindowText, mSwitchTextDisplayConfig.mFgColor);
 	curSwitchDisplay->setPalette(pal);
 
+	_ASSERTE(id < kMaxButtons);
 	_ASSERTE(!mSwitchTextDisplays[id]);
 	mSwitchTextDisplays[id] = curSwitchDisplay;
 }
@@ -783,14 +791,14 @@ ControlUi::MonomeStartupSequence()
 
 	int idx;
 	byte vals = 0xff;
-	for (idx = 0; idx < 8; ++idx)
+	for (idx = 0; idx < kMaxRows; ++idx)
 	{
 		mHardwareUi->EnableLedRow(idx, vals);
 		SLEEP(100);
 		mHardwareUi->EnableLedRow(idx, 0);
 	}
 
-	for (idx = 0; idx < 8; ++idx)
+	for (idx = 0; idx < kMaxCols; ++idx)
 	{
 		mHardwareUi->EnableLedColumn(idx, vals);
 		SLEEP(100);
@@ -909,4 +917,95 @@ ControlUi::UpdateAdcs(const bool adcOverrides[ExpressionPedals::PedalCount])
 			Trace(std::string(traceMsg.str()));
 		}
 	}
+}
+
+void
+ControlUi::InvertLeds(bool invert)
+{
+	mInvertLeds = invert;
+}
+
+void
+ControlUi::TestLeds()
+{
+	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+	int row, col, switchNumber;
+
+	// turn all on
+	for (row = 0; row < kMaxRows; ++row)
+	{
+		for (col = 0; col < kMaxCols; ++col)
+			SetSwitchDisplay((row * kMaxCols) + col, true);
+	}
+
+	QApplication::processEvents();
+	QApplication::processEvents();
+	SLEEP(750);
+
+	// turn all off
+	for (row = 0; row < kMaxRows; ++row)
+	{
+		for (col = 0; col < kMaxCols; ++col)
+			SetSwitchDisplay((row * kMaxCols) + col, false);
+	}
+
+	// walk rows
+	for (row = 0; row < kMaxRows; ++row)
+	{
+		for (col = 0; col < kMaxCols; ++col)
+		{
+			switchNumber = mRowColToSwitchNumber[(row << 16) | col];
+			if (switchNumber || (!row && !col)) // assume only row0, col0 can be switchNumber 0
+				SetSwitchDisplay(switchNumber, true);
+		}
+		QApplication::processEvents();
+		QApplication::processEvents();
+		SLEEP(200);
+		for (col = 0; col < kMaxCols; ++col)
+		{
+			switchNumber = mRowColToSwitchNumber[(row << 16) | col];
+			if (switchNumber || (!row && !col))
+				SetSwitchDisplay(switchNumber, false);
+		}
+	}
+
+	// walk columns
+	for (col = 0; col < kMaxCols; ++col)
+	{
+		for (row = 0; row < kMaxRows; ++row)
+		{
+			switchNumber = mRowColToSwitchNumber[(row << 16) | col];
+			if (switchNumber || (!row && !col))
+				SetSwitchDisplay(switchNumber, true);
+		}
+		QApplication::processEvents();
+		QApplication::processEvents();
+		SLEEP(200);
+		for (row = 0; row < kMaxRows; ++row)
+		{
+			switchNumber = mRowColToSwitchNumber[(row << 16) | col];
+			if (switchNumber || (!row && !col))
+				SetSwitchDisplay(switchNumber, false);
+		}
+	}
+
+	// turn all on
+	for (row = 0; row < kMaxRows; ++row)
+	{
+		for (col = 0; col < kMaxCols; ++col)
+			SetSwitchDisplay((row * kMaxCols) + col, true);
+	}
+
+	QApplication::processEvents();
+	QApplication::processEvents();
+	SLEEP(750);
+
+	// turn all off
+	for (row = 0; row < kMaxRows; ++row)
+	{
+		for (col = 0; col < kMaxCols; ++col)
+			SetSwitchDisplay((row * kMaxCols) + col, false);
+	}
+
+	QApplication::restoreOverrideCursor();
 }
