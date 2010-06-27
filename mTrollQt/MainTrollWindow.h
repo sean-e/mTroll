@@ -52,6 +52,10 @@ private slots:
 	void ToggleAdc3Override(bool checked) { ToggleAdcOverride(3, checked); }
 
 private:
+	virtual bool IsAdcOverridden(int adc) { if (adc >=0 && adc < 4) return mAdcForceDisable[adc]; return false;}
+	virtual void ToggleAdcOverride(int adc) { if (adc >=0 && adc < 4) ToggleAdcOverride(adc, !mAdcForceDisable[adc]); }
+
+private:
 	ControlUi	* mUi;
 	QString		mConfigFilename;
 	QString		mUiFilename;

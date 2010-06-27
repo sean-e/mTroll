@@ -58,11 +58,11 @@ enum HardCodedSwitchNumbers
 	kModeBankDescSwitchNumber,
 	kModeBankDirect,
 	kModeExprPedalDisplay,
+	kModeAdcOverride,
+	kModeTestLeds,
+	kModeToggleLedInversion,
 	kModeRefresh,
 	kModeReconnect,
-	kModeStartupSequence,
-	kModeToggleLedInversion,
-	kModeAdcOverride,
 	kModeToggleTraceWindow
 };
 
@@ -359,14 +359,32 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 				mApplication->Reconnect();
 				EscapeToDefaultMode();
 				break;
-			case kModeStartupSequence:
+			case kModeTestLeds:
 				mSwitchDisplay->TestLeds();
 				EscapeToDefaultMode();
 				break;
 			case kModeToggleTraceWindow:
 				mApplication->ToggleTraceWindow();
 				break;
+			case kModeAdcOverride:
+				ChangeMode(emAdcOverride);
+				break;
 			}
+		}
+
+		return;
+	}
+
+	if (emAdcOverride == mMode)
+	{
+		if (switchNumber == mModeSwitchNumber)
+		{
+			EscapeToDefaultMode();
+		}
+		else if (switchNumber >= 0 && switchNumber <= 3)
+		{
+			mApplication->ToggleAdcOverride(switchNumber);
+			ChangeMode(emAdcOverride);
 		}
 
 		return;
@@ -773,16 +791,16 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		{
 			mSwitchDisplay->SetSwitchText(kModeDefaultSwitchNumber, "Bank");
 			mSwitchDisplay->SetSwitchDisplay(kModeDefaultSwitchNumber, true);
-			mSwitchDisplay->SetSwitchText(kModeBankNavSwitchNumber, "Bank Navigation");
+			mSwitchDisplay->SetSwitchText(kModeBankNavSwitchNumber, "Bank Navigation...");
 			mSwitchDisplay->SetSwitchDisplay(kModeBankNavSwitchNumber, true);
-			mSwitchDisplay->SetSwitchText(kModeBankDescSwitchNumber, "Bank Description");
+			mSwitchDisplay->SetSwitchText(kModeBankDescSwitchNumber, "Bank Description...");
 			mSwitchDisplay->SetSwitchDisplay(kModeBankDescSwitchNumber, true);
-			mSwitchDisplay->SetSwitchText(kModeBankDirect, "Bank Direct");
+			mSwitchDisplay->SetSwitchText(kModeBankDirect, "Bank Direct...");
 			mSwitchDisplay->SetSwitchDisplay(kModeBankDirect, true);
-			mSwitchDisplay->SetSwitchText(kModeExprPedalDisplay, "Raw ADC Values");
+			mSwitchDisplay->SetSwitchText(kModeExprPedalDisplay, "Raw ADC Values...");
 			mSwitchDisplay->SetSwitchDisplay(kModeExprPedalDisplay, true);
-			mSwitchDisplay->SetSwitchText(kModeStartupSequence, "Test LEDs");
-			mSwitchDisplay->SetSwitchDisplay(kModeStartupSequence, true);
+			mSwitchDisplay->SetSwitchText(kModeTestLeds, "Test LEDs");
+			mSwitchDisplay->SetSwitchDisplay(kModeTestLeds, true);
 			mSwitchDisplay->SetSwitchText(kModeToggleLedInversion, "Toggle LED Inversion");
 			mSwitchDisplay->SetSwitchDisplay(kModeToggleLedInversion, true);
 			mSwitchDisplay->SetSwitchText(kModeRefresh, "Refresh");
@@ -791,6 +809,8 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			mSwitchDisplay->SetSwitchDisplay(kModeReconnect, true);
 			mSwitchDisplay->SetSwitchText(kModeToggleTraceWindow, "Toggle Trace Window");
 			mSwitchDisplay->SetSwitchDisplay(kModeToggleTraceWindow, true);
+			mSwitchDisplay->SetSwitchText(kModeAdcOverride, "ADC overrides...");
+			mSwitchDisplay->SetSwitchDisplay(kModeAdcOverride, true);
 		}
 		break;
 	case emExprPedalDisplay:
@@ -805,6 +825,33 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			mSwitchDisplay->SetSwitchText(1, "Pedal 2");
 			mSwitchDisplay->SetSwitchText(2, "Pedal 3");
 			mSwitchDisplay->SetSwitchText(3, "Pedal 4");
+		}
+		break;
+	case emAdcOverride:
+		msg = "Override ADCs";
+		mPedalModePort = 0;
+		if (mSwitchDisplay)
+		{
+			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "");
+			mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "");
+
+			for (int idx = 0; idx < 4; ++idx)
+			{
+				std::strstream msg;
+				msg << "ADC " << idx;
+				if (mApplication->IsAdcOverridden(idx))
+				{
+					msg << " forced off" << std::endl << std::ends;
+					mSwitchDisplay->SetSwitchText(idx, msg.str());
+					mSwitchDisplay->SetSwitchDisplay(idx, true);
+				}
+				else
+				{
+					msg << " normal" << std::endl << std::ends;
+					mSwitchDisplay->SetSwitchText(idx, msg.str());
+					mSwitchDisplay->SetSwitchDisplay(idx, false);
+				}
+			}
 		}
 		break;
 	case emBankDirect:

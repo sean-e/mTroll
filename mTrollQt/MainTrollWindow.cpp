@@ -186,6 +186,7 @@ MainTrollWindow::ToggleAdcOverride(int adc,
 
 	if (checked)
 	{
+		mAdcOverrideActions[adc]->setChecked(true);
 		// if 2 is disabled, then 3 and 4 also need to be disabled
 		for (int idx = adc + 1; idx < ExpressionPedals::PedalCount; ++idx)
 		{
@@ -198,6 +199,7 @@ MainTrollWindow::ToggleAdcOverride(int adc,
 	}
 	else
 	{
+		mAdcOverrideActions[adc]->setChecked(false);
 		// if 2 is enabled, then 0 and 1 also need to be enabled
 		for (int idx = 0; idx < adc; ++idx)
 		{

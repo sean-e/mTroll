@@ -94,6 +94,7 @@ private:
 		emBankDesc,			// describe switches in bank
 		emBankDirect,		// use buttons to call bank
 		emExprPedalDisplay,	// display actual adc values
+		emAdcOverride,		// set ADC overrides
 		emNotValid 
 	};
 	void					ChangeMode(EngineMode newMode);
