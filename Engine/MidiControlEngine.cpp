@@ -349,22 +349,27 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 				ChangeMode(emExprPedalDisplay);
 				break;
 			case kModeToggleLedInversion:
-				mSwitchDisplay->InvertLeds(!mSwitchDisplay->IsInverted());
+				if (mSwitchDisplay)
+					mSwitchDisplay->InvertLeds(!mSwitchDisplay->IsInverted());
 				EscapeToDefaultMode();
 				break;
 			case kModeRefresh:
-				mApplication->Refresh();
+				if (mApplication)
+					mApplication->Refresh();
 				break;
 			case kModeReconnect:
-				mApplication->Reconnect();
+				if (mApplication)
+					mApplication->Reconnect();
 				EscapeToDefaultMode();
 				break;
 			case kModeTestLeds:
-				mSwitchDisplay->TestLeds();
+				if (mSwitchDisplay)
+					mSwitchDisplay->TestLeds();
 				EscapeToDefaultMode();
 				break;
 			case kModeToggleTraceWindow:
-				mApplication->ToggleTraceWindow();
+				if (mApplication)
+					mApplication->ToggleTraceWindow();
 				break;
 			case kModeAdcOverride:
 				ChangeMode(emAdcOverride);
@@ -383,7 +388,8 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 		}
 		else if (switchNumber >= 0 && switchNumber <= 3)
 		{
-			mApplication->ToggleAdcOverride(switchNumber);
+			if (mApplication)
+				mApplication->ToggleAdcOverride(switchNumber);
 			ChangeMode(emAdcOverride);
 		}
 
@@ -830,7 +836,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 	case emAdcOverride:
 		msg = "Override ADCs";
 		mPedalModePort = 0;
-		if (mSwitchDisplay)
+		if (mSwitchDisplay && mApplication)
 		{
 			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "");
 			mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "");
@@ -886,7 +892,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		if (!msg.empty())
 		{
 			if (emBank != mMode)
-				msg = "Cancel " + msg;
+				msg = "Exit " + msg;
 			mSwitchDisplay->SetSwitchText(mModeSwitchNumber, msg);
 		}
 		mSwitchDisplay->SetSwitchDisplay(mModeSwitchNumber, mMode == emBank ? true : false);
