@@ -27,7 +27,15 @@
 #include "ExpressionPedals.h"
 #include "IMainDisplay.h"
 #include "IMidiOut.h"
+#include "DeletePtr.h"
 
+
+void
+PedalToggle::ClearCommands()
+{
+	std::for_each(mToggleOn.begin(), mToggleOn.end(), DeletePtr<IPatchCommand>());
+	std::for_each(mToggleOff.begin(), mToggleOff.end(), DeletePtr<IPatchCommand>());
+}
 
 void
 ExpressionControl::Init(bool invert, 
@@ -63,9 +71,14 @@ ExpressionControl::Init(bool invert,
 
 	mMidiData[0] = (0xb0 | mChannel);
 	mMidiData[1] = mControlNumber;
-	mMidiData[2] = 0;
-	mMidiData[3] = 0;
+	// init to invalid value so that jitter control does not filter initial 0s
+	// these values need to be specifically checked for in Refire
+	mMidiData[2] = 0xff;
+	mMidiData[3] = 0xff;
 	mMidiData[4] = 0;
+
+	PedalCalibration pc;
+	Calibrate(pc);
 }
 
 void
@@ -74,6 +87,45 @@ ExpressionControl::Calibrate(const PedalCalibration & calibrationSetting)
 	mMinAdcVal = calibrationSetting.mMinAdcVal;
 	mMaxAdcVal = calibrationSetting.mMaxAdcVal;
 	mAdcValRange = mMaxAdcVal - mMinAdcVal;
+
+	if (mBottomToggle.mToggleIsEnabled)
+	{
+		mBottomToggle.mMinDeactivateAdcVal = mMinAdcVal;
+		mBottomToggle.mMaxDeactivateAdcVal = mBottomToggle.mMinDeactivateAdcVal + mBottomToggle.mActiveZoneSize;
+		mBottomToggle.mMinActivateAdcVal = mBottomToggle.mMaxDeactivateAdcVal + mBottomToggle.mDeadzoneSize;
+		mBottomToggle.mMaxActivateAdcVal = mMaxAdcVal;
+		mAdcValRange = mMaxAdcVal - mBottomToggle.mMinActivateAdcVal;
+	}
+
+	if (mTopToggle.mToggleIsEnabled)
+	{
+		mTopToggle.mMaxDeactivateAdcVal = mMaxAdcVal;
+		mTopToggle.mMinDeactivateAdcVal = mTopToggle.mMaxDeactivateAdcVal - mTopToggle.mActiveZoneSize;
+		mTopToggle.mMaxActivateAdcVal = mTopToggle.mMinDeactivateAdcVal - mTopToggle.mDeadzoneSize;
+		if (mBottomToggle.mToggleIsEnabled)
+		{
+			mTopToggle.mMinActivateAdcVal = mBottomToggle.mMinActivateAdcVal;
+			mBottomToggle.mMaxActivateAdcVal = mTopToggle.mMaxActivateAdcVal;
+			mAdcValRange = mTopToggle.mMaxActivateAdcVal - mBottomToggle.mMinActivateAdcVal;
+		}
+		else
+		{
+			mTopToggle.mMinActivateAdcVal = mMinAdcVal;
+			mAdcValRange = mTopToggle.mMaxActivateAdcVal - mMinAdcVal;
+		}
+	}
+
+	mActiveAdcRangeStart = mBottomToggle.mToggleIsEnabled ? mBottomToggle.mMinActivateAdcVal : mMinAdcVal;
+	mActiveAdcRangeEnd = mTopToggle.mToggleIsEnabled ? mTopToggle.mMaxActivateAdcVal : mMaxAdcVal;
+
+	if (0 >= mAdcValRange)
+		mAdcValRange = 1;
+
+	if (!mBottomToggle.mToggleIsEnabled && !mTopToggle.mToggleIsEnabled)
+	{
+		_ASSERTE(mMinAdcVal == mActiveAdcRangeStart);
+	}
+	_ASSERTE(mAdcValRange == mActiveAdcRangeEnd - mActiveAdcRangeStart);
 }
 
 void
@@ -84,110 +136,230 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 	if (!mEnabled)
 		return;
 
+	int newCcVal;
+	bool showStatus = false;
+	bool doCcSend;
+	bool bottomActivated = false;
+	bool bottomDeactivated = false;
+	bool topActivated = false;
+	bool topDeactivated = false;
+	bool deadZone = false;
+
+	// unaffected by toggle zones
 	const int cappedAdcVal = newAdcVal < mMinAdcVal ? 
 			mMinAdcVal : 
 			(newAdcVal > mMaxAdcVal) ? mMaxAdcVal : newAdcVal;
 
-	// normal 127 range is 1023
-	int newCcVal = ((cappedAdcVal - mMinAdcVal) * mCcValRange) / mAdcValRange;
-	if (mMinCcVal)
-		newCcVal += mMinCcVal;
-
-	if (newCcVal > mMaxCcVal)
-		newCcVal = mMaxCcVal;
-	else if (newCcVal < mMinCcVal)
-		newCcVal = mMinCcVal;
-
-	// only fire midi indicator at top and bottom of range -
-	// easier to see that top and bottom hit on controller than on pc
-	const bool showStatus = newCcVal == mMinCcVal || newCcVal == mMaxCcVal;
-
-	if (mIsDoubleByte)
+	if (mBottomToggle.mToggleIsEnabled || mTopToggle.mToggleIsEnabled)
 	{
-		if (mInverted)
-			newCcVal = 16383 - newCcVal;
-
-		byte newFineCcVal = newCcVal & 0x7F; // LSB
-		byte newCoarseCcVal = (newCcVal >> 7) & 0x7f; // MSB
-
-		if (mMidiData[2] == newCoarseCcVal && (mMidiData[3] == newFineCcVal || mMidiData[4] == newFineCcVal))
-			return;
-#if 0
-		byte coarseCh = mMidiData[1];
-		byte fineCh = coarseCh + 32;
-
-		byte oldCoarseCcVal = mMidiData[2];
-		byte oldFineCcVal = mMidiData[3];
-		
-		static const int kFineIncVal = 64;
-
-		while (oldCoarseCcVal != newCoarseCcVal)
+		if (cappedAdcVal >= mActiveAdcRangeStart && cappedAdcVal <= mActiveAdcRangeEnd)
 		{
-			if (oldCoarseCcVal < newCoarseCcVal)
-			{
-				for (oldFineCcVal += kFineIncVal; oldFineCcVal < 127; oldFineCcVal += kFineIncVal)
-					midiOut->MidiOut(mMidiData[0], fineCh, oldFineCcVal, false);
+			// normal 127 range is 1023
+			newCcVal = ((cappedAdcVal - mActiveAdcRangeStart) * mCcValRange) / mAdcValRange;
+			doCcSend = true;
+		}
+		else
+		{
+			doCcSend = false;
+			newCcVal = -1;
+		}
 
-				oldFineCcVal = 0;
-				midiOut->MidiOut(mMidiData[0], coarseCh, ++oldCoarseCcVal, false);
+		if (mBottomToggle.mToggleIsEnabled)
+		{
+			if (mBottomToggle.IsInActivationZone(cappedAdcVal))
+			{
+				_ASSERTE(doCcSend);
+				if (mBottomToggle.Activate())
+					showStatus = bottomActivated = true;
+			}
+			else if (mBottomToggle.IsInDeactivationZone(cappedAdcVal))
+			{
+				_ASSERTE(!doCcSend);
+				if (mBottomToggle.Deactivate())
+					showStatus = bottomDeactivated = true;
+			}
+			else if (mBottomToggle.IsInDeadzone(cappedAdcVal))
+			{
+				_ASSERTE(!doCcSend);
+				showStatus = deadZone = true;
 			}
 			else
 			{
-				for (oldFineCcVal -= kFineIncVal; oldFineCcVal > 0 && oldFineCcVal < 127; oldFineCcVal -= kFineIncVal)
-					midiOut->MidiOut(mMidiData[0], fineCh, oldFineCcVal, false);
-
-				oldFineCcVal = 127;
-				midiOut->MidiOut(mMidiData[0], coarseCh, --oldCoarseCcVal, false);
+				_ASSERTE(mTopToggle.mToggleIsEnabled && (mTopToggle.IsInDeactivationZone(cappedAdcVal) || mTopToggle.IsInDeadzone(cappedAdcVal)));
 			}
 		}
 
-		if (oldFineCcVal < newFineCcVal)
+		if (!deadZone && !bottomDeactivated && mTopToggle.mToggleIsEnabled)
 		{
-			for (oldFineCcVal += kFineIncVal; oldFineCcVal < newFineCcVal; oldFineCcVal += kFineIncVal)
-				midiOut->MidiOut(mMidiData[0], fineCh, oldFineCcVal, false);
+			if (mTopToggle.IsInActivationZone(cappedAdcVal))
+			{
+				_ASSERTE(doCcSend);
+				if (mTopToggle.Activate())
+					showStatus = topActivated = true;
+			}
+			else if (mTopToggle.IsInDeactivationZone(cappedAdcVal))
+			{
+				_ASSERTE(!doCcSend);
+				if (mTopToggle.Deactivate())
+					showStatus = topDeactivated = true;
+			}
+			else if (mTopToggle.IsInDeadzone(cappedAdcVal))
+			{
+				_ASSERTE(!doCcSend);
+				showStatus = deadZone = true;
+			}
+			else
+			{
+				_ASSERTE(mBottomToggle.mToggleIsEnabled && (mBottomToggle.IsInDeactivationZone(cappedAdcVal) || mBottomToggle.IsInDeadzone(cappedAdcVal)));
+			}
 		}
-		else if (oldFineCcVal > newFineCcVal)
-		{
-			for (oldFineCcVal -= kFineIncVal; oldFineCcVal > newFineCcVal && oldFineCcVal < 127; oldFineCcVal -= kFineIncVal)
-				midiOut->MidiOut(mMidiData[0], fineCh, oldFineCcVal, false);
-		}
-
-		midiOut->MidiOut(mMidiData[0], fineCh, newFineCcVal, showStatus);
-#else
-		midiOut->MidiOut(mMidiData[0], mMidiData[1], newCoarseCcVal, showStatus);
-		midiOut->MidiOut(mMidiData[0], mMidiData[1] + 32, newFineCcVal, showStatus);
-#endif
-
-		mMidiData[4] = mMidiData[3];
-		mMidiData[3] = newFineCcVal;
-		mMidiData[2] = newCoarseCcVal;
 	}
 	else
 	{
-		if (mInverted)
-			newCcVal = 127 - newCcVal;
+		// no toggle
+		// normal 127 range is 1023
+		newCcVal = ((cappedAdcVal - mMinAdcVal) * mCcValRange) / mAdcValRange;
+		doCcSend = true;
+	}
 
-		if (mMidiData[2] == newCcVal || mMidiData[3] == newCcVal)
-			return;
+	if (doCcSend)
+	{
+		if (mMinCcVal)
+			newCcVal += mMinCcVal;
 
-		mMidiData[3] = mMidiData[2];
-		mMidiData[2] = newCcVal;
-		midiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], showStatus);
+		if (newCcVal > mMaxCcVal)
+			newCcVal = mMaxCcVal;
+		else if (newCcVal < mMinCcVal)
+			newCcVal = mMinCcVal;
+
+		// only fire midi indicator at top and bottom of range -
+		// easier to see that top and bottom hit on controller than on pc
+		if (!showStatus)
+			showStatus = newCcVal == mMinCcVal || newCcVal == mMaxCcVal;
+
+		if (mIsDoubleByte)
+		{
+			if (mInverted)
+				newCcVal = 16383 - newCcVal;
+
+			byte newFineCcVal = newCcVal & 0x7F; // LSB
+			byte newCoarseCcVal = (newCcVal >> 7) & 0x7f; // MSB
+
+			// jitter control
+			if (mMidiData[2] == newCoarseCcVal && (mMidiData[3] == newFineCcVal || mMidiData[4] == newFineCcVal) &&
+				!topActivated && !bottomActivated && !topDeactivated && !bottomDeactivated)
+			{
+				if (0 == newFineCcVal || 127 == newFineCcVal)
+				{
+					if (abs(mMidiData[3] - mMidiData[4]) < 3)
+						return;
+				}
+				else
+					return;
+			}
+#if 0
+			byte coarseCh = mMidiData[1];
+			byte fineCh = coarseCh + 32;
+
+			byte oldCoarseCcVal = mMidiData[2];
+			byte oldFineCcVal = mMidiData[3];
+			
+			static const int kFineIncVal = 64;
+
+			while (oldCoarseCcVal != newCoarseCcVal)
+			{
+				if (oldCoarseCcVal < newCoarseCcVal)
+				{
+					for (oldFineCcVal += kFineIncVal; oldFineCcVal < 127; oldFineCcVal += kFineIncVal)
+						midiOut->MidiOut(mMidiData[0], fineCh, oldFineCcVal, false);
+
+					oldFineCcVal = 0;
+					midiOut->MidiOut(mMidiData[0], coarseCh, ++oldCoarseCcVal, false);
+				}
+				else
+				{
+					for (oldFineCcVal -= kFineIncVal; oldFineCcVal > 0 && oldFineCcVal < 127; oldFineCcVal -= kFineIncVal)
+						midiOut->MidiOut(mMidiData[0], fineCh, oldFineCcVal, false);
+
+					oldFineCcVal = 127;
+					midiOut->MidiOut(mMidiData[0], coarseCh, --oldCoarseCcVal, false);
+				}
+			}
+
+			if (oldFineCcVal < newFineCcVal)
+			{
+				for (oldFineCcVal += kFineIncVal; oldFineCcVal < newFineCcVal; oldFineCcVal += kFineIncVal)
+					midiOut->MidiOut(mMidiData[0], fineCh, oldFineCcVal, false);
+			}
+			else if (oldFineCcVal > newFineCcVal)
+			{
+				for (oldFineCcVal -= kFineIncVal; oldFineCcVal > newFineCcVal && oldFineCcVal < 127; oldFineCcVal -= kFineIncVal)
+					midiOut->MidiOut(mMidiData[0], fineCh, oldFineCcVal, false);
+			}
+
+			midiOut->MidiOut(mMidiData[0], fineCh, newFineCcVal, showStatus);
+#else
+			midiOut->MidiOut(mMidiData[0], mMidiData[1], newCoarseCcVal, showStatus);
+			midiOut->MidiOut(mMidiData[0], mMidiData[1] + 32, newFineCcVal, showStatus);
+#endif
+
+			mMidiData[4] = mMidiData[3];
+			mMidiData[3] = newFineCcVal;
+			mMidiData[2] = newCoarseCcVal;
+		}
+		else
+		{
+			if (mInverted)
+				newCcVal = 127 - newCcVal;
+
+			// jitter control
+			if ((mMidiData[2] == newCcVal || mMidiData[3] == newCcVal) &&
+				!topActivated && !bottomActivated && !topDeactivated && !bottomDeactivated)
+			{
+				if (0 == newCcVal || 127 == newCcVal)
+				{
+					if (abs(mMidiData[2] - mMidiData[3]) < 3)
+						return;
+				}
+				else
+					return;
+			}
+
+			mMidiData[3] = mMidiData[2];
+			mMidiData[2] = newCcVal;
+			midiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], showStatus);
+		}
 	}
 
 	if (mainDisplay)
 	{
 		static bool sHadStatus = false;
+//		showStatus = true; // for testing
 		if (showStatus || sHadStatus)
 		{
 			std::strstream displayMsg;
-			if (newCcVal == mMinCcVal)
-				displayMsg << "______ min ______" << std::endl;
-			else if (newCcVal == mMaxCcVal)
-				displayMsg << "|||||| MAX ||||||" << std::endl;
+			if (bottomDeactivated)
+				displayMsg << "bottom toggle deactivated" << std::endl;
+			else if (bottomActivated)
+				displayMsg << "bottom toggle activated" << std::endl;
 
-			sHadStatus = showStatus;
-			if (showStatus)
+			if (topDeactivated)
+				displayMsg << "top toggle deactivated" << std::endl;
+			else if (topActivated)
+				displayMsg << "top toggle activated" << std::endl;
+
+			if (doCcSend)
+			{
+				if (newCcVal == mMinCcVal)
+					displayMsg << "______ min ______" << std::endl;
+				else if (newCcVal == mMaxCcVal)
+					displayMsg << "|||||| MAX ||||||" << std::endl;
+			}
+			else if (deadZone)
+				displayMsg << "pedal deadzone" << std::endl;
+
+			sHadStatus = showStatus && doCcSend;
+			if (showStatus && doCcSend)
 			{
 				if (mIsDoubleByte)
 				{
@@ -212,11 +384,82 @@ ExpressionControl::Refire(IMainDisplay * mainDisplay,
 	if (!mEnabled)
 		return;
 
+	// the refire command may not work as intended if a toggle is present
 	if (mIsDoubleByte)
 	{
-		midiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], true);
-		midiOut->MidiOut(mMidiData[0], mMidiData[1] + 32, mMidiData[3], true);
+		if (0xff != mMidiData[2] && 0xff != mMidiData[3])
+		{
+			midiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], true);
+			midiOut->MidiOut(mMidiData[0], mMidiData[1] + 32, mMidiData[3], true);
+		}
 	}
 	else
-		midiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], true);
+	{
+		if (mMidiData[2] != 0xff)
+			midiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], true);
+	}
 }
+
+
+
+
+
+
+
+#if 0 // pedal logic testing
+
+#include <windows.h>
+#undef TextOut		// stupid unicode support defines TextOut to TextOutW
+
+class TestDisplay : public IMainDisplay
+{
+public:
+	TestDisplay() { }
+	virtual void TextOut(const std::string & txt) { OutputDebugStringA(txt.c_str()); }
+	virtual void ClearDisplay() { }
+};
+
+class TestMidiOut : public IMidiOut
+{
+public:
+	TestMidiOut() { }
+	virtual unsigned int GetMidiOutDeviceCount() const {return 0;}
+	virtual std::string GetMidiOutDeviceName(unsigned int deviceIdx) const {return std::string();}
+	virtual void SetActivityIndicator(ISwitchDisplay * activityIndicator, int activityIndicatorIdx) {}
+	virtual void EnableActivityIndicator(bool enable) {}
+	virtual bool OpenMidiOut(unsigned int deviceIdx) {return false;}
+	virtual bool IsMidiOutOpen() const {return false;}
+	virtual bool MidiOut(const Bytes & bytes) {return false;}
+	virtual void MidiOut(byte singleByte, bool useIndicator = true) {}
+	virtual void MidiOut(byte byte1, byte byte2, bool useIndicator = true) {}
+	virtual void MidiOut(byte byte1, byte byte2, byte byte3, bool useIndicator = true) {}
+	virtual void CloseMidiOut() {}
+};
+
+void TestPedals()
+{
+	TestDisplay disp;
+	TestMidiOut midi;
+
+	PedalCalibration calib;
+	calib.Init(100, 1000);
+//	calib.Init(0, PedalCalibration::MaxAdcVal);
+
+	ExpressionControl ctl;
+	ctl.Init(false, 1, 1, 0, 127, false);
+
+	PatchCommands onCmds, offCmds;
+	ctl.InitToggle(0, 25, 50, onCmds, offCmds);
+	ctl.InitToggle(1, 25, 50, onCmds, offCmds);
+
+	ctl.Calibrate(calib);
+
+	int idx;
+	for (idx = 0; idx <= PedalCalibration::MaxAdcVal; ++idx)
+		ctl.AdcValueChange(&disp, &midi, idx);
+
+	for (idx = PedalCalibration::MaxAdcVal + 1; idx > 0; )
+		ctl.AdcValueChange(&disp, &midi, --idx);
+}
+
+#endif

@@ -25,7 +25,10 @@
 #ifndef ExpressionPedals_h__
 #define ExpressionPedals_h__
 
+#include <algorithm>
+#include <functional>
 #include "IMidiOut.h"
+#include "IPatchCommand.h"
 
 class IMainDisplay;
 
@@ -50,6 +53,112 @@ struct PedalCalibration
 };
 
 
+struct PedalToggle
+{
+	// used for setup
+	bool				mToggleIsEnabled;
+	int					mActiveZoneSize;	
+	int					mDeadzoneSize;
+
+	// runtime values calculated during pedal calibration
+	int					mMinActivateAdcVal;			// bottom of active zone that sends ccs and may result in exec of ON command
+	int					mMaxActivateAdcVal;			// top of active zone that sends ccs and may result in exec of ON command
+	int					mMinDeactivateAdcVal;		// bottom of zone that execs OFF command
+	int					mMaxDeactivateAdcVal;		// top of zone that execs OFF command
+
+	// runtime state
+	PatchCommands		mToggleOn, mToggleOff;
+	bool				mToggleIsOn;
+
+	PedalToggle() :
+		mToggleIsEnabled(false),
+		mToggleIsOn(false),
+		mActiveZoneSize(0),
+		mDeadzoneSize(0),
+		mMinActivateAdcVal(0),
+		mMinDeactivateAdcVal(0),
+		mMaxActivateAdcVal(0),
+		mMaxDeactivateAdcVal(0)
+	{
+	}
+
+	~PedalToggle()
+	{
+		ClearCommands();
+	}
+
+	void Init(int zoneSize, int deadzoneSize, PatchCommands & onCmds, PatchCommands & offCmds)
+	{
+		mToggleIsEnabled = true;
+		ClearCommands();
+		mToggleIsOn = false;
+		mActiveZoneSize = zoneSize;
+		mDeadzoneSize = deadzoneSize;
+		mToggleOn.swap(onCmds);
+		mToggleOff.swap(offCmds);
+	}
+
+	bool IsInActivationZone(int adcVal) const
+	{
+		if (adcVal >= mMinActivateAdcVal && adcVal <= mMaxActivateAdcVal)
+			return true;
+		return false;
+	}
+
+	bool IsInDeactivationZone(int adcVal) const
+	{
+		if (adcVal >= mMinDeactivateAdcVal && adcVal <= mMaxDeactivateAdcVal)
+			return true;
+		return false;
+	}
+
+	bool Activate()
+	{
+		if (/*!mToggleIsEnabled ||*/ mToggleIsOn)
+			return false;
+
+		std::for_each(mToggleOn.begin(), mToggleOn.end(), std::mem_fun(&IPatchCommand::Exec));
+		mToggleIsOn = true;
+		return true;
+	}
+
+	bool Deactivate()
+	{
+		if (/*!mToggleIsEnabled ||*/ !mToggleIsOn)
+			return false;
+
+		std::for_each(mToggleOff.begin(), mToggleOff.end(), std::mem_fun(&IPatchCommand::Exec));
+		mToggleIsOn = false;
+		return true;
+	}
+
+private:
+	void ClearCommands();
+};
+
+
+struct BottomToggle : public PedalToggle
+{
+	bool IsInDeadzone(int adcVal) const 
+	{ 
+		if (adcVal < mMinActivateAdcVal && adcVal > mMaxDeactivateAdcVal)
+			return true;
+		return false; 
+	}
+};
+
+
+struct TopToggle : public PedalToggle
+{
+	bool IsInDeadzone(int adcVal) const 
+	{ 
+		if (adcVal > mMinActivateAdcVal && adcVal < mMaxDeactivateAdcVal)
+			return true;
+		return false; 
+	}
+};
+
+
 class ExpressionControl
 {
 public:
@@ -57,7 +166,9 @@ public:
 		mEnabled(false), 
 		mMinAdcVal(0), 
 		mMaxAdcVal(PedalCalibration::MaxAdcVal), 
-		mAdcValRange(PedalCalibration::MaxAdcVal) 
+		mActiveAdcRangeStart(0),
+		mActiveAdcRangeEnd(PedalCalibration::MaxAdcVal),
+		mAdcValRange(PedalCalibration::MaxAdcVal)
 	{ }
 
 	void Init(bool invert, 
@@ -66,6 +177,18 @@ public:
 			  int minVal, 
 			  int maxVal,
 			  bool doubleByte);
+
+	void InitToggle(int toggle, 
+					int zoneSize, 
+					int deadzoneSize, 
+					PatchCommands & onCmds, 
+					PatchCommands & offCmds)
+	{
+		if (toggle)
+			mTopToggle.Init(zoneSize, deadzoneSize, onCmds, offCmds);
+		else
+			mBottomToggle.Init(zoneSize, deadzoneSize, onCmds, offCmds);
+	}
 
 	void Calibrate(const PedalCalibration & calibrationSetting);
 	void AdcValueChange(IMainDisplay * mainDisplay, IMidiOut * midiOut, int newVal);
@@ -88,6 +211,10 @@ private:
 	int					mMinAdcVal;
 	int					mMaxAdcVal;
 	int					mAdcValRange;
+	int					mActiveAdcRangeStart;
+	int					mActiveAdcRangeEnd;
+	TopToggle			mTopToggle;
+	BottomToggle		mBottomToggle;
 };
 
 
@@ -108,6 +235,17 @@ public:
 	{
 		_ASSERTE(idx < ccsPerPedals);
 		mPedalControlData[idx].Init(invert, channel, controlNumber, minVal, maxVal, doubleByte);
+	}
+
+	void InitToggle(int idx,
+					int toggle, 
+					int zoneSize, 
+					int deadzoneSize, 
+					PatchCommands & onCmds, 
+					PatchCommands & offCmds)
+	{
+		_ASSERTE(idx < ccsPerPedals);
+		mPedalControlData[idx].InitToggle(toggle, zoneSize, deadzoneSize, onCmds, offCmds);
 	}
 
 	void Calibrate(const PedalCalibration & calibrationSetting)
@@ -171,6 +309,18 @@ public:
 		mPedals[pedal].Init(idx, invert, channel, controlNumber, minVal, maxVal, doubleByte);
 		mPedalEnables[pedal] = true;
 		mHasAnyNondefault = true;
+	}
+
+	void InitToggle(int pedal,
+					int idx,
+					int toggle, 
+					int zoneSize, 
+					int deadzoneSize, 
+					PatchCommands & onCmds, 
+					PatchCommands & offCmds)
+	{
+		_ASSERTE(pedal < PedalCount);
+		mPedals[pedal].InitToggle(idx, toggle, zoneSize, deadzoneSize, onCmds, offCmds);
 	}
 
 	void Calibrate(const PedalCalibration * calibrationSetting)
