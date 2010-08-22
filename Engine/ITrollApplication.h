@@ -32,7 +32,6 @@
 class ITrollApplication
 {
 public:
-	virtual void Refresh() = 0;
 	virtual void Reconnect() = 0;
 	virtual void ToggleTraceWindow() = 0;
 	virtual bool IsAdcOverridden(int adc) = 0;

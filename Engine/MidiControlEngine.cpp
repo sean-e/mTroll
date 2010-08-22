@@ -61,7 +61,6 @@ enum HardCodedSwitchNumbers
 	kModeAdcOverride,
 	kModeTestLeds,
 	kModeToggleLedInversion,
-	kModeRefresh,
 	kModeReconnect,
 	kModeToggleTraceWindow
 };
@@ -352,10 +351,6 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 				if (mSwitchDisplay)
 					mSwitchDisplay->InvertLeds(!mSwitchDisplay->IsInverted());
 				EscapeToDefaultMode();
-				break;
-			case kModeRefresh:
-				if (mApplication)
-					mApplication->Refresh();
 				break;
 			case kModeReconnect:
 				if (mApplication)
@@ -809,8 +804,6 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			mSwitchDisplay->SetSwitchDisplay(kModeTestLeds, true);
 			mSwitchDisplay->SetSwitchText(kModeToggleLedInversion, "Toggle LED Inversion");
 			mSwitchDisplay->SetSwitchDisplay(kModeToggleLedInversion, true);
-			mSwitchDisplay->SetSwitchText(kModeRefresh, "Refresh");
-			mSwitchDisplay->SetSwitchDisplay(kModeRefresh, true);
 			mSwitchDisplay->SetSwitchText(kModeReconnect, "Reconnect to Monome");
 			mSwitchDisplay->SetSwitchDisplay(kModeReconnect, true);
 			mSwitchDisplay->SetSwitchText(kModeToggleTraceWindow, "Toggle Trace Window");
