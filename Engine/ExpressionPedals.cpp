@@ -35,7 +35,7 @@
 bool
 PedalToggle::Activate()
 {
-	if (mPatch && mPatch->IsActive())
+	if (mPatch->IsActive())
 		return false;
 
 	mPatch->SwitchPressed(NULL, mSwitchDisplay);
@@ -45,7 +45,7 @@ PedalToggle::Activate()
 bool
 PedalToggle::Deactivate()
 {
-	if (!mPatch || !mPatch->IsActive())
+	if (!mPatch->IsActive())
 		return false;
 
 	mPatch->SwitchPressed(NULL, mSwitchDisplay);
@@ -417,7 +417,7 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 			else if (deadZone)
 				displayMsg << "pedal deadzone" << std::endl;
 
-			sHadStatus = showStatus && doCcSend;
+			sHadStatus = showStatus;
 			if (showStatus && doCcSend)
 			{
 				if (mIsDoubleByte)
