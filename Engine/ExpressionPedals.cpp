@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2009 Sean Echevarria
+ * Copyright (C) 2007-2010 Sean Echevarria
  *
  * This file is part of mTroll.
  *
