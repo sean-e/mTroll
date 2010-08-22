@@ -117,7 +117,7 @@ MidiControlEngine::AddBank(int number,
 void
 MidiControlEngine::AddPatch(Patch * patch)
 {
-	mPatches[patch->GetNumber()] = patch;	
+	mPatches[patch->GetNumber()] = patch;
 }
 
 void
@@ -191,14 +191,14 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 void
 MidiControlEngine::CalibrateExprSettings(const PedalCalibration * pedalCalibrationSettings)
 {
-	mGlobalPedals.Calibrate(pedalCalibrationSettings);
+	mGlobalPedals.Calibrate(pedalCalibrationSettings, this, mTrace);
 
 	for (Banks::iterator it = mBanks.begin();
 		it != mBanks.end();
 		++it)
 	{
 		PatchBank * curItem = *it;
-		curItem->CalibrateExprSettings(pedalCalibrationSettings);
+		curItem->CalibrateExprSettings(pedalCalibrationSettings, this, mTrace);
 	}
 }
 
@@ -924,4 +924,10 @@ MidiControlEngine::EscapeToDefaultMode()
 	ChangeMode(emBank);
 	mBankNavigationIndex = mActiveBankIndex;
 	NavigateBankRelative(0);
+}
+
+Patch *
+MidiControlEngine::GetPatch(int number)
+{
+	return mPatches[number];
 }

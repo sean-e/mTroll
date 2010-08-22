@@ -218,11 +218,19 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 			int enable = 1;
 			int minVal = 0;
 			int maxVal = PedalCalibration::MaxAdcVal;
+			int	bottomToggleZoneSize = -1;
+			int	bottomToggleDeadzoneSize = -1;
+			int	topToggleZoneSize = -1;
+			int	topToggleDeadzoneSize = -1;
 
 			pChildElem->QueryIntAttribute("inputNumber", &exprInputNumber);
 			pChildElem->QueryIntAttribute("enable", &enable);
 			pChildElem->QueryIntAttribute("minimumAdcVal", &minVal);
 			pChildElem->QueryIntAttribute("maximumAdcVal", &maxVal);
+			pChildElem->QueryIntAttribute("bottomToggleZoneSize", &bottomToggleZoneSize);
+			pChildElem->QueryIntAttribute("bottomToggleDeadzoneSize", &bottomToggleDeadzoneSize);
+			pChildElem->QueryIntAttribute("topToggleZoneSize", &topToggleZoneSize);
+			pChildElem->QueryIntAttribute("topToggleDeadzoneSize", &topToggleDeadzoneSize);
 
 			if (exprInputNumber > 0 &&
 				exprInputNumber <= ExpressionPedals::PedalCount)
@@ -232,7 +240,13 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 				else
 					mAdcEnables[exprInputNumber - 1] = adc_forceOff;
 
-				mAdcCalibration[exprInputNumber - 1].Init(minVal, maxVal);
+				PedalCalibration & pc = mAdcCalibration[exprInputNumber - 1];
+				pc.mMinAdcVal = minVal;
+				pc.mMaxAdcVal = maxVal;
+				pc.mBottomToggleZoneSize = bottomToggleZoneSize;
+				pc.mBottomToggleDeadzoneSize = bottomToggleDeadzoneSize;
+				pc.mTopToggleZoneSize = topToggleZoneSize;
+				pc.mTopToggleDeadzoneSize = topToggleDeadzoneSize;
 			}
 		}
 	}
@@ -708,6 +722,8 @@ EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem,
 	int enable = 1;
 	int invert = 0;
 	int isDoubleByte = 0;
+	int bottomTogglePatchNumber = -1;
+	int topTogglePatchNumber = -1;
 
 	childElem->QueryIntAttribute("inputNumber", &exprInputNumber);
 	childElem->QueryIntAttribute("assignmentNumber", &assignmentIndex);
@@ -731,6 +747,8 @@ EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem,
 	childElem->QueryIntAttribute("invert", &invert);
 	childElem->QueryIntAttribute("enable", &enable);
 	childElem->QueryIntAttribute("doubleByte", &isDoubleByte);
+	childElem->QueryIntAttribute("bottomTogglePatchNumber", &bottomTogglePatchNumber);
+	childElem->QueryIntAttribute("topTogglePatchNumber", &topTogglePatchNumber);
 
 	if (enable &&
 		exprInputNumber > 0 &&
@@ -742,7 +760,9 @@ EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem,
 		controller >= 0 &&
 		controller < 128)
 	{
-		pedals.Init(exprInputNumber - 1, assignmentIndex - 1, !!invert, channel - 1, controller, minVal, maxVal, !!isDoubleByte);
+		pedals.Init(exprInputNumber - 1, assignmentIndex - 1, !!invert, 
+			channel - 1, controller, minVal, maxVal, !!isDoubleByte, 
+			bottomTogglePatchNumber, topTogglePatchNumber);
 	}
 	else if (enable)
 	{

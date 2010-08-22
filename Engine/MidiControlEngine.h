@@ -63,6 +63,8 @@ public:
 	void					CompleteInit(const PedalCalibration * pedalCalibrationSettings);
 
 	ExpressionPedals &		GetPedals() {return mGlobalPedals;}
+	Patch *					GetPatch(int number);
+	ISwitchDisplay *		GetSwitchDisplay() const { return mSwitchDisplay; }
 
 	void					SwitchPressed(int switchNumber);
 	void					SwitchReleased(int switchNumber);

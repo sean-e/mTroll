@@ -27,14 +27,29 @@
 #include "ExpressionPedals.h"
 #include "IMainDisplay.h"
 #include "IMidiOut.h"
-#include "DeletePtr.h"
+#include "Patch.h"
+#include "MidiControlEngine.h"
+#include "ITraceDisplay.h"
 
 
-void
-PedalToggle::ClearCommands()
+bool
+PedalToggle::Activate()
 {
-	std::for_each(mToggleOn.begin(), mToggleOn.end(), DeletePtr<IPatchCommand>());
-	std::for_each(mToggleOff.begin(), mToggleOff.end(), DeletePtr<IPatchCommand>());
+	if (mPatch && mPatch->IsActive())
+		return false;
+
+	mPatch->SwitchPressed(NULL, mSwitchDisplay);
+	return true;
+}
+
+bool
+PedalToggle::Deactivate()
+{
+	if (!mPatch || !mPatch->IsActive())
+		return false;
+
+	mPatch->SwitchPressed(NULL, mSwitchDisplay);
+	return true;
 }
 
 void
@@ -43,7 +58,9 @@ ExpressionControl::Init(bool invert,
 						byte controlNumber, 
 						int minVal, 
 						int maxVal,
-						bool doubleByte)
+						bool doubleByte,
+						int bottomTogglePatchNumber,
+						int topTogglePatchNumber)
 {
 	mEnabled = true;
 	mInverted = invert;
@@ -77,41 +94,83 @@ ExpressionControl::Init(bool invert,
 	mMidiData[3] = 0xff;
 	mMidiData[4] = 0;
 
-	PedalCalibration pc;
-	Calibrate(pc);
+	mBottomToggle.mTogglePatchNumber = bottomTogglePatchNumber;
+	mTopToggle.mTogglePatchNumber = topTogglePatchNumber;
 }
 
 void
-ExpressionControl::Calibrate(const PedalCalibration & calibrationSetting)
+ExpressionControl::Calibrate(const PedalCalibration & calibrationSetting, 
+							 MidiControlEngine * eng, 
+							 ITraceDisplay * traceDisp)
 {
 	mMinAdcVal = calibrationSetting.mMinAdcVal;
 	mMaxAdcVal = calibrationSetting.mMaxAdcVal;
 	mAdcValRange = mMaxAdcVal - mMinAdcVal;
 
-	if (mBottomToggle.mToggleIsEnabled)
+	if (mBottomToggle.mTogglePatchNumber != -1)
 	{
-		mBottomToggle.mMinDeactivateAdcVal = mMinAdcVal;
-		mBottomToggle.mMaxDeactivateAdcVal = mBottomToggle.mMinDeactivateAdcVal + mBottomToggle.mActiveZoneSize;
-		mBottomToggle.mMinActivateAdcVal = mBottomToggle.mMaxDeactivateAdcVal + mBottomToggle.mDeadzoneSize;
-		mBottomToggle.mMaxActivateAdcVal = mMaxAdcVal;
-		mAdcValRange = mMaxAdcVal - mBottomToggle.mMinActivateAdcVal;
-	}
-
-	if (mTopToggle.mToggleIsEnabled)
-	{
-		mTopToggle.mMaxDeactivateAdcVal = mMaxAdcVal;
-		mTopToggle.mMinDeactivateAdcVal = mTopToggle.mMaxDeactivateAdcVal - mTopToggle.mActiveZoneSize;
-		mTopToggle.mMaxActivateAdcVal = mTopToggle.mMinDeactivateAdcVal - mTopToggle.mDeadzoneSize;
-		if (mBottomToggle.mToggleIsEnabled)
+		if (-1 == calibrationSetting.mBottomToggleZoneSize || -1 == calibrationSetting.mBottomToggleDeadzoneSize)
 		{
-			mTopToggle.mMinActivateAdcVal = mBottomToggle.mMinActivateAdcVal;
-			mBottomToggle.mMaxActivateAdcVal = mTopToggle.mMaxActivateAdcVal;
-			mAdcValRange = mTopToggle.mMaxActivateAdcVal - mBottomToggle.mMinActivateAdcVal;
+			if (traceDisp)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error setting up expression pedal bottom toggle - bottomToggleZoneSize and/or bottomToggleDeadzoneSize are not set" << std::endl << std::ends;
+				traceDisp->Trace(std::string(traceMsg.str()));
+			}
 		}
 		else
 		{
-			mTopToggle.mMinActivateAdcVal = mMinAdcVal;
-			mAdcValRange = mTopToggle.mMaxActivateAdcVal - mMinAdcVal;
+			mBottomToggle.mMinDeactivateAdcVal = mMinAdcVal;
+			mBottomToggle.mMaxDeactivateAdcVal = mBottomToggle.mMinDeactivateAdcVal + calibrationSetting.mBottomToggleZoneSize;
+			mBottomToggle.mMinActivateAdcVal = mBottomToggle.mMaxDeactivateAdcVal + calibrationSetting.mBottomToggleDeadzoneSize;
+			mBottomToggle.mMaxActivateAdcVal = mMaxAdcVal;
+			mAdcValRange = mMaxAdcVal - mBottomToggle.mMinActivateAdcVal;
+
+			if (eng)
+			{
+				mBottomToggle.mPatch = eng->GetPatch(mBottomToggle.mTogglePatchNumber);
+				mBottomToggle.mSwitchDisplay = eng->GetSwitchDisplay();
+				if (mBottomToggle.mPatch)
+					mBottomToggle.mToggleIsEnabled = true;
+			}
+		}
+	}
+
+	if (mTopToggle.mTogglePatchNumber != -1)
+	{
+		if (-1 == calibrationSetting.mTopToggleZoneSize || -1 == calibrationSetting.mTopToggleDeadzoneSize)
+		{
+			if (traceDisp)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error setting up expression pedal top toggle - topToggleZoneSize and/or topToggleDeadzoneSize are not set" << std::endl << std::ends;
+				traceDisp->Trace(std::string(traceMsg.str()));
+			}
+		}
+		else
+		{
+			mTopToggle.mMaxDeactivateAdcVal = mMaxAdcVal;
+			mTopToggle.mMinDeactivateAdcVal = mTopToggle.mMaxDeactivateAdcVal - calibrationSetting.mTopToggleZoneSize;
+			mTopToggle.mMaxActivateAdcVal = mTopToggle.mMinDeactivateAdcVal - calibrationSetting.mTopToggleDeadzoneSize;
+			if (mBottomToggle.mToggleIsEnabled)
+			{
+				mTopToggle.mMinActivateAdcVal = mBottomToggle.mMinActivateAdcVal;
+				mBottomToggle.mMaxActivateAdcVal = mTopToggle.mMaxActivateAdcVal;
+				mAdcValRange = mTopToggle.mMaxActivateAdcVal - mBottomToggle.mMinActivateAdcVal;
+			}
+			else
+			{
+				mTopToggle.mMinActivateAdcVal = mMinAdcVal;
+				mAdcValRange = mTopToggle.mMaxActivateAdcVal - mMinAdcVal;
+			}
+
+			if (eng)
+			{
+				mTopToggle.mPatch = eng->GetPatch(mTopToggle.mTogglePatchNumber);
+				mTopToggle.mSwitchDisplay = eng->GetSwitchDisplay();
+				if (mTopToggle.mPatch)
+					mTopToggle.mToggleIsEnabled = true;
+			}
 		}
 	}
 

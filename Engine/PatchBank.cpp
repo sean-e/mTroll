@@ -143,7 +143,7 @@ PatchBank::InitPatches(const MidiControlEngine::Patches & enginePatches,
 }
 
 void
-PatchBank::CalibrateExprSettings(const PedalCalibration * pedalCalibration)
+PatchBank::CalibrateExprSettings(const PedalCalibration * pedalCalibration, MidiControlEngine * eng, ITraceDisplay * traceDisp)
 {
 	for (PatchMaps::iterator it = mPatches.begin();
 		it != mPatches.end();
@@ -158,7 +158,7 @@ PatchBank::CalibrateExprSettings(const PedalCalibration * pedalCalibration)
 			if (curItem)
 			{
 				ExpressionPedals & pedals = curItem->mPatch->GetPedals();
-				pedals.Calibrate(pedalCalibration);
+				pedals.Calibrate(pedalCalibration, eng, traceDisp);
 			}
 		}
 	}

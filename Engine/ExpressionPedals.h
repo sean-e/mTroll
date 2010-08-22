@@ -25,12 +25,14 @@
 #ifndef ExpressionPedals_h__
 #define ExpressionPedals_h__
 
-#include <algorithm>
-#include <functional>
-#include "IMidiOut.h"
-#include "IPatchCommand.h"
+#include "..\Monome40h\IMonome40hInputSubscriber.h"
 
+class Patch;
 class IMainDisplay;
+class IMidiOut;
+class ISwitchDisplay;
+class MidiControlEngine;
+class ITraceDisplay;
 
 
 struct PedalCalibration
@@ -39,26 +41,26 @@ struct PedalCalibration
 
 	PedalCalibration() : 
 		mMinAdcVal(0),
-		mMaxAdcVal(MaxAdcVal)
+		mMaxAdcVal(MaxAdcVal),
+		mBottomToggleZoneSize(0),
+		mBottomToggleDeadzoneSize(0),
+		mTopToggleZoneSize(0),
+		mTopToggleDeadzoneSize(0)
 	{ }
-
-	void Init(int minVal, int maxVal)
-	{
-		mMinAdcVal = minVal;
-		mMaxAdcVal = maxVal;
-	}
 
 	int		mMinAdcVal;
 	int		mMaxAdcVal;
+	int		mBottomToggleZoneSize;
+	int		mBottomToggleDeadzoneSize;
+	int		mTopToggleZoneSize;
+	int		mTopToggleDeadzoneSize;
 };
 
 
 struct PedalToggle
 {
-	// used for setup
 	bool				mToggleIsEnabled;
-	int					mActiveZoneSize;	
-	int					mDeadzoneSize;
+	int					mTogglePatchNumber;
 
 	// runtime values calculated during pedal calibration
 	int					mMinActivateAdcVal;			// bottom of active zone that sends ccs and may result in exec of ON command
@@ -67,35 +69,19 @@ struct PedalToggle
 	int					mMaxDeactivateAdcVal;		// top of zone that execs OFF command
 
 	// runtime state
-	PatchCommands		mToggleOn, mToggleOff;
-	bool				mToggleIsOn;
+	Patch				* mPatch;
+	ISwitchDisplay		* mSwitchDisplay;
 
 	PedalToggle() :
 		mToggleIsEnabled(false),
-		mToggleIsOn(false),
-		mActiveZoneSize(0),
-		mDeadzoneSize(0),
 		mMinActivateAdcVal(0),
 		mMinDeactivateAdcVal(0),
 		mMaxActivateAdcVal(0),
-		mMaxDeactivateAdcVal(0)
+		mMaxDeactivateAdcVal(0),
+		mTogglePatchNumber(-1),
+		mPatch(NULL),
+		mSwitchDisplay(NULL)
 	{
-	}
-
-	~PedalToggle()
-	{
-		ClearCommands();
-	}
-
-	void Init(int zoneSize, int deadzoneSize, PatchCommands & onCmds, PatchCommands & offCmds)
-	{
-		mToggleIsEnabled = true;
-		ClearCommands();
-		mToggleIsOn = false;
-		mActiveZoneSize = zoneSize;
-		mDeadzoneSize = deadzoneSize;
-		mToggleOn.swap(onCmds);
-		mToggleOff.swap(offCmds);
 	}
 
 	bool IsInActivationZone(int adcVal) const
@@ -112,28 +98,8 @@ struct PedalToggle
 		return false;
 	}
 
-	bool Activate()
-	{
-		if (/*!mToggleIsEnabled ||*/ mToggleIsOn)
-			return false;
-
-		std::for_each(mToggleOn.begin(), mToggleOn.end(), std::mem_fun(&IPatchCommand::Exec));
-		mToggleIsOn = true;
-		return true;
-	}
-
-	bool Deactivate()
-	{
-		if (/*!mToggleIsEnabled ||*/ !mToggleIsOn)
-			return false;
-
-		std::for_each(mToggleOff.begin(), mToggleOff.end(), std::mem_fun(&IPatchCommand::Exec));
-		mToggleIsOn = false;
-		return true;
-	}
-
-private:
-	void ClearCommands();
+	bool Activate();
+	bool Deactivate();
 };
 
 
@@ -176,21 +142,11 @@ public:
 			  byte controlNumber, 
 			  int minVal, 
 			  int maxVal,
-			  bool doubleByte);
+			  bool doubleByte,
+			  int bottomTogglePatchNumber,
+			  int topTogglePatchNumber);
 
-	void InitToggle(int toggle, 
-					int zoneSize, 
-					int deadzoneSize, 
-					PatchCommands & onCmds, 
-					PatchCommands & offCmds)
-	{
-		if (toggle)
-			mTopToggle.Init(zoneSize, deadzoneSize, onCmds, offCmds);
-		else
-			mBottomToggle.Init(zoneSize, deadzoneSize, onCmds, offCmds);
-	}
-
-	void Calibrate(const PedalCalibration & calibrationSetting);
+	void Calibrate(const PedalCalibration & calibrationSetting, MidiControlEngine * eng, ITraceDisplay * traceDisp);
 	void AdcValueChange(IMainDisplay * mainDisplay, IMidiOut * midiOut, int newVal);
 	void Refire(IMainDisplay * mainDisplay, IMidiOut * midiOut);
 
@@ -231,27 +187,18 @@ public:
 			  byte controlNumber, 
 			  int minVal, 
 			  int maxVal,
-			  bool doubleByte)
+			  bool doubleByte,
+			  int bottomTogglePatchNumber = -1,
+			  int topTogglePatchNumber = -1)
 	{
 		_ASSERTE(idx < ccsPerPedals);
-		mPedalControlData[idx].Init(invert, channel, controlNumber, minVal, maxVal, doubleByte);
+		mPedalControlData[idx].Init(invert, channel, controlNumber, minVal, maxVal, doubleByte, bottomTogglePatchNumber, topTogglePatchNumber);
 	}
 
-	void InitToggle(int idx,
-					int toggle, 
-					int zoneSize, 
-					int deadzoneSize, 
-					PatchCommands & onCmds, 
-					PatchCommands & offCmds)
+	void Calibrate(const PedalCalibration & calibrationSetting, MidiControlEngine * eng, ITraceDisplay * traceDisp)
 	{
-		_ASSERTE(idx < ccsPerPedals);
-		mPedalControlData[idx].InitToggle(toggle, zoneSize, deadzoneSize, onCmds, offCmds);
-	}
-
-	void Calibrate(const PedalCalibration & calibrationSetting)
-	{
-		mPedalControlData[0].Calibrate(calibrationSetting);
-		mPedalControlData[1].Calibrate(calibrationSetting);
+		mPedalControlData[0].Calibrate(calibrationSetting, eng, traceDisp);
+		mPedalControlData[1].Calibrate(calibrationSetting, eng, traceDisp);
 	}
 
 	void AdcValueChange(IMainDisplay * mainDisplay, IMidiOut * midiOut, int newVal)
@@ -303,30 +250,20 @@ public:
 			  byte controlNumber, 
 			  int minVal, 
 			  int maxVal,
-			  bool doubleByte)
+			  bool doubleByte,
+			  int bottomTogglePatchNumber = -1,
+			  int topTogglePatchNumber = -1)
 	{
 		_ASSERTE(pedal < PedalCount);
-		mPedals[pedal].Init(idx, invert, channel, controlNumber, minVal, maxVal, doubleByte);
+		mPedals[pedal].Init(idx, invert, channel, controlNumber, minVal, maxVal, doubleByte, bottomTogglePatchNumber, topTogglePatchNumber);
 		mPedalEnables[pedal] = true;
 		mHasAnyNondefault = true;
 	}
 
-	void InitToggle(int pedal,
-					int idx,
-					int toggle, 
-					int zoneSize, 
-					int deadzoneSize, 
-					PatchCommands & onCmds, 
-					PatchCommands & offCmds)
-	{
-		_ASSERTE(pedal < PedalCount);
-		mPedals[pedal].InitToggle(idx, toggle, zoneSize, deadzoneSize, onCmds, offCmds);
-	}
-
-	void Calibrate(const PedalCalibration * calibrationSetting)
+	void Calibrate(const PedalCalibration * calibrationSetting, MidiControlEngine * eng, ITraceDisplay * traceDisp)
 	{
 		for (int idx = 0; idx < PedalCount; ++idx)
-			mPedals[idx].Calibrate(calibrationSetting[idx]);
+			mPedals[idx].Calibrate(calibrationSetting[idx], eng, traceDisp);
 	}
 
 	bool AdcValueChange(IMainDisplay * mainDisplay, 
