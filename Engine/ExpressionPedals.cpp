@@ -197,31 +197,26 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 
 	int newCcVal;
 	bool showStatus = false;
-	bool doCcSend;
+	bool doCcSend = true;
 	bool bottomActivated = false;
 	bool bottomDeactivated = false;
 	bool topActivated = false;
 	bool topDeactivated = false;
-	bool deadZone = false;
+	bool bottomDeadzone = false;
+	bool topDeadzone = false;
 
 	// unaffected by toggle zones
 	const int cappedAdcVal = newAdcVal < mMinAdcVal ? 
 			mMinAdcVal : 
 			(newAdcVal > mMaxAdcVal) ? mMaxAdcVal : newAdcVal;
 
+	// normal 127 range is 1023
+	newCcVal = ((cappedAdcVal - mActiveAdcRangeStart) * mCcValRange) / mAdcValRange;
+
 	if (mBottomToggle.mToggleIsEnabled || mTopToggle.mToggleIsEnabled)
 	{
-		if (cappedAdcVal >= mActiveAdcRangeStart && cappedAdcVal <= mActiveAdcRangeEnd)
-		{
-			// normal 127 range is 1023
-			newCcVal = ((cappedAdcVal - mActiveAdcRangeStart) * mCcValRange) / mAdcValRange;
-			doCcSend = true;
-		}
-		else
-		{
+		if (!(cappedAdcVal >= mActiveAdcRangeStart && cappedAdcVal <= mActiveAdcRangeEnd))
 			doCcSend = false;
-			newCcVal = -1;
-		}
 
 		if (mBottomToggle.mToggleIsEnabled)
 		{
@@ -235,12 +230,16 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 			{
 				_ASSERTE(!doCcSend);
 				if (mBottomToggle.Deactivate())
+				{
 					showStatus = bottomDeactivated = true;
+					newCcVal = mMinCcVal;
+				}
 			}
 			else if (mBottomToggle.IsInDeadzone(cappedAdcVal))
 			{
 				_ASSERTE(!doCcSend);
-				showStatus = deadZone = true;
+				showStatus = bottomDeadzone = true;
+				newCcVal = mMinCcVal;
 			}
 			else
 			{
@@ -248,7 +247,7 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 			}
 		}
 
-		if (!deadZone && !bottomDeactivated && mTopToggle.mToggleIsEnabled)
+		if (!bottomDeadzone && !bottomDeactivated && mTopToggle.mToggleIsEnabled)
 		{
 			if (mTopToggle.IsInActivationZone(cappedAdcVal))
 			{
@@ -260,12 +259,16 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 			{
 				_ASSERTE(!doCcSend);
 				if (mTopToggle.Deactivate())
+				{
 					showStatus = topDeactivated = true;
+					newCcVal = mMaxCcVal;
+				}
 			}
 			else if (mTopToggle.IsInDeadzone(cappedAdcVal))
 			{
 				_ASSERTE(!doCcSend);
-				showStatus = deadZone = true;
+				showStatus = topDeadzone = true;
+				newCcVal = mMaxCcVal;
 			}
 			else
 			{
@@ -273,49 +276,48 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 			}
 		}
 	}
-	else
+
+	if (mMinCcVal)
+		newCcVal += mMinCcVal;
+
+	if (newCcVal > mMaxCcVal)
+		newCcVal = mMaxCcVal;
+	else if (newCcVal < mMinCcVal)
+		newCcVal = mMinCcVal;
+
+	// only fire midi indicator at top and bottom of range -
+	// easier to see that top and bottom hit on controller than on pc
+	if (!showStatus)
+		showStatus = newCcVal == mMinCcVal || newCcVal == mMaxCcVal;
+
+	if (mIsDoubleByte)
 	{
-		// no toggle
-		// normal 127 range is 1023
-		newCcVal = ((cappedAdcVal - mMinAdcVal) * mCcValRange) / mAdcValRange;
-		doCcSend = true;
-	}
+		if (mInverted)
+			newCcVal = 16383 - newCcVal;
 
-	if (doCcSend)
-	{
-		if (mMinCcVal)
-			newCcVal += mMinCcVal;
+		byte newFineCcVal = newCcVal & 0x7F; // LSB
+		byte newCoarseCcVal = (newCcVal >> 7) & 0x7f; // MSB
 
-		if (newCcVal > mMaxCcVal)
-			newCcVal = mMaxCcVal;
-		else if (newCcVal < mMinCcVal)
-			newCcVal = mMinCcVal;
-
-		// only fire midi indicator at top and bottom of range -
-		// easier to see that top and bottom hit on controller than on pc
-		if (!showStatus)
-			showStatus = newCcVal == mMinCcVal || newCcVal == mMaxCcVal;
-
-		if (mIsDoubleByte)
+		if (bottomDeadzone || bottomDeactivated || topDeadzone || topDeactivated)
 		{
-			if (mInverted)
-				newCcVal = 16383 - newCcVal;
-
-			byte newFineCcVal = newCcVal & 0x7F; // LSB
-			byte newCoarseCcVal = (newCcVal >> 7) & 0x7f; // MSB
-
+			if (mMidiData[2] != newCoarseCcVal || mMidiData[3] != newFineCcVal)
+				doCcSend = true; // make sure min/maxCcVal is sent before deadzone entry
+		}
+		else if (mMidiData[2] == newCoarseCcVal && (mMidiData[3] == newFineCcVal || mMidiData[4] == newFineCcVal) &&
+			!topActivated && !bottomActivated)
+		{
 			// jitter control
-			if (mMidiData[2] == newCoarseCcVal && (mMidiData[3] == newFineCcVal || mMidiData[4] == newFineCcVal) &&
-				!topActivated && !bottomActivated && !topDeactivated && !bottomDeactivated)
+			if (0 == newFineCcVal || 127 == newFineCcVal)
 			{
-				if (0 == newFineCcVal || 127 == newFineCcVal)
-				{
-					if (abs(mMidiData[3] - mMidiData[4]) < 3)
-						return;
-				}
-				else
+				if (abs(mMidiData[3] - mMidiData[4]) < 3)
 					return;
 			}
+			else
+				return;
+		}
+
+		if (doCcSend)
+		{
 #if 0
 			byte coarseCh = mMidiData[1];
 			byte fineCh = coarseCh + 32;
@@ -366,24 +368,32 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 			mMidiData[3] = newFineCcVal;
 			mMidiData[2] = newCoarseCcVal;
 		}
-		else
-		{
-			if (mInverted)
-				newCcVal = 127 - newCcVal;
+	}
+	else
+	{
+		if (mInverted)
+			newCcVal = 127 - newCcVal;
 
+		if (bottomDeadzone || bottomDeactivated || topDeadzone || topDeactivated)
+		{
+			if (mMidiData[2] != newCcVal)
+				doCcSend = true; // make sure min/maxCcVal is sent before deadzone entry
+		}
+		else if ((mMidiData[2] == newCcVal || mMidiData[3] == newCcVal) &&
+			!topActivated && !bottomActivated)
+		{
 			// jitter control
-			if ((mMidiData[2] == newCcVal || mMidiData[3] == newCcVal) &&
-				!topActivated && !bottomActivated && !topDeactivated && !bottomDeactivated)
+			if (mMinCcVal == newCcVal || mMaxCcVal == newCcVal)
 			{
-				if (0 == newCcVal || 127 == newCcVal)
-				{
-					if (abs(mMidiData[2] - mMidiData[3]) < 3)
-						return;
-				}
-				else
+				if (abs(mMidiData[2] - mMidiData[3]) < 3)
 					return;
 			}
+			else
+				return;
+		}
 
+		if (doCcSend)
+		{
 			mMidiData[3] = mMidiData[2];
 			mMidiData[2] = newCcVal;
 			midiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], showStatus);
@@ -414,7 +424,7 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 				else if (newCcVal == mMaxCcVal)
 					displayMsg << "|||||| MAX ||||||" << std::endl;
 			}
-			else if (deadZone)
+			if (bottomDeadzone || topDeadzone)
 				displayMsg << "pedal deadzone" << std::endl;
 
 			sHadStatus = showStatus;
