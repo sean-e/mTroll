@@ -24,12 +24,16 @@
 
 #include <string>
 #include <strstream>
+#include <complex>
 #include "ExpressionPedals.h"
 #include "IMainDisplay.h"
 #include "IMidiOut.h"
 #include "Patch.h"
 #include "MidiControlEngine.h"
 #include "ITraceDisplay.h"
+
+
+#define PEDAL_TEST
 
 
 bool
@@ -53,26 +57,20 @@ PedalToggle::Deactivate()
 }
 
 void
-ExpressionControl::Init(bool invert, 
-						byte channel, 
-						byte controlNumber, 
-						int minVal, 
-						int maxVal,
-						bool doubleByte,
-						int bottomTogglePatchNumber,
-						int topTogglePatchNumber)
+ExpressionControl::Init(const InitParams & params)
 {
 	mEnabled = true;
-	mInverted = invert;
-	mChannel = channel;
-	mControlNumber = controlNumber;
-	mMinCcVal = minVal < maxVal ? minVal : maxVal;
+	mInverted = params.mInvert;
+	mChannel = params.mChannel;
+	mControlNumber = params.mControlNumber;
+	mMinCcVal = params.mMinVal < params.mMaxVal ? params.mMinVal : params.mMaxVal;
 	if (mMinCcVal < 0)
 		mMinCcVal = 0;
-	mMaxCcVal = maxVal > minVal ? maxVal : minVal;
+	mMaxCcVal = params.mMaxVal > params.mMinVal ? params.mMaxVal : params.mMinVal;
+	mSweepCurve = params.mCurve;
 
 	// http://www.midi.org/techspecs/midimessages.php
-	if (doubleByte && controlNumber >= 0 && controlNumber < 32)
+	if (params.mDoubleByte && params.mControlNumber >= 0 && params.mControlNumber < 32)
 	{
 		mIsDoubleByte = true;
 		if (mMaxCcVal > 16383)
@@ -94,8 +92,8 @@ ExpressionControl::Init(bool invert,
 	mMidiData[3] = 0xff;
 	mMidiData[4] = 0;
 
-	mBottomToggle.mTogglePatchNumber = bottomTogglePatchNumber;
-	mTopToggle.mTogglePatchNumber = topTogglePatchNumber;
+	mBottomToggle.mTogglePatchNumber = params.mBottomTogglePatchNumber;
+	mTopToggle.mTogglePatchNumber = params.mTopTogglePatchNumber;
 }
 
 void
@@ -210,8 +208,76 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 			mMinAdcVal : 
 			(newAdcVal > mMaxAdcVal) ? mMaxAdcVal : newAdcVal;
 
-	// normal 127 range is 1023
-	newCcVal = ((cappedAdcVal - mActiveAdcRangeStart) * mCcValRange) / mAdcValRange;
+	int adcVal = cappedAdcVal - mActiveAdcRangeStart;
+	switch (mSweepCurve)
+	{
+	case scLinear:
+		// normal 127 range is 1023
+		newCcVal = (adcVal * mCcValRange) / mAdcValRange;
+		break;
+	case scAudioLog:
+		{
+		// http://www.maxim-ic.com/app-notes/index.mvp/id/3996
+		// http://en.wikipedia.org/wiki/Logarithm
+		// http://beavisaudio.com/techpages/Pots/
+		if (adcVal < 1)
+			adcVal = 1;
+		if (adcVal >= mAdcValRange)
+			adcVal = mAdcValRange - 1;
+
+		double tmp_b = (mAdcValRange - adcVal) / (double)mAdcValRange;
+		double dbVal = 20 * log10(tmp_b);
+		newCcVal = (int)((dbVal * mCcValRange) / -60);
+		}
+		break;
+	case scPseudoReverseAudioLog:
+		{
+		// made this up myself while trying to do reverseAudioLog
+		double tmp_b = (mAdcValRange - adcVal) / (double)mAdcValRange;
+		double dbVal = pow((mCcValRange + 1), tmp_b);
+		newCcVal = mCcValRange - (int)((dbVal * mCcValRange) / (mCcValRange + 1));
+		}
+		break;
+	case scReverseAudioLog:
+		{
+		// take audioLog and then reverse and mirror using linear sweep as mirror line
+		// is there an alternate way to do this?
+		int oppositeAdcVal = mAdcValRange - adcVal;
+		const int oppositeLinearCcVal = (oppositeAdcVal * mCcValRange) / mAdcValRange;
+
+		// opposite is audioLog
+		if (oppositeAdcVal < 1)
+			oppositeAdcVal = 1;
+		if (oppositeAdcVal >= mAdcValRange)
+			oppositeAdcVal = mAdcValRange - 1;
+
+		double tmp_b = (mAdcValRange - oppositeAdcVal) / (double)mAdcValRange;
+		double dbVal = 20 * log10(tmp_b);
+		const int oppositeNewCcVal = (int)((dbVal * mCcValRange) / -60);
+
+		newCcVal = (adcVal * mCcValRange) / mAdcValRange; // linear calc
+		newCcVal += (oppositeLinearCcVal - oppositeNewCcVal); // add opposite offset
+		}
+		break;
+	case scPseudoAudioLog:
+		{
+		// take pseudoReverseAudioLog and then reverse and mirror using linear as mirror line
+		// is there an alternate way to do this?
+		int oppositeAdcVal = mAdcValRange - adcVal;
+		const int oppositeLinearCcVal = (oppositeAdcVal * mCcValRange) / mAdcValRange;
+			
+		double tmp_b = (mAdcValRange - oppositeAdcVal) / (double)mAdcValRange;
+		double dbVal = pow((mCcValRange + 1), tmp_b);
+		const int oppositeNewCcVal = mCcValRange - (int)((dbVal * mCcValRange) / (mCcValRange + 1));
+
+		newCcVal = (adcVal * mCcValRange) / mAdcValRange; // linear calc
+		newCcVal -= (oppositeNewCcVal - oppositeLinearCcVal); // subtract opposite offset
+		}
+		break;
+	default:
+		_ASSERTE(!"unhandled sweep");
+		return;
+	}
 
 	if (mBottomToggle.mToggleIsEnabled || mTopToggle.mToggleIsEnabled)
 	{
@@ -403,7 +469,9 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 	if (mainDisplay)
 	{
 		static bool sHadStatus = false;
-//		showStatus = true; // for testing
+#ifdef PEDAL_TEST
+		showStatus = true;
+#endif
 		if (showStatus || sHadStatus)
 		{
 			std::strstream displayMsg;
@@ -436,7 +504,14 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 					displayMsg << "adc ch(" << (int) mChannel << "), ctrl(" << ((int) mControlNumber) + 31 << "): " << newAdcVal << " -> " << (int) mMidiData[3] << std::endl << std::ends;
 				}
 				else
+				{
+#ifdef PEDAL_TEST
+					// to ease insert into spreadsheet
+					displayMsg << newAdcVal << "," << (int) mMidiData[2] << std::endl << std::ends;
+#else
 					displayMsg << "adc ch(" << (int) mChannel << "), ctrl(" << (int) mControlNumber << "): " << newAdcVal << " -> " << (int) mMidiData[2] << std::endl << std::ends;
+#endif
+				}
 			}
 			else
 				displayMsg << std::endl << std::ends; // clear display
@@ -475,17 +550,18 @@ ExpressionControl::Refire(IMainDisplay * mainDisplay,
 
 
 
-#if 0 // pedal logic testing
+#ifdef PEDAL_TEST // pedal logic testing
 
 #include <windows.h>
 #undef TextOut		// stupid unicode support defines TextOut to TextOutW
 
-class TestDisplay : public IMainDisplay
+class TestDisplay : public IMainDisplay, public ITraceDisplay
 {
 public:
 	TestDisplay() { }
 	virtual void TextOut(const std::string & txt) { OutputDebugStringA(txt.c_str()); }
 	virtual void ClearDisplay() { }
+	virtual void Trace(const std::string & txt) { TextOut(txt); }
 };
 
 class TestMidiOut : public IMidiOut
@@ -511,24 +587,18 @@ void TestPedals()
 	TestMidiOut midi;
 
 	PedalCalibration calib;
-	calib.Init(100, 1000);
-//	calib.Init(0, PedalCalibration::MaxAdcVal);
-
 	ExpressionControl ctl;
-	ctl.Init(false, 1, 1, 0, 127, false);
-
-	PatchCommands onCmds, offCmds;
-	ctl.InitToggle(0, 25, 50, onCmds, offCmds);
-	ctl.InitToggle(1, 25, 50, onCmds, offCmds);
-
-	ctl.Calibrate(calib);
+	ExpressionControl::InitParams params;
+	params.mCurve = ExpressionControl::scPseudoAudioLog;
+	ctl.Init(params);
+	ctl.Calibrate(calib, NULL, &disp);
 
 	int idx;
 	for (idx = 0; idx <= PedalCalibration::MaxAdcVal; ++idx)
 		ctl.AdcValueChange(&disp, &midi, idx);
 
-	for (idx = PedalCalibration::MaxAdcVal + 1; idx > 0; )
-		ctl.AdcValueChange(&disp, &midi, --idx);
+// 	for (idx = PedalCalibration::MaxAdcVal + 1; idx > 0; )
+// 		ctl.AdcValueChange(&disp, &midi, --idx);
 }
 
 #endif

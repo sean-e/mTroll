@@ -128,8 +128,36 @@ struct TopToggle : public PedalToggle
 class ExpressionControl
 {
 public:
+	enum SweepCurve { scLinear, scAudioLog, scPseudoAudioLog, scPseudoReverseAudioLog, scReverseAudioLog, scMaxCurve = scReverseAudioLog };
+
+	struct InitParams
+	{
+		InitParams() :
+		  mInvert(false),
+		  mChannel(1),
+		  mControlNumber(1),
+		  mMinVal(0),
+		  mMaxVal(127),
+		  mDoubleByte(false),
+		  mCurve(scLinear),
+		  mBottomTogglePatchNumber(-1),
+		  mTopTogglePatchNumber(-1)
+		{ }
+
+		bool mInvert;
+		byte mChannel;
+		byte mControlNumber;
+		int mMinVal;
+		int mMaxVal;
+		bool mDoubleByte;
+		SweepCurve mCurve;
+		int mBottomTogglePatchNumber;
+		int mTopTogglePatchNumber;
+	};
+
 	ExpressionControl() : 
 		mEnabled(false), 
+		mSweepCurve(scLinear),
 		mMinAdcVal(0), 
 		mMaxAdcVal(PedalCalibration::MaxAdcVal), 
 		mActiveAdcRangeStart(0),
@@ -137,14 +165,7 @@ public:
 		mAdcValRange(PedalCalibration::MaxAdcVal)
 	{ }
 
-	void Init(bool invert, 
-			  byte channel, 
-			  byte controlNumber, 
-			  int minVal, 
-			  int maxVal,
-			  bool doubleByte,
-			  int bottomTogglePatchNumber,
-			  int topTogglePatchNumber);
+	void Init(const InitParams & params);
 
 	void Calibrate(const PedalCalibration & calibrationSetting, MidiControlEngine * eng, ITraceDisplay * traceDisp);
 	void AdcValueChange(IMainDisplay * mainDisplay, IMidiOut * midiOut, int newVal);
@@ -159,6 +180,7 @@ private:
 	int					mMinCcVal;
 	int					mMaxCcVal;
 	int					mCcValRange;
+	SweepCurve			mSweepCurve;
 	// 4 bytes used for single byte controllers
 	// 5 bytes used for double byte controllers
 	// each get one extra byte to reduce adc jitter
@@ -182,17 +204,10 @@ public:
 	ExpressionPedal() { }
 
 	void Init(int idx, 
-			  bool invert, 
-			  byte channel, 
-			  byte controlNumber, 
-			  int minVal, 
-			  int maxVal,
-			  bool doubleByte,
-			  int bottomTogglePatchNumber = -1,
-			  int topTogglePatchNumber = -1)
+			  const ExpressionControl::InitParams & params)
 	{
 		_ASSERTE(idx < ccsPerPedals);
-		mPedalControlData[idx].Init(invert, channel, controlNumber, minVal, maxVal, doubleByte, bottomTogglePatchNumber, topTogglePatchNumber);
+		mPedalControlData[idx].Init(params);
 	}
 
 	void Calibrate(const PedalCalibration & calibrationSetting, MidiControlEngine * eng, ITraceDisplay * traceDisp)
@@ -245,17 +260,10 @@ public:
 
 	void Init(int pedal, 
 			  int idx, 
-			  bool invert, 
-			  byte channel, 
-			  byte controlNumber, 
-			  int minVal, 
-			  int maxVal,
-			  bool doubleByte,
-			  int bottomTogglePatchNumber = -1,
-			  int topTogglePatchNumber = -1)
+			  const ExpressionControl::InitParams & params)
 	{
 		_ASSERTE(pedal < PedalCount);
-		mPedals[pedal].Init(idx, invert, channel, controlNumber, minVal, maxVal, doubleByte, bottomTogglePatchNumber, topTogglePatchNumber);
+		mPedals[pedal].Init(idx, params);
 		mPedalEnables[pedal] = true;
 		mHasAnyNondefault = true;
 	}

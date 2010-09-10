@@ -724,6 +724,7 @@ EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem,
 	int isDoubleByte = 0;
 	int bottomTogglePatchNumber = -1;
 	int topTogglePatchNumber = -1;
+	ExpressionControl::SweepCurve curve = ExpressionControl::scLinear;
 
 	childElem->QueryIntAttribute("inputNumber", &exprInputNumber);
 	childElem->QueryIntAttribute("assignmentNumber", &assignmentIndex);
@@ -750,6 +751,22 @@ EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem,
 	childElem->QueryIntAttribute("bottomTogglePatchNumber", &bottomTogglePatchNumber);
 	childElem->QueryIntAttribute("topTogglePatchNumber", &topTogglePatchNumber);
 
+	bool curveOk = true;
+	std::string tmp;
+	childElem->QueryValueAttribute("sweepCurve", &tmp);
+	if (tmp == "linear" || tmp == "Linear")
+		curve = ExpressionControl::scLinear;
+	else if (tmp == "audioLog" || tmp == "audiolog" || tmp == "AudioLog")
+		curve = ExpressionControl::scAudioLog;
+	else if (tmp == "reverseAudioLog" || tmp == "reverseaudiolog" || tmp == "ReverseAudioLog")
+		curve = ExpressionControl::scReverseAudioLog;
+	else if (tmp == "pseudoReverseAudioLog" || tmp == "pseudoreverseaudioLog" || tmp == "PseudoReverseAudioLog")
+		curve = ExpressionControl::scPseudoReverseAudioLog;
+	else if (tmp == "pseudoAudioLog" || tmp == "pseudoaudioLog" || tmp == "PseudoAudioLog")
+		curve = ExpressionControl::scPseudoAudioLog;
+	else if (tmp.length())
+		curveOk = false;
+
 	if (enable &&
 		exprInputNumber > 0 &&
 		exprInputNumber <= ExpressionPedals::PedalCount &&
@@ -758,11 +775,20 @@ EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem,
 		channel > 0 &&
 		channel < 17 &&
 		controller >= 0 &&
-		controller < 128)
+		controller < 128 &&
+		curveOk)
 	{
-		pedals.Init(exprInputNumber - 1, assignmentIndex - 1, !!invert, 
-			channel - 1, controller, minVal, maxVal, !!isDoubleByte, 
-			bottomTogglePatchNumber, topTogglePatchNumber);
+		ExpressionControl::InitParams initParams;
+		initParams.mInvert = !!invert;
+		initParams.mChannel = channel - 1;
+		initParams.mControlNumber = controller;
+		initParams.mMinVal = minVal;
+		initParams.mMaxVal = maxVal;
+		initParams.mDoubleByte = !!isDoubleByte;
+		initParams.mBottomTogglePatchNumber = bottomTogglePatchNumber;
+		initParams.mTopTogglePatchNumber = topTogglePatchNumber;
+		initParams.mCurve = curve;
+		pedals.Init(exprInputNumber - 1, assignmentIndex - 1, initParams);
 	}
 	else if (enable)
 	{
