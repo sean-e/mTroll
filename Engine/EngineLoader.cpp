@@ -754,18 +754,25 @@ EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem,
 	bool curveOk = true;
 	std::string tmp;
 	childElem->QueryValueAttribute("sweepCurve", &tmp);
-	if (tmp == "linear" || tmp == "Linear")
-		curve = ExpressionControl::scLinear;
-	else if (tmp == "audioLog" || tmp == "audiolog" || tmp == "AudioLog")
-		curve = ExpressionControl::scAudioLog;
-	else if (tmp == "reverseAudioLog" || tmp == "reverseaudiolog" || tmp == "ReverseAudioLog")
-		curve = ExpressionControl::scReverseAudioLog;
-	else if (tmp == "pseudoReverseAudioLog" || tmp == "pseudoreverseaudioLog" || tmp == "PseudoReverseAudioLog")
-		curve = ExpressionControl::scPseudoReverseAudioLog;
-	else if (tmp == "pseudoAudioLog" || tmp == "pseudoaudioLog" || tmp == "PseudoAudioLog")
-		curve = ExpressionControl::scPseudoAudioLog;
-	else if (tmp.length())
-		curveOk = false;
+	if (tmp.length())
+	{
+		if (!::_stricmp(tmp.c_str(), "linear"))
+			curve = ExpressionControl::scLinear;
+		else if (!::_stricmp(tmp.c_str(), "AudioLog"))
+			curve = ExpressionControl::scAudioLog;
+		else if (!::_stricmp(tmp.c_str(), "ShallowLog"))
+			curve = ExpressionControl::scShallowLog;
+		else if (!::_stricmp(tmp.c_str(), "ReverseShallowLog"))
+			curve = ExpressionControl::scReverseShallowLog;
+		else if (!::_stricmp(tmp.c_str(), "ReverseAudioLog"))
+			curve = ExpressionControl::scReverseAudioLog;
+		else if (!::_stricmp(tmp.c_str(), "ReversePseudoAudioLog"))
+			curve = ExpressionControl::scReversePseudoAudioLog;
+		else if (!::_stricmp(tmp.c_str(), "PseudoAudioLog"))
+			curve = ExpressionControl::scPseudoAudioLog;
+		else
+			curveOk = false;
+	}
 
 	if (enable &&
 		exprInputNumber > 0 &&

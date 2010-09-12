@@ -33,7 +33,7 @@
 #include "ITraceDisplay.h"
 
 
-#define PEDAL_TEST
+//#define PEDAL_TEST
 
 
 bool
@@ -216,21 +216,22 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 		newCcVal = (adcVal * mCcValRange) / mAdcValRange;
 		break;
 	case scAudioLog:
-		{
+	case scShallowLog:
 		// http://www.maxim-ic.com/app-notes/index.mvp/id/3996
 		// http://en.wikipedia.org/wiki/Logarithm
 		// http://beavisaudio.com/techpages/Pots/
 		if (adcVal < 1)
-			adcVal = 1;
-		if (adcVal >= mAdcValRange)
-			adcVal = mAdcValRange - 1;
-
-		double tmp_b = (mAdcValRange - adcVal) / (double)mAdcValRange;
-		double dbVal = 20 * log10(tmp_b);
-		newCcVal = (int)((dbVal * mCcValRange) / -60);
+			newCcVal = 0;
+		else if (adcVal >= mAdcValRange)
+			newCcVal = mCcValRange;
+		else
+		{
+			double tmp_b = (mAdcValRange - adcVal) / (double)mAdcValRange;
+			double dbVal = log10(tmp_b); // was * 20
+			newCcVal = (int)((dbVal * mCcValRange) / (scAudioLog == mSweepCurve ? -3 : -2.25)); // was / -60
 		}
 		break;
-	case scPseudoReverseAudioLog:
+	case scReversePseudoAudioLog:
 		{
 		// made this up myself while trying to do reverseAudioLog
 		double tmp_b = (mAdcValRange - adcVal) / (double)mAdcValRange;
@@ -239,24 +240,27 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 		}
 		break;
 	case scReverseAudioLog:
+	case scReverseShallowLog:
 		{
 		// take audioLog and then reverse and mirror using linear sweep as mirror line
 		// is there an alternate way to do this?
 		int oppositeAdcVal = mAdcValRange - adcVal;
-		const int oppositeLinearCcVal = (oppositeAdcVal * mCcValRange) / mAdcValRange;
 
 		// opposite is audioLog
 		if (oppositeAdcVal < 1)
-			oppositeAdcVal = 1;
+			newCcVal = mCcValRange;
 		if (oppositeAdcVal >= mAdcValRange)
-			oppositeAdcVal = mAdcValRange - 1;
+			newCcVal = 0;
+		else
+		{
+			const int oppositeLinearCcVal = (oppositeAdcVal * mCcValRange) / mAdcValRange;
+			double tmp_b = (mAdcValRange - oppositeAdcVal) / (double)mAdcValRange;
+			double dbVal = log10(tmp_b); // was * 20
+			const int oppositeNewCcVal = (int)((dbVal * mCcValRange) / (scReverseAudioLog == mSweepCurve ? -3 : -2.25)); // was / -60
 
-		double tmp_b = (mAdcValRange - oppositeAdcVal) / (double)mAdcValRange;
-		double dbVal = 20 * log10(tmp_b);
-		const int oppositeNewCcVal = (int)((dbVal * mCcValRange) / -60);
-
-		newCcVal = (adcVal * mCcValRange) / mAdcValRange; // linear calc
-		newCcVal += (oppositeLinearCcVal - oppositeNewCcVal); // add opposite offset
+			newCcVal = (adcVal * mCcValRange) / mAdcValRange; // linear calc
+			newCcVal += (oppositeLinearCcVal - oppositeNewCcVal); // add opposite offset
+		}
 		}
 		break;
 	case scPseudoAudioLog:
@@ -507,7 +511,7 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 				{
 #ifdef PEDAL_TEST
 					// to ease insert into spreadsheet
-					displayMsg << newAdcVal << "," << (int) mMidiData[2] << std::endl << std::ends;
+					displayMsg << newAdcVal << ", " << (int) mMidiData[2] << std::endl << std::ends;
 #else
 					displayMsg << "adc ch(" << (int) mChannel << "), ctrl(" << (int) mControlNumber << "): " << newAdcVal << " -> " << (int) mMidiData[2] << std::endl << std::ends;
 #endif
@@ -587,9 +591,13 @@ void TestPedals()
 	TestMidiOut midi;
 
 	PedalCalibration calib;
+// 	calib.mMaxAdcVal = 900;
+// 	calib.mMinAdcVal = 200;
 	ExpressionControl ctl;
 	ExpressionControl::InitParams params;
-	params.mCurve = ExpressionControl::scPseudoAudioLog;
+	params.mCurve = ExpressionControl::scReversePseudoAudioLog;
+// 	params.mMinVal = 20;
+// 	params.mMaxVal = 100;
 	ctl.Init(params);
 	ctl.Calibrate(calib, NULL, &disp);
 

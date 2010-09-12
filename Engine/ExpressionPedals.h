@@ -128,7 +128,7 @@ struct TopToggle : public PedalToggle
 class ExpressionControl
 {
 public:
-	enum SweepCurve { scLinear, scAudioLog, scPseudoAudioLog, scPseudoReverseAudioLog, scReverseAudioLog, scMaxCurve = scReverseAudioLog };
+	enum SweepCurve { scLinear, scAudioLog, scShallowLog, scPseudoAudioLog, scReverseAudioLog, scReverseShallowLog, scReversePseudoAudioLog };
 
 	struct InitParams
 	{
