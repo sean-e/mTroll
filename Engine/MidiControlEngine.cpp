@@ -24,6 +24,7 @@
 
 #include <algorithm>
 #include <strstream>
+#include <time.h>
 #include "MidiControlEngine.h"
 #include "PatchBank.h"
 #include "IMainDisplay.h"
@@ -53,16 +54,15 @@ SortByBankNumber(const PatchBank* lhs, const PatchBank* rhs)
 // These are the switch numbers used in "Mode Select" mode
 enum HardCodedSwitchNumbers
 {
-	kModeDefaultSwitchNumber = 0,
-	kModeBankNavSwitchNumber,
-	kModeBankDescSwitchNumber,
+	kModeBankDescSwitchNumber = 0,
 	kModeBankDirect,
 	kModeExprPedalDisplay,
 	kModeAdcOverride,
 	kModeTestLeds,
 	kModeToggleLedInversion,
 	kModeReconnect,
-	kModeToggleTraceWindow
+	kModeToggleTraceWindow,
+	kModeTime
 };
 
 const int kBankNavNextPatchNumber = -2; // reserved patch number
@@ -324,20 +324,24 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 	{
 		if (switchNumber == mModeSwitchNumber)
 			EscapeToDefaultMode();
+		else if (switchNumber == mDecrementSwitchNumber)
+		{
+			ChangeMode(emBankNav);
+			mBankNavigationIndex = mActiveBankIndex;
+			NavigateBankRelative(-1);
+		}
+		else if (switchNumber == mIncrementSwitchNumber)
+		{
+			ChangeMode(emBankNav);
+			mBankNavigationIndex = mActiveBankIndex;
+			NavigateBankRelative(1);
+		}
 		else
 		{
 			switch (switchNumber)
 			{
-			case kModeDefaultSwitchNumber:
-				EscapeToDefaultMode();
-				break;
 			case kModeBankDescSwitchNumber:
 				ChangeMode(emBankDesc);
-				mBankNavigationIndex = mActiveBankIndex;
-				NavigateBankRelative(0);
-				break;
-			case kModeBankNavSwitchNumber:
-				ChangeMode(emBankNav);
 				mBankNavigationIndex = mActiveBankIndex;
 				NavigateBankRelative(0);
 				break;
@@ -365,6 +369,19 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 			case kModeToggleTraceWindow:
 				if (mApplication)
 					mApplication->ToggleTraceWindow();
+				break;
+			case kModeTime:
+				if (mMainDisplay)
+				{
+					const int kBufLen = 50;
+					char msgBuf[kBufLen];
+					time_t curTime1;
+					::time(&curTime1);
+					tm * curTime2 = ::localtime(&curTime1);
+					::strftime(msgBuf, kBufLen - 1, "%I:%M:%S %p \n%b %d, %Y", curTime2);
+					std::string msg(msgBuf);
+					mMainDisplay->TextOut(msg);
+				}
 				break;
 			case kModeAdcOverride:
 				ChangeMode(emAdcOverride);
@@ -790,10 +807,10 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		msg = "Mode Select";
 		if (mSwitchDisplay)
 		{
-			mSwitchDisplay->SetSwitchText(kModeDefaultSwitchNumber, "Bank");
-			mSwitchDisplay->SetSwitchDisplay(kModeDefaultSwitchNumber, true);
-			mSwitchDisplay->SetSwitchText(kModeBankNavSwitchNumber, "Bank Navigation...");
-			mSwitchDisplay->SetSwitchDisplay(kModeBankNavSwitchNumber, true);
+			// override possible user override in this mode
+			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Next Bank");
+			mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "Prev Bank");
+
 			mSwitchDisplay->SetSwitchText(kModeBankDescSwitchNumber, "Bank Description...");
 			mSwitchDisplay->SetSwitchDisplay(kModeBankDescSwitchNumber, true);
 			mSwitchDisplay->SetSwitchText(kModeBankDirect, "Bank Direct...");
@@ -810,6 +827,8 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			mSwitchDisplay->SetSwitchDisplay(kModeToggleTraceWindow, true);
 			mSwitchDisplay->SetSwitchText(kModeAdcOverride, "ADC overrides...");
 			mSwitchDisplay->SetSwitchDisplay(kModeAdcOverride, true);
+			mSwitchDisplay->SetSwitchText(kModeTime, "Display Current Time");
+			mSwitchDisplay->SetSwitchDisplay(kModeTime, true);
 		}
 		break;
 	case emExprPedalDisplay:
