@@ -53,15 +53,19 @@ SortByBankNumber(const PatchBank* lhs, const PatchBank* rhs)
 // These are the switch numbers used in "Mode Select" mode
 enum HardCodedSwitchNumbers
 {
-	kModeBankDescSwitchNumber = 0,
+	kModeRecall = 0,
+	kModeBack,
+	kModeForward,
+	kModeTime,
+	kModeBankDescSwitchNumber,
 	kModeBankDirect,
 	kModeExprPedalDisplay,
 	kModeAdcOverride,
 	kModeTestLeds,
-	kModeToggleLedInversion,
-	kModeReconnect,
 	kModeToggleTraceWindow,
-	kModeTime
+// 	kModeToggleLedInversion,
+// 	kModeReconnect,
+	kMaxUnused
 };
 
 const int kBankNavNextPatchNumber = -2; // reserved patch number
@@ -339,6 +343,18 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 		{
 			switch (switchNumber)
 			{
+			case kModeRecall:
+				EscapeToDefaultMode();
+				HistoryRecall();
+				break;
+			case kModeBack:
+				EscapeToDefaultMode();
+				HistoryBackward();
+				break;
+			case kModeForward:
+				EscapeToDefaultMode();
+				HistoryForward();
+				break;
 			case kModeBankDescSwitchNumber:
 				ChangeMode(emBankDesc);
 				mBankNavigationIndex = mActiveBankIndex;
@@ -350,16 +366,16 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 			case kModeExprPedalDisplay:
 				ChangeMode(emExprPedalDisplay);
 				break;
-			case kModeToggleLedInversion:
-				if (mSwitchDisplay)
-					mSwitchDisplay->InvertLeds(!mSwitchDisplay->IsInverted());
-				EscapeToDefaultMode();
-				break;
-			case kModeReconnect:
-				if (mApplication)
-					mApplication->Reconnect();
-				EscapeToDefaultMode();
-				break;
+// 			case kModeToggleLedInversion:
+// 				if (mSwitchDisplay)
+// 					mSwitchDisplay->InvertLeds(!mSwitchDisplay->IsInverted());
+// 				EscapeToDefaultMode();
+// 				break;
+// 			case kModeReconnect:
+// 				if (mApplication)
+// 					mApplication->Reconnect();
+// 				EscapeToDefaultMode();
+// 				break;
 			case kModeTestLeds:
 				if (mSwitchDisplay)
 					mSwitchDisplay->TestLeds();
@@ -808,24 +824,38 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Next Bank");
 			mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "Prev Bank");
 
-			mSwitchDisplay->SetSwitchText(kModeBankDescSwitchNumber, "Bank Description...");
+			mSwitchDisplay->SetSwitchText(kModeRecall, "Recall last bank");
+			mSwitchDisplay->SetSwitchDisplay(kModeRecall, true);
+			if (!mBackHistory.empty())
+			{
+				mSwitchDisplay->SetSwitchText(kModeBack, "Go back (bank history)");
+				mSwitchDisplay->SetSwitchDisplay(kModeBack, true);
+			}
+			if (!mForwardHistory.empty())
+			{
+				mSwitchDisplay->SetSwitchText(kModeForward, "Go forward (bank history)");
+				mSwitchDisplay->SetSwitchDisplay(kModeForward, true);
+			}
+			mSwitchDisplay->SetSwitchText(kModeBankDescSwitchNumber, "Describe banks...");
 			mSwitchDisplay->SetSwitchDisplay(kModeBankDescSwitchNumber, true);
-			mSwitchDisplay->SetSwitchText(kModeBankDirect, "Bank Direct...");
+			mSwitchDisplay->SetSwitchText(kModeBankDirect, "Bank direct access...");
 			mSwitchDisplay->SetSwitchDisplay(kModeBankDirect, true);
-			mSwitchDisplay->SetSwitchText(kModeExprPedalDisplay, "Raw ADC Values...");
+			mSwitchDisplay->SetSwitchText(kModeExprPedalDisplay, "Raw ADC values...");
 			mSwitchDisplay->SetSwitchDisplay(kModeExprPedalDisplay, true);
 			mSwitchDisplay->SetSwitchText(kModeTestLeds, "Test LEDs");
 			mSwitchDisplay->SetSwitchDisplay(kModeTestLeds, true);
-			mSwitchDisplay->SetSwitchText(kModeToggleLedInversion, "Toggle LED Inversion");
-			mSwitchDisplay->SetSwitchDisplay(kModeToggleLedInversion, true);
-			mSwitchDisplay->SetSwitchText(kModeReconnect, "Reconnect to Monome");
-			mSwitchDisplay->SetSwitchDisplay(kModeReconnect, true);
 			mSwitchDisplay->SetSwitchText(kModeToggleTraceWindow, "Toggle Trace Window");
 			mSwitchDisplay->SetSwitchDisplay(kModeToggleTraceWindow, true);
 			mSwitchDisplay->SetSwitchText(kModeAdcOverride, "ADC overrides...");
 			mSwitchDisplay->SetSwitchDisplay(kModeAdcOverride, true);
-			mSwitchDisplay->SetSwitchText(kModeTime, "Display Current Time");
+			mSwitchDisplay->SetSwitchText(kModeTime, "Display time");
 			mSwitchDisplay->SetSwitchDisplay(kModeTime, true);
+// 			mSwitchDisplay->SetSwitchText(kModeToggleLedInversion, "Toggle LED Inversion");
+// 			mSwitchDisplay->SetSwitchDisplay(kModeToggleLedInversion, true);
+// 			mSwitchDisplay->SetSwitchText(kModeReconnect, "Reconnect to Monome");
+// 			mSwitchDisplay->SetSwitchDisplay(kModeReconnect, true);
+// 			mSwitchDisplay->SetSwitchText(kMode, "");
+// 			mSwitchDisplay->SetSwitchDisplay(kMode, true);
 		}
 		break;
 	case emTimeDisplay:
