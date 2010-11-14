@@ -267,6 +267,28 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 		globalPedals.InitMidiOut(globalExprPedalMidiOut);
 	}
 
+	pChildElem = hRoot.FirstChild("CustomBankLoadMap").FirstChildElement().Element();
+	for ( ; pChildElem; pChildElem = pChildElem->NextSiblingElement())
+	{
+		int bnkNum = -1;
+		int slot = -1;
+		pChildElem->QueryIntAttribute("slot", &slot);
+		pChildElem->QueryIntAttribute("bank", &bnkNum);
+
+		if (-1 != bnkNum && -1 != slot)
+		{
+			if (!mEngine->AssignCustomBankLoad(slot - 1, bnkNum))
+			{
+				if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: failed to load CustomBankLoadMap " << std::endl << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
+			}
+		}
+	}
+
 	return true;
 }
 

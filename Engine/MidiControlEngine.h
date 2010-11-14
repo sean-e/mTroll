@@ -60,6 +60,7 @@ public:
 	void					AddPatch(Patch * patch);
 	void					SetPowerup(int powerupBank, int powerupPatch, int powerupTimeout);
 	void					FilterRedundantProgChg(bool filter) {mFilterRedundantProgramChanges = filter;}
+	bool					AssignCustomBankLoad(int customSlot, int bankNumber);
 	void					CompleteInit(const PedalCalibration * pedalCalibrationSettings);
 
 	ExpressionPedals &		GetPedals() {return mGlobalPedals;}
@@ -148,6 +149,9 @@ private:
 	int						mModeToggleTraceWindowSwitchNumber;
 	int						mModeToggleLedInversionSwitchNumber;
 	int						mModeReconnectSwitchNumber;
+	enum { kCustomBankLoadCount = 5 };
+	int						mModeLoadBankSwitchNumbers[kCustomBankLoadCount];
+	int						mCustomBankLoads[kCustomBankLoadCount];
 };
 
 #endif // MidiControlEngine_h__

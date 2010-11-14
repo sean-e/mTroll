@@ -65,6 +65,11 @@ enum EngineModeSwitchNumberDefaults
 	kModeAdcOverride,
 	kModeTestLeds,
 	kModeToggleTraceWindow,
+	kModeLoadBankA,
+	kModeLoadBankB,
+	kModeLoadBankC,
+	kModeLoadBankD,
+	kModeLoadBankE,
 	kModeToggleLedInversion,
 	kModeReconnect
 };
@@ -110,6 +115,11 @@ MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 	mModeReconnectSwitchNumber(kUnassignedSwitchNumber)
 {
 	mBanks.reserve(999);
+	for (int idx = 0; idx < kCustomBankLoadCount; ++idx)
+	{
+		mCustomBankLoads[idx] = kUnassignedSwitchNumber;
+		mModeLoadBankSwitchNumbers[idx] = kUnassignedSwitchNumber;
+	}
 }
 
 MidiControlEngine::~MidiControlEngine()
@@ -159,7 +169,12 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 		kUnassignedSwitchNumber == mModeTestLedsSwitchNumber &&
 		kUnassignedSwitchNumber == mModeToggleTraceWindowSwitchNumber &&
 		kUnassignedSwitchNumber == mModeToggleLedInversionSwitchNumber &&
-		kUnassignedSwitchNumber == mModeReconnectSwitchNumber)
+		kUnassignedSwitchNumber == mModeReconnectSwitchNumber &&
+		kUnassignedSwitchNumber == mModeLoadBankSwitchNumbers[0] &&
+		kUnassignedSwitchNumber == mModeLoadBankSwitchNumbers[1] &&
+		kUnassignedSwitchNumber == mModeLoadBankSwitchNumbers[2] &&
+		kUnassignedSwitchNumber == mModeLoadBankSwitchNumbers[3] &&
+		kUnassignedSwitchNumber == mModeLoadBankSwitchNumbers[4])
 	{
 		mModeRecallSwitchNumber = kModeRecall;
 		mModeBackSwitchNumber = kModeBack;
@@ -173,6 +188,11 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 		mModeToggleTraceWindowSwitchNumber = kModeToggleTraceWindow;
 		mModeToggleLedInversionSwitchNumber = kModeToggleLedInversion;
 		mModeReconnectSwitchNumber = kModeReconnect;
+		mModeLoadBankSwitchNumbers[0] = kModeLoadBankA;
+		mModeLoadBankSwitchNumbers[1] = kModeLoadBankB;
+		mModeLoadBankSwitchNumbers[2] = kModeLoadBankC;
+		mModeLoadBankSwitchNumbers[3] = kModeLoadBankD;
+		mModeLoadBankSwitchNumbers[4] = kModeLoadBankE;
 	}
 
 	std::sort(mBanks.begin(), mBanks.end(), SortByBankNumber);
@@ -431,6 +451,18 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 			ChangeMode(emTimeDisplay);
 		else if (switchNumber == mModeAdcOverrideSwitchNumber)
 			ChangeMode(emAdcOverride);
+		else 
+		{
+			for (int idx = 0; idx < kCustomBankLoadCount; idx++)
+			{
+				if (switchNumber == mModeLoadBankSwitchNumbers[idx])
+				{
+					EscapeToDefaultMode();
+					LoadBank(mCustomBankLoads[idx]);
+					break;
+				}
+			}
+		}
 
 		return;
 	}
@@ -567,6 +599,9 @@ MidiControlEngine::AdcValueChanged(int port,
 		}
 		return;
 	}
+
+	if (emBank != mMode)
+		return;
 
 	// forward directly to active patch
 	if (!gActivePatchPedals || 
@@ -909,7 +944,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			}
 			if (kUnassignedSwitchNumber != mModeTimeSwitchNumber)
 			{
-				mSwitchDisplay->SetSwitchText(mModeTimeSwitchNumber, "Display time");
+				mSwitchDisplay->SetSwitchText(mModeTimeSwitchNumber, "Display time...");
 				mSwitchDisplay->SetSwitchDisplay(mModeTimeSwitchNumber, true);
 			}
 			if (kUnassignedSwitchNumber != mModeToggleLedInversionSwitchNumber)
@@ -921,6 +956,23 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			{
 				mSwitchDisplay->SetSwitchText(mModeReconnectSwitchNumber, "Reconnect to Monome");
 				mSwitchDisplay->SetSwitchDisplay(mModeReconnectSwitchNumber, true);
+			}
+
+			for (int idx = 0; idx < kCustomBankLoadCount; ++idx)
+			{
+				if (kUnassignedSwitchNumber != mModeLoadBankSwitchNumbers[idx] && 
+					kUnassignedSwitchNumber != mCustomBankLoads[idx])
+				{
+					PatchBank * bnk = GetBank(mCustomBankLoads[idx]);
+					if (bnk)
+					{
+						std::string txt("Load (");
+						txt += bnk->GetBankName();
+						txt += ")";
+						mSwitchDisplay->SetSwitchText(mModeLoadBankSwitchNumbers[idx], txt);
+						mSwitchDisplay->SetSwitchDisplay(mModeLoadBankSwitchNumbers[idx], true);
+					}
+				}
 			}
 // 			if (kUnassignedSwitchNumber != mMode)
 // 			{
@@ -934,7 +986,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		showModeInMainDisplay = false;
 		if (kUnassignedSwitchNumber != mModeTimeSwitchNumber)
 		{
-			mSwitchDisplay->SetSwitchText(mModeTimeSwitchNumber, "Any button to exit...");
+			mSwitchDisplay->SetSwitchText(mModeTimeSwitchNumber, "Any button to exit");
 			mSwitchDisplay->SetSwitchDisplay(mModeTimeSwitchNumber, true);
 		}
 		if (!mApplication || !mApplication->EnableTimeDisplay(true))
@@ -1051,4 +1103,14 @@ Patch *
 MidiControlEngine::GetPatch(int number)
 {
 	return mPatches[number];
+}
+
+bool
+MidiControlEngine::AssignCustomBankLoad(int customSlot, int bankNumber)
+{
+	if (customSlot < 0 || customSlot >= kCustomBankLoadCount)
+		return false;
+
+	mCustomBankLoads[customSlot] = bankNumber;
+	return true;
 }
