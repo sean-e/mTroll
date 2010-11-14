@@ -128,12 +128,26 @@ private:
 	int						mPowerUpTimeout;
 	int						mPowerUpBank;
 	int						mPowerUpPatch;
-	int						mIncrementSwitchNumber;
-	int						mDecrementSwitchNumber;
-	int						mModeSwitchNumber;
 	bool					mFilterRedundantProgramChanges;
 	ExpressionPedals		mGlobalPedals;
 	int						mPedalModePort;
+
+	// mode switch numbers
+	int						mModeSwitchNumber;
+	int						mIncrementSwitchNumber;
+	int						mDecrementSwitchNumber;
+	int						mModeRecallSwitchNumber;
+	int						mModeBackSwitchNumber;
+	int						mModeForwardSwitchNumber;
+	int						mModeTimeSwitchNumber;
+	int						mModeBankDescSwitchNumber;
+	int						mModeBankDirectSwitchNumber;
+	int						mModeExprPedalDisplaySwitchNumber;
+	int						mModeAdcOverrideSwitchNumber;
+	int						mModeTestLedsSwitchNumber;
+	int						mModeToggleTraceWindowSwitchNumber;
+	int						mModeToggleLedInversionSwitchNumber;
+	int						mModeReconnectSwitchNumber;
 };
 
 #endif // MidiControlEngine_h__
