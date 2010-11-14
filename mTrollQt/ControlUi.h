@@ -49,6 +49,7 @@ class QLabel;
 class QPushButton;
 class QPlainTextEdit;
 class QFrame;
+class QTimer;
 class IMonome40h;
 class ITrollApplication;
 
@@ -74,6 +75,7 @@ public:
 			void Unload();
 			void ToggleTraceWindow();
 			void UpdateAdcs(const bool adcOverrides[ExpressionPedals::PedalCount]);
+			bool EnableTimeDisplay(bool enable);
 
 			void GetPreferredSize(int & width, int & height) const {width = mPreferredWidth; height = mPreferredHeight;}
 
@@ -119,6 +121,8 @@ private: // IMidiControlUi
 	virtual void		SetLedDisplayState(bool invert) { mInvertLeds = invert; }
 
 private slots:
+	void TimerFired();
+
 	// sigh... the one time that I would use a macro but the Qt MOC doesn't support it (or the use of tokenization)!!
 	void UiButtonPressed_0() { ButtonPressed(0); }
 	void UiButtonPressed_1() { ButtonPressed(1); }
@@ -257,6 +261,7 @@ private:
 	void LoadUi(const std::string & uiSettingsFile);
 	void LoadMonome(bool displayStartSequence);
 	void LoadMidiSettings(const std::string & file, const bool adcOverrides[ExpressionPedals::PedalCount]);
+	void StopTimer();
 
 	void ButtonReleased(const int idx);
 	void ButtonPressed(const int idx);
@@ -272,7 +277,6 @@ private:
 	{
 		return mRowColToSwitchNumber[(row << 16) | col];
 	}
-
 private:
 	ITrollApplication			* mApp;
 	IMonome40h					* mHardwareUi;
@@ -297,6 +301,7 @@ private:
 	QRect						mMainDisplayRc;
 	QRect						mTraceDiplayRc;
 	bool						mUserAdcSettings[ExpressionPedals::PedalCount];
+	QTimer						* mTimeDisplayTimer;
 
 	struct SwitchTextDisplayConfig
 	{

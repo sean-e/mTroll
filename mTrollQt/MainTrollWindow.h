@@ -54,6 +54,7 @@ private slots:
 private:
 	virtual bool IsAdcOverridden(int adc) { if (adc >=0 && adc < 4) return mAdcForceDisable[adc]; return false;}
 	virtual void ToggleAdcOverride(int adc) { if (adc >=0 && adc < 4) ToggleAdcOverride(adc, !mAdcForceDisable[adc]); }
+	virtual bool EnableTimeDisplay(bool enable);
 
 private:
 	ControlUi	* mUi;

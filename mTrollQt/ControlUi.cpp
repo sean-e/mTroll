@@ -31,6 +31,8 @@
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QtEvents>
+#include <QTimer>
+#include <QDateTime>
 
 #include "ControlUi.h"
 #include "../Engine/EngineLoader.h"
@@ -65,6 +67,7 @@ ControlUi::ControlUi(QWidget * parent, ITrollApplication * app) :
 	mHardwareUi(NULL),
 	mLedIntensity(0),
 	mInvertLeds(false),
+	mTimeDisplayTimer(NULL),
 	mSystemPowerOverride(NULL)
 {
 }
@@ -1008,4 +1011,49 @@ ControlUi::TestLeds()
 	}
 
 	QApplication::restoreOverrideCursor();
+}
+
+bool
+ControlUi::EnableTimeDisplay(bool enable)
+{
+	if (mTimeDisplayTimer)
+	{
+		if (enable)
+			return true;
+
+		StopTimer();
+		return false;
+	}
+	else if (!enable)
+		return false;
+
+	TimerFired();
+	mTimeDisplayTimer = new QTimer(this);
+	connect(mTimeDisplayTimer, SIGNAL(timeout()), this, SLOT(TimerFired()));
+	mTimeDisplayTimer->start(1000);
+	return true;
+}
+
+void
+ControlUi::TimerFired()
+{
+	if (mMainDisplay)
+	{
+		const QString ts(QDateTime::currentDateTime().toString("h:mm:ss ap \nddd, MMM d, yyyy"));
+		const std::string msg(ts.toAscii());
+		TextOut(msg);
+	}
+}
+
+void
+ControlUi::StopTimer()
+{
+	if (!mTimeDisplayTimer)
+		return;
+
+	QTimer * tmp = mTimeDisplayTimer;
+	mTimeDisplayTimer = NULL;
+	tmp->stop();
+	disconnect(mTimeDisplayTimer, SIGNAL(timeout()), this, SLOT(TimerFired()));
+	delete tmp;
 }

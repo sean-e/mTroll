@@ -97,6 +97,7 @@ private:
 		emBankDirect,		// use buttons to call bank
 		emExprPedalDisplay,	// display actual adc values
 		emAdcOverride,		// set ADC overrides
+		emTimeDisplay,		// displays time
 		emNotValid 
 	};
 	void					ChangeMode(EngineMode newMode);

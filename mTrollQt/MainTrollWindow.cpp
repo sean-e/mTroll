@@ -218,3 +218,11 @@ MainTrollWindow::ToggleAdcOverride(int adc,
 	for (int idx = 0; idx < ExpressionPedals::PedalCount; ++idx)
 		settings.setValue(kAdcOverride.arg(idx), mAdcForceDisable[idx]);
 }
+
+bool
+MainTrollWindow::EnableTimeDisplay(bool enable)
+{
+	if (mUi)
+		return mUi->EnableTimeDisplay(enable);
+	return false;
+}

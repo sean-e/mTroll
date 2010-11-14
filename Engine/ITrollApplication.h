@@ -36,6 +36,7 @@ public:
 	virtual void ToggleTraceWindow() = 0;
 	virtual bool IsAdcOverridden(int adc) = 0;
 	virtual void ToggleAdcOverride(int adc) = 0;
+	virtual bool EnableTimeDisplay(bool enable) = 0;
 };
 
 #endif // ITrollApplication_h__

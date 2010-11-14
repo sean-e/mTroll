@@ -24,7 +24,6 @@
 
 #include <algorithm>
 #include <strstream>
-#include <time.h>
 #include "MidiControlEngine.h"
 #include "PatchBank.h"
 #include "IMainDisplay.h"
@@ -146,7 +145,7 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 	}
 
 	// this is how we allow users to override Next and Prev switches in their banks
-	// while at the same time reserving them for use by our modes (other than emBank).
+	// while at the same time reserving them for use by our modes.
 	// If their default bank specifies a mapping for mIncrementSwitchNumber or 
 	// mDecrementSwitchNumber, they will not get Next or Prev at all.
 	PatchBank tmpDefaultBank(0, "nav default");
@@ -371,17 +370,7 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 					mApplication->ToggleTraceWindow();
 				break;
 			case kModeTime:
-				if (mMainDisplay)
-				{
-					const int kBufLen = 50;
-					char msgBuf[kBufLen];
-					time_t curTime1;
-					::time(&curTime1);
-					tm * curTime2 = ::localtime(&curTime1);
-					::strftime(msgBuf, kBufLen - 1, "%I:%M:%S %p \n%b %d, %Y", curTime2);
-					std::string msg(msgBuf);
-					mMainDisplay->TextOut(msg);
-				}
+				ChangeMode(emTimeDisplay);
 				break;
 			case kModeAdcOverride:
 				ChangeMode(emAdcOverride);
@@ -497,6 +486,14 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 			}
 		}
 
+		return;
+	}
+
+	if (emTimeDisplay == mMode)
+	{
+		// any switch press/release cancels mode
+		mApplication->EnableTimeDisplay(false);
+		EscapeToDefaultMode();
 		return;
 	}
 }
@@ -831,6 +828,14 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			mSwitchDisplay->SetSwitchDisplay(kModeTime, true);
 		}
 		break;
+	case emTimeDisplay:
+		msg = "Time Display";
+		showModeInMainDisplay = false;
+		mSwitchDisplay->SetSwitchText(kModeTime, "Any button to exit...");
+		mSwitchDisplay->SetSwitchDisplay(kModeTime, true);
+		if (!mApplication || !mApplication->EnableTimeDisplay(true))
+			EscapeToDefaultMode();
+		break;
 	case emExprPedalDisplay:
 		msg = "Raw ADC values";
 		mPedalModePort = 0;
@@ -896,7 +901,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 	    break;
 	}
 
-	if (showModeInMainDisplay && mMainDisplay)
+	if (showModeInMainDisplay && mMainDisplay && !msg.empty())
 		mMainDisplay->TextOut("mode: " +  msg);
 
 	if (mSwitchDisplay)
