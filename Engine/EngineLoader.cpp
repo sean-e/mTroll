@@ -190,26 +190,29 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 	pChildElem = hRoot.FirstChild("midiDevices").FirstChildElement().Element();
 	for ( ; pChildElem; pChildElem = pChildElem->NextSiblingElement())
 	{
-		int deviceIdx = 1;
+		int deviceIdx = -1;
 		int inDeviceIdx = -1;
+		int activityIndicatorId = -1;
 		int port = 1;
-		int activityIndicatorId = 0;
 
-		pChildElem->QueryIntAttribute("outIdx", &deviceIdx);
 		pChildElem->QueryIntAttribute("inIdx", &inDeviceIdx);
 		pChildElem->QueryIntAttribute("port", &port);
+		pChildElem->QueryIntAttribute("outIdx", &deviceIdx);
 		pChildElem->QueryIntAttribute("activityIndicatorId", &activityIndicatorId);
 
-		if (-1 == inDeviceIdx)
+		if (-1 == inDeviceIdx || -1 != deviceIdx)
 		{
+			if (-1 == deviceIdx)
+				deviceIdx = 1; // maintain back compat with original behavior
 			mMidiOutPortToDeviceIdxMap[port] = deviceIdx;
 			mMidiOutGenerator->CreateMidiOut(mMidiOutPortToDeviceIdxMap[port], activityIndicatorId);
 		}
-		else
+
+		if (-1 != inDeviceIdx)
 		{
 			mMidiInPortToDeviceIdxMap[port] = inDeviceIdx;
 			if (mMidiInGenerator)
-				mMidiInGenerator->CreateMidiIn(mMidiInPortToDeviceIdxMap[port], activityIndicatorId);
+				mMidiInGenerator->CreateMidiIn(mMidiInPortToDeviceIdxMap[port]);
 		}
 	}
 	mEngine = new MidiControlEngine(mApp, mMainDisplay, mSwitchDisplay, mTraceDisplay, incrementSwitch, decrementSwitch, modeSwitch);

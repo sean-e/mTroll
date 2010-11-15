@@ -35,7 +35,7 @@ class IMidiIn;
 class IMidiInGenerator
 {
 public:
-	virtual IMidiIn *	CreateMidiIn(unsigned int deviceIdx, int activityIndicatorIdx) = 0;
+	virtual IMidiIn *	CreateMidiIn(unsigned int deviceIdx) = 0;
 	virtual IMidiIn *	GetMidiIn(unsigned int deviceIdx) = 0;
 	virtual void		OpenMidiIns() = 0;
 	virtual void		CloseMidiIns() = 0;

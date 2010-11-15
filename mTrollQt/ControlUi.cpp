@@ -239,7 +239,7 @@ ControlUi::LoadUi(const std::string & uiSettingsFile)
 {
 	UiLoader ldr(this, uiSettingsFile);
 
-	Trace("Midi Devices:\n");
+	Trace("Midi Output Devices:\n");
 	IMidiOut * midiOut = CreateMidiOut(0, -1);
 	if (midiOut)
 	{
@@ -255,9 +255,10 @@ ControlUi::LoadUi(const std::string & uiSettingsFile)
 		mMidiOuts.erase(0);
 	}
 
-	IMidiIn * midiIn = CreateMidiIn(0, -1);
+	IMidiIn * midiIn = CreateMidiIn(0);
 	if (midiIn)
 	{
+		Trace("Midi Input Devices:\n");
 		const int kMidiInCnt = midiIn->GetMidiInDeviceCount();
 		for (int idx = 0; idx < kMidiInCnt; ++idx)
 		{
@@ -1131,14 +1132,10 @@ ControlUi::OpenMidiIns()
 }
 
 IMidiIn *
-ControlUi::CreateMidiIn(unsigned int deviceIdx, 
-						int activityIndicatorIdx)
+ControlUi::CreateMidiIn(unsigned int deviceIdx)
 {
 	if (!mMidiIns[deviceIdx])
 		mMidiIns[deviceIdx] = new XMidiIn(this);
-
-	if (activityIndicatorIdx > 0)
-		mMidiIns[deviceIdx]->SetActivityIndicator(this, activityIndicatorIdx);
 
 	return mMidiIns[deviceIdx];
 }

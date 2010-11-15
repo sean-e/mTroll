@@ -91,7 +91,7 @@ public: // IMidiInGenerator
 	virtual IMidiIn *	GetMidiIn(unsigned int deviceIdx);
 	virtual void		CloseMidiIns();
 	virtual void		OpenMidiIns();
-	virtual IMidiIn *	CreateMidiIn(unsigned int deviceIdx, int activityIndicatorIdx);
+	virtual IMidiIn *	CreateMidiIn(unsigned int deviceIdx);
 
 public: // IMainDisplay
 	virtual void		TextOut(const std::string & txt);

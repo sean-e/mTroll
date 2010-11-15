@@ -44,8 +44,6 @@ public:
 
 	virtual unsigned int GetMidiInDeviceCount() const = 0;
 	virtual std::string GetMidiInDeviceName(unsigned int deviceIdx) const = 0;
-	virtual void SetActivityIndicator(ISwitchDisplay * activityIndicator, int activityIndicatorIdx) = 0;
-	virtual void EnableActivityIndicator(bool enable) = 0;
 	virtual bool OpenMidiIn(unsigned int deviceIdx) = 0;
 	virtual bool IsMidiInOpen() const = 0;
 	virtual void CloseMidiIn() = 0;

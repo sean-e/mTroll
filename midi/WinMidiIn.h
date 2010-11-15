@@ -42,8 +42,6 @@ public:
 	// IMidiIn
 	virtual unsigned int GetMidiInDeviceCount() const;
 	virtual std::string GetMidiInDeviceName(unsigned int deviceIdx) const;
-	virtual void SetActivityIndicator(ISwitchDisplay * activityIndicator, int activityIndicatorIdx);
-	virtual void EnableActivityIndicator(bool enable);
 	virtual bool OpenMidiIn(unsigned int deviceIdx);
 	virtual bool IsMidiInOpen() const {return mMidiIn != NULL;}
 	virtual void CloseMidiIn();
@@ -54,22 +52,14 @@ private:
 	void ReportError(LPCTSTR msg, int param1);
 	void ReportError(LPCTSTR msg, int param1, int param2);
 
-	void IndicateActivity();
-	void TurnOffIndicator();
-	static void CALLBACK TimerProc(HWND, UINT, UINT_PTR id, DWORD);
 	static void CALLBACK MidiInCallbackProc(HMIDIIN hmi, UINT wMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2);
 
 	ITraceDisplay				* mTrace;
-	ISwitchDisplay				* mActivityIndicator;
-	volatile bool				mEnableActivityIndicator;
-	int							mActivityIndicatorIndex;
 	HMIDIIN						mMidiIn;
 	enum {MIDIHDR_CNT = 128};
 	MIDIHDR						mMidiHdrs[MIDIHDR_CNT];
 	int							mCurMidiHdrIdx;
 	bool						mMidiInError;
-	UINT_PTR					mTimerId;
-	LONG						mTimerEventCount;
 };
 
 #endif // WinMidiIn_h__
