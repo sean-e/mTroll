@@ -49,31 +49,6 @@ SortByBankNumber(const PatchBank* lhs, const PatchBank* rhs)
 	return lhs->GetBankNumber() < rhs->GetBankNumber();
 }
 
-// bad hardcoded switch grid assumptions - these need to come from one of the xml files...
-// These are the switch numbers used in "Mode Select" mode (default values that 
-// can be overridden, but currently loader does not have support for overrides)
-enum EngineModeSwitchNumberDefaults
-{
-	kUnassignedSwitchNumber = -1,
-	kModeRecall = 0,
-	kModeBack,
-	kModeForward,
-	kModeTime,
-	kModeBankDesc,
-	kModeBankDirect,
-	kModeExprPedalDisplay,
-	kModeAdcOverride,
-	kModeTestLeds,
-	kModeToggleTraceWindow,
-	kModeLoadBankA,
-	kModeLoadBankB,
-	kModeLoadBankC,
-	kModeLoadBankD,
-	kModeLoadBankE,
-	kModeToggleLedInversion,
-	kModeReconnect
-};
-
 const int kBankNavNextPatchNumber = -2; // reserved patch number
 const int kBankNavPrevPatchNumber = -3; // reserved patch number
 
@@ -100,26 +75,9 @@ MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 	mModeSwitchNumber(modeSwitchNumber),
 	mFilterRedundantProgramChanges(false),
 	mPedalModePort(0),
-	mHistoryNavMode(hmNone),
-	mModeRecallSwitchNumber(kUnassignedSwitchNumber),
-	mModeBackSwitchNumber(kUnassignedSwitchNumber),
-	mModeForwardSwitchNumber(kUnassignedSwitchNumber),
-	mModeTimeSwitchNumber(kUnassignedSwitchNumber),
-	mModeBankDescSwitchNumber(kUnassignedSwitchNumber),
-	mModeBankDirectSwitchNumber(kUnassignedSwitchNumber),
-	mModeExprPedalDisplaySwitchNumber(kUnassignedSwitchNumber),
-	mModeAdcOverrideSwitchNumber(kUnassignedSwitchNumber),
-	mModeTestLedsSwitchNumber(kUnassignedSwitchNumber),
-	mModeToggleTraceWindowSwitchNumber(kUnassignedSwitchNumber),
-	mModeToggleLedInversionSwitchNumber(kUnassignedSwitchNumber),
-	mModeReconnectSwitchNumber(kUnassignedSwitchNumber)
+	mHistoryNavMode(hmNone)
 {
 	mBanks.reserve(999);
-	for (int idx = 0; idx < kCustomBankLoadCount; ++idx)
-	{
-		mCustomBankLoads[idx] = kUnassignedSwitchNumber;
-		mModeLoadBankSwitchNumbers[idx] = kUnassignedSwitchNumber;
-	}
 }
 
 MidiControlEngine::~MidiControlEngine()
@@ -158,41 +116,21 @@ MidiControlEngine::SetPowerup(int powerupBank,
 void
 MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSettings)
 {
-	if (kUnassignedSwitchNumber == mModeRecallSwitchNumber &&
-		kUnassignedSwitchNumber == mModeBackSwitchNumber &&
-		kUnassignedSwitchNumber == mModeForwardSwitchNumber &&
-		kUnassignedSwitchNumber == mModeTimeSwitchNumber &&
-		kUnassignedSwitchNumber == mModeBankDescSwitchNumber &&
-		kUnassignedSwitchNumber == mModeBankDirectSwitchNumber &&
-		kUnassignedSwitchNumber == mModeExprPedalDisplaySwitchNumber &&
-		kUnassignedSwitchNumber == mModeAdcOverrideSwitchNumber &&
-		kUnassignedSwitchNumber == mModeTestLedsSwitchNumber &&
-		kUnassignedSwitchNumber == mModeToggleTraceWindowSwitchNumber &&
-		kUnassignedSwitchNumber == mModeToggleLedInversionSwitchNumber &&
-		kUnassignedSwitchNumber == mModeReconnectSwitchNumber &&
-		kUnassignedSwitchNumber == mModeLoadBankSwitchNumbers[0] &&
-		kUnassignedSwitchNumber == mModeLoadBankSwitchNumbers[1] &&
-		kUnassignedSwitchNumber == mModeLoadBankSwitchNumbers[2] &&
-		kUnassignedSwitchNumber == mModeLoadBankSwitchNumbers[3] &&
-		kUnassignedSwitchNumber == mModeLoadBankSwitchNumbers[4])
+	if (!mOtherModeSwitchNumbers.size())
 	{
-		mModeRecallSwitchNumber = kModeRecall;
-		mModeBackSwitchNumber = kModeBack;
-		mModeForwardSwitchNumber = kModeForward;
-		mModeTimeSwitchNumber = kModeTime;
-		mModeBankDescSwitchNumber = kModeBankDesc;
-		mModeBankDirectSwitchNumber = kModeBankDirect;
-		mModeExprPedalDisplaySwitchNumber = kModeExprPedalDisplay;
-		mModeAdcOverrideSwitchNumber = kModeAdcOverride;
-		mModeTestLedsSwitchNumber = kModeTestLeds;
-		mModeToggleTraceWindowSwitchNumber = kModeToggleTraceWindow;
-		mModeToggleLedInversionSwitchNumber = kModeToggleLedInversion;
-		mModeReconnectSwitchNumber = kModeReconnect;
-		mModeLoadBankSwitchNumbers[0] = kModeLoadBankA;
-		mModeLoadBankSwitchNumbers[1] = kModeLoadBankB;
-		mModeLoadBankSwitchNumbers[2] = kModeLoadBankC;
-		mModeLoadBankSwitchNumbers[3] = kModeLoadBankD;
-		mModeLoadBankSwitchNumbers[4] = kModeLoadBankE;
+		// set defaults
+		mOtherModeSwitchNumbers[kModeRecall] = kModeRecall;
+		mOtherModeSwitchNumbers[kModeBack] = kModeBack;
+		mOtherModeSwitchNumbers[kModeForward] = kModeForward;
+		mOtherModeSwitchNumbers[kModeTime] = kModeTime;
+		mOtherModeSwitchNumbers[kModeBankDesc] = kModeBankDesc;
+		mOtherModeSwitchNumbers[kModeBankDirect] = kModeBankDirect;
+		mOtherModeSwitchNumbers[kModeExprPedalDisplay] = kModeExprPedalDisplay;
+		mOtherModeSwitchNumbers[kModeAdcOverride] = kModeAdcOverride;
+		mOtherModeSwitchNumbers[kModeTestLeds] = kModeTestLeds;
+		mOtherModeSwitchNumbers[kModeToggleTraceWindow] = kModeToggleTraceWindow;
+		mOtherModeSwitchNumbers[kModeToggleLedInversion] = kModeToggleLedInversion;
+		mOtherModeSwitchNumbers[kModeReconnect] = kModeReconnect;
 	}
 
 	std::sort(mBanks.begin(), mBanks.end(), SortByBankNumber);
@@ -401,68 +339,65 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 			mBankNavigationIndex = mActiveBankIndex;
 			NavigateBankRelative(1);
 		}
-		else if (switchNumber == mModeRecallSwitchNumber)
+		else if (switchNumber == GetSwitchNumber(kModeRecall))
 		{
 			EscapeToDefaultMode();
 			HistoryRecall();
 		}
-		else if (switchNumber == mModeBackSwitchNumber)
+		else if (switchNumber == GetSwitchNumber(kModeBack))
 		{
 			EscapeToDefaultMode();
 			HistoryBackward();
 		}
-		else if (switchNumber == mModeForwardSwitchNumber)
+		else if (switchNumber == GetSwitchNumber(kModeForward))
 		{
 			EscapeToDefaultMode();
 			HistoryForward();
 		}
-		else if (switchNumber == mModeBankDescSwitchNumber)
+		else if (switchNumber == GetSwitchNumber(kModeBankDesc))
 		{
 			ChangeMode(emBankDesc);
 			mBankNavigationIndex = mActiveBankIndex;
 			NavigateBankRelative(0);
 		}
-		else if (switchNumber == mModeBankDirectSwitchNumber)
+		else if (switchNumber == GetSwitchNumber(kModeBankDirect))
 			ChangeMode(emBankDirect);
-		else if (switchNumber == mModeExprPedalDisplaySwitchNumber)
+		else if (switchNumber == GetSwitchNumber(kModeExprPedalDisplay))
 			ChangeMode(emExprPedalDisplay);
-		else if (switchNumber == mModeToggleLedInversionSwitchNumber)
+		else if (switchNumber == GetSwitchNumber(kModeToggleLedInversion))
 		{
 			if (mSwitchDisplay)
 				mSwitchDisplay->InvertLeds(!mSwitchDisplay->IsInverted());
 			EscapeToDefaultMode();
 		}
-		else if (switchNumber == mModeReconnectSwitchNumber)
+		else if (switchNumber == GetSwitchNumber(kModeReconnect))
 		{
 			if (mApplication)
 				mApplication->Reconnect();
 			EscapeToDefaultMode();
 		}
-		else if (switchNumber == mModeTestLedsSwitchNumber)
+		else if (switchNumber == GetSwitchNumber(kModeTestLeds))
 		{
 			if (mSwitchDisplay)
 				mSwitchDisplay->TestLeds();
 			EscapeToDefaultMode();
 		}
-		else if (switchNumber == mModeToggleTraceWindowSwitchNumber)
+		else if (switchNumber == GetSwitchNumber(kModeToggleTraceWindow))
 		{
 			if (mApplication)
 				mApplication->ToggleTraceWindow();
 		}
-		else if (switchNumber == mModeTimeSwitchNumber)
+		else if (switchNumber == GetSwitchNumber(kModeTime))
 			ChangeMode(emTimeDisplay);
-		else if (switchNumber == mModeAdcOverrideSwitchNumber)
+		else if (switchNumber == GetSwitchNumber(kModeAdcOverride))
 			ChangeMode(emAdcOverride);
 		else 
 		{
-			for (int idx = 0; idx < kCustomBankLoadCount; idx++)
+			std::map<int, int>::const_iterator it = mBankLoadSwitchNumbers.find(switchNumber);
+			if (it != mBankLoadSwitchNumbers.end())
 			{
-				if (switchNumber == mModeLoadBankSwitchNumbers[idx])
-				{
-					EscapeToDefaultMode();
-					LoadBank(mCustomBankLoads[idx]);
-					break;
-				}
+				EscapeToDefaultMode();
+				LoadBank(it->second);
 			}
 		}
 
@@ -899,100 +834,49 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Next Bank");
 			mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "Prev Bank");
 
-			if (kUnassignedSwitchNumber != mModeRecallSwitchNumber)
-			{
-				mSwitchDisplay->SetSwitchText(mModeRecallSwitchNumber, "Recall last bank");
-				mSwitchDisplay->SetSwitchDisplay(mModeRecallSwitchNumber, true);
-			}
-			if (!mBackHistory.empty() && kUnassignedSwitchNumber != mModeBackSwitchNumber)
-			{
-				mSwitchDisplay->SetSwitchText(mModeBackSwitchNumber, "Go back (bank history)");
-				mSwitchDisplay->SetSwitchDisplay(mModeBackSwitchNumber, true);
-			}
-			if (!mForwardHistory.empty() && kUnassignedSwitchNumber != mModeForwardSwitchNumber)
-			{
-				mSwitchDisplay->SetSwitchText(mModeForwardSwitchNumber, "Go forward (bank history)");
-				mSwitchDisplay->SetSwitchDisplay(mModeForwardSwitchNumber, true);
-			}
-			if (kUnassignedSwitchNumber != mModeBankDescSwitchNumber)
-			{
-				mSwitchDisplay->SetSwitchText(mModeBankDescSwitchNumber, "Describe banks...");
-				mSwitchDisplay->SetSwitchDisplay(mModeBankDescSwitchNumber, true);
-			}
-			if (kUnassignedSwitchNumber != mModeBankDirectSwitchNumber)
-			{
-				mSwitchDisplay->SetSwitchText(mModeBankDirectSwitchNumber, "Bank direct access...");
-				mSwitchDisplay->SetSwitchDisplay(mModeBankDirectSwitchNumber, true);
-			}
-			if (kUnassignedSwitchNumber != mModeExprPedalDisplaySwitchNumber)
-			{
-				mSwitchDisplay->SetSwitchText(mModeExprPedalDisplaySwitchNumber, "Raw ADC values...");
-				mSwitchDisplay->SetSwitchDisplay(mModeExprPedalDisplaySwitchNumber, true);
-			}
-			if (kUnassignedSwitchNumber != mModeTestLedsSwitchNumber)
-			{
-				mSwitchDisplay->SetSwitchText(mModeTestLedsSwitchNumber, "Test LEDs");
-				mSwitchDisplay->SetSwitchDisplay(mModeTestLedsSwitchNumber, true);
-			}
-			if (kUnassignedSwitchNumber != mModeToggleTraceWindowSwitchNumber)
-			{
-				mSwitchDisplay->SetSwitchText(mModeToggleTraceWindowSwitchNumber, "Toggle Trace Window");
-				mSwitchDisplay->SetSwitchDisplay(mModeToggleTraceWindowSwitchNumber, true);
-			}
-			if (kUnassignedSwitchNumber != mModeAdcOverrideSwitchNumber)
-			{
-				mSwitchDisplay->SetSwitchText(mModeAdcOverrideSwitchNumber, "ADC overrides...");
-				mSwitchDisplay->SetSwitchDisplay(mModeAdcOverrideSwitchNumber, true);
-			}
-			if (kUnassignedSwitchNumber != mModeTimeSwitchNumber)
-			{
-				mSwitchDisplay->SetSwitchText(mModeTimeSwitchNumber, "Display time...");
-				mSwitchDisplay->SetSwitchDisplay(mModeTimeSwitchNumber, true);
-			}
-			if (kUnassignedSwitchNumber != mModeToggleLedInversionSwitchNumber)
-			{
-				mSwitchDisplay->SetSwitchText(mModeToggleLedInversionSwitchNumber, "Toggle LED Inversion");
-				mSwitchDisplay->SetSwitchDisplay(mModeToggleLedInversionSwitchNumber, true);
-			}
-			if (kUnassignedSwitchNumber != mModeReconnectSwitchNumber)
-			{
-				mSwitchDisplay->SetSwitchText(mModeReconnectSwitchNumber, "Reconnect to Monome");
-				mSwitchDisplay->SetSwitchDisplay(mModeReconnectSwitchNumber, true);
-			}
+			SetupModeSelectSwitch(kModeRecall);
+			if (!mBackHistory.empty())
+				SetupModeSelectSwitch(kModeBack);
+			if (!mForwardHistory.empty())
+				SetupModeSelectSwitch(kModeForward);
+			SetupModeSelectSwitch(kModeBankDesc);
+			SetupModeSelectSwitch(kModeBankDirect);
+			SetupModeSelectSwitch(kModeExprPedalDisplay);
+			SetupModeSelectSwitch(kModeTestLeds);
+			SetupModeSelectSwitch(kModeToggleTraceWindow);
+			SetupModeSelectSwitch(kModeAdcOverride);
+			SetupModeSelectSwitch(kModeTime);
+			SetupModeSelectSwitch(kModeToggleLedInversion);
+			SetupModeSelectSwitch(kModeReconnect);
 
-			for (int idx = 0; idx < kCustomBankLoadCount; ++idx)
+			for (std::map<int, int>::const_iterator it = mBankLoadSwitchNumbers.begin();
+				it != mBankLoadSwitchNumbers.end(); ++it)
 			{
-				if (kUnassignedSwitchNumber != mModeLoadBankSwitchNumbers[idx] && 
-					kUnassignedSwitchNumber != mCustomBankLoads[idx])
+				PatchBank * bnk = GetBank(it->second);
+				if (bnk)
 				{
-					PatchBank * bnk = GetBank(mCustomBankLoads[idx]);
-					if (bnk)
-					{
-						std::string txt("Load (");
-						txt += bnk->GetBankName();
-						txt += ")";
-						mSwitchDisplay->SetSwitchText(mModeLoadBankSwitchNumbers[idx], txt);
-						mSwitchDisplay->SetSwitchDisplay(mModeLoadBankSwitchNumbers[idx], true);
-					}
+					std::string txt("Load (");
+					txt += bnk->GetBankName();
+					txt += ")";
+					mSwitchDisplay->SetSwitchText(it->first, txt);
+					mSwitchDisplay->SetSwitchDisplay(it->first, true);
 				}
 			}
-// 			if (kUnassignedSwitchNumber != mMode)
-// 			{
-// 				mSwitchDisplay->SetSwitchText(mMode, "");
-// 				mSwitchDisplay->SetSwitchDisplay(mMode, true);
-// 			}
 		}
 		break;
 	case emTimeDisplay:
-		msg = "Time Display";
-		showModeInMainDisplay = false;
-		if (kUnassignedSwitchNumber != mModeTimeSwitchNumber)
 		{
-			mSwitchDisplay->SetSwitchText(mModeTimeSwitchNumber, "Any button to exit");
-			mSwitchDisplay->SetSwitchDisplay(mModeTimeSwitchNumber, true);
+			msg = "Time Display";
+			showModeInMainDisplay = false;
+			int switchNumber = GetSwitchNumber(kModeTime);
+			if (kUnassignedSwitchNumber != switchNumber)
+			{
+				mSwitchDisplay->SetSwitchText(switchNumber, "Any button to exit");
+				mSwitchDisplay->SetSwitchDisplay(switchNumber, true);
+			}
+			if (!mApplication || !mApplication->EnableTimeDisplay(true))
+				EscapeToDefaultMode();
 		}
-		if (!mApplication || !mApplication->EnableTimeDisplay(true))
-			EscapeToDefaultMode();
 		break;
 	case emExprPedalDisplay:
 		msg = "Raw ADC values";
@@ -1102,12 +986,79 @@ MidiControlEngine::GetPatch(int number)
 	return mPatches[number];
 }
 
-bool
-MidiControlEngine::AssignCustomBankLoad(int customSlot, int bankNumber)
+void
+MidiControlEngine::AssignCustomBankLoad(int switchNumber, int bankNumber)
 {
-	if (customSlot < 0 || customSlot >= kCustomBankLoadCount)
-		return false;
+	mBankLoadSwitchNumbers[switchNumber] = bankNumber;
+}
 
-	mCustomBankLoads[customSlot] = bankNumber;
-	return true;
+void
+MidiControlEngine::AssignModeSwitchNumber(EngineModeSwitch mode, int switchNumber)
+{
+	mOtherModeSwitchNumbers[mode] = switchNumber;
+}
+
+int
+MidiControlEngine::GetSwitchNumber(EngineModeSwitch m) const
+{
+	std::map<EngineModeSwitch, int>::const_iterator it = mOtherModeSwitchNumbers.find(m);
+	if (it == mOtherModeSwitchNumbers.end())
+		return -1;
+	return it->second;
+}
+
+void
+MidiControlEngine::SetupModeSelectSwitch(EngineModeSwitch m)
+{
+	const int switchNumber = GetSwitchNumber(m);
+	if (kUnassignedSwitchNumber == switchNumber)
+		return;
+
+	std::string txt;
+
+	switch (m)
+	{
+	case kModeRecall:
+		txt = "Recall last bank";
+		break;
+	case kModeBack:
+		txt = "Go back (bank history)";
+		break;
+	case kModeForward:
+		txt = "Go forward (bank history)";
+		break;
+	case kModeBankDesc:
+		txt = "Describe banks...";
+		break;
+	case kModeBankDirect:
+		txt = "Bank direct access...";
+		break;
+	case kModeExprPedalDisplay:
+		txt = "Raw ADC values...";
+		break;
+	case kModeTestLeds:
+		txt = "Test LEDs";
+		break;
+	case kModeToggleTraceWindow:
+		txt = "Toggle Trace Window";
+		break;
+	case kModeAdcOverride:
+		txt = "ADC overrides...";
+		break;
+	case kModeTime:
+		txt = "Display time...";
+		break;
+	case kModeToggleLedInversion:
+		txt = "Toggle LED Inversion";
+		break;
+	case kModeReconnect:
+		txt = "Reconnect to Monome";
+		break;
+	default:
+		_ASSERTE(!"unhandled EngineModeSwitch");
+		return;
+	}
+
+	mSwitchDisplay->SetSwitchText(switchNumber, txt);
+	mSwitchDisplay->SetSwitchDisplay(switchNumber, true);
 }

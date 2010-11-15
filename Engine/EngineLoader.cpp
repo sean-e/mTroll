@@ -267,26 +267,46 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 		globalPedals.InitMidiOut(globalExprPedalMidiOut);
 	}
 
-	pChildElem = hRoot.FirstChild("CustomBankLoadMap").FirstChildElement().Element();
+	pChildElem = hRoot.FirstChild("switches").FirstChildElement().Element();
 	for ( ; pChildElem; pChildElem = pChildElem->NextSiblingElement())
 	{
-		int bnkNum = -1;
-		int slot = -1;
-		pChildElem->QueryIntAttribute("slot", &slot);
-		pChildElem->QueryIntAttribute("bank", &bnkNum);
+		std::string name;
+		pChildElem->QueryValueAttribute("name", &name);
+		if (name.empty() || name == "mode" || name == "increment" || name == "decrement")
+			continue;
 
-		if (-1 != bnkNum && -1 != slot)
+		int switchNumber = -1;
+		pChildElem->QueryIntAttribute("id", &switchNumber);
+		if (-1 == switchNumber)
+			continue;
+
+		if (name == "bankLoad")
 		{
-			if (!mEngine->AssignCustomBankLoad(slot - 1, bnkNum))
-			{
-				if (mTraceDisplay)
-				{
-					std::strstream traceMsg;
-					traceMsg << "Error loading config file: failed to load CustomBankLoadMap " << std::endl << std::ends;
-					mTraceDisplay->Trace(std::string(traceMsg.str()));
-				}
-			}
+			int bnkNum = -1;
+			pChildElem->QueryIntAttribute("bank", &bnkNum);
+			if (-1 == bnkNum)
+				continue;
+
+			mEngine->AssignCustomBankLoad(switchNumber, bnkNum);
+			continue;
 		}
+
+		MidiControlEngine::EngineModeSwitch m = MidiControlEngine::kUnassignedSwitchNumber;
+		if (name == "recall") m = MidiControlEngine::kModeRecall;
+		else if (name == "back") m = MidiControlEngine::kModeBack;
+		else if (name == "forward") m = MidiControlEngine::kModeForward;
+		else if (name == "time") m = MidiControlEngine::kModeTime;
+		else if (name == "bankDescription") m = MidiControlEngine::kModeBankDesc;
+		else if (name == "bankDirect") m = MidiControlEngine::kModeBankDirect;
+		else if (name == "adcDisplay") m = MidiControlEngine::kModeExprPedalDisplay;
+		else if (name == "adcOverride") m = MidiControlEngine::kModeAdcOverride;
+		else if (name == "testLeds") m = MidiControlEngine::kModeTestLeds;
+		else if (name == "toggleTraceWindow") m = MidiControlEngine::kModeToggleTraceWindow;
+		else if (name == "toggleLedInversion") m = MidiControlEngine::kModeToggleLedInversion;
+		else if (name == "reconnectMonome") m = MidiControlEngine::kModeReconnect;
+
+		if (MidiControlEngine::kUnassignedSwitchNumber != m)
+			mEngine->AssignModeSwitchNumber(m, switchNumber);
 	}
 
 	return true;

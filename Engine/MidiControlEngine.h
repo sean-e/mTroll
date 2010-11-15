@@ -28,6 +28,7 @@
 #include <map>
 #include <vector>
 #include <stack>
+
 #include "Patch.h"
 #include "ExpressionPedals.h"
 #include "../Monome40h/IMonome40hInputSubscriber.h"
@@ -54,13 +55,33 @@ public:
 					  int modeSwitchNumber);
 	~MidiControlEngine();
 
+	// These are the switch numbers used in "Mode Select" mode (default values 
+	// that can be overridden in the config xml file <switches> section)
+	enum EngineModeSwitch
+	{
+		kUnassignedSwitchNumber = -1,
+		kModeRecall = 0,
+		kModeBack,
+		kModeForward,
+		kModeTime,
+		kModeBankDesc,
+		kModeBankDirect,
+		kModeExprPedalDisplay,
+		kModeAdcOverride,
+		kModeTestLeds,
+		kModeToggleTraceWindow,
+		kModeToggleLedInversion,
+		kModeReconnect
+	};
+
 	// initialization
 	typedef std::map<int, Patch*> Patches;
 	PatchBank &				AddBank(int number, const std::string & name);
 	void					AddPatch(Patch * patch);
 	void					SetPowerup(int powerupBank, int powerupPatch, int powerupTimeout);
 	void					FilterRedundantProgChg(bool filter) {mFilterRedundantProgramChanges = filter;}
-	bool					AssignCustomBankLoad(int customSlot, int bankNumber);
+	void					AssignCustomBankLoad(int switchNumber, int bankNumber);
+	void					AssignModeSwitchNumber(EngineModeSwitch mode, int switchNumber);
 	void					CompleteInit(const PedalCalibration * pedalCalibrationSettings);
 
 	ExpressionPedals &		GetPedals() {return mGlobalPedals;}
@@ -88,6 +109,7 @@ private:
 	void					UpdateBankModeSwitchDisplay();
 	void					CalibrateExprSettings(const PedalCalibration * pedalCalibrationSettings);
 	void					EscapeToDefaultMode();
+	int						GetSwitchNumber(EngineModeSwitch m) const;
 	enum EngineMode 
 	{ 
 		emCreated = -1,		// initial state - no data loaded
@@ -102,6 +124,7 @@ private:
 		emNotValid 
 	};
 	void					ChangeMode(EngineMode newMode);
+	void					SetupModeSelectSwitch(EngineModeSwitch m);
 
 private:
 	// non-retained runtime state
@@ -137,21 +160,8 @@ private:
 	int						mModeSwitchNumber;
 	int						mIncrementSwitchNumber;
 	int						mDecrementSwitchNumber;
-	int						mModeRecallSwitchNumber;
-	int						mModeBackSwitchNumber;
-	int						mModeForwardSwitchNumber;
-	int						mModeTimeSwitchNumber;
-	int						mModeBankDescSwitchNumber;
-	int						mModeBankDirectSwitchNumber;
-	int						mModeExprPedalDisplaySwitchNumber;
-	int						mModeAdcOverrideSwitchNumber;
-	int						mModeTestLedsSwitchNumber;
-	int						mModeToggleTraceWindowSwitchNumber;
-	int						mModeToggleLedInversionSwitchNumber;
-	int						mModeReconnectSwitchNumber;
-	enum { kCustomBankLoadCount = 5 };
-	int						mModeLoadBankSwitchNumbers[kCustomBankLoadCount];
-	int						mCustomBankLoads[kCustomBankLoadCount];
+	std::map<EngineModeSwitch, int>		mOtherModeSwitchNumbers;
+	std::map<int, int>		mBankLoadSwitchNumbers;
 };
 
 #endif // MidiControlEngine_h__
