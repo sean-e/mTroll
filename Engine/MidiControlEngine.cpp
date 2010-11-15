@@ -208,15 +208,17 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 			defaultsBank = NULL;
 	}
 
+	PatchBank tmpDefaultBank(0, "nav default");
+	AddPatch(new MetaPatch_BankNavNext(this, kBankNavNextPatchNumber, "Next Bank"));
+	AddPatch(new MetaPatch_BankNavPrevious(this, kBankNavPrevPatchNumber, "Prev Bank"));
+
 	// this is how we allow users to override Next and Prev switches in their banks
 	// while at the same time reserving them for use by our modes.
 	// If their default bank specifies a mapping for mIncrementSwitchNumber or 
 	// mDecrementSwitchNumber, they will not get Next or Prev at all.
-	PatchBank tmpDefaultBank(0, "nav default");
-	AddPatch(new MetaPatch_BankNavNext(this, kBankNavNextPatchNumber, "Next Bank"));
-	AddPatch(new MetaPatch_BankNavPrevious(this, kBankNavPrevPatchNumber, "Prev Bank"));
-	tmpDefaultBank.AddPatchMapping(mIncrementSwitchNumber, kBankNavNextPatchNumber, PatchBank::stIgnore, PatchBank::stIgnore);
-	tmpDefaultBank.AddPatchMapping(mDecrementSwitchNumber, kBankNavPrevPatchNumber, PatchBank::stIgnore, PatchBank::stIgnore);
+	// CHANGED: no longer add Next and prev by default
+// 	tmpDefaultBank.AddPatchMapping(mIncrementSwitchNumber, kBankNavNextPatchNumber, PatchBank::stIgnore, PatchBank::stIgnore);
+// 	tmpDefaultBank.AddPatchMapping(mDecrementSwitchNumber, kBankNavPrevPatchNumber, PatchBank::stIgnore, PatchBank::stIgnore);
 
 	if (defaultsBank)
 		defaultsBank->SetDefaultMappings(tmpDefaultBank);  // add Next and Prev to their default bank
@@ -997,8 +999,6 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		mPedalModePort = 0;
 		if (mSwitchDisplay)
 		{
-			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "");
-			mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "");
 			mSwitchDisplay->SetSwitchText(0, "Pedal 1");
 			mSwitchDisplay->SetSwitchDisplay(0, true);
 			mSwitchDisplay->SetSwitchText(1, "Pedal 2");
@@ -1011,9 +1011,6 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		mPedalModePort = 0;
 		if (mSwitchDisplay && mApplication)
 		{
-			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "");
-			mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "");
-
 			for (int idx = 0; idx < 4; ++idx)
 			{
 				std::strstream msg;
