@@ -358,6 +358,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Engine\IMidiIn.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Engine\IMidiInGenerator.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Engine\IMidiOut.h"
 				>
 			</File>
@@ -561,6 +569,14 @@
 		<Filter
 			Name="midi"
 			>
+			<File
+				RelativePath="..\midi\WinMidiIn.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\midi\WinMidiIn.h"
+				>
+			</File>
 			<File
 				RelativePath=".\..\midi\WinMidiOut.cpp"
 				>
