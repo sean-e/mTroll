@@ -44,11 +44,14 @@
 #ifdef _WINDOWS
 	#include "../winUtil/SEHexception.h"
 	#include "../midi/WinMidiOut.h"
+	#include "../midi/WinMidiIn.h"
 	typedef WinMidiOut	XMidiOut;
+	typedef WinMidiIn	XMidiIn;
 	#define SLEEP	Sleep
 #else
 	#error "include the midiOut header file for this platform"
 	typedef YourMidiOut		XMidiOut;
+	typedef YourMidiIn		XMidiIn;
 	#define SLEEP	sleep
 #endif
 
@@ -80,6 +83,14 @@ ControlUi::~ControlUi()
 struct DeleteMidiOut
 {
 	void operator()(const std::pair<unsigned int, IMidiOut *> & pr)
+	{
+		delete pr.second;
+	}
+};
+
+struct DeleteMidiIn
+{
+	void operator()(const std::pair<unsigned int, IMidiIn *> & pr)
 	{
 		delete pr.second;
 	}
@@ -127,6 +138,7 @@ ControlUi::Unload()
 		mHardwareUi->Unsubscribe(this);
 	}
 
+	CloseMidiIns();
 	CloseMidiOuts();
 
 	delete mEngine;
@@ -162,6 +174,9 @@ ControlUi::Unload()
 
 	for_each(mMidiOuts.begin(), mMidiOuts.end(), DeleteMidiOut());
 	mMidiOuts.clear();
+
+	for_each(mMidiIns.begin(), mMidiIns.end(), DeleteMidiIn());
+	mMidiIns.clear();
 
 	for_each(mLeds.begin(), mLeds.end(), DeleteSwitchLed());
 	mLeds.clear();
@@ -240,6 +255,21 @@ ControlUi::LoadUi(const std::string & uiSettingsFile)
 		mMidiOuts.erase(0);
 	}
 
+	IMidiIn * midiIn = CreateMidiIn(0, -1);
+	if (midiIn)
+	{
+		const int kMidiInCnt = midiIn->GetMidiInDeviceCount();
+		for (int idx = 0; idx < kMidiInCnt; ++idx)
+		{
+			std::strstream msg;
+			msg << "  " << idx << ": " << midiIn->GetMidiInDeviceName(idx) << std::endl << std::ends;
+			Trace(msg.str());
+		}
+		Trace("\n");
+		midiIn->CloseMidiIn();
+		mMidiIns.erase(0);
+	}
+
 	if (mSwitches[0])
 		mSwitches[0]->setFocus();
 }
@@ -287,7 +317,7 @@ ControlUi::LoadMidiSettings(const std::string & file,
 							const bool adcOverrides[ExpressionPedals::PedalCount])
 {
 	delete mEngine;
-	EngineLoader ldr(mApp, this, this, this, this);
+	EngineLoader ldr(mApp, this, this, this, this, this);
 	mEngine = ldr.CreateEngine(file);
 	if (mEngine)
 	{
@@ -1056,4 +1086,59 @@ ControlUi::StopTimer()
 	tmp->stop();
 	disconnect(mTimeDisplayTimer, SIGNAL(timeout()), this, SLOT(TimerFired()));
 	delete tmp;
+}
+
+IMidiIn *
+ControlUi::GetMidiIn(unsigned int deviceIdx)
+{
+	return mMidiIns[deviceIdx];
+}
+
+void
+ControlUi::CloseMidiIns()
+{
+	for (MidiIns::iterator it = mMidiIns.begin();
+		it != mMidiIns.end();
+		++it)
+	{
+		IMidiIn * curIn = (*it).second;
+		if (curIn && curIn->IsMidiInOpen())
+			curIn->CloseMidiIn();
+	}
+}
+
+void
+ControlUi::OpenMidiIns()
+{
+	for (MidiIns::iterator it = mMidiIns.begin();
+		it != mMidiIns.end();
+		++it)
+	{
+		IMidiIn * curIn = (*it).second;
+		if (curIn->IsMidiInOpen())
+			continue;
+
+		std::strstream traceMsg;
+		const unsigned int kDeviceIdx = (*it).first;
+
+		if (curIn->OpenMidiIn(kDeviceIdx))
+			traceMsg << "Opened MIDI in " << kDeviceIdx << " " << curIn->GetMidiInDeviceName(kDeviceIdx) << std::endl << std::ends;
+		else
+			traceMsg << "Failed to open MIDI in " << kDeviceIdx << std::endl << std::ends;
+
+		Trace(traceMsg.str());
+	}
+}
+
+IMidiIn *
+ControlUi::CreateMidiIn(unsigned int deviceIdx, 
+						int activityIndicatorIdx)
+{
+	if (!mMidiIns[deviceIdx])
+		mMidiIns[deviceIdx] = new XMidiIn(this);
+
+	if (activityIndicatorIdx > 0)
+		mMidiIns[deviceIdx]->SetActivityIndicator(this, activityIndicatorIdx);
+
+	return mMidiIns[deviceIdx];
 }

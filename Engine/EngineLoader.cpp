@@ -30,6 +30,7 @@
 #include "../tinyxml/tinyxml.h"
 #include "HexStringUtils.h"
 #include "IMidiOutGenerator.h"
+#include "IMidiInGenerator.h"
 #include "ITraceDisplay.h"
 #include "../Monome40h/IMonome40h.h"
 #include "NormalPatch.h"
@@ -49,12 +50,14 @@ static PatchBank::PatchState GetLoadState(const std::string & tmpLoad);
 
 EngineLoader::EngineLoader(ITrollApplication * app,
 						   IMidiOutGenerator * midiOutGenerator,
+						   IMidiInGenerator * midiInGenerator,
 						   IMainDisplay * mainDisplay,
 						   ISwitchDisplay * switchDisplay,
 						   ITraceDisplay * traceDisplay) :
 	mEngine(NULL),
 	mApp(app),
 	mMidiOutGenerator(midiOutGenerator),
+	mMidiInGenerator(midiInGenerator),
 	mMainDisplay(mainDisplay),
 	mSwitchDisplay(switchDisplay),
 	mTraceDisplay(traceDisplay)
@@ -131,6 +134,8 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 	LoadBanks(pElem);
 
 	mMidiOutGenerator->OpenMidiOuts();
+	if (mMidiInGenerator)
+		mMidiInGenerator->OpenMidiIns();
 	mEngine->CompleteInit(mAdcCalibration);
 
 	MidiControlEngine * createdEngine = mEngine;
@@ -186,15 +191,26 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 	for ( ; pChildElem; pChildElem = pChildElem->NextSiblingElement())
 	{
 		int deviceIdx = 1;
+		int inDeviceIdx = -1;
 		int port = 1;
 		int activityIndicatorId = 0;
 
 		pChildElem->QueryIntAttribute("outIdx", &deviceIdx);
+		pChildElem->QueryIntAttribute("inIdx", &inDeviceIdx);
 		pChildElem->QueryIntAttribute("port", &port);
 		pChildElem->QueryIntAttribute("activityIndicatorId", &activityIndicatorId);
 
-		mMidiOutPortToDeviceIdxMap[port] = deviceIdx;
-		mMidiOutGenerator->CreateMidiOut(mMidiOutPortToDeviceIdxMap[port], activityIndicatorId);
+		if (-1 == inDeviceIdx)
+		{
+			mMidiOutPortToDeviceIdxMap[port] = deviceIdx;
+			mMidiOutGenerator->CreateMidiOut(mMidiOutPortToDeviceIdxMap[port], activityIndicatorId);
+		}
+		else
+		{
+			mMidiInPortToDeviceIdxMap[port] = inDeviceIdx;
+			if (mMidiInGenerator)
+				mMidiInGenerator->CreateMidiIn(mMidiInPortToDeviceIdxMap[port], activityIndicatorId);
+		}
 	}
 	mEngine = new MidiControlEngine(mApp, mMainDisplay, mSwitchDisplay, mTraceDisplay, incrementSwitch, decrementSwitch, modeSwitch);
 	mEngine->SetPowerup(powerupBank, powerupPatch, powerupTimeout);

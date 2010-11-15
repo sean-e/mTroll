@@ -35,6 +35,7 @@ class IMainDisplay;
 class ISwitchDisplay;
 class ITraceDisplay;
 class IMidiOutGenerator;
+class IMidiInGenerator;
 class TiXmlElement;
 class IMonome40h;
 
@@ -42,7 +43,7 @@ class IMonome40h;
 class EngineLoader
 {
 public:
-	EngineLoader(ITrollApplication * app, IMidiOutGenerator * midiOutGenerator, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay, ITraceDisplay * traceDisplay);
+	EngineLoader(ITrollApplication * app, IMidiOutGenerator * midiOutGenerator, IMidiInGenerator * midiInGenerator, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay, ITraceDisplay * traceDisplay);
 
 	MidiControlEngine *		CreateEngine(const std::string & engineSettingsFile);
 	void					InitMonome(IMonome40h * monome, 
@@ -56,8 +57,9 @@ private:
 	void					LoadPatches(TiXmlElement * pElem);
 	void					LoadBanks(TiXmlElement * pElem);
 
-	typedef std::map<int, unsigned int> MidiOutPortToDeviceIdxMap;
-	MidiOutPortToDeviceIdxMap	mMidiOutPortToDeviceIdxMap;
+	typedef std::map<int, unsigned int> MidiPortToDeviceIdxMap;
+	MidiPortToDeviceIdxMap	mMidiOutPortToDeviceIdxMap;
+	MidiPortToDeviceIdxMap	mMidiInPortToDeviceIdxMap;
 	enum AdcEnableState {adc_default, adc_used, adc_forceOn, adc_forceOff};
 	AdcEnableState			mAdcEnables[ExpressionPedals::PedalCount];
 	PedalCalibration		mAdcCalibration[ExpressionPedals::PedalCount];
@@ -66,6 +68,7 @@ private:
 	ITrollApplication *		mApp;
 	IMainDisplay *			mMainDisplay;
 	IMidiOutGenerator *		mMidiOutGenerator;
+	IMidiInGenerator *		mMidiInGenerator;
 	ISwitchDisplay *		mSwitchDisplay;
 	ITraceDisplay *			mTraceDisplay;
 	std::map<std::string, std::string> mDevices;

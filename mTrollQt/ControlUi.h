@@ -35,6 +35,7 @@
 #include "../Engine/MidiControlEngine.h"
 #include "../Engine/IMidiControlUi.h"
 #include "../Engine/IMidiOutGenerator.h"
+#include "../Engine/IMidiInGenerator.h"
 #include "../Monome40h/IMonome40hInputSubscriber.h"
 
 #ifdef _WINDOWS
@@ -60,6 +61,7 @@ class ControlUi : public QWidget,
 						 ITraceDisplay,
 						 IMidiControlUi,
 						 IMidiOutGenerator,
+						 IMidiInGenerator,
 						 IMonome40hSwitchSubscriber
 {
 	Q_OBJECT;
@@ -84,6 +86,12 @@ public: // IMidiOutGenerator
 	virtual IMidiOut *	GetMidiOut(unsigned int deviceIdx);
 	virtual void		OpenMidiOuts();
 	virtual void		CloseMidiOuts();
+
+public: // IMidiInGenerator
+	virtual IMidiIn *	GetMidiIn(unsigned int deviceIdx);
+	virtual void		CloseMidiIns();
+	virtual void		OpenMidiIns();
+	virtual IMidiIn *	CreateMidiIn(unsigned int deviceIdx, int activityIndicatorIdx);
 
 public: // IMainDisplay
 	virtual void		TextOut(const std::string & txt);
@@ -277,6 +285,7 @@ private:
 	{
 		return mRowColToSwitchNumber[(row << 16) | col];
 	}
+
 private:
 	ITrollApplication			* mApp;
 	IMonome40h					* mHardwareUi;
@@ -295,6 +304,8 @@ private:
 	int							mMaxSwitchId;
 	typedef std::map<unsigned int, IMidiOut*> MidiOuts;
 	MidiOuts					mMidiOuts;
+	typedef std::map<unsigned int, IMidiIn*> MidiIns;
+	MidiIns						mMidiIns;
 	int							mLedIntensity;
 	bool						mInvertLeds;
 	KeepDisplayOn				* mSystemPowerOverride;
