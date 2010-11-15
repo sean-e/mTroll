@@ -54,10 +54,12 @@
 		</switchAssembly>
 		<switchAssembly number="21" incrementalVpos="0" incrementalHpos="205" >
 			<switchTextDisplay />
+			<switchLed vOffset="38" hOffset="112" />
 			<switch label="&amp;Prev" vOffset="35" />
 			</switchAssembly>
 		<switchAssembly number="22" incrementalVpos="0" incrementalHpos="205" >
 			<switchTextDisplay />
+			<switchLed vOffset="38" hOffset="112" />
 			<switch label="&amp;Next" vOffset="35" />
 	    </switchAssembly>
 
