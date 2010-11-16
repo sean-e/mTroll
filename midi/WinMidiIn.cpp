@@ -25,26 +25,38 @@
 #include "..\midi\WinMidiIn.h"
 #include "..\Engine\ITraceDisplay.h"
 #include "..\Engine\ISwitchDisplay.h"
+#include "../WinUtil/AutoLockCs.h"
 #include <atlstr.h>
 
 #pragma comment(lib, "winmm.lib")
 
 static CString GetMidiErrorText(MMRESULT resultCode);
 
+// http://home.roadrunner.com/~jgglatt/tech/lowmidi.htm
+// http://msdn.microsoft.com/en-us/library/dd798458%28v=VS.85%29.aspx
 
 WinMidiIn::WinMidiIn(ITraceDisplay * trace) : 
 	mTrace(trace), 
 	mMidiIn(NULL), 
 	mMidiInError(false),
+	mThread(NULL),
+	mThreadId(0),
+	mDeviceIdx(0),
+	mThreadState(tsNotStarted),
 	mCurMidiHdrIdx(0)
 {
 	for (int idx = 0; idx < MIDIHDR_CNT; ++idx)
 		ZeroMemory(&mMidiHdrs[idx], sizeof(MIDIHDR));
+	::InitializeCriticalSection(&mCs);
+	mDoneEvent = ::CreateEvent(NULL, FALSE, FALSE, NULL);
 }
 
 WinMidiIn::~WinMidiIn()
 {
 	CloseMidiIn();
+	if (mDoneEvent && mDoneEvent != INVALID_HANDLE_VALUE)
+		::CloseHandle(mDoneEvent);
+	::DeleteCriticalSection(&mCs);
 }
 
 // IMidiIn
@@ -77,10 +89,87 @@ bool
 WinMidiIn::OpenMidiIn(unsigned int deviceIdx)
 {
 	_ASSERTE(!mMidiIn);
-	MMRESULT res = ::midiInOpen(&mMidiIn, deviceIdx, (DWORD_PTR)MidiInCallbackProc, (DWORD_PTR)this, CALLBACK_FUNCTION);
+	mDeviceIdx = deviceIdx;
+	mThreadState = tsStarting;
+	mThread = (HANDLE)_beginthreadex(NULL, 0, ServiceThread, this, 0, (unsigned int*)&mThreadId);
+	if (!mThread)
+		return false;
+
+	while (mThread && mThreadState == tsStarting)
+		::Sleep(500);
+
+	return mThread && mThreadState == tsRunning;
+}
+
+void
+WinMidiIn::ServiceThread()
+{
+	MMRESULT res = ::midiInOpen(&mMidiIn, mDeviceIdx, (DWORD_PTR)MidiInCallbackProc, (DWORD_PTR)this, CALLBACK_FUNCTION | MIDI_IO_STATUS);
 	if (MMSYSERR_NOERROR != res)
+	{
+		mThreadState = tsEnding;
 		ReportMidiError(res, __LINE__);
-	return res == MMSYSERR_NOERROR;
+		return;
+	}
+
+	mThreadState = tsRunning;
+	_ASSERTE(mDoneEvent && mDoneEvent != INVALID_HANDLE_VALUE);
+    for (;;)
+    {
+		DWORD result; 
+		MSG msg; 
+
+		// Read all of the messages in this next loop, 
+		// removing each message as we read it.
+		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) 
+		{ 
+			// If it is a quit message, exit.
+			if (msg.message == WM_QUIT)  
+				break; 
+
+			// Otherwise, dispatch the message.
+			DispatchMessage(&msg); 
+		}
+
+		// Wait for any message sent or posted to this queue 
+		// or for one of the passed handles be set to signaled.
+		result = MsgWaitForMultipleObjects(1, &mDoneEvent, FALSE, INFINITE, QS_ALLEVENTS);
+
+		// The result tells us the type of event we have.
+		if (result == (WAIT_OBJECT_0 + 1))
+		{
+			// New messages have arrived. 
+			// Continue to the top of the always while loop to 
+			// dispatch them and resume waiting.
+			continue;
+		} 
+		else 
+		{ 
+			break;
+		}
+    }
+
+	mThreadState = tsEnding;
+	res = ::midiInReset(mMidiIn);
+	_ASSERTE(res == MMSYSERR_NOERROR);
+	res = ::midiInClose(mMidiIn);
+	if (res == MMSYSERR_NOERROR)
+		mMidiIn = NULL;
+	else
+		ReportMidiError(res, __LINE__);
+
+	mThreadState = tsNotStarted;
+	mThread = NULL;
+	mThreadId = 0;
+}
+
+unsigned int __stdcall
+WinMidiIn::ServiceThread(void * _thisParam)
+{
+	WinMidiIn * _this = static_cast<WinMidiIn*>(_thisParam);
+	_this->ServiceThread();
+	_endthreadex(0);
+	return 0;
 }
 
 #define NOTEOFF			0x80
@@ -99,28 +188,43 @@ WinMidiIn::MidiInCallbackProc(HMIDIIN hmi,
 							  DWORD dwParam1, 
 							  DWORD dwParam2)
 {
-	if (MOM_DONE == wMsg)
+	MMRESULT res;
+	WinMidiIn * _this = (WinMidiIn *) dwInstance;
+	LPMIDIHDR hdr = (LPMIDIHDR) dwParam1;
+// 	std::strstream traceMsg;
+
+	switch (wMsg)
 	{
-		WinMidiIn * _this = (WinMidiIn *) dwInstance;
-		LPMIDIHDR hdr = (LPMIDIHDR) dwParam1;
-		MMRESULT res = ::midiInUnprepareHeader(_this->mMidiIn, hdr, sizeof(MIDIHDR));
+	case MIM_DATA:
+		break;
+	case MIM_LONGDATA:
+		break;
+	case MIM_ERROR:
+	case MIM_LONGERROR:
+		break;
+	case MOM_DONE:
+		res = ::midiInUnprepareHeader(_this->mMidiIn, hdr, sizeof(MIDIHDR));
 		hdr->dwFlags = 0;
 		_ASSERTE(MMSYSERR_NOERROR == res);
+		break;
 	}
 }
 
 void
 WinMidiIn::CloseMidiIn()
 {
-	if (mMidiIn)
+	if (mThread)
 	{
-		::midiInReset(mMidiIn);
-		MMRESULT res = ::midiInClose(mMidiIn);
-		if (res == MMSYSERR_NOERROR)
-			mMidiIn = NULL;
-		else
-			ReportMidiError(res, __LINE__);
+		_ASSERTE(mDoneEvent);
+		::SetEvent(mDoneEvent);
+		::WaitForSingleObjectEx(mThread, 10000, FALSE);
+		_ASSERTE(mThreadState == tsNotStarted);
+		CloseHandle(mThread);
+		mThread = NULL;
+		mThreadId = 0;
 	}
+
+	_ASSERTE(!mMidiIn);
 }
 
 void

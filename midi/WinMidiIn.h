@@ -47,19 +47,29 @@ public:
 	virtual void CloseMidiIn();
 
 private:
+	static unsigned int __stdcall ServiceThread(void * _this);
+	void ServiceThread();
+
 	void ReportMidiError(MMRESULT resultCode, unsigned int lineNumber);
 	void ReportError(LPCTSTR msg);
 	void ReportError(LPCTSTR msg, int param1);
 	void ReportError(LPCTSTR msg, int param1, int param2);
 
 	static void CALLBACK MidiInCallbackProc(HMIDIIN hmi, UINT wMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2);
+	enum ThreadState { tsNotStarted, tsStarting, tsRunning, tsEnding };
 
 	ITraceDisplay				* mTrace;
 	HMIDIIN						mMidiIn;
-	enum {MIDIHDR_CNT = 128};
+	enum { MIDIHDR_CNT = 128 };
 	MIDIHDR						mMidiHdrs[MIDIHDR_CNT];
+	CRITICAL_SECTION			mCs;
 	int							mCurMidiHdrIdx;
+	unsigned int				mDeviceIdx;
 	bool						mMidiInError;
+	HANDLE						mDoneEvent;
+	HANDLE						mThread;
+	ThreadState					mThreadState;
+	DWORD						mThreadId;
 };
 
 #endif // WinMidiIn_h__
