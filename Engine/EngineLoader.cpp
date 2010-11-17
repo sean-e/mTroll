@@ -734,8 +734,10 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 				const PatchBank::PatchState loadState = GetLoadState(tmp);
 				childElem->QueryValueAttribute("unloadState", &tmp);
 				const PatchBank::PatchState unloadState = GetLoadState(tmp);
+				childElem->QueryValueAttribute("override", &tmp);
+				const PatchBank::PatchState stateOverride = GetLoadState(tmp);
 
-				bank.AddPatchMapping(switchNumber - 1, patchNumber, loadState, unloadState);
+				bank.AddPatchMapping(switchNumber - 1, patchNumber, loadState, unloadState, stateOverride);
 			}
 			else if (childElem->ValueStr() == "ExclusiveSwitchGroup")
 			{

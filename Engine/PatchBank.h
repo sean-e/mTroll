@@ -51,7 +51,7 @@ public:
 	};
 
 	// creation/init
-	void AddPatchMapping(int switchNumber, int patchNumber, PatchState patchLoadState, PatchState patchUnloadState);
+	void AddPatchMapping(int switchNumber, int patchNumber, PatchState patchLoadState, PatchState patchUnloadState, PatchState patchStateOverride);
 	void InitPatches(const MidiControlEngine::Patches & patches, ITraceDisplay * traceDisp);
 	void CalibrateExprSettings(const PedalCalibration * pedalCalibration, MidiControlEngine * eng, ITraceDisplay * traceDisp);
 	void SetDefaultMappings(const PatchBank & defaultMapping);
@@ -76,22 +76,25 @@ private:
 	struct PatchMap
 	{
 		int					mPatchNumber;	// needed for load of document
-		PatchState			mPatchStateAtLoad;
-		PatchState			mPatchStateAtUnload;
+		PatchState			mPatchStateAtBankLoad;
+		PatchState			mPatchStateAtBankUnload;
+		PatchState			mPatchStateOverride; // press of switch prevents toggle from changing
 		Patch				*mPatch;		// non-retained runtime state; weak ref
 
-		PatchMap(int patchNumber, PatchState loadState, PatchState unloadState) :
+		PatchMap(int patchNumber, PatchState loadState, PatchState unloadState, PatchState stateOverride) :
 			mPatchNumber(patchNumber),
-			mPatchStateAtLoad(loadState),
-			mPatchStateAtUnload(unloadState),
+			mPatchStateAtBankLoad(loadState),
+			mPatchStateAtBankUnload(unloadState),
+			mPatchStateOverride(stateOverride),
 			mPatch(NULL)
 		{
 		}
 
 		PatchMap(const PatchMap & rhs) :
 			mPatchNumber(rhs.mPatchNumber),
-			mPatchStateAtLoad(rhs.mPatchStateAtLoad),
-			mPatchStateAtUnload(rhs.mPatchStateAtUnload),
+			mPatchStateAtBankLoad(rhs.mPatchStateAtBankLoad),
+			mPatchStateAtBankUnload(rhs.mPatchStateAtBankUnload),
+			mPatchStateOverride(rhs.mPatchStateOverride),
 			mPatch(rhs.mPatch)
 		{
 		}

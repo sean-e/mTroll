@@ -70,10 +70,10 @@ void PatchBank::DeletePatchMaps::operator()(const std::pair<int, PatchVect> & pr
 }
 
 void
-PatchBank::AddPatchMapping(int switchNumber, int patchNumber, PatchState patchLoadState, PatchState patchUnloadState)
+PatchBank::AddPatchMapping(int switchNumber, int patchNumber, PatchState patchLoadState, PatchState patchUnloadState, PatchState patchStateOverride)
 {
 	PatchVect & curPatches = mPatches[switchNumber];
-	curPatches.push_back(new PatchMap(patchNumber, patchLoadState, patchUnloadState));
+	curPatches.push_back(new PatchMap(patchNumber, patchLoadState, patchUnloadState, patchStateOverride));
 }
 
 void
@@ -181,9 +181,9 @@ PatchBank::Load(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 			if (!curItem || !curItem->mPatch)
 				continue;
 
-			if (stA == curItem->mPatchStateAtLoad)
+			if (stA == curItem->mPatchStateAtBankLoad)
 				curItem->mPatch->BankTransitionActivation();
-			else if (stB == curItem->mPatchStateAtLoad)
+			else if (stB == curItem->mPatchStateAtBankLoad)
 				curItem->mPatch->BankTransitionDeactivation();
 
 			// only assign a switch to the first patch (if multiple 
@@ -217,9 +217,9 @@ PatchBank::Unload(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 			if (!curItem || !curItem->mPatch)
 				continue;
 
-			if (stA == curItem->mPatchStateAtUnload)
+			if (stA == curItem->mPatchStateAtBankUnload)
 				curItem->mPatch->BankTransitionActivation();
-			else if (stB == curItem->mPatchStateAtUnload)
+			else if (stB == curItem->mPatchStateAtBankUnload)
 				curItem->mPatch->BankTransitionDeactivation();
 
 			curItem->mPatch->ClearSwitch(switchDisplay);
@@ -308,7 +308,13 @@ PatchBank::PatchSwitchPressed(int switchNumber, IMainDisplay * mainDisplay, ISwi
 		if (!curSwitchItem || !curSwitchItem->mPatch)
 			continue;
 
-		curSwitchItem->mPatch->SwitchPressed(NULL, switchDisplay);
+		if (stIgnore == curSwitchItem->mPatchStateOverride ||
+			(stA == curSwitchItem->mPatchStateOverride && !curSwitchItem->mPatch->IsActive()) ||
+			(stB == curSwitchItem->mPatchStateOverride && curSwitchItem->mPatch->IsActive()))
+			curSwitchItem->mPatch->SwitchPressed(NULL, switchDisplay);
+		else
+			curSwitchItem->mPatch->UpdateDisplays(NULL, switchDisplay);
+
 		if (curSwitchItem->mPatch->IsPatchVolatile())
 		{
 			_ASSERTE(std::find(sActiveVolatilePatches.begin(), sActiveVolatilePatches.end(), curSwitchItem->mPatch) == sActiveVolatilePatches.end());
