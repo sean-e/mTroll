@@ -1,5 +1,5 @@
 /*
-Original code copyright (c) 2007-2009 Sean Echevarria ( http://www.creepingfog.com/sean/ )
+Original code copyright (c) 2007-2009,2010 Sean Echevarria ( http://www.creepingfog.com/sean/ )
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any
@@ -131,8 +131,14 @@ GetAsciiHexStr(const Bytes & inBytes,
 			   bool format /*= true*/)
 {
 	const int len = inBytes.size();
+	return GetAsciiHexStr(&inBytes[0], inBytes.size(), format);
+}
+
+std::string
+GetAsciiHexStr(const byte * inBytes, size_t sz, bool format /*= true*/)
+{
 	std::string tmp, retval;
-	for (int idx = 0; idx < len; idx++)
+	for (size_t idx = 0; idx < sz; idx++)
 	{
 		char tmp[6];
 		sprintf(tmp, "%02x", inBytes[idx]);
