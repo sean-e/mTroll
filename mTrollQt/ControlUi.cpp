@@ -45,13 +45,19 @@
 	#include "../winUtil/SEHexception.h"
 	#include "../midi/WinMidiOut.h"
 	#include "../midi/WinMidiIn.h"
+	#define USE_MIDI_IN
 	typedef WinMidiOut	XMidiOut;
 	typedef WinMidiIn	XMidiIn;
 	#define SLEEP	Sleep
 #else
 	#error "include the midiOut header file for this platform"
 	typedef YourMidiOut		XMidiOut;
-	typedef YourMidiIn		XMidiIn;
+
+//	#define USE_MIDI_IN
+	#ifdef USE_MIDI_IN
+		#error "include the midiIn header file for this platform"
+		typedef YourMidiIn		XMidiIn;
+	#endif
 	#define SLEEP	sleep
 #endif
 
@@ -219,7 +225,7 @@ ControlUi::Load(const std::string & uiSettingsFile,
 			++it)
 		{
 			IMidiOut * curOut = (*it).second;
-			if (curOut->IsMidiOutOpen())
+			if (curOut && curOut->IsMidiOutOpen())
 			{
 				anyMidiOutOpen = true;
 				break;
@@ -770,7 +776,7 @@ ControlUi::OpenMidiOuts()
 		++it)
 	{
 		IMidiOut * curOut = (*it).second;
-		if (curOut->IsMidiOutOpen())
+		if (!curOut || curOut->IsMidiOutOpen())
 			continue;
 
 		std::strstream traceMsg;
@@ -1116,7 +1122,7 @@ ControlUi::OpenMidiIns()
 		++it)
 	{
 		IMidiIn * curIn = (*it).second;
-		if (curIn->IsMidiInOpen())
+		if (!curIn || curIn->IsMidiInOpen())
 			continue;
 
 		std::strstream traceMsg;
@@ -1134,8 +1140,12 @@ ControlUi::OpenMidiIns()
 IMidiIn *
 ControlUi::CreateMidiIn(unsigned int deviceIdx)
 {
+#ifdef USE_MIDI_IN
 	if (!mMidiIns[deviceIdx])
 		mMidiIns[deviceIdx] = new XMidiIn(this);
 
 	return mMidiIns[deviceIdx];
+#else
+	return NULL;
+#endif // USE_MIDI_IN
 }

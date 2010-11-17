@@ -26,7 +26,7 @@
 #include "..\Engine\ITraceDisplay.h"
 #include "..\Engine\ISwitchDisplay.h"
 #include "../Engine/HexStringUtils.h"
-#include "../WinUtil/AutoLockCs.h"
+//#include "../WinUtil/AutoLockCs.h"
 #include <atlstr.h>
 
 #pragma comment(lib, "winmm.lib")
