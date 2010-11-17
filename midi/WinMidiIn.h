@@ -60,7 +60,7 @@ private:
 
 	ITraceDisplay				* mTrace;
 	HMIDIIN						mMidiIn;
-	enum { MIDIHDR_CNT = 128 };
+	enum { MIDIHDR_CNT = 512 };
 	MIDIHDR						mMidiHdrs[MIDIHDR_CNT];
 	CRITICAL_SECTION			mCs;
 	int							mCurMidiHdrIdx;
