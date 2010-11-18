@@ -32,8 +32,31 @@
 AxeFxManager::AxeFxManager(ISwitchDisplay * switchDisp,
 						   ITraceDisplay *pTrace) :
 	mSwitchDisplay(switchDisp),
-	mTrace(pTrace)
+	mTrace(pTrace),
+	mRefCnt(0)
 {
+}
+
+AxeFxManager::~AxeFxManager()
+{
+	// TODO: cancel timer
+}
+
+void
+AxeFxManager::AddRef()
+{
+	// this should only happen on the UI thread, otherwise mRefCnt needs 
+	// to be thread protected
+	++mRefCnt;
+}
+
+void
+AxeFxManager::Release()
+{
+	// this should only happen on the UI thread, otherwise mRefCnt needs 
+	// to be thread protected
+	if (!--mRefCnt)
+		delete this;
 }
 
 void
@@ -60,7 +83,6 @@ AxeFxManager::ReceivedSysex(byte * bytes, int len)
 void
 AxeFxManager::Closed(IMidiIn * midIn)
 {
-	// TODO: cancel timer
 	midIn->Unsubscribe(this);
-	delete this;
+	Release();
 }

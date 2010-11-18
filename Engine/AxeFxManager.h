@@ -40,14 +40,18 @@ class AxeFxManager : public IMidiInSubscriber
 {
 public:
 	AxeFxManager(ISwitchDisplay * switchDisp, ITraceDisplay * pTrace);
-	virtual ~AxeFxManager() {}
+	virtual ~AxeFxManager();
 
 	// IMidiInSubscriber
 	virtual void ReceivedData(byte b1, byte b2, byte b3);
 	virtual void ReceivedSysex(byte * bytes, int len);
 	virtual void Closed(IMidiIn * midIn);
 
+	void AddRef();
+	void Release();
+
 private:
+	int				mRefCnt;
 	ITraceDisplay	* mTrace;
 	ISwitchDisplay	* mSwitchDisplay;
 	// TODO: need tempo patch (tempo attribute?)

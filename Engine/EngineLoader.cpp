@@ -223,22 +223,20 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 				{
 					if (mAxeFxManager)
 					{
-						if (mTraceDisplay)
-						{
-							std::strstream traceMsg;
-							traceMsg << "Error loading config file: AxeFx sync attribute found on more than one <midiDevice>" << std::endl << std::ends;
-							mTraceDisplay->Trace(std::string(traceMsg.str()));
-						}
-					}
-					else
-					{
 						mAxeFxManager = new AxeFxManager(mSwitchDisplay, mTraceDisplay);
-						midiIn->Subscribe(mAxeFxManager);
+						mAxeFxManager->AddRef();
 					}
+
+					if (midiIn->Subscribe(mAxeFxManager))
+						mAxeFxManager->AddRef();
 				}
 			}
 		}
 	}
+
+	if (mAxeFxManager)
+		mAxeFxManager->Release();
+
 	mEngine = new MidiControlEngine(mApp, mMainDisplay, mSwitchDisplay, mTraceDisplay, incrementSwitch, decrementSwitch, modeSwitch);
 	mEngine->SetPowerup(powerupBank, powerupPatch, powerupTimeout);
 	mEngine->FilterRedundantProgChg(filterPC ? true : false);
