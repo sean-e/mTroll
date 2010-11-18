@@ -43,6 +43,8 @@
 #include "MidiCommandString.h"
 #include "RefirePedalCommand.h"
 #include "SleepCommand.h"
+#include "AxeFxManager.h"
+#include "IMidiIn.h"
 
 
 static PatchBank::PatchState GetLoadState(const std::string & tmpLoad);
@@ -60,7 +62,8 @@ EngineLoader::EngineLoader(ITrollApplication * app,
 	mMidiInGenerator(midiInGenerator),
 	mMainDisplay(mainDisplay),
 	mSwitchDisplay(switchDisplay),
-	mTraceDisplay(traceDisplay)
+	mTraceDisplay(traceDisplay),
+	mAxeFxManager(NULL)
 {
 	for (int idx = 0; idx < 4; ++idx)
 		mAdcEnables[idx] = adc_default;
@@ -194,11 +197,13 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 		int inDeviceIdx = -1;
 		int activityIndicatorId = -1;
 		int port = 1;
+		std::string sync;
 
 		pChildElem->QueryIntAttribute("inIdx", &inDeviceIdx);
 		pChildElem->QueryIntAttribute("port", &port);
 		pChildElem->QueryIntAttribute("outIdx", &deviceIdx);
 		pChildElem->QueryIntAttribute("activityIndicatorId", &activityIndicatorId);
+		pChildElem->QueryValueAttribute("sync", &sync);
 
 		if (-1 == inDeviceIdx || -1 != deviceIdx)
 		{
@@ -212,7 +217,26 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 		{
 			mMidiInPortToDeviceIdxMap[port] = inDeviceIdx;
 			if (mMidiInGenerator)
-				mMidiInGenerator->CreateMidiIn(mMidiInPortToDeviceIdxMap[port]);
+			{
+				IMidiIn * midiIn = mMidiInGenerator->CreateMidiIn(mMidiInPortToDeviceIdxMap[port]);
+				if (midiIn && sync == "AxeFx")
+				{
+					if (mAxeFxManager)
+					{
+						if (mTraceDisplay)
+						{
+							std::strstream traceMsg;
+							traceMsg << "Error loading config file: AxeFx sync attribute found on more than one <midiDevice>" << std::endl << std::ends;
+							mTraceDisplay->Trace(std::string(traceMsg.str()));
+						}
+					}
+					else
+					{
+						mAxeFxManager = new AxeFxManager(mSwitchDisplay, mTraceDisplay);
+						midiIn->Subscribe(mAxeFxManager);
+					}
+				}
+			}
 		}
 	}
 	mEngine = new MidiControlEngine(mApp, mMainDisplay, mSwitchDisplay, mTraceDisplay, incrementSwitch, decrementSwitch, modeSwitch);

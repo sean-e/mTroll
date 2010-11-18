@@ -22,31 +22,45 @@
  * Contact Sean: "fester" at the domain of the original project site
  */
 
-#ifndef IMidiIn_h__
-#define IMidiIn_h__
-
 #include <string>
+#include "AxeFxManager.h"
+#include "ITraceDisplay.h"
+#include "HexStringUtils.h"
+#include "IMidiIn.h"
 
-typedef unsigned char byte;
-class IMidiInSubscriber;
 
-
-// IMidiIn
-// ----------------------------------------------------------------------------
-// use to receive MIDI
-//
-class IMidiIn
+AxeFxManager::AxeFxManager(ISwitchDisplay * switchDisp,
+						   ITraceDisplay *pTrace) :
+	mSwitchDisplay(switchDisp),
+	mTrace(pTrace)
 {
-public:
-	virtual ~IMidiIn() {}
+}
 
-	virtual unsigned int GetMidiInDeviceCount() const = 0;
-	virtual std::string GetMidiInDeviceName(unsigned int deviceIdx) const = 0;
-	virtual bool OpenMidiIn(unsigned int deviceIdx) = 0;
-	virtual bool IsMidiInOpen() const = 0;
-	virtual bool Subscribe(IMidiInSubscriber* sub) = 0;
-	virtual void Unsubscribe(IMidiInSubscriber* sub) = 0;
-	virtual void CloseMidiIn() = 0;
-};
+void
+AxeFxManager::ReceivedData(byte b1, byte b2, byte b3)
+{
+// 	if (mTrace)
+// 	{
+// 		const std::string msg(::GetAsciiHexStr((byte*)&dwParam1, 4, true) + "\n");
+// 		mTrace->Trace(msg);
+// 	}
+}
 
-#endif // IMidiIn_h__
+void
+AxeFxManager::ReceivedSysex(byte * bytes, int len)
+{
+	if (mTrace)
+	{
+		const std::string msg(::GetAsciiHexStr(bytes, len, true) + "\n");
+		mTrace->Trace(msg);
+		// mTempoPatch->ActivateSwitchDisplay(mSwitchDisplay, true);
+	}
+}
+
+void
+AxeFxManager::Closed(IMidiIn * midIn)
+{
+	// TODO: cancel timer
+	midIn->Unsubscribe(this);
+	delete this;
+}

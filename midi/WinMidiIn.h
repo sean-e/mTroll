@@ -29,6 +29,7 @@
 #include <Windows.h>
 #include <MMSystem.h>
 #include <tchar.h>
+#include <vector>
 
 class ITraceDisplay;
 
@@ -44,18 +45,20 @@ public:
 	virtual std::string GetMidiInDeviceName(unsigned int deviceIdx) const;
 	virtual bool OpenMidiIn(unsigned int deviceIdx);
 	virtual bool IsMidiInOpen() const {return mMidiIn != NULL;}
+	virtual bool Subscribe(IMidiInSubscriber* sub);
+	virtual void Unsubscribe(IMidiInSubscriber* sub);
 	virtual void CloseMidiIn();
 
 private:
 	static unsigned int __stdcall ServiceThread(void * _this);
 	void ServiceThread();
-
 	void ReportMidiError(MMRESULT resultCode, unsigned int lineNumber);
 	void ReportError(LPCTSTR msg);
 	void ReportError(LPCTSTR msg, int param1);
 	void ReportError(LPCTSTR msg, int param1, int param2);
 
 	static void CALLBACK MidiInCallbackProc(HMIDIIN hmi, UINT wMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2);
+
 	enum ThreadState { tsNotStarted, tsStarting, tsRunning, tsEnding };
 
 	ITraceDisplay				* mTrace;
@@ -70,6 +73,8 @@ private:
 	HANDLE						mThread;
 	ThreadState					mThreadState;
 	DWORD						mThreadId;
+	typedef std::vector<IMidiInSubscriber*> MidiInSubscribers;
+	MidiInSubscribers			mInputSubscribers;
 };
 
 #endif // WinMidiIn_h__

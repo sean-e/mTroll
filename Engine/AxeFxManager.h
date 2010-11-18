@@ -22,31 +22,43 @@
  * Contact Sean: "fester" at the domain of the original project site
  */
 
-#ifndef IMidiIn_h__
-#define IMidiIn_h__
+#ifndef AxeFxManager_h__
+#define AxeFxManager_h__
 
-#include <string>
+#include "IMidiInSubscriber.h"
 
+class ITraceDisplay;
+class ISwitchDisplay;
 typedef unsigned char byte;
-class IMidiInSubscriber;
 
 
-// IMidiIn
+// AxeFxManager
 // ----------------------------------------------------------------------------
-// use to receive MIDI
+// Manages extended Axe-Fx support
 //
-class IMidiIn
+class AxeFxManager : public IMidiInSubscriber
 {
 public:
-	virtual ~IMidiIn() {}
+	AxeFxManager(ISwitchDisplay * switchDisp, ITraceDisplay * pTrace);
+	virtual ~AxeFxManager() {}
 
-	virtual unsigned int GetMidiInDeviceCount() const = 0;
-	virtual std::string GetMidiInDeviceName(unsigned int deviceIdx) const = 0;
-	virtual bool OpenMidiIn(unsigned int deviceIdx) = 0;
-	virtual bool IsMidiInOpen() const = 0;
-	virtual bool Subscribe(IMidiInSubscriber* sub) = 0;
-	virtual void Unsubscribe(IMidiInSubscriber* sub) = 0;
-	virtual void CloseMidiIn() = 0;
+	// IMidiInSubscriber
+	virtual void ReceivedData(byte b1, byte b2, byte b3);
+	virtual void ReceivedSysex(byte * bytes, int len);
+	virtual void Closed(IMidiIn * midIn);
+
+private:
+	ITraceDisplay	* mTrace;
+	ISwitchDisplay	* mSwitchDisplay;
+	// TODO: need tempo patch (tempo attribute?)
+	// limit to single channel?
+	// need list of IA patches
+	// need queue (and lock) for outgoing queries
+	// need timer for tempo indicator
+	// axefx patch type
+	//		poll after program changes on axe ch?
+	//		http://www.fractalaudio.com/forum/viewtopic.php?f=14&t=21524&start=10
+
 };
 
-#endif // IMidiIn_h__
+#endif // AxeFxManager_h__

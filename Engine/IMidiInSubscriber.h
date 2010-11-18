@@ -22,31 +22,23 @@
  * Contact Sean: "fester" at the domain of the original project site
  */
 
-#ifndef IMidiIn_h__
-#define IMidiIn_h__
-
-#include <string>
+#ifndef IMidiInSubscriber_h__
+#define IMidiInSubscriber_h__
 
 typedef unsigned char byte;
-class IMidiInSubscriber;
+class IMidiIn;
 
 
-// IMidiIn
+// IMidiInSubscriber
 // ----------------------------------------------------------------------------
-// use to receive MIDI
+// Implement to get notification of MIDI IN events
 //
-class IMidiIn
+class IMidiInSubscriber
 {
 public:
-	virtual ~IMidiIn() {}
-
-	virtual unsigned int GetMidiInDeviceCount() const = 0;
-	virtual std::string GetMidiInDeviceName(unsigned int deviceIdx) const = 0;
-	virtual bool OpenMidiIn(unsigned int deviceIdx) = 0;
-	virtual bool IsMidiInOpen() const = 0;
-	virtual bool Subscribe(IMidiInSubscriber* sub) = 0;
-	virtual void Unsubscribe(IMidiInSubscriber* sub) = 0;
-	virtual void CloseMidiIn() = 0;
+	virtual void ReceivedData(byte b1, byte b2, byte b3) = 0;
+	virtual void ReceivedSysex(byte * bytes, int len) = 0;
+	virtual void Closed(IMidiIn * midIn) = 0;
 };
 
-#endif // IMidiIn_h__
+#endif // IMidiInSubscriber_h__

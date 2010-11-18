@@ -38,6 +38,7 @@ class IMidiOutGenerator;
 class IMidiInGenerator;
 class TiXmlElement;
 class IMonome40h;
+class AxeFxManager;
 
 
 class EngineLoader
@@ -71,6 +72,7 @@ private:
 	IMidiInGenerator *		mMidiInGenerator;
 	ISwitchDisplay *		mSwitchDisplay;
 	ITraceDisplay *			mTraceDisplay;
+	AxeFxManager *			mAxeFxManager;
 	std::map<std::string, std::string> mDevices;
 };
 

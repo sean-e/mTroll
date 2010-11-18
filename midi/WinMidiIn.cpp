@@ -22,11 +22,11 @@
  * Contact Sean: "fester" at the domain of the original project site
  */
 
-#include "..\midi\WinMidiIn.h"
+#include "WinMidiIn.h"
+#include "..\Engine\IMidiInSubscriber.h"
 #include "..\Engine\ITraceDisplay.h"
 #include "..\Engine\ISwitchDisplay.h"
-#include "../Engine/HexStringUtils.h"
-//#include "../WinUtil/AutoLockCs.h"
+#include "..\Engine\HexStringUtils.h"
 #include <atlstr.h>
 
 #pragma comment(lib, "winmm.lib")
@@ -219,8 +219,9 @@ WinMidiIn::MidiInCallbackProc(HMIDIIN hmi,
 							  DWORD dwParam2)
 {
 	MMRESULT res;
+	LPMIDIHDR hdr;
 	WinMidiIn * _this = (WinMidiIn *) dwInstance;
-	if (_this->mThreadState != tsRunning)
+	if (_this->mThreadState == tsEnding)
 		return;
 
 	switch (wMsg)
@@ -228,29 +229,39 @@ WinMidiIn::MidiInCallbackProc(HMIDIIN hmi,
 	case MIM_DATA:
 		// 	dwParam1 is the midi event with status in the low byte of the low word
 		// 	dwParam2 is the event time in ms since the start of midi in
-// 		if (_this->mTrace)
-// 		{
-// 			const std::string msg(::GetAsciiHexStr((byte*)&dwParam1, 4, true) + "\n");
-// 			_this->mTrace->Trace(msg);
-// 		}
+		if (_this->mThreadState != tsRunning)
+			return;
+
+		for (MidiInSubscribers::const_iterator it = _this->mInputSubscribers.begin();
+			it != _this->mInputSubscribers.end(); ++it)
+		{
+			if (*it)
+				(*it)->ReceivedData(LOBYTE(dwParam1), HIBYTE(dwParam1), LOBYTE(HIWORD(dwParam1)));
+		}
+		break;
+	case MIM_ERROR:
 		break;
 	case MIM_LONGDATA:
 		// 	dwParam1 is the lpMidiHdr
 		// 	dwParam2 is the event time in ms since the start of midi in
+		hdr = (LPMIDIHDR) dwParam1;
+		if (_this->mThreadState == tsRunning)
 		{
-			LPMIDIHDR hdr = (LPMIDIHDR) dwParam1;
-			if (_this->mTrace)
+			for (MidiInSubscribers::const_iterator it = _this->mInputSubscribers.begin();
+				it != _this->mInputSubscribers.end(); ++it)
 			{
-				const std::string msg(::GetAsciiHexStr((byte*)hdr->lpData, hdr->dwBytesRecorded, true) + "\n");
-				_this->mTrace->Trace(msg);
+				if (*it)
+					(*it)->ReceivedSysex((byte*)hdr->lpData, (int)hdr->dwBytesRecorded);
 			}
-			res = ::midiInAddBuffer(_this->mMidiIn, hdr, sizeof(MIDIHDR));
-			_ASSERTE(res == MMSYSERR_NOERROR);
 		}
+
+		res = ::midiInAddBuffer(_this->mMidiIn, hdr, sizeof(MIDIHDR));
+		_ASSERTE(res == MMSYSERR_NOERROR);
 		break;
-	case MIM_ERROR:
 	case MIM_LONGERROR:
-		_asm nop;
+		hdr = (LPMIDIHDR) dwParam1;
+		res = ::midiInAddBuffer(_this->mMidiIn, hdr, sizeof(MIDIHDR));
+		_ASSERTE(res == MMSYSERR_NOERROR);
 		break;
 	}
 }
@@ -264,12 +275,20 @@ WinMidiIn::CloseMidiIn()
 		::SetEvent(mDoneEvent);
 		::WaitForSingleObjectEx(mThread, 30000, FALSE);
 		_ASSERTE(mThreadState == tsNotStarted);
-		CloseHandle(mThread);
+		::CloseHandle(mThread);
 		mThread = NULL;
 		mThreadId = 0;
 	}
 
 	_ASSERTE(!mMidiIn);
+
+	for (MidiInSubscribers::const_iterator it = mInputSubscribers.begin();
+		it != mInputSubscribers.end(); ++it)
+	{
+		(*it)->Closed(this);
+	}
+
+	mInputSubscribers.clear();
 }
 
 void
@@ -310,6 +329,46 @@ WinMidiIn::ReportError(LPCTSTR msg,
 	CString errMsg;
 	errMsg.Format(msg, param1, param2);
 	ReportError(errMsg);
+}
+
+bool
+WinMidiIn::Subscribe(IMidiInSubscriber* sub)
+{
+	if (mThreadState != tsRunning)
+	{
+		for (MidiInSubscribers::const_iterator it = mInputSubscribers.begin();
+			it != mInputSubscribers.end(); ++it)
+		{
+			if (*it == sub)
+				return false;
+		}
+
+		mInputSubscribers.push_back(sub);
+		return true;
+	}
+	else
+	{
+		_ASSERTE(!"don't subscribe to midi in events after thread has started");
+		return false;
+	}
+}
+
+void
+WinMidiIn::Unsubscribe(IMidiInSubscriber* sub)
+{
+	if (mThreadState != tsRunning)
+	{
+		for (MidiInSubscribers::iterator it = mInputSubscribers.begin();
+			it != mInputSubscribers.end(); ++it)
+		{
+			if (*it == sub)
+				*it = NULL;
+		}
+	}
+	else
+	{
+		_ASSERTE(!"don't unsubscribe to midi in events until thread has stopped");
+	}
 }
 
 CString

@@ -322,6 +322,14 @@
 			Name="Engine"
 			>
 			<File
+				RelativePath="..\Engine\AxeFxManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Engine\AxeFxManager.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Engine\DeletePtr.h"
 				>
 			</File>
@@ -363,6 +371,10 @@
 			</File>
 			<File
 				RelativePath="..\Engine\IMidiInGenerator.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Engine\IMidiInSubscriber.h"
 				>
 			</File>
 			<File
