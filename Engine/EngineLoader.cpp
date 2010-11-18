@@ -69,6 +69,12 @@ EngineLoader::EngineLoader(ITrollApplication * app,
 		mAdcEnables[idx] = adc_default;
 }
 
+EngineLoader::~EngineLoader()
+{
+	if (mAxeFxManager)
+		mAxeFxManager->Release();
+}
+
 MidiControlEngine *
 EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 {
@@ -233,9 +239,6 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 			}
 		}
 	}
-
-	if (mAxeFxManager)
-		mAxeFxManager->Release();
 
 	mEngine = new MidiControlEngine(mApp, mMainDisplay, mSwitchDisplay, mTraceDisplay, incrementSwitch, decrementSwitch, modeSwitch);
 	mEngine->SetPowerup(powerupBank, powerupPatch, powerupTimeout);

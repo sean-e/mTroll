@@ -45,6 +45,7 @@ class EngineLoader
 {
 public:
 	EngineLoader(ITrollApplication * app, IMidiOutGenerator * midiOutGenerator, IMidiInGenerator * midiInGenerator, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay, ITraceDisplay * traceDisplay);
+	~EngineLoader();
 
 	MidiControlEngine *		CreateEngine(const std::string & engineSettingsFile);
 	void					InitMonome(IMonome40h * monome, 
