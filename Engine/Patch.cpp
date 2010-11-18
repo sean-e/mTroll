@@ -77,14 +77,14 @@ Patch::ClearSwitch(ISwitchDisplay * switchDisplay)
 }
 
 void
-Patch::UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
+Patch::UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) const
 {
 	if (mSwitchNumbers.empty())
 		return;
 
 	if (switchDisplay)
 	{
-		for (std::vector<int>::iterator it = mSwitchNumbers.begin(); 
+		for (std::vector<int>::const_iterator it = mSwitchNumbers.begin(); 
 			it != mSwitchNumbers.end();
 			++it)
 		{
@@ -108,4 +108,22 @@ Patch::Deactivate(IMainDisplay * mainDisplay,
 		return;
 
 	SwitchPressed(mainDisplay, switchDisplay);
+}
+
+void
+Patch::ActivateSwitchDisplay(ISwitchDisplay * switchDisplay,
+							 bool activate) const
+{
+	if (mSwitchNumbers.empty())
+		return;
+
+	if (switchDisplay)
+	{
+		for (std::vector<int>::const_iterator it = mSwitchNumbers.begin(); 
+			it != mSwitchNumbers.end();
+			++it)
+		{
+			switchDisplay->SetSwitchDisplay(*it, activate);
+		}
+	}
 }

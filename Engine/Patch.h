@@ -47,11 +47,12 @@ public:
 	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) = 0;
 	virtual void SwitchReleased(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) { }
 
-	void UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
+	void UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) const;
 	const std::string & GetName() const {return mName;}
 	int GetNumber() const {return mNumber;}
 	bool IsActive() const {return mPatchIsActive;}
 	void Reset(ISwitchDisplay * switchDisplay) {mPatchIsActive = false; UpdateDisplays(NULL, switchDisplay);}
+	void ActivateSwitchDisplay(ISwitchDisplay * switchDisplay, bool activate) const;
 	virtual bool UpdateMainDisplayOnPress() const {return true;}
 
 	virtual void Deactivate(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
