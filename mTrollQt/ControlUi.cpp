@@ -1064,15 +1064,15 @@ ControlUi::EnableTimeDisplay(bool enable)
 	else if (!enable)
 		return false;
 
-	TimerFired();
+	DisplayTime();
 	mTimeDisplayTimer = new QTimer(this);
-	connect(mTimeDisplayTimer, SIGNAL(timeout()), this, SLOT(TimerFired()));
+	connect(mTimeDisplayTimer, SIGNAL(timeout()), this, SLOT(DisplayTime()));
 	mTimeDisplayTimer->start(1000);
 	return true;
 }
 
 void
-ControlUi::TimerFired()
+ControlUi::DisplayTime()
 {
 	if (mMainDisplay)
 	{
@@ -1091,7 +1091,7 @@ ControlUi::StopTimer()
 	QTimer * tmp = mTimeDisplayTimer;
 	mTimeDisplayTimer = NULL;
 	tmp->stop();
-	disconnect(mTimeDisplayTimer, SIGNAL(timeout()), this, SLOT(TimerFired()));
+	disconnect(mTimeDisplayTimer, SIGNAL(timeout()), this, SLOT(DisplayTime()));
 	delete tmp;
 }
 
