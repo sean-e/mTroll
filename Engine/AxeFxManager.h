@@ -29,6 +29,7 @@
 
 class ITraceDisplay;
 class ISwitchDisplay;
+class Patch;
 typedef unsigned char byte;
 
 
@@ -50,14 +51,17 @@ public:
 	void AddRef();
 	void Release();
 
+	void SetTempoPatch(Patch * patch) { mTempoPatch = patch; }
+
 private:
 	int				mRefCnt;
 	ITraceDisplay	* mTrace;
 	ISwitchDisplay	* mSwitchDisplay;
-	// TODO: need tempo patch (tempo attribute?)
-	// limit to single channel?
+	Patch			* mTempoPatch;
+	// TODO: need tempo patch (tempo attribute or tempo patch type?)
 	// need list of IA patches
 	// need queue (and lock) for outgoing queries
+	// need timer for timeout on query response
 	// need timer for tempo indicator
 	// axefx patch type
 	//		poll after program changes on axe ch?

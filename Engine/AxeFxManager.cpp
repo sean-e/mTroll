@@ -27,13 +27,15 @@
 #include "ITraceDisplay.h"
 #include "HexStringUtils.h"
 #include "IMidiIn.h"
+#include "Patch.h"
 
 
 AxeFxManager::AxeFxManager(ISwitchDisplay * switchDisp,
 						   ITraceDisplay *pTrace) :
 	mSwitchDisplay(switchDisp),
 	mTrace(pTrace),
-	mRefCnt(0)
+	mRefCnt(0),
+	mTempoPatch(NULL)
 {
 }
 
@@ -78,6 +80,13 @@ AxeFxManager::ReceivedSysex(byte * bytes, int len)
 		mTrace->Trace(msg);
 		// mTempoPatch->ActivateSwitchDisplay(mSwitchDisplay, true);
 	}
+
+// 	if (mTempoPatch && IsTempo())
+// 	{
+// 		mTempoPatch->ActivateSwitchDisplay(mSwitchDisplay, true);
+// 		// TODO: set timer to deactivate display
+// 	}
+		
 }
 
 void
