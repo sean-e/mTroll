@@ -52,7 +52,10 @@ public:
 	int GetNumber() const {return mNumber;}
 	bool IsActive() const {return mPatchIsActive;}
 	void Reset(ISwitchDisplay * switchDisplay) {mPatchIsActive = false; UpdateDisplays(NULL, switchDisplay);}
+	// used to drive led display without exec
 	void ActivateSwitchDisplay(ISwitchDisplay * switchDisplay, bool activate) const;
+	// used to update state of patch without exec
+	virtual void UpdateState(ISwitchDisplay * switchDisplay, bool active);
 	virtual bool UpdateMainDisplayOnPress() const {return true;}
 
 	virtual void Deactivate(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);

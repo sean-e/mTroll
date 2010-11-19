@@ -127,3 +127,13 @@ Patch::ActivateSwitchDisplay(ISwitchDisplay * switchDisplay,
 		}
 	}
 }
+
+void
+Patch::UpdateState(ISwitchDisplay * switchDisplay, bool active)
+{
+	if (mPatchIsActive == active)
+		return;
+
+	mPatchIsActive = active;
+	UpdateDisplays(NULL, switchDisplay);
+}
