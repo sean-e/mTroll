@@ -464,7 +464,7 @@ PatchBank::ResetPatches(IMainDisplay * mainDisplay,
 			if (!curItem || !curItem->mPatch)
 				continue;
 
-			curItem->mPatch->Reset(switchDisplay);
+			curItem->mPatch->UpdateState(switchDisplay, false);
 		}
 	}
 

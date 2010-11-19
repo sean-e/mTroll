@@ -51,7 +51,6 @@ public:
 	const std::string & GetName() const {return mName;}
 	int GetNumber() const {return mNumber;}
 	bool IsActive() const {return mPatchIsActive;}
-	void Reset(ISwitchDisplay * switchDisplay) {mPatchIsActive = false; UpdateDisplays(NULL, switchDisplay);}
 	// used to drive led display without exec
 	void ActivateSwitchDisplay(ISwitchDisplay * switchDisplay, bool activate) const;
 	// used to update state of patch without exec
