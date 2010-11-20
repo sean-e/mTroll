@@ -37,7 +37,7 @@ class IMidiInSubscriber
 {
 public:
 	virtual void ReceivedData(byte b1, byte b2, byte b3) = 0;
-	virtual void ReceivedSysex(byte * bytes, int len) = 0;
+	virtual void ReceivedSysex(const byte * bytes, int len) = 0;
 	virtual void Closed(IMidiIn * midIn) = 0;
 };
 

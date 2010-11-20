@@ -45,13 +45,16 @@ public:
 
 	// IMidiInSubscriber
 	virtual void ReceivedData(byte b1, byte b2, byte b3);
-	virtual void ReceivedSysex(byte * bytes, int len);
+	virtual void ReceivedSysex(const byte * bytes, int len);
 	virtual void Closed(IMidiIn * midIn);
 
 	void AddRef();
 	void Release();
 
 	void SetTempoPatch(Patch * patch) { mTempoPatch = patch; }
+
+private:
+	void ReceiveParamValue(const byte * bytes, int len);
 
 private:
 	int				mRefCnt;

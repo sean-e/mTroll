@@ -64,6 +64,13 @@ AxeFxManager::Release()
 }
 
 void
+AxeFxManager::Closed(IMidiIn * midIn)
+{
+	midIn->Unsubscribe(this);
+	Release();
+}
+
+void
 AxeFxManager::ReceivedData(byte b1, byte b2, byte b3)
 {
 // 	if (mTrace)
@@ -73,32 +80,26 @@ AxeFxManager::ReceivedData(byte b1, byte b2, byte b3)
 // 	}
 }
 
-// f0 00 01 74
+// f0 00 01 74 01 ...
 bool
-IsAxeFxSysex(const byte * bytes, const int & len)
+IsAxeFxSysex(const byte * bytes, const int len)
 {
-	if (len < 6)
+	if (len < 7)
 		return false;
 
-	const byte kAxeFxId[] = { 0xf0, 0x00, 0x01, 0x74 };
-	return !::memcmp(bytes, kAxeFxId, 4);
-}
-
-// f0 00 01 74 01 10 f7 
-bool
-IsTempoSysex(const byte * bytes, const int & len) 
-{
-	if (len != 7)
-		return false;
-
-	const byte kTempoSysex[] = { 0xf0, 0x00, 0x01, 0x74, 0x01, 0x10, 0xf7 };
-	return !::memcmp(bytes, kTempoSysex, 7);
+	const byte kAxeFxId[] = { 0xf0, 0x00, 0x01, 0x74, 0x01 };
+	return !::memcmp(bytes, kAxeFxId, 5);
 }
 
 void
-AxeFxManager::ReceivedSysex(byte * bytes, int len)
+AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 {
-	if (::IsTempoSysex(bytes, len))
+	// http://axefxwiki.guitarlogic.org/index.php?title=Axe-Fx_SysEx_Documentation
+	if (!::IsAxeFxSysex(bytes, len))
+		return;
+
+	// Tempo: f0 00 01 74 01 10 f7 
+	if (0x10 == bytes[5])
 	{
 		if (mTempoPatch)
 		{
@@ -108,7 +109,32 @@ AxeFxManager::ReceivedSysex(byte * bytes, int len)
 		return;
 	}
 
-	if (!::IsAxeFxSysex(bytes, len))
+	// MIDI_PARAM_VALUE: f0 00 01 74 01 02 ...
+	if (2 == bytes[5])
+	{
+		ReceiveParamValue(&bytes[6], len - 6);
+		return;
+	}
+}
+
+void
+AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
+{
+/*
+	0xdd effect ID LS nibble 
+	0xdd effect ID MS nibble 
+	0xdd parameter ID LS nibble 
+	0xdd parameter ID MS nibble 
+	0xdd parameter value LS nibble 
+	0xdd parameter value MS nibble 
+	0xdd null-terminated string byte0 
+	0xdd byte1 
+	... 
+	0x00 null character 
+	0xF7 sysex end 
+ */
+
+	if (len < 8)
 		return;
 
 	if (mTrace)
@@ -118,9 +144,20 @@ AxeFxManager::ReceivedSysex(byte * bytes, int len)
 	}
 }
 
-void
-AxeFxManager::Closed(IMidiIn * midIn)
-{
-	midIn->Unsubscribe(this);
-	Release();
-}
+/*
+ *	MIDI_SET_PARAMETER (or GET)
+    0xF0 sysex start 
+    0x00 Manf. ID byte0 
+    0x01 Manf. ID byte1 
+    0x74 Manf. ID byte2
+    0x01 Model / device
+    0x02 Function ID 
+    0xdd effect ID LS nibble 
+    0xdd effect ID MS nibble 
+    0xdd parameter ID LS nibble 
+    0xdd parameter ID MS nibble 
+    0xdd parameter value LS nibble 
+    0xdd parameter value MS nibble 
+    0xdd query(0) or set(1) value 
+    0xF7 sysex end 
+*/
