@@ -227,13 +227,13 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 				IMidiIn * midiIn = mMidiInGenerator->CreateMidiIn(mMidiInPortToDeviceIdxMap[port]);
 				if (midiIn && sync == "AxeFx")
 				{
-					if (mAxeFxManager)
+					if (!mAxeFxManager)
 					{
 						mAxeFxManager = new AxeFxManager(mSwitchDisplay, mTraceDisplay);
 						mAxeFxManager->AddRef();
 					}
 
-					if (midiIn->Subscribe(mAxeFxManager))
+					if (mAxeFxManager && midiIn->Subscribe(mAxeFxManager))
 						mAxeFxManager->AddRef();
 				}
 			}
@@ -654,6 +654,18 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			newPatch = new MomentaryPatch(patchNumber, patchName, midiOut, cmds, cmds2);
 		else if (patchType == "sequence")
 			newPatch = new SequencePatch(patchNumber, patchName, midiOut, cmds);
+		else if (patchType == "AxeFxTapTempo")
+		{
+			newPatch = new MomentaryPatch(patchNumber, patchName, midiOut, cmds, cmds2);
+			if (mAxeFxManager)
+				mAxeFxManager->SetTempoPatch(newPatch);
+			else if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: AxeFxTapTempo specified but no Axe-Fx input was created" << std::endl << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
+		}
 		else if (mTraceDisplay)
 		{
 			std::strstream traceMsg;
