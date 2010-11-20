@@ -516,6 +516,56 @@ ControlUi::ClearSwitchText(int switchNumber)
 	SetSwitchText(switchNumber, std::string(""));
 }
 
+void
+SetIndicatorTimerCallback::TimerFired()
+{
+	mPatch->ActivateSwitchDisplay(mSwitchDisplay, mOn);
+	delete this;
+}
+
+void
+ControlUi::SetIndicatorThreadSafe(bool isOn, Patch * patch, int time)
+{
+	// ClearIndicatorTimer
+	// --------------------------------------------------------------------
+	// class used to handle LED state change on UI thread (via postEvent)
+	//
+	class ClearIndicatorTimer : public QEvent
+	{
+		int mTime;
+		ISwitchDisplay * mSwitchDisplay;
+		Patch * mPatch;
+		bool mOn;
+
+	public:
+		ClearIndicatorTimer(bool isOn, ISwitchDisplay * switchDisplay, Patch * patch, int time) : 
+		  QEvent(User), 
+		  mTime(time),
+		  mPatch(patch),
+		  mSwitchDisplay(switchDisplay),
+		  mOn(isOn)
+		{
+		}
+
+		virtual void exec()
+		{
+			if (mTime)
+			{
+				// use timer
+				SetIndicatorTimerCallback * clr = new SetIndicatorTimerCallback(mOn, mSwitchDisplay, mPatch);
+				QTimer::singleShot(mTime, clr, SLOT(TimerFired()));
+			}
+			else
+			{
+				// immediate
+				mPatch->ActivateSwitchDisplay(mSwitchDisplay, mOn);
+			}
+		}
+	};
+
+	QCoreApplication::postEvent(this, new ClearIndicatorTimer(isOn, this, patch, time));
+}
+
 
 // IMidiControlUi
 void

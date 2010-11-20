@@ -23,11 +23,13 @@
  */
 
 #include <string>
+#include <memory.h>
 #include "AxeFxManager.h"
 #include "ITraceDisplay.h"
 #include "HexStringUtils.h"
 #include "IMidiIn.h"
 #include "Patch.h"
+#include "ISwitchDisplay.h"
 
 
 AxeFxManager::AxeFxManager(ISwitchDisplay * switchDisp,
@@ -71,22 +73,49 @@ AxeFxManager::ReceivedData(byte b1, byte b2, byte b3)
 // 	}
 }
 
+// f0 00 01 74
+bool
+IsAxeFxSysex(const byte * bytes, const int & len)
+{
+	if (len < 6)
+		return false;
+
+	const byte kAxeFxId[] = { 0xf0, 0x00, 0x01, 0x74 };
+	return !::memcmp(bytes, kAxeFxId, 4);
+}
+
+// f0 00 01 74 01 10 f7 
+bool
+IsTempoSysex(const byte * bytes, const int & len) 
+{
+	if (len != 7)
+		return false;
+
+	const byte kTempoSysex[] = { 0xf0, 0x00, 0x01, 0x74, 0x01, 0x10, 0xf7 };
+	return !::memcmp(bytes, kTempoSysex, 7);
+}
+
 void
 AxeFxManager::ReceivedSysex(byte * bytes, int len)
 {
+	if (::IsTempoSysex(bytes, len))
+	{
+		if (mTempoPatch)
+		{
+			mTempoPatch->ActivateSwitchDisplay(mSwitchDisplay, true);
+			mSwitchDisplay->SetIndicatorThreadSafe(false, mTempoPatch, 75);
+		}
+		return;
+	}
+
+	if (!::IsAxeFxSysex(bytes, len))
+		return;
+
 	if (mTrace)
 	{
 		const std::string msg(::GetAsciiHexStr(bytes, len, true) + "\n");
 		mTrace->Trace(msg);
-		// mTempoPatch->ActivateSwitchDisplay(mSwitchDisplay, true);
 	}
-
-// 	if (mTempoPatch && IsTempo())
-// 	{
-// 		mTempoPatch->ActivateSwitchDisplay(mSwitchDisplay, true);
-// 		// TODO: set timer to deactivate display
-// 	}
-		
 }
 
 void

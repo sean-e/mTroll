@@ -58,15 +58,13 @@ private:
 	ITraceDisplay	* mTrace;
 	ISwitchDisplay	* mSwitchDisplay;
 	Patch			* mTempoPatch;
-	// TODO: need tempo patch (tempo attribute or tempo patch type?)
+	// TODO: 
+	// axefx patch type or attribute?
 	// need list of IA patches
 	// need queue (and lock) for outgoing queries
 	// need timer for timeout on query response
-	// need timer for tempo indicator
-	// axefx patch type
 	//		poll after program changes on axe ch?
 	//		http://www.fractalaudio.com/forum/viewtopic.php?f=14&t=21524&start=10
-
 };
 
 #endif // AxeFxManager_h__

@@ -108,6 +108,7 @@ public: // ISwitchDisplay
 	virtual bool		IsInverted() const { return mInvertLeds; }
 	virtual	void		Reconnect();
 	virtual void		TestLeds();
+	virtual void		SetIndicatorThreadSafe(bool isOn, Patch * patch, int time);
 
 public: // IMonome40hSwitchSubscriber
 	virtual void		SwitchPressed(byte row, byte column);
@@ -344,6 +345,31 @@ private:
 		DWORD					mOffColor;
 	};
 	LedConfig					mLedConfig;
+};
+
+
+
+// SetIndicatorTimerCallback
+// ----------------------------------------------------------------------------
+// Timer callback for delayed modification of LED display for a patch
+//
+class SetIndicatorTimerCallback : public QObject
+{
+	Q_OBJECT;
+	ISwitchDisplay * mSwitchDisplay;
+	Patch * mPatch;
+	bool mOn;
+
+public:
+	SetIndicatorTimerCallback(bool on, ISwitchDisplay * switchDisplay, Patch * p) :
+	  mSwitchDisplay(switchDisplay),
+	  mPatch(p),
+	  mOn(on)
+	{
+	}
+
+private slots:
+	void TimerFired();
 };
 
 #endif // ControlUi_h__
