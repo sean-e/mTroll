@@ -288,7 +288,6 @@ WinMidiIn::CloseMidiIn()
 		(*it)->Closed(this);
 	}
 
-	_ASSERTE(!mInputSubscribers.empty());
 	mInputSubscribers.clear();
 }
 
