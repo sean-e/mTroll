@@ -48,30 +48,59 @@
  */
 
 bool
-AxemlLoader::Load(const std::string & axeFile)
+AxemlLoader::Load(const std::string & axeFile, AxeEffects & effects)
 {
 	TiXmlDocument doc(axeFile);
 	if (!doc.LoadFile()) 
+	{
+		if (mTrace)
+		{
+			std::string msg("Failed to load AxeFx axeml file\n");
+			mTrace->Trace(msg);
+		}
 		return false;
+	}
 
 	TiXmlHandle hDoc(&doc);
 	TiXmlElement* pElem = hDoc.FirstChildElement().Element();
 	if (!pElem || pElem->ValueStr() != "CONFIG")
+	{
+		if (mTrace)
+		{
+			std::string msg("Invalid AxeFx axeml file\n");
+			mTrace->Trace(msg);
+		}
 		return false;
+	}
 
 	TiXmlHandle hRoot(NULL);
 	hRoot = TiXmlHandle(pElem);
 	pElem = hRoot.FirstChild("EffectPool").FirstChildElement().Element();
 	if (!pElem)
+	{
+		if (mTrace)
+		{
+			std::string msg("AxeFx axeml file missing EffectPool\n");
+			mTrace->Trace(msg);
+		}
 		return false;
+	}
 	LoadEffectPool(pElem);
 
 	pElem = hRoot.FirstChild("EffectParameterLists").FirstChildElement().Element();
 	if (!pElem)
+	{
+		if (mTrace)
+		{
+			std::string msg("AxeFx axeml file missing EffectParameterLists\n");
+			mTrace->Trace(msg);
+		}
 		return false;
+	}
 	LoadParameterLists(pElem);
 
 	CheckResults();
+	mEffects.swap(effects);
 	return true;
 }
 
@@ -87,10 +116,12 @@ AxemlLoader::LoadEffectPool(TiXmlElement* pElem)
 		int effectId = -1;
 		std::string effectName, effectType;
 
-		// TODO: fix read of name with space
+		// QueryValueAttribute does not work with string when there are 
+		// spaces (truncated at whitespace); use Attribute instead
+		if (pElem->Attribute("name"))
+			effectName = pElem->Attribute("name");
 
 		pElem->QueryIntAttribute("id", &effectId);
-		pElem->QueryValueAttribute("name", &effectName);
 		pElem->QueryValueAttribute("type", &effectType);
 		if (effectId == -1 || effectName.empty() || effectType.empty() || 
 			effectType == "Dummy" || effectType == "Controllers")
@@ -98,7 +129,7 @@ AxemlLoader::LoadEffectPool(TiXmlElement* pElem)
 			continue;
 		}
 
-		AddEffect(effectId, effectName, effectType);
+		mEffects.push_back(AxeEffect(effectId, effectName, effectType));
 	}
 }
 
@@ -108,6 +139,7 @@ AxemlLoader::LoadParameterLists(TiXmlElement* pElem)
 	// 	<EffectParameters name="Amp">
 	// 		<EffectParameter id="0" name="DISTORT_TYPE" modifierID="0"/>
 	// 	</EffectParameters>
+
 	for ( ; pElem; pElem = pElem->NextSiblingElement())
 	{
 		if (pElem->ValueStr() != "EffectParameters")
@@ -118,6 +150,7 @@ AxemlLoader::LoadParameterLists(TiXmlElement* pElem)
 		if (effectType.empty())
 			continue;
 
+		bool foundBypass = false;
 		TiXmlHandle hRoot(NULL);
 		hRoot = TiXmlHandle(pElem);
 		for (TiXmlElement *childElem = hRoot.FirstChildElement().Element(); 
@@ -135,8 +168,19 @@ AxemlLoader::LoadParameterLists(TiXmlElement* pElem)
 			// for each EffectParameter: check name; if ends in _BYPASS (but not _BYPASSMODE) keep id
 			const std::string kBypass("_BYPASS");
 			int pos = paramName.find(kBypass);
-			if (-1 == pos || pos != paramName.length() - kBypass.length())
+			if (-1 == pos)
+			{
+				// _FLAGS instead of _BYPASS for:
+				// Amp Chorus Flanger Pitch
+				const std::string kFlags("_FLAGS");
+				pos = paramName.find(kFlags);
+				if (-1 == pos || pos != paramName.length() - kFlags.length())
+					continue;
+			}
+			else if (pos != paramName.length() - kBypass.length())
 				continue;
+			else
+				foundBypass = true;
 
 			int paramId = -1;
 			childElem->QueryIntAttribute("id", &paramId);
@@ -144,36 +188,48 @@ AxemlLoader::LoadParameterLists(TiXmlElement* pElem)
 				continue;
 
 			SetEffectBypass(effectType, paramId);
-			break;
+			if (foundBypass)
+				break; // continuing looking if we found _FLAGS, just in case there is _FLAGS and _BYPASS
 		}
-	}
-}
-
-void
-AxemlLoader::AddEffect(int id, const std::string & name, const std::string & type)
-{
-	// TODO:
-	// save id as int and as 2 nibbles?
-	if (mTrace)
-	{
-		std::string msg(name + " " + type + "\n");
-		mTrace->Trace(msg);
 	}
 }
 
 void
 AxemlLoader::SetEffectBypass(const std::string & type, int bypassId)
 {
-	// TODO:
-	// save id as int and as 2 nibbles?
-	if (mTrace)
+	for (AxeEffects::iterator it = mEffects.begin(); it != mEffects.end(); ++it)
 	{
-		std::string msg(type + "\n");
-		mTrace->Trace(msg);
+		AxeEffect & cur = *it;
+		if (cur.mType == type)
+			cur.SetBypass(bypassId);
+		// don't break because there can be multiple instances in the EffectPool
 	}
 }
 
 void
 AxemlLoader::CheckResults()
 {
+	for (AxeEffects::iterator it = mEffects.begin(); it != mEffects.end(); ++it)
+	{
+		AxeEffect & cur = *it;
+		if (cur.mType == "FeedbackSend" || cur.mType == "Mixer")
+			continue; // these can't be bypassed
+
+		if (-1 == cur.mEffectId)
+		{
+			if (mTrace)
+			{
+				std::string msg("AxeFx EffectID is missing from " + cur.mName + "\n");
+				mTrace->Trace(msg);
+			}
+		}
+		if (-1 == cur.mBypassParameterId)
+		{
+			if (mTrace)
+			{
+				std::string msg("AxeFx Bypass paramenter ID is missing from " + cur.mName + "\n");
+				mTrace->Trace(msg);
+			}
+		}
+	}
 }

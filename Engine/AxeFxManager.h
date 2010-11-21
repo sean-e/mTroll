@@ -26,6 +26,7 @@
 #define AxeFxManager_h__
 
 #include "IMidiInSubscriber.h"
+#include "AxemlLoader.h"
 
 class ITraceDisplay;
 class ISwitchDisplay;
@@ -61,6 +62,7 @@ private:
 	ITraceDisplay	* mTrace;
 	ISwitchDisplay	* mSwitchDisplay;
 	Patch			* mTempoPatch;
+	AxeEffects		mAxeEffectInfo;
 	// TODO: 
 	// axefx patch type or attribute?
 	// need list of IA patches

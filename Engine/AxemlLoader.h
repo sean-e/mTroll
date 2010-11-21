@@ -26,9 +26,53 @@
 #define AxemlLoader_h__
 
 #include <string>
+#include <vector>
 
 class TiXmlElement;
 class ITraceDisplay;
+
+struct AxeEffect
+{
+	std::string		mName;			// Amp 1
+	std::string		mType;			// Amp
+	int				mEffectId;
+	int				mEffectIdMs;
+	int				mEffectIdLs;
+	int				mBypassParameterId;
+	int				mBypassParameterIdMs;
+	int				mBypassParameterIdLs;
+
+	AxeEffect() :
+		mEffectId(-1),
+		mEffectIdLs(-1),
+		mEffectIdMs(-1),
+		mBypassParameterId(-1),
+		mBypassParameterIdLs(-1),
+		mBypassParameterIdMs(-1)
+	{
+	}
+
+	AxeEffect(int id, const std::string & name, const std::string & type) :
+		mName(name),
+		mType(type),
+		mEffectId(id),
+		mBypassParameterId(-1),
+		mBypassParameterIdLs(-1),
+		mBypassParameterIdMs(-1)
+	{
+		mEffectIdLs = mEffectId & 0x0000000F;
+		mEffectIdMs = (mEffectId >> 4) & 0x0000000F;
+	}
+
+	void SetBypass(int id)
+	{
+		mBypassParameterId = id;
+		mBypassParameterIdLs = mBypassParameterId & 0x0000000F;
+		mBypassParameterIdMs = (mBypassParameterId >> 4) & 0x0000000F;
+	}
+};
+
+typedef std::vector<AxeEffect> AxeEffects;
 
 
 // AxemlLoader
@@ -40,18 +84,18 @@ class AxemlLoader
 public:
 	AxemlLoader(ITraceDisplay * traceDisplay) : mTrace(traceDisplay) { }
 
-	bool Load(const std::string & doc);
+	bool Load(const std::string & doc, AxeEffects & effects);
 
 private:
 	void LoadEffectPool(TiXmlElement* pElem);
 	void LoadParameterLists(TiXmlElement* pElem);
 	void CheckResults();
 
-	void AddEffect(int id, const std::string & name, const std::string & type);
 	void SetEffectBypass(const std::string & type, int bypassId);
 
 private:
 	ITraceDisplay * mTrace;
+	AxeEffects	mEffects;
 };
 
 #endif // AxemlLoader_h__

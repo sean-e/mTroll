@@ -41,7 +41,7 @@ AxeFxManager::AxeFxManager(ISwitchDisplay * switchDisp,
 	mTempoPatch(NULL)
 {
 	AxemlLoader ldr(mTrace);
-	ldr.Load("debug/default.axeml");	
+	ldr.Load("debug/default.axeml", mAxeEffectInfo);
 }
 
 AxeFxManager::~AxeFxManager()
