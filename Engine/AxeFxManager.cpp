@@ -30,6 +30,7 @@
 #include "IMidiIn.h"
 #include "Patch.h"
 #include "ISwitchDisplay.h"
+#include "AxemlLoader.h"
 
 
 AxeFxManager::AxeFxManager(ISwitchDisplay * switchDisp,
@@ -39,11 +40,13 @@ AxeFxManager::AxeFxManager(ISwitchDisplay * switchDisp,
 	mRefCnt(0),
 	mTempoPatch(NULL)
 {
+	AxemlLoader ldr(mTrace);
+	ldr.Load("debug/default.axeml");	
 }
 
 AxeFxManager::~AxeFxManager()
 {
-	// TODO: cancel timer
+	// TODO: cancel timers?
 }
 
 void
@@ -135,7 +138,14 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
  */
 
 	if (len < 8)
+	{
+		if (mTrace)
+		{
+			const std::string msg("truncated param value msg\n");
+			mTrace->Trace(msg);
+		}
 		return;
+	}
 
 	if (mTrace)
 	{

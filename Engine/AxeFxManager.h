@@ -65,6 +65,7 @@ private:
 	// axefx patch type or attribute?
 	// need list of IA patches
 	// need queue (and lock) for outgoing queries
+	// difference between disabled and not present?
 	// need timer for timeout on query response
 	//		poll after program changes on axe ch?
 	//		http://www.fractalaudio.com/forum/viewtopic.php?f=14&t=21524&start=10
