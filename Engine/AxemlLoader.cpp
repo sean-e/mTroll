@@ -25,6 +25,8 @@
 #include "AxemlLoader.h"
 #include "../tinyxml/tinyxml.h"
 #include "ITraceDisplay.h"
+#include "AxeFxManager.h"
+
 
 /*
  *	Bottom of page: http://www.fractalaudio.com/forum/viewtopic.php?f=14&t=9077&hilit=effect+block+ids&start=40
@@ -48,14 +50,14 @@
  */
 
 bool
-AxemlLoader::Load(const std::string & axeFile, AxeEffects & effects)
+AxemlLoader::Load(const std::string & axeFile, AxeEffectBlocks & effects)
 {
 	TiXmlDocument doc(axeFile);
 	if (!doc.LoadFile()) 
 	{
 		if (mTrace)
 		{
-			std::string msg("Failed to load AxeFx axeml file\n");
+			std::string msg("ERROR: Failed to load AxeFx axeml file\n");
 			mTrace->Trace(msg);
 		}
 		return false;
@@ -67,7 +69,7 @@ AxemlLoader::Load(const std::string & axeFile, AxeEffects & effects)
 	{
 		if (mTrace)
 		{
-			std::string msg("Invalid AxeFx axeml file\n");
+			std::string msg("ERROR: Invalid AxeFx axeml file\n");
 			mTrace->Trace(msg);
 		}
 		return false;
@@ -80,7 +82,7 @@ AxemlLoader::Load(const std::string & axeFile, AxeEffects & effects)
 	{
 		if (mTrace)
 		{
-			std::string msg("AxeFx axeml file missing EffectPool\n");
+			std::string msg("ERROR: AxeFx axeml file missing EffectPool\n");
 			mTrace->Trace(msg);
 		}
 		return false;
@@ -92,14 +94,14 @@ AxemlLoader::Load(const std::string & axeFile, AxeEffects & effects)
 	{
 		if (mTrace)
 		{
-			std::string msg("AxeFx axeml file missing EffectParameterLists\n");
+			std::string msg("ERROR: AxeFx axeml file missing EffectParameterLists\n");
 			mTrace->Trace(msg);
 		}
 		return false;
 	}
 	LoadParameterLists(pElem);
 
-	CheckResults();
+	ReportMissingBypassIds();
 	mEffects.swap(effects);
 	return true;
 }
@@ -129,7 +131,8 @@ AxemlLoader::LoadEffectPool(TiXmlElement* pElem)
 			continue;
 		}
 
-		mEffects.push_back(AxeEffect(effectId, effectName, effectType));
+		const int cc = ::GetDefaultCc(effectName, mTrace);
+		mEffects.push_back(AxeEffectBlockInfo(effectId, effectName, effectType, cc));
 	}
 }
 
@@ -178,7 +181,7 @@ AxemlLoader::LoadParameterLists(TiXmlElement* pElem)
 					continue;
 			}
 			else if (pos != paramName.length() - kBypass.length())
-				continue;
+				continue; // _BYPASSMODE
 			else
 				foundBypass = true;
 
@@ -189,7 +192,7 @@ AxemlLoader::LoadParameterLists(TiXmlElement* pElem)
 
 			SetEffectBypass(effectType, paramId);
 			if (foundBypass)
-				break; // continuing looking if we found _FLAGS, just in case there is _FLAGS and _BYPASS
+				break; // continue looking if we found _FLAGS, just in case there are both _FLAGS and _BYPASS
 		}
 	}
 }
@@ -197,9 +200,9 @@ AxemlLoader::LoadParameterLists(TiXmlElement* pElem)
 void
 AxemlLoader::SetEffectBypass(const std::string & type, int bypassId)
 {
-	for (AxeEffects::iterator it = mEffects.begin(); it != mEffects.end(); ++it)
+	for (AxeEffectBlocks::iterator it = mEffects.begin(); it != mEffects.end(); ++it)
 	{
-		AxeEffect & cur = *it;
+		AxeEffectBlockInfo & cur = *it;
 		if (cur.mType == type)
 			cur.SetBypass(bypassId);
 		// don't break because there can be multiple instances in the EffectPool
@@ -207,11 +210,11 @@ AxemlLoader::SetEffectBypass(const std::string & type, int bypassId)
 }
 
 void
-AxemlLoader::CheckResults()
+AxemlLoader::ReportMissingBypassIds()
 {
-	for (AxeEffects::iterator it = mEffects.begin(); it != mEffects.end(); ++it)
+	for (AxeEffectBlocks::iterator it = mEffects.begin(); it != mEffects.end(); ++it)
 	{
-		AxeEffect & cur = *it;
+		AxeEffectBlockInfo & cur = *it;
 		if (cur.mType == "FeedbackSend" || cur.mType == "Mixer")
 			continue; // these can't be bypassed
 
@@ -219,7 +222,7 @@ AxemlLoader::CheckResults()
 		{
 			if (mTrace)
 			{
-				std::string msg("AxeFx EffectID is missing from " + cur.mName + "\n");
+				std::string msg("ERROR: AxeFx EffectID is missing from " + cur.mName + "\n");
 				mTrace->Trace(msg);
 			}
 		}
@@ -227,7 +230,7 @@ AxemlLoader::CheckResults()
 		{
 			if (mTrace)
 			{
-				std::string msg("AxeFx Bypass paramenter ID is missing from " + cur.mName + "\n");
+				std::string msg("ERROR: AxeFx Bypass parameter ID is missing from " + cur.mName + "\n");
 				mTrace->Trace(msg);
 			}
 		}

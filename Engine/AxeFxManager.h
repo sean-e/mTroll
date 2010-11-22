@@ -52,7 +52,9 @@ public:
 	void AddRef();
 	void Release();
 
-	void SetTempoPatch(Patch * patch) { mTempoPatch = patch; }
+	void CompleteInit();
+	void SetTempoPatch(Patch * patch);
+	void SetSyncPatch(const std::string &effectName, Patch * patch);
 
 private:
 	void ReceiveParamValue(const byte * bytes, int len);
@@ -62,15 +64,17 @@ private:
 	ITraceDisplay	* mTrace;
 	ISwitchDisplay	* mSwitchDisplay;
 	Patch			* mTempoPatch;
-	AxeEffects		mAxeEffectInfo;
+	AxeEffectBlocks	mAxeEffectInfo;
 	// TODO: 
+	// what indexes are needed here?
 	// axefx patch type or attribute?
-	// need list of IA patches
 	// need queue (and lock) for outgoing queries
-	// difference between disabled and not present?
 	// need timer for timeout on query response
 	//		poll after program changes on axe ch?
 	//		http://www.fractalaudio.com/forum/viewtopic.php?f=14&t=21524&start=10
+	// difference between disabled and not present?
 };
+
+int GetDefaultCc(const std::string &effectName, ITraceDisplay * trc);
 
 #endif // AxeFxManager_h__

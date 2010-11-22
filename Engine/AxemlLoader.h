@@ -30,35 +30,42 @@
 
 class TiXmlElement;
 class ITraceDisplay;
+class Patch;
 
-struct AxeEffect
+struct AxeEffectBlockInfo
 {
-	std::string		mName;			// Amp 1
-	std::string		mType;			// Amp
-	int				mEffectId;
-	int				mEffectIdMs;
-	int				mEffectIdLs;
-	int				mBypassParameterId;
-	int				mBypassParameterIdMs;
-	int				mBypassParameterIdLs;
+	std::string		mName;				// Amp 1
+	std::string		mType;				// Amp
+	int				mEffectId;			// unique per name
+	int				mEffectIdMs;			// derived 
+	int				mEffectIdLs;			// derived
+	int				mBypassParameterId;	// unique per type
+	int				mBypassParameterIdMs;	// derived
+	int				mBypassParameterIdLs;	// derived
+	int				mBypassCC;			// unique per name
+	Patch			* mPatch;
 
-	AxeEffect() :
+	AxeEffectBlockInfo() :
 		mEffectId(-1),
 		mEffectIdLs(-1),
 		mEffectIdMs(-1),
 		mBypassParameterId(-1),
 		mBypassParameterIdLs(-1),
-		mBypassParameterIdMs(-1)
+		mBypassParameterIdMs(-1),
+		mBypassCC(0),
+		mPatch(NULL)
 	{
 	}
 
-	AxeEffect(int id, const std::string & name, const std::string & type) :
+	AxeEffectBlockInfo(int id, const std::string & name, const std::string & type, int cc) :
 		mName(name),
 		mType(type),
 		mEffectId(id),
 		mBypassParameterId(-1),
 		mBypassParameterIdLs(-1),
-		mBypassParameterIdMs(-1)
+		mBypassParameterIdMs(-1),
+		mBypassCC(cc),
+		mPatch(NULL)
 	{
 		mEffectIdLs = mEffectId & 0x0000000F;
 		mEffectIdMs = (mEffectId >> 4) & 0x0000000F;
@@ -72,7 +79,7 @@ struct AxeEffect
 	}
 };
 
-typedef std::vector<AxeEffect> AxeEffects;
+typedef std::vector<AxeEffectBlockInfo> AxeEffectBlocks;
 
 
 // AxemlLoader
@@ -84,18 +91,17 @@ class AxemlLoader
 public:
 	AxemlLoader(ITraceDisplay * traceDisplay) : mTrace(traceDisplay) { }
 
-	bool Load(const std::string & doc, AxeEffects & effects);
+	bool Load(const std::string & doc, AxeEffectBlocks & effects);
 
 private:
 	void LoadEffectPool(TiXmlElement* pElem);
 	void LoadParameterLists(TiXmlElement* pElem);
-	void CheckResults();
-
+	void ReportMissingBypassIds();
 	void SetEffectBypass(const std::string & type, int bypassId);
 
 private:
 	ITraceDisplay * mTrace;
-	AxeEffects	mEffects;
+	AxeEffectBlocks	mEffects;
 };
 
 #endif // AxemlLoader_h__

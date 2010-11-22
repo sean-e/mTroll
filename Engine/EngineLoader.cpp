@@ -143,6 +143,8 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 	LoadBanks(pElem);
 
 	mMidiOutGenerator->OpenMidiOuts();
+	if (mAxeFxManager)
+		mAxeFxManager->CompleteInit();
 	if (mMidiInGenerator)
 		mMidiInGenerator->OpenMidiIns();
 	mEngine->CompleteInit(mAdcCalibration);
