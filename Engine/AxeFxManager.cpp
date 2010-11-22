@@ -242,7 +242,7 @@ NormalizeName(std::string &effectName)
 
 
 int
-GetDefaultCc(const std::string &effectNameIn, ITraceDisplay * trc) 
+GetDefaultAxeCc(const std::string &effectNameIn, ITraceDisplay * trc) 
 {
 	std::string effectName(effectNameIn);
 	NormalizeName(effectName);

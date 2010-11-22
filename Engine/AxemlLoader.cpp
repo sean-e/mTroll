@@ -131,7 +131,7 @@ AxemlLoader::LoadEffectPool(TiXmlElement* pElem)
 			continue;
 		}
 
-		const int cc = ::GetDefaultCc(effectName, mTrace);
+		const int cc = ::GetDefaultAxeCc(effectName, mTrace);
 		mEffects.push_back(AxeEffectBlockInfo(effectId, effectName, effectType, cc));
 	}
 }

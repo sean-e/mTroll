@@ -75,6 +75,6 @@ private:
 	// difference between disabled and not present?
 };
 
-int GetDefaultCc(const std::string &effectName, ITraceDisplay * trc);
+int GetDefaultAxeCc(const std::string &effectName, ITraceDisplay * trc);
 
 #endif // AxeFxManager_h__
