@@ -464,6 +464,36 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		IMidiOut * midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[midiOutPortNumber]);
 		PatchCommands cmds, cmds2;
 
+		// optional default channel in <patch> so that it doesn't need to be specified in each patch command
+		int patchDefaultCh = -1;
+		{
+			std::string chStr;
+			pElem->QueryValueAttribute("channel", &chStr);
+			if (chStr.empty())
+			{
+				std::string device;
+				if (pElem->Attribute("device"))
+					device = pElem->Attribute("device");
+				if (!device.empty())
+					chStr = mDevices[device];
+			}
+
+			if (!chStr.empty())
+			{
+				patchDefaultCh = ::atoi(chStr.c_str()) - 1;
+				if (patchDefaultCh < 0 || patchDefaultCh > 15)
+				{
+					if (mTraceDisplay)
+					{
+						std::strstream traceMsg;
+						traceMsg << "Error loading config file: invalid command channel in patch " << patchName << std::endl << std::ends;
+						mTraceDisplay->Trace(std::string(traceMsg.str()));
+					}
+					patchDefaultCh = -1;
+				}
+			}
+		}
+
 		TiXmlHandle hRoot(NULL);
 		hRoot = TiXmlHandle(pElem);
 
@@ -567,16 +597,21 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 					}
 				}
 
-				const int ch = ::atoi(chStr.c_str()) - 1;
+				int ch = ::atoi(chStr.c_str()) - 1;
 				if (ch < 0 || ch > 15)
 				{
-					if (mTraceDisplay)
+					if (patchDefaultCh < 0 || patchDefaultCh > 15)
 					{
-						std::strstream traceMsg;
-						traceMsg << "Error loading config file: invalid command channel in patch " << patchName << std::endl << std::ends;
-						mTraceDisplay->Trace(std::string(traceMsg.str()));
+						if (mTraceDisplay)
+						{
+							std::strstream traceMsg;
+							traceMsg << "Error loading config file: invalid command channel in patch " << patchName << std::endl << std::ends;
+							mTraceDisplay->Trace(std::string(traceMsg.str()));
+						}
+						continue;
 					}
-					continue;
+					else
+						ch = patchDefaultCh;
 				}
 
 				byte cmdByte = 0;
@@ -647,6 +682,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			}
 		}
 
+		bool patchTypeErr = false;
 		Patch * newPatch = NULL;
 		if (patchType == "normal")
 			newPatch = new NormalPatch(patchNumber, patchName, midiOut, cmds, cmds2);
@@ -658,6 +694,19 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			newPatch = new SequencePatch(patchNumber, patchName, midiOut, cmds);
 		else if (patchType == "AxeFxTapTempo")
 		{
+			if (!cmds.size() && !cmds2.size() && -1 != patchDefaultCh)
+			{
+				const int cc = ::GetDefaultAxeCc("Tap Tempo", mTraceDisplay);
+				if (cc)
+				{
+					Bytes bytes;
+					bytes.push_back(0xb0 | patchDefaultCh);
+					bytes.push_back(cc);
+					bytes.push_back(127);
+					cmds.push_back(new MidiCommandString(midiOut, bytes));
+				}
+			}
+
 			newPatch = new MomentaryPatch(patchNumber, patchName, midiOut, cmds, cmds2);
 			if (mAxeFxManager)
 				mAxeFxManager->SetTempoPatch(newPatch);
@@ -668,7 +717,10 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				mTraceDisplay->Trace(std::string(traceMsg.str()));
 			}
 		}
-		else if (mTraceDisplay)
+		else
+			patchTypeErr = true;
+
+		if (patchTypeErr && mTraceDisplay)
 		{
 			std::strstream traceMsg;
 			traceMsg << "Error loading config file: invalid patch type specified for patch " << patchName << std::endl << std::ends;
