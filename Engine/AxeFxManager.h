@@ -41,7 +41,7 @@ typedef unsigned char byte;
 class AxeFxManager : public IMidiInSubscriber
 {
 public:
-	AxeFxManager(ISwitchDisplay * switchDisp, ITraceDisplay * pTrace);
+	AxeFxManager(ISwitchDisplay * switchDisp, ITraceDisplay * pTrace, std::string appPath);
 	virtual ~AxeFxManager();
 
 	// IMidiInSubscriber

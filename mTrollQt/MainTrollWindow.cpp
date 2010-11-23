@@ -228,3 +228,11 @@ MainTrollWindow::EnableTimeDisplay(bool enable)
 		return mUi->EnableTimeDisplay(enable);
 	return false;
 }
+
+std::string
+MainTrollWindow::ApplicationDirectory()
+{
+	const QString path(QApplication::applicationDirPath());
+	const std::string pathStd(path.toLatin1());
+	return pathStd;
+}

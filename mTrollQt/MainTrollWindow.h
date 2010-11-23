@@ -46,6 +46,7 @@ private slots:
 	virtual void Refresh();
 	virtual void Reconnect();
 	virtual void ToggleTraceWindow();
+	virtual std::string ApplicationDirectory();
 	void ToggleAdc0Override(bool checked) { ToggleAdcOverride(0, checked); }
 	void ToggleAdc1Override(bool checked) { ToggleAdcOverride(1, checked); }
 	void ToggleAdc2Override(bool checked) { ToggleAdcOverride(2, checked); }

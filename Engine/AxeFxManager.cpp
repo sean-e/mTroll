@@ -38,14 +38,15 @@ void NormalizeName(std::string &effectName);
 
 
 AxeFxManager::AxeFxManager(ISwitchDisplay * switchDisp,
-						   ITraceDisplay *pTrace) :
+						   ITraceDisplay *pTrace,
+						   std::string appPath) :
 	mSwitchDisplay(switchDisp),
 	mTrace(pTrace),
 	mRefCnt(0),
 	mTempoPatch(NULL)
 {
 	AxemlLoader ldr(mTrace);
-	ldr.Load("debug/default.axeml", mAxeEffectInfo);
+	ldr.Load(appPath + "/default.axeml", mAxeEffectInfo);
 }
 
 AxeFxManager::~AxeFxManager()

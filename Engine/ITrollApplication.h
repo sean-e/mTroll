@@ -37,6 +37,7 @@ public:
 	virtual bool IsAdcOverridden(int adc) = 0;
 	virtual void ToggleAdcOverride(int adc) = 0;
 	virtual bool EnableTimeDisplay(bool enable) = 0;
+	virtual std::string ApplicationDirectory() = 0;
 };
 
 #endif // ITrollApplication_h__

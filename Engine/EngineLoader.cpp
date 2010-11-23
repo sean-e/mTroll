@@ -45,6 +45,7 @@
 #include "SleepCommand.h"
 #include "AxeFxManager.h"
 #include "IMidiIn.h"
+#include "ITrollApplication.h"
 
 
 static PatchBank::PatchState GetLoadState(const std::string & tmpLoad);
@@ -231,7 +232,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 				{
 					if (!mAxeFxManager)
 					{
-						mAxeFxManager = new AxeFxManager(mSwitchDisplay, mTraceDisplay);
+						mAxeFxManager = new AxeFxManager(mSwitchDisplay, mTraceDisplay, mApp->ApplicationDirectory());
 						mAxeFxManager->AddRef();
 					}
 
