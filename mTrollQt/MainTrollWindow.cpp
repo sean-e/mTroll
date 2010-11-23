@@ -125,6 +125,8 @@ void
 MainTrollWindow::Refresh()
 {
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+	if (mUi)
+		mUi->Unload();
 	mUi = new ControlUi(this, this);
 	setCentralWidget(mUi);	// Qt deletes the previous central widget
 
