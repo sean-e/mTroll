@@ -218,7 +218,7 @@ AxemlLoader::ReportMissingBypassIds()
 		if (cur.mType == "FeedbackSend" || cur.mType == "Mixer")
 			continue; // these can't be bypassed
 
-		if (-1 == cur.mEffectId)
+		if (-1 == cur.mSysexEffectId)
 		{
 			if (mTrace)
 			{
@@ -226,7 +226,7 @@ AxemlLoader::ReportMissingBypassIds()
 				mTrace->Trace(msg);
 			}
 		}
-		if (-1 == cur.mBypassParameterId)
+		if (-1 == cur.mSysexBypassParameterId)
 		{
 			if (mTrace)
 			{

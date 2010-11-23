@@ -36,22 +36,22 @@ struct AxeEffectBlockInfo
 {
 	std::string		mName;				// Amp 1
 	std::string		mType;				// Amp
-	int				mEffectId;			// unique per name
-	int				mEffectIdMs;			// derived 
-	int				mEffectIdLs;			// derived
-	int				mBypassParameterId;	// unique per type
-	int				mBypassParameterIdMs;	// derived
-	int				mBypassParameterIdLs;	// derived
+	int				mSysexEffectId;			// unique per name
+	int				mSysexEffectIdMs;			// derived 
+	int				mSysexEffectIdLs;			// derived
+	int				mSysexBypassParameterId;	// unique per type
+	int				mSysexBypassParameterIdMs;	// derived
+	int				mSysexBypassParameterIdLs;	// derived
 	int				mBypassCC;			// unique per name
 	Patch			* mPatch;
 
 	AxeEffectBlockInfo() :
-		mEffectId(-1),
-		mEffectIdLs(-1),
-		mEffectIdMs(-1),
-		mBypassParameterId(-1),
-		mBypassParameterIdLs(-1),
-		mBypassParameterIdMs(-1),
+		mSysexEffectId(-1),
+		mSysexEffectIdLs(-1),
+		mSysexEffectIdMs(-1),
+		mSysexBypassParameterId(-1),
+		mSysexBypassParameterIdLs(-1),
+		mSysexBypassParameterIdMs(-1),
 		mBypassCC(0),
 		mPatch(NULL)
 	{
@@ -60,22 +60,22 @@ struct AxeEffectBlockInfo
 	AxeEffectBlockInfo(int id, const std::string & name, const std::string & type, int cc) :
 		mName(name),
 		mType(type),
-		mEffectId(id),
-		mBypassParameterId(-1),
-		mBypassParameterIdLs(-1),
-		mBypassParameterIdMs(-1),
+		mSysexEffectId(id),
+		mSysexBypassParameterId(-1),
+		mSysexBypassParameterIdLs(-1),
+		mSysexBypassParameterIdMs(-1),
 		mBypassCC(cc),
 		mPatch(NULL)
 	{
-		mEffectIdLs = mEffectId & 0x0000000F;
-		mEffectIdMs = (mEffectId >> 4) & 0x0000000F;
+		mSysexEffectIdLs = mSysexEffectId & 0x0000000F;
+		mSysexEffectIdMs = (mSysexEffectId >> 4) & 0x0000000F;
 	}
 
 	void SetBypass(int id)
 	{
-		mBypassParameterId = id;
-		mBypassParameterIdLs = mBypassParameterId & 0x0000000F;
-		mBypassParameterIdMs = (mBypassParameterId >> 4) & 0x0000000F;
+		mSysexBypassParameterId = id;
+		mSysexBypassParameterIdLs = mSysexBypassParameterId & 0x0000000F;
+		mSysexBypassParameterIdMs = (mSysexBypassParameterId >> 4) & 0x0000000F;
 	}
 };
 
