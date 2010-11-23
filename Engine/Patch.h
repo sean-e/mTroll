@@ -39,7 +39,8 @@ class Patch
 public:
 	virtual ~Patch();
 
-	ExpressionPedals & GetPedals() {return mPedals;}
+	ExpressionPedals & GetPedals() { return mPedals; }
+	virtual void OverridePedals(bool overridePedals) { mOverridePedals = overridePedals; }
 
 	void AssignSwitch(int switchNumber, ISwitchDisplay * switchDisplay);
 	void ClearSwitch(ISwitchDisplay * switchDisplay);
@@ -76,6 +77,7 @@ private:
 protected:
 	ExpressionPedals		mPedals;
 	bool					mPatchIsActive;
+	bool					mOverridePedals;
 
 private:
 	const int				mNumber;	// unique across patches

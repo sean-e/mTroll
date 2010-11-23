@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2009 Sean Echevarria
+ * Copyright (C) 2007-2010 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -68,16 +68,19 @@ protected:
 		std::for_each(mCmdsA.begin(), mCmdsA.end(), std::mem_fun(&IPatchCommand::Exec));
 		mPatchIsActive = true;
 
-		if (psDisallow != mPedalSupport)
+		if (!mOverridePedals)
 		{
-			if (mPedals.HasAnySettings())
+			if (psDisallow != mPedalSupport)
 			{
-				// do this here rather than SwitchPressed to that pedals can be
-				// set on bank load rather than only during patch load
-				gActivePatchPedals = &mPedals;
+				if (mPedals.HasAnySettings())
+				{
+					// do this here rather than SwitchPressed to that pedals can be
+					// set on bank load rather than only during patch load
+					gActivePatchPedals = &mPedals;
+				}
+				else
+					gActivePatchPedals = NULL;
 			}
-			else
-				gActivePatchPedals = NULL;
 		}
 	}
 
@@ -86,8 +89,11 @@ protected:
 		std::for_each(mCmdsB.begin(), mCmdsB.end(), std::mem_fun(&IPatchCommand::Exec));
 		mPatchIsActive = false;
 
-		if (psAllowOnlyActive == mPedalSupport && gActivePatchPedals == &mPedals)
-			gActivePatchPedals = NULL;
+		if (!mOverridePedals)
+		{
+			if (psAllowOnlyActive == mPedalSupport && gActivePatchPedals == &mPedals)
+				gActivePatchPedals = NULL;
+		}
 	}
 
 private:

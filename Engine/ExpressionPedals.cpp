@@ -42,7 +42,9 @@ PedalToggle::Activate()
 	if (mPatch->IsActive())
 		return false;
 
+	mPatch->OverridePedals(true);
 	mPatch->SwitchPressed(NULL, mSwitchDisplay);
+	mPatch->OverridePedals(false);
 	return true;
 }
 
@@ -52,7 +54,9 @@ PedalToggle::Deactivate()
 	if (!mPatch->IsActive())
 		return false;
 
+	mPatch->OverridePedals(true);
 	mPatch->SwitchPressed(NULL, mSwitchDisplay);
+	mPatch->OverridePedals(false);
 	return true;
 }
 

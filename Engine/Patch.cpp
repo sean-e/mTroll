@@ -38,7 +38,8 @@ Patch::Patch(int number,
 	mNumber(number),
 	mName(name),
 	mPatchIsActive(false),
-	mPedals(midiOut)
+	mPedals(midiOut),
+	mOverridePedals(false)
 {
 }
 
