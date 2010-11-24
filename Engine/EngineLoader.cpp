@@ -441,8 +441,6 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			continue;
 		}
 
-		int midiOutPortNumber = 1;
-
 		if (pElem->Attribute("name"))
 			patchName = pElem->Attribute("name");
 		int patchNumber = -1;
@@ -461,9 +459,6 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		std::string patchType;
 		pElem->QueryValueAttribute("type", &patchType);
 		const bool isSeq = patchType == "sequence";
-		pElem->QueryIntAttribute("port", &midiOutPortNumber);
-		IMidiOut * midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[midiOutPortNumber]);
-		PatchCommands cmds, cmds2;
 
 		// optional default channel in <patch> so that it doesn't need to be specified in each patch command
 		int patchDefaultCh = -1;
@@ -495,6 +490,17 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			}
 		}
 
+		int midiOutPortNumber = -1;
+		pElem->QueryIntAttribute("port", &midiOutPortNumber);
+		if (-1 == midiOutPortNumber)
+		{
+			// TODO: see if there is a port number associated with the device
+			midiOutPortNumber = 1;
+		}
+
+		IMidiOut * midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[midiOutPortNumber]);
+
+		PatchCommands cmds, cmds2;
 		TiXmlHandle hRoot(NULL);
 		hRoot = TiXmlHandle(pElem);
 
@@ -586,19 +592,25 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 						device = childElem->Attribute("device");
 					if (!device.empty())
 						chStr = mDevices[device];
-					if (chStr.empty())
+					if (patchDefaultCh < 0 || patchDefaultCh > 15)
 					{
-						if (mTraceDisplay)
+						if (chStr.empty())
 						{
-							std::strstream traceMsg;
-							traceMsg << "Error loading config file: command missing channel in patch " << patchName << std::endl << std::ends;
-							mTraceDisplay->Trace(std::string(traceMsg.str()));
+							if (mTraceDisplay)
+							{
+								std::strstream traceMsg;
+								traceMsg << "Error loading config file: command missing channel in patch " << patchName << std::endl << std::ends;
+								mTraceDisplay->Trace(std::string(traceMsg.str()));
+							}
+							continue;
 						}
-						continue;
 					}
 				}
 
-				int ch = ::atoi(chStr.c_str()) - 1;
+				int ch = -1;
+				if (!chStr.empty())
+					ch = ::atoi(chStr.c_str()) - 1;
+
 				if (ch < 0 || ch > 15)
 				{
 					if (patchDefaultCh < 0 || patchDefaultCh > 15)
