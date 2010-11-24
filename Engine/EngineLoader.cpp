@@ -1009,15 +1009,7 @@ EngineLoader::LoadDeviceChannelMap(TiXmlElement * pElem)
 		}
 
 		if (!pElem->GetText())
-		{
-			if (mTraceDisplay)
-			{
-				std::strstream traceMsg;
-				traceMsg << "Error loading config file: missing device name in DeviceChannelMap" << std::endl << std::ends;
-				mTraceDisplay->Trace(std::string(traceMsg.str()));
-			}
 			continue;
-		}
 		dev = pElem->GetText();
 
 		std::string ch;
