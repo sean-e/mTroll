@@ -198,6 +198,8 @@ ControlUi::Unload()
 
 	delete mSystemPowerOverride;
 	mSystemPowerOverride = NULL;
+
+	repaint();
 }
 
 void
