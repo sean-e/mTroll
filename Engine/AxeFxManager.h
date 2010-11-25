@@ -73,7 +73,6 @@ private:
 	//		poll after program changes on axe ch?
 	//		http://www.fractalaudio.com/forum/viewtopic.php?f=14&t=21524&start=10
 	// difference between disabled and not present?
-	// consider mapping midi port to device name so not necessary to do so for every patch (like default ch)
 };
 
 int GetDefaultAxeCc(const std::string &effectName, ITraceDisplay * trc);

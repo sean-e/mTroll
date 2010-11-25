@@ -49,6 +49,7 @@
 
 
 static PatchBank::PatchState GetLoadState(const std::string & tmpLoad);
+static PatchBank::PatchState GetPatchOverride(const std::string & tmpLoad);
 
 
 EngineLoader::EngineLoader(ITrollApplication * app,
@@ -257,7 +258,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 	{
 		if (pChildElem->ValueStr() == "globalExpr")
 		{
-			LoadExpressionPedalSettings(pChildElem, globalPedals);
+			LoadExpressionPedalSettings(pChildElem, globalPedals, -1);
 		}
 		else if (pChildElem->ValueStr() == "adc")
 		{
@@ -460,19 +461,17 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		pElem->QueryValueAttribute("type", &patchType);
 		const bool isSeq = patchType == "sequence";
 
+		std::string device;
+		if (pElem->Attribute("device"))
+			device = pElem->Attribute("device");
+
 		// optional default channel in <patch> so that it doesn't need to be specified in each patch command
 		int patchDefaultCh = -1;
 		{
 			std::string chStr;
 			pElem->QueryValueAttribute("channel", &chStr);
-			if (chStr.empty())
-			{
-				std::string device;
-				if (pElem->Attribute("device"))
-					device = pElem->Attribute("device");
-				if (!device.empty())
-					chStr = mDevices[device];
-			}
+			if (chStr.empty() && !device.empty())
+				chStr = mDeviceChannels[device];
 
 			if (!chStr.empty())
 			{
@@ -492,11 +491,11 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 
 		int midiOutPortNumber = -1;
 		pElem->QueryIntAttribute("port", &midiOutPortNumber);
+		if (-1 == midiOutPortNumber && !device.empty())
+			midiOutPortNumber = mDevicePorts[device]; // see if a port mapping was set up for the device
+
 		if (-1 == midiOutPortNumber)
-		{
-			// TODO: see if there is a port number associated with the device
 			midiOutPortNumber = 1;
-		}
 
 		IMidiOut * midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[midiOutPortNumber]);
 
@@ -591,7 +590,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 					if (childElem->Attribute("device"))
 						device = childElem->Attribute("device");
 					if (!device.empty())
-						chStr = mDevices[device];
+						chStr = mDeviceChannels[device];
 					if (patchDefaultCh < 0 || patchDefaultCh > 15)
 					{
 						if (chStr.empty())
@@ -753,7 +752,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			if (patchElement == "localExpr")
 			{
 				// <localExpr inputNumber="1" assignmentNumber="1" channel="" controller="" min="" max="" invert="0" enable="" />
-				LoadExpressionPedalSettings(childElem, pedals);
+				LoadExpressionPedalSettings(childElem, pedals, patchDefaultCh);
 			}
 			else if (patchElement == "globalExpr")
 			{
@@ -835,11 +834,16 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 
 				std::string tmp;
 				childElem->QueryValueAttribute("loadState", &tmp);
-				const PatchBank::PatchState loadState = GetLoadState(tmp);
+				const PatchBank::PatchState loadState = ::GetLoadState(tmp);
 				childElem->QueryValueAttribute("unloadState", &tmp);
-				const PatchBank::PatchState unloadState = GetLoadState(tmp);
+				const PatchBank::PatchState unloadState = ::GetLoadState(tmp);
 				childElem->QueryValueAttribute("override", &tmp);
-				const PatchBank::PatchState stateOverride = GetLoadState(tmp);
+				const PatchBank::PatchState stateOverride = ::GetPatchOverride(tmp);
+				// TODO: need a sync override mode (A/B/ignore/out of phase sync/in phase sync - same as ignore but syncs on activate)
+				// see PatchBank::PatchSwitchPressed
+				// 2 sync options work relative to first mapping
+				// 2 sync options not applicable to first mapping
+				// sync at load only option - override no change after load?
 
 				bank.AddPatchMapping(switchNumber - 1, patchNumber, loadState, unloadState, stateOverride);
 			}
@@ -878,7 +882,8 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 
 void
 EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem, 
-										  ExpressionPedals &pedals)
+										  ExpressionPedals &pedals,
+										  int defaultChannel)
 {
 	int exprInputNumber = -1;
 	int assignmentIndex = -1;
@@ -903,11 +908,14 @@ EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem,
 			tmp = childElem->Attribute("device");
 		if (!tmp.empty())
 		{
-			tmp = mDevices[tmp];
+			tmp = mDeviceChannels[tmp];
 			if (!tmp.empty())
 				channel = ::atoi(tmp.c_str());
 		}
 	}
+
+	if (-1 == channel)
+		channel = defaultChannel;
 
 	childElem->QueryIntAttribute("controller", &controller);
 	childElem->QueryIntAttribute("max", &maxVal);
@@ -1001,9 +1009,10 @@ void
 EngineLoader::LoadDeviceChannelMap(TiXmlElement * pElem)
 {
 /*
+ * optional device / channel and device / port map
 	<DeviceChannelMap>
-		<device channel="1">EDP</>
-		<device channel="2">H8000</>
+		<device channel="1" port="1">EDP</>
+		<device channel="2" port="2">H8000</>
 	</DeviceChannelMap>
  */
 	std::string dev;
@@ -1037,12 +1046,28 @@ EngineLoader::LoadDeviceChannelMap(TiXmlElement * pElem)
 			continue;
 		}
 
-		mDevices[dev] = ch;
+		mDeviceChannels[dev] = ch;
+
+		// optional midi port device mapping
+		int port = -1;
+		pElem->QueryIntAttribute("port", &port);
+		mDevicePorts[dev] = port;
 	}
 }
 
 PatchBank::PatchState
 GetLoadState(const std::string & tmpLoad)
+{
+	if (tmpLoad == "A")
+		return PatchBank::stA;
+	else if (tmpLoad == "B")
+		return PatchBank::stB;
+	else
+		return PatchBank::stIgnore;
+}
+
+PatchBank::PatchState
+GetPatchOverride(const std::string & tmpLoad)
 {
 	if (tmpLoad == "A")
 		return PatchBank::stA;

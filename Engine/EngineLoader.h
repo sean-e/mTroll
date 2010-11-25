@@ -55,7 +55,7 @@ public:
 private:
 	bool					LoadSystemConfig(TiXmlElement * pElem);
 	void					LoadDeviceChannelMap(TiXmlElement * pElem);
-	void					LoadExpressionPedalSettings(TiXmlElement * pElem, ExpressionPedals &pedals);
+	void					LoadExpressionPedalSettings(TiXmlElement * pElem, ExpressionPedals &pedals, int defaultChannel);
 	void					LoadPatches(TiXmlElement * pElem);
 	void					LoadBanks(TiXmlElement * pElem);
 
@@ -74,7 +74,8 @@ private:
 	ISwitchDisplay *		mSwitchDisplay;
 	ITraceDisplay *			mTraceDisplay;
 	AxeFxManager *			mAxeFxManager;
-	std::map<std::string, std::string> mDevices;
+	std::map<std::string, std::string> mDeviceChannels; // outboard device channels
+	std::map<std::string, int> mDevicePorts; // computer midi ports used to address outboard devices
 };
 
 #endif // EngineLoader_h__
