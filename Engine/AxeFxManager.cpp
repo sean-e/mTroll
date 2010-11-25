@@ -241,6 +241,155 @@ NormalizeName(std::string &effectName)
     0xF7 sysex end 
 */
 
+struct DefaultAxeCcs
+{
+	std::string mParameter;
+	int			mCc;
+};
+
+DefaultAxeCcs kDefaultAxeCcs[] = 
+{
+	// these don't have defaults (some can't be bypassed)
+	{"feedback send", 0},
+	{"mixer 1", 0},
+	{"mixer 2", 0},
+	{"feedback return", 0},
+	{"noisegate", 0},
+	{"input volume", 10},
+	{"out 1 volume", 11},
+	{"out 2 volume", 12},
+	{"output", 13},
+	{"tap tempo", 14},
+	{"tuner", 15},
+	{"external 1", 16},
+	{"ext 1", 16},
+	{"external 2", 17},
+	{"ext 2", 17},
+	{"external 3", 18},
+	{"ext 3", 18},
+	{"external 4", 19},
+	{"ext 4", 19},
+	{"external 5", 20},
+	{"ext 5", 20},
+	{"external 6", 21},
+	{"ext 6", 21},
+	{"external 7", 22},
+	{"ext 7", 22},
+	{"external 8", 23},
+	{"ext 8", 23},
+
+	{"looper 1 record", 24},
+	{"looper 1 play", 25},
+	{"looper 1 once", 26},
+	{"looper 1 overdub", 27},
+	{"looper 1 reverse", 28},
+	{"looper 2 record", 29},
+	{"looper 2 play", 30},
+	{"looper 2 once", 31},
+	{"looper 2 overdub", 32},
+	{"looper 2 reverse", 33},
+
+	{"global preset effect toggle", 34},
+	{"volume increment", 35},
+	{"volume decrement", 36},
+
+	{"amp 1", 37},
+	{"amp 2", 38},
+	{"cabinet 1", 39},
+	{"cabinet 2", 40},
+	{"chorus 1", 41},
+	{"chorus 2", 42},
+	{"compressor 1", 43},
+	{"comp 1", 43},
+	{"compressor 2", 44},
+	{"comp 2", 44},
+	{"crossover 1", 45},
+	{"x-over 1", 45},
+	{"crossover 2", 46},
+	{"x-over 2", 46},
+	{"delay 1", 47},
+	{"delay 1 (reverse)", 47},
+	{"delay 2", 48},
+	{"delay 2 (reverse)", 48},
+	{"drive 1", 49},
+	{"drive 2", 50},
+	{"enhancer", 51},
+	{"filter 1", 52},
+	{"filter 2", 53},
+	{"filter 3", 54},
+	{"filter 4", 55},
+	{"flanger 1", 56},
+	{"flanger 2", 57},
+	{"formant", 58},
+	{"fx loop", 59},
+	{"effects loop", 59},
+	{"gate 1", 60},
+	{"gate/expander 1", 60},
+	{"gate 2", 61},
+	{"gate/expander 2", 61},
+	{"graphiceq 1", 62},
+	{"graphic eq 1", 62},
+	{"graphiceq 2", 63},
+	{"graphic eq 2", 63},
+	{"graphiceq 3", 64},
+	{"graphic eq 3", 64},
+	{"graphiceq 4", 65},
+	{"graphic eq 4", 65},
+	{"megatap delay", 66},
+	{"metatap", 66},
+	{"multiband comp 1", 67},
+	{"multi comp 1", 67},
+	{"multiband comp 2", 68},
+	{"multi comp 1", 68},
+	{"multidelay 1", 69},
+	{"multi delay 1", 69},
+	{"multidelay 2", 70},
+	{"multi delay 2", 70},
+	{"para eq 1", 71},
+	{"parametric eq 1", 71},
+	{"para eq 2", 72},
+	{"parametric eq 2", 72},
+	{"para eq 3", 73},
+	{"parametric eq 3", 73},
+	{"para eq 4", 74},
+	{"parametric eq 4", 74},
+	{"phaser 1", 75},
+	{"phaser 2", 76},
+	{"pitch 1", 77},
+	{"pitch 1 (whammy)", 77},
+	{"pitch 2", 78},
+	{"pitch 2 (whammy)", 78},
+	{"quad chorus 1", 79},
+	{"quad chorus 2", 80},
+	{"resonator 1", 81},
+	{"resonator 2", 82},
+	{"reverb 1", 83},
+	{"reverb 2", 84},
+	{"ring mod", 85},
+	{"ringmod", 85},
+	{"rotary 1", 86},
+	{"rotary 2", 87},
+	{"synth 1", 88},
+	{"synth 2", 89},
+	{"tremolo 1", 90},
+	{"panner/tremolo 1", 90},
+	{"tremolo 2", 91},
+	{"panner/tremolo 2", 91},
+	{"vocoder", 92},
+	{"volume 1", 93},
+	{"vol/pan 1", 93},
+	{"volume 2", 94},
+	{"vol/pan 2", 94},
+	{"volume 3", 95},
+	{"vol/pan 3", 95},
+	{"volume 4", 96},
+	{"vol/pan 4", 96},
+	{"wah-wah 1", 97},
+	{"wahwah 1", 97},
+	{"wah-wah 2", 98},
+	{"wahwah 2", 98},
+	{"", -1}
+};
 
 int
 GetDefaultAxeCc(const std::string &effectNameIn, ITraceDisplay * trc) 
@@ -248,195 +397,9 @@ GetDefaultAxeCc(const std::string &effectNameIn, ITraceDisplay * trc)
 	std::string effectName(effectNameIn);
 	NormalizeName(effectName);
 
-	if (effectName == "feedback send" || 
-		effectName == "mixer 1" || 
-		effectName == "mixer 2" ||
-		effectName == "feedback return" ||
-		effectName == "noisegate")
-		return 0; // these don't have defaults (some can't be bypassed)
-
-	if (effectName == "input volume")
-		return 10;
-	if (effectName == "out 1 volume")
-		return 11;
-	if (effectName == "out 2 volume")
-		return 12;
-	if (effectName == "output")
-		return 13;
-	if (effectName == "tap tempo")
-		return 14;
-	if (effectName == "tuner")
-		return 15;
-
-	if (effectName == "external 1" || effectName == "ext 1")
-		return 16;
-	if (effectName == "external 2" || effectName == "ext 2")
-		return 17;
-	if (effectName == "external 3" || effectName == "ext 3")
-		return 18;
-	if (effectName == "external 4" || effectName == "ext 4")
-		return 19;
-	if (effectName == "external 5" || effectName == "ext 5")
-		return 20;
-	if (effectName == "external 6" || effectName == "ext 6")
-		return 21;
-	if (effectName == "external 7" || effectName == "ext 7")
-		return 22;
-	if (effectName == "external 8" || effectName == "ext 8")
-		return 23;
-
-	if (effectName == "looper 1 record")
-		return 24;
-	if (effectName == "looper 1 play")
-		return 25;
-	if (effectName == "looper 1 once")
-		return 26;
-	if (effectName == "looper 1 overdub")
-		return 27;
-	if (effectName == "looper 1 reverse")
-		return 28;
-	if (effectName == "looper 2 record")
-		return 29;
-	if (effectName == "looper 2 play")
-		return 30;
-	if (effectName == "looper 2 once")
-		return 31;
-	if (effectName == "looper 2 overdub")
-		return 32;
-	if (effectName == "looper 2 reverse")
-		return 33;
-
-	if (effectName == "global preset effect toggle")
-		return 34;
-	if (effectName == "volume increment")
-		return 35;
-	if (effectName == "volume decrement")
-		return 36;
-
-	if (effectName == "amp 1")
-		return 37;
-	if (effectName == "amp 2")
-		return 38;
-	if (effectName == "cabinet 1")
-		return 39;
-	if (effectName == "cabinet 2")
-		return 40;
-	if (effectName == "chorus 1")
-		return 41;
-	if (effectName == "chorus 2")
-		return 42;
-	if (effectName == "compressor 1" || effectName == "comp 1")
-		return 43;
-	if (effectName == "compressor 2" || effectName == "comp 2")
-		return 44;
-	if (effectName == "crossover 1" || effectName == "x-over 1")
-		return 45;
-	if (effectName == "crossover 2" || effectName == "x-over 2")
-		return 46;
-	if (effectName == "delay 1" || effectName == "delay 1 (reverse)")
-		return 47;
-	if (effectName == "delay 2" || effectName == "delay 2 (reverse)")
-		return 48;
-	if (effectName == "drive 1")
-		return 49;
-	if (effectName == "drive 2")
-		return 50;
-	if (effectName == "enhancer")
-		return 51;
-	if (effectName == "filter 1")
-		return 52;
-	if (effectName == "filter 2")
-		return 53;
-	if (effectName == "filter 3")
-		return 54;
-	if (effectName == "filter 4")
-		return 55;
-	if (effectName == "flanger 1")
-		return 56;
-	if (effectName == "flanger 2")
-		return 57;
-	if (effectName == "formant")
-		return 58;
-	if (effectName == "fx loop" || effectName == "effects loop")
-		return 59;
-	if (effectName == "gate 1" || effectName == "gate/expander 1")
-		return 60;
-	if (effectName == "gate 2" || effectName == "gate/expander 2")
-		return 61;
-	if (effectName == "graphiceq 1" || effectName == "graphic eq 1")
-		return 62;
-	if (effectName == "graphiceq 2" || effectName == "graphic eq 2")
-		return 63;
-	if (effectName == "graphiceq 3" || effectName == "graphic eq 3")
-		return 64;
-	if (effectName == "graphiceq 4" || effectName == "graphic eq 4")
-		return 65;
-	if (effectName == "megatap delay" || effectName == "metatap")
-		return 66;
-	if (effectName == "multiband comp 1" || effectName == "multi comp 1")
-		return 67;
-	if (effectName == "multiband comp 2" || effectName == "multi comp 1")
-		return 68;
-	if (effectName == "multidelay 1" || effectName == "multi delay 1")
-		return 69;
-	if (effectName == "multidelay 2" || effectName == "multi delay 2")
-		return 70;
-	if (effectName == "para eq 1" || effectName == "parametric eq 1")
-		return 71;
-	if (effectName == "para eq 2" || effectName == "parametric eq 2")
-		return 72;
-	if (effectName == "para eq 3" || effectName == "parametric eq 3")
-		return 73;
-	if (effectName == "para eq 4" || effectName == "parametric eq 4")
-		return 74;
-	if (effectName == "phaser 1")
-		return 75;
-	if (effectName == "phaser 2")
-		return 76;
-	if (effectName == "pitch 1" || effectName == "pitch 1 (whammy)")
-		return 77;
-	if (effectName == "pitch 2" || effectName == "pitch 2 (whammy)")
-		return 78;
-	if (effectName == "quad chorus 1")
-		return 79;
-	if (effectName == "quad chorus 2")
-		return 80;
-	if (effectName == "resonator 1")
-		return 81;
-	if (effectName == "resonator 2")
-		return 82;
-	if (effectName == "reverb 1")
-		return 83;
-	if (effectName == "reverb 2")
-		return 84;
-	if (effectName == "ring mod" || effectName == "ringmod")
-		return 85;
-	if (effectName == "rotary 1")
-		return 86;
-	if (effectName == "rotary 2")
-		return 87;
-	if (effectName == "synth 1")
-		return 88;
-	if (effectName == "synth 2")
-		return 89;
-	if (effectName == "tremolo 1" || effectName == "panner/tremolo 1")
-		return 90;
-	if (effectName == "tremolo 2" || effectName == "panner/tremolo 2")
-		return 91;
-	if (effectName == "vocoder")
-		return 92;
-	if (effectName == "volume 1" || effectName == "vol/pan 1")
-		return 93;
-	if (effectName == "volume 2" || effectName == "vol/pan 2")
-		return 94;
-	if (effectName == "volume 3" || effectName == "vol/pan 3")
-		return 95;
-	if (effectName == "volume 4" || effectName == "vol/pan 4")
-		return 96;
-	if (effectName == "wah-wah 1" || effectName == "wahwah 1")
-		return 97;
-	if (effectName == "wah-wah 2" || effectName == "wahwah 2")
-		return 98;
+	for (int idx = 0; !kDefaultAxeCcs[idx].mParameter.empty(); ++idx)
+		if (kDefaultAxeCcs[idx].mParameter == effectName)
+			return kDefaultAxeCcs[idx].mCc;
 
 	if (trc)
 	{
