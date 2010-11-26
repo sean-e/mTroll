@@ -65,6 +65,7 @@ class ControlUi : public QWidget,
 						 IMonome40hSwitchSubscriber
 {
 	Q_OBJECT;
+	friend class CreateDisplayTimeTimer;
 public:
 	ControlUi(QWidget * parent, ITrollApplication * app);
 	virtual ~ControlUi();
@@ -271,6 +272,7 @@ private:
 	void LoadMonome(bool displayStartSequence);
 	void LoadMidiSettings(const std::string & file, const bool adcOverrides[ExpressionPedals::PedalCount]);
 	void StopTimer();
+	void CreateTimeDisplayTimer();
 
 	void ButtonReleased(const int idx);
 	void ButtonPressed(const int idx);
@@ -371,5 +373,6 @@ public:
 private slots:
 	void TimerFired();
 };
+
 
 #endif // ControlUi_h__

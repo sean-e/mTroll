@@ -1116,11 +1116,39 @@ ControlUi::EnableTimeDisplay(bool enable)
 	else if (!enable)
 		return false;
 
+	// CreateDisplayTimeTimer
+	// --------------------------------------------------------------------
+	// class used to create timer to fire time updates on UI thread (via postEvent)
+	//
+	class CreateDisplayTimeTimer : public QEvent
+	{
+		ControlUi * mUi;
+
+	public:
+		CreateDisplayTimeTimer(ControlUi * ui) : 
+		  QEvent(User), 
+		  mUi(ui)
+		{
+		}
+
+		virtual void exec()
+		{
+			mUi->CreateTimeDisplayTimer();
+		}
+	};
+
+	QCoreApplication::postEvent(this, new CreateDisplayTimeTimer(this));
+	return true;
+}
+
+void
+ControlUi::CreateTimeDisplayTimer()
+{
 	DisplayTime();
+	StopTimer();
 	mTimeDisplayTimer = new QTimer(this);
 	connect(mTimeDisplayTimer, SIGNAL(timeout()), this, SLOT(DisplayTime()));
 	mTimeDisplayTimer->start(1000);
-	return true;
 }
 
 void
@@ -1143,7 +1171,7 @@ ControlUi::StopTimer()
 	QTimer * tmp = mTimeDisplayTimer;
 	mTimeDisplayTimer = NULL;
 	tmp->stop();
-	disconnect(mTimeDisplayTimer, SIGNAL(timeout()), this, SLOT(DisplayTime()));
+	disconnect(tmp, SIGNAL(timeout()), this, SLOT(DisplayTime()));
 	delete tmp;
 }
 
