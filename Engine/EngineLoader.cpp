@@ -49,7 +49,7 @@
 
 
 static PatchBank::PatchState GetLoadState(const std::string & tmpLoad);
-static PatchBank::PatchState GetPatchOverride(const std::string & tmpLoad);
+static PatchBank::PatchSyncState GetSyncState(const std::string & tmpLoad);
 
 
 EngineLoader::EngineLoader(ITrollApplication * app,
@@ -838,14 +838,9 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 				childElem->QueryValueAttribute("unloadState", &tmp);
 				const PatchBank::PatchState unloadState = ::GetLoadState(tmp);
 				childElem->QueryValueAttribute("override", &tmp);
-				const PatchBank::PatchState stateOverride = ::GetPatchOverride(tmp);
-				// TODO: need a sync override mode (A/B/ignore/out of phase sync/in phase sync - same as ignore but syncs on activate)
-				// see PatchBank::PatchSwitchPressed
-				// 2 sync options work relative to first mapping
-				// 2 sync options not applicable to first mapping
-				// sync at load only option - override no change after load?
-
-				bank.AddPatchMapping(switchNumber - 1, patchNumber, loadState, unloadState, stateOverride);
+				const PatchBank::PatchState stateOverride = ::GetLoadState(tmp);
+				const PatchBank::PatchSyncState syncState = ::GetSyncState(tmp);
+				bank.AddPatchMapping(switchNumber - 1, patchNumber, loadState, unloadState, stateOverride, syncState);
 			}
 			else if (childElem->ValueStr() == "ExclusiveSwitchGroup")
 			{
@@ -1056,23 +1051,23 @@ EngineLoader::LoadDeviceChannelMap(TiXmlElement * pElem)
 }
 
 PatchBank::PatchState
-GetLoadState(const std::string & tmpLoad)
+GetLoadState(const std::string & loadState)
 {
-	if (tmpLoad == "A")
+	if (loadState == "A")
 		return PatchBank::stA;
-	else if (tmpLoad == "B")
+	else if (loadState == "B")
 		return PatchBank::stB;
 	else
 		return PatchBank::stIgnore;
 }
 
-PatchBank::PatchState
-GetPatchOverride(const std::string & tmpLoad)
+PatchBank::PatchSyncState
+GetSyncState(const std::string & syncState)
 {
-	if (tmpLoad == "A")
-		return PatchBank::stA;
-	else if (tmpLoad == "B")
-		return PatchBank::stB;
+	if (syncState == "syncInPhase" || syncState == "sync" || syncState == "inPhase")
+		return PatchBank::syncInPhase;
+	else if (syncState == "syncOutOfPhase" || syncState == "outOfPhase")
+		return PatchBank::syncOutOfPhase;
 	else
-		return PatchBank::stIgnore;
+		return PatchBank::syncIgnore;
 }

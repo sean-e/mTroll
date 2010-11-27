@@ -50,8 +50,15 @@ public:
 		stB				// only valid for ptNormal and ptToggle
 	};
 
+	enum PatchSyncState
+	{
+		syncIgnore,		// default
+		syncInPhase,	// PatchState of sibling patches sync identical to master patch
+		syncOutOfPhase	// PatchState of sibling patches sync opposite of master patch
+	};
+
 	// creation/init
-	void AddPatchMapping(int switchNumber, int patchNumber, PatchState patchLoadState, PatchState patchUnloadState, PatchState patchStateOverride);
+	void AddPatchMapping(int switchNumber, int patchNumber, PatchState patchLoadState, PatchState patchUnloadState, PatchState patchStateOverride, PatchSyncState patchSyncState);
 	void InitPatches(const MidiControlEngine::Patches & patches, ITraceDisplay * traceDisp);
 	void CalibrateExprSettings(const PedalCalibration * pedalCalibration, MidiControlEngine * eng, ITraceDisplay * traceDisp);
 	void SetDefaultMappings(const PatchBank & defaultMapping);
@@ -79,13 +86,15 @@ private:
 		PatchState			mPatchStateAtBankLoad;
 		PatchState			mPatchStateAtBankUnload;
 		PatchState			mPatchStateOverride; // press of switch prevents toggle from changing
+		PatchSyncState		mPatchSyncState;
 		Patch				*mPatch;		// non-retained runtime state; weak ref
 
-		PatchMap(int patchNumber, PatchState loadState, PatchState unloadState, PatchState stateOverride) :
+		PatchMap(int patchNumber, PatchState loadState, PatchState unloadState, PatchState stateOverride, PatchSyncState patchSyncState) :
 			mPatchNumber(patchNumber),
 			mPatchStateAtBankLoad(loadState),
 			mPatchStateAtBankUnload(unloadState),
 			mPatchStateOverride(stateOverride),
+			mPatchSyncState(patchSyncState),
 			mPatch(NULL)
 		{
 		}
@@ -95,6 +104,7 @@ private:
 			mPatchStateAtBankLoad(rhs.mPatchStateAtBankLoad),
 			mPatchStateAtBankUnload(rhs.mPatchStateAtBankUnload),
 			mPatchStateOverride(rhs.mPatchStateOverride),
+			mPatchSyncState(rhs.mPatchSyncState),
 			mPatch(rhs.mPatch)
 		{
 		}

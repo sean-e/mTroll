@@ -70,10 +70,10 @@ void PatchBank::DeletePatchMaps::operator()(const std::pair<int, PatchVect> & pr
 }
 
 void
-PatchBank::AddPatchMapping(int switchNumber, int patchNumber, PatchState patchLoadState, PatchState patchUnloadState, PatchState patchStateOverride)
+PatchBank::AddPatchMapping(int switchNumber, int patchNumber, PatchState patchLoadState, PatchState patchUnloadState, PatchState patchStateOverride, PatchSyncState patchSyncState)
 {
 	PatchVect & curPatches = mPatches[switchNumber];
-	curPatches.push_back(new PatchMap(patchNumber, patchLoadState, patchUnloadState, patchStateOverride));
+	curPatches.push_back(new PatchMap(patchNumber, patchLoadState, patchUnloadState, patchStateOverride, patchSyncState));
 }
 
 void
@@ -297,6 +297,12 @@ PatchBank::PatchSwitchPressed(int switchNumber, IMainDisplay * mainDisplay, ISwi
 	}
 
 	bool doDisplayUpdate = true;
+
+	// TODO: need a sync override mode (ignore/out of phase sync/in phase sync - same as ignore but syncs on activate)
+	// see PatchBank::PatchSwitchPressed
+	// sync options work relative to first mapping
+	// sync options not applicable to first mapping
+	// sync at load only option - override no change after load?
 
 	// do standard pressed processing (send A)
 	std::strstream msgstr;
