@@ -198,6 +198,8 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 		return;
 	}
 
+	// TODO: lookup effect ID and parameter ID
+
 	if (mTrace)
 	{
 		const std::string msg(::GetAsciiHexStr(bytes, len, true) + "\n");
@@ -251,13 +253,20 @@ DefaultAxeCcs kDefaultAxeCcs[] =
 {
 	// these don't have defaults (some can't be bypassed)
 	{"feedback send", 0},
+	{"send", 0},
 	{"mixer 1", 0},
+	{"mix 1", 0},
 	{"mixer 2", 0},
+	{"mix 2", 0},
 	{"feedback return", 0},
+	{"return", 0},
 	{"noisegate", 0},
 	{"input volume", 10},
+	{"input vol", 10},
 	{"out 1 volume", 11},
+	{"out 1 vol", 11},
 	{"out 2 volume", 12},
+	{"out 2 vol", 12},
 	{"output", 13},
 	{"tap tempo", 14},
 	{"tuner", 15},
@@ -290,13 +299,17 @@ DefaultAxeCcs kDefaultAxeCcs[] =
 	{"looper 2 reverse", 33},
 
 	{"global preset effect toggle", 34},
+	{"vol increment", 35},
 	{"volume increment", 35},
+	{"vol decrement", 36},
 	{"volume decrement", 36},
 
 	{"amp 1", 37},
 	{"amp 2", 38},
 	{"cabinet 1", 39},
+	{"cab 1", 39},
 	{"cabinet 2", 40},
+	{"cab 2", 40},
 	{"chorus 1", 41},
 	{"chorus 2", 42},
 	{"compressor 1", 43},
@@ -360,7 +373,9 @@ DefaultAxeCcs kDefaultAxeCcs[] =
 	{"pitch 2", 78},
 	{"pitch 2 (whammy)", 78},
 	{"quad chorus 1", 79},
+	{"quad 1", 79},
 	{"quad chorus 2", 80},
+	{"quad 2", 80},
 	{"resonator 1", 81},
 	{"resonator 2", 82},
 	{"reverb 1", 83},
@@ -372,22 +387,30 @@ DefaultAxeCcs kDefaultAxeCcs[] =
 	{"synth 1", 88},
 	{"synth 2", 89},
 	{"tremolo 1", 90},
+	{"trem 1", 90},
 	{"panner/tremolo 1", 90},
 	{"tremolo 2", 91},
+	{"trem 2", 91},
 	{"panner/tremolo 2", 91},
 	{"vocoder", 92},
 	{"volume 1", 93},
+	{"vol 1", 93},
 	{"vol/pan 1", 93},
 	{"volume 2", 94},
+	{"vol 2", 94},
 	{"vol/pan 2", 94},
 	{"volume 3", 95},
+	{"vol 3", 95},
 	{"vol/pan 3", 95},
 	{"volume 4", 96},
+	{"vol 4", 96},
 	{"vol/pan 4", 96},
 	{"wah-wah 1", 97},
 	{"wahwah 1", 97},
+	{"wah 1", 97},
 	{"wah-wah 2", 98},
 	{"wahwah 2", 98},
+	{"wah 2", 98},
 	{"", -1}
 };
 
