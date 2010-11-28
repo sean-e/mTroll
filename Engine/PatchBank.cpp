@@ -298,11 +298,14 @@ PatchBank::PatchSwitchPressed(int switchNumber, IMainDisplay * mainDisplay, ISwi
 
 	bool doDisplayUpdate = true;
 
-	// TODO: need a sync override mode (ignore/out of phase sync/in phase sync - same as ignore but syncs on activate)
-	// see PatchBank::PatchSwitchPressed
-	// sync options work relative to first mapping
-	// sync options not applicable to first mapping
-	// sync at load only option - override no change after load?
+	it = curPatches.begin();
+	bool masterPatchIsActive = false;
+	if (it != curPatches.end())
+	{
+		PatchMap * curSwitchItem = *it;
+		if (curSwitchItem && curSwitchItem->mPatch && curSwitchItem->mPatch->IsActive())
+			masterPatchIsActive = true; // master patch is just the first
+	}
 
 	// do standard pressed processing (send A)
 	std::strstream msgstr;
@@ -313,6 +316,31 @@ PatchBank::PatchSwitchPressed(int switchNumber, IMainDisplay * mainDisplay, ISwi
 		PatchMap * curSwitchItem = *it;
 		if (!curSwitchItem || !curSwitchItem->mPatch)
 			continue;
+
+		if (syncIgnore != curSwitchItem->mPatchSyncState)
+		{
+			// sync mode
+			// sync options work relative to first mapping
+			// sync options not applicable to first mapping
+			// 	 syncIgnore		// siblings are toggled as is - might be same as master, might not - depends on active state, not sync'd up first
+			// 	 syncInPhase,	// PatchState of sibling patches sync identical to master patch
+			// 	 syncOutOfPhase	// PatchState of sibling patches sync opposite of master patch
+			// Note: works on the assumption that IsActive can just be toggled by issuing a SwitchPressed call
+
+			// Consider: option for sync on activate only - override no change after load?
+			// Consider: option for override on deactivate only - override no change on load?
+
+			if (syncInPhase == curSwitchItem->mPatchSyncState)
+			{
+				if (curSwitchItem->mPatch->IsActive() != masterPatchIsActive)
+					curSwitchItem->mPatch->SwitchPressed(NULL, switchDisplay);
+			}
+			else
+			{
+				if (curSwitchItem->mPatch->IsActive() == masterPatchIsActive)
+					curSwitchItem->mPatch->SwitchPressed(NULL, switchDisplay);
+			}
+		}
 
 		if (stIgnore == curSwitchItem->mPatchStateOverride ||
 			(stA == curSwitchItem->mPatchStateOverride && !curSwitchItem->mPatch->IsActive()) ||
