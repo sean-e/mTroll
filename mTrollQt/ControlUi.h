@@ -290,6 +290,7 @@ private:
 	}
 
 private:
+	QWidget						* mParent;
 	ITrollApplication			* mApp;
 	IMonome40h					* mHardwareUi;
 	MidiControlEngine			* mEngine;

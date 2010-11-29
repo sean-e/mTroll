@@ -63,9 +63,12 @@
 
 const int kMaxRows = 8, kMaxCols = 8;
 const int kMaxButtons = kMaxRows * kMaxCols;
+const DWORD kBackColor = 0x3a3a3a;
+const DWORD kFrameColor = 0x7a7a7a;
 
 ControlUi::ControlUi(QWidget * parent, ITrollApplication * app) :
 	QWidget(parent),
+	mParent(parent),
 	mApp(app),
 	mEngine(NULL),
 	mMainDisplay(NULL),
@@ -208,6 +211,10 @@ ControlUi::Load(const std::string & uiSettingsFile,
 				const bool adcOverrides[ExpressionPedals::PedalCount])
 {
 	Unload();
+
+	QPalette pal;
+	pal.setColor(QPalette::Window, kBackColor);
+	mParent->setPalette(pal);
 
 	for (int idx = 0; idx < ExpressionPedals::PedalCount; ++idx)
 		mUserAdcSettings[idx] = false;
@@ -492,6 +499,8 @@ ControlUi::SetSwitchDisplay(int switchNumber,
 		{
 			QPalette pal;
 			pal.setColor(QPalette::Window, mColor);
+			pal.setColor(QPalette::Light, mColor);
+			pal.setColor(QPalette::Dark, kFrameColor);
 			mLed->setPalette(pal);
 		}
 	};
@@ -611,6 +620,8 @@ ControlUi::CreateSwitchLed(int id,
 
 	QPalette pal;
 	pal.setColor(QPalette::Window, mLedConfig.mOffColor);
+	pal.setColor(QPalette::Light, mLedConfig.mOffColor);
+	pal.setColor(QPalette::Dark, kFrameColor);
 	curSwitchLed->setPalette(pal);
 
 	_ASSERTE(id < kMaxButtons);
@@ -708,6 +719,8 @@ ControlUi::CreateSwitchTextDisplay(int id,
 	QPalette pal;
 	pal.setColor(QPalette::Window, mSwitchTextDisplayConfig.mBgColor);
 	pal.setColor(QPalette::WindowText, mSwitchTextDisplayConfig.mFgColor);
+	pal.setColor(QPalette::Light, mSwitchTextDisplayConfig.mBgColor);
+	pal.setColor(QPalette::Dark, kFrameColor);
 	curSwitchDisplay->setPalette(pal);
 
 	_ASSERTE(id < kMaxButtons);
@@ -747,6 +760,8 @@ ControlUi::CreateMainDisplay(int top,
 	pal.setColor(QPalette::WindowText, fgColor);
 	pal.setColor(QPalette::Text, fgColor);
 	pal.setColor(QPalette::Base, bgColor);
+	pal.setColor(QPalette::Light, kFrameColor);
+	pal.setColor(QPalette::Dark, kFrameColor);
 	mMainDisplay->setPalette(pal);
 }
 
@@ -776,6 +791,12 @@ ControlUi::CreateTraceDisplay(int top,
 	mTraceFont.setPointSize(fontHeight);
 	mTraceFont.setBold(bold);
 	mTraceDisplay->setFont(mTraceFont);
+
+
+	QPalette pal;
+	pal.setColor(QPalette::Light, kFrameColor);
+	pal.setColor(QPalette::Dark, kFrameColor);
+	mTraceDisplay->setPalette(pal);
 }
 
 void
