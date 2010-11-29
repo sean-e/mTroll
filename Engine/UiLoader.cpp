@@ -260,7 +260,8 @@ UiLoader::LoadSwitchAssembly(TiXmlElement * pElem)
 		pElem->QueryIntAttribute("vOffset", &vOffset);
 		pElem->QueryIntAttribute("hOffset", &hOffset);
 		std::string label;
-		pElem->QueryValueAttribute("label", &label);
+		if (pElem->Attribute("label"))
+			label = pElem->Attribute("label");
 		mUi->CreateSwitch(idNumber, label, top + vOffset, left + hOffset);
 	}
 }
