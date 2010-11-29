@@ -34,6 +34,15 @@
 #include "AxemlLoader.h"
 
 
+// TODO: 
+// axefx patch type or attribute?
+// need queue (and lock) for outgoing queries
+// need timer for timeout on query response
+//		poll after program changes on axe ch?
+//		http://www.fractalaudio.com/forum/viewtopic.php?f=14&t=21524&start=10
+// sysex difference between disabled and not present?
+
+
 void NormalizeName(std::string &effectName);
 
 
@@ -171,6 +180,29 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 	}
 }
 
+AxeEffectBlockInfo *
+AxeFxManager::IdentifyBlockInfo(const byte * bytes)
+{
+	const int effectIdLs = bytes[0];
+	const int effectIdMs = bytes[1];
+	const int parameterIdLs = bytes[2];
+	const int parameterIdMs = bytes[3];
+
+	for (AxeEffectBlocks::iterator it = mAxeEffectInfo.begin(); 
+		it != mAxeEffectInfo.end(); 
+		++it)
+	{
+		AxeEffectBlockInfo & cur = *it;
+		if (cur.mSysexEffectIdLs == effectIdLs &&
+			cur.mSysexEffectIdMs == effectIdMs &&
+			cur.mSysexBypassParameterIdLs == parameterIdLs &&
+			cur.mSysexBypassParameterIdMs == parameterIdMs)
+			return &(*it);
+	}
+
+	return NULL;
+}
+
 void
 AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 {
@@ -198,13 +230,19 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 		return;
 	}
 
-	// TODO: lookup effect ID and parameter ID
+	AxeEffectBlockInfo * inf = IdentifyBlockInfo(bytes);
+	if (!inf || !inf->mPatch /*|| !inf->mBypassCC*/)
+		return;
 
-	if (mTrace)
-	{
-		const std::string msg(::GetAsciiHexStr(bytes, len, true) + "\n");
-		mTrace->Trace(msg);
-	}
+	const bool isActive = 0 != bytes[4];
+	if (inf->mPatch->IsActive() != isActive)
+		inf->mPatch->UpdateState(mSwitchDisplay, isActive);
+
+// 	if (mTrace)
+// 	{
+// 		const std::string msg(::GetAsciiHexStr(bytes, len, true) + "\n");
+// 		mTrace->Trace(msg);
+// 	}
 }
 
 void 

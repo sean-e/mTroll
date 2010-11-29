@@ -58,6 +58,7 @@ public:
 
 private:
 	void ReceiveParamValue(const byte * bytes, int len);
+	AxeEffectBlockInfo * IdentifyBlockInfo(const byte * bytes);
 
 private:
 	int				mRefCnt;
@@ -65,14 +66,6 @@ private:
 	ISwitchDisplay	* mSwitchDisplay;
 	Patch			* mTempoPatch;
 	AxeEffectBlocks	mAxeEffectInfo;
-	// TODO: 
-	// what indexes are needed here?
-	// axefx patch type or attribute?
-	// need queue (and lock) for outgoing queries
-	// need timer for timeout on query response
-	//		poll after program changes on axe ch?
-	//		http://www.fractalaudio.com/forum/viewtopic.php?f=14&t=21524&start=10
-	// difference between disabled and not present?
 };
 
 int GetDefaultAxeCc(const std::string &effectName, ITraceDisplay * trc);
