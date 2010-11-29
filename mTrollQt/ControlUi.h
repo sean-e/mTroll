@@ -129,6 +129,7 @@ private: // IMidiControlUi
 	virtual void		SetMainSize(int width, int height);
 	virtual void		SetHardwareLedIntensity(short brightness) { mLedIntensity = brightness; }
 	virtual void		SetLedDisplayState(bool invert) { mInvertLeds = invert; }
+	virtual void		SetColors(unsigned int backgroundColor, unsigned int frameHighlightColor) { mFrameHighlightColor = frameHighlightColor; mBackgroundColor = backgroundColor; }
 
 private slots:
 	void DisplayTime();
@@ -318,6 +319,8 @@ private:
 	bool						mUserAdcSettings[ExpressionPedals::PedalCount];
 	bool						mDisplayTime;
 	QTimer						* mTimeDisplayTimer;
+	DWORD						mBackgroundColor;
+	DWORD						mFrameHighlightColor;
 
 	struct SwitchTextDisplayConfig
 	{

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008 Sean Echevarria
+ * Copyright (C) 2007-2008,2010 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -37,12 +37,12 @@ public:
 	UiLoader(IMidiControlUi * ui, const std::string & settingsFile);
 
 private:
+	void					LoadFrameInfo(TiXmlElement * pElem);
 	bool					LoadAssembyConfig(TiXmlElement * pElem);
 	void					LoadSwitchMappings(TiXmlElement * pElem);
 	void					LoadSwitchAssemblies(TiXmlElement * pElem);
 	void					LoadSwitchAssembly(TiXmlElement * pElem);
 	void					LoadOtherStuffAndFinalize(TiXmlElement * pElem);
-
 	IMidiControlUi			* mUi;
 	int						mPreviousAssemblyHpos;
 	int						mPreviousAssemblyVpos;

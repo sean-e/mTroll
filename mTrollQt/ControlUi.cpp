@@ -63,8 +63,6 @@
 
 const int kMaxRows = 8, kMaxCols = 8;
 const int kMaxButtons = kMaxRows * kMaxCols;
-const DWORD kBackColor = 0x3a3a3a;
-const DWORD kFrameColor = 0x7a7a7a;
 
 ControlUi::ControlUi(QWidget * parent, ITrollApplication * app) :
 	QWidget(parent),
@@ -81,7 +79,9 @@ ControlUi::ControlUi(QWidget * parent, ITrollApplication * app) :
 	mInvertLeds(false),
 	mTimeDisplayTimer(NULL),
 	mDisplayTime(false),
-	mSystemPowerOverride(NULL)
+	mSystemPowerOverride(NULL),
+	mBackgroundColor(0x1a1a1a),
+	mFrameHighlightColor(0x5a5a5a)
 {
 }
 
@@ -143,8 +143,6 @@ void
 ControlUi::Unload()
 {
 	StopTimer();
-	delete mTimeDisplayTimer;
-	mTimeDisplayTimer = NULL;
 
 	if (mHardwareUi)
 	{
@@ -207,6 +205,9 @@ ControlUi::Unload()
 	delete mSystemPowerOverride;
 	mSystemPowerOverride = NULL;
 
+	delete mTimeDisplayTimer;
+	mTimeDisplayTimer = NULL;
+
 	repaint();
 }
 
@@ -218,7 +219,7 @@ ControlUi::Load(const std::string & uiSettingsFile,
 	Unload();
 
 	QPalette pal;
-	pal.setColor(QPalette::Window, kBackColor);
+	pal.setColor(QPalette::Window, mBackgroundColor);
 	mParent->setPalette(pal);
 
 	for (int idx = 0; idx < ExpressionPedals::PedalCount; ++idx)
@@ -491,12 +492,14 @@ ControlUi::SetSwitchDisplay(int switchNumber,
 	{
 		ControlUi::SwitchLed * mLed;
 		DWORD mColor;
+		DWORD mFrameHighlightColor;
 
 	public:
-		UpdateSwitchDisplayEvent(ControlUi::SwitchLed * led, DWORD color) : 
+		UpdateSwitchDisplayEvent(ControlUi::SwitchLed * led, DWORD color, DWORD frameHighlightColor) : 
 			ControlUiEvent(User),
 			mLed(led),
-			mColor(color)
+			mColor(color),
+			mFrameHighlightColor(frameHighlightColor)
 		{
 		}
 
@@ -505,13 +508,13 @@ ControlUi::SetSwitchDisplay(int switchNumber,
 			QPalette pal;
 			pal.setColor(QPalette::Window, mColor);
 			pal.setColor(QPalette::Light, mColor);
-			pal.setColor(QPalette::Dark, kFrameColor);
+			pal.setColor(QPalette::Dark, mFrameHighlightColor);
 			mLed->setPalette(pal);
 		}
 	};
 
 	QCoreApplication::postEvent(this, 
-		new UpdateSwitchDisplayEvent(mLeds[switchNumber], isOn ? mLedConfig.mOnColor : mLedConfig.mOffColor));
+		new UpdateSwitchDisplayEvent(mLeds[switchNumber], isOn ? mLedConfig.mOnColor : mLedConfig.mOffColor, mFrameHighlightColor));
 }
 
 void
@@ -536,7 +539,7 @@ void
 SetIndicatorTimerCallback::TimerFired()
 {
 	mPatch->ActivateSwitchDisplay(mSwitchDisplay, mOn);
-	delete this;
+	deleteLater();
 }
 
 void
@@ -626,7 +629,7 @@ ControlUi::CreateSwitchLed(int id,
 	QPalette pal;
 	pal.setColor(QPalette::Window, mLedConfig.mOffColor);
 	pal.setColor(QPalette::Light, mLedConfig.mOffColor);
-	pal.setColor(QPalette::Dark, kFrameColor);
+	pal.setColor(QPalette::Dark, mFrameHighlightColor);
 	curSwitchLed->setPalette(pal);
 
 	_ASSERTE(id < kMaxButtons);
@@ -725,7 +728,7 @@ ControlUi::CreateSwitchTextDisplay(int id,
 	pal.setColor(QPalette::Window, mSwitchTextDisplayConfig.mBgColor);
 	pal.setColor(QPalette::WindowText, mSwitchTextDisplayConfig.mFgColor);
 	pal.setColor(QPalette::Light, mSwitchTextDisplayConfig.mBgColor);
-	pal.setColor(QPalette::Dark, kFrameColor);
+	pal.setColor(QPalette::Dark, mFrameHighlightColor);
 	curSwitchDisplay->setPalette(pal);
 
 	_ASSERTE(id < kMaxButtons);
@@ -765,8 +768,8 @@ ControlUi::CreateMainDisplay(int top,
 	pal.setColor(QPalette::WindowText, fgColor);
 	pal.setColor(QPalette::Text, fgColor);
 	pal.setColor(QPalette::Base, bgColor);
-	pal.setColor(QPalette::Light, kFrameColor);
-	pal.setColor(QPalette::Dark, kFrameColor);
+	pal.setColor(QPalette::Light, mFrameHighlightColor);
+	pal.setColor(QPalette::Dark, mFrameHighlightColor);
 	mMainDisplay->setPalette(pal);
 }
 
@@ -799,8 +802,8 @@ ControlUi::CreateTraceDisplay(int top,
 
 
 	QPalette pal;
-	pal.setColor(QPalette::Light, kFrameColor);
-	pal.setColor(QPalette::Dark, kFrameColor);
+	pal.setColor(QPalette::Light, mFrameHighlightColor);
+	pal.setColor(QPalette::Dark, mFrameHighlightColor);
 	mTraceDisplay->setPalette(pal);
 }
 

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008 Sean Echevarria
+ * Copyright (C) 2007-2008,2010 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -48,6 +48,8 @@ UiLoader::UiLoader(IMidiControlUi * theUi,
 
 	TiXmlHandle hRoot(NULL);
 	hRoot = TiXmlHandle(pElem);
+
+	LoadFrameInfo(hRoot.ToElement());
 
 	pElem = hRoot.FirstChild("switchMappings").Element();
 	if (pElem)
@@ -340,20 +342,6 @@ UiLoader::LoadOtherStuffAndFinalize(TiXmlElement * pElem)
 		}
 	}
 
-	// <frame height="567" width="817" />
-	pElem = hRoot.FirstChild("frame").Element();
-	if (pElem)
-	{
-		int height = -1;
-		pElem->QueryIntAttribute("height", &height);
-
-		int width = -1;
-		pElem->QueryIntAttribute("width", &width);
-
-		if (!(-1 == height || -1 == width))
-			mUi->SetMainSize(width, height);
-	}
-
 	// <hardware ledBrightness="0" invertLeds="0" />
 	pElem = hRoot.FirstChild("hardware").Element();
 	if (pElem)
@@ -367,5 +355,32 @@ UiLoader::LoadOtherStuffAndFinalize(TiXmlElement * pElem)
 		int invertLeds = 0;
 		pElem->QueryIntAttribute("invertLeds", &invertLeds);
 		mUi->SetLedDisplayState(!!invertLeds);
+	}
+}
+
+void
+UiLoader::LoadFrameInfo(TiXmlElement * pElem)
+{
+	// <frame height="567" width="817" />
+	TiXmlHandle hRoot(NULL);
+	hRoot = TiXmlHandle(pElem);
+	pElem = hRoot.FirstChild("frame").Element();
+	if (pElem)
+	{
+		int height = -1;
+		pElem->QueryIntAttribute("height", &height);
+
+		int width = -1;
+		pElem->QueryIntAttribute("width", &width);
+
+		if (!(-1 == height || -1 == width))
+			mUi->SetMainSize(width, height);
+
+		int backgroundColor = -1;
+		int frameHighlightColor = -1;
+		pElem->QueryHexAttribute("backgroundColor", &backgroundColor);
+		pElem->QueryHexAttribute("frameHighlightColor", &frameHighlightColor);
+		if (backgroundColor != -1 && frameHighlightColor != -1)
+			mUi->SetColors(backgroundColor, frameHighlightColor);
 	}
 }
