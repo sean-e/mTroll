@@ -38,6 +38,7 @@
 #include "../Engine/EngineLoader.h"
 #include "../Engine/MidiControlEngine.h"
 #include "../Engine/UiLoader.h"
+#include "../Engine/HexStringUtils.h"
 #include "../Monome40h/IMonome40h.h"
 #include "../Monome40h/qt/Monome40hFtqt.h"
 
@@ -642,13 +643,15 @@ ControlUi::SetSwitchConfig(int width,
 						   int height, 
 						   const std::string & fontName, 
 						   int fontHeight, 
-						   bool bold)
+						   bool bold, 
+						   unsigned int fgColor)
 {
 	mSwitchConfig.mWidth = width;
 	mSwitchConfig.mHeight = height;
 	mSwitchConfig.mFontname = fontName.c_str();
 	mSwitchConfig.mFontHeight = fontHeight;
 	mSwitchConfig.mBold = bold;
+	mSwitchConfig.mFgColor = fgColor;
 
 	mSwitchButtonFont.setFamily(mSwitchConfig.mFontname);
 	mSwitchButtonFont.setPointSize(mSwitchConfig.mFontHeight);
@@ -665,6 +668,34 @@ ControlUi::CreateSwitch(int id,
 	curSwitch->setFont(mSwitchButtonFont);
 	curSwitch->move(left, top);
 	curSwitch->resize(mSwitchConfig.mWidth, mSwitchConfig.mHeight);
+
+	curSwitch->setFlat(true);
+	QPalette pal;
+	pal.setColor(QPalette::Button, mFrameHighlightColor);
+	pal.setColor(QPalette::Dark, mFrameHighlightColor);
+	pal.setColor(QPalette::Light, mFrameHighlightColor);
+	if (mSwitchConfig.mFgColor != -1)
+		pal.setColor(QPalette::ButtonText, mSwitchConfig.mFgColor);
+	curSwitch->setPalette(pal);
+	curSwitch->setAutoFillBackground(true);
+
+	const DWORD pressedColor(mFrameHighlightColor + 0x0a0a0a); // yeah, this could overflow...
+	std::string pressedColorStr;
+	pressedColorStr += ::GetAsciiHexStr(&((byte*)&pressedColor)[2], 1, false);
+	pressedColorStr += ::GetAsciiHexStr(&((byte*)&pressedColor)[1], 1, false);
+	pressedColorStr += ::GetAsciiHexStr(&((byte*)&pressedColor)[0], 1, false);
+
+	// http://doc.qt.nokia.com/4.4/stylesheet-examples.html#customizing-qpushbutton
+	QString buttonStyleSheet(
+	" \
+	QPushButton:pressed { \
+		padding-left: 2px; \
+		padding-top: 2px; \
+		border: none; \
+		background-color: #" + QString(pressedColorStr.c_str()) + "; \
+	} \
+	");
+	curSwitch->setStyleSheet(buttonStyleSheet);
 
 	QString qSlot;
 
@@ -799,7 +830,6 @@ ControlUi::CreateTraceDisplay(int top,
 	mTraceFont.setPointSize(fontHeight);
 	mTraceFont.setBold(bold);
 	mTraceDisplay->setFont(mTraceFont);
-
 
 	QPalette pal;
 	pal.setColor(QPalette::Light, mFrameHighlightColor);

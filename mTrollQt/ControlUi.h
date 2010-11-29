@@ -119,7 +119,7 @@ private: // IMidiControlUi
 	virtual void		AddSwitchMapping(int switchNumber, int row, int col);
 	virtual void		SetSwitchLedConfig(int width, int height, unsigned int onColor, unsigned int offColor);
 	virtual void		CreateSwitchLed(int id, int top, int left);
-	virtual void		SetSwitchConfig(int width, int height, const std::string & fontName, int fontHeight, bool bold);
+	virtual void		SetSwitchConfig(int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int fgColor);
 	virtual void		CreateSwitch(int id, const std::string & label, int top, int left);
 	virtual void		SetSwitchTextDisplayConfig(int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor);
 	virtual void		CreateSwitchTextDisplay(int id, int top, int left);
@@ -341,6 +341,7 @@ private:
 		QString					mFontname;
 		int						mFontHeight;
 		bool					mBold;
+		DWORD					mFgColor;
 	};
 	SwitchConfig				mSwitchConfig;
 

@@ -72,7 +72,7 @@ UiLoader::LoadAssembyConfig(TiXmlElement * pElem)
 {
 /*
   <switchAssemblyConfig>
-    <switch font-name="Tahoma" font-weight="bold" font-height="10" width="75" height="23" />
+    <switch font-name="Tahoma" font-weight="bold" font-height="10" width="75" height="23" foregroundColor="bbbbbb" />
     <switchTextDisplay font-name="Tahoma" font-height="12" foregroundColor="65280" backgroundColor="0" width="105" height="23" />
     <switchLed width="26" height="10" onColor="65280" offColor="256" />
   </switchAssemblyConfig>
@@ -95,14 +95,16 @@ UiLoader::LoadAssembyConfig(TiXmlElement * pElem)
 	fontWeight.clear();
 	fontHeight = 10;
 	width = height = 0;
+	fgColor = -1;
 
+	pElem->QueryHexAttribute("foregroundColor", &fgColor);
 	pElem->QueryValueAttribute("font-name", &fontname);
 	pElem->QueryValueAttribute("font-weight", &fontWeight);
 	pElem->QueryIntAttribute("font-height", &fontHeight);
 	pElem->QueryIntAttribute("height", &height);
 	pElem->QueryIntAttribute("width", &width);
 	boldFont = (fontWeight == "bold");
-	mUi->SetSwitchConfig(width, height, fontname, fontHeight, boldFont);
+	mUi->SetSwitchConfig(width, height, fontname, fontHeight, boldFont, (unsigned int) fgColor);
 
 	pElem = hRoot.FirstChild("switchTextDisplay").Element();
 	if (!pElem)
