@@ -181,6 +181,9 @@ PatchBank::Load(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 			if (!curItem || !curItem->mPatch)
 				continue;
 
+			if (!once)
+				curItem->mPatch->OverridePedals(true); // expression pedals only apply to first patch
+	
 			if (stA == curItem->mPatchStateAtBankLoad)
 				curItem->mPatch->BankTransitionActivation();
 			else if (stB == curItem->mPatchStateAtBankLoad)
@@ -193,6 +196,8 @@ PatchBank::Load(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 				once = false;
 				curItem->mPatch->AssignSwitch((*it).first, switchDisplay);
 			}
+			else
+				curItem->mPatch->OverridePedals(false);
 // 			else
 // 				curItem->mPatch->AssignSwitch(-1, NULL);
 		}
@@ -208,6 +213,7 @@ PatchBank::Unload(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 		it != mPatches.end();
 		++it)
 	{
+		bool once = true;
 		PatchVect & patches = (*it).second;
 		for (PatchVect::iterator it2 = patches.begin();
 			 it2 != patches.end();
@@ -217,10 +223,18 @@ PatchBank::Unload(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 			if (!curItem || !curItem->mPatch)
 				continue;
 
+			if (!once)
+				curItem->mPatch->OverridePedals(true);
+
 			if (stA == curItem->mPatchStateAtBankUnload)
 				curItem->mPatch->BankTransitionActivation();
 			else if (stB == curItem->mPatchStateAtBankUnload)
 				curItem->mPatch->BankTransitionDeactivation();
+		
+			if (once)
+				once = false;
+			else
+				curItem->mPatch->OverridePedals(false);
 
 			curItem->mPatch->ClearSwitch(switchDisplay);
 		}
@@ -308,6 +322,7 @@ PatchBank::PatchSwitchPressed(int switchNumber, IMainDisplay * mainDisplay, ISwi
 	}
 
 	// do standard pressed processing (send A)
+	bool once = true;
 	std::strstream msgstr;
 	for (it = curPatches.begin();
 		 it != curPatches.end();
@@ -316,6 +331,9 @@ PatchBank::PatchSwitchPressed(int switchNumber, IMainDisplay * mainDisplay, ISwi
 		PatchMap * curSwitchItem = *it;
 		if (!curSwitchItem || !curSwitchItem->mPatch)
 			continue;
+
+		if (!once)
+			curSwitchItem->mPatch->OverridePedals(true); // expression pedals only apply to first patch
 
 		if (syncIgnore != curSwitchItem->mPatchSyncState)
 		{
@@ -349,6 +367,11 @@ PatchBank::PatchSwitchPressed(int switchNumber, IMainDisplay * mainDisplay, ISwi
 		else
 			curSwitchItem->mPatch->UpdateDisplays(NULL, switchDisplay);
 
+		if (once)
+			once = false;
+		else
+			curSwitchItem->mPatch->OverridePedals(false);
+
 		if (curSwitchItem->mPatch->IsPatchVolatile())
 		{
 			_ASSERTE(std::find(sActiveVolatilePatches.begin(), sActiveVolatilePatches.end(), curSwitchItem->mPatch) == sActiveVolatilePatches.end());
@@ -371,6 +394,7 @@ PatchBank::PatchSwitchPressed(int switchNumber, IMainDisplay * mainDisplay, ISwi
 void
 PatchBank::PatchSwitchReleased(int switchNumber, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 {
+	bool once = true;
 	PatchVect & curPatches = mPatches[switchNumber];
 	for (PatchVect::iterator it = curPatches.begin();
 		 it != curPatches.end();
@@ -380,7 +404,15 @@ PatchBank::PatchSwitchReleased(int switchNumber, IMainDisplay * mainDisplay, ISw
 		if (!curSwitchItem || !curSwitchItem->mPatch)
 			continue;
 
+		if (!once)
+			curSwitchItem->mPatch->OverridePedals(true); // expression pedals only apply to first patch
+
 		curSwitchItem->mPatch->SwitchReleased(mainDisplay, switchDisplay);
+
+		if (once)
+			once = false;
+		else
+			curSwitchItem->mPatch->OverridePedals(false);
 	}
 }
 
