@@ -179,7 +179,7 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 	if (mTrace)
 	{
 		std::strstream traceMsg;
-		traceMsg << "Load complete: bank cnt " << mBanks.size() << ", patch cnt " << mPatches.size() << std::endl << std::ends;
+		traceMsg << "Loaded " << mBanks.size() << " banks, " << mPatches.size() << " patches" << std::endl << std::ends;
 		mTrace->Trace(std::string(traceMsg.str()));
 	}
 
