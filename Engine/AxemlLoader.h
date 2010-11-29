@@ -34,15 +34,15 @@ class Patch;
 
 struct AxeEffectBlockInfo
 {
-	std::string		mName;				// Amp 1
-	std::string		mType;				// Amp
-	int				mSysexEffectId;			// unique per name
-	int				mSysexEffectIdMs;			// derived 
-	int				mSysexEffectIdLs;			// derived
+	std::string		mName;						// Amp 1
+	std::string		mType;						// Amp
+	int				mSysexEffectId;				// unique per name
+	int				mSysexEffectIdMs;			//	derived 
+	int				mSysexEffectIdLs;			//	derived
 	int				mSysexBypassParameterId;	// unique per type
-	int				mSysexBypassParameterIdMs;	// derived
-	int				mSysexBypassParameterIdLs;	// derived
-	int				mBypassCC;			// unique per name
+	int				mSysexBypassParameterIdMs;	//	derived
+	int				mSysexBypassParameterIdLs;	//	derived
+	int				mBypassCC;					// unique per name
 	Patch			* mPatch;
 
 	AxeEffectBlockInfo() :
