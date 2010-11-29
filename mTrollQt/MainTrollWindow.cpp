@@ -53,6 +53,29 @@ MainTrollWindow::MainTrollWindow() :
 	setWindowTitle(tr("mTroll MIDI Controller"));
 	QSettings settings;
 
+	// http://doc.qt.nokia.com/4.4/stylesheet-examples.html#customizing-qmenubar
+	QString menuBarStyle(" \
+		QMenuBar { \
+			background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, \
+											   stop:0 lightgray, stop:1 darkgray); \
+		} \
+ \
+		QMenuBar::item { \
+			spacing: 3px; /* spacing between menu bar items */ \
+			padding: 1px 4px; \
+			background: transparent; \
+		} \
+ \
+		QMenuBar::item:selected { /* when selected using mouse or keyboard */ \
+			background: #a8a8a8; \
+		} \
+ \
+		QMenuBar::item:pressed { \
+			background: #888888; \
+		} \
+	");
+	menuBar()->setStyleSheet(menuBarStyle);
+
 	QMenu * fileMenu = menuBar()->addMenu(tr("&File"));
 	fileMenu->addAction(tr("&Open..."), this, SLOT(OpenFile()), QKeySequence(tr("Ctrl+O")));
 	fileMenu->addAction(tr("&Refresh"), this, SLOT(Refresh()), QKeySequence(tr("F5")));
@@ -60,6 +83,7 @@ MainTrollWindow::MainTrollWindow() :
 	fileMenu->addAction(tr("&Toggle trace window visibility"), this, SLOT(ToggleTraceWindow()), QKeySequence(tr("Ctrl+T")));
 	fileMenu->addSeparator();
 	fileMenu->addAction(tr("E&xit"), this, SLOT(close()));
+	// http://doc.qt.nokia.com/4.4/stylesheet-examples.html#customizing-qmenu
 
 	QString slotName;
 	QMenu * adcMenu = menuBar()->addMenu(tr("&Pedal Overrides"));
