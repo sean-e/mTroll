@@ -80,6 +80,7 @@ ControlUi::ControlUi(QWidget * parent, ITrollApplication * app) :
 	mLedIntensity(0),
 	mInvertLeds(false),
 	mTimeDisplayTimer(NULL),
+	mDisplayTime(false),
 	mSystemPowerOverride(NULL)
 {
 }
@@ -141,6 +142,10 @@ public:
 void
 ControlUi::Unload()
 {
+	StopTimer();
+	delete mTimeDisplayTimer;
+	mTimeDisplayTimer = NULL;
+
 	if (mHardwareUi)
 	{
 		mHardwareUi->Unsubscribe(mEngine);
@@ -1126,16 +1131,11 @@ ControlUi::TestLeds()
 bool
 ControlUi::EnableTimeDisplay(bool enable)
 {
-	if (mTimeDisplayTimer)
+	if (!enable)
 	{
-		if (enable)
-			return true;
-
-		StopTimer();
+		mDisplayTime = false;
 		return false;
 	}
-	else if (!enable)
-		return false;
 
 	// CreateDisplayTimeTimer
 	// --------------------------------------------------------------------
@@ -1165,9 +1165,10 @@ ControlUi::EnableTimeDisplay(bool enable)
 void
 ControlUi::CreateTimeDisplayTimer()
 {
+	mDisplayTime = true;
 	DisplayTime();
-	StopTimer();
-	mTimeDisplayTimer = new QTimer(this);
+	if (!mTimeDisplayTimer)
+		mTimeDisplayTimer = new QTimer(this);
 	connect(mTimeDisplayTimer, SIGNAL(timeout()), this, SLOT(DisplayTime()));
 	mTimeDisplayTimer->start(1000);
 }
@@ -1175,25 +1176,26 @@ ControlUi::CreateTimeDisplayTimer()
 void
 ControlUi::DisplayTime()
 {
-	if (mMainDisplay)
+	if (mDisplayTime)
 	{
-		const QString ts(QDateTime::currentDateTime().toString("h:mm:ss ap \nddd, MMM d, yyyy"));
-		const std::string msg(ts.toAscii());
-		TextOut(msg);
+		if (mMainDisplay)
+		{
+			const QString ts(QDateTime::currentDateTime().toString("h:mm:ss ap \nddd, MMM d, yyyy"));
+			const std::string msg(ts.toAscii());
+			TextOut(msg);
+		}
+	}
+	else
+	{
+		mTimeDisplayTimer->stop();
+		disconnect(mTimeDisplayTimer, SIGNAL(timeout()), this, SLOT(DisplayTime()));
 	}
 }
 
 void
 ControlUi::StopTimer()
 {
-	if (!mTimeDisplayTimer)
-		return;
-
-	QTimer * tmp = mTimeDisplayTimer;
-	mTimeDisplayTimer = NULL;
-	tmp->stop();
-	disconnect(tmp, SIGNAL(timeout()), this, SLOT(DisplayTime()));
-	delete tmp;
+	mDisplayTime = false;
 }
 
 IMidiIn *

@@ -316,6 +316,7 @@ private:
 	QRect						mMainDisplayRc;
 	QRect						mTraceDiplayRc;
 	bool						mUserAdcSettings[ExpressionPedals::PedalCount];
+	bool						mDisplayTime;
 	QTimer						* mTimeDisplayTimer;
 
 	struct SwitchTextDisplayConfig
