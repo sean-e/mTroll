@@ -970,6 +970,33 @@ ControlUi::ToggleTraceWindow()
 	if (!mTraceDisplay)
 		return;
 
+	// ToggleTraceWindowEvent
+	// --------------------------------------------------------------------
+	// class used to toggle trace wnd on UI thread (via postEvent)
+	//
+	class ToggleTraceWindowEvent : public QEvent
+	{
+		ControlUi * mUi;
+
+	public:
+		ToggleTraceWindowEvent(ControlUi * ui) : 
+		  QEvent(User), 
+		  mUi(ui)
+		{
+		}
+
+		virtual void exec()
+		{
+			mUi->ToggleTraceWindowCallback();
+		}
+	};
+
+	QCoreApplication::postEvent(this, new ToggleTraceWindowEvent(this));
+}
+
+void
+ControlUi::ToggleTraceWindowCallback()
+{
 	if (mTraceDisplay->isVisible())
 	{
 		mTraceDisplay->hide();

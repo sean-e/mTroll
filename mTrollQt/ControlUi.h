@@ -274,6 +274,7 @@ private:
 	void LoadMidiSettings(const std::string & file, const bool adcOverrides[ExpressionPedals::PedalCount]);
 	void StopTimer();
 	void CreateTimeDisplayTimer();
+	void ToggleTraceWindowCallback();
 
 	void ButtonReleased(const int idx);
 	void ButtonPressed(const int idx);
@@ -289,7 +290,6 @@ private:
 	{
 		return mRowColToSwitchNumber[(row << 16) | col];
 	}
-
 private:
 	QWidget						* mParent;
 	ITrollApplication			* mApp;
