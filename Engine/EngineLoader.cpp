@@ -146,7 +146,16 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 
 	mMidiOutGenerator->OpenMidiOuts();
 	if (mAxeFxManager)
-		mAxeFxManager->CompleteInit();
+	{
+		IMidiOut * midiOut = NULL;
+		std::map<std::string, int>::iterator it = mDevicePorts.find("AxeFx");
+		if (it != mDevicePorts.end())
+		{
+			int port = mDevicePorts["AxeFx"];
+			midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[port]);
+		}
+		mAxeFxManager->CompleteInit(midiOut);
+	}
 	if (mMidiInGenerator)
 		mMidiInGenerator->OpenMidiIns();
 	mEngine->CompleteInit(mAdcCalibration);

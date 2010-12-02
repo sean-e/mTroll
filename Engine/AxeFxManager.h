@@ -25,21 +25,24 @@
 #ifndef AxeFxManager_h__
 #define AxeFxManager_h__
 
+#include <QObject>
+#include <qmutex.h>
 #include "IMidiInSubscriber.h"
 #include "AxemlLoader.h"
 
 class ITraceDisplay;
 class ISwitchDisplay;
 class Patch;
-typedef unsigned char byte;
+class IMidiOut;
 
 
 // AxeFxManager
 // ----------------------------------------------------------------------------
 // Manages extended Axe-Fx support
 //
-class AxeFxManager : public IMidiInSubscriber
+class AxeFxManager : public QObject, public IMidiInSubscriber
 {
+	Q_OBJECT;
 public:
 	AxeFxManager(ISwitchDisplay * switchDisp, ITraceDisplay * pTrace, std::string appPath);
 	virtual ~AxeFxManager();
@@ -52,20 +55,29 @@ public:
 	void AddRef();
 	void Release();
 
-	void CompleteInit();
+	void CompleteInit(IMidiOut * midiOut);
 	void SetTempoPatch(Patch * patch);
 	void SetSyncPatch(const std::string &effectName, Patch * patch);
+	void InitiateSyncFromAxe();
 
 private:
 	void ReceiveParamValue(const byte * bytes, int len);
 	AxeEffectBlockInfo * IdentifyBlockInfo(const byte * bytes);
+	void SyncNextFromAxe(bool restart);
+	void KillResponseTimer();
+
+private slots:
+	void QueryTimerFired();
 
 private:
 	int				mRefCnt;
 	ITraceDisplay	* mTrace;
 	ISwitchDisplay	* mSwitchDisplay;
+	IMidiOut		* mMidiOut;
 	Patch			* mTempoPatch;
 	AxeEffectBlocks	mAxeEffectInfo;
+	AxeEffectBlocks::iterator mCurQuery;
+	QMutex			mQueryLock;
 };
 
 int GetDefaultAxeCc(const std::string &effectName, ITraceDisplay * trc);
