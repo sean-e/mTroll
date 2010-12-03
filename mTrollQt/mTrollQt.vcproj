@@ -448,6 +448,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Engine\MetaPatch_SyncAxeFx.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Engine\MidiCommandString.h"
 				>
 			</File>
@@ -644,18 +648,6 @@
 			Name="Moc Generated Source"
 			>
 			<File
-				RelativePath=".\Debug\moc_AxeFxManager.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath=".\Release\moc_AxeFxManager.cpp"
 				>
 				<FileConfiguration
@@ -668,7 +660,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\Debug\moc_ControlUi.cpp"
+				RelativePath=".\Debug\moc_AxeFxManager.cpp"
 				>
 				<FileConfiguration
 					Name="Release|Win32"
@@ -692,7 +684,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\Debug\moc_MainTrollWindow.cpp"
+				RelativePath=".\Debug\moc_ControlUi.cpp"
 				>
 				<FileConfiguration
 					Name="Release|Win32"
@@ -708,6 +700,18 @@
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\Debug\moc_MainTrollWindow.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool

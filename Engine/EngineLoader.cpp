@@ -40,6 +40,7 @@
 #include "MetaPatch_ResetBankPatches.h"
 #include "MetaPatch_LoadBank.h"
 #include "MetaPatch_BankHistory.h"
+#include "MetaPatch_SyncAxeFx.h"
 #include "MidiCommandString.h"
 #include "RefirePedalCommand.h"
 #include "SleepCommand.h"
@@ -148,10 +149,17 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 	if (mAxeFxManager)
 	{
 		IMidiOut * midiOut = NULL;
-		std::map<std::string, int>::iterator it = mDevicePorts.find("AxeFx");
+		std::string axeName("AxeFx");
+		std::map<std::string, int>::iterator it = mDevicePorts.find(axeName);
+		if (it == mDevicePorts.end())
+		{
+			axeName = "Axe-Fx";
+			it = mDevicePorts.find(axeName);
+		}
+
 		if (it != mDevicePorts.end())
 		{
-			int port = mDevicePorts["AxeFx"];
+			int port = mDevicePorts[axeName];
 			midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[port]);
 		}
 		mAxeFxManager->CompleteInit(midiOut);
@@ -407,6 +415,8 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 
 			if (tmp == "ResetBankPatches")
 				 mEngine->AddPatch(new MetaPatch_ResetBankPatches(mEngine, patchNumber, patchName));
+			else if (tmp == "SyncAxeFx")
+				 mEngine->AddPatch(new MetaPatch_SyncAxeFx(mAxeFxManager, patchNumber, patchName));
 			else if (tmp == "LoadBank")
 			{
 				int bankNumber = -1;
