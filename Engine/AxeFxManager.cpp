@@ -55,9 +55,14 @@ AxeFxManager::AxeFxManager(ISwitchDisplay * switchDisp,
 	mTrace(pTrace),
 	mRefCnt(0),
 	mTempoPatch(NULL),
+	// mQueryLock(QMutex::Recursive),
 	mMidiOut(NULL)
 {
 	mCurQuery = mAxeEffectInfo.end();
+	mQueryTimer = new QTimer(this);
+	connect(mQueryTimer, SIGNAL(timeout()), this, SLOT(QueryTimedOut()));
+	mQueryTimer->setSingleShot(true);
+	mQueryTimer->setInterval(1000);
 
 	AxemlLoader ldr(mTrace);
 	ldr.Load(appPath + "/default.axeml", mAxeEffectInfo);
@@ -65,6 +70,7 @@ AxeFxManager::AxeFxManager(ISwitchDisplay * switchDisp,
 
 AxeFxManager::~AxeFxManager()
 {
+	QMutexLocker lock(&mQueryLock);
 	KillResponseTimer();
 }
 
@@ -130,6 +136,12 @@ AxeFxManager::CompleteInit(IMidiOut * midiOut)
 {
 	mMidiOut = midiOut;
 	mCurQuery = mAxeEffectInfo.end();
+
+	if (!mMidiOut && mTrace)
+	{
+		const std::string msg("ERROR: no Midi Out set for AxeFx sync\n");
+		mTrace->Trace(msg);
+	}
 }
 
 void
@@ -240,32 +252,52 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 
 	{
 		QMutexLocker lock(&mQueryLock);
-		if (mCurQuery == mAxeEffectInfo.end())
-		{
-			// we weren't expecting anything...
-// 			if (mTrace)
-// 			{
-// 				const std::string msg(::GetAsciiHexStr(bytes, len, true) + "\n");
-// 				mTrace->Trace(msg);
-// 			}
-			return;
-		}
-
-		if (mCurQuery->mSysexEffectIdLs == bytes[0] && 
+		if (mCurQuery != mAxeEffectInfo.end() &&
+			mCurQuery->mSysexEffectIdLs == bytes[0] && 
 			mCurQuery->mSysexEffectIdMs == bytes[1] &&
 			mCurQuery->mSysexBypassParameterIdLs == bytes[2] &&
 			mCurQuery->mSysexBypassParameterIdMs == bytes[3])
+		{
 			inf = &(*mCurQuery);
+		}
 		else
+		{
+			lock.unlock();
+
+			// got something we weren't expecting; see if we can look it up
 			inf = IdentifyBlockInfo(bytes);
+
+			// TODO: remove this
+			if (mTrace)
+			{
+				std::string msg("unexpected response\n");
+				mTrace->Trace(msg);
+			}
+		}
 	}
 
 	if (!inf || !inf->mPatch /*|| !inf->mBypassCC*/)
+	{
+// 		if (mTrace)
+// 		{
+// 			const std::string msg(::GetAsciiHexStr(bytes, len, true) + "\n");
+// 			mTrace->Trace(msg);
+// 		}
+
+// TODO: remove this line after testing
+SyncNextFromAxe(false);
 		return;
+	}
 
 	const bool isActive = 0 != bytes[4];
 	if (inf->mPatch->IsActive() != isActive)
 		inf->mPatch->UpdateState(mSwitchDisplay, isActive);
+
+// 	if (mTrace)
+// 	{
+// 		const std::string msg(::GetAsciiHexStr(bytes, len, true) + "\n");
+// 		mTrace->Trace(msg);
+// 	}
 
 	SyncNextFromAxe(false);
 }
@@ -282,9 +314,9 @@ AxeFxManager::SyncNextFromAxe(bool restart)
 	if (!mMidiOut)
 		return;
 
+	QMutexLocker lock(&mQueryLock);
 	KillResponseTimer();
 
-	QMutexLocker lock(&mQueryLock);
 	for (;;)
 	{
 		if (restart)
@@ -298,7 +330,8 @@ AxeFxManager::SyncNextFromAxe(bool restart)
 		if (mCurQuery == mAxeEffectInfo.end())
 			return;
 
-		if (mCurQuery->mPatch)
+// TODO: restore this after testing
+// 		if (mCurQuery->mPatch)
 			break;
 	}
 
@@ -326,27 +359,26 @@ AxeFxManager::SyncNextFromAxe(bool restart)
 	bb[9] = mCurQuery->mSysexBypassParameterIdMs;
 	lock.unlock();
 
-	class CreateTimeoutTimer : public QEvent
+	class StartQueryTimer : public QEvent
 	{
 		AxeFxManager *mMgr;
-		int mTime;
 
 	public:
-		CreateTimeoutTimer(AxeFxManager * mgr, int time) : 
+		StartQueryTimer(AxeFxManager * mgr) : 
 		  QEvent(User), 
-		  mMgr(mgr),
-		  mTime(time)
+		  mMgr(mgr)
 		{
+			mMgr->AddRef();
 		}
 
-		virtual void exec()
+		~StartQueryTimer()
 		{
-			// TODO: need to save timer so that it can be cancelled?
-			QTimer::singleShot(mTime, mMgr, SLOT(QueryTimerFired()));
+			mMgr->mQueryTimer->start();
+			mMgr->Release();
 		}
 	};
 
-	QCoreApplication::postEvent(this, new CreateTimeoutTimer(this, 1000));
+	QCoreApplication::postEvent(this, new StartQueryTimer(this));
 
 	mMidiOut->MidiOut(bb);
 }
@@ -354,12 +386,44 @@ AxeFxManager::SyncNextFromAxe(bool restart)
 void
 AxeFxManager::KillResponseTimer()
 {
-	//	TODO: kill response timeout timer via postEvent
+	if (!mQueryTimer->isActive())
+		return;
+
+	class StopQueryTimer : public QEvent
+	{
+		AxeFxManager *mMgr;
+
+	public:
+		StopQueryTimer(AxeFxManager * mgr) : 
+		  QEvent(User), 
+		  mMgr(mgr)
+		{
+			mMgr->AddRef();
+		}
+
+		~StopQueryTimer()
+		{
+			mMgr->mQueryTimer->stop();
+			mMgr->Release();
+		}
+	};
+
+	QCoreApplication::postEvent(this, new StopQueryTimer(this));
 }
 
 void
-AxeFxManager::QueryTimerFired()
+AxeFxManager::QueryTimedOut()
 {
+	// TODO: remove this when done
+	if (mTrace)
+	{
+		std::string msg("Query timed out for " + mCurQuery->mName + "\n");
+		mTrace->Trace(msg);
+		// TODO: deal with
+		// Feedback Send
+		// Mixer 1
+		// Mixer 2
+	}
 	SyncNextFromAxe(false);
 }
 

@@ -34,6 +34,7 @@ class ITraceDisplay;
 class ISwitchDisplay;
 class Patch;
 class IMidiOut;
+class QTimer;
 
 
 // AxeFxManager
@@ -67,7 +68,7 @@ private:
 	void KillResponseTimer();
 
 private slots:
-	void QueryTimerFired();
+	void QueryTimedOut();
 
 private:
 	int				mRefCnt;
@@ -78,6 +79,7 @@ private:
 	AxeEffectBlocks	mAxeEffectInfo;
 	AxeEffectBlocks::iterator mCurQuery;
 	QMutex			mQueryLock;
+	QTimer			* mQueryTimer;
 };
 
 int GetDefaultAxeCc(const std::string &effectName, ITraceDisplay * trc);
