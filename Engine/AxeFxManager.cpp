@@ -461,13 +461,23 @@ NormalizeName(std::string &effectName)
 	if (-1 == pos)
 		return;
 
-	pos = effectName.find("axe ");
+	std::string searchStr;
+
+	searchStr = "axe ";
+	pos = effectName.find(searchStr);
 	if (-1 == pos)
-		pos = effectName.find("axefx ");
+	{
+		searchStr = "axefx ";
+		pos = effectName.find(searchStr);
+	}
 	if (-1 == pos)
-		pos = effectName.find("axe-fx ");
+	{
+		searchStr = "axe-fx ";
+		pos = effectName.find(searchStr);
+	}
+
 	if (-1 != pos)
-		effectName = effectName.substr(pos);
+		effectName = effectName.substr(pos + searchStr.length());
 }
 
 struct DefaultAxeCcs
