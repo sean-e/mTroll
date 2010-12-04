@@ -39,10 +39,12 @@
 
 
 // TODO: 
-// axefx patch type or attribute?
-// poll after program changes on axe ch?
+// axefx patch type or attribute? using SetSyncPatch
+// allow individual patches to check status
+// poll after program changes on axe ch via metapatch
 //		http://www.fractalaudio.com/forum/viewtopic.php?f=14&t=21524&start=10
 // sysex difference between disabled and not present?
+// request patch name?
 
 
 void NormalizeName(std::string &effectName);
@@ -56,9 +58,11 @@ AxeFxManager::AxeFxManager(ISwitchDisplay * switchDisp,
 	mRefCnt(0),
 	mTempoPatch(NULL),
 	// mQueryLock(QMutex::Recursive),
-	mMidiOut(NULL)
+	mMidiOut(NULL),
+	mSyncAll(false)
 {
 	mCurQuery = mAxeEffectInfo.end();
+
 	mQueryTimer = new QTimer(this);
 	connect(mQueryTimer, SIGNAL(timeout()), this, SLOT(QueryTimedOut()));
 	mQueryTimer->setSingleShot(true);
@@ -221,6 +225,21 @@ AxeFxManager::IdentifyBlockInfo(const byte * bytes)
 	return NULL;
 }
 
+AxeEffectBlocks::iterator
+AxeFxManager::GetBlockInfo(Patch * patch)
+{
+	for (AxeEffectBlocks::iterator it = mAxeEffectInfo.begin(); 
+		it != mAxeEffectInfo.end(); 
+		++it)
+	{
+		const AxeEffectBlockInfo & cur = *it;
+		if (cur.mPatch == patch)
+			return it;
+	}
+
+	return mAxeEffectInfo.end();
+}
+
 void
 AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 {
@@ -266,54 +285,52 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 
 			// got something we weren't expecting; see if we can look it up
 			inf = IdentifyBlockInfo(bytes);
-
-			// TODO: remove this
-			if (mTrace)
-			{
-				std::string msg("unexpected response\n");
-				mTrace->Trace(msg);
-			}
 		}
 	}
 
-	if (!inf || !inf->mPatch /*|| !inf->mBypassCC*/)
+	if (inf && inf->mPatch /* inf->mBypassCC ??*/)
+	{
+		const bool isActive = 0 != bytes[4];
+		if (inf->mPatch->IsActive() != isActive)
+			inf->mPatch->UpdateState(mSwitchDisplay, isActive);
+	}
+	else
 	{
 // 		if (mTrace)
 // 		{
 // 			const std::string msg(::GetAsciiHexStr(bytes, len, true) + "\n");
 // 			mTrace->Trace(msg);
 // 		}
-
-// TODO: remove this line after testing
-SyncNextFromAxe(false);
-		return;
 	}
 
-	const bool isActive = 0 != bytes[4];
-	if (inf->mPatch->IsActive() != isActive)
-		inf->mPatch->UpdateState(mSwitchDisplay, isActive);
-
-// 	if (mTrace)
-// 	{
-// 		const std::string msg(::GetAsciiHexStr(bytes, len, true) + "\n");
-// 		mTrace->Trace(msg);
-// 	}
-
-	SyncNextFromAxe(false);
+	if (mSyncAll)
+		SyncNextFromAxe(false);
 }
 
 void
 AxeFxManager::InitiateSyncFromAxe()
 {
+	mSyncAll = true;
 	SyncNextFromAxe(true);
+}
+
+void
+AxeFxManager::SyncFromAxe(Patch * patch)
+{
+	AxeEffectBlocks::iterator it = GetBlockInfo(patch);
+	if (it == mAxeEffectInfo.end())
+		return;
+
+	mSyncAll = false;
+	QMutexLocker lock(&mQueryLock);
+	KillResponseTimer();
+	mCurQuery = it;
+	SendCurQuery();
 }
 
 void
 AxeFxManager::SyncNextFromAxe(bool restart)
 {
-	if (!mMidiOut)
-		return;
-
 	QMutexLocker lock(&mQueryLock);
 	KillResponseTimer();
 
@@ -328,59 +345,22 @@ AxeFxManager::SyncNextFromAxe(bool restart)
 			mCurQuery++;
 
 		if (mCurQuery == mAxeEffectInfo.end())
+		{
+			mSyncAll = false;
 			return;
+		}
 
-// TODO: restore this after testing
-// 		if (mCurQuery->mPatch)
+		if (-1 == mCurQuery->mSysexBypassParameterId)
+			continue;
+
+		if (-1 == mCurQuery->mSysexEffectId)
+			continue;
+
+		if (mCurQuery->mPatch)
 			break;
 	}
 
-/* MIDI_SET_PARAMETER (or GET)
-	0xF0 sysex start 
-	0x00 Manf. ID byte0 
-	0x01 Manf. ID byte1 
-	0x74 Manf. ID byte2
-	0x01 Model / device
-	0x02 Function ID 
-	0xdd effect ID LS nibble 
-	0xdd effect ID MS nibble 
-	0xdd parameter ID LS nibble 
-	0xdd parameter ID MS nibble 
-	0xdd parameter value LS nibble 
-	0xdd parameter value MS nibble 
-	0xdd query(0) or set(1) value 
-	0xF7 sysex end 
-*/
-	const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, 0x01, 0x02, 0, 0, 0, 0, 0x0, 0x0, 0x00, 0xF7 };
-	Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
-	bb[6] = mCurQuery->mSysexEffectIdLs;
-	bb[7] = mCurQuery->mSysexEffectIdMs;
-	bb[8] = mCurQuery->mSysexBypassParameterIdLs;
-	bb[9] = mCurQuery->mSysexBypassParameterIdMs;
-	lock.unlock();
-
-	class StartQueryTimer : public QEvent
-	{
-		AxeFxManager *mMgr;
-
-	public:
-		StartQueryTimer(AxeFxManager * mgr) : 
-		  QEvent(User), 
-		  mMgr(mgr)
-		{
-			mMgr->AddRef();
-		}
-
-		~StartQueryTimer()
-		{
-			mMgr->mQueryTimer->start();
-			mMgr->Release();
-		}
-	};
-
-	QCoreApplication::postEvent(this, new StartQueryTimer(this));
-
-	mMidiOut->MidiOut(bb);
+	SendCurQuery();
 }
 
 void
@@ -414,17 +394,62 @@ AxeFxManager::KillResponseTimer()
 void
 AxeFxManager::QueryTimedOut()
 {
-	// TODO: remove this when done
-	if (mTrace)
+	if (mSyncAll)
+		SyncNextFromAxe(false);
+}
+
+void
+AxeFxManager::SendCurQuery()
+{
+	if (!mMidiOut)
+		return;
+
+/* MIDI_SET_PARAMETER (or GET)
+	0xF0 sysex start 
+	0x00 Manf. ID byte0 
+	0x01 Manf. ID byte1 
+	0x74 Manf. ID byte2
+	0x01 Model / device
+	0x02 Function ID 
+	0xdd effect ID LS nibble 
+	0xdd effect ID MS nibble 
+	0xdd parameter ID LS nibble 
+	0xdd parameter ID MS nibble 
+	0xdd parameter value LS nibble 
+	0xdd parameter value MS nibble 
+	0xdd query(0) or set(1) value 
+	0xF7 sysex end 
+*/
+
+	const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, 0x01, 0x02, 0, 0, 0, 0, 0x0, 0x0, 0x00, 0xF7 };
+	Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
+	bb[6] = mCurQuery->mSysexEffectIdLs;
+	bb[7] = mCurQuery->mSysexEffectIdMs;
+	bb[8] = mCurQuery->mSysexBypassParameterIdLs;
+	bb[9] = mCurQuery->mSysexBypassParameterIdMs;
+
+	class StartQueryTimer : public QEvent
 	{
-		std::string msg("Query timed out for " + mCurQuery->mName + "\n");
-		mTrace->Trace(msg);
-		// TODO: deal with
-		// Feedback Send
-		// Mixer 1
-		// Mixer 2
-	}
-	SyncNextFromAxe(false);
+		AxeFxManager *mMgr;
+
+	public:
+		StartQueryTimer(AxeFxManager * mgr) : 
+		  QEvent(User), 
+			  mMgr(mgr)
+		  {
+			  mMgr->AddRef();
+		  }
+
+		  ~StartQueryTimer()
+		  {
+			  mMgr->mQueryTimer->start();
+			  mMgr->Release();
+		  }
+	};
+
+	QCoreApplication::postEvent(this, new StartQueryTimer(this));
+
+	mMidiOut->MidiOut(bb);
 }
 
 void 
