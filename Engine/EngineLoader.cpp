@@ -713,6 +713,21 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			}
 		}
 
+		if (device == "Axe-Fx")
+		{
+			// TODO:
+			::GetDefaultAxeCc(patchName, mTraceDisplay);
+			// ERROR: AxeFx default CC for device complete bypass toggle is unknown
+			// ERROR: AxeFx default CC for megatap is unknown
+			// ERROR: AxeFx default CC for multi comp 2 is unknown
+			// ERROR: AxeFx default CC for toggle all except amps is unknown
+			// ERROR: AxeFx default CC for ext 1 mute toggle is unknown
+			// ERROR: AxeFx default CC for ext 1 mute momentary is unknown
+			// ERROR: AxeFx default CC for input mute toggle is unknown
+			// ERROR: AxeFx default CC for input mute momentary is unknown
+			// ERROR: AxeFx default CC for wah-wah 2 pdl 3 is unknown
+		}
+
 		bool patchTypeErr = false;
 		Patch * newPatch = NULL;
 		if (patchType == "normal")
