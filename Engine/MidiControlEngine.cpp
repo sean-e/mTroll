@@ -855,9 +855,8 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 				PatchBank * bnk = GetBank(it->second);
 				if (bnk)
 				{
-					std::string txt("Load (");
+					std::string txt("Bank: ");
 					txt += bnk->GetBankName();
-					txt += ")";
 					mSwitchDisplay->SetSwitchText(it->first, txt);
 					mSwitchDisplay->SetSwitchDisplay(it->first, true);
 				}
