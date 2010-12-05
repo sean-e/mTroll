@@ -720,33 +720,40 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			patchDefaultCh != -1)
 		{
 			const int axeCc = ::GetDefaultAxeCc(patchName, mTraceDisplay);
-			// TODO:
-				// ERROR: AxeFx default CC for device complete bypass toggle is unknown
-
-				// ERROR: AxeFx default CC for ext 1 mute toggle is unknown
-				// ERROR: AxeFx default CC for ext 1 mute momentary is unknown
-				// ERROR: AxeFx default CC for input mute toggle is unknown
-				// ERROR: AxeFx default CC for input mute momentary is unknown
-
-				// ERROR: AxeFx default CC for toggle all except amps is unknown
-				// ERROR: AxeFx default CC for wah-wah 2 pdl 3 is unknown
 			if (axeCc)
 			{
 				Bytes bytes;
 				if (patchType.empty())
 					patchType = "AxeToggle";
 
+				// default to A (127)
 				bytes.push_back(0xb0 | patchDefaultCh);
 				bytes.push_back(axeCc);
 				bytes.push_back(127);
 				cmds.push_back(new MidiCommandString(midiOut, bytes));
 				bytes.clear();
 
+				// default to B (0)
 				bytes.push_back(0xb0 | patchDefaultCh);
 				bytes.push_back(axeCc);
 				bytes.push_back(0);
 				cmds2.push_back(new MidiCommandString(midiOut, bytes));
 				bytes.clear();
+
+				int invert = 0;
+				pElem->QueryIntAttribute("invert", &invert);
+				if (1 == invert)
+					cmds.swap(cmds2);
+
+				int singleState = 0;
+				pElem->QueryIntAttribute("singleState", &singleState);
+				if (1 == singleState)
+				{
+					PatchCommands::iterator it = cmds2.begin();
+					if (it != cmds2.end())
+						delete *it;
+					cmds2.clear();
+				}
 			}
 		}
 
@@ -758,15 +765,20 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			newPatch = new TogglePatch(patchNumber, patchName, midiOut, cmds, cmds2);
 		else if (patchType == "AxeToggle")
 		{
-			newPatch = new AxeTogglePatch(patchNumber, patchName, midiOut, cmds, cmds2, mAxeFxManager);
+			AxeTogglePatch * axePatch = new AxeTogglePatch(patchNumber, patchName, midiOut, cmds, cmds2, mAxeFxManager);
 			if (mAxeFxManager)
-				mAxeFxManager->SetSyncPatch(newPatch);
+			{
+				if (!mAxeFxManager->SetSyncPatch(axePatch))
+					axePatch->ClearAxeMgr();
+			}
 			else if (mTraceDisplay)
 			{
 				std::strstream traceMsg;
 				traceMsg << "Error loading config file: Axe-Fx device specified but no Axe-Fx input was created" << std::endl << std::ends;
 				mTraceDisplay->Trace(std::string(traceMsg.str()));
 			}
+
+			newPatch = axePatch;
 		}
 		else if (patchType == "momentary")
 			newPatch = new MomentaryPatch(patchNumber, patchName, midiOut, cmds, cmds2);
