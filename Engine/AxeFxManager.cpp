@@ -41,12 +41,10 @@
 // sysex difference between disabled and not present?
 
 // Consider: 
-// poll after program changes on axe ch?
+// poll after program changes on axe ch? (where?)
 // request patch name?
 
-
-void NormalizeName(std::string &effectName);
-
+static void SynonymNormalization(std::string & name);
 
 AxeFxManager::AxeFxManager(ISwitchDisplay * switchDisp,
 						   ITraceDisplay *pTrace,
@@ -104,57 +102,17 @@ AxeFxManager::SetTempoPatch(Patch * patch)
 	mTempoPatch = patch;
 }
 
-void
+bool
 AxeFxManager::SetSyncPatch(Patch * patch)
 {
 	std::string effectName(patch->GetName());
-	::NormalizeName(effectName);
+	::NormalizeAxeEffectName(effectName);
 	for (AxeEffectBlocks::iterator it = mAxeEffectInfo.begin(); 
 		it != mAxeEffectInfo.end(); 
 		++it)
 	{
 		AxeEffectBlockInfo & cur = *it;
-		std::string curName(cur.mName);
-		::NormalizeName(curName);
-		// TODO: need better normalization - maybe do it by CC??
-			// Warning: no Axe-Fx effect found to sync for Axe Loop 1 Record
-			// Warning: no Axe-Fx effect found to sync for Axe Loop 1 Play
-			// Warning: no Axe-Fx effect found to sync for Axe Loop 1 Once
-			// Warning: no Axe-Fx effect found to sync for Axe Loop 1 Overdub
-			// Warning: no Axe-Fx effect found to sync for Axe Loop 1 Reverse
-			// Warning: no Axe-Fx effect found to sync for Axe Loop 2 Record
-			// Warning: no Axe-Fx effect found to sync for Axe Loop 2 Play
-			// Warning: no Axe-Fx effect found to sync for Axe Loop 2 Once
-			// Warning: no Axe-Fx effect found to sync for Axe Loop 2 Overdub
-			// Warning: no Axe-Fx effect found to sync for Axe Loop 2 Reverse
-			// Warning: no Axe-Fx effect found to sync for Axe Delay 2 (Reverse)
-			// Warning: no Axe-Fx effect found to sync for Axe Fx Loop
-			// Warning: no Axe-Fx effect found to sync for Axe Gate 1
-			// Warning: no Axe-Fx effect found to sync for Axe Gate 2
-			// Warning: no Axe-Fx effect found to sync for Axe Graphic EQ 1
-			// Warning: no Axe-Fx effect found to sync for Axe Graphic EQ 2
-			// Warning: no Axe-Fx effect found to sync for Axe Graphic EQ 3
-			// Warning: no Axe-Fx effect found to sync for Axe Graphic EQ 4
-			// Warning: no Axe-Fx effect found to sync for Axe MegaTap
-			// Warning: no Axe-Fx effect found to sync for Axe Multi Comp 1
-			// Warning: no Axe-Fx effect found to sync for Axe Multi Comp 2
-			// Warning: no Axe-Fx effect found to sync for Axe Multi Delay 1
-			// Warning: no Axe-Fx effect found to sync for Axe Multi Delay 2
-			// Warning: no Axe-Fx effect found to sync for Axe Para EQ 1
-			// Warning: no Axe-Fx effect found to sync for Axe Para EQ 2
-			// Warning: no Axe-Fx effect found to sync for Axe Para EQ 3
-			// Warning: no Axe-Fx effect found to sync for Axe Para EQ 4
-			// Warning: no Axe-Fx effect found to sync for Axe Pitch 1 (Whammy)
-			// Warning: no Axe-Fx effect found to sync for Axe Ring Mod
-			// Warning: no Axe-Fx effect found to sync for Axe Tremolo 1
-			// Warning: no Axe-Fx effect found to sync for Axe Tremolo 2
-			// Warning: no Axe-Fx effect found to sync for Axe Volume 1
-			// Warning: no Axe-Fx effect found to sync for Axe Volume 2
-			// Warning: no Axe-Fx effect found to sync for Axe Volume 3
-			// Warning: no Axe-Fx effect found to sync for Axe Volume 4
-			// Warning: no Axe-Fx effect found to sync for Axe Wah-wah 1
-			// Warning: no Axe-Fx effect found to sync for Axe Wah-wah 2
-		if (curName == effectName)
+		if (cur.mNormalizedName == effectName)
 		{
 			if (cur.mPatch && mTrace)
 			{
@@ -162,15 +120,22 @@ AxeFxManager::SetSyncPatch(Patch * patch)
 				mTrace->Trace(msg);
 			}
 			cur.mPatch = patch;
-			return;
+			return true;
 		}
 	}
 
-	if (mTrace)
+	if (mTrace && 
+		0 != effectName.find("looper ") &&
+		effectName != "tuner" &&
+		effectName != "global preset effect toggle" &&
+		effectName != "volume increment" &&
+		effectName != "volume decrement")
 	{
 		std::string msg("Warning: no Axe-Fx effect found to sync for " + patch->GetName() + "\n");
 		mTrace->Trace(msg);
 	}
+
+	return false;
 }
 
 void
@@ -498,31 +463,63 @@ AxeFxManager::SendCurQuery()
 }
 
 void 
-NormalizeName(std::string &effectName) 
+NormalizeAxeEffectName(std::string &effectName) 
 {
 	std::transform(effectName.begin(), effectName.end(), effectName.begin(), ::tolower);
 
 	int pos = effectName.find("axe");
-	if (-1 == pos)
-		return;
-
-	std::string searchStr;
-
-	searchStr = "axe ";
-	pos = effectName.find(searchStr);
-	if (-1 == pos)
-	{
-		searchStr = "axefx ";
-		pos = effectName.find(searchStr);
-	}
-	if (-1 == pos)
-	{
-		searchStr = "axe-fx ";
-		pos = effectName.find(searchStr);
-	}
-
 	if (-1 != pos)
-		effectName = effectName.substr(pos + searchStr.length());
+	{
+		std::string searchStr;
+
+		searchStr = "axe ";
+		pos = effectName.find(searchStr);
+		if (-1 == pos)
+		{
+			searchStr = "axefx ";
+			pos = effectName.find(searchStr);
+		}
+		if (-1 == pos)
+		{
+			searchStr = "axe-fx ";
+			pos = effectName.find(searchStr);
+		}
+
+		if (-1 != pos)
+			effectName = effectName.substr(pos + searchStr.length());
+	}
+
+// 	pos = effectName.find(" mute");
+// 	if (-1 != pos)
+// 		effectName.replace(pos, 5, "");
+// 	else
+// 	{
+// 		pos = effectName.find("mute ");
+// 		if (-1 != pos)
+// 			effectName.replace(pos, 5, "");
+// 	}
+// 
+// 	pos = effectName.find(" toggle");
+// 	if (-1 != pos)
+// 		effectName.replace(pos, 7, "");
+// 	else
+// 	{
+// 		pos = effectName.find("toggle ");
+// 		if (-1 != pos)
+// 			effectName.replace(pos, 7, "");
+// 	}
+// 
+// 	pos = effectName.find(" momentary");
+// 	if (-1 != pos)
+// 		effectName.replace(pos, 10, "");
+// 	else
+// 	{
+// 		pos = effectName.find("momentary ");
+// 		if (-1 != pos)
+// 			effectName.replace(pos, 10, "");
+// 	}
+
+	SynonymNormalization(effectName);
 }
 
 struct DefaultAxeCcs
@@ -535,97 +532,52 @@ DefaultAxeCcs kDefaultAxeCcs[] =
 {
 	// these don't have defaults (some can't be bypassed)
 	{"feedback send", 0},
-	{"send", 0},
 	{"mixer 1", 0},
-	{"mix 1", 0},
 	{"mixer 2", 0},
-	{"mix 2", 0},
 	{"feedback return", 0},
-	{"return", 0},
 	{"noisegate", 0},
-	{"noise gate", 0},
 	{"input volume", 10},
-	{"input vol", 10},
 	{"out 1 volume", 11},
-	{"out 1 vol", 11},
 	{"out 2 volume", 12},
-	{"out 2 vol", 12},
 	{"output", 13},
-	{"tap", 14},
 	{"taptempo", 14},
-	{"tap tempo", 14},
 	{"tuner", 15},
 	{"external 1", 16},
-	{"ext 1", 16},
 	{"external 2", 17},
-	{"ext 2", 17},
 	{"external 3", 18},
-	{"ext 3", 18},
 	{"external 4", 19},
-	{"ext 4", 19},
 	{"external 5", 20},
-	{"ext 5", 20},
 	{"external 6", 21},
-	{"ext 6", 21},
 	{"external 7", 22},
-	{"ext 7", 22},
 	{"external 8", 23},
-	{"ext 8", 23},
 
 	{"looper 1 record", 24},
-	{"loop 1 record", 24},
-	{"loop 1 rec", 24},
 	{"looper 1 play", 25},
-	{"loop 1 play", 25},
 	{"looper 1 once", 26},
-	{"loop 1 once", 26},
 	{"looper 1 overdub", 27},
-	{"loop 1 overdub", 27},
 	{"looper 1 reverse", 28},
-	{"loop 1 reverse", 28},
-	{"loop 1 rev", 28},
-
 	{"looper 2 record", 29},
-	{"loop 2 record", 29},
-	{"loop 2 rec", 29},
 	{"looper 2 play", 30},
-	{"loop 2 play", 30},
 	{"looper 2 once", 31},
-	{"loop 2 once", 31},
 	{"looper 2 overdub", 32},
-	{"loop 2 overdub", 32},
 	{"looper 2 reverse", 33},
-	{"loop 2 reverse", 33},
-	{"loop 2 rev", 33},
 
 	{"global preset effect toggle", 34},
-	{"vol inc", 35},
-	{"vol increment", 35},
 	{"volume increment", 35},
-	{"vol dec", 36},
-	{"vol decrement", 36},
 	{"volume decrement", 36},
 
 	{"amp 1", 37},
 	{"amp 2", 38},
 	{"cabinet 1", 39},
-	{"cab 1", 39},
 	{"cabinet 2", 40},
-	{"cab 2", 40},
 	{"chorus 1", 41},
 	{"chorus 2", 42},
 	{"compressor 1", 43},
-	{"comp 1", 43},
 	{"compressor 2", 44},
-	{"comp 2", 44},
 	{"crossover 1", 45},
-	{"x-over 1", 45},
 	{"crossover 2", 46},
-	{"x-over 2", 46},
 	{"delay 1", 47},
-	{"delay 1 (reverse)", 47},
 	{"delay 2", 48},
-	{"delay 2 (reverse)", 48},
 	{"drive 1", 49},
 	{"drive 2", 50},
 	{"enhancer", 51},
@@ -636,84 +588,46 @@ DefaultAxeCcs kDefaultAxeCcs[] =
 	{"flanger 1", 56},
 	{"flanger 2", 57},
 	{"formant", 58},
-	{"fx loop", 59},
 	{"effects loop", 59},
-	{"gate 1", 60},
 	{"gate/expander 1", 60},
-	{"gate 2", 61},
 	{"gate/expander 2", 61},
-	{"graphiceq 1", 62},
 	{"graphic eq 1", 62},
-	{"graphiceq 2", 63},
 	{"graphic eq 2", 63},
-	{"graphiceq 3", 64},
 	{"graphic eq 3", 64},
-	{"graphiceq 4", 65},
 	{"graphic eq 4", 65},
 	{"megatap delay", 66},
-	{"megatap", 66},
 	{"multiband comp 1", 67},
-	{"multi comp 1", 67},
 	{"multiband comp 2", 68},
-	{"multi comp 2", 68},
 	{"multidelay 1", 69},
-	{"multi delay 1", 69},
 	{"multidelay 2", 70},
-	{"multi delay 2", 70},
-	{"para eq 1", 71},
 	{"parametric eq 1", 71},
-	{"para eq 2", 72},
 	{"parametric eq 2", 72},
-	{"para eq 3", 73},
 	{"parametric eq 3", 73},
-	{"para eq 4", 74},
 	{"parametric eq 4", 74},
 	{"phaser 1", 75},
 	{"phaser 2", 76},
 	{"pitch 1", 77},
-	{"pitch 1 (whammy)", 77},
 	{"pitch 2", 78},
-	{"pitch 2 (whammy)", 78},
 	{"quad chorus 1", 79},
-	{"quad 1", 79},
 	{"quad chorus 2", 80},
-	{"quad 2", 80},
 	{"resonator 1", 81},
 	{"resonator 2", 82},
 	{"reverb 1", 83},
 	{"reverb 2", 84},
 	{"ring mod", 85},
-	{"ringmod", 85},
-	{"ring modulator", 85},
 	{"rotary 1", 86},
 	{"rotary 2", 87},
 	{"synth 1", 88},
 	{"synth 2", 89},
-	{"tremolo 1", 90},
-	{"trem 1", 90},
 	{"panner/tremolo 1", 90},
-	{"tremolo 2", 91},
-	{"trem 2", 91},
 	{"panner/tremolo 2", 91},
 	{"vocoder", 92},
-	{"volume 1", 93},
-	{"vol 1", 93},
 	{"vol/pan 1", 93},
-	{"volume 2", 94},
-	{"vol 2", 94},
 	{"vol/pan 2", 94},
-	{"volume 3", 95},
-	{"vol 3", 95},
 	{"vol/pan 3", 95},
-	{"volume 4", 96},
-	{"vol 4", 96},
 	{"vol/pan 4", 96},
 	{"wah-wah 1", 97},
-	{"wahwah 1", 97},
-	{"wah 1", 97},
 	{"wah-wah 2", 98},
-	{"wahwah 2", 98},
-	{"wah 2", 98},
 	{"", -1}
 };
 
@@ -721,7 +635,7 @@ int
 GetDefaultAxeCc(const std::string &effectNameIn, ITraceDisplay * trc) 
 {
 	std::string effectName(effectNameIn);
-	NormalizeName(effectName);
+	NormalizeAxeEffectName(effectName);
 
 	for (int idx = 0; !kDefaultAxeCcs[idx].mParameter.empty(); ++idx)
 		if (kDefaultAxeCcs[idx].mParameter == effectName)
@@ -733,4 +647,145 @@ GetDefaultAxeCc(const std::string &effectNameIn, ITraceDisplay * trc)
 		trc->Trace(msg);
 	}
 	return 0;
+}
+
+void
+SynonymNormalization(std::string & name)
+{
+#define MapName(subst, legit) if (name == subst) { name = legit; return; }
+
+	switch (name[0])
+	{
+	case 'c':
+		MapName("cab 1", "cabinet 1");
+		MapName("cab 2", "cabinet 2");
+		MapName("comp 1", "compressor 1");
+		MapName("comp 2", "compressor 2");
+		break;
+	case 'd':
+		MapName("delay 1 (reverse)", "delay 1");
+		MapName("delay 2 (reverse)", "delay 2");
+		MapName("device complete bypass toggle", "output");
+		break;
+	case 'e':
+		MapName("ext 1", "external 1");
+		MapName("ext 2", "external 2");
+		MapName("ext 3", "external 3");
+		MapName("ext 4", "external 4");
+		MapName("ext 5", "external 5");
+		MapName("ext 6", "external 6");
+		MapName("ext 7", "external 7");
+		MapName("ext 8", "external 8");
+		break;
+	case 'f':
+		MapName("fx loop", "effects loop");
+		break;
+	case 'g':
+		MapName("gate 1", "gate/expander 1");
+		MapName("gate 2", "gate/expander 2");
+		MapName("graphiceq 1", "graphic eq 1");
+		MapName("graphiceq 2", "graphic eq 2");
+		MapName("graphiceq 3", "graphic eq 3");
+		MapName("graphiceq 4", "graphic eq 4");
+		break;
+	case 'i':
+		MapName("in vol", "input volume");
+		MapName("input", "input volume");
+		MapName("input vol", "input volume");
+		break;
+	case 'l':
+		MapName("loop 1 rec", "looper 1 record");
+		MapName("loop 1 record", "looper 1 record");
+		MapName("loop 1 play", "looper 1 play");
+		MapName("loop 1 once", "looper 1 once");
+		MapName("loop 1 overdub", "looper 1 overdub");
+		MapName("loop 1 rev", "looper 1 reverse");
+		MapName("loop 1 reverse", "looper 1 reverse");
+		MapName("loop 2 rec", "looper 2 record");
+		MapName("loop 2 record", "looper 2 record");
+		MapName("loop 2 play", "looper 2 play");
+		MapName("loop 2 once", "looper 2 once");
+		MapName("loop 2 overdub", "looper 2 overdub");
+		MapName("loop 2 rev", "looper 2 reverse");
+		MapName("loop 2 reverse", "looper 2 reverse");
+		break;
+	case 'm':
+		MapName("megatap", "megatap delay");
+		MapName("mix 1", "mixer 1");
+		MapName("mix 2", "mixer 2");
+		MapName("multi comp 1", "multiband comp 1");
+		MapName("multi comp 2", "multiband comp 2");
+		MapName("multi delay 1", "multidelay 1");
+		MapName("multi delay 2", "multidelay 2");
+		break;
+	case 'n':
+		MapName("noise gate", "noisegate");
+		break;
+	case 'o':
+		MapName("out 1 vol", "out 1 volume");
+		MapName("out 2 vol", "out 2 volume");
+		MapName("output 1 vol", "out 1 volume");
+		MapName("output 2 vol", "out 2 volume");
+		break;
+	case 'p':
+		MapName("pan/trem 1", "panner/tremolo 1");
+		MapName("pan/trem 2", "panner/tremolo 2");
+		MapName("para eq 1", "parametric eq 1");
+		MapName("para eq 2", "parametric eq 2");
+		MapName("para eq 3", "parametric eq 3");
+		MapName("para eq 4", "parametric eq 4");
+		MapName("pitch 1 (whammy)", "pitch 1");
+		MapName("pitch 2 (whammy)", "pitch 2");
+		break;
+	case 'q':
+		MapName("quad 1", "quad chorus 1");
+		MapName("quad 2", "quad chorus 2");
+		MapName("quadchorus 1", "quad chorus 1");
+		MapName("quadchorus 2", "quad chorus 2");
+		break;
+	case 'r':
+		MapName("return", "feedback return");
+		MapName("reverse 1", "delay 1");
+		MapName("reverse 2", "delay 2");
+		MapName("ring modulator", "ring mod");
+		MapName("ringmod", "ring mod");
+		break;
+	case 's':
+		MapName("send", "feedback send");
+		break;
+	case 't':
+		MapName("tap", "taptempo");
+		MapName("tap tempo", "taptempo");
+		MapName("trem 1", "panner/tremolo 1");
+		MapName("trem 2", "panner/tremolo 2");
+		MapName("tremolo 1", "panner/tremolo 1");
+		MapName("tremolo 2", "panner/tremolo 2");
+		break;
+	case 'v':
+		MapName("vol dec", "volume decrement");
+		MapName("vol decrement", "volume decrement");
+		MapName("vol inc", "volume increment");
+		MapName("vol increment", "volume increment");
+		MapName("vol 1", "vol/pan 1");
+		MapName("vol 2", "vol/pan 2");
+		MapName("vol 3", "vol/pan 3");
+		MapName("vol 4", "vol/pan 4");
+		MapName("volume 1", "vol/pan 1");
+		MapName("volume 2", "vol/pan 2");
+		MapName("volume 3", "vol/pan 3");
+		MapName("volume 4", "vol/pan 4");
+		break;
+	case 'w':
+		MapName("wah 1", "wah-wah 1");
+		MapName("wah 2", "wah-wah 2");
+		MapName("wahwah 1", "wah-wah 1");
+		MapName("wahwah 2", "wah-wah 2");
+		MapName("whammy 1", "pitch 1");
+		MapName("whammy 2", "pitch 2");
+		break;
+	case 'x':
+		MapName("x-over 1", "crossover 1");
+		MapName("x-over 2", "crossover 2");
+		break;
+	}
 }

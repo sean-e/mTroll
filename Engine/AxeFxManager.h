@@ -58,7 +58,7 @@ public:
 
 	void CompleteInit(IMidiOut * midiOut);
 	void SetTempoPatch(Patch * patch);
-	void SetSyncPatch(Patch * patch);
+	bool SetSyncPatch(Patch * patch);
 	void InitiateSyncFromAxe();
 	void SyncFromAxe(Patch * patch);
 
@@ -87,5 +87,6 @@ private:
 };
 
 int GetDefaultAxeCc(const std::string &effectName, ITraceDisplay * trc);
+void NormalizeAxeEffectName(std::string & effectName);
 
 #endif // AxeFxManager_h__
