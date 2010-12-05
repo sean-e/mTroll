@@ -27,6 +27,7 @@
 
 #include <QObject>
 #include <qmutex.h>
+#include <time.h>
 #include "IMidiInSubscriber.h"
 #include "AxemlLoader.h"
 
@@ -83,6 +84,8 @@ private:
 	AxeEffectBlocks::iterator mCurQuery;
 	QMutex			mQueryLock;
 	QTimer			* mQueryTimer;
+	int				mTimeoutCnt;
+	clock_t			mLastTimeout;
 	bool			mSyncAll;
 };
 

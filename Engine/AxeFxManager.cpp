@@ -24,6 +24,7 @@
 
 #include <string>
 #include <memory.h>
+#include <strstream>
 #include <algorithm>
 #include <QEvent>
 #include <QApplication>
@@ -37,8 +38,6 @@
 #include "AxemlLoader.h"
 #include "IMidiOut.h"
 
-// TODO:
-// sysex difference between disabled and not present?
 
 // Consider: 
 // poll after program changes on axe ch? (where?)
@@ -52,6 +51,8 @@ AxeFxManager::AxeFxManager(ISwitchDisplay * switchDisp,
 	mSwitchDisplay(switchDisp),
 	mTrace(pTrace),
 	mRefCnt(0),
+	mTimeoutCnt(0),
+	mLastTimeout(0),
 	mTempoPatch(NULL),
 	// mQueryLock(QMutex::Recursive),
 	mMidiOut(NULL),
@@ -62,7 +63,7 @@ AxeFxManager::AxeFxManager(ISwitchDisplay * switchDisp,
 	mQueryTimer = new QTimer(this);
 	connect(mQueryTimer, SIGNAL(timeout()), this, SLOT(QueryTimedOut()));
 	mQueryTimer->setSingleShot(true);
-	mQueryTimer->setInterval(1000);
+	mQueryTimer->setInterval(1500);
 
 	AxemlLoader ldr(mTrace);
 	ldr.Load(appPath + "/default.axeml", mAxeEffectInfo);
@@ -71,7 +72,9 @@ AxeFxManager::AxeFxManager(ISwitchDisplay * switchDisp,
 AxeFxManager::~AxeFxManager()
 {
 	QMutexLocker lock(&mQueryLock);
-	KillResponseTimer();
+	if (mQueryTimer->isActive())
+		mQueryTimer->stop();
+	delete mQueryTimer;
 }
 
 void
@@ -291,11 +294,35 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 		}
 	}
 
-	if (inf && inf->mPatch /* inf->mBypassCC ??*/)
+	if (inf && inf->mPatch)
 	{
-		const bool isActive = 0 != bytes[4];
-		if (inf->mPatch->IsActive() != isActive)
-			inf->mPatch->UpdateState(mSwitchDisplay, isActive);
+		// TODO: is there a difference between disabled and not present?
+
+		if (0 == bytes[5])
+		{
+			const bool isBypassed = (1 == bytes[4] || 3 == bytes[4]); // bypass param is 1 for bypassed, 0 for not bypassed (except for Amp and Pitch)
+			const bool notBypassed = (0 == bytes[4] || 2 == bytes[4]);
+
+			if (isBypassed || notBypassed)
+			{
+				if (inf->mPatch->IsActive() != notBypassed)
+					inf->mPatch->UpdateState(mSwitchDisplay, notBypassed);
+			}
+			else if (mTrace)
+			{
+				const std::string byteDump(::GetAsciiHexStr(bytes, len - 2, true));
+				std::strstream traceMsg;
+				traceMsg << "Unrecognized bypass param value for " << inf->mName << " " << byteDump.c_str() << std::endl << std::ends;
+				mTrace->Trace(std::string(traceMsg.str()));
+			}
+		}
+		else if (mTrace)
+		{
+			const std::string byteDump(::GetAsciiHexStr(bytes, len - 2, true));
+			std::strstream traceMsg;
+			traceMsg << "Unhandled bypass MS param value for " << inf->mName << " " << byteDump.c_str() << std::endl << std::ends;
+			mTrace->Trace(std::string(traceMsg.str()));
+		}
 	}
 	else
 	{
@@ -313,6 +340,7 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 void
 AxeFxManager::InitiateSyncFromAxe()
 {
+	// TODO: see if something is loaded?
 	mSyncAll = true;
 	SyncNextFromAxe(true);
 }
@@ -404,6 +432,37 @@ AxeFxManager::KillResponseTimer()
 void
 AxeFxManager::QueryTimedOut()
 {
+	const clock_t curTime = ::clock();
+	if (curTime > mLastTimeout + 5000)
+		mTimeoutCnt = 0;
+	mLastTimeout = curTime;
+	++mTimeoutCnt;
+
+	if (mTrace)
+	{
+		std::string msg;
+		if (mTimeoutCnt > 3)
+			msg = ("Multiple sync request timeouts, make sure it hasn't locked up\n");
+		else
+			msg = ("Axe sync request timed out\n");
+
+		mTrace->Trace(msg);
+	}
+
+	if (mTimeoutCnt > 5)
+	{
+		mTimeoutCnt = 0;
+		if (mSyncAll)
+		{
+			mSyncAll = false;
+			if (mTrace)
+			{
+				std::string msg("Aborting axe sync\n");
+				mTrace->Trace(msg);
+			}
+		}
+	}
+
 	if (mSyncAll)
 		SyncNextFromAxe(false);
 }
