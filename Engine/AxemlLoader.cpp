@@ -132,7 +132,9 @@ AxemlLoader::LoadEffectPool(TiXmlElement* pElem)
 		}
 
 		const int cc = ::GetDefaultAxeCc(effectName, mTrace);
-		mEffects.push_back(AxeEffectBlockInfo(effectId, effectName, effectType, cc));
+		std::string normalizedName(effectName);
+		::NormalizeAxeEffectName(normalizedName);
+		mEffects.push_back(AxeEffectBlockInfo(effectId, effectName, normalizedName, effectType, cc));
 	}
 }
 
