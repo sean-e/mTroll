@@ -146,7 +146,7 @@ GetAsciiHexStr(const byte * inBytes, size_t sz, bool format /*= true*/)
 
 		if (format)
 		{
-			if ((idx+1) % 8)
+			if ((idx+1) % 16)
 				retval += " ";
 			else
 				retval += "\n";
