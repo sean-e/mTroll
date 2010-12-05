@@ -47,6 +47,7 @@
 #include "AxeFxManager.h"
 #include "IMidiIn.h"
 #include "ITrollApplication.h"
+#include "AxeTogglePatch.h"
 
 
 static PatchBank::PatchState GetLoadState(const std::string & tmpLoad);
@@ -713,19 +714,40 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			}
 		}
 
-		if (device == "Axe-Fx")
+		if (device == "Axe-Fx" && 
+			(patchType.empty() || patchType == "AxeToggle" || patchType == "AxeMomentary") && 
+			cmds.empty() && cmds2.empty() &&
+			patchDefaultCh != -1)
 		{
+			const int axeCc = ::GetDefaultAxeCc(patchName, mTraceDisplay);
 			// TODO:
-			::GetDefaultAxeCc(patchName, mTraceDisplay);
-			// ERROR: AxeFx default CC for device complete bypass toggle is unknown
-			// ERROR: AxeFx default CC for megatap is unknown
-			// ERROR: AxeFx default CC for multi comp 2 is unknown
-			// ERROR: AxeFx default CC for toggle all except amps is unknown
-			// ERROR: AxeFx default CC for ext 1 mute toggle is unknown
-			// ERROR: AxeFx default CC for ext 1 mute momentary is unknown
-			// ERROR: AxeFx default CC for input mute toggle is unknown
-			// ERROR: AxeFx default CC for input mute momentary is unknown
-			// ERROR: AxeFx default CC for wah-wah 2 pdl 3 is unknown
+				// ERROR: AxeFx default CC for device complete bypass toggle is unknown
+
+				// ERROR: AxeFx default CC for ext 1 mute toggle is unknown
+				// ERROR: AxeFx default CC for ext 1 mute momentary is unknown
+				// ERROR: AxeFx default CC for input mute toggle is unknown
+				// ERROR: AxeFx default CC for input mute momentary is unknown
+
+				// ERROR: AxeFx default CC for toggle all except amps is unknown
+				// ERROR: AxeFx default CC for wah-wah 2 pdl 3 is unknown
+			if (axeCc)
+			{
+				Bytes bytes;
+				if (patchType.empty())
+					patchType = "AxeToggle";
+
+				bytes.push_back(0xb0 | patchDefaultCh);
+				bytes.push_back(axeCc);
+				bytes.push_back(127);
+				cmds.push_back(new MidiCommandString(midiOut, bytes));
+				bytes.clear();
+
+				bytes.push_back(0xb0 | patchDefaultCh);
+				bytes.push_back(axeCc);
+				bytes.push_back(0);
+				cmds2.push_back(new MidiCommandString(midiOut, bytes));
+				bytes.clear();
+			}
 		}
 
 		bool patchTypeErr = false;
@@ -734,8 +756,32 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			newPatch = new NormalPatch(patchNumber, patchName, midiOut, cmds, cmds2);
 		else if (patchType == "toggle")
 			newPatch = new TogglePatch(patchNumber, patchName, midiOut, cmds, cmds2);
+		else if (patchType == "AxeToggle")
+		{
+			newPatch = new AxeTogglePatch(patchNumber, patchName, midiOut, cmds, cmds2, mAxeFxManager);
+			if (mAxeFxManager)
+				mAxeFxManager->SetSyncPatch(newPatch);
+			else if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: Axe-Fx device specified but no Axe-Fx input was created" << std::endl << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
+		}
 		else if (patchType == "momentary")
 			newPatch = new MomentaryPatch(patchNumber, patchName, midiOut, cmds, cmds2);
+		else if (patchType == "AxeMomentary")
+		{
+			newPatch = new MomentaryPatch(patchNumber, patchName, midiOut, cmds, cmds2);
+			if (mAxeFxManager)
+				mAxeFxManager->SetSyncPatch(newPatch);
+			else if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: Axe-Fx device specified but no Axe-Fx input was created" << std::endl << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
+		}
 		else if (patchType == "sequence")
 			newPatch = new SequencePatch(patchNumber, patchName, midiOut, cmds);
 		else if (patchType == "AxeFxTapTempo")

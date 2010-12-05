@@ -58,7 +58,7 @@ public:
 
 	void CompleteInit(IMidiOut * midiOut);
 	void SetTempoPatch(Patch * patch);
-	void SetSyncPatch(const std::string &effectName, Patch * patch);
+	void SetSyncPatch(Patch * patch);
 	void InitiateSyncFromAxe();
 	void SyncFromAxe(Patch * patch);
 

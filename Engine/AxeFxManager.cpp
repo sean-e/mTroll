@@ -37,13 +37,11 @@
 #include "AxemlLoader.h"
 #include "IMidiOut.h"
 
-
-// TODO: 
-// axefx patch type or attribute? using SetSyncPatch
-// allow individual patches to check status
-// poll after program changes on axe ch via metapatch
-//		http://www.fractalaudio.com/forum/viewtopic.php?f=14&t=21524&start=10
+// TODO:
 // sysex difference between disabled and not present?
+
+// Consider: 
+// poll after program changes on axe ch?
 // request patch name?
 
 
@@ -107,20 +105,60 @@ AxeFxManager::SetTempoPatch(Patch * patch)
 }
 
 void
-AxeFxManager::SetSyncPatch(const std::string & effectNameIn, Patch * patch)
+AxeFxManager::SetSyncPatch(Patch * patch)
 {
-	std::string effectName(effectNameIn);
+	std::string effectName(patch->GetName());
 	::NormalizeName(effectName);
 	for (AxeEffectBlocks::iterator it = mAxeEffectInfo.begin(); 
 		it != mAxeEffectInfo.end(); 
 		++it)
 	{
 		AxeEffectBlockInfo & cur = *it;
-		if (cur.mName == effectName)
+		std::string curName(cur.mName);
+		::NormalizeName(curName);
+		// TODO: need better normalization - maybe do it by CC??
+			// Warning: no Axe-Fx effect found to sync for Axe Loop 1 Record
+			// Warning: no Axe-Fx effect found to sync for Axe Loop 1 Play
+			// Warning: no Axe-Fx effect found to sync for Axe Loop 1 Once
+			// Warning: no Axe-Fx effect found to sync for Axe Loop 1 Overdub
+			// Warning: no Axe-Fx effect found to sync for Axe Loop 1 Reverse
+			// Warning: no Axe-Fx effect found to sync for Axe Loop 2 Record
+			// Warning: no Axe-Fx effect found to sync for Axe Loop 2 Play
+			// Warning: no Axe-Fx effect found to sync for Axe Loop 2 Once
+			// Warning: no Axe-Fx effect found to sync for Axe Loop 2 Overdub
+			// Warning: no Axe-Fx effect found to sync for Axe Loop 2 Reverse
+			// Warning: no Axe-Fx effect found to sync for Axe Delay 2 (Reverse)
+			// Warning: no Axe-Fx effect found to sync for Axe Fx Loop
+			// Warning: no Axe-Fx effect found to sync for Axe Gate 1
+			// Warning: no Axe-Fx effect found to sync for Axe Gate 2
+			// Warning: no Axe-Fx effect found to sync for Axe Graphic EQ 1
+			// Warning: no Axe-Fx effect found to sync for Axe Graphic EQ 2
+			// Warning: no Axe-Fx effect found to sync for Axe Graphic EQ 3
+			// Warning: no Axe-Fx effect found to sync for Axe Graphic EQ 4
+			// Warning: no Axe-Fx effect found to sync for Axe MegaTap
+			// Warning: no Axe-Fx effect found to sync for Axe Multi Comp 1
+			// Warning: no Axe-Fx effect found to sync for Axe Multi Comp 2
+			// Warning: no Axe-Fx effect found to sync for Axe Multi Delay 1
+			// Warning: no Axe-Fx effect found to sync for Axe Multi Delay 2
+			// Warning: no Axe-Fx effect found to sync for Axe Para EQ 1
+			// Warning: no Axe-Fx effect found to sync for Axe Para EQ 2
+			// Warning: no Axe-Fx effect found to sync for Axe Para EQ 3
+			// Warning: no Axe-Fx effect found to sync for Axe Para EQ 4
+			// Warning: no Axe-Fx effect found to sync for Axe Pitch 1 (Whammy)
+			// Warning: no Axe-Fx effect found to sync for Axe Ring Mod
+			// Warning: no Axe-Fx effect found to sync for Axe Tremolo 1
+			// Warning: no Axe-Fx effect found to sync for Axe Tremolo 2
+			// Warning: no Axe-Fx effect found to sync for Axe Volume 1
+			// Warning: no Axe-Fx effect found to sync for Axe Volume 2
+			// Warning: no Axe-Fx effect found to sync for Axe Volume 3
+			// Warning: no Axe-Fx effect found to sync for Axe Volume 4
+			// Warning: no Axe-Fx effect found to sync for Axe Wah-wah 1
+			// Warning: no Axe-Fx effect found to sync for Axe Wah-wah 2
+		if (curName == effectName)
 		{
 			if (cur.mPatch && mTrace)
 			{
-				std::string msg("Warning: multiple Axe-Fx patches for " + effectNameIn + "\n");
+				std::string msg("Warning: multiple Axe-Fx patches for " + patch->GetName() + "\n");
 				mTrace->Trace(msg);
 			}
 			cur.mPatch = patch;
@@ -130,7 +168,7 @@ AxeFxManager::SetSyncPatch(const std::string & effectNameIn, Patch * patch)
 
 	if (mTrace)
 	{
-		std::string msg("Warning: no Axe-Fx effect found to sync for " + effectNameIn + "\n");
+		std::string msg("Warning: no Axe-Fx effect found to sync for " + patch->GetName() + "\n");
 		mTrace->Trace(msg);
 	}
 }
@@ -319,7 +357,14 @@ AxeFxManager::SyncFromAxe(Patch * patch)
 {
 	AxeEffectBlocks::iterator it = GetBlockInfo(patch);
 	if (it == mAxeEffectInfo.end())
+	{
+		if (mTrace)
+		{
+			const std::string msg("Failed to located AxeFx block info for AxeToggle patch\n");
+			mTrace->Trace(msg);
+		}
 		return;
+	}
 
 	mSyncAll = false;
 	QMutexLocker lock(&mQueryLock);
@@ -498,6 +543,7 @@ DefaultAxeCcs kDefaultAxeCcs[] =
 	{"feedback return", 0},
 	{"return", 0},
 	{"noisegate", 0},
+	{"noise gate", 0},
 	{"input volume", 10},
 	{"input vol", 10},
 	{"out 1 volume", 11},
@@ -505,6 +551,8 @@ DefaultAxeCcs kDefaultAxeCcs[] =
 	{"out 2 volume", 12},
 	{"out 2 vol", 12},
 	{"output", 13},
+	{"tap", 14},
+	{"taptempo", 14},
 	{"tap tempo", 14},
 	{"tuner", 15},
 	{"external 1", 16},
@@ -525,19 +573,36 @@ DefaultAxeCcs kDefaultAxeCcs[] =
 	{"ext 8", 23},
 
 	{"looper 1 record", 24},
+	{"loop 1 record", 24},
+	{"loop 1 rec", 24},
 	{"looper 1 play", 25},
+	{"loop 1 play", 25},
 	{"looper 1 once", 26},
+	{"loop 1 once", 26},
 	{"looper 1 overdub", 27},
+	{"loop 1 overdub", 27},
 	{"looper 1 reverse", 28},
+	{"loop 1 reverse", 28},
+	{"loop 1 rev", 28},
+
 	{"looper 2 record", 29},
+	{"loop 2 record", 29},
+	{"loop 2 rec", 29},
 	{"looper 2 play", 30},
+	{"loop 2 play", 30},
 	{"looper 2 once", 31},
+	{"loop 2 once", 31},
 	{"looper 2 overdub", 32},
+	{"loop 2 overdub", 32},
 	{"looper 2 reverse", 33},
+	{"loop 2 reverse", 33},
+	{"loop 2 rev", 33},
 
 	{"global preset effect toggle", 34},
+	{"vol inc", 35},
 	{"vol increment", 35},
 	{"volume increment", 35},
+	{"vol dec", 36},
 	{"vol decrement", 36},
 	{"volume decrement", 36},
 
@@ -586,11 +651,11 @@ DefaultAxeCcs kDefaultAxeCcs[] =
 	{"graphiceq 4", 65},
 	{"graphic eq 4", 65},
 	{"megatap delay", 66},
-	{"metatap", 66},
+	{"megatap", 66},
 	{"multiband comp 1", 67},
 	{"multi comp 1", 67},
 	{"multiband comp 2", 68},
-	{"multi comp 1", 68},
+	{"multi comp 2", 68},
 	{"multidelay 1", 69},
 	{"multi delay 1", 69},
 	{"multidelay 2", 70},
@@ -619,6 +684,7 @@ DefaultAxeCcs kDefaultAxeCcs[] =
 	{"reverb 2", 84},
 	{"ring mod", 85},
 	{"ringmod", 85},
+	{"ring modulator", 85},
 	{"rotary 1", 86},
 	{"rotary 2", 87},
 	{"synth 1", 88},
