@@ -65,6 +65,16 @@ public:
 		if (mAx)
 			mAx->SyncFromAxe(this);
 	}
+
+	void ClearAxeMgr() 
+	{
+		if (mAx)
+		{
+			mAx->Release();
+			mAx = NULL;
+		}
+	}
+
 };
 
 #endif // AxeTogglePatch_h__
