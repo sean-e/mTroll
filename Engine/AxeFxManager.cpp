@@ -55,15 +55,12 @@ AxeFxManager::AxeFxManager(ISwitchDisplay * switchDisp,
 	mLastTimeout(0),
 	mTempoPatch(NULL),
 	// mQueryLock(QMutex::Recursive),
-	mMidiOut(NULL),
-	mSyncAll(false)
+	mMidiOut(NULL)
 {
-	mCurQuery = mAxeEffectInfo.end();
-
 	mQueryTimer = new QTimer(this);
 	connect(mQueryTimer, SIGNAL(timeout()), this, SLOT(QueryTimedOut()));
 	mQueryTimer->setSingleShot(true);
-	mQueryTimer->setInterval(1500);
+	mQueryTimer->setInterval(2000);
 
 	AxemlLoader ldr(mTrace);
 	ldr.Load(appPath + "/default.axeml", mAxeEffectInfo);
@@ -145,8 +142,6 @@ void
 AxeFxManager::CompleteInit(IMidiOut * midiOut)
 {
 	mMidiOut = midiOut;
-	mCurQuery = mAxeEffectInfo.end();
-
 	if (!mMidiOut && mTrace)
 	{
 		const std::string msg("ERROR: no Midi Out set for AxeFx sync\n");
@@ -185,6 +180,7 @@ IsAxeFxSysex(const byte * bytes, const int len)
 void
 AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 {
+	// http://www.fractalaudio.com/forum/viewtopic.php?f=14&t=21524&start=10
 	// http://axefxwiki.guitarlogic.org/index.php?title=Axe-Fx_SysEx_Documentation
 	if (!::IsAxeFxSysex(bytes, len))
 		return;
@@ -205,6 +201,14 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 	{
 		ReceiveParamValue(&bytes[6], len - 6);
 		return;
+	}
+
+	if (0 && mTrace)
+	{
+		const std::string byteDump(::GetAsciiHexStr(&bytes[5], len - 5, true));
+		std::strstream traceMsg;
+		traceMsg << byteDump.c_str() << std::endl << std::ends;
+		mTrace->Trace(std::string(traceMsg.str()));
 	}
 }
 
@@ -263,6 +267,8 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 	0xF7 sysex end 
  */
 
+	KillResponseTimer();
+
 	if (len < 8)
 	{
 		if (mTrace)
@@ -270,79 +276,136 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 			const std::string msg("truncated param value msg\n");
 			mTrace->Trace(msg);
 		}
-		return;
-	}
 
-	AxeEffectBlockInfo * inf = NULL;
-
-	{
 		QMutexLocker lock(&mQueryLock);
-		if (mCurQuery != mAxeEffectInfo.end() &&
-			mCurQuery->mSysexEffectIdLs == bytes[0] && 
-			mCurQuery->mSysexEffectIdMs == bytes[1] &&
-			mCurQuery->mSysexBypassParameterIdLs == bytes[2] &&
-			mCurQuery->mSysexBypassParameterIdMs == bytes[3])
-		{
-			inf = &(*mCurQuery);
-		}
-		else
-		{
-			lock.unlock();
+		if (mQueries.begin() != mQueries.end())
+			mQueries.pop_front();
+	}
+	else
+	{
+		AxeEffectBlockInfo * inf = NULL;
 
-			// got something we weren't expecting; see if we can look it up
+		{
+			QMutexLocker lock(&mQueryLock);
+			std::list<AxeEffectBlockInfo*>::iterator it = mQueries.begin();
+			if (it != mQueries.end() &&
+				(*it)->mSysexEffectIdLs == bytes[0] && 
+				(*it)->mSysexEffectIdMs == bytes[1] &&
+				(*it)->mSysexBypassParameterIdLs == bytes[2] &&
+				(*it)->mSysexBypassParameterIdMs == bytes[3])
+			{
+				inf = *mQueries.begin();
+				mQueries.pop_front();
+			}
+		}
+
+		if (!inf)
+		{
+			// received something we weren't expecting; see if we can look it up
 			inf = IdentifyBlockInfo(bytes);
 		}
-	}
 
-	if (inf && inf->mPatch)
-	{
-		// TODO: is there a difference between disabled and not present?
-
-		if (0 == bytes[5])
+		if (inf && inf->mPatch)
 		{
-			const bool isBypassed = (1 == bytes[4] || 3 == bytes[4]); // bypass param is 1 for bypassed, 0 for not bypassed (except for Amp and Pitch)
-			const bool notBypassed = (0 == bytes[4] || 2 == bytes[4]);
+			// TODO: how to know when not present?
 
-			if (isBypassed || notBypassed)
+			if (0 == bytes[5])
 			{
-				if (inf->mPatch->IsActive() != notBypassed)
-					inf->mPatch->UpdateState(mSwitchDisplay, notBypassed);
+				const bool isBypassed = (1 == bytes[4] || 3 == bytes[4]); // bypass param is 1 for bypassed, 0 for not bypassed (except for Amp and Pitch)
+				const bool notBypassed = (0 == bytes[4] || 2 == bytes[4]);
+
+				if (isBypassed || notBypassed)
+				{
+					if (inf->mPatch->IsActive() != notBypassed)
+						inf->mPatch->UpdateState(mSwitchDisplay, notBypassed);
+
+					if (0 && mTrace)
+					{
+						const std::string byteDump(::GetAsciiHexStr(bytes + 4, len - 6, true));
+						const std::string asciiDump(::GetAsciiStr(&bytes[6], len - 8));
+						std::strstream traceMsg;
+						traceMsg << inf->mName << " : " << byteDump.c_str() << " : " << asciiDump.c_str() << std::endl << std::ends;
+						mTrace->Trace(std::string(traceMsg.str()));
+					}
+				}
+				else if (mTrace)
+				{
+					const std::string byteDump(::GetAsciiHexStr(bytes, len - 2, true));
+					std::strstream traceMsg;
+					traceMsg << "Unrecognized bypass param value for " << inf->mName << " " << byteDump.c_str() << std::endl << std::ends;
+					mTrace->Trace(std::string(traceMsg.str()));
+				}
 			}
 			else if (mTrace)
 			{
 				const std::string byteDump(::GetAsciiHexStr(bytes, len - 2, true));
 				std::strstream traceMsg;
-				traceMsg << "Unrecognized bypass param value for " << inf->mName << " " << byteDump.c_str() << std::endl << std::ends;
+				traceMsg << "Unhandled bypass MS param value for " << inf->mName << " " << byteDump.c_str() << std::endl << std::ends;
 				mTrace->Trace(std::string(traceMsg.str()));
 			}
 		}
-		else if (mTrace)
+		else
 		{
-			const std::string byteDump(::GetAsciiHexStr(bytes, len - 2, true));
-			std::strstream traceMsg;
-			traceMsg << "Unhandled bypass MS param value for " << inf->mName << " " << byteDump.c_str() << std::endl << std::ends;
-			mTrace->Trace(std::string(traceMsg.str()));
+			if (mTrace)
+			{
+				const std::string msg("Axe sync error: No inf or patch\n");
+				mTrace->Trace(msg);
+			}
 		}
 	}
-	else
-	{
-// 		if (mTrace)
-// 		{
-// 			const std::string msg(::GetAsciiHexStr(bytes, len, true) + "\n");
-// 			mTrace->Trace(msg);
-// 		}
-	}
 
-	if (mSyncAll)
-		SyncNextFromAxe(false);
+
+	// post an event to kick off the next query
+	class CreateSendNextQueryTimer : public QEvent
+	{
+		AxeFxManager *mMgr;
+
+	public:
+		CreateSendNextQueryTimer(AxeFxManager * mgr) : 
+		  QEvent(User), 
+		  mMgr(mgr)
+		{
+			mMgr->AddRef();
+		}
+
+		~CreateSendNextQueryTimer()
+		{
+			mMgr->SendNextQuery();
+			mMgr->Release();
+		}
+	};
+
+	QCoreApplication::postEvent(this, new CreateSendNextQueryTimer(this));
 }
 
 void
 AxeFxManager::InitiateSyncFromAxe()
 {
-	// TODO: see if something is loaded?
-	mSyncAll = true;
-	SyncNextFromAxe(true);
+	KillResponseTimer();
+
+	{
+		QMutexLocker lock(&mQueryLock);
+		mQueries.clear();
+
+		for (AxeEffectBlocks::iterator it = mAxeEffectInfo.begin(); 
+			it != mAxeEffectInfo.end(); 
+			++it)
+		{
+			AxeEffectBlockInfo * cur = &(*it);
+			if (-1 == cur->mSysexBypassParameterId)
+				continue;
+
+			if (-1 == cur->mSysexEffectId)
+				continue;
+
+			if (!cur->mPatch)
+				continue;
+
+			mQueries.push_back(cur);
+		}
+	}
+
+	SendNextQuery();
 }
 
 void
@@ -353,52 +416,30 @@ AxeFxManager::SyncFromAxe(Patch * patch)
 	{
 		if (mTrace)
 		{
-			const std::string msg("Failed to located AxeFx block info for AxeToggle patch\n");
+			const std::string msg("Failed to locate AxeFx block info for AxeToggle patch\n");
 			mTrace->Trace(msg);
 		}
 		return;
 	}
 
-	mSyncAll = false;
-	QMutexLocker lock(&mQueryLock);
-	KillResponseTimer();
-	mCurQuery = it;
-	SendCurQuery();
-}
+	if (-1 == (*it).mSysexBypassParameterId)
+		return;
 
-void
-AxeFxManager::SyncNextFromAxe(bool restart)
-{
-	QMutexLocker lock(&mQueryLock);
-	KillResponseTimer();
+	if (-1 == (*it).mSysexEffectId)
+		return;
 
-	for (;;)
+	if (!(*it).mPatch)
+		return;
+
 	{
-		if (restart)
-		{
-			mCurQuery = mAxeEffectInfo.begin();
-			restart = false;
-		}
-		else if (mCurQuery != mAxeEffectInfo.end())
-			mCurQuery++;
-
-		if (mCurQuery == mAxeEffectInfo.end())
-		{
-			mSyncAll = false;
-			return;
-		}
-
-		if (-1 == mCurQuery->mSysexBypassParameterId)
-			continue;
-
-		if (-1 == mCurQuery->mSysexEffectId)
-			continue;
-
-		if (mCurQuery->mPatch)
-			break;
+		QMutexLocker lock(&mQueryLock);
+		mQueries.push_back(&(*it));
+		if (mQueries.size() > 1)
+			return; // should already be processing
 	}
 
-	SendCurQuery();
+	// queue was empty, so kick off processing
+	SendNextQuery();
 }
 
 void
@@ -452,9 +493,11 @@ AxeFxManager::QueryTimedOut()
 	if (mTimeoutCnt > 5)
 	{
 		mTimeoutCnt = 0;
-		if (mSyncAll)
+		if (mQueries.size())
 		{
-			mSyncAll = false;
+			QMutexLocker lock(&mQueryLock);
+			mQueries.clear();
+
 			if (mTrace)
 			{
 				std::string msg("Aborting axe sync\n");
@@ -463,14 +506,25 @@ AxeFxManager::QueryTimedOut()
 		}
 	}
 
-	if (mSyncAll)
-		SyncNextFromAxe(false);
+	{
+		QMutexLocker lock(&mQueryLock);
+		if (mQueries.begin() != mQueries.end())
+			mQueries.pop_front();
+		else
+			return;
+	}
+
+	SendNextQuery();
 }
 
 void
-AxeFxManager::SendCurQuery()
+AxeFxManager::SendNextQuery()
 {
 	if (!mMidiOut)
+		return;
+
+	QMutexLocker lock(&mQueryLock);
+	if (mQueries.begin() == mQueries.end())
 		return;
 
 /* MIDI_SET_PARAMETER (or GET)
@@ -492,10 +546,11 @@ AxeFxManager::SendCurQuery()
 
 	const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, 0x01, 0x02, 0, 0, 0, 0, 0x0, 0x0, 0x00, 0xF7 };
 	Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
-	bb[6] = mCurQuery->mSysexEffectIdLs;
-	bb[7] = mCurQuery->mSysexEffectIdMs;
-	bb[8] = mCurQuery->mSysexBypassParameterIdLs;
-	bb[9] = mCurQuery->mSysexBypassParameterIdMs;
+	AxeEffectBlockInfo * next = *mQueries.begin();
+	bb[6] = next->mSysexEffectIdLs;
+	bb[7] = next->mSysexEffectIdMs;
+	bb[8] = next->mSysexBypassParameterIdLs;
+	bb[9] = next->mSysexBypassParameterIdMs;
 
 	class StartQueryTimer : public QEvent
 	{
@@ -587,6 +642,7 @@ struct DefaultAxeCcs
 	int			mCc;
 };
 
+// consider: define this list in an external xml file
 DefaultAxeCcs kDefaultAxeCcs[] = 
 {
 	// these don't have defaults (some can't be bypassed)
@@ -595,6 +651,7 @@ DefaultAxeCcs kDefaultAxeCcs[] =
 	{"mixer 2", 0},
 	{"feedback return", 0},
 	{"noisegate", 0},
+
 	{"input volume", 10},
 	{"out 1 volume", 11},
 	{"out 2 volume", 12},
@@ -781,6 +838,7 @@ SynonymNormalization(std::string & name)
 		MapName("noise gate", "noisegate");
 		break;
 	case 'o':
+		MapName("out", "output");
 		MapName("out 1 vol", "out 1 volume");
 		MapName("out 2 vol", "out 2 volume");
 		MapName("output 1 vol", "out 1 volume");

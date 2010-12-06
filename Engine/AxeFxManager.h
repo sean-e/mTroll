@@ -67,8 +67,7 @@ private:
 	void ReceiveParamValue(const byte * bytes, int len);
 	AxeEffectBlockInfo * IdentifyBlockInfo(const byte * bytes);
 	AxeEffectBlocks::iterator GetBlockInfo(Patch * patch);
-	void SyncNextFromAxe(bool restart);
-	void SendCurQuery();
+	void SendNextQuery();
 	void KillResponseTimer();
 
 private slots:
@@ -81,12 +80,11 @@ private:
 	IMidiOut		* mMidiOut;
 	Patch			* mTempoPatch;
 	AxeEffectBlocks	mAxeEffectInfo;
-	AxeEffectBlocks::iterator mCurQuery;
 	QMutex			mQueryLock;
+	std::list<AxeEffectBlockInfo *> mQueries;
 	QTimer			* mQueryTimer;
 	int				mTimeoutCnt;
 	clock_t			mLastTimeout;
-	bool			mSyncAll;
 };
 
 int GetDefaultAxeCc(const std::string &effectName, ITraceDisplay * trc);
