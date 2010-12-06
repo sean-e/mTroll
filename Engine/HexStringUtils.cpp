@@ -155,3 +155,17 @@ GetAsciiHexStr(const byte * inBytes, size_t sz, bool format /*= true*/)
 
 	return retval;
 }
+
+std::string
+GetAsciiStr(const byte * inBytes, size_t sz)
+{
+	std::string tmp, retval;
+	for (size_t idx = 0; idx < sz && inBytes[idx]; idx++)
+	{
+		char tmp[2];
+		sprintf(tmp, "%c", inBytes[idx]);
+		retval += tmp;
+	}
+
+	return retval;
+}

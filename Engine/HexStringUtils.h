@@ -37,5 +37,6 @@ byte CharsToByte(const char chrs[2]);
 int ValidateString(const std::string & inString, Bytes & outBytes);
 std::string GetAsciiHexStr(const Bytes & inBytes, bool format /*= true*/);
 std::string GetAsciiHexStr(const byte * inBytes, size_t sz, bool format /*= true*/);
+std::string GetAsciiStr(const byte * inBytes, size_t sz);
 
 #endif // HexStringUtils_h__
