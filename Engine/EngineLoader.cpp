@@ -147,6 +147,8 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 	LoadBanks(pElem);
 
 	mMidiOutGenerator->OpenMidiOuts();
+	if (mMidiInGenerator)
+		mMidiInGenerator->OpenMidiIns();
 	if (mAxeFxManager)
 	{
 		IMidiOut * midiOut = NULL;
@@ -165,8 +167,6 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 		}
 		mAxeFxManager->CompleteInit(midiOut);
 	}
-	if (mMidiInGenerator)
-		mMidiInGenerator->OpenMidiIns();
 	mEngine->CompleteInit(mAdcCalibration);
 
 	MidiControlEngine * createdEngine = mEngine;
