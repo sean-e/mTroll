@@ -38,6 +38,7 @@
 #include "AxemlLoader.h"
 #include "IMidiOut.h"
 
+// TODO: model selection for sysex
 
 // Consider: 
 // poll after program changes on axe ch? (where?)
@@ -55,7 +56,9 @@ AxeFxManager::AxeFxManager(ISwitchDisplay * switchDisp,
 	mLastTimeout(0),
 	mTempoPatch(NULL),
 	// mQueryLock(QMutex::Recursive),
-	mMidiOut(NULL)
+	mMidiOut(NULL),
+	mCheckedFirmware(false),
+	mModel(1)
 {
 	mQueryTimer = new QTimer(this);
 	connect(mQueryTimer, SIGNAL(timeout()), this, SLOT(QueryTimedOut()));
@@ -147,6 +150,8 @@ AxeFxManager::CompleteInit(IMidiOut * midiOut)
 		const std::string msg("ERROR: no Midi Out set for AxeFx sync\n");
 		mTrace->Trace(msg);
 	}
+
+	SendFirmwareVersionQuery();
 }
 
 void
@@ -173,8 +178,21 @@ IsAxeFxSysex(const byte * bytes, const int len)
 	if (len < 7)
 		return false;
 
-	const byte kAxeFxId[] = { 0xf0, 0x00, 0x01, 0x74, 0x01 };
-	return !::memcmp(bytes, kAxeFxId, 5);
+	const byte kAxeFx[] = { 0xf0, 0x00, 0x01, 0x74 };
+	if (::memcmp(bytes, kAxeFx, 4))
+		return false;
+
+// 	const byte kAxeFxUltraId[]	= { 0xf0, 0x00, 0x01, 0x74, 0x01 };
+// 	const byte kAxeFxStdId[]	= { 0xf0, 0x00, 0x01, 0x74, 0x00 };
+
+	switch (bytes[4])
+	{
+	case 0:
+	case 1:
+		return true;
+	}
+
+	return false;
 }
 
 void
@@ -183,7 +201,10 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 	// http://www.fractalaudio.com/forum/viewtopic.php?f=14&t=21524&start=10
 	// http://axefxwiki.guitarlogic.org/index.php?title=Axe-Fx_SysEx_Documentation
 	if (!::IsAxeFxSysex(bytes, len))
+	{
+		// not Axe sysex, or larger msg continuations that we don't care about
 		return;
+	}
 
 	// Tempo: f0 00 01 74 01 10 f7 
 	if (0x10 == bytes[5])
@@ -200,6 +221,46 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 	if (2 == bytes[5])
 	{
 		ReceiveParamValue(&bytes[6], len - 6);
+		return;
+	}
+
+	if (4 == bytes[5])
+	{
+		// skip byte 6 - may as well update state whenever we get it
+		ReceivePatchDump(&bytes[7], len - 7);
+		return;
+	}
+
+	if (8 == bytes[5])
+	{
+		// response firmware version request: F0 00 01 74 01 08 0A 03 F7
+		if (mCheckedFirmware)
+			return;
+
+		if (mTrace)
+		{
+			std::strstream traceMsg;
+			std::string model;
+			switch (bytes[4])
+			{
+			case 0:
+				model = "Standard ";
+				break;
+			case 1:
+				model = "Ultra ";
+				break;
+			default:
+				model = "Unknown model ";
+			}
+
+			if (len >= 8)
+				traceMsg << "Axe-Fx " << model << "version " << (int) bytes[6] << "." << (int) bytes[7] << std::endl << std::ends;
+			else
+				traceMsg << "Axe-Fx " << model << "version " << (int) bytes[6] << "." << (int) bytes[7] << std::endl << std::ends;
+			mTrace->Trace(std::string(traceMsg.str()));
+		}
+
+		mCheckedFirmware = true;
 		return;
 	}
 
@@ -401,6 +462,8 @@ AxeFxManager::InitiateSyncFromAxe()
 			if (!cur->mPatch)
 				continue;
 
+			// TODO: only iterate over effects that we recorded from the edit buffer dump??
+
 			mQueries.push_back(cur);
 		}
 	}
@@ -517,11 +580,33 @@ AxeFxManager::QueryTimedOut()
 	SendNextQuery();
 }
 
+class StartQueryTimer : public QEvent
+{
+	AxeFxManager *mMgr;
+
+public:
+	StartQueryTimer(AxeFxManager * mgr) : 
+	  QEvent(User), 
+		  mMgr(mgr)
+	  {
+		  mMgr->AddRef();
+	  }
+
+	  ~StartQueryTimer()
+	  {
+		  mMgr->mQueryTimer->start();
+		  mMgr->Release();
+	  }
+};
+
 void
 AxeFxManager::SendNextQuery()
 {
 	if (!mMidiOut)
 		return;
+
+	if (!mCheckedFirmware)
+		SendFirmwareVersionQuery();
 
 	QMutexLocker lock(&mQueryLock);
 	if (mQueries.begin() == mQueries.end())
@@ -544,7 +629,7 @@ AxeFxManager::SendNextQuery()
 	0xF7 sysex end 
 */
 
-	const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, 0x01, 0x02, 0, 0, 0, 0, 0x0, 0x0, 0x00, 0xF7 };
+	const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, mModel, 0x02, 0, 0, 0, 0, 0x0, 0x0, 0x00, 0xF7 };
 	Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
 	AxeEffectBlockInfo * next = *mQueries.begin();
 	bb[6] = next->mSysexEffectIdLs;
@@ -552,28 +637,81 @@ AxeFxManager::SendNextQuery()
 	bb[8] = next->mSysexBypassParameterIdLs;
 	bb[9] = next->mSysexBypassParameterIdMs;
 
-	class StartQueryTimer : public QEvent
-	{
-		AxeFxManager *mMgr;
-
-	public:
-		StartQueryTimer(AxeFxManager * mgr) : 
-		  QEvent(User), 
-			  mMgr(mgr)
-		  {
-			  mMgr->AddRef();
-		  }
-
-		  ~StartQueryTimer()
-		  {
-			  mMgr->mQueryTimer->start();
-			  mMgr->Release();
-		  }
-	};
-
 	QCoreApplication::postEvent(this, new StartQueryTimer(this));
 
 	mMidiOut->MidiOut(bb);
+}
+
+void
+AxeFxManager::SendFirmwareVersionQuery()
+{
+	// request firmware vers : F0 00 01 74 01 08 00 00 F7
+	if (!mMidiOut)
+		return;
+
+	QMutexLocker lock(&mQueryLock);
+	const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, mModel, 0x08, 0, 0, 0xF7 };
+	Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
+	mMidiOut->MidiOut(bb);
+}
+
+void
+AxeFxManager::ReceivePatchDump(const byte * bytes, int len)
+{
+	// header that is not passed into this method:
+	// F0 00 01 74 01 04 01
+
+	// undetermined 70 bytes
+	// 00 00 05 03 00 00 05 04 0D 06 00 07 04 07 09 07 
+	// 00 02 03 05 09 06 0C 06 05 06 0E 06 03 06 05 06 
+	// 00 02 00 02 00 02 00 02 00 02 00 02 00 02 00 00 
+	// 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+	// 00 00 00 00 00 00
+
+	// start of grid layout and effect ids
+	// 4 bytes per block in 4 x 12 grid starting at bytes[70]:
+	// 0A 06 00 00 0B 06 00 00 0C 06 00 00 0D 06 00 00 
+	// 04 07 00 00 05 07 00 00 00 00 00 00 00 00 00 00 
+	// 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+	// 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+	// 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+	// 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+	// 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+	// 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+	// 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+	// 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+	// 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+	// 00 00 00 00 00 00 00 00 0C 07 00 00 0D 07 00 00
+
+	// TODO: record all effect blocks
+
+	if (mTrace)
+	{
+		const std::string byteDump(::GetAsciiHexStr(&bytes[70], 8, true) + "\n");
+		mTrace->Trace(byteDump);
+	}
+
+	InitiateSyncFromAxe();
+}
+
+void
+AxeFxManager::RequestEditBufferDump()
+{
+	if (!mCheckedFirmware)
+		SendFirmwareVersionQuery();
+
+	KillResponseTimer();
+	QMutexLocker lock(&mQueryLock);
+	mQueries.clear();
+	const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, mModel, 0x03, 0x01, 0x00, 0x00, 0xF7 };
+	Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
+	mMidiOut->MidiOut(bb);
+}
+
+void
+AxeFxManager::SyncAllFromAxe()
+{
+	RequestEditBufferDump();
 }
 
 void 

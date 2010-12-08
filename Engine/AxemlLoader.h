@@ -44,6 +44,7 @@ struct AxeEffectBlockInfo
 	int				mSysexBypassParameterIdMs;	//	derived
 	int				mSysexBypassParameterIdLs;	//	derived
 	int				mBypassCC;					// unique per name
+	bool			mEffectIsPresentInAxePatch;	// unique per name
 	Patch			* mPatch;
 
 	AxeEffectBlockInfo() :
@@ -54,6 +55,7 @@ struct AxeEffectBlockInfo
 		mSysexBypassParameterIdLs(-1),
 		mSysexBypassParameterIdMs(-1),
 		mBypassCC(0),
+		mEffectIsPresentInAxePatch(true),
 		mPatch(NULL)
 	{
 	}
@@ -67,6 +69,7 @@ struct AxeEffectBlockInfo
 		mSysexBypassParameterIdLs(-1),
 		mSysexBypassParameterIdMs(-1),
 		mBypassCC(cc),
+		mEffectIsPresentInAxePatch(true),
 		mPatch(NULL)
 	{
 		mSysexEffectIdLs = mSysexEffectId & 0x0000000F;

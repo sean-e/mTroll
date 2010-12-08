@@ -45,6 +45,7 @@ class QTimer;
 class AxeFxManager : public QObject, public IMidiInSubscriber
 {
 	Q_OBJECT;
+	friend class StartQueryTimer;
 public:
 	AxeFxManager(ISwitchDisplay * switchDisp, ITraceDisplay * pTrace, std::string appPath);
 	virtual ~AxeFxManager();
@@ -60,14 +61,18 @@ public:
 	void CompleteInit(IMidiOut * midiOut);
 	void SetTempoPatch(Patch * patch);
 	bool SetSyncPatch(Patch * patch);
-	void InitiateSyncFromAxe();
 	void SyncFromAxe(Patch * patch);
+	void SyncAllFromAxe();
 
 private:
-	void ReceiveParamValue(const byte * bytes, int len);
 	AxeEffectBlockInfo * IdentifyBlockInfo(const byte * bytes);
 	AxeEffectBlocks::iterator GetBlockInfo(Patch * patch);
+	void ReceiveParamValue(const byte * bytes, int len);
+	void ReceivePatchDump(const byte * bytes, int len);
+	void InitiateSyncFromAxe();
+	void RequestEditBufferDump();
 	void SendNextQuery();
+	void SendFirmwareVersionQuery();
 	void KillResponseTimer();
 
 private slots:
@@ -85,6 +90,8 @@ private:
 	QTimer			* mQueryTimer;
 	int				mTimeoutCnt;
 	clock_t			mLastTimeout;
+	bool			mCheckedFirmware;
+	byte			mModel;
 };
 
 int GetDefaultAxeCc(const std::string &effectName, ITraceDisplay * trc);
