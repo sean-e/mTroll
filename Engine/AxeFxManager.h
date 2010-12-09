@@ -28,6 +28,7 @@
 #include <QObject>
 #include <qmutex.h>
 #include <time.h>
+#include <set>
 #include "IMidiInSubscriber.h"
 #include "AxemlLoader.h"
 
@@ -68,7 +69,8 @@ private:
 	AxeEffectBlockInfo * IdentifyBlockInfo(const byte * bytes);
 	AxeEffectBlocks::iterator GetBlockInfo(Patch * patch);
 	void ReceiveParamValue(const byte * bytes, int len);
-	void ReceivePatchDump(const byte * bytes, int len);
+	void StartReceivePatchDump(const byte * bytes, int len);
+	void ContinueReceivePatchDump(const byte * bytes, int len);
 	void InitiateSyncFromAxe();
 	void RequestEditBufferDump();
 	void SendNextQuery();
@@ -92,6 +94,8 @@ private:
 	clock_t			mLastTimeout;
 	bool			mCheckedFirmware;
 	byte			mModel;
+	std::set<int>	mEditBufferEffectBlocks; // at last update
+	int				mPatchDumpBytesReceived;
 };
 
 int GetDefaultAxeCc(const std::string &effectName, ITraceDisplay * trc);

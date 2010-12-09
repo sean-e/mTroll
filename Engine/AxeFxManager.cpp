@@ -38,10 +38,10 @@
 #include "AxemlLoader.h"
 #include "IMidiOut.h"
 
-// TODO: model selection for sysex
 
 // Consider: 
-// poll after program changes on axe ch? (where?)
+// poll after program changes on axe ch?
+// restrict effect bypasses to mEffectIsPresentInAxePatch?
 // request patch name?
 
 static void SynonymNormalization(std::string & name);
@@ -58,6 +58,7 @@ AxeFxManager::AxeFxManager(ISwitchDisplay * switchDisp,
 	// mQueryLock(QMutex::Recursive),
 	mMidiOut(NULL),
 	mCheckedFirmware(false),
+	mPatchDumpBytesReceived(0),
 	mModel(1)
 {
 	mQueryTimer = new QTimer(this);
@@ -202,7 +203,13 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 	// http://axefxwiki.guitarlogic.org/index.php?title=Axe-Fx_SysEx_Documentation
 	if (!::IsAxeFxSysex(bytes, len))
 	{
-		// not Axe sysex, or larger msg continuations that we don't care about
+		if (mPatchDumpBytesReceived)
+		{
+			// continuation of previous sysex received
+			ContinueReceivePatchDump(bytes, len);
+		}
+		else
+			; // not Axe sysex
 		return;
 	}
 
@@ -227,7 +234,7 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 	if (4 == bytes[5])
 	{
 		// skip byte 6 - may as well update state whenever we get it
-		ReceivePatchDump(&bytes[7], len - 7);
+		StartReceivePatchDump(&bytes[7], len - 7);
 		return;
 	}
 
@@ -368,8 +375,6 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 
 		if (inf && inf->mPatch)
 		{
-			// TODO: how to know when not present?
-
 			if (0 == bytes[5])
 			{
 				const bool isBypassed = (1 == bytes[4] || 3 == bytes[4]); // bypass param is 1 for bypassed, 0 for not bypassed (except for Amp and Pitch)
@@ -462,8 +467,15 @@ AxeFxManager::InitiateSyncFromAxe()
 			if (!cur->mPatch)
 				continue;
 
-			// TODO: only iterate over effects that we recorded from the edit buffer dump??
+			std::set<int>::const_iterator findIt = mEditBufferEffectBlocks.find(cur->mSysexEffectId);
+			if (findIt == mEditBufferEffectBlocks.end())
+			{
+				cur->mEffectIsPresentInAxePatch = false;
+				cur->mPatch->UpdateState(mSwitchDisplay, false);
+				continue;
+			}
 
+			cur->mEffectIsPresentInAxePatch = true;
 			mQueries.push_back(cur);
 		}
 	}
@@ -656,10 +668,11 @@ AxeFxManager::SendFirmwareVersionQuery()
 }
 
 void
-AxeFxManager::ReceivePatchDump(const byte * bytes, int len)
+AxeFxManager::StartReceivePatchDump(const byte * bytes, int len)
 {
 	// header that is not passed into this method:
 	// F0 00 01 74 01 04 01
+	mPatchDumpBytesReceived = len + 7;
 
 	// undetermined 70 bytes
 	// 00 00 05 03 00 00 05 04 0D 06 00 07 04 07 09 07 
@@ -683,15 +696,41 @@ AxeFxManager::ReceivePatchDump(const byte * bytes, int len)
 	// 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
 	// 00 00 00 00 00 00 00 00 0C 07 00 00 0D 07 00 00
 
-	// TODO: record all effect blocks
-
-	if (mTrace)
+	// record all effect blocks
+	mEditBufferEffectBlocks.clear();
+	const int kBlockCount = 4 * 12;
+	const int kBlockSize = 4 * kBlockCount;
+	const int kStopByte = kBlockSize + 70 + 1; // stop byte is one beyond
+	for (int idx = 70, blockIdx = 0; 
+		(idx + 4) < len && (idx + 4) < kStopByte && blockIdx <= kBlockCount; 
+		idx += 4, blockIdx++)
 	{
-		const std::string byteDump(::GetAsciiHexStr(&bytes[70], 8, true) + "\n");
-		mTrace->Trace(byteDump);
-	}
+		if (mTrace)
+		{
+			const std::string byteDump(::GetAsciiHexStr(&bytes[idx], 4, true) + "\n");
+			mTrace->Trace(byteDump);
+		}
 
-	InitiateSyncFromAxe();
+		const byte ms = bytes[idx];
+		const byte ls = bytes[idx + 1];
+		if (!ms && !ls)
+			continue;
+
+		const int effectId = ms << 4 | ls;
+		mEditBufferEffectBlocks.insert(effectId);
+	}
+}
+
+void
+AxeFxManager::ContinueReceivePatchDump(const byte * bytes, int len)
+{
+	mPatchDumpBytesReceived += len;
+	if (bytes[len - 1] == 0xf7)
+	{
+		// patch dump is 2060 bytes
+		mPatchDumpBytesReceived = 0;
+		InitiateSyncFromAxe();
+	}
 }
 
 void
@@ -705,6 +744,7 @@ AxeFxManager::RequestEditBufferDump()
 	mQueries.clear();
 	const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, mModel, 0x03, 0x01, 0x00, 0x00, 0xF7 };
 	Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
+	mPatchDumpBytesReceived = 0;
 	mMidiOut->MidiOut(bb);
 }
 
