@@ -394,6 +394,27 @@ public:
 	}
 };
 
+class LabelAppendEvent : public ControlUiEvent
+{
+	QPlainTextEdit *mLabel;
+	QString mText;
+
+public:
+	LabelAppendEvent(QPlainTextEdit* label, const QString & text) : 
+		ControlUiEvent(User),
+		mText(text),
+		mLabel(label)
+	{
+	}
+
+	virtual void exec()
+	{
+		QString txt(mLabel->toPlainText());
+		txt += mText;
+		mLabel->setPlainText(txt);
+	}
+};
+
 class LabelTextOutEvent : public ControlUiEvent
 {
 	QLabel *mLabel;
@@ -424,6 +445,16 @@ ControlUi::TextOut(const std::string & txt)
 
 	QCoreApplication::postEvent(this, 
 		new LabelTextOutEvent2(mMainDisplay, txt.c_str()));
+}
+
+void
+ControlUi::AppendText(const std::string & text)
+{
+	if (!mMainDisplay)
+		return;
+
+	QCoreApplication::postEvent(this, 
+		new LabelAppendEvent(mMainDisplay, text.c_str()));
 }
 
 void

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008 Sean Echevarria
+ * Copyright (C) 2007-2008,2010 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -36,6 +36,7 @@ class IMainDisplay
 {
 public:
 	virtual void TextOut(const std::string & txt) = 0;
+	virtual void AppendText(const std::string & text) = 0;
 	virtual void ClearDisplay() = 0;
 };
 

@@ -96,6 +96,7 @@ public: // IMidiInGenerator
 
 public: // IMainDisplay
 	virtual void		TextOut(const std::string & txt);
+	virtual void		AppendText(const std::string & text);
 	virtual void		ClearDisplay();
 
 public: // ITraceDisplay
@@ -290,6 +291,7 @@ private:
 	{
 		return mRowColToSwitchNumber[(row << 16) | col];
 	}
+
 private:
 	QWidget						* mParent;
 	ITrollApplication			* mApp;
