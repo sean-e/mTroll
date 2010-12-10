@@ -76,6 +76,7 @@ private:
 	AxeFxManager *			mAxeFxManager;
 	std::map<std::string, std::string> mDeviceChannels; // outboard device channels
 	std::map<std::string, int> mDevicePorts; // computer midi ports used to address outboard devices
+	int						mAxeSyncPort;
 };
 
 #endif // EngineLoader_h__

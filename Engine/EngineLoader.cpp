@@ -48,6 +48,7 @@
 #include "IMidiIn.h"
 #include "ITrollApplication.h"
 #include "AxeTogglePatch.h"
+#include "AxeFxProgramChange.h"
 
 
 static PatchBank::PatchState GetLoadState(const std::string & tmpLoad);
@@ -67,7 +68,8 @@ EngineLoader::EngineLoader(ITrollApplication * app,
 	mMainDisplay(mainDisplay),
 	mSwitchDisplay(switchDisplay),
 	mTraceDisplay(traceDisplay),
-	mAxeFxManager(NULL)
+	mAxeFxManager(NULL),
+	mAxeSyncPort(-1)
 {
 	for (int idx = 0; idx < 4; ++idx)
 		mAdcEnables[idx] = adc_default;
@@ -225,13 +227,11 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 		int inDeviceIdx = -1;
 		int activityIndicatorId = -1;
 		int port = 1;
-		std::string sync;
 
 		pChildElem->QueryIntAttribute("inIdx", &inDeviceIdx);
 		pChildElem->QueryIntAttribute("port", &port);
 		pChildElem->QueryIntAttribute("outIdx", &deviceIdx);
 		pChildElem->QueryIntAttribute("activityIndicatorId", &activityIndicatorId);
-		pChildElem->QueryValueAttribute("sync", &sync);
 
 		if (-1 == inDeviceIdx || -1 != deviceIdx)
 		{
@@ -247,15 +247,9 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 			if (mMidiInGenerator)
 			{
 				IMidiIn * midiIn = mMidiInGenerator->CreateMidiIn(mMidiInPortToDeviceIdxMap[port]);
-				if (midiIn && sync == "AxeFx")
+				if (mAxeFxManager && port == mAxeSyncPort && midiIn)
 				{
-					if (!mAxeFxManager)
-					{
-						mAxeFxManager = new AxeFxManager(mSwitchDisplay, mTraceDisplay, mApp->ApplicationDirectory());
-						mAxeFxManager->AddRef();
-					}
-
-					if (mAxeFxManager && midiIn->Subscribe(mAxeFxManager))
+					if (midiIn->Subscribe(mAxeFxManager))
 						mAxeFxManager->AddRef();
 				}
 			}
@@ -656,6 +650,41 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 					childElem->QueryIntAttribute("program", &data1);
 					cmdByte = 0xc0;
 					useDataByte2 = false;
+				}
+				else if (patchElement == "AxeProgramChange")
+				{
+					// <AxeProgramChange group="A" device="Axe-Fx" program="0" />
+					// use data2 as bank change
+					// data1 val range 0 - 383
+					childElem->QueryIntAttribute("program", &data1);
+					if (0 > data1 || data1 > 383)
+					{
+						if (mTraceDisplay)
+						{
+							std::strstream traceMsg;
+							traceMsg << "Error loading config file: too large a preset specified for AxeProgramChange in patch " << patchName << std::endl << std::ends;
+							mTraceDisplay->Trace(std::string(traceMsg.str()));
+						}
+						continue;
+					}
+
+					while (data1 > 127)
+					{
+						data1 -= 128;
+						++data2;
+					}
+
+					// bank select
+					bytes.push_back(0xb0 | ch);
+					bytes.push_back(0);
+					bytes.push_back(data2);
+
+					bytes.push_back(0xc0 | ch);
+					bytes.push_back(data1);
+					if (group == "B")
+						cmds2.push_back(new AxeFxProgramChange(midiOut, bytes, mAxeFxManager));
+					else
+						cmds.push_back(new AxeFxProgramChange(midiOut, bytes, mAxeFxManager));
 				}
 				else if (patchElement == "ControlChange")
 				{
@@ -1148,6 +1177,22 @@ EngineLoader::LoadDeviceChannelMap(TiXmlElement * pElem)
 		int port = -1;
 		pElem->QueryIntAttribute("port", &port);
 		mDevicePorts[dev] = port;
+
+		if (dev == "AxeFx" || dev == "Axe-Fx")
+		{
+			if (!mAxeFxManager)
+			{
+				mAxeFxManager = new AxeFxManager(mSwitchDisplay, mTraceDisplay, mApp->ApplicationDirectory());
+				mAxeFxManager->AddRef();
+				mAxeSyncPort = -1 == port ? 1 : port;
+			}
+			else if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: multiple axe-fx devices" << std::endl << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
+		}
 	}
 }
 
