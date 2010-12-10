@@ -37,19 +37,22 @@ public:
 		mAxe(axe)
 	{
 		_ASSERTE(mAxe);
-		mAxe->AddRef();
+		if (mAxe)
+			mAxe->AddRef();
 	}
 
 	~MetaPatch_SyncAxeFx()
 	{
-		mAxe->Release();
+		if (mAxe)
+			mAxe->Release();
 	}
 
 	virtual std::string GetPatchTypeStr() const {return "meta: syncAxeFx";}
 
 	virtual void SwitchPressed(IMainDisplay *, ISwitchDisplay *)
 	{
-		mAxe->SyncAllFromAxe();
+		if (mAxe)
+			mAxe->SyncAllFromAxe();
 	}
 
 	virtual void BankTransitionActivation() {SwitchPressed(NULL, NULL);}
