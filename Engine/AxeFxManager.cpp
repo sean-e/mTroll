@@ -39,16 +39,14 @@
 #include "IMidiOut.h"
 
 
-// Consider: 
-// poll after program changes on axe ch?
-// restrict effect bypasses to mEffectIsPresentInAxePatch?
-// request patch name?
+// TODO: display patch name (via Append)
+// Consider: restrict effect bypasses to mEffectIsPresentInAxePatch?
 
 static void SynonymNormalization(std::string & name);
 
 AxeFxManager::AxeFxManager(ISwitchDisplay * switchDisp,
 						   ITraceDisplay *pTrace,
-						   std::string appPath) :
+						   const std::string & appPath) :
 	mSwitchDisplay(switchDisp),
 	mTrace(pTrace),
 	mRefCnt(0),
@@ -59,7 +57,7 @@ AxeFxManager::AxeFxManager(ISwitchDisplay * switchDisp,
 	mMidiOut(NULL),
 	mCheckedFirmware(false),
 	mPatchDumpBytesReceived(0),
-	mModel(1)
+	mModel(0)
 {
 	mQueryTimer = new QTimer(this);
 	connect(mQueryTimer, SIGNAL(timeout()), this, SLOT(QueryTimedOut()));
@@ -244,22 +242,23 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 		if (mCheckedFirmware)
 			return;
 
+		std::strstream traceMsg;
+		std::string model;
+		switch (bytes[4])
+		{
+		case 0:
+			model = "Standard ";
+			break;
+		case 1:
+			model = "Ultra ";
+			mModel = 1;
+			break;
+		default:
+			model = "Unknown model ";
+		}
+
 		if (mTrace)
 		{
-			std::strstream traceMsg;
-			std::string model;
-			switch (bytes[4])
-			{
-			case 0:
-				model = "Standard ";
-				break;
-			case 1:
-				model = "Ultra ";
-				break;
-			default:
-				model = "Unknown model ";
-			}
-
 			if (len >= 8)
 				traceMsg << "Axe-Fx " << model << "version " << (int) bytes[6] << "." << (int) bytes[7] << std::endl << std::ends;
 			else
@@ -662,8 +661,8 @@ AxeFxManager::SendFirmwareVersionQuery()
 		return;
 
 	QMutexLocker lock(&mQueryLock);
-	const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, mModel, 0x08, 0, 0, 0xF7 };
-	Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
+	const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, 0, 0x08, 0, 0, 0xF7 };
+	const Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
 	mMidiOut->MidiOut(bb);
 }
 
@@ -705,14 +704,14 @@ AxeFxManager::StartReceivePatchDump(const byte * bytes, int len)
 		(idx + 4) < len && (idx + 4) < kStopByte && blockIdx <= kBlockCount; 
 		idx += 4, blockIdx++)
 	{
-		if (mTrace)
+		if (0 && mTrace)
 		{
 			const std::string byteDump(::GetAsciiHexStr(&bytes[idx], 4, true) + "\n");
 			mTrace->Trace(byteDump);
 		}
 
-		const byte ms = bytes[idx];
-		const byte ls = bytes[idx + 1];
+		const byte ls = bytes[idx];
+		const byte ms = bytes[idx + 1];
 		if (!ms && !ls)
 			continue;
 
@@ -743,7 +742,7 @@ AxeFxManager::RequestEditBufferDump()
 	QMutexLocker lock(&mQueryLock);
 	mQueries.clear();
 	const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, mModel, 0x03, 0x01, 0x00, 0x00, 0xF7 };
-	Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
+	const Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
 	mPatchDumpBytesReceived = 0;
 	mMidiOut->MidiOut(bb);
 }

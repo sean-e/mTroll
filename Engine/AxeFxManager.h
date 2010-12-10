@@ -48,7 +48,7 @@ class AxeFxManager : public QObject, public IMidiInSubscriber
 	Q_OBJECT;
 	friend class StartQueryTimer;
 public:
-	AxeFxManager(ISwitchDisplay * switchDisp, ITraceDisplay * pTrace, std::string appPath);
+	AxeFxManager(ISwitchDisplay * switchDisp, ITraceDisplay * pTrace, const std::string & appPath);
 	virtual ~AxeFxManager();
 
 	// IMidiInSubscriber
