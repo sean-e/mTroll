@@ -69,6 +69,7 @@ private:
 	AxeEffectBlockInfo * IdentifyBlockInfo(const byte * bytes);
 	AxeEffectBlocks::iterator GetBlockInfo(Patch * patch);
 	void ReceiveParamValue(const byte * bytes, int len);
+	void ReceiveFirmwareVersionResponse(const byte * bytes, int len);
 	void StartReceivePatchDump(const byte * bytes, int len);
 	void ContinueReceivePatchDump(const byte * bytes, int len);
 	void InitiateSyncFromAxe();

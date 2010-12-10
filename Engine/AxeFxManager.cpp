@@ -238,35 +238,10 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 
 	if (8 == bytes[5])
 	{
-		// response firmware version request: F0 00 01 74 01 08 0A 03 F7
 		if (mCheckedFirmware)
 			return;
 
-		std::strstream traceMsg;
-		std::string model;
-		switch (bytes[4])
-		{
-		case 0:
-			model = "Standard ";
-			break;
-		case 1:
-			model = "Ultra ";
-			mModel = 1;
-			break;
-		default:
-			model = "Unknown model ";
-		}
-
-		if (mTrace)
-		{
-			if (len >= 8)
-				traceMsg << "Axe-Fx " << model << "version " << (int) bytes[6] << "." << (int) bytes[7] << std::endl << std::ends;
-			else
-				traceMsg << "Axe-Fx " << model << "version " << (int) bytes[6] << "." << (int) bytes[7] << std::endl << std::ends;
-			mTrace->Trace(std::string(traceMsg.str()));
-		}
-
-		mCheckedFirmware = true;
+		ReceiveFirmwareVersionResponse(bytes, len);
 		return;
 	}
 
@@ -751,6 +726,37 @@ void
 AxeFxManager::SyncAllFromAxe()
 {
 	RequestEditBufferDump();
+}
+
+void
+AxeFxManager::ReceiveFirmwareVersionResponse(const byte * bytes, int len)
+{
+	// response to firmware version request: F0 00 01 74 01 08 0A 03 F7
+	std::string model;
+	switch (bytes[4])
+	{
+	case 0:
+		model = "Standard ";
+		break;
+	case 1:
+		model = "Ultra ";
+		mModel = 1;
+		break;
+	default:
+		model = "Unknown model ";
+	}
+
+	if (mTrace)
+	{
+		std::strstream traceMsg;
+		if (len >= 8)
+			traceMsg << "Axe-Fx " << model << "version " << (int) bytes[6] << "." << (int) bytes[7] << std::endl << std::ends;
+		else
+			traceMsg << "Axe-Fx " << model << "version " << (int) bytes[6] << "." << (int) bytes[7] << std::endl << std::ends;
+		mTrace->Trace(std::string(traceMsg.str()));
+	}
+
+	mCheckedFirmware = true;
 }
 
 void 
