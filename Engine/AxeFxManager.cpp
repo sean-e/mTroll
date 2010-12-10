@@ -37,17 +37,19 @@
 #include "ISwitchDisplay.h"
 #include "AxemlLoader.h"
 #include "IMidiOut.h"
+#include "IMainDisplay.h"
 
 
-// TODO: display patch name (via Append)
 // Consider: restrict effect bypasses to mEffectIsPresentInAxePatch?
 
 static void SynonymNormalization(std::string & name);
 
-AxeFxManager::AxeFxManager(ISwitchDisplay * switchDisp,
+AxeFxManager::AxeFxManager(IMainDisplay * mainDisp, 
+						   ISwitchDisplay * switchDisp,
 						   ITraceDisplay *pTrace,
 						   const std::string & appPath) :
 	mSwitchDisplay(switchDisp),
+	mMainDisplay(mainDisp),
 	mTrace(pTrace),
 	mRefCnt(0),
 	mTimeoutCnt(0),
@@ -644,14 +646,40 @@ AxeFxManager::SendFirmwareVersionQuery()
 void
 AxeFxManager::StartReceivePatchDump(const byte * bytes, int len)
 {
+	int idx;
 	// header that is not passed into this method:
 	// F0 00 01 74 01 04 01
 	mPatchDumpBytesReceived = len + 7;
 
-	// undetermined 70 bytes
-	// 00 00 05 03 00 00 05 04 0D 06 00 07 04 07 09 07 
-	// 00 02 03 05 09 06 0C 06 05 06 0E 06 03 06 05 06 
-	// 00 02 00 02 00 02 00 02 00 02 00 02 00 02 00 00 
+	// undetermined 6 bytes
+	// 00 00 05 03 00 00 
+// 	if (mTrace)
+// 	{
+// 		const std::string byteDump(::GetAsciiHexStr(&bytes[7], 6, true) + "\n");
+// 		mTrace->Trace(byteDump);
+// 	}
+
+	// patch name 21 * 2bytes = 42 bytes
+	// 05 04 0D 06 00 07 04 07 09 07 00 02 03 05 09 06 
+	// 0C 06 05 06 0E 06 03 06 05 06 00 02 00 02 00 02 
+	// 00 02 00 02 00 02 00 02 00 00 
+	const int kNameBufLen = 42;
+	std::string patchName;
+	for (idx = 6; (idx + 2) < len && (idx + 2 - 6) <= kNameBufLen; idx += 2)
+	{
+		const byte ls = bytes[idx];
+		const byte ms = bytes[idx + 1];
+		const int ch = ms << 4 | ls;
+		patchName += ch;
+	}
+
+	if (mMainDisplay && patchName.size())
+	{
+		patchName = "Axe-Fx " + patchName;
+		mMainDisplay->AppendText(patchName);
+	}
+	
+	// undetermined 22 bytes
 	// 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
 	// 00 00 00 00 00 00
 
@@ -675,7 +703,8 @@ AxeFxManager::StartReceivePatchDump(const byte * bytes, int len)
 	const int kBlockCount = 4 * 12;
 	const int kBlockSize = 4 * kBlockCount;
 	const int kStopByte = kBlockSize + 70 + 1; // stop byte is one beyond
-	for (int idx = 70, blockIdx = 0; 
+	idx = 70;
+	for (int blockIdx = 0; 
 		(idx + 4) < len && (idx + 4) < kStopByte && blockIdx <= kBlockCount; 
 		idx += 4, blockIdx++)
 	{

@@ -1182,7 +1182,7 @@ EngineLoader::LoadDeviceChannelMap(TiXmlElement * pElem)
 		{
 			if (!mAxeFxManager)
 			{
-				mAxeFxManager = new AxeFxManager(mSwitchDisplay, mTraceDisplay, mApp->ApplicationDirectory());
+				mAxeFxManager = new AxeFxManager(mMainDisplay, mSwitchDisplay, mTraceDisplay, mApp->ApplicationDirectory());
 				mAxeFxManager->AddRef();
 				mAxeSyncPort = -1 == port ? 1 : port;
 			}

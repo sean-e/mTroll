@@ -32,6 +32,7 @@
 #include "IMidiInSubscriber.h"
 #include "AxemlLoader.h"
 
+class IMainDisplay;
 class ITraceDisplay;
 class ISwitchDisplay;
 class Patch;
@@ -48,7 +49,7 @@ class AxeFxManager : public QObject, public IMidiInSubscriber
 	Q_OBJECT;
 	friend class StartQueryTimer;
 public:
-	AxeFxManager(ISwitchDisplay * switchDisp, ITraceDisplay * pTrace, const std::string & appPath);
+	AxeFxManager(IMainDisplay * mainDisp, ISwitchDisplay * switchDisp, ITraceDisplay * pTrace, const std::string & appPath);
 	virtual ~AxeFxManager();
 
 	// IMidiInSubscriber
@@ -83,6 +84,7 @@ private slots:
 
 private:
 	int				mRefCnt;
+	IMainDisplay	* mMainDisplay;
 	ITraceDisplay	* mTrace;
 	ISwitchDisplay	* mSwitchDisplay;
 	IMidiOut		* mMidiOut;
