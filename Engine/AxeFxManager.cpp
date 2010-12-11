@@ -600,6 +600,9 @@ AxeFxManager::SendNextQuery()
 	if (mQueries.begin() == mQueries.end())
 		return;
 
+	if (!mCheckedFirmware)
+		return;
+
 /* MIDI_SET_PARAMETER (or GET)
 	0xF0 sysex start 
 	0x00 Manf. ID byte0 
@@ -744,6 +747,8 @@ AxeFxManager::RequestEditBufferDump()
 
 	KillResponseTimer();
 	QMutexLocker lock(&mQueryLock);
+	if (!mCheckedFirmware)
+		return;
 	mQueries.clear();
 	const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, mModel, 0x03, 0x01, 0x00, 0x00, 0xF7 };
 	const Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
