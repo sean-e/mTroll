@@ -397,7 +397,7 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 			if (it != mBankLoadSwitchNumbers.end())
 			{
 				EscapeToDefaultMode();
-				LoadBank(it->second);
+				LoadBankByNumber(it->second);
 			}
 		}
 
@@ -884,7 +884,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			for (std::map<int, int>::const_iterator it = mBankLoadSwitchNumbers.begin();
 				it != mBankLoadSwitchNumbers.end(); ++it)
 			{
-				PatchBank * bnk = GetBank(it->second);
+				PatchBank * bnk = GetBank(GetBankIndex(it->second));
 				if (bnk)
 				{
 					std::string txt("Bank: ");
