@@ -946,12 +946,12 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 				childElem->QueryIntAttribute("switch", &switchNumber);
 				int patchNumber = -1;
 				childElem->QueryIntAttribute("patch", &patchNumber);
-				if (switchNumber <= 0|| -1 == patchNumber)
+				if (switchNumber <= 0)
 				{
 					if (mTraceDisplay)
 					{
 						std::strstream traceMsg;
-						traceMsg << "Error loading config file: invalid switch or patch number in PatchMap for bank " << bankName << std::endl << std::ends;
+						traceMsg << "Error loading config file: invalid switch in PatchMap for bank " << bankName << std::endl << std::ends;
 						mTraceDisplay->Trace(std::string(traceMsg.str()));
 					}
 					continue;

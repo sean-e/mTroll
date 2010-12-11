@@ -119,15 +119,18 @@ PatchBank::InitPatches(const MidiControlEngine::Patches & enginePatches,
 				MidiControlEngine::Patches::const_iterator patchIt = enginePatches.find(curItem->mPatchNumber);
 				if (patchIt == enginePatches.end())
 				{
-					if (traceDisp)
+					if (curItem->mPatchNumber != -1)
 					{
-						std::strstream traceMsg;
-						traceMsg << "Patch " << curItem->mPatchNumber << " referenced in bank " << mName << " (" << mNumber << ") does not exist!" << std::endl << std::ends;
-						traceDisp->Trace(std::string(traceMsg.str()));
-					}
+						if (traceDisp)
+						{
+							std::strstream traceMsg;
+							traceMsg << "Patch " << curItem->mPatchNumber << " referenced in bank " << mName << " (" << mNumber << ") does not exist!" << std::endl << std::ends;
+							traceDisp->Trace(std::string(traceMsg.str()));
+						}
 
-					inc = false;
-					it2 = patches.erase(it2);
+						inc = false;
+						it2 = patches.erase(it2);
+					}
 				}
 				else
 				{
@@ -155,7 +158,7 @@ PatchBank::CalibrateExprSettings(const PedalCalibration * pedalCalibration, Midi
 			 ++it2)
 		{
 			PatchMap * curItem = *it2;
-			if (curItem)
+			if (curItem && curItem->mPatch)
 			{
 				ExpressionPedals & pedals = curItem->mPatch->GetPedals();
 				pedals.Calibrate(pedalCalibration, eng, traceDisp);
