@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008 Sean Echevarria
+ * Copyright (C) 2007-2008,2010 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -55,6 +55,58 @@ public:
 private:
 	MidiControlEngine	* mEngine;
 	int			mBankNumber;
+};
+
+
+class MetaPatch_LoadBankRelative : public Patch
+{
+private:
+	MetaPatch_LoadBankRelative();
+
+protected:
+	MetaPatch_LoadBankRelative(MidiControlEngine * engine, int number, const std::string & name, int steps) : 
+		Patch(number, name),
+		mEngine(engine),
+		mSteps(steps)
+	{
+		_ASSERTE(mEngine);
+	}
+
+public:
+	virtual void SwitchPressed(IMainDisplay *, ISwitchDisplay *)
+	{
+		mEngine->LoadBankRelative(mSteps);
+	}
+
+	virtual bool UpdateMainDisplayOnPress() const {return false;}
+
+	virtual void BankTransitionActivation() {SwitchPressed(NULL, NULL);}
+	virtual void BankTransitionDeactivation() {SwitchPressed(NULL, NULL);}
+
+private:
+	MidiControlEngine	* mEngine;
+	int					mSteps;
+};
+
+class MetaPatch_LoadNextBank : public MetaPatch_LoadBankRelative
+{
+public:
+	MetaPatch_LoadNextBank(MidiControlEngine * engine, int number, const std::string & name) : 
+		MetaPatch_LoadBankRelative(engine, number, name, 1)
+	{ }
+
+	virtual std::string GetPatchTypeStr() const {return "meta: LoadNextBank";}
+
+};
+
+class MetaPatch_LoadPreviousBank : public MetaPatch_LoadBankRelative
+{
+public:
+	MetaPatch_LoadPreviousBank(MidiControlEngine * engine, int number, const std::string & name) : 
+		MetaPatch_LoadBankRelative(engine, number, name, -1)
+	{ }
+
+	virtual std::string GetPatchTypeStr() const {return "meta: LoadPreviousBank";}
 };
 
 #endif // MetaPatch_LoadBank_h__

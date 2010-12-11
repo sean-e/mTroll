@@ -412,6 +412,10 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				 mEngine->AddPatch(new MetaPatch_ResetBankPatches(mEngine, patchNumber, patchName));
 			else if (tmp == "SyncAxeFx")
 				 mEngine->AddPatch(new MetaPatch_SyncAxeFx(mAxeFxManager, patchNumber, patchName));
+			else if (tmp == "LoadNextBank")
+				mEngine->AddPatch(new MetaPatch_LoadNextBank(mEngine, patchNumber, patchName));
+			else if (tmp == "LoadPreviousBank")
+				mEngine->AddPatch(new MetaPatch_LoadPreviousBank(mEngine, patchNumber, patchName));
 			else if (tmp == "LoadBank")
 			{
 				int bankNumber = -1;

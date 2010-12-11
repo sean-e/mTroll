@@ -606,6 +606,38 @@ MidiControlEngine::NavigateBankRelative(int relativeBankIndex)
 }
 
 void
+MidiControlEngine::LoadBankRelative(int relativeBankIndex)
+{
+	// navigate and commit bank
+	const int kBankCnt = mBanks.size();
+	if (!kBankCnt || kBankCnt == 1)
+		return;
+
+	mBankNavigationIndex = mBankNavigationIndex + relativeBankIndex;
+	if (mBankNavigationIndex < 0)
+		mBankNavigationIndex = kBankCnt - 1;
+	if (mBankNavigationIndex >= kBankCnt)
+		mBankNavigationIndex = 0;
+
+	ChangeMode(emBank);
+	LoadBank(mBankNavigationIndex);
+
+	PatchBank * bank = GetBank(mBankNavigationIndex);
+	if (!bank)
+	{
+		if (mTrace)
+		{
+			std::strstream traceMsg;
+			traceMsg << "Bank navigation error" << std::endl << std::ends;
+			mTrace->Trace(std::string(traceMsg.str()));
+		}
+		return;
+	}
+
+	bank->DisplayInfo(mMainDisplay, mSwitchDisplay, true, false);
+}
+
+void
 MidiControlEngine::LoadBankByNumber(int bankNumber)
 {
 	int bankidx = GetBankIndex(bankNumber);

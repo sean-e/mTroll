@@ -94,6 +94,7 @@ public:
 	void					RefirePedal(int pedal);
 	void					ResetBankPatches();
 	void					LoadBankByNumber(int bankNumber);
+	void					LoadBankRelative(int relativeBankIndex);
 
 	void					EnterNavMode() { ChangeMode(emBankNav); }
 	void					HistoryBackward();
