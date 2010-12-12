@@ -520,11 +520,11 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 					displayMsg << "adc ch(" << (int) mChannel << "), ctrl(" << (int) mControlNumber << "): " << newAdcVal << " -> " << (int) mMidiData[2] << std::endl << std::ends;
 #endif
 				}
+	
+				mainDisplay->TransientTextOut(displayMsg.str());
 			}
 			else
-				displayMsg << std::endl << std::ends; // clear display
-
-			mainDisplay->TextOut(displayMsg.str());
+				mainDisplay->ClearTransientText();
 		}
 	}
 }

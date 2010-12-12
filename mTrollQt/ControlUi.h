@@ -66,6 +66,8 @@ class ControlUi : public QWidget,
 {
 	Q_OBJECT;
 	friend class CreateDisplayTimeTimer;
+	friend class EditTextOutEvent;
+	friend class EditAppendEvent;
 public:
 	ControlUi(QWidget * parent, ITrollApplication * app);
 	virtual ~ControlUi();
@@ -98,6 +100,8 @@ public: // IMainDisplay
 	virtual void		TextOut(const std::string & txt);
 	virtual void		AppendText(const std::string & text);
 	virtual void		ClearDisplay();
+	virtual void		ClearTransientText();
+	virtual void		TransientTextOut(const std::string & txt);
 
 public: // ITraceDisplay
 	virtual void		Trace(const std::string & txt);
@@ -323,6 +327,7 @@ private:
 	QTimer						* mTimeDisplayTimer;
 	DWORD						mBackgroundColor;
 	DWORD						mFrameHighlightColor;
+	QString						mMainText;
 
 	struct SwitchTextDisplayConfig
 	{

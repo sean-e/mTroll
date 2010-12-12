@@ -373,16 +373,20 @@ ControlUi::ButtonReleased(const int idx)
 	}
 }
 
-class LabelTextOutEvent2 : public ControlUiEvent
+class EditTextOutEvent : public ControlUiEvent
 {
+	ControlUi * mUi;
 	QPlainTextEdit *mLabel;
 	QString mText;
+	bool mKeepText;
 
 public:
-	LabelTextOutEvent2(QPlainTextEdit* label, const QString & text) : 
+	EditTextOutEvent(ControlUi * ui, QPlainTextEdit* label, const QString & text, bool keepText = true) : 
 		ControlUiEvent(User),
+		mUi(ui),
 		mText(text),
-		mLabel(label)
+		mLabel(label),
+		mKeepText(keepText)
 	{
 	}
 
@@ -390,18 +394,24 @@ public:
 	{
 		const QString prevTxt(mLabel->toPlainText());
 		if (prevTxt != mText)
+		{
+			if (mKeepText)
+				mUi->mMainText = mText;
 			mLabel->setPlainText(mText);
+		}
 	}
 };
 
-class LabelAppendEvent : public ControlUiEvent
+class EditAppendEvent : public ControlUiEvent
 {
+	ControlUi * mUi;
 	QPlainTextEdit *mLabel;
 	QString mText;
 
 public:
-	LabelAppendEvent(QPlainTextEdit* label, const QString & text) : 
+	EditAppendEvent(ControlUi * ui, QPlainTextEdit* label, const QString & text) : 
 		ControlUiEvent(User),
+		mUi(ui),
 		mText(text),
 		mLabel(label)
 	{
@@ -409,30 +419,11 @@ public:
 
 	virtual void exec()
 	{
-		QString txt(mLabel->toPlainText());
+		// assumes non-transient text
+		QString txt(mUi->mMainText);
 		txt += mText;
+		mUi->mMainText = txt;
 		mLabel->setPlainText(txt);
-	}
-};
-
-class LabelTextOutEvent : public ControlUiEvent
-{
-	QLabel *mLabel;
-	QString mText;
-
-public:
-	LabelTextOutEvent(QLabel * label, const QString & text) : 
-		ControlUiEvent(User),
-		mText(text),
-		mLabel(label)
-	{
-	}
-
-	virtual void exec()
-	{
-		const QString prevTxt(mLabel->text());
-		if (prevTxt != mText)
-			mLabel->setText(mText);
 	}
 };
 
@@ -444,7 +435,7 @@ ControlUi::TextOut(const std::string & txt)
 		return;
 
 	QCoreApplication::postEvent(this, 
-		new LabelTextOutEvent2(mMainDisplay, txt.c_str()));
+		new EditTextOutEvent(this, mMainDisplay, txt.c_str()));
 }
 
 void
@@ -454,7 +445,7 @@ ControlUi::AppendText(const std::string & text)
 		return;
 
 	QCoreApplication::postEvent(this, 
-		new LabelAppendEvent(mMainDisplay, text.c_str()));
+		new EditAppendEvent(this, mMainDisplay, text.c_str()));
 }
 
 void
@@ -464,7 +455,24 @@ ControlUi::ClearDisplay()
 		return;
 
 	QCoreApplication::postEvent(this, 
-		new LabelTextOutEvent2(mMainDisplay, ""));
+		new EditTextOutEvent(this, mMainDisplay, ""));
+}
+
+void
+ControlUi::TransientTextOut(const std::string & txt)
+{
+	if (!mMainDisplay)
+		return;
+
+	QCoreApplication::postEvent(this, 
+		new EditTextOutEvent(this, mMainDisplay, txt.c_str(), false));
+}
+
+void
+ControlUi::ClearTransientText()
+{
+	QCoreApplication::postEvent(this, 
+		new EditTextOutEvent(this, mMainDisplay, mMainText));
 }
 
 
@@ -548,6 +556,27 @@ ControlUi::SetSwitchDisplay(int switchNumber,
 	QCoreApplication::postEvent(this, 
 		new UpdateSwitchDisplayEvent(mLeds[switchNumber], isOn ? mLedConfig.mOnColor : mLedConfig.mOffColor, mFrameHighlightColor));
 }
+
+class LabelTextOutEvent : public ControlUiEvent
+{
+	QLabel *mLabel;
+	QString mText;
+
+public:
+	LabelTextOutEvent(QLabel * label, const QString & text) : 
+		ControlUiEvent(User),
+		mText(text),
+		mLabel(label)
+	{
+	}
+
+	virtual void exec()
+	{
+		const QString prevTxt(mLabel->text());
+		if (prevTxt != mText)
+			mLabel->setText(mText);
+	}
+};
 
 void
 ControlUi::SetSwitchText(int switchNumber, 

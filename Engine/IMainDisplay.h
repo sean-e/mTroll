@@ -38,6 +38,8 @@ public:
 	virtual void TextOut(const std::string & txt) = 0;
 	virtual void AppendText(const std::string & text) = 0;
 	virtual void ClearDisplay() = 0;
+	virtual void TransientTextOut(const std::string & txt) = 0;
+	virtual void ClearTransientText() = 0;
 };
 
 #endif // IMainDisplay_h__
