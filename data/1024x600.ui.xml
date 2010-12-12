@@ -1,14 +1,14 @@
 <?xml version="1.0" ?>
 <MidiControlUiSettings>
-	<frame width="1024" height="590" />
+	<frame width="1024" height="590" backgroundColor="1a1a1a" frameHighlightColor="5a5a5a" />
 	<mainTextDisplay top="330" left="2" width="745" height="230" font-name="Lucida Console" font-height="45" foregroundColor="ffcc00" backgroundColor="0" />
 	<traceTextDisplay top="330" left="750" width="270" height="230" font-height="8" />
 	<hardware ledBrightness="1" />
 
 	<switchAssemblyConfig>
-	    <switch font-name="Tahoma" font-height="10" width="75" height="23" />
+			<switch font-name="Tahoma" font-weight="bold" font-height="10" width="75" height="23" foregroundColor="bbbbbb" />
 	    <switchTextDisplay font-name="Tahoma" font-height="19" foregroundColor="00ff00" backgroundColor="0" width="203" height="32" />
-	    <switchLed width="30" height="15" onColor="3300ff" offColor="dddddd" />
+	    <switchLed width="30" height="15" onColor="ffff00" offColor="3a3a3a" />
 	</switchAssemblyConfig>
 
 	<switchMappings comment="this is for mapping ordinal switch numbers to monome grid coords (all are zero based)">
@@ -50,7 +50,7 @@
 		</switchAssembly>
 			<switchAssembly number="30" incrementalVpos="0" incrementalHpos="205" />
 			<switchAssembly number="23" incrementalVpos="0" incrementalHpos="205" >
-			<switchLed vOffset="5" hOffset="70" />
+			<switchLed vOffset="25" hOffset="90" />
 		</switchAssembly>
 		<switchAssembly number="21" incrementalVpos="0" incrementalHpos="205" >
 			<switchTextDisplay />
