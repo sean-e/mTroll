@@ -49,7 +49,7 @@ class AxeFxManager : public QObject, public IMidiInSubscriber
 	Q_OBJECT;
 	friend class StartQueryTimer;
 public:
-	AxeFxManager(IMainDisplay * mainDisp, ISwitchDisplay * switchDisp, ITraceDisplay * pTrace, const std::string & appPath);
+	AxeFxManager(IMainDisplay * mainDisp, ISwitchDisplay * switchDisp, ITraceDisplay * pTrace, const std::string & appPath, int ch);
 	virtual ~AxeFxManager();
 
 	// IMidiInSubscriber
@@ -65,6 +65,7 @@ public:
 	bool SetSyncPatch(Patch * patch);
 	void SyncFromAxe(Patch * patch);
 	void SyncAllFromAxe();
+	int GetAxeChannel() const { return mAxeChannel; }
 
 private:
 	AxeEffectBlockInfo * IdentifyBlockInfo(const byte * bytes);
@@ -84,6 +85,7 @@ private slots:
 
 private:
 	int				mRefCnt;
+	int				mAxeChannel;
 	IMainDisplay	* mMainDisplay;
 	ITraceDisplay	* mTrace;
 	ISwitchDisplay	* mSwitchDisplay;

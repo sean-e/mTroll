@@ -256,7 +256,12 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 		}
 	}
 
-	mEngine = new MidiControlEngine(mApp, mMainDisplay, mSwitchDisplay, mTraceDisplay, incrementSwitch, decrementSwitch, modeSwitch);
+	IMidiOut * engOut = NULL; // for direct program change use
+	if (mMidiOutPortToDeviceIdxMap.size())
+		engOut = mMidiOutGenerator->GetMidiOut((*mMidiOutPortToDeviceIdxMap.begin()).second);
+
+	mEngine = new MidiControlEngine(mApp, mMainDisplay, mSwitchDisplay, mTraceDisplay, 
+		engOut, mAxeFxManager, incrementSwitch, decrementSwitch, modeSwitch);
 	mEngine->SetPowerup(powerupBank, powerupPatch, powerupTimeout);
 	mEngine->FilterRedundantProgChg(filterPC ? true : false);
 
@@ -358,6 +363,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 		else if (name == "time") m = MidiControlEngine::kModeTime;
 		else if (name == "bankDescription") m = MidiControlEngine::kModeBankDesc;
 		else if (name == "bankDirect") m = MidiControlEngine::kModeBankDirect;
+		else if (name == "programChangeDirect") m = MidiControlEngine::kModeProgramChangeDirect;
 		else if (name == "adcDisplay") m = MidiControlEngine::kModeExprPedalDisplay;
 		else if (name == "adcOverride") m = MidiControlEngine::kModeAdcOverride;
 		else if (name == "testLeds") m = MidiControlEngine::kModeTestLeds;
@@ -1186,7 +1192,8 @@ EngineLoader::LoadDeviceChannelMap(TiXmlElement * pElem)
 		{
 			if (!mAxeFxManager)
 			{
-				mAxeFxManager = new AxeFxManager(mMainDisplay, mSwitchDisplay, mTraceDisplay, mApp->ApplicationDirectory());
+				const int axeCh = ::atoi(ch.c_str()) - 1;
+				mAxeFxManager = new AxeFxManager(mMainDisplay, mSwitchDisplay, mTraceDisplay, mApp->ApplicationDirectory(), axeCh);
 				mAxeFxManager->AddRef();
 				mAxeSyncPort = -1 == port ? 1 : port;
 			}

@@ -33,6 +33,8 @@
 #include "DeletePtr.h"
 #include "SleepCommand.h"
 #include "ITrollApplication.h"
+#include "HexStringUtils.h"
+#include "AxeFxManager.h"
 
 
 struct DeletePatch
@@ -56,6 +58,8 @@ MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 									 IMainDisplay * mainDisplay, 
 									 ISwitchDisplay * switchDisplay, 
 									 ITraceDisplay * traceDisplay,
+									 IMidiOut * midiOut,
+									 AxeFxManager * axMgr,
 									 int incrementSwitchNumber,
 									 int decrementSwitchNumber,
 									 int modeSwitchNumber) :
@@ -75,13 +79,20 @@ MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 	mModeSwitchNumber(modeSwitchNumber),
 	mFilterRedundantProgramChanges(false),
 	mPedalModePort(0),
-	mHistoryNavMode(hmNone)
+	mHistoryNavMode(hmNone),
+	mDirectProgramChangeChannel(0),
+	mMidiOut(midiOut),
+	mAxeMgr(axMgr)
 {
+	if (mAxeMgr)
+		mAxeMgr->AddRef();
 	mBanks.reserve(999);
 }
 
 MidiControlEngine::~MidiControlEngine()
 {
+	if (mAxeMgr)
+		mAxeMgr->Release();
 	std::for_each(mBanks.begin(), mBanks.end(), DeletePtr<PatchBank>());
 	mBanks.clear();
 	std::for_each(mPatches.begin(), mPatches.end(), DeletePatch());
@@ -123,6 +134,7 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 		mOtherModeSwitchNumbers[kModeBack] = kModeBack;
 		mOtherModeSwitchNumbers[kModeForward] = kModeForward;
 		mOtherModeSwitchNumbers[kModeTime] = kModeTime;
+		mOtherModeSwitchNumbers[kModeProgramChangeDirect] = kModeProgramChangeDirect;
 		mOtherModeSwitchNumbers[kModeBankDesc] = kModeBankDesc;
 		mOtherModeSwitchNumbers[kModeBankDirect] = kModeBankDirect;
 		mOtherModeSwitchNumbers[kModeExprPedalDisplay] = kModeExprPedalDisplay;
@@ -244,15 +256,21 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 		return;
 	}
 
-	if (emBankDirect == mMode)
+	if (emBankDirect == mMode || 
+		emProgramChangeDirect == mMode)
 	{
-		if (mSwitchDisplay)
-		{
-			if ((switchNumber >= 0 && switchNumber <= 9) ||
-				switchNumber == mDecrementSwitchNumber || 
-				switchNumber == mIncrementSwitchNumber)
-				mSwitchDisplay->SetSwitchDisplay(switchNumber, true);
-		}
+		bool doUpdate = false;
+		if ((switchNumber >= 0 && switchNumber <= 9) ||
+			switchNumber == mDecrementSwitchNumber || 
+			switchNumber == mIncrementSwitchNumber)
+			doUpdate = true;
+
+		if (emProgramChangeDirect == mMode && 
+			switchNumber >= 10 && switchNumber <= 14)
+			doUpdate = true;
+
+		if (mSwitchDisplay && doUpdate)
+			mSwitchDisplay->SetSwitchDisplay(switchNumber, true);
 		return;
 	}
 
@@ -269,11 +287,10 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 		mTrace->Trace(msg.str());
 	}
 
-	if (emCreated == mMode)
-		return;
-
-	if (emBank == mMode)
+	switch (mMode)
 	{
+	case emBank:
+		// default mode
 		if (switchNumber == mModeSwitchNumber)
 		{
 			ChangeMode(emModeSelect);
@@ -282,238 +299,37 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 
 		if (mActiveBank)
 			mActiveBank->PatchSwitchReleased(switchNumber, mMainDisplay, mSwitchDisplay);
-
 		return;
-	}
 
-	if (emBankNav == mMode ||
-		emBankDesc == mMode)
-	{
-		if (switchNumber == mIncrementSwitchNumber)
-		{
-			// bank inc/dec does not commit bank
-			NavigateBankRelative(1);
-		}
-		else if (switchNumber == mDecrementSwitchNumber)
-		{
-			// bank inc/dec does not commit bank
-			NavigateBankRelative(-1);
-		}
-		else if (switchNumber == mModeSwitchNumber)
-		{
-			EscapeToDefaultMode();
-		}
-		else if (emBankNav == mMode)
-		{
-			// any switch release (except inc/dec/util) after bank inc/dec commits bank
-			// reset to default mode when in bankNav mode
-			ChangeMode(emBank);
-			LoadBank(mBankNavigationIndex);
-		}
-		else if (emBankDesc == mMode)
-		{
-			PatchBank * bank = GetBank(mBankNavigationIndex);
-			if (bank)
-			{
-				bank->DisplayInfo(mMainDisplay, mSwitchDisplay, true, true);
-				bank->DisplayDetailedPatchInfo(switchNumber, mMainDisplay);
-			}
-		}
-
+	case emCreated:
 		return;
-	}
 
-	if (emModeSelect == mMode)
-	{
-		if (switchNumber == mModeSwitchNumber)
-			EscapeToDefaultMode();
-		else if (switchNumber == mDecrementSwitchNumber)
-		{
-			ChangeMode(emBankNav);
-			mBankNavigationIndex = mActiveBankIndex;
-			NavigateBankRelative(-1);
-		}
-		else if (switchNumber == mIncrementSwitchNumber)
-		{
-			ChangeMode(emBankNav);
-			mBankNavigationIndex = mActiveBankIndex;
-			NavigateBankRelative(1);
-		}
-		else if (switchNumber == GetSwitchNumber(kModeRecall))
-		{
-			EscapeToDefaultMode();
-			HistoryRecall();
-		}
-		else if (switchNumber == GetSwitchNumber(kModeBack))
-		{
-			EscapeToDefaultMode();
-			HistoryBackward();
-		}
-		else if (switchNumber == GetSwitchNumber(kModeForward))
-		{
-			EscapeToDefaultMode();
-			HistoryForward();
-		}
-		else if (switchNumber == GetSwitchNumber(kModeBankDesc))
-		{
-			ChangeMode(emBankDesc);
-			mBankNavigationIndex = mActiveBankIndex;
-			NavigateBankRelative(0);
-		}
-		else if (switchNumber == GetSwitchNumber(kModeBankDirect))
-			ChangeMode(emBankDirect);
-		else if (switchNumber == GetSwitchNumber(kModeExprPedalDisplay))
-			ChangeMode(emExprPedalDisplay);
-		else if (switchNumber == GetSwitchNumber(kModeToggleLedInversion))
-		{
-			if (mSwitchDisplay)
-				mSwitchDisplay->InvertLeds(!mSwitchDisplay->IsInverted());
-			EscapeToDefaultMode();
-		}
-		else if (switchNumber == GetSwitchNumber(kModeReconnect))
-		{
-			if (mApplication)
-				mApplication->Reconnect();
-			EscapeToDefaultMode();
-		}
-		else if (switchNumber == GetSwitchNumber(kModeTestLeds))
-		{
-			if (mSwitchDisplay)
-				mSwitchDisplay->TestLeds();
-			EscapeToDefaultMode();
-		}
-		else if (switchNumber == GetSwitchNumber(kModeToggleTraceWindow))
-		{
-			if (mApplication)
-				mApplication->ToggleTraceWindow();
-		}
-		else if (switchNumber == GetSwitchNumber(kModeTime))
-			ChangeMode(emTimeDisplay);
-		else if (switchNumber == GetSwitchNumber(kModeAdcOverride))
-			ChangeMode(emAdcOverride);
-		else 
-		{
-			std::map<int, int>::const_iterator it = mBankLoadSwitchNumbers.find(switchNumber);
-			if (it != mBankLoadSwitchNumbers.end())
-			{
-				EscapeToDefaultMode();
-				LoadBankByNumber(it->second);
-			}
-		}
-
+	case emBankNav:
+	case emBankDesc:
+		SwitchReleased_NavAndDescMode(switchNumber);
 		return;
-	}
 
-	if (emAdcOverride == mMode)
-	{
-		if (switchNumber == mModeSwitchNumber)
-		{
-			EscapeToDefaultMode();
-		}
-		else if (switchNumber >= 0 && switchNumber <= 3)
-		{
-			if (mApplication)
-				mApplication->ToggleAdcOverride(switchNumber);
-			ChangeMode(emAdcOverride);
-		}
-
+	case emExprPedalDisplay:
+		SwitchReleased_PedalDisplayMode(switchNumber);
 		return;
-	}
 
-	if (emExprPedalDisplay == mMode)
-	{
-		if (switchNumber == mModeSwitchNumber)
-		{
-			EscapeToDefaultMode();
-		}
-		else if (switchNumber >= 0 && switchNumber <= 3)
-		{
-			if (mSwitchDisplay)
-				mSwitchDisplay->SetSwitchDisplay(mPedalModePort, false);
-			mPedalModePort = switchNumber;
-			if (mSwitchDisplay)
-				mSwitchDisplay->SetSwitchDisplay(mPedalModePort, true);
-
-			if (mMainDisplay)
-			{
-				std::strstream displayMsg;
-				displayMsg << "ADC port " << (int) (mPedalModePort + 1) << " monitor" << std::endl << std::ends;
-				mMainDisplay->TextOut(displayMsg.str());
-			}
-		}
-
+	case emModeSelect:
+		SwitchReleased_ModeSelect(switchNumber);
 		return;
-	}
 
-	if (emBankDirect == mMode)
-	{
-		bool updateMainDisplay = true;
-		switch (switchNumber)
-		{
-		case 0:		mBankDirectNumber += "1";	break;
-		case 1:		mBankDirectNumber += "2";	break;
-		case 2:		mBankDirectNumber += "3";	break;
-		case 3:		mBankDirectNumber += "4";	break;
-		case 4:		mBankDirectNumber += "5";	break;
-		case 5:		mBankDirectNumber += "6";	break;
-		case 6:		mBankDirectNumber += "7";	break;
-		case 7:		mBankDirectNumber += "8";	break;
-		case 8:		mBankDirectNumber += "9";	break;
-		case 9:		mBankDirectNumber += "0";	break;
-		}
-
-		if (switchNumber == mModeSwitchNumber)
-		{
-			EscapeToDefaultMode();
-			updateMainDisplay = false;
-		}
-		else if (switchNumber == mDecrementSwitchNumber)
-		{
-			// remove last char
-			if (mBankDirectNumber.length())
-				mBankDirectNumber = mBankDirectNumber.erase(mBankDirectNumber.length() - 1);
-		}
-		else if (switchNumber == mIncrementSwitchNumber)
-		{
-			// commit
-			ChangeMode(emBank);
-			mBankNavigationIndex = mActiveBankIndex;
-			const int bnkIdx = GetBankIndex(::atoi(mBankDirectNumber.c_str()));
-			if (bnkIdx != -1)
-				LoadBank(bnkIdx);
-			else if (mMainDisplay)
-				mMainDisplay->TextOut("Invalid bank number");
-			updateMainDisplay = false;
-		}
-
-		if (mSwitchDisplay)
-		{
-			if ((switchNumber >= 0 && switchNumber <= 9) ||
-				switchNumber == mDecrementSwitchNumber || 
-				switchNumber == mIncrementSwitchNumber)
-				mSwitchDisplay->SetSwitchDisplay(switchNumber, false);
-		}
-
-		if (mMainDisplay && updateMainDisplay)
-		{
-			const int bnkIdx = GetBankIndex(::atoi(mBankDirectNumber.c_str()));
-			if (bnkIdx == -1)
-			{
-				mMainDisplay->TextOut(mBankDirectNumber + " (invalid bank number)");
-			}
-			else
-			{
-				PatchBank * bnk = GetBank(bnkIdx);
-				_ASSERTE(bnk);
-				mMainDisplay->TextOut(mBankDirectNumber + " " + bnk->GetBankName());
-			}
-		}
-
+	case emAdcOverride:
+		SwitchReleased_AdcOverrideMode(switchNumber);
 		return;
-	}
 
-	if (emTimeDisplay == mMode)
-	{
+	case emProgramChangeDirect:
+		SwitchReleased_ProgramChangeDirect(switchNumber);
+		return;
+
+	case emBankDirect:
+		SwitchReleased_BankDirect(switchNumber);
+		return;
+
+	case emTimeDisplay:
 		// any switch press/release cancels mode
 		mApplication->EnableTimeDisplay(false);
 		EscapeToDefaultMode();
@@ -804,10 +620,12 @@ MidiControlEngine::HistoryRecall()
 // emModeSelect -> emBankNav
 // emModeSelect -> emBankDesc
 // emModeSelect -> emBankDirect
+// emModeSelect -> emProgramChangeDirect
 // emModeSelect -> emExprPedalDisplay
 // emBankNav -> emDefault
 // emBankDesc -> emDefault
 // emBankDirect -> emDefault
+// emProgramChangeDirect -> emDefault
 // emExprPedalDisplay -> emDefault
 void
 MidiControlEngine::ChangeMode(EngineMode newMode)
@@ -873,6 +691,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 				SetupModeSelectSwitch(kModeForward);
 			SetupModeSelectSwitch(kModeBankDesc);
 			SetupModeSelectSwitch(kModeBankDirect);
+			SetupModeSelectSwitch(kModeProgramChangeDirect);
 			SetupModeSelectSwitch(kModeExprPedalDisplay);
 			SetupModeSelectSwitch(kModeTestLeds);
 			SetupModeSelectSwitch(kModeToggleTraceWindow);
@@ -945,9 +764,21 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			}
 		}
 		break;
+	case emProgramChangeDirect:
+		if (!mMidiOut)
+		{
+			if (mMainDisplay)
+				mMainDisplay->TextOut("Program change not available without MIDI out");
+			break;
+		}
+		// fall-through
 	case emBankDirect:
-		mBankDirectNumber.clear();
-		msg = "Bank Direct";
+		mDirectNumber.clear();
+		if (emBankDirect == mMode)
+			msg = "Bank Direct";
+		else
+			msg = "Manual Program Changes";
+
 		if (mSwitchDisplay)
 		{
 			mSwitchDisplay->SetSwitchText(0, "1");
@@ -960,8 +791,18 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			mSwitchDisplay->SetSwitchText(7, "8");
 			mSwitchDisplay->SetSwitchText(8, "9");
 			mSwitchDisplay->SetSwitchText(9, "0");
-			mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Commit");
 			mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "Backspace");
+			if (emBankDirect == mMode)
+				mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Commit");
+			else
+			{
+				mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Clear");
+				mSwitchDisplay->SetSwitchText(10, "Set channel");
+				mSwitchDisplay->SetSwitchText(11, "Send bank select");
+				mSwitchDisplay->SetSwitchText(12, "Send program change");
+				mSwitchDisplay->SetSwitchText(13, "Decrement program");
+				mSwitchDisplay->SetSwitchText(14, "Increment program");
+			}
 		}
 		break;
 	default:
@@ -1064,6 +905,9 @@ MidiControlEngine::SetupModeSelectSwitch(EngineModeSwitch m)
 	case kModeBankDirect:
 		txt = "Bank direct access...";
 		break;
+	case kModeProgramChangeDirect:
+		txt = "Manual program change...";
+		break;
 	case kModeExprPedalDisplay:
 		txt = "Raw ADC values...";
 		break;
@@ -1092,4 +936,375 @@ MidiControlEngine::SetupModeSelectSwitch(EngineModeSwitch m)
 
 	mSwitchDisplay->SetSwitchText(switchNumber, txt);
 	mSwitchDisplay->SetSwitchDisplay(switchNumber, true);
+}
+
+void
+MidiControlEngine::SwitchReleased_PedalDisplayMode(int switchNumber)
+{
+	if (switchNumber == mModeSwitchNumber)
+	{
+		EscapeToDefaultMode();
+	}
+	else if (switchNumber >= 0 && switchNumber <= 3)
+	{
+		if (mSwitchDisplay)
+			mSwitchDisplay->SetSwitchDisplay(mPedalModePort, false);
+		mPedalModePort = switchNumber;
+		if (mSwitchDisplay)
+			mSwitchDisplay->SetSwitchDisplay(mPedalModePort, true);
+
+		if (mMainDisplay)
+		{
+			std::strstream displayMsg;
+			displayMsg << "ADC port " << (int) (mPedalModePort + 1) << " monitor" << std::endl << std::ends;
+			mMainDisplay->TextOut(displayMsg.str());
+		}
+	}
+}
+
+void
+MidiControlEngine::SwitchReleased_AdcOverrideMode(int switchNumber)
+{
+	if (switchNumber == mModeSwitchNumber)
+	{
+		EscapeToDefaultMode();
+	}
+	else if (switchNumber >= 0 && switchNumber <= 3)
+	{
+		if (mApplication)
+			mApplication->ToggleAdcOverride(switchNumber);
+		ChangeMode(emAdcOverride);
+	}
+}
+
+void
+MidiControlEngine::SwitchReleased_NavAndDescMode(int switchNumber)
+{
+	if (switchNumber == mIncrementSwitchNumber)
+	{
+		// bank inc/dec does not commit bank
+		NavigateBankRelative(1);
+	}
+	else if (switchNumber == mDecrementSwitchNumber)
+	{
+		// bank inc/dec does not commit bank
+		NavigateBankRelative(-1);
+	}
+	else if (switchNumber == mModeSwitchNumber)
+	{
+		EscapeToDefaultMode();
+	}
+	else if (emBankNav == mMode)
+	{
+		// any switch release (except inc/dec/util) after bank inc/dec commits bank
+		// reset to default mode when in bankNav mode
+		ChangeMode(emBank);
+		LoadBank(mBankNavigationIndex);
+	}
+	else if (emBankDesc == mMode)
+	{
+		PatchBank * bank = GetBank(mBankNavigationIndex);
+		if (bank)
+		{
+			bank->DisplayInfo(mMainDisplay, mSwitchDisplay, true, true);
+			bank->DisplayDetailedPatchInfo(switchNumber, mMainDisplay);
+		}
+	}
+}
+
+void
+MidiControlEngine::SwitchReleased_ModeSelect(int switchNumber)
+{
+	if (switchNumber == mModeSwitchNumber)
+		EscapeToDefaultMode();
+	else if (switchNumber == mDecrementSwitchNumber)
+	{
+		ChangeMode(emBankNav);
+		mBankNavigationIndex = mActiveBankIndex;
+		NavigateBankRelative(-1);
+	}
+	else if (switchNumber == mIncrementSwitchNumber)
+	{
+		ChangeMode(emBankNav);
+		mBankNavigationIndex = mActiveBankIndex;
+		NavigateBankRelative(1);
+	}
+	else if (switchNumber == GetSwitchNumber(kModeRecall))
+	{
+		EscapeToDefaultMode();
+		HistoryRecall();
+	}
+	else if (switchNumber == GetSwitchNumber(kModeBack))
+	{
+		EscapeToDefaultMode();
+		HistoryBackward();
+	}
+	else if (switchNumber == GetSwitchNumber(kModeForward))
+	{
+		EscapeToDefaultMode();
+		HistoryForward();
+	}
+	else if (switchNumber == GetSwitchNumber(kModeBankDesc))
+	{
+		ChangeMode(emBankDesc);
+		mBankNavigationIndex = mActiveBankIndex;
+		NavigateBankRelative(0);
+	}
+	else if (switchNumber == GetSwitchNumber(kModeBankDirect))
+		ChangeMode(emBankDirect);
+	else if (switchNumber == GetSwitchNumber(kModeProgramChangeDirect))
+		ChangeMode(emProgramChangeDirect);
+	else if (switchNumber == GetSwitchNumber(kModeExprPedalDisplay))
+		ChangeMode(emExprPedalDisplay);
+	else if (switchNumber == GetSwitchNumber(kModeToggleLedInversion))
+	{
+		if (mSwitchDisplay)
+			mSwitchDisplay->InvertLeds(!mSwitchDisplay->IsInverted());
+		EscapeToDefaultMode();
+	}
+	else if (switchNumber == GetSwitchNumber(kModeReconnect))
+	{
+		if (mApplication)
+			mApplication->Reconnect();
+		EscapeToDefaultMode();
+	}
+	else if (switchNumber == GetSwitchNumber(kModeTestLeds))
+	{
+		if (mSwitchDisplay)
+			mSwitchDisplay->TestLeds();
+		EscapeToDefaultMode();
+	}
+	else if (switchNumber == GetSwitchNumber(kModeToggleTraceWindow))
+	{
+		if (mApplication)
+			mApplication->ToggleTraceWindow();
+	}
+	else if (switchNumber == GetSwitchNumber(kModeTime))
+		ChangeMode(emTimeDisplay);
+	else if (switchNumber == GetSwitchNumber(kModeAdcOverride))
+		ChangeMode(emAdcOverride);
+	else 
+	{
+		std::map<int, int>::const_iterator it = mBankLoadSwitchNumbers.find(switchNumber);
+		if (it != mBankLoadSwitchNumbers.end())
+		{
+			EscapeToDefaultMode();
+			LoadBankByNumber(it->second);
+		}
+	}
+}
+
+void
+MidiControlEngine::SwitchReleased_BankDirect(int switchNumber)
+{
+	bool updateMainDisplay = true;
+	switch (switchNumber)
+	{
+	case 0:		mDirectNumber += "1";	break;
+	case 1:		mDirectNumber += "2";	break;
+	case 2:		mDirectNumber += "3";	break;
+	case 3:		mDirectNumber += "4";	break;
+	case 4:		mDirectNumber += "5";	break;
+	case 5:		mDirectNumber += "6";	break;
+	case 6:		mDirectNumber += "7";	break;
+	case 7:		mDirectNumber += "8";	break;
+	case 8:		mDirectNumber += "9";	break;
+	case 9:		mDirectNumber += "0";	break;
+	default:
+		if (switchNumber == mModeSwitchNumber)
+		{
+			EscapeToDefaultMode();
+			updateMainDisplay = false;
+		}
+		else if (switchNumber == mDecrementSwitchNumber)
+		{
+			// remove last char
+			if (mDirectNumber.length())
+				mDirectNumber = mDirectNumber.erase(mDirectNumber.length() - 1);
+		}
+		else if (switchNumber == mIncrementSwitchNumber)
+		{
+			// commit
+			ChangeMode(emBank);
+			mBankNavigationIndex = mActiveBankIndex;
+			const int bnkIdx = GetBankIndex(::atoi(mDirectNumber.c_str()));
+			if (bnkIdx != -1)
+				LoadBank(bnkIdx);
+			else if (mMainDisplay)
+				mMainDisplay->TextOut("Invalid bank number");
+			updateMainDisplay = false;
+		}
+	}
+
+	if (mSwitchDisplay)
+		mSwitchDisplay->SetSwitchDisplay(switchNumber, false);
+
+	if (mMainDisplay && updateMainDisplay)
+	{
+		const int bnkIdx = GetBankIndex(::atoi(mDirectNumber.c_str()));
+		if (bnkIdx == -1)
+		{
+			mMainDisplay->TextOut(mDirectNumber + " (invalid bank number)");
+		}
+		else
+		{
+			PatchBank * bnk = GetBank(bnkIdx);
+			_ASSERTE(bnk);
+			mMainDisplay->TextOut(mDirectNumber + " " + bnk->GetBankName());
+		}
+	}
+}
+
+void
+MidiControlEngine::SwitchReleased_ProgramChangeDirect(int switchNumber)
+{
+	std::string msg;
+	Bytes bytes;
+	int program = -1;
+	static bool sJustDidProgramChange = false;
+
+	if (sJustDidProgramChange)
+	{
+		if (switchNumber >= 0 && switchNumber <= 9)
+		{
+			// clear buffer for entry restart - triggered by press of number switch after a send
+			// need to otherwise retain value of mDirectNumber for inc/dec
+			mDirectNumber.clear();
+		}
+
+		sJustDidProgramChange = false;
+	}
+
+	switch (switchNumber)
+	{
+	case 0:		mDirectNumber += "1";	break;
+	case 1:		mDirectNumber += "2";	break;
+	case 2:		mDirectNumber += "3";	break;
+	case 3:		mDirectNumber += "4";	break;
+	case 4:		mDirectNumber += "5";	break;
+	case 5:		mDirectNumber += "6";	break;
+	case 6:		mDirectNumber += "7";	break;
+	case 7:		mDirectNumber += "8";	break;
+	case 8:		mDirectNumber += "9";	break;
+	case 9:		mDirectNumber += "0";	break;
+	case 10:
+		// Set channel
+		mDirectProgramChangeChannel = ::atoi(mDirectNumber.c_str());
+		--mDirectProgramChangeChannel;
+		if (mDirectProgramChangeChannel > 15)
+			mDirectProgramChangeChannel = 15;
+		else if (mDirectProgramChangeChannel < 0)
+			mDirectProgramChangeChannel = 0;
+		msg += "set channel for messages to " + mDirectNumber;
+		mDirectNumber.clear();
+		break;
+	case 11:
+		// bank select
+		{
+			int bank = ::atoi(mDirectNumber.c_str());
+			if (bank > 127)
+				bank = 127;
+			else if (bank < 0)
+				bank = 0;
+			bytes.push_back(0xb0 | mDirectProgramChangeChannel);
+			bytes.push_back(0);
+			bytes.push_back(bank);
+		}
+		msg += "send bank select " + mDirectNumber;
+		mDirectNumber.clear();
+		break;
+	case 12:
+		// program change
+		program = ::atoi(mDirectNumber.c_str());
+		break;
+	case 13:
+	case 14:
+		// dec/inc prog change
+		program = ::atoi(mDirectNumber.c_str());
+		if (13 == switchNumber)
+		{
+			--program;
+			if (program < 0)
+				program = 127;
+		}
+		else
+			++program;
+
+		// update mDirectNumber with changed val
+		{
+			std::strstream strm;
+			strm << program << std::ends;
+			mDirectNumber = strm.str();
+		}
+		break;
+	default:
+		if (switchNumber == mModeSwitchNumber)
+		{
+			EscapeToDefaultMode();
+			return;
+		}
+		
+		if (switchNumber == mDecrementSwitchNumber)
+		{
+			// remove last char
+			if (mDirectNumber.length())
+				mDirectNumber = mDirectNumber.erase(mDirectNumber.length() - 1);
+		}
+		else if (switchNumber == mIncrementSwitchNumber)
+		{
+			// clear buf
+			mDirectNumber.clear();
+		}
+		else 
+			return;
+	}
+
+	if (-1 != program)
+	{
+		msg += "send ";
+		if (program > 127)
+		{
+			int bank = 0;
+			while (program > 127)
+			{
+				program -= 128;
+				++bank;
+			}
+
+			// bank select
+			bytes.push_back(0xb0 | mDirectProgramChangeChannel);
+			bytes.push_back(0);
+			bytes.push_back(bank);
+			msg += "bank select and ";
+		}
+
+		bytes.push_back(0xc0 | mDirectProgramChangeChannel);
+		bytes.push_back(program);
+		msg += "program change ";
+		sJustDidProgramChange = true;
+	}
+
+	if (mSwitchDisplay)
+		mSwitchDisplay->SetSwitchDisplay(switchNumber, false);
+
+	if (mMainDisplay)
+		mMainDisplay->TextOut(msg + mDirectNumber);
+
+	if (mMidiOut)
+	{
+		if (bytes.size())
+		{
+			if (mMainDisplay)
+			{
+				const std::string byteDump("\r\n" + ::GetAsciiHexStr(bytes, true));
+				mMainDisplay->AppendText(byteDump);
+			}
+			mMidiOut->MidiOut(bytes);
+
+			if (sJustDidProgramChange && mAxeMgr && mAxeMgr->GetAxeChannel() && mDirectProgramChangeChannel)
+				mAxeMgr->SyncAllFromAxe();
+		}
+	}
+	else if (mMainDisplay)
+		mMainDisplay->AppendText("\r\nNo midi out available for program changes");
 }

@@ -41,6 +41,7 @@ class ITraceDisplay;
 class IMidiOut;
 class Patch;
 class PatchBank;
+class AxeFxManager;
 
 
 class MidiControlEngine : public IMonome40hAdcSubscriber
@@ -50,6 +51,8 @@ public:
 					  IMainDisplay * mainDisplay, 
 					  ISwitchDisplay * switchDisplay,
 					  ITraceDisplay * traceDisplay,
+					  IMidiOut * midiOut,
+					  AxeFxManager * axMgr,
 					  int incrementSwitchNumber,
 					  int decrementSwitchNumber,
 					  int modeSwitchNumber);
@@ -64,12 +67,13 @@ public:
 		kModeBack,
 		kModeForward,
 		kModeTime,
-		kModeBankDesc,
+		kModeProgramChangeDirect,
 		kModeBankDirect,
 		kModeExprPedalDisplay,
 		kModeAdcOverride,
 		kModeTestLeds,
 		kModeToggleTraceWindow,
+		kModeBankDesc,
 		kModeToggleLedInversion,
 		kModeReconnect
 	};
@@ -122,10 +126,17 @@ private:
 		emExprPedalDisplay,	// display actual adc values
 		emAdcOverride,		// set ADC overrides
 		emTimeDisplay,		// displays time
+		emProgramChangeDirect, // manual send of program changes
 		emNotValid 
 	};
 	void					ChangeMode(EngineMode newMode);
 	void					SetupModeSelectSwitch(EngineModeSwitch m);
+	void					SwitchReleased_AdcOverrideMode(int switchNumber);
+	void					SwitchReleased_PedalDisplayMode(int switchNumber);
+	void					SwitchReleased_NavAndDescMode(int switchNumber);
+	void					SwitchReleased_ModeSelect(int switchNumber);
+	void					SwitchReleased_BankDirect(int switchNumber);
+	void					SwitchReleased_ProgramChangeDirect(int switchNumber);
 
 private:
 	// non-retained runtime state
@@ -133,12 +144,15 @@ private:
 	IMainDisplay *			mMainDisplay;
 	ITraceDisplay *			mTrace;
 	ISwitchDisplay *		mSwitchDisplay;
+	IMidiOut *				mMidiOut; // only used for emProgramChangeDirect
+	AxeFxManager *			mAxeMgr;
 
 	PatchBank *				mActiveBank;
 	int						mActiveBankIndex;
 	EngineMode				mMode;
 	int						mBankNavigationIndex;
-	std::string				mBankDirectNumber;
+	std::string				mDirectNumber; // used by emBankDirect / emProgramChangeDirect
+	int						mDirectProgramChangeChannel;
 	std::stack<int>			mBackHistory;
 	std::stack<int>			mForwardHistory;
 	enum HistoryNavMode		{ hmNone, hmBack, hmForward, hmWentBack, hmWentForward};

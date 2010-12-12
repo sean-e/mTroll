@@ -20,12 +20,13 @@
 			<switch name="back" id="1" />
 			<switch name="forward" id="2" />
 			<switch name="time" id="3" />
-			<switch name="bankDescription" id="4" />
+			<switch name="programChangeDirect" id="4" />
 			<switch name="bankDirect" id="5" />
 			<switch name="adcDisplay" id="6" />
 			<switch name="adcOverride" id="7" />
 			<switch name="testLeds" id="8" />
 			<switch name="toggleTraceWindow" id="9" />
+			<switch name="bankDescription" id="17" />
 			<switch name="toggleLedInversion" id="18" />
 			<switch name="reconnectMonome" id="19" />
 
@@ -35,10 +36,11 @@
 			<switch name="bankLoad" id="10" bank="1" />
 			<switch name="bankLoad" id="11" bank="100" />
 			<switch name="bankLoad" id="12" bank="101" />
+			<switch name="bankLoad" id="13" bank="45" />
 		</switches>
 
 		<midiDevices>
-			<midiDevice port="1" activityIndicatorId="23" outIdx="0" inIdx="0" />
+			<midiDevice port="1" activityIndicatorId="23" outIdx="1" inIdx="0" />
 		</midiDevices>
 
 		<!-- port attr on expression block is required -->

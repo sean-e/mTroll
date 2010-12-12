@@ -47,7 +47,8 @@ static void SynonymNormalization(std::string & name);
 AxeFxManager::AxeFxManager(IMainDisplay * mainDisp, 
 						   ISwitchDisplay * switchDisp,
 						   ITraceDisplay *pTrace,
-						   const std::string & appPath) :
+						   const std::string & appPath, 
+						   int ch) :
 	mSwitchDisplay(switchDisp),
 	mMainDisplay(mainDisp),
 	mTrace(pTrace),
@@ -59,6 +60,7 @@ AxeFxManager::AxeFxManager(IMainDisplay * mainDisp,
 	mMidiOut(NULL),
 	mCheckedFirmware(false),
 	mPatchDumpBytesReceived(0),
+	mAxeChannel(ch),
 	mModel(0)
 {
 	mQueryTimer = new QTimer(this);
