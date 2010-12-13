@@ -82,7 +82,8 @@ ControlUi::ControlUi(QWidget * parent, ITrollApplication * app) :
 	mDisplayTime(false),
 	mSystemPowerOverride(NULL),
 	mBackgroundColor(0x1a1a1a),
-	mFrameHighlightColor(0x5a5a5a)
+	mFrameHighlightColor(0x5a5a5a),
+	mSwitchLedUpdateEnabled(true)
 {
 }
 
@@ -520,6 +521,9 @@ ControlUi::SetSwitchDisplay(int switchNumber,
 							bool isOn)
 {
 	_ASSERTE(switchNumber < kMaxButtons);
+	if (!mSwitchLedUpdateEnabled)
+		return;
+
 	if (mInvertLeds)
 		isOn = !isOn;
 

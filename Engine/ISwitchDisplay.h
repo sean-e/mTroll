@@ -44,6 +44,7 @@ public:
 	virtual void InvertLeds(bool invert) = 0;
 	virtual bool IsInverted() const = 0;
 	virtual void TestLeds() = 0;
+	virtual void EnableDisplayUpdate(bool enable) = 0;
 };
 
 #endif // ISwitchDisplay_h__

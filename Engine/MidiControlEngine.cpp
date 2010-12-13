@@ -45,6 +45,21 @@ struct DeletePatch
 	}
 };
 
+class EnableSwitchDisplayTmp
+{
+	ISwitchDisplay * mSwDisp;
+public:
+	EnableSwitchDisplayTmp(ISwitchDisplay * swDisp) : mSwDisp(swDisp)
+	{
+		mSwDisp->EnableDisplayUpdate(true);
+	}
+
+	~EnableSwitchDisplayTmp()
+	{
+		mSwDisp->EnableDisplayUpdate(false);
+	}
+};
+
 static bool
 SortByBankNumber(const PatchBank* lhs, const PatchBank* rhs)
 {
@@ -271,7 +286,10 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 			doUpdate = true;
 
 		if (mSwitchDisplay && doUpdate)
+		{
+			EnableSwitchDisplayTmp t(mSwitchDisplay);
 			mSwitchDisplay->SetSwitchDisplay(switchNumber, true);
+		}
 		return;
 	}
 
@@ -406,6 +424,7 @@ MidiControlEngine::NavigateBankRelative(int relativeBankIndex)
 
 	if (mSwitchDisplay)
 	{
+		EnableSwitchDisplayTmp t(mSwitchDisplay);
 		for (int idx = 0; idx < 64; idx++)
 		{
 			if (idx != mModeSwitchNumber)
@@ -635,11 +654,10 @@ void
 MidiControlEngine::ChangeMode(EngineMode newMode)
 {
 	mMode = newMode;
-	if (mAxeMgr)
-		mAxeMgr->EnableSwitchUpdates(false);
 
 	if (mSwitchDisplay)
 	{
+		EnableSwitchDisplayTmp t(mSwitchDisplay);
 		for (int idx = 0; idx < 64; idx++)
 		{
 			mSwitchDisplay->ClearSwitchText(idx);
@@ -653,6 +671,8 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 	{
 	case emBank:
 		msg = "Bank";
+		if (mSwitchDisplay)
+			mSwitchDisplay->EnableDisplayUpdate(true);
 		if (mActiveBank)
 		{
 			// caller changing to emBank will update mainDisplay - reduce flicker
@@ -661,8 +681,6 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			if (mSwitchDisplay)
 				msg.clear();
 		}
-		if (mAxeMgr)
-			mAxeMgr->EnableSwitchUpdates(true);
 		break;
 	case emBankNav:
 		msg = "Bank Navigation";
@@ -708,6 +726,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			SetupModeSelectSwitch(kModeToggleLedInversion);
 			SetupModeSelectSwitch(kModeReconnect);
 
+			EnableSwitchDisplayTmp t(mSwitchDisplay);
 			for (std::map<int, int>::const_iterator it = mBankLoadSwitchNumbers.begin();
 				it != mBankLoadSwitchNumbers.end(); ++it)
 			{
@@ -729,6 +748,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			int switchNumber = GetSwitchNumber(kModeTime);
 			if (kUnassignedSwitchNumber != switchNumber)
 			{
+				EnableSwitchDisplayTmp t(mSwitchDisplay);
 				mSwitchDisplay->SetSwitchText(switchNumber, "Any button to exit");
 				mSwitchDisplay->SetSwitchDisplay(switchNumber, true);
 			}
@@ -742,6 +762,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		if (mSwitchDisplay)
 		{
 			mSwitchDisplay->SetSwitchText(0, "Pedal 1");
+			EnableSwitchDisplayTmp t(mSwitchDisplay);
 			mSwitchDisplay->SetSwitchDisplay(0, true);
 			mSwitchDisplay->SetSwitchText(1, "Pedal 2");
 			mSwitchDisplay->SetSwitchText(2, "Pedal 3");
@@ -753,6 +774,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		mPedalModePort = 0;
 		if (mSwitchDisplay && mApplication)
 		{
+			EnableSwitchDisplayTmp t(mSwitchDisplay);
 			for (int idx = 0; idx < 4; ++idx)
 			{
 				std::strstream msg;
@@ -815,8 +837,6 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		break;
 	default:
 		msg = "Invalid";
-		if (mAxeMgr)
-			mAxeMgr->EnableSwitchUpdates(true);
 	    break;
 	}
 
@@ -831,7 +851,14 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 				msg = "Exit " + msg;
 			mSwitchDisplay->SetSwitchText(mModeSwitchNumber, msg);
 		}
-		mSwitchDisplay->SetSwitchDisplay(mModeSwitchNumber, mMode == emBank ? true : false);
+
+		if (mMode == emBank)
+			mSwitchDisplay->SetSwitchDisplay(mModeSwitchNumber, true);
+		else
+		{
+			EnableSwitchDisplayTmp t(mSwitchDisplay);
+			mSwitchDisplay->SetSwitchDisplay(mModeSwitchNumber, false);
+		}
 	}
 }
 
@@ -945,6 +972,7 @@ MidiControlEngine::SetupModeSelectSwitch(EngineModeSwitch m)
 	}
 
 	mSwitchDisplay->SetSwitchText(switchNumber, txt);
+	EnableSwitchDisplayTmp t(mSwitchDisplay);
 	mSwitchDisplay->SetSwitchDisplay(switchNumber, true);
 }
 
@@ -957,6 +985,7 @@ MidiControlEngine::SwitchReleased_PedalDisplayMode(int switchNumber)
 	}
 	else if (switchNumber >= 0 && switchNumber <= 3)
 	{
+		EnableSwitchDisplayTmp t(mSwitchDisplay);
 		if (mSwitchDisplay)
 			mSwitchDisplay->SetSwitchDisplay(mPedalModePort, false);
 		mPedalModePort = switchNumber;
@@ -1147,7 +1176,10 @@ MidiControlEngine::SwitchReleased_BankDirect(int switchNumber)
 	}
 
 	if (mSwitchDisplay)
+	{
+		EnableSwitchDisplayTmp t(mSwitchDisplay);
 		mSwitchDisplay->SetSwitchDisplay(switchNumber, false);
+	}
 
 	if (mMainDisplay && updateMainDisplay)
 	{
@@ -1205,7 +1237,7 @@ MidiControlEngine::SwitchReleased_ProgramChangeDirect(int switchNumber)
 			mDirectProgramChangeChannel = 15;
 		else if (mDirectProgramChangeChannel < 0)
 			mDirectProgramChangeChannel = 0;
-		msg += "set channel for messages to " + mDirectNumber;
+		msg += "set channel to " + mDirectNumber;
 		mDirectNumber.clear();
 		break;
 	case 11:
@@ -1303,7 +1335,10 @@ MidiControlEngine::SwitchReleased_ProgramChangeDirect(int switchNumber)
 	}
 
 	if (mSwitchDisplay)
+	{
+		EnableSwitchDisplayTmp t(mSwitchDisplay);
 		mSwitchDisplay->SetSwitchDisplay(switchNumber, false);
+	}
 
 	if (mMainDisplay)
 		mMainDisplay->TextOut(msg + mDirectNumber);

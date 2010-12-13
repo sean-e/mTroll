@@ -115,6 +115,7 @@ public: // ISwitchDisplay
 	virtual	void		Reconnect();
 	virtual void		TestLeds();
 	virtual void		SetIndicatorThreadSafe(bool isOn, Patch * patch, int time);
+	virtual void		EnableDisplayUpdate(bool enable) { mSwitchLedUpdateEnabled = enable; }
 
 public: // IMonome40hSwitchSubscriber
 	virtual void		SwitchPressed(byte row, byte column);
@@ -328,6 +329,7 @@ private:
 	DWORD						mBackgroundColor;
 	DWORD						mFrameHighlightColor;
 	QString						mMainText;
+	bool						mSwitchLedUpdateEnabled;
 
 	struct SwitchTextDisplayConfig
 	{
