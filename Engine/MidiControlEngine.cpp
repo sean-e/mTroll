@@ -343,8 +343,9 @@ MidiControlEngine::AdcValueChanged(int port,
 								   int newValue)
 {
 	_ASSERTE(port < ExpressionPedals::PedalCount);
-	if (emExprPedalDisplay == mMode)
+	switch (mMode)
 	{
+	case emExprPedalDisplay:
 		if (mMainDisplay && mPedalModePort == port)
 		{
 			std::strstream displayMsg;
@@ -352,17 +353,19 @@ MidiControlEngine::AdcValueChanged(int port,
 			mMainDisplay->TextOut(displayMsg.str());
 		}
 		return;
-	}
 
-	if (emBank != mMode)
-		return;
-
-	// forward directly to active patch
-	if (!gActivePatchPedals || 
-		gActivePatchPedals->AdcValueChange(mMainDisplay, port, newValue))
-	{
-		// process globals if no rejection
-		mGlobalPedals.AdcValueChange(mMainDisplay, port, newValue);
+	case emBank:
+	case emProgramChangeDirect:
+	case emModeSelect:
+	case emTimeDisplay:
+		// forward directly to active patch
+		if (!gActivePatchPedals || 
+			gActivePatchPedals->AdcValueChange(mMainDisplay, port, newValue))
+		{
+			// process globals if no rejection
+			mGlobalPedals.AdcValueChange(mMainDisplay, port, newValue);
+		}
+		break;
 	}
 }
 
