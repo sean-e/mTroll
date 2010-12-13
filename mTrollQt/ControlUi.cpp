@@ -378,24 +378,30 @@ class EditTextOutEvent : public ControlUiEvent
 	ControlUi * mUi;
 	QPlainTextEdit *mLabel;
 	QString mText;
-	bool mKeepText;
+	bool mTransientText;
 
 public:
-	EditTextOutEvent(ControlUi * ui, QPlainTextEdit* label, const QString & text, bool keepText = true) : 
+	EditTextOutEvent(ControlUi * ui, QPlainTextEdit* label, const QString & text, bool transientTxt = false) : 
 		ControlUiEvent(User),
 		mUi(ui),
 		mText(text),
 		mLabel(label),
-		mKeepText(keepText)
+		mTransientText(transientTxt)
 	{
 	}
 
 	virtual void exec()
 	{
 		const QString prevTxt(mLabel->toPlainText());
+		if (mTransientText)
+		{
+			// transient text is prepended to non-transient
+			mText = mText + mUi->mMainText;
+		}
+
 		if (prevTxt != mText)
 		{
-			if (mKeepText)
+			if (!mTransientText)
 				mUi->mMainText = mText;
 			mLabel->setPlainText(mText);
 		}
