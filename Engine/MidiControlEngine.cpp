@@ -635,6 +635,8 @@ void
 MidiControlEngine::ChangeMode(EngineMode newMode)
 {
 	mMode = newMode;
+	if (mAxeMgr)
+		mAxeMgr->EnableSwitchUpdates(false);
 
 	if (mSwitchDisplay)
 	{
@@ -659,6 +661,8 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			if (mSwitchDisplay)
 				msg.clear();
 		}
+		if (mAxeMgr)
+			mAxeMgr->EnableSwitchUpdates(true);
 		break;
 	case emBankNav:
 		msg = "Bank Navigation";
@@ -811,6 +815,8 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		break;
 	default:
 		msg = "Invalid";
+		if (mAxeMgr)
+			mAxeMgr->EnableSwitchUpdates(true);
 	    break;
 	}
 

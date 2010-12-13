@@ -66,6 +66,7 @@ public:
 	void SyncFromAxe(Patch * patch);
 	void SyncAllFromAxe();
 	int GetAxeChannel() const { return mAxeChannel; }
+	void EnableSwitchUpdates(bool enable) { mSwitchUpdatesAreOk = enable; }
 
 private:
 	AxeEffectBlockInfo * IdentifyBlockInfo(const byte * bytes);
@@ -101,6 +102,7 @@ private:
 	byte			mModel;
 	std::set<int>	mEditBufferEffectBlocks; // at last update
 	int				mPatchDumpBytesReceived;
+	bool			mSwitchUpdatesAreOk;
 };
 
 int GetDefaultAxeCc(const std::string &effectName, ITraceDisplay * trc);

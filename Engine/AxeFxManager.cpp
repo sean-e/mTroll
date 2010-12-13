@@ -61,7 +61,8 @@ AxeFxManager::AxeFxManager(IMainDisplay * mainDisp,
 	mCheckedFirmware(false),
 	mPatchDumpBytesReceived(0),
 	mAxeChannel(ch),
-	mModel(0)
+	mModel(0),
+	mSwitchUpdatesAreOk(true)
 {
 	mQueryTimer = new QTimer(this);
 	connect(mQueryTimer, SIGNAL(timeout()), this, SLOT(QueryTimedOut()));
@@ -218,7 +219,7 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 	// Tempo: f0 00 01 74 01 10 f7 
 	if (0x10 == bytes[5])
 	{
-		if (mTempoPatch)
+		if (mTempoPatch && mSwitchUpdatesAreOk)
 		{
 			mTempoPatch->ActivateSwitchDisplay(mSwitchDisplay, true);
 			mSwitchDisplay->SetIndicatorThreadSafe(false, mTempoPatch, 75);
@@ -361,7 +362,7 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 				if (isBypassed || notBypassed)
 				{
 					if (inf->mPatch->IsActive() != notBypassed)
-						inf->mPatch->UpdateState(mSwitchDisplay, notBypassed);
+						inf->mPatch->UpdateState(mSwitchUpdatesAreOk ? mSwitchDisplay : NULL, notBypassed);
 
 					if (0 && mTrace)
 					{
@@ -449,7 +450,7 @@ AxeFxManager::InitiateSyncFromAxe()
 			if (findIt == mEditBufferEffectBlocks.end())
 			{
 				cur->mEffectIsPresentInAxePatch = false;
-				cur->mPatch->UpdateState(mSwitchDisplay, false);
+				cur->mPatch->UpdateState(mSwitchUpdatesAreOk ? mSwitchDisplay : NULL, false);
 				continue;
 			}
 
