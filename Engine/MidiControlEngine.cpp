@@ -81,6 +81,7 @@ MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 	mPedalModePort(0),
 	mHistoryNavMode(hmNone),
 	mDirectProgramChangeChannel(0),
+	mDirectProgramLastSent(0),
 	mMidiOut(midiOut),
 	mAxeMgr(axMgr)
 {
@@ -1215,12 +1216,19 @@ MidiControlEngine::SwitchReleased_ProgramChangeDirect(int switchNumber)
 		break;
 	case 12:
 		// program change
-		program = ::atoi(mDirectNumber.c_str());
+		if (mDirectNumber.empty())
+			program = mDirectProgramLastSent;
+		else
+			program = ::atoi(mDirectNumber.c_str());
 		break;
 	case 13:
 	case 14:
 		// dec/inc prog change
-		program = ::atoi(mDirectNumber.c_str());
+		if (mDirectNumber.empty())
+			program = mDirectProgramLastSent;
+		else
+			program = ::atoi(mDirectNumber.c_str());
+
 		if (13 == switchNumber)
 		{
 			--program;
@@ -1275,11 +1283,12 @@ MidiControlEngine::SwitchReleased_ProgramChangeDirect(int switchNumber)
 			bytes.push_back(0xb0 | mDirectProgramChangeChannel);
 			bytes.push_back(0);
 			bytes.push_back(bank);
-			msg += "bank select and ";
+			msg += "bank and ";
 		}
 
 		bytes.push_back(0xc0 | mDirectProgramChangeChannel);
 		bytes.push_back(program);
+		mDirectProgramLastSent = program;
 		msg += "program change ";
 		sJustDidProgramChange = true;
 	}
@@ -1296,7 +1305,7 @@ MidiControlEngine::SwitchReleased_ProgramChangeDirect(int switchNumber)
 		{
 			if (mMainDisplay)
 			{
-				const std::string byteDump("\r\n" + ::GetAsciiHexStr(bytes, true));
+				const std::string byteDump("\r\n" + ::GetAsciiHexStr(bytes, true) + "\r\n");
 				mMainDisplay->AppendText(byteDump);
 			}
 			mMidiOut->MidiOut(bytes);

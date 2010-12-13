@@ -153,6 +153,7 @@ private:
 	int						mBankNavigationIndex;
 	std::string				mDirectNumber; // used by emBankDirect / emProgramChangeDirect
 	int						mDirectProgramChangeChannel;
+	int						mDirectProgramLastSent;
 	std::stack<int>			mBackHistory;
 	std::stack<int>			mForwardHistory;
 	enum HistoryNavMode		{ hmNone, hmBack, hmForward, hmWentBack, hmWentForward};
