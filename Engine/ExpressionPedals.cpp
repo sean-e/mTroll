@@ -299,6 +299,8 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 				_ASSERTE(doCcSend);
 				if (mBottomToggle.Activate())
 					showStatus = bottomActivated = true;
+				else if (!doCcSend)
+					showStatus = true;
 			}
 			else if (mBottomToggle.IsInDeactivationZone(cappedAdcVal))
 			{
@@ -308,6 +310,8 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 					showStatus = bottomDeactivated = true;
 					newCcVal = mMinCcVal;
 				}
+				else if (!doCcSend)
+					showStatus = true;
 			}
 			else if (mBottomToggle.IsInDeadzone(cappedAdcVal))
 			{
@@ -328,6 +332,8 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 				_ASSERTE(doCcSend);
 				if (mTopToggle.Activate())
 					showStatus = topActivated = true;
+				else if (!doCcSend)
+					showStatus = true;
 			}
 			else if (mTopToggle.IsInDeactivationZone(cappedAdcVal))
 			{
@@ -337,6 +343,8 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 					showStatus = topDeactivated = true;
 					newCcVal = mMaxCcVal;
 				}
+				else if (!doCcSend)
+					showStatus = true;
 			}
 			else if (mTopToggle.IsInDeadzone(cappedAdcVal))
 			{
