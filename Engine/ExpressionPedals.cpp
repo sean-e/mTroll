@@ -523,6 +523,8 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 	
 				mainDisplay->TransientTextOut(displayMsg.str());
 			}
+			else if (bottomDeadzone || topDeadzone)
+				mainDisplay->TransientTextOut(displayMsg.str());
 			else
 				mainDisplay->ClearTransientText();
 		}
