@@ -472,7 +472,7 @@ ControlUi::TransientTextOut(const std::string & txt)
 		return;
 
 	QCoreApplication::postEvent(this, 
-		new EditTextOutEvent(this, mMainDisplay, txt.c_str(), false));
+		new EditTextOutEvent(this, mMainDisplay, txt.c_str(), true));
 }
 
 void
