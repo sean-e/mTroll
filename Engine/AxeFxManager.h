@@ -68,16 +68,24 @@ public:
 	int GetAxeChannel() const { return mAxeChannel; }
 
 private:
-	AxeEffectBlockInfo * IdentifyBlockInfo(const byte * bytes);
+	AxeEffectBlockInfo * IdentifyBlockInfoUsingBypassId(const byte * bytes);
+	AxeEffectBlockInfo * IdentifyBlockInfoUsingCc(const byte * bytes);
 	AxeEffectBlocks::iterator GetBlockInfo(Patch * patch);
-	void ReceiveParamValue(const byte * bytes, int len);
+	void SendFirmwareVersionQuery();
 	void ReceiveFirmwareVersionResponse(const byte * bytes, int len);
+
+	void RequestPresetName();
+	void ReceivePresetName(const byte * bytes, int len);
+	void RequestPresetEffects();
+	void ReceivePresetEffects(const byte * bytes, int len);
+
+	// these aren't necessary any more - superseded by the previous 4
+	void RequestEditBufferDump();
 	void StartReceivePatchDump(const byte * bytes, int len);
 	void ContinueReceivePatchDump(const byte * bytes, int len);
 	void InitiateSyncFromAxe();
-	void RequestEditBufferDump();
-	void SendNextQuery();
-	void SendFirmwareVersionQuery();
+	void RequestNextParamValue();
+	void ReceiveParamValue(const byte * bytes, int len);
 	void KillResponseTimer();
 
 private slots:

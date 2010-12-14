@@ -233,10 +233,22 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 		return;
 	}
 
+	if (0xf == bytes[5])
+	{
+		ReceivePresetName(&bytes[6], len - 6);
+		return;
+	}
+
+	if (0xe == bytes[5])
+	{
+		ReceivePresetEffects(&bytes[6], len - 6);
+		return;
+	}
+
 	if (4 == bytes[5])
 	{
 		// skip byte 6 - may as well update state whenever we get it
-		StartReceivePatchDump(&bytes[7], len - 7);
+//		StartReceivePatchDump(&bytes[7], len - 7);
 		return;
 	}
 
@@ -259,7 +271,7 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 }
 
 AxeEffectBlockInfo *
-AxeFxManager::IdentifyBlockInfo(const byte * bytes)
+AxeFxManager::IdentifyBlockInfoUsingBypassId(const byte * bytes)
 {
 	const int effectIdLs = bytes[0];
 	const int effectIdMs = bytes[1];
@@ -275,6 +287,28 @@ AxeFxManager::IdentifyBlockInfo(const byte * bytes)
 			cur.mSysexEffectIdMs == effectIdMs &&
 			cur.mSysexBypassParameterIdLs == parameterIdLs &&
 			cur.mSysexBypassParameterIdMs == parameterIdMs)
+			return &(*it);
+	}
+
+	return NULL;
+}
+
+AxeEffectBlockInfo *
+AxeFxManager::IdentifyBlockInfoUsingCc(const byte * bytes)
+{
+	const int effectIdLs = bytes[0];
+	const int effectIdMs = bytes[1];
+	const int effectId = effectIdMs << 4 | effectIdLs;
+	const int ccLs = bytes[2];
+	const int ccMs = bytes[3];
+	const int cc = ccMs << 4 | ccLs;
+
+	for (AxeEffectBlocks::iterator it = mAxeEffectInfo.begin(); 
+		it != mAxeEffectInfo.end(); 
+		++it)
+	{
+		AxeEffectBlockInfo & cur = *it;
+		if (cur.mSysexEffectId == effectId && cur.mBypassCC == cc)
 			return &(*it);
 	}
 
@@ -348,7 +382,7 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 		if (!inf)
 		{
 			// received something we weren't expecting; see if we can look it up
-			inf = IdentifyBlockInfo(bytes);
+			inf = IdentifyBlockInfoUsingBypassId(bytes);
 		}
 
 		if (inf && inf->mPatch)
@@ -414,7 +448,7 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 
 		~CreateSendNextQueryTimer()
 		{
-			mMgr->SendNextQuery();
+			mMgr->RequestNextParamValue();
 			mMgr->Release();
 		}
 	};
@@ -458,7 +492,7 @@ AxeFxManager::InitiateSyncFromAxe()
 		}
 	}
 
-	SendNextQuery();
+	RequestNextParamValue();
 }
 
 void
@@ -492,7 +526,7 @@ AxeFxManager::SyncFromAxe(Patch * patch)
 	}
 
 	// queue was empty, so kick off processing
-	SendNextQuery();
+	RequestNextParamValue();
 }
 
 void
@@ -567,7 +601,7 @@ AxeFxManager::QueryTimedOut()
 			return;
 	}
 
-	SendNextQuery();
+	RequestNextParamValue();
 }
 
 class StartQueryTimer : public QEvent
@@ -590,7 +624,7 @@ public:
 };
 
 void
-AxeFxManager::SendNextQuery()
+AxeFxManager::RequestNextParamValue()
 {
 	if (!mMidiOut)
 		return;
@@ -761,7 +795,7 @@ AxeFxManager::RequestEditBufferDump()
 void
 AxeFxManager::SyncAllFromAxe()
 {
-	RequestEditBufferDump();
+	RequestPresetName();
 }
 
 void
@@ -793,6 +827,137 @@ AxeFxManager::ReceiveFirmwareVersionResponse(const byte * bytes, int len)
 	}
 
 	mCheckedFirmware = true;
+}
+
+void
+AxeFxManager::RequestPresetName()
+{
+	if (!mCheckedFirmware)
+		SendFirmwareVersionQuery();
+
+	KillResponseTimer();
+	QMutexLocker lock(&mQueryLock);
+	if (!mCheckedFirmware)
+		return;
+
+	const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, mModel, 0x0f, 0xF7 };
+	const Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
+	mMidiOut->MidiOut(bb);
+}
+
+void
+AxeFxManager::ReceivePresetName(const byte * bytes, int len)
+{
+	if (len < 21)
+		return;
+
+	std::string patchName((const char *)bytes, 21);
+	if (mMainDisplay && patchName.size())
+	{
+		patchName = "Axe-Fx " + patchName;
+		mMainDisplay->AppendText(patchName);
+	}
+
+	RequestPresetEffects();
+}
+
+void
+AxeFxManager::RequestPresetEffects()
+{
+	if (!mCheckedFirmware)
+		SendFirmwareVersionQuery();
+
+	KillResponseTimer();
+	QMutexLocker lock(&mQueryLock);
+	if (!mCheckedFirmware)
+		return;
+
+	// default to no fx in patch, but don't update LEDs until later
+	for (AxeEffectBlocks::iterator it = mAxeEffectInfo.begin(); 
+		it != mAxeEffectInfo.end(); 
+		++it)
+	{
+		AxeEffectBlockInfo * cur = &(*it);
+		if (-1 == cur->mSysexBypassParameterId)
+			continue;
+
+		if (-1 == cur->mSysexEffectId)
+			continue;
+
+		if (!cur->mPatch)
+			continue;
+
+		cur->mEffectIsPresentInAxePatch = false;
+	}
+
+	const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, mModel, 0x0e, 0xF7 };
+	const Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
+	mMidiOut->MidiOut(bb);
+}
+
+void
+AxeFxManager::ReceivePresetEffects(const byte * bytes, int len)
+{
+	// for each effect, there are 2 bytes for the ID, 2 bytes for the bypass CC and 1 byte for the state
+	// 0A 06 05 02 00
+	for (int idx = 0; (idx + 5) < len; idx += 5)
+	{
+		if (0 && mTrace)
+		{
+			const std::string byteDump(::GetAsciiHexStr(&bytes[idx], 5, true) + "\n");
+			mTrace->Trace(byteDump);
+		}
+
+		AxeEffectBlockInfo * inf = NULL;
+		inf = IdentifyBlockInfoUsingCc(bytes + idx);
+		if (inf && inf->mPatch)
+		{
+			inf->mEffectIsPresentInAxePatch = true;
+			const byte kParamVal = bytes[idx + 4];
+			const bool notBypassed = (1 == kParamVal);
+			const bool isBypassed = (0 == kParamVal);
+
+			if (isBypassed || notBypassed)
+			{
+				if (inf->mPatch->IsActive() != notBypassed)
+					inf->mPatch->UpdateState(mSwitchDisplay, notBypassed);
+			}
+			else if (mTrace)
+			{
+				const std::string byteDump(::GetAsciiHexStr(bytes + idx, 5, true));
+				std::strstream traceMsg;
+				traceMsg << "Unrecognized bypass param value for " << inf->mName << " " << byteDump.c_str() << std::endl << std::ends;
+				mTrace->Trace(std::string(traceMsg.str()));
+			}
+		}
+		else
+		{
+			if (mTrace && !inf)
+			{
+				const std::string msg("Axe sync error: No inf\n");
+				mTrace->Trace(msg);
+			}
+		}
+	}
+
+	// turn off LEDs for all effects not in cur preset
+	for (AxeEffectBlocks::iterator it = mAxeEffectInfo.begin(); 
+		it != mAxeEffectInfo.end(); 
+		++it)
+	{
+		AxeEffectBlockInfo * cur = &(*it);
+		if (-1 == cur->mSysexBypassParameterId)
+			continue;
+
+		if (-1 == cur->mSysexEffectId)
+			continue;
+
+		if (!cur->mPatch)
+			continue;
+
+		if (!cur->mEffectIsPresentInAxePatch)
+			cur->mPatch->UpdateState(mSwitchDisplay, false);
+	}
 }
 
 void 
