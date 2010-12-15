@@ -136,6 +136,7 @@ private:
 	void					SwitchReleased_NavAndDescMode(int switchNumber);
 	void					SwitchReleased_ModeSelect(int switchNumber);
 	void					SwitchReleased_BankDirect(int switchNumber);
+	void					SwitchPressed_ProgramChangeDirect(int switchNumber);
 	void					SwitchReleased_ProgramChangeDirect(int switchNumber);
 
 private:

@@ -290,6 +290,10 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 			EnableSwitchDisplayTmp t(mSwitchDisplay);
 			mSwitchDisplay->SetSwitchDisplay(switchNumber, true);
 		}
+
+		if (emProgramChangeDirect == mMode)
+			SwitchPressed_ProgramChangeDirect(switchNumber);
+
 		return;
 	}
 
@@ -1207,7 +1211,7 @@ MidiControlEngine::SwitchReleased_BankDirect(int switchNumber)
 }
 
 void
-MidiControlEngine::SwitchReleased_ProgramChangeDirect(int switchNumber)
+MidiControlEngine::SwitchPressed_ProgramChangeDirect(int switchNumber)
 {
 	std::string msg;
 	Bytes bytes;
@@ -1296,12 +1300,6 @@ MidiControlEngine::SwitchReleased_ProgramChangeDirect(int switchNumber)
 		}
 		break;
 	default:
-		if (switchNumber == mModeSwitchNumber)
-		{
-			EscapeToDefaultMode();
-			return;
-		}
-		
 		if (switchNumber == mDecrementSwitchNumber)
 		{
 			// remove last char
@@ -1343,12 +1341,6 @@ MidiControlEngine::SwitchReleased_ProgramChangeDirect(int switchNumber)
 		sJustDidProgramChange = true;
 	}
 
-	if (mSwitchDisplay)
-	{
-		EnableSwitchDisplayTmp t(mSwitchDisplay);
-		mSwitchDisplay->SetSwitchDisplay(switchNumber, false);
-	}
-
 	if (mMainDisplay)
 		mMainDisplay->TextOut(msg + mDirectNumber);
 
@@ -1369,4 +1361,18 @@ MidiControlEngine::SwitchReleased_ProgramChangeDirect(int switchNumber)
 	}
 	else if (mMainDisplay)
 		mMainDisplay->AppendText("\r\nNo midi out available for program changes");
+}
+
+void
+MidiControlEngine::SwitchReleased_ProgramChangeDirect(int switchNumber)
+{
+	if (switchNumber == mModeSwitchNumber)
+	{
+		EscapeToDefaultMode();
+	}
+	else if (mSwitchDisplay)
+	{
+		EnableSwitchDisplayTmp t(mSwitchDisplay);
+		mSwitchDisplay->SetSwitchDisplay(switchNumber, false);
+	}
 }
