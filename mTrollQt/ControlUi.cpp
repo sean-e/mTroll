@@ -382,7 +382,7 @@ class EditTextOutEvent : public ControlUiEvent
 	bool mTransientText;
 
 public:
-	EditTextOutEvent(ControlUi * ui, QPlainTextEdit* label, const QString & text, bool transientTxt = false) : 
+	EditTextOutEvent(ControlUi * ui, QPlainTextEdit* label, const QString text, bool transientTxt = false) : 
 		ControlUiEvent(User),
 		mUi(ui),
 		mText(text),
@@ -416,7 +416,7 @@ class EditAppendEvent : public ControlUiEvent
 	QString mText;
 
 public:
-	EditAppendEvent(ControlUi * ui, QPlainTextEdit* label, const QString & text) : 
+	EditAppendEvent(ControlUi * ui, QPlainTextEdit* label, const QString text) : 
 		ControlUiEvent(User),
 		mUi(ui),
 		mText(text),
