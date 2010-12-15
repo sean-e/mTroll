@@ -435,6 +435,9 @@ MidiControlEngine::NavigateBankRelative(int relativeBankIndex)
 		}
 	}
 
+	if (emBank == mMode && mSwitchDisplay)
+		mSwitchDisplay->EnableDisplayUpdate(true);
+
 	// display bank info
 	PatchBank * bank = GetBank(mBankNavigationIndex);
 	if (!bank)
@@ -853,7 +856,10 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		}
 
 		if (mMode == emBank)
+		{
+			mSwitchDisplay->EnableDisplayUpdate(true);
 			mSwitchDisplay->SetSwitchDisplay(mModeSwitchNumber, true);
+		}
 		else
 		{
 			EnableSwitchDisplayTmp t(mSwitchDisplay);
@@ -1110,7 +1116,10 @@ MidiControlEngine::SwitchReleased_ModeSelect(int switchNumber)
 	else if (switchNumber == GetSwitchNumber(kModeTestLeds))
 	{
 		if (mSwitchDisplay)
+		{
+			mSwitchDisplay->EnableDisplayUpdate(true);
 			mSwitchDisplay->TestLeds();
+		}
 		EscapeToDefaultMode();
 	}
 	else if (switchNumber == GetSwitchNumber(kModeToggleTraceWindow))
