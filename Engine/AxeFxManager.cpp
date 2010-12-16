@@ -459,6 +459,14 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 void
 AxeFxManager::SyncFromAxe(Patch * patch)
 {
+	// TODO: keep this or not?  impact on edit screen?
+	// pro: no out of sync possible
+	// pro: less chance of deadlock?
+	// con: edit screen won't follow pedal
+	RequestPresetEffects();
+	return;
+
+	// this will cause the Axe to open the edit screen of the effect being queried
 	AxeEffectBlocks::iterator it = GetBlockInfo(patch);
 	if (it == mAxeEffectInfo.end())
 	{
@@ -478,6 +486,16 @@ AxeFxManager::SyncFromAxe(Patch * patch)
 
 	if (!(*it).mPatch)
 		return;
+
+	if (!(*it).mEffectIsPresentInAxePatch)
+	{
+		// don't query if effect isn't present in current patch - to lessen
+		// chance of axe-fx deadlock
+		// opens us up to the possibility of getting a toggle out of sync with
+		// any changes made by hand on the face of the unit or via other midi sources.
+		// an alternative to consider would be to simply call RequestPresetEffects.
+		return;
+	}
 
 	{
 		QMutexLocker lock(&mQueryLock);
