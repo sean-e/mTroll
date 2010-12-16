@@ -457,45 +457,6 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 }
 
 void
-AxeFxManager::InitiateSyncFromAxe()
-{
-	KillResponseTimer();
-
-	{
-		QMutexLocker lock(&mQueryLock);
-		mQueries.clear();
-
-		for (AxeEffectBlocks::iterator it = mAxeEffectInfo.begin(); 
-			it != mAxeEffectInfo.end(); 
-			++it)
-		{
-			AxeEffectBlockInfo * cur = &(*it);
-			if (-1 == cur->mSysexBypassParameterId)
-				continue;
-
-			if (-1 == cur->mSysexEffectId)
-				continue;
-
-			if (!cur->mPatch)
-				continue;
-
-			std::set<int>::const_iterator findIt = mEditBufferEffectBlocks.find(cur->mSysexEffectId);
-			if (findIt == mEditBufferEffectBlocks.end())
-			{
-				cur->mEffectIsPresentInAxePatch = false;
-				cur->mPatch->UpdateState(mSwitchDisplay, false);
-				continue;
-			}
-
-			cur->mEffectIsPresentInAxePatch = true;
-			mQueries.push_back(cur);
-		}
-	}
-
-	RequestNextParamValue();
-}
-
-void
 AxeFxManager::SyncFromAxe(Patch * patch)
 {
 	AxeEffectBlocks::iterator it = GetBlockInfo(patch);
@@ -771,7 +732,6 @@ AxeFxManager::ContinueReceivePatchDump(const byte * bytes, int len)
 	{
 		// patch dump is 2060 bytes
 		mPatchDumpBytesReceived = 0;
-		InitiateSyncFromAxe();
 	}
 }
 

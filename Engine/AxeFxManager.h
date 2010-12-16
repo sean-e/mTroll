@@ -83,7 +83,7 @@ private:
 	void RequestEditBufferDump();
 	void StartReceivePatchDump(const byte * bytes, int len);
 	void ContinueReceivePatchDump(const byte * bytes, int len);
-	void InitiateSyncFromAxe();
+
 	void RequestNextParamValue();
 	void ReceiveParamValue(const byte * bytes, int len);
 	void KillResponseTimer();
