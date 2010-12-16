@@ -369,7 +369,6 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 		else if (name == "testLeds") m = MidiControlEngine::kModeTestLeds;
 		else if (name == "toggleTraceWindow") m = MidiControlEngine::kModeToggleTraceWindow;
 		else if (name == "toggleLedInversion") m = MidiControlEngine::kModeToggleLedInversion;
-		else if (name == "reconnectMonome") m = MidiControlEngine::kModeReconnect;
 
 		if (MidiControlEngine::kUnassignedSwitchNumber != m)
 			mEngine->AssignModeSwitchNumber(m, switchNumber);

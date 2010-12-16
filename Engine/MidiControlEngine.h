@@ -74,8 +74,7 @@ public:
 		kModeTestLeds,
 		kModeToggleTraceWindow,
 		kModeBankDesc,
-		kModeToggleLedInversion,
-		kModeReconnect
+		kModeToggleLedInversion
 	};
 
 	// initialization

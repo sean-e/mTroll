@@ -158,7 +158,6 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 		mOtherModeSwitchNumbers[kModeTestLeds] = kModeTestLeds;
 		mOtherModeSwitchNumbers[kModeToggleTraceWindow] = kModeToggleTraceWindow;
 		mOtherModeSwitchNumbers[kModeToggleLedInversion] = kModeToggleLedInversion;
-		mOtherModeSwitchNumbers[kModeReconnect] = kModeReconnect;
 	}
 
 	std::sort(mBanks.begin(), mBanks.end(), SortByBankNumber);
@@ -731,7 +730,6 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			SetupModeSelectSwitch(kModeAdcOverride);
 			SetupModeSelectSwitch(kModeTime);
 			SetupModeSelectSwitch(kModeToggleLedInversion);
-			SetupModeSelectSwitch(kModeReconnect);
 
 			EnableSwitchDisplayTmp t(mSwitchDisplay);
 			for (std::map<int, int>::const_iterator it = mBankLoadSwitchNumbers.begin();
@@ -973,9 +971,6 @@ MidiControlEngine::SetupModeSelectSwitch(EngineModeSwitch m)
 	case kModeToggleLedInversion:
 		txt = "Toggle LED Inversion";
 		break;
-	case kModeReconnect:
-		txt = "Reconnect to Monome";
-		break;
 	default:
 		_ASSERTE(!"unhandled EngineModeSwitch");
 		return;
@@ -1109,12 +1104,6 @@ MidiControlEngine::SwitchReleased_ModeSelect(int switchNumber)
 	{
 		if (mSwitchDisplay)
 			mSwitchDisplay->InvertLeds(!mSwitchDisplay->IsInverted());
-		EscapeToDefaultMode();
-	}
-	else if (switchNumber == GetSwitchNumber(kModeReconnect))
-	{
-		if (mApplication)
-			mApplication->Reconnect();
 		EscapeToDefaultMode();
 	}
 	else if (switchNumber == GetSwitchNumber(kModeTestLeds))
