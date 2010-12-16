@@ -64,7 +64,7 @@ public:
 	void SetTempoPatch(Patch * patch);
 	bool SetSyncPatch(Patch * patch);
 	void SyncFromAxe(Patch * patch);
-	void SyncAllFromAxe();
+	void SyncFromAxe();
 	int GetAxeChannel() const { return mAxeChannel; }
 
 private:

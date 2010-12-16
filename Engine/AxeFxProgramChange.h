@@ -61,7 +61,7 @@ public:
 		SLEEP(50); // too long?
 
 		if (mAxeMgr)
-			mAxeMgr->SyncAllFromAxe();
+			mAxeMgr->SyncFromAxe();
 	}
 
 private:

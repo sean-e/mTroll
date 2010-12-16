@@ -1345,7 +1345,7 @@ MidiControlEngine::SwitchPressed_ProgramChangeDirect(int switchNumber)
 			mMidiOut->MidiOut(bytes);
 
 			if (sJustDidProgramChange && mAxeMgr && mAxeMgr->GetAxeChannel() && mDirectProgramChangeChannel)
-				mAxeMgr->SyncAllFromAxe();
+				mAxeMgr->SyncFromAxe();
 		}
 	}
 	else if (mMainDisplay)

@@ -793,7 +793,7 @@ AxeFxManager::RequestEditBufferDump()
 }
 
 void
-AxeFxManager::SyncAllFromAxe()
+AxeFxManager::SyncFromAxe()
 {
 	RequestPresetName();
 }

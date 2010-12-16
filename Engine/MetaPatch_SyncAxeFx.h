@@ -52,7 +52,7 @@ public:
 	virtual void SwitchPressed(IMainDisplay *, ISwitchDisplay *)
 	{
 		if (mAxe)
-			mAxe->SyncAllFromAxe();
+			mAxe->SyncFromAxe();
 	}
 
 	virtual void BankTransitionActivation() {SwitchPressed(NULL, NULL);}
