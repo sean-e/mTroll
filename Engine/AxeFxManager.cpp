@@ -215,58 +215,42 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 		return;
 	}
 
-	// Tempo: f0 00 01 74 01 10 f7 
-	if (0x10 == bytes[5])
+	switch (bytes[5])
 	{
+	case 0x10:
+		// Tempo: f0 00 01 74 01 10 f7
 		if (mTempoPatch)
 		{
 			mTempoPatch->ActivateSwitchDisplay(mSwitchDisplay, true);
 			mSwitchDisplay->SetIndicatorThreadSafe(false, mTempoPatch, 75);
 		}
 		return;
-	}
-
-	// MIDI_PARAM_VALUE: f0 00 01 74 01 02 ...
-	if (2 == bytes[5])
-	{
+	case 2:
 		ReceiveParamValue(&bytes[6], len - 6);
 		return;
-	}
-
-	if (0xf == bytes[5])
-	{
+	case 0xf:
 		ReceivePresetName(&bytes[6], len - 6);
 		return;
-	}
-
-	if (0xe == bytes[5])
-	{
+	case 0xe:
 		ReceivePresetEffects(&bytes[6], len - 6);
 		return;
-	}
-
-	if (4 == bytes[5])
-	{
+	case 8:
+		if (mCheckedFirmware)
+			return;
+		ReceiveFirmwareVersionResponse(bytes, len);
+		return;
+	case 4:
 		// skip byte 6 - may as well update state whenever we get it
 //		StartReceivePatchDump(&bytes[7], len - 7);
 		return;
-	}
-
-	if (8 == bytes[5])
-	{
-		if (mCheckedFirmware)
-			return;
-
-		ReceiveFirmwareVersionResponse(bytes, len);
-		return;
-	}
-
-	if (0 && mTrace)
-	{
-		const std::string byteDump(::GetAsciiHexStr(&bytes[5], len - 5, true));
-		std::strstream traceMsg;
-		traceMsg << byteDump.c_str() << std::endl << std::ends;
-		mTrace->Trace(std::string(traceMsg.str()));
+	default:
+		if (0 && mTrace)
+		{
+			const std::string byteDump(::GetAsciiHexStr(&bytes[5], len - 5, true));
+			std::strstream traceMsg;
+			traceMsg << byteDump.c_str() << std::endl << std::ends;
+			mTrace->Trace(std::string(traceMsg.str()));
+		}
 	}
 }
 
