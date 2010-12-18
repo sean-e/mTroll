@@ -443,14 +443,24 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 void
 AxeFxManager::SyncFromAxe(Patch * patch)
 {
-	// TODO: keep this or not?  impact on edit screen?
-	// pro: no out of sync possible
-	// pro: less chance of deadlock?
-	// con: edit screen won't follow pedal
-	RequestPresetEffects();
-	return;
+	// We have two methods to sync bypass state.
+	// First is to use RequestPresetEffects.
+	// Second is to use RequestParamValue.
+	if (1)
+	{
+		// pro: if effect does not exist in preset, we'll know it by lack of return value 
+		// pro: less chance of Axe-Fx deadlock?
+		// pro or con: edit screen won't open to effect
+		// alternatively: axe screen stays where it is at
+		RequestPresetEffects();
+		return;
+	}
 
-	// this will cause the Axe to open the edit screen of the effect being queried
+	// pro or con: RequestParamValue will cause the Axe to open the edit 
+	//   screen of the effect being queried.
+	// con: Potential for Axe-Fx deadlock?
+	// con: If effect does not exist in preset, get a return value that can't
+	//   be used to determine if it doesn't exist
 	AxeEffectBlocks::iterator it = GetBlockInfo(patch);
 	if (it == mAxeEffectInfo.end())
 	{
