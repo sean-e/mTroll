@@ -45,21 +45,6 @@ struct DeletePatch
 	}
 };
 
-class EnableSwitchDisplayTmp
-{
-	ISwitchDisplay * mSwDisp;
-public:
-	EnableSwitchDisplayTmp(ISwitchDisplay * swDisp) : mSwDisp(swDisp)
-	{
-		mSwDisp->EnableDisplayUpdate(true);
-	}
-
-	~EnableSwitchDisplayTmp()
-	{
-		mSwDisp->EnableDisplayUpdate(false);
-	}
-};
-
 static bool
 SortByBankNumber(const PatchBank* lhs, const PatchBank* rhs)
 {
@@ -286,8 +271,8 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 
 		if (mSwitchDisplay && doUpdate)
 		{
-			EnableSwitchDisplayTmp t(mSwitchDisplay);
-			mSwitchDisplay->SetSwitchDisplay(switchNumber, true);
+			mSwitchDisplay->EnableDisplayUpdate(false);
+			mSwitchDisplay->ForceSwitchDisplay(switchNumber, true);
 		}
 
 		if (emProgramChangeDirect == mMode)
@@ -427,13 +412,13 @@ MidiControlEngine::NavigateBankRelative(int relativeBankIndex)
 
 	if (mSwitchDisplay)
 	{
-		EnableSwitchDisplayTmp t(mSwitchDisplay);
+		mSwitchDisplay->EnableDisplayUpdate(false);
 		for (int idx = 0; idx < 64; idx++)
 		{
 			if (idx != mModeSwitchNumber)
 			{
 				mSwitchDisplay->ClearSwitchText(idx);
-				mSwitchDisplay->SetSwitchDisplay(idx, false);
+				mSwitchDisplay->ForceSwitchDisplay(idx, false);
 			}
 		}
 	}
@@ -663,11 +648,11 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 
 	if (mSwitchDisplay)
 	{
-		EnableSwitchDisplayTmp t(mSwitchDisplay);
+		mSwitchDisplay->EnableDisplayUpdate(false);
 		for (int idx = 0; idx < 64; idx++)
 		{
 			mSwitchDisplay->ClearSwitchText(idx);
-			mSwitchDisplay->SetSwitchDisplay(idx, false);
+			mSwitchDisplay->ForceSwitchDisplay(idx, false);
 		}
 	}
 
@@ -731,7 +716,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			SetupModeSelectSwitch(kModeTime);
 			SetupModeSelectSwitch(kModeToggleLedInversion);
 
-			EnableSwitchDisplayTmp t(mSwitchDisplay);
+			mSwitchDisplay->EnableDisplayUpdate(false);
 			for (std::map<int, int>::const_iterator it = mBankLoadSwitchNumbers.begin();
 				it != mBankLoadSwitchNumbers.end(); ++it)
 			{
@@ -741,7 +726,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 					std::string txt("Bank: ");
 					txt += bnk->GetBankName();
 					mSwitchDisplay->SetSwitchText(it->first, txt);
-					mSwitchDisplay->SetSwitchDisplay(it->first, true);
+					mSwitchDisplay->ForceSwitchDisplay(it->first, true);
 				}
 			}
 		}
@@ -753,9 +738,9 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			int switchNumber = GetSwitchNumber(kModeTime);
 			if (kUnassignedSwitchNumber != switchNumber)
 			{
-				EnableSwitchDisplayTmp t(mSwitchDisplay);
+				mSwitchDisplay->EnableDisplayUpdate(false);
 				mSwitchDisplay->SetSwitchText(switchNumber, "Any button to exit");
-				mSwitchDisplay->SetSwitchDisplay(switchNumber, true);
+				mSwitchDisplay->ForceSwitchDisplay(switchNumber, true);
 			}
 			if (!mApplication || !mApplication->EnableTimeDisplay(true))
 				EscapeToDefaultMode();
@@ -767,8 +752,8 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		if (mSwitchDisplay)
 		{
 			mSwitchDisplay->SetSwitchText(0, "Pedal 1");
-			EnableSwitchDisplayTmp t(mSwitchDisplay);
-			mSwitchDisplay->SetSwitchDisplay(0, true);
+			mSwitchDisplay->EnableDisplayUpdate(false);
+			mSwitchDisplay->ForceSwitchDisplay(0, true);
 			mSwitchDisplay->SetSwitchText(1, "Pedal 2");
 			mSwitchDisplay->SetSwitchText(2, "Pedal 3");
 			mSwitchDisplay->SetSwitchText(3, "Pedal 4");
@@ -779,7 +764,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		mPedalModePort = 0;
 		if (mSwitchDisplay && mApplication)
 		{
-			EnableSwitchDisplayTmp t(mSwitchDisplay);
+			mSwitchDisplay->EnableDisplayUpdate(false);
 			for (int idx = 0; idx < 4; ++idx)
 			{
 				std::strstream msg;
@@ -788,13 +773,13 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 				{
 					msg << " forced off" << std::endl << std::ends;
 					mSwitchDisplay->SetSwitchText(idx, msg.str());
-					mSwitchDisplay->SetSwitchDisplay(idx, true);
+					mSwitchDisplay->ForceSwitchDisplay(idx, true);
 				}
 				else
 				{
 					msg << " normal" << std::endl << std::ends;
 					mSwitchDisplay->SetSwitchText(idx, msg.str());
-					mSwitchDisplay->SetSwitchDisplay(idx, false);
+					mSwitchDisplay->ForceSwitchDisplay(idx, false);
 				}
 			}
 		}
@@ -864,8 +849,8 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		}
 		else
 		{
-			EnableSwitchDisplayTmp t(mSwitchDisplay);
-			mSwitchDisplay->SetSwitchDisplay(mModeSwitchNumber, false);
+			mSwitchDisplay->EnableDisplayUpdate(false);
+			mSwitchDisplay->ForceSwitchDisplay(mModeSwitchNumber, false);
 		}
 	}
 }
@@ -977,8 +962,8 @@ MidiControlEngine::SetupModeSelectSwitch(EngineModeSwitch m)
 	}
 
 	mSwitchDisplay->SetSwitchText(switchNumber, txt);
-	EnableSwitchDisplayTmp t(mSwitchDisplay);
-	mSwitchDisplay->SetSwitchDisplay(switchNumber, true);
+	mSwitchDisplay->EnableDisplayUpdate(false);
+	mSwitchDisplay->ForceSwitchDisplay(switchNumber, true);
 }
 
 void
@@ -990,12 +975,12 @@ MidiControlEngine::SwitchReleased_PedalDisplayMode(int switchNumber)
 	}
 	else if (switchNumber >= 0 && switchNumber <= 3)
 	{
-		EnableSwitchDisplayTmp t(mSwitchDisplay);
+		mSwitchDisplay->EnableDisplayUpdate(false);
 		if (mSwitchDisplay)
-			mSwitchDisplay->SetSwitchDisplay(mPedalModePort, false);
+			mSwitchDisplay->ForceSwitchDisplay(mPedalModePort, false);
 		mPedalModePort = switchNumber;
 		if (mSwitchDisplay)
-			mSwitchDisplay->SetSwitchDisplay(mPedalModePort, true);
+			mSwitchDisplay->ForceSwitchDisplay(mPedalModePort, true);
 
 		if (mMainDisplay)
 		{
@@ -1179,8 +1164,8 @@ MidiControlEngine::SwitchReleased_BankDirect(int switchNumber)
 
 	if (mSwitchDisplay)
 	{
-		EnableSwitchDisplayTmp t(mSwitchDisplay);
-		mSwitchDisplay->SetSwitchDisplay(switchNumber, false);
+		mSwitchDisplay->EnableDisplayUpdate(false);
+		mSwitchDisplay->ForceSwitchDisplay(switchNumber, false);
 	}
 
 	if (mMainDisplay && updateMainDisplay)
@@ -1361,7 +1346,7 @@ MidiControlEngine::SwitchReleased_ProgramChangeDirect(int switchNumber)
 	}
 	else if (mSwitchDisplay)
 	{
-		EnableSwitchDisplayTmp t(mSwitchDisplay);
-		mSwitchDisplay->SetSwitchDisplay(switchNumber, false);
+		mSwitchDisplay->EnableDisplayUpdate(false);
+		mSwitchDisplay->ForceSwitchDisplay(switchNumber, false);
 	}
 }

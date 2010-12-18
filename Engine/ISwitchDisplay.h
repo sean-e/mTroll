@@ -38,6 +38,7 @@ class ISwitchDisplay
 {
 public:
 	virtual void SetSwitchDisplay(int switchNumber, bool isOn) = 0;
+	virtual void ForceSwitchDisplay(int switchNumber, bool isOn) = 0;
 	virtual void SetSwitchText(int switchNumber, const std::string & txt) = 0;
 	virtual void ClearSwitchText(int switchNumber) = 0;
 	virtual void SetIndicatorThreadSafe(bool isOn, Patch * patch, int time) = 0;

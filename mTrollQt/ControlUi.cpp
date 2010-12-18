@@ -520,10 +520,17 @@ void
 ControlUi::SetSwitchDisplay(int switchNumber, 
 							bool isOn)
 {
-	_ASSERTE(switchNumber < kMaxButtons);
 	if (!mSwitchLedUpdateEnabled)
 		return;
 
+	ForceSwitchDisplay(switchNumber, isOn);
+}
+
+void
+ControlUi::ForceSwitchDisplay(int switchNumber, 
+							  bool isOn)
+{
+	_ASSERTE(switchNumber < kMaxButtons);
 	if (mInvertLeds)
 		isOn = !isOn;
 
