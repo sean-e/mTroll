@@ -1,0 +1,5 @@
+glob:*.ncb
+glob:*.suo
+glob:*.sean.e.user
+glob:mTrollQt/Debug/*
+glob:mTrollQt/Release/*

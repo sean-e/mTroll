@@ -4,13 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mTrollQt", "mTrollQt\mTrollQt.vcproj", "{3D33E5B3-BA0F-45D2-AAE7-A939F9F4B985}"
 EndProject
 Global
-	GlobalSection(SourceCodeControl) = preSolution
-		SccNumberOfProjects = 2
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = mTrollQt\\mTrollQt.vcproj
-		SccLocalPath1 = .
-		SccProjectFilePathRelativizedFromConnection1 = mTrollQt\\
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
 		Release|Win32 = Release|Win32
