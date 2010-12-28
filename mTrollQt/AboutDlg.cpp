@@ -19,6 +19,7 @@
  *
  * Let me know if you modify, extend or use mTroll.
  * Original project site: http://www.creepingfog.com/mTroll/
+ * SourceForge site: http://sourceforge.net/projects/mtroll/
  * Contact Sean: "fester" at the domain of the original project site
  */
 
@@ -38,6 +39,7 @@ AboutDlg::AboutDlg()
 	QString labelTxt =
 		"<html><body>mTroll MIDI Controller<br><br>"
 		"<a href=\"http://www.creepingfog.com/mTroll/\">http://www.creepingfog.com/mTroll/</a><br><br>"
+		"<a href=\"http://sourceforge.net/projects/mtroll/\">http://sourceforge.net/projects/mtroll/</a><br><br>"
 		"&copy; copyright 2007-2010 Sean Echevarria<br><br>";
 	labelTxt += "Built " + ::GetBuildDate();
 	labelTxt += "</body></html>";
