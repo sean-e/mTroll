@@ -1,5 +1,6 @@
 glob:*.ncb
 glob:*.suo
+glob:mtrollQt.zip
 glob:*.sean.e.user
 glob:mTrollQt/Debug/*
 glob:mTrollQt/Release/*
