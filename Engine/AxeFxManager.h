@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010 Sean Echevarria
+ * Copyright (C) 2010-2011 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -62,7 +62,7 @@ public:
 
 	void CompleteInit(IMidiOut * midiOut);
 	void SetTempoPatch(Patch * patch);
-	bool SetSyncPatch(Patch * patch);
+	bool SetSyncPatch(Patch * patch, int bypassCc = -1);
 	void SyncFromAxe(Patch * patch);
 	void SyncFromAxe();
 	int GetAxeChannel() const { return mAxeChannel; }
@@ -70,6 +70,7 @@ public:
 private:
 	AxeEffectBlockInfo * IdentifyBlockInfoUsingBypassId(const byte * bytes);
 	AxeEffectBlockInfo * IdentifyBlockInfoUsingCc(const byte * bytes);
+	AxeEffectBlockInfo * IdentifyBlockInfoUsingEffectId(const byte * bytes);
 	AxeEffectBlocks::iterator GetBlockInfo(Patch * patch);
 	void SendFirmwareVersionQuery();
 	void ReceiveFirmwareVersionResponse(const byte * bytes, int len);

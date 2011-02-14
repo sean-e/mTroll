@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010 Sean Echevarria
+ * Copyright (C) 2010-2011 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -109,33 +109,38 @@ AxeFxManager::SetTempoPatch(Patch * patch)
 }
 
 bool
-AxeFxManager::SetSyncPatch(Patch * patch)
+AxeFxManager::SetSyncPatch(Patch * patch, int bypassCc /*= -1*/)
 {
-	std::string effectName(patch->GetName());
-	::NormalizeAxeEffectName(effectName);
+	std::string normalizedEffectName(patch->GetName());
+	::NormalizeAxeEffectName(normalizedEffectName);
 	for (AxeEffectBlocks::iterator it = mAxeEffectInfo.begin(); 
 		it != mAxeEffectInfo.end(); 
 		++it)
 	{
 		AxeEffectBlockInfo & cur = *it;
-		if (cur.mNormalizedName == effectName)
+		if (cur.mNormalizedName == normalizedEffectName)
 		{
 			if (cur.mPatch && mTrace)
 			{
 				std::string msg("Warning: multiple Axe-Fx patches for " + patch->GetName() + "\n");
 				mTrace->Trace(msg);
 			}
+
+			if (-1 != bypassCc)
+				cur.mBypassCC = bypassCc;
+
 			cur.mPatch = patch;
 			return true;
 		}
 	}
 
 	if (mTrace && 
-		0 != effectName.find("looper ") &&
-		effectName != "tuner" &&
-		effectName != "global preset effect toggle" &&
-		effectName != "volume increment" &&
-		effectName != "volume decrement")
+		0 != normalizedEffectName.find("looper ") &&
+		0 != normalizedEffectName.find("external ") &&
+		normalizedEffectName != "tuner" &&
+		normalizedEffectName != "global preset effect toggle" &&
+		normalizedEffectName != "volume increment" &&
+		normalizedEffectName != "volume decrement")
 	{
 		std::string msg("Warning: no Axe-Fx effect found to sync for " + patch->GetName() + "\n");
 		mTrace->Trace(msg);
@@ -299,6 +304,30 @@ AxeFxManager::IdentifyBlockInfoUsingCc(const byte * bytes)
 	return NULL;
 }
 
+// This method is provided for last chance guess.  Only use if all other methods
+// fail.  It can return incorrect information since many effects are available
+// in quantity.  This will return the first effect Id match to the exclusion
+// of instance id.  It is meant for Feedback Return which is a single instance
+// effect that has no default cc for bypass.
+AxeEffectBlockInfo *
+AxeFxManager::IdentifyBlockInfoUsingEffectId(const byte * bytes)
+{
+	const int effectIdLs = bytes[0];
+	const int effectIdMs = bytes[1];
+
+	for (AxeEffectBlocks::iterator it = mAxeEffectInfo.begin(); 
+		it != mAxeEffectInfo.end(); 
+		++it)
+	{
+		AxeEffectBlockInfo & cur = *it;
+		if (cur.mSysexEffectIdLs == effectIdLs &&
+			cur.mSysexEffectIdMs == effectIdMs)
+			return &(*it);
+	}
+
+	return NULL;
+}
+
 AxeEffectBlocks::iterator
 AxeFxManager::GetBlockInfo(Patch * patch)
 {
@@ -438,6 +467,14 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 	};
 
 	QCoreApplication::postEvent(this, new CreateSendNextQueryTimer(this));
+}
+
+// consider: queue sync requests so that multiple patches on a single 
+// switch result in a single request (handle on a timer)
+void
+AxeFxManager::SyncFromAxe()
+{
+	RequestPresetName();
 }
 
 void
@@ -765,12 +802,6 @@ AxeFxManager::RequestEditBufferDump()
 }
 
 void
-AxeFxManager::SyncFromAxe()
-{
-	RequestPresetName();
-}
-
-void
 AxeFxManager::ReceiveFirmwareVersionResponse(const byte * bytes, int len)
 {
 	// response to firmware version request: F0 00 01 74 01 08 0A 03 F7
@@ -882,6 +913,17 @@ AxeFxManager::ReceivePresetEffects(const byte * bytes, int len)
 
 		AxeEffectBlockInfo * inf = NULL;
 		inf = IdentifyBlockInfoUsingCc(bytes + idx);
+		if (!inf)
+		{
+			inf = IdentifyBlockInfoUsingEffectId(bytes + idx);
+			if (inf && mTrace && inf->mNormalizedName != "feedback return")
+			{
+				std::strstream traceMsg;
+				traceMsg << "Axe sync warning: potentially unexpected sync for  " << inf->mName << " " << std::endl << std::ends;
+				mTrace->Trace(std::string(traceMsg.str()));
+			}
+		}
+
 		if (inf && inf->mPatch)
 		{
 			inf->mEffectIsPresentInAxePatch = true;
@@ -1148,8 +1190,19 @@ SynonymNormalization(std::string & name)
 		MapName("ext 6", "external 6");
 		MapName("ext 7", "external 7");
 		MapName("ext 8", "external 8");
+		MapName("extern 1", "external 1");
+		MapName("extern 2", "external 2");
+		MapName("extern 3", "external 3");
+		MapName("extern 4", "external 4");
+		MapName("extern 5", "external 5");
+		MapName("extern 6", "external 6");
+		MapName("extern 7", "external 7");
+		MapName("extern 8", "external 8");
 		break;
 	case 'f':
+		MapName("fdbk ret", "feedback return");
+		MapName("fdbk return", "feedback return");
+		MapName("feedback ret", "feedback return");
 		MapName("fx loop", "effects loop");
 		break;
 	case 'g':

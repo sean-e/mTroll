@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010 Sean Echevarria
+ * Copyright (C) 2007-2011 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -752,12 +752,19 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			}
 		}
 
+		int overrideCc = -1;
 		if (device == "Axe-Fx" && 
 			(patchType.empty() || patchType == "AxeToggle" || patchType == "AxeMomentary") && 
 			cmds.empty() && cmds2.empty() &&
 			patchDefaultCh != -1)
 		{
-			const int axeCc = ::GetDefaultAxeCc(patchName, mTraceDisplay);
+			int axeCc = 0;
+			pElem->QueryIntAttribute("cc", &axeCc);
+			if (axeCc)
+				overrideCc = axeCc; // no default (like Feedback Return) or overridden from default
+			else
+				axeCc = ::GetDefaultAxeCc(patchName, mTraceDisplay); // fallback to default
+
 			if (axeCc)
 			{
 				Bytes bytes;
@@ -806,7 +813,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			AxeTogglePatch * axePatch = new AxeTogglePatch(patchNumber, patchName, midiOut, cmds, cmds2, mAxeFxManager);
 			if (mAxeFxManager)
 			{
-				if (!mAxeFxManager->SetSyncPatch(axePatch))
+				if (!mAxeFxManager->SetSyncPatch(axePatch, overrideCc))
 					axePatch->ClearAxeMgr();
 			}
 			else if (mTraceDisplay)
@@ -824,7 +831,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		{
 			newPatch = new MomentaryPatch(patchNumber, patchName, midiOut, cmds, cmds2);
 			if (mAxeFxManager)
-				mAxeFxManager->SetSyncPatch(newPatch);
+				mAxeFxManager->SetSyncPatch(newPatch, overrideCc);
 			else if (mTraceDisplay)
 			{
 				std::strstream traceMsg;
