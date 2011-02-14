@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010 Sean Echevarria
+ * Copyright (C) 2007-2011 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -532,7 +532,10 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 				mainDisplay->TransientTextOut(displayMsg.str());
 			}
 			else if (bottomDeadzone || topDeadzone)
+			{
+				displayMsg << std::ends;
 				mainDisplay->TransientTextOut(displayMsg.str());
+			}
 			else
 				mainDisplay->ClearTransientText();
 		}
