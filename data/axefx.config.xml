@@ -469,64 +469,44 @@
 		<patch name="Axe 383" number="383" type="normal" device="Axe-Fx"><AxeProgramChange program="383"/></patch>
 
 		<!-- Axe-Fx default controllers -->
-		<patch name="Axe Input Volume" number="700" type="normal" device="Axe-Fx">
-			<!-- Input Volume 10 -->
+		<patch name="Axe Input Volume" comment="Input Volume 10" number="700" type="normal" device="Axe-Fx">
 			<globalExpr inputNumber="1" enable="0" />
 			<localExpr inputNumber="1" assignmentNumber="1" controller="10" min="0" max="127" invert="0" enable="1" />
 		</patch>
-		<patch name="Axe Out 1 Volume" number="701" type="normal" device="Axe-Fx">
-			<!-- Out 1 Volume 11 -->
+		<patch name="Axe Out 1 Volume" comment="Out 1 Volume 11" number="701" type="normal" device="Axe-Fx">
 			<globalExpr inputNumber="1" enable="0" />
 			<localExpr inputNumber="1" assignmentNumber="1" controller="11" min="0" max="127" invert="0" enable="1" />
 		</patch>
-		<patch name="Axe Out 2 Volume" number="702" type="normal" device="Axe-Fx">
-			<!-- Out 2 Volume 12 -->
+		<patch name="Axe Out 2 Volume" comment="Out 2 Volume 12" number="702" type="normal" device="Axe-Fx">
 			<globalExpr inputNumber="1" enable="0" />
 			<localExpr inputNumber="1" assignmentNumber="1" controller="12" min="0" max="127" invert="0" enable="1" />
 		</patch>
 		<patch name="Axe Device Complete Bypass Toggle" number="703" device="Axe-Fx" invert="1" />
 		<patch name="Axe Tap Tempo" number="704" type="AxeFxTapTempo" device="Axe-Fx" />
 		<patch name="Axe Tuner" number="705" device="Axe-Fx" />
-		<patch name="Axe Ext 1" number="706" type="normal" device="Axe-Fx">
-			<!-- External 1 16 -->
+		<patch name="Axe Ext 1" comment="External 1 16" number="706" type="normal" device="Axe-Fx">
 			<globalExpr inputNumber="4" enable="0" />
 			<localExpr inputNumber="4" assignmentNumber="1" controller="16" min="0" max="127" invert="0" enable="1" />
 		</patch>
-		<patch name="Axe Ext 2" number="707" type="normal" device="Axe-Fx">
-			<!-- External 2 17 -->
+		<patch name="Axe Ext 2" comment="External 2 17" number="707" type="normal" device="Axe-Fx">
 			<globalExpr inputNumber="4" enable="0" />
 			<localExpr inputNumber="4" assignmentNumber="1" controller="17" min="0" max="127" invert="0" enable="1" />
 		</patch>
-		<patch name="Axe Ext 3" number="708" type="normal" device="Axe-Fx">
-			<!-- External 3 18 -->
+		<patch name="Axe Ext 3" comment="External 3 18" number="708" type="normal" device="Axe-Fx">
 			<globalExpr inputNumber="4" enable="0" />
 			<localExpr inputNumber="4" assignmentNumber="1" controller="18" min="0" max="127" invert="0" enable="1" />
 		</patch>
-		<patch name="Axe Ext 4" number="709" type="normal" device="Axe-Fx">
-			<!-- External 4 19 -->
+		<patch name="Axe Ext 4" comment="External 4 19" number="709" type="normal" device="Axe-Fx">
 			<globalExpr inputNumber="4" enable="0" />
 			<localExpr inputNumber="4" assignmentNumber="1" controller="19" min="0" max="127" invert="0" enable="1" />
 		</patch>
-		<patch name="Axe Ext 5" number="710" type="normal" device="Axe-Fx">
-			<!-- External 5 20 -->
+		<patch name="Axe Ext 5" comment="External 5 20" number="710" type="normal" device="Axe-Fx">
 			<globalExpr inputNumber="4" enable="0" />
 			<localExpr inputNumber="4" assignmentNumber="1" controller="20" min="0" max="127" invert="0" enable="1" />
 		</patch>
-		<patch name="Axe Ext 6" number="711" type="normal" device="Axe-Fx">
-			<!-- External 6 21 -->
-			<globalExpr inputNumber="4" enable="0" />
-			<localExpr inputNumber="4" assignmentNumber="1" controller="21" min="0" max="127" invert="0" enable="1" />
-		</patch>
-		<patch name="Axe Ext 7" number="712" type="normal" device="Axe-Fx">
-			<!-- External 7 22 -->
-			<globalExpr inputNumber="4" enable="0" />
-			<localExpr inputNumber="4" assignmentNumber="1" controller="22" min="0" max="127" invert="0" enable="1" />
-		</patch>
-		<patch name="Axe Ext 8" number="713" type="normal" device="Axe-Fx">
-			<!-- External 8 23 -->
-			<globalExpr inputNumber="4" enable="0" />
-			<localExpr inputNumber="4" assignmentNumber="1" controller="23" min="0" max="127" invert="0" enable="1" />
-		</patch>
+		<patch name="Axe Ext 6" comment="External 6 21" number="711" device="Axe-Fx" />
+		<patch name="Axe Ext 7" comment="External 7 22" number="712" device="Axe-Fx" />
+		<patch name="Axe Ext 8" comment="External 8 23" number="713" device="Axe-Fx" />
 
 		<!-- Axe-Fx default controllers; note no controllers specifed, mTroll will look up 
 			default based on patch name.
@@ -614,6 +594,11 @@
 		<patch name="Axe Volume 4" number="786" device="Axe-Fx" />
 		<patch name="Axe Wah-wah 1" number="787" device="Axe-Fx" />
 		<patch name="Axe Wah-wah 2" number="788" device="Axe-Fx" />
+		<patch name="Axe Fdbk Return" number="789" type="AxeToggle" device="Axe-Fx" cc="23" comment="23 is ext 8 cc" >
+			<!-- The type attribute needs to be explicit since there is no default cc for feedback return. -->
+			<!-- For this to work as expected, external 8 needs to be assigned to 
+					modify feedback return bypass in every preset where it is used. -->
+		</patch>
 
 		<patch name="Axe Ext 1 Mute Toggle" number="801" type="toggle" device="Axe-Fx">
 			<ControlChange group="A" controller="16" value="0" />
