@@ -889,7 +889,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			if (patchElement == "localExpr")
 			{
 				// <localExpr inputNumber="1" assignmentNumber="1" channel="" controller="" min="" max="" invert="0" enable="" />
-				LoadExpressionPedalSettings(childElem, pedals, patchDefaultCh);
+				LoadExpressionPedalSettings(childElem, pedals, patchDefaultCh + 1);
 			}
 			else if (patchElement == "globalExpr")
 			{
