@@ -1201,8 +1201,10 @@ SynonymNormalization(std::string & name)
 		break;
 	case 'f':
 		MapName("fdbk ret", "feedback return");
+		MapName("fdbk rtrn", "feedback return");
 		MapName("fdbk return", "feedback return");
 		MapName("feedback ret", "feedback return");
+		MapName("feedback rtrn", "feedback return");
 		MapName("fx loop", "effects loop");
 		break;
 	case 'g':
