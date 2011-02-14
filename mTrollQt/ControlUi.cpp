@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010 Sean Echevarria
+ * Copyright (C) 2007-2011 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -374,6 +374,28 @@ ControlUi::ButtonReleased(const int idx)
 	}
 }
 
+class RestoreMainTextEvent : public ControlUiEvent
+{
+	ControlUi * mUi;
+	QPlainTextEdit *mLabel;
+
+public:
+	RestoreMainTextEvent(ControlUi * ui, QPlainTextEdit* label) : 
+		ControlUiEvent(User),
+		mUi(ui),
+		mLabel(label)
+	{
+	}
+
+	virtual void exec()
+	{
+		const QString prevTxt(mLabel->toPlainText());
+		const QString newTxt(mUi->mMainText);
+		if (prevTxt != newTxt)
+			mLabel->setPlainText(newTxt);
+	}
+};
+
 class EditTextOutEvent : public ControlUiEvent
 {
 	ControlUi * mUi;
@@ -479,7 +501,7 @@ void
 ControlUi::ClearTransientText()
 {
 	QCoreApplication::postEvent(this, 
-		new EditTextOutEvent(this, mMainDisplay, mMainText));
+		new RestoreMainTextEvent(this, mMainDisplay));
 }
 
 

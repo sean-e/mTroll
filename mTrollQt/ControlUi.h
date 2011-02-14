@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010 Sean Echevarria
+ * Copyright (C) 2007-2011 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -68,6 +68,7 @@ class ControlUi : public QWidget,
 	friend class CreateDisplayTimeTimer;
 	friend class EditTextOutEvent;
 	friend class EditAppendEvent;
+	friend class RestoreMainTextEvent;
 public:
 	ControlUi(QWidget * parent, ITrollApplication * app);
 	virtual ~ControlUi();
