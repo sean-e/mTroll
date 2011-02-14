@@ -1,14 +1,14 @@
 <?xml version="1.0" ?>
 <MidiControlUiSettings>
 	<frame width="815" height="790" />
-	<mainTextDisplay top="430" left="9" width="800" height="163" font-height="12" font-weight="bold" foregroundColor="ff9900" backgroundColor="0" />
+	<mainTextDisplay top="430" left="9" width="800" height="163" font-height="12" font-weight="bold" foregroundColor="ffcc00" backgroundColor="0" />
 	<traceTextDisplay top="600" left="9" width="800" height="163" font-height="8" />
 	<hardware ledBrightness="2" invertLeds="0" />
 
 	<switchAssemblyConfig>
 		<switch font-name="Tahoma" font-weight="bold" font-height="10" width="75" height="23" />
 		<switchTextDisplay font-name="Tahoma" font-height="11" foregroundColor="00ff00" backgroundColor="0" width="145" height="23" />
-		<switchLed width="30" height="15" onColor="ff0033" offColor="969696" />
+	    <switchLed width="30" height="15" onColor="ffff00" offColor="3a3a3a" />
 	</switchAssemblyConfig>
 
 	<switchMappings comment="this is for mapping ordinal switch numbers to monome grid coords (all are zero based)">
