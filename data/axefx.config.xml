@@ -20,11 +20,12 @@
 			<switch name="forward" id="2" />
 			<switch name="time" id="3" />
 			<switch name="programChangeDirect" id="4" />
-			<switch name="bankDirect" id="5" />
-			<switch name="adcDisplay" id="6" />
-			<switch name="adcOverride" id="7" />
-			<switch name="testLeds" id="8" />
-			<switch name="toggleTraceWindow" id="9" />
+			<switch name="controlChangeDirect" id="5" />
+			<switch name="adcOverride" id="6" />
+			<switch name="toggleTraceWindow" id="7" />
+			<switch name="bankDirect" id="15" />
+			<switch name="adcDisplay" id="16" />
+			<switch name="testLeds" id="17" />
 			<switch name="bankDescription" id="18" />
 			<switch name="toggleLedInversion" id="19" />
 

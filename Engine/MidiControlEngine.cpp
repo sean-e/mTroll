@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010 Sean Echevarria
+ * Copyright (C) 2007-2011 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -80,8 +80,9 @@ MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 	mFilterRedundantProgramChanges(false),
 	mPedalModePort(0),
 	mHistoryNavMode(hmNone),
-	mDirectProgramChangeChannel(0),
-	mDirectProgramLastSent(0),
+	mDirectChangeChannel(0),
+	mDirectValueLastSent(0),
+	mDirectValue1LastSent(0),
 	mMidiOut(midiOut),
 	mAxeMgr(axMgr)
 {
@@ -136,6 +137,7 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 		mOtherModeSwitchNumbers[kModeForward] = kModeForward;
 		mOtherModeSwitchNumbers[kModeTime] = kModeTime;
 		mOtherModeSwitchNumbers[kModeProgramChangeDirect] = kModeProgramChangeDirect;
+		mOtherModeSwitchNumbers[kModeControlChangeDirect] = kModeControlChangeDirect;
 		mOtherModeSwitchNumbers[kModeBankDesc] = kModeBankDesc;
 		mOtherModeSwitchNumbers[kModeBankDirect] = kModeBankDirect;
 		mOtherModeSwitchNumbers[kModeExprPedalDisplay] = kModeExprPedalDisplay;
@@ -257,7 +259,8 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 	}
 
 	if (emBankDirect == mMode || 
-		emProgramChangeDirect == mMode)
+		emProgramChangeDirect == mMode ||
+		emControlChangeDirect == mMode)
 	{
 		bool doUpdate = false;
 		if ((switchNumber >= 0 && switchNumber <= 9) ||
@@ -265,7 +268,7 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 			switchNumber == mIncrementSwitchNumber)
 			doUpdate = true;
 
-		if (emProgramChangeDirect == mMode && 
+		if ((emProgramChangeDirect == mMode || emControlChangeDirect == mMode) && 
 			switchNumber >= 10 && switchNumber <= 14)
 			doUpdate = true;
 
@@ -277,6 +280,8 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 
 		if (emProgramChangeDirect == mMode)
 			SwitchPressed_ProgramChangeDirect(switchNumber);
+		else if (emControlChangeDirect == mMode)
+			SwitchPressed_ControlChangeDirect(switchNumber);
 
 		return;
 	}
@@ -332,6 +337,10 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 		SwitchReleased_ProgramChangeDirect(switchNumber);
 		return;
 
+	case emControlChangeDirect:
+		SwitchReleased_ControlChangeDirect(switchNumber);
+		return;
+
 	case emBankDirect:
 		SwitchReleased_BankDirect(switchNumber);
 		return;
@@ -362,6 +371,7 @@ MidiControlEngine::AdcValueChanged(int port,
 
 	case emBank:
 	case emProgramChangeDirect:
+	case emControlChangeDirect:
 	case emModeSelect:
 	case emTimeDisplay:
 		// forward directly to active patch
@@ -635,11 +645,13 @@ MidiControlEngine::HistoryRecall()
 // emModeSelect -> emBankDesc
 // emModeSelect -> emBankDirect
 // emModeSelect -> emProgramChangeDirect
+// emModeSelect -> emControlChangeDirect
 // emModeSelect -> emExprPedalDisplay
 // emBankNav -> emDefault
 // emBankDesc -> emDefault
 // emBankDirect -> emDefault
 // emProgramChangeDirect -> emDefault
+// emControlChangeDirect -> emDefault
 // emExprPedalDisplay -> emDefault
 void
 MidiControlEngine::ChangeMode(EngineMode newMode)
@@ -709,6 +721,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			SetupModeSelectSwitch(kModeBankDesc);
 			SetupModeSelectSwitch(kModeBankDirect);
 			SetupModeSelectSwitch(kModeProgramChangeDirect);
+			SetupModeSelectSwitch(kModeControlChangeDirect);
 			SetupModeSelectSwitch(kModeExprPedalDisplay);
 			SetupModeSelectSwitch(kModeTestLeds);
 			SetupModeSelectSwitch(kModeToggleTraceWindow);
@@ -785,10 +798,11 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		}
 		break;
 	case emProgramChangeDirect:
+	case emControlChangeDirect:
 		if (!mMidiOut)
 		{
 			if (mMainDisplay)
-				mMainDisplay->TextOut("Program change not available without MIDI out");
+				mMainDisplay->TextOut("Program or control change not available without MIDI out");
 			break;
 		}
 		// fall-through
@@ -796,8 +810,10 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		mDirectNumber.clear();
 		if (emBankDirect == mMode)
 			msg = "Bank Direct";
-		else
+		else if (emProgramChangeDirect == mMode)
 			msg = "Manual Program Changes";
+		else if (emControlChangeDirect == mMode)
+			msg = "Manual Control Changes";
 
 		if (mSwitchDisplay)
 		{
@@ -814,7 +830,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "Backspace");
 			if (emBankDirect == mMode)
 				mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Commit");
-			else
+			else if (emProgramChangeDirect == mMode)
 			{
 				mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Clear");
 				mSwitchDisplay->SetSwitchText(10, "Set channel");
@@ -822,6 +838,15 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 				mSwitchDisplay->SetSwitchText(12, "Send program change");
 				mSwitchDisplay->SetSwitchText(13, "Decrement program");
 				mSwitchDisplay->SetSwitchText(14, "Increment program");
+			}
+			else if (emControlChangeDirect == mMode)
+			{
+				mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Clear");
+				mSwitchDisplay->SetSwitchText(10, "Set channel");
+				mSwitchDisplay->SetSwitchText(11, "Set controller");
+				mSwitchDisplay->SetSwitchText(12, "Send control change");
+				mSwitchDisplay->SetSwitchText(13, "Decrement value");
+				mSwitchDisplay->SetSwitchText(14, "Increment value");
 			}
 		}
 		break;
@@ -937,6 +962,9 @@ MidiControlEngine::SetupModeSelectSwitch(EngineModeSwitch m)
 		break;
 	case kModeProgramChangeDirect:
 		txt = "Manual program change...";
+		break;
+	case kModeControlChangeDirect:
+		txt = "Manual control change...";
 		break;
 	case kModeExprPedalDisplay:
 		txt = "Raw ADC values...";
@@ -1083,6 +1111,8 @@ MidiControlEngine::SwitchReleased_ModeSelect(int switchNumber)
 		ChangeMode(emBankDirect);
 	else if (switchNumber == GetSwitchNumber(kModeProgramChangeDirect))
 		ChangeMode(emProgramChangeDirect);
+	else if (switchNumber == GetSwitchNumber(kModeControlChangeDirect))
+		ChangeMode(emControlChangeDirect);
 	else if (switchNumber == GetSwitchNumber(kModeExprPedalDisplay))
 		ChangeMode(emExprPedalDisplay);
 	else if (switchNumber == GetSwitchNumber(kModeToggleLedInversion))
@@ -1218,12 +1248,12 @@ MidiControlEngine::SwitchPressed_ProgramChangeDirect(int switchNumber)
 	case 9:		mDirectNumber += "0";	break;
 	case 10:
 		// Set channel
-		mDirectProgramChangeChannel = ::atoi(mDirectNumber.c_str());
-		--mDirectProgramChangeChannel;
-		if (mDirectProgramChangeChannel > 15)
-			mDirectProgramChangeChannel = 15;
-		else if (mDirectProgramChangeChannel < 0)
-			mDirectProgramChangeChannel = 0;
+		mDirectChangeChannel = ::atoi(mDirectNumber.c_str());
+		--mDirectChangeChannel;
+		if (mDirectChangeChannel > 15)
+			mDirectChangeChannel = 15;
+		else if (mDirectChangeChannel < 0)
+			mDirectChangeChannel = 0;
 		msg += "set channel to " + mDirectNumber;
 		mDirectNumber.clear();
 		break;
@@ -1235,7 +1265,7 @@ MidiControlEngine::SwitchPressed_ProgramChangeDirect(int switchNumber)
 				bank = 127;
 			else if (bank < 0)
 				bank = 0;
-			bytes.push_back(0xb0 | mDirectProgramChangeChannel);
+			bytes.push_back(0xb0 | mDirectChangeChannel);
 			bytes.push_back(0);
 			bytes.push_back(bank);
 		}
@@ -1245,7 +1275,7 @@ MidiControlEngine::SwitchPressed_ProgramChangeDirect(int switchNumber)
 	case 12:
 		// program change
 		if (mDirectNumber.empty())
-			program = mDirectProgramLastSent;
+			program = mDirectValueLastSent;
 		else
 			program = ::atoi(mDirectNumber.c_str());
 		break;
@@ -1253,7 +1283,7 @@ MidiControlEngine::SwitchPressed_ProgramChangeDirect(int switchNumber)
 	case 14:
 		// dec/inc prog change
 		if (mDirectNumber.empty())
-			program = mDirectProgramLastSent;
+			program = mDirectValueLastSent;
 		else
 			program = ::atoi(mDirectNumber.c_str());
 
@@ -1302,15 +1332,15 @@ MidiControlEngine::SwitchPressed_ProgramChangeDirect(int switchNumber)
 			}
 
 			// bank select
-			bytes.push_back(0xb0 | mDirectProgramChangeChannel);
+			bytes.push_back(0xb0 | mDirectChangeChannel);
 			bytes.push_back(0);
 			bytes.push_back(bank);
 			msg += "bank and ";
 		}
 
-		bytes.push_back(0xc0 | mDirectProgramChangeChannel);
+		bytes.push_back(0xc0 | mDirectChangeChannel);
 		bytes.push_back(program);
-		mDirectProgramLastSent = program;
+		mDirectValueLastSent = program;
 		msg += "program change ";
 		sJustDidProgramChange = true;
 	}
@@ -1329,7 +1359,7 @@ MidiControlEngine::SwitchPressed_ProgramChangeDirect(int switchNumber)
 			}
 			mMidiOut->MidiOut(bytes);
 
-			if (sJustDidProgramChange && mAxeMgr && mAxeMgr->GetAxeChannel() && mDirectProgramChangeChannel)
+			if (sJustDidProgramChange && mAxeMgr && mAxeMgr->GetAxeChannel() && mDirectChangeChannel)
 				mAxeMgr->SyncFromAxe();
 		}
 	}
@@ -1339,6 +1369,156 @@ MidiControlEngine::SwitchPressed_ProgramChangeDirect(int switchNumber)
 
 void
 MidiControlEngine::SwitchReleased_ProgramChangeDirect(int switchNumber)
+{
+	if (switchNumber == mModeSwitchNumber)
+	{
+		EscapeToDefaultMode();
+	}
+	else if (mSwitchDisplay)
+	{
+		mSwitchDisplay->EnableDisplayUpdate(false);
+		mSwitchDisplay->ForceSwitchDisplay(switchNumber, false);
+	}
+}
+
+void
+MidiControlEngine::SwitchPressed_ControlChangeDirect(int switchNumber)
+{
+	std::string msg;
+	Bytes bytes;
+	int ctrlValue = -1;
+	static bool sJustDidControlChange = false;
+
+	if (sJustDidControlChange)
+	{
+		if (switchNumber >= 0 && switchNumber <= 9)
+		{
+			// clear buffer for entry restart - triggered by press of number switch after a send
+			// need to otherwise retain value of mDirectNumber for inc/dec
+			mDirectNumber.clear();
+		}
+
+		sJustDidControlChange = false;
+	}
+
+	switch (switchNumber)
+	{
+	case 0:		mDirectNumber += "1";	break;
+	case 1:		mDirectNumber += "2";	break;
+	case 2:		mDirectNumber += "3";	break;
+	case 3:		mDirectNumber += "4";	break;
+	case 4:		mDirectNumber += "5";	break;
+	case 5:		mDirectNumber += "6";	break;
+	case 6:		mDirectNumber += "7";	break;
+	case 7:		mDirectNumber += "8";	break;
+	case 8:		mDirectNumber += "9";	break;
+	case 9:		mDirectNumber += "0";	break;
+	case 10:
+		// Set channel
+		mDirectChangeChannel = ::atoi(mDirectNumber.c_str());
+		--mDirectChangeChannel;
+		if (mDirectChangeChannel > 15)
+			mDirectChangeChannel = 15;
+		else if (mDirectChangeChannel < 0)
+			mDirectChangeChannel = 0;
+		msg += "set channel to " + mDirectNumber;
+		mDirectNumber.clear();
+		break;
+	case 11:
+		// set controller
+		{
+			int controller = ::atoi(mDirectNumber.c_str());
+			if (controller > 127)
+				controller = 127;
+			else if (controller < 0)
+				controller = 0;
+			mDirectValue1LastSent = controller;
+		}
+		msg += "set controller to " + mDirectNumber;
+		mDirectNumber.clear();
+		break;
+	case 12:
+		// control change
+		if (mDirectNumber.empty())
+			ctrlValue = mDirectValueLastSent;
+		else
+			ctrlValue = ::atoi(mDirectNumber.c_str());
+		break;
+	case 13:
+	case 14:
+		// dec/inc control change
+		if (mDirectNumber.empty())
+			ctrlValue = mDirectValueLastSent;
+		else
+			ctrlValue = ::atoi(mDirectNumber.c_str());
+
+		if (13 == switchNumber)
+		{
+			--ctrlValue;
+			if (ctrlValue < 0)
+				ctrlValue = 127;
+		}
+		else
+		{
+			++ctrlValue;
+			if (ctrlValue >= 128)
+				ctrlValue = 0;
+		}
+
+		// update mDirectNumber with changed val
+		{
+			std::strstream strm;
+			strm << ctrlValue << std::ends;
+			mDirectNumber = strm.str();
+		}
+		break;
+	default:
+		if (switchNumber == mDecrementSwitchNumber)
+		{
+			// remove last char
+			if (mDirectNumber.length())
+				mDirectNumber = mDirectNumber.erase(mDirectNumber.length() - 1);
+		}
+		else if (switchNumber == mIncrementSwitchNumber)
+		{
+			// clear buf
+			mDirectNumber.clear();
+		}
+		else 
+			return;
+	}
+
+	if (-1 != ctrlValue)
+	{
+		bytes.push_back(0xb0 | mDirectChangeChannel);
+		bytes.push_back(mDirectValue1LastSent);
+		bytes.push_back(ctrlValue);
+		mDirectValueLastSent = ctrlValue;
+		msg += "send control value ";
+		sJustDidControlChange = true;
+	}
+
+	if (mMainDisplay)
+		mMainDisplay->TextOut(msg + mDirectNumber);
+
+	if (mMidiOut)
+	{
+		if (bytes.size())
+		{
+			if (mMainDisplay)
+			{
+				const std::string byteDump("\r\n" + ::GetAsciiHexStr(bytes, true) + "\r\n");
+				mMainDisplay->AppendText(byteDump);
+			}
+			mMidiOut->MidiOut(bytes);
+		}
+	}
+	else if (mMainDisplay)
+		mMainDisplay->AppendText("\r\nNo midi out available for control changes");
+}
+
+void
+MidiControlEngine::SwitchReleased_ControlChangeDirect(int switchNumber)
 {
 	if (switchNumber == mModeSwitchNumber)
 	{

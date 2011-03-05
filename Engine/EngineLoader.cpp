@@ -364,6 +364,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 		else if (name == "bankDescription") m = MidiControlEngine::kModeBankDesc;
 		else if (name == "bankDirect") m = MidiControlEngine::kModeBankDirect;
 		else if (name == "programChangeDirect") m = MidiControlEngine::kModeProgramChangeDirect;
+		else if (name == "controlChangeDirect") m = MidiControlEngine::kModeControlChangeDirect;
 		else if (name == "adcDisplay") m = MidiControlEngine::kModeExprPedalDisplay;
 		else if (name == "adcOverride") m = MidiControlEngine::kModeAdcOverride;
 		else if (name == "testLeds") m = MidiControlEngine::kModeTestLeds;

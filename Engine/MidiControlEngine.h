@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010 Sean Echevarria
+ * Copyright (C) 2007-2011 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -68,6 +68,7 @@ public:
 		kModeForward,
 		kModeTime,
 		kModeProgramChangeDirect,
+		kModeControlChangeDirect,
 		kModeBankDirect,
 		kModeExprPedalDisplay,
 		kModeAdcOverride,
@@ -126,6 +127,7 @@ private:
 		emAdcOverride,		// set ADC overrides
 		emTimeDisplay,		// displays time
 		emProgramChangeDirect, // manual send of program changes
+		emControlChangeDirect, // manual send of control changes
 		emNotValid 
 	};
 	void					ChangeMode(EngineMode newMode);
@@ -137,6 +139,8 @@ private:
 	void					SwitchReleased_BankDirect(int switchNumber);
 	void					SwitchPressed_ProgramChangeDirect(int switchNumber);
 	void					SwitchReleased_ProgramChangeDirect(int switchNumber);
+	void					SwitchPressed_ControlChangeDirect(int switchNumber);
+	void					SwitchReleased_ControlChangeDirect(int switchNumber);
 
 private:
 	// non-retained runtime state
@@ -144,16 +148,17 @@ private:
 	IMainDisplay *			mMainDisplay;
 	ITraceDisplay *			mTrace;
 	ISwitchDisplay *		mSwitchDisplay;
-	IMidiOut *				mMidiOut; // only used for emProgramChangeDirect
+	IMidiOut *				mMidiOut; // only used for emProgramChangeDirect/emControlChangeDirect
 	AxeFxManager *			mAxeMgr;
 
 	PatchBank *				mActiveBank;
 	int						mActiveBankIndex;
 	EngineMode				mMode;
 	int						mBankNavigationIndex;
-	std::string				mDirectNumber; // used by emBankDirect / emProgramChangeDirect
-	int						mDirectProgramChangeChannel;
-	int						mDirectProgramLastSent;
+	std::string				mDirectNumber; // used by emBankDirect / emProgramChangeDirect / emControlChangeDirect
+	int						mDirectChangeChannel; // used by emProgramChangeDirect / emControlChangeDirect
+	int						mDirectValueLastSent; // used by emProgramChangeDirect / emControlChangeDirect
+	int						mDirectValue1LastSent; // used by emControlChangeDirect
 	std::stack<int>			mBackHistory;
 	std::stack<int>			mForwardHistory;
 	enum HistoryNavMode		{ hmNone, hmBack, hmForward, hmWentBack, hmWentForward};
