@@ -1168,18 +1168,46 @@ SynonymNormalization(std::string & name)
 {
 #define MapName(subst, legit) if (name == subst) { name = legit; return; }
 
+	int pos = name.find('(');
+	if (std::string::npos != pos)
+	{
+		name = name.substr(0, pos);
+		while (name.at(name.length() - 1) == ' ')
+			name = name.substr(0, name.length() - 1);
+	}
+
 	switch (name[0])
 	{
+	case 'a':
+		MapName("arpeggiator 1", "pitch 1");
+		MapName("arpeggiator 2", "pitch 2");
+		break;
+	case 'b':
+		MapName("band delay 1", "multidelay 1");
+		MapName("band delay 2", "multidelay 2");
+		MapName("band dly 1", "multidelay 1");
+		MapName("band dly 2", "multidelay 2");
+		break;
 	case 'c':
 		MapName("cab 1", "cabinet 1");
 		MapName("cab 2", "cabinet 2");
 		MapName("comp 1", "compressor 1");
 		MapName("comp 2", "compressor 2");
+		MapName("crystals 1", "pitch 1");
+		MapName("crystals 2", "pitch 2");
 		break;
 	case 'd':
 		MapName("delay 1 (reverse)", "delay 1");
 		MapName("delay 2 (reverse)", "delay 2");
+		MapName("detune 1", "pitch 1");
+		MapName("detune 2", "pitch 2");
 		MapName("device complete bypass toggle", "output");
+		MapName("diff 1", "multidelay 1");
+		MapName("diff 2", "multidelay 2");
+		MapName("diffuser 1", "multidelay 1");
+		MapName("diffuser 2", "multidelay 2");
+		MapName("dly 1", "delay 1");
+		MapName("dly 2", "delay 2");
 		break;
 	case 'e':
 		MapName("ext 1", "external 1");
@@ -1235,8 +1263,12 @@ SynonymNormalization(std::string & name)
 		MapName("loop 2 overdub", "looper 2 overdub");
 		MapName("loop 2 rev", "looper 2 reverse");
 		MapName("loop 2 reverse", "looper 2 reverse");
+		MapName("looper 1", "delay 1");
+		MapName("looper 2", "delay 2");
 		break;
 	case 'm':
+		MapName("mdly 1", "multidelay 1");
+		MapName("mdly 2", "multidelay 2");
 		MapName("megatap", "megatap delay");
 		MapName("mix 1", "mixer 1");
 		MapName("mix 2", "mixer 2");
@@ -1249,6 +1281,8 @@ SynonymNormalization(std::string & name)
 		MapName("noise gate", "noisegate");
 		break;
 	case 'o':
+		MapName("octave 1", "pitch 1");
+		MapName("octave 2", "pitch 2");
 		MapName("out", "output");
 		MapName("out 1 vol", "out 1 volume");
 		MapName("out 2 vol", "out 2 volume");
@@ -1264,10 +1298,28 @@ SynonymNormalization(std::string & name)
 		MapName("para eq 4", "parametric eq 4");
 		MapName("pitch 1 (whammy)", "pitch 1");
 		MapName("pitch 2 (whammy)", "pitch 2");
+		MapName("plex 1", "multidelay 1");
+		MapName("plex 2", "multidelay 2");
+		MapName("plex delay 1", "multidelay 1");
+		MapName("plex delay 2", "multidelay 2");
+		MapName("plex detune 1", "multidelay 1");
+		MapName("plex detune 2", "multidelay 2");
+		MapName("plex dly 1", "multidelay 1");
+		MapName("plex dly 2", "multidelay 2");
+		MapName("plex shift 1", "multidelay 1");
+		MapName("plex shift 2", "multidelay 2");
 		break;
 	case 'q':
 		MapName("quad 1", "quad chorus 1");
 		MapName("quad 2", "quad chorus 2");
+		MapName("quad delay 1", "multidelay 1");
+		MapName("quad delay 2", "multidelay 2");
+		MapName("quad dly 1", "multidelay 1");
+		MapName("quad dly 2", "multidelay 2");
+		MapName("quad series 1", "multidelay 1");
+		MapName("quad series 2", "multidelay 2");
+		MapName("quad tap 1", "multidelay 1");
+		MapName("quad tap 2", "multidelay 2");
 		MapName("quadchorus 1", "quad chorus 1");
 		MapName("quadchorus 2", "quad chorus 2");
 		break;
@@ -1275,15 +1327,25 @@ SynonymNormalization(std::string & name)
 		MapName("return", "feedback return");
 		MapName("reverse 1", "delay 1");
 		MapName("reverse 2", "delay 2");
+		MapName("reverse delay 1", "delay 1");
+		MapName("reverse delay 2", "delay 2");
+		MapName("reverse dly 1", "delay 1");
+		MapName("reverse dly 2", "delay 2");
+		MapName("rhythm tap 1", "multidelay 1");
+		MapName("rhythm tap 2", "multidelay 2");
 		MapName("ring modulator", "ring mod");
 		MapName("ringmod", "ring mod");
 		break;
 	case 's':
 		MapName("send", "feedback send");
+		MapName("shift 1", "pitch 1");
+		MapName("shift 2", "pitch 2");
 		break;
 	case 't':
 		MapName("tap", "taptempo");
 		MapName("tap tempo", "taptempo");
+		MapName("ten tap 1", "multidelay 1");
+		MapName("ten tap 2", "multidelay 2");
 		MapName("trem 1", "panner/tremolo 1");
 		MapName("trem 2", "panner/tremolo 2");
 		MapName("tremolo 1", "panner/tremolo 1");
