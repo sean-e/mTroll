@@ -358,8 +358,8 @@ ControlUi::ButtonPressed(const int idx)
 	if (!mStupidSwitchStates[idx])
 	{
 		byte row, col;
-		RowColFromSwitchNumber(idx, row, col);
-		SwitchPressed(row, col);
+		if (RowColFromSwitchNumber(idx, row, col))
+			SwitchPressed(row, col);
 	}
 }
 
@@ -369,8 +369,8 @@ ControlUi::ButtonReleased(const int idx)
 	if (mStupidSwitchStates[idx])
 	{
 		byte row, col;
-		RowColFromSwitchNumber(idx, row, col);
-		SwitchReleased(row, col);
+		if (RowColFromSwitchNumber(idx, row, col))
+			SwitchReleased(row, col);
 	}
 }
 
@@ -559,8 +559,8 @@ ControlUi::ForceSwitchDisplay(int switchNumber,
 	if (mHardwareUi)
 	{
 		byte row, col;
-		RowColFromSwitchNumber(switchNumber, row, col);
-		mHardwareUi->EnableLed(row, col, isOn);
+		if (RowColFromSwitchNumber(switchNumber, row, col))
+			mHardwareUi->EnableLed(row, col, isOn);
 	}
 
 	if (!mLeds[switchNumber] || !mLeds[switchNumber]->isEnabled())

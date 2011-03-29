@@ -288,11 +288,15 @@ private:
 	void ButtonPressed(const int idx);
 
 	void MonomeStartupSequence();
-	inline void RowColFromSwitchNumber(int ord, byte & row, byte & col)
+	inline bool RowColFromSwitchNumber(int ord, byte & row, byte & col)
 	{
-		int rc = mSwitchNumberToRowCol[ord];
+		std::map<int, int>::const_iterator it = mSwitchNumberToRowCol.find(ord);
+		if (it == mSwitchNumberToRowCol.end())
+			return false;
+		const int rc = (*it).second;
 		col = (byte)(rc & 0xff);
 		row = (byte)((rc >> 16) & 0xff);
+		return true;
 	}
 	inline int SwitchNumberFromRowCol(byte row, byte col)
 	{
