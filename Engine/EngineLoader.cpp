@@ -973,12 +973,16 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 				std::string tmp;
 				childElem->QueryValueAttribute("loadState", &tmp);
 				const PatchBank::PatchState loadState = ::GetLoadState(tmp);
+				tmp.clear();
 				childElem->QueryValueAttribute("unloadState", &tmp);
 				const PatchBank::PatchState unloadState = ::GetLoadState(tmp);
+				tmp.clear();
 				childElem->QueryValueAttribute("override", &tmp);
 				const PatchBank::PatchState stateOverride = ::GetLoadState(tmp);
+				tmp.clear();
 				childElem->QueryValueAttribute("sync", &tmp);
 				const PatchBank::PatchSyncState syncState = ::GetSyncState(tmp);
+				tmp.clear();
 // 				if (syncState != PatchBank::syncIgnore && 
 // 					stateOverride != PatchBank::stIgnore && 
 // 					mTraceDisplay)
