@@ -63,9 +63,12 @@ public:
 	void CompleteInit(IMidiOut * midiOut);
 	void SetTempoPatch(Patch * patch);
 	bool SetSyncPatch(Patch * patch, int bypassCc = -1);
-	void SyncFromAxe(Patch * patch);
-	void SyncFromAxe();
+	void DelayedSyncFromAxe();
 	int GetAxeChannel() const { return mAxeChannel; }
+	void SyncFromAxe(Patch * patch);
+
+public slots:
+	void SyncFromAxe();
 
 private:
 	AxeEffectBlockInfo * IdentifyBlockInfoUsingBypassId(const byte * bytes);
@@ -104,6 +107,7 @@ private:
 	QMutex			mQueryLock;
 	std::list<AxeEffectBlockInfo *> mQueries;
 	QTimer			* mQueryTimer;
+	QTimer			* mDelayedSyncTimer;
 	int				mTimeoutCnt;
 	clock_t			mLastTimeout;
 	bool			mCheckedFirmware;

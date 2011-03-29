@@ -68,16 +68,27 @@ AxeFxManager::AxeFxManager(IMainDisplay * mainDisp,
 	mQueryTimer->setSingleShot(true);
 	mQueryTimer->setInterval(2000);
 
+	mDelayedSyncTimer = new QTimer(this);
+	connect(mDelayedSyncTimer, SIGNAL(timeout()), this, SLOT(SyncFromAxe()));
+	mDelayedSyncTimer->setSingleShot(true);
+	mDelayedSyncTimer->setInterval(100);
+
 	AxemlLoader ldr(mTrace);
 	ldr.Load(appPath + "/default.axeml", mAxeEffectInfo);
 }
 
 AxeFxManager::~AxeFxManager()
 {
+	if (mDelayedSyncTimer->isActive())
+		mDelayedSyncTimer->stop();
+	delete mDelayedSyncTimer;
+	mDelayedSyncTimer = NULL;
+
 	QMutexLocker lock(&mQueryLock);
 	if (mQueryTimer->isActive())
 		mQueryTimer->stop();
 	delete mQueryTimer;
+	mQueryTimer = NULL;
 }
 
 void
@@ -621,17 +632,69 @@ class StartQueryTimer : public QEvent
 public:
 	StartQueryTimer(AxeFxManager * mgr) : 
 	  QEvent(User), 
-		  mMgr(mgr)
-	  {
-		  mMgr->AddRef();
-	  }
+	  mMgr(mgr)
+	{
+		mMgr->AddRef();
+	}
 
-	  ~StartQueryTimer()
-	  {
-		  mMgr->mQueryTimer->start();
-		  mMgr->Release();
-	  }
+	~StartQueryTimer()
+	{
+		mMgr->mQueryTimer->start();
+		mMgr->Release();
+	}
 };
+
+void
+AxeFxManager::DelayedSyncFromAxe()
+{
+	if (!mDelayedSyncTimer)
+		return;
+
+	if (mDelayedSyncTimer->isActive())
+	{
+		class StopDelayedSyncTimer : public QEvent
+		{
+			AxeFxManager *mMgr;
+
+		public:
+			StopDelayedSyncTimer(AxeFxManager * mgr) : 
+			  QEvent(User), 
+				  mMgr(mgr)
+			{
+				mMgr->AddRef();
+			}
+
+			~StopDelayedSyncTimer()
+			{
+				mMgr->mDelayedSyncTimer->stop();
+				mMgr->Release();
+			}
+		};
+
+		QCoreApplication::postEvent(this, new StopDelayedSyncTimer(this));
+	}
+
+	class StartDelayedSyncTimer : public QEvent
+	{
+		AxeFxManager *mMgr;
+
+	public:
+		StartDelayedSyncTimer(AxeFxManager * mgr) : 
+		  QEvent(User), 
+		  mMgr(mgr)
+		{
+			mMgr->AddRef();
+		}
+
+		~StartDelayedSyncTimer()
+		{
+			mMgr->mDelayedSyncTimer->start();
+			mMgr->Release();
+		}
+	};
+
+	QCoreApplication::postEvent(this, new StartDelayedSyncTimer(this));
+}
 
 void
 AxeFxManager::RequestNextParamValue()

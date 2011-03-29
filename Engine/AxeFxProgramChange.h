@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010 Sean Echevarria
+ * Copyright (C) 2010-2011 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -27,13 +27,6 @@
 
 #include "MidiCommandString.h"
 #include "AxeFxManager.h"
-#ifdef _WINDOWS
-#include <windows.h>
-	#define SLEEP	Sleep
-	#undef TextOut		// stupid unicode support defines TextOut to TextOutW
-#else
-	#define SLEEP	sleep
-#endif // _WINDOWS
 
 
 class AxeFxProgramChange : public MidiCommandString
@@ -58,10 +51,8 @@ public:
 	void Exec()
 	{
 		__super::Exec();
-		SLEEP(50); // too long?
-
 		if (mAxeMgr)
-			mAxeMgr->SyncFromAxe();
+			mAxeMgr->DelayedSyncFromAxe();
 	}
 
 private:
