@@ -166,23 +166,23 @@ AxeFxManager::SetSyncPatch(Patch * patch, int bypassCc /*= -1*/)
 			AxeEffectBlockInfo & cur = *it;
 			if (cur.mNormalizedName == normalizedEffectName)
 			{
-// 				if (cur.mXyPatch && mTrace)
-// 				{
-// 					std::string msg("Warning: multiple Axe-Fx patches for XY control '" + patch->GetName() + "'\n");
-// 					mTrace->Trace(msg);
-// 				}
-// 
-// 				cur.mXyPatch = patch;
+				if (cur.mXyPatch && mTrace)
+				{
+					std::string msg("Warning: multiple Axe-Fx patches for XY control '" + patch->GetName() + "'\n");
+					mTrace->Trace(msg);
+				}
+
+				cur.mXyPatch = patch;
 				return true;
 			}
 		}
 
-// 		if (mTrace)
-// 		{
-// 			std::string msg("Warning: no Axe-Fx effect found to sync for x/y control '" + patch->GetName() + "'\n");
-// 			mTrace->Trace(msg);
-// 		}
-// 		return false;
+		if (mTrace)
+		{
+			std::string msg("Warning: no Axe-Fx effect found to sync for x/y control '" + patch->GetName() + "'\n");
+			mTrace->Trace(msg);
+		}
+		return false;
 	}
 
 	if (mTrace && 
@@ -1112,15 +1112,25 @@ AxeFxManager::ReceivePresetEffectsV2(const byte * bytes, int len)
 		{
 			inf->mEffectIsPresentInAxePatch = true;
 			const byte kParamVal = bytes[idx];
-			const bool isX = (3 == kParamVal); // enabled X or no xy
-			const bool isY = (1 == kParamVal);
+			const bool isActive = (3 == kParamVal); // enabled X or no xy
+			const bool isActiveY = (1 == kParamVal);
 			const bool isBypassed = (2 == kParamVal); // disabled X or no xy
 			const bool isBypassedY = (0 == kParamVal);
 
-			if (isBypassed || isBypassedY || isX || isY)
+			if (isBypassed || isBypassedY || isActive || isActiveY)
 			{
 				if (inf->mPatch->IsActive() != !(isBypassed || isBypassedY))
 					inf->mPatch->UpdateState(mSwitchDisplay, !(isBypassed || isBypassedY));
+
+				if (inf->mXyPatch)
+				{
+					// X is the active state, Y is inactive
+					const bool isX = isActive || isBypassed;
+					const bool isY = isActiveY || isBypassedY;
+					_ASSERTE(isX ^ isY);
+					if (inf->mXyPatch->IsActive() != isX)
+						inf->mXyPatch->UpdateState(mSwitchDisplay, isX);
+				}
 			}
 			else if (mTrace)
 			{
@@ -1164,7 +1174,11 @@ AxeFxManager::TurnOffLedsForNaEffects()
 			continue;
 
 		if (!cur->mEffectIsPresentInAxePatch)
+		{
 			cur->mPatch->UpdateState(mSwitchDisplay, false);
+			if (cur->mXyPatch)
+				cur->mXyPatch->UpdateState(mSwitchDisplay, false);
+		}
 	}
 }
 

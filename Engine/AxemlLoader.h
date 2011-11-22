@@ -53,6 +53,7 @@ struct AxeEffectBlockInfo
 	int				mBypassCC;					// unique per name
 	bool			mEffectIsPresentInAxePatch;	// unique per name
 	Patch			* mPatch;					// the patch assigned to this effectId
+	Patch			* mXyPatch;					// optional XY patch for this effectId
 
 	AxeEffectBlockInfo() :
 		mSysexEffectId(-1),
@@ -63,7 +64,8 @@ struct AxeEffectBlockInfo
 		mSysexBypassParameterIdMs(-1),
 		mBypassCC(0),
 		mEffectIsPresentInAxePatch(true),
-		mPatch(NULL)
+		mPatch(NULL),
+		mXyPatch(NULL)
 	{
 	}
 
@@ -77,7 +79,8 @@ struct AxeEffectBlockInfo
 		mSysexBypassParameterIdMs(-1),
 		mBypassCC(cc),
 		mEffectIsPresentInAxePatch(true),
-		mPatch(NULL)
+		mPatch(NULL),
+		mXyPatch(NULL)
 	{
 		mSysexEffectIdLs = mSysexEffectId & 0x0000000F;
 		mSysexEffectIdMs = (mSysexEffectId >> 4) & 0x0000000F;
