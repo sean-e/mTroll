@@ -49,7 +49,7 @@ class AxeFxManager : public QObject, public IMidiInSubscriber
 	Q_OBJECT;
 	friend class StartQueryTimer;
 public:
-	AxeFxManager(IMainDisplay * mainDisp, ISwitchDisplay * switchDisp, ITraceDisplay * pTrace, const std::string & appPath, int ch);
+	AxeFxManager(IMainDisplay * mainDisp, ISwitchDisplay * switchDisp, ITraceDisplay * pTrace, const std::string & appPath, int ch, AxeFxModel m);
 	virtual ~AxeFxManager();
 
 	// IMidiInSubscriber
@@ -82,6 +82,8 @@ private:
 	void ReceivePresetName(const byte * bytes, int len);
 	void RequestPresetEffects();
 	void ReceivePresetEffects(const byte * bytes, int len);
+	void ReceivePresetEffectsV2(const byte * bytes, int len);
+	void TurnOffLedsForNaEffects();
 
 	// these aren't necessary any more - superseded by the previous 4
 	void RequestEditBufferDump();
@@ -111,7 +113,7 @@ private:
 	int				mTimeoutCnt;
 	clock_t			mLastTimeout;
 	bool			mCheckedFirmware;
-	byte			mModel;
+	AxeFxModel		mModel;
 	std::set<int>	mEditBufferEffectBlocks; // at last update
 	int				mPatchDumpBytesReceived;
 };

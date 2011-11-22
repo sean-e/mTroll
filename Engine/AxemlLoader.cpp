@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010 Sean Echevarria
+ * Copyright (C) 2010-2011 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -50,8 +50,9 @@
  */
 
 bool
-AxemlLoader::Load(const std::string & axeFile, AxeEffectBlocks & effects)
+AxemlLoader::Load(AxeFxModel model, const std::string & axeFile, AxeEffectBlocks & effects)
 {
+	mModel = model;
 	TiXmlDocument doc(axeFile);
 	if (!doc.LoadFile()) 
 	{
@@ -219,6 +220,9 @@ AxemlLoader::ReportMissingBypassIds()
 		AxeEffectBlockInfo & cur = *it;
 		if (cur.mType == "FeedbackSend" || cur.mType == "Mixer")
 			continue; // these can't be bypassed
+
+		if (AxeUltra < mModel && cur.mType == "NoiseGate")
+			continue; // this can't be bypassed in axe-fx 2
 
 		if (-1 == cur.mSysexEffectId)
 		{

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010 Sean Echevarria
+ * Copyright (C) 2010-2011 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -32,6 +32,13 @@ class TiXmlElement;
 class ITraceDisplay;
 class Patch;
 
+enum AxeFxModel
+{
+	AxeStd = 0,
+	AxeUltra = 1,
+	Axe2 = 3
+};
+
 struct AxeEffectBlockInfo
 {
 	std::string		mName;						// Amp 1
@@ -45,7 +52,7 @@ struct AxeEffectBlockInfo
 	int				mSysexBypassParameterIdLs;	//	derived
 	int				mBypassCC;					// unique per name
 	bool			mEffectIsPresentInAxePatch;	// unique per name
-	Patch			* mPatch;
+	Patch			* mPatch;					// the patch assigned to this effectId
 
 	AxeEffectBlockInfo() :
 		mSysexEffectId(-1),
@@ -94,9 +101,9 @@ typedef std::vector<AxeEffectBlockInfo> AxeEffectBlocks;
 class AxemlLoader
 {
 public:
-	AxemlLoader(ITraceDisplay * traceDisplay) : mTrace(traceDisplay) { }
+	AxemlLoader(ITraceDisplay * traceDisplay) : mModel(AxeStd), mTrace(traceDisplay) { }
 
-	bool Load(const std::string & doc, AxeEffectBlocks & effects);
+	bool Load(AxeFxModel model, const std::string & doc, AxeEffectBlocks & effects);
 
 private:
 	void LoadEffectPool(TiXmlElement* pElem);
@@ -107,6 +114,7 @@ private:
 private:
 	ITraceDisplay * mTrace;
 	AxeEffectBlocks	mEffects;
+	AxeFxModel mModel;
 };
 
 #endif // AxemlLoader_h__

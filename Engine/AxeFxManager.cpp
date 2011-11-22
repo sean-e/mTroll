@@ -48,7 +48,8 @@ AxeFxManager::AxeFxManager(IMainDisplay * mainDisp,
 						   ISwitchDisplay * switchDisp,
 						   ITraceDisplay *pTrace,
 						   const std::string & appPath, 
-						   int ch) :
+						   int ch, 
+						   AxeFxModel mod) :
 	mSwitchDisplay(switchDisp),
 	mMainDisplay(mainDisp),
 	mTrace(pTrace),
@@ -61,7 +62,7 @@ AxeFxManager::AxeFxManager(IMainDisplay * mainDisp,
 	mCheckedFirmware(false),
 	mPatchDumpBytesReceived(0),
 	mAxeChannel(ch),
-	mModel(0)
+	mModel(mod)
 {
 	mQueryTimer = new QTimer(this);
 	connect(mQueryTimer, SIGNAL(timeout()), this, SLOT(QueryTimedOut()));
@@ -74,7 +75,16 @@ AxeFxManager::AxeFxManager(IMainDisplay * mainDisp,
 	mDelayedSyncTimer->setInterval(100);
 
 	AxemlLoader ldr(mTrace);
-	ldr.Load(appPath + "/default.axeml", mAxeEffectInfo);
+	if (Axe2 == mModel)
+	{
+		// C:\Program Files (x86)\Fractal Audio\Axe-Edit 1.0\Configs\II\default.axeml
+		ldr.Load(mModel, appPath + "/axefx2.default.axeml", mAxeEffectInfo);
+	}
+	else
+	{
+		// C:\Program Files (x86)\Fractal Audio\Axe-Edit 1.0\Configs\Ultra\default.axeml
+		ldr.Load(mModel, appPath + "/default.axeml", mAxeEffectInfo);
+	}
 }
 
 AxeFxManager::~AxeFxManager()
@@ -145,6 +155,37 @@ AxeFxManager::SetSyncPatch(Patch * patch, int bypassCc /*= -1*/)
 		}
 	}
 
+	const std::string xy(" x/y");
+	const int xyPos = normalizedEffectName.find(xy);
+	if (-1 != xyPos)
+	{
+		normalizedEffectName.replace(xyPos, xy.length(), "");
+		for (AxeEffectBlocks::iterator it = mAxeEffectInfo.begin(); 
+			it != mAxeEffectInfo.end(); 
+			++it)
+		{
+			AxeEffectBlockInfo & cur = *it;
+			if (cur.mNormalizedName == normalizedEffectName)
+			{
+// 				if (cur.mXyPatch && mTrace)
+// 				{
+// 					std::string msg("Warning: multiple Axe-Fx patches for XY control '" + patch->GetName() + "'\n");
+// 					mTrace->Trace(msg);
+// 				}
+// 
+// 				cur.mXyPatch = patch;
+				return true;
+			}
+		}
+
+// 		if (mTrace)
+// 		{
+// 			std::string msg("Warning: no Axe-Fx effect found to sync for x/y control '" + patch->GetName() + "'\n");
+// 			mTrace->Trace(msg);
+// 		}
+// 		return false;
+	}
+
 	if (mTrace && 
 		0 != normalizedEffectName.find("looper ") &&
 		0 != normalizedEffectName.find("external ") &&
@@ -153,7 +194,7 @@ AxeFxManager::SetSyncPatch(Patch * patch, int bypassCc /*= -1*/)
 		normalizedEffectName != "volume increment" &&
 		normalizedEffectName != "volume decrement")
 	{
-		std::string msg("Warning: no Axe-Fx effect found to sync for " + patch->GetName() + "\n");
+		std::string msg("Warning: no Axe-Fx effect found to sync for '" + patch->GetName() + "'\n");
 		mTrace->Trace(msg);
 	}
 
@@ -201,13 +242,15 @@ IsAxeFxSysex(const byte * bytes, const int len)
 	if (::memcmp(bytes, kAxeFx, 4))
 		return false;
 
-// 	const byte kAxeFxUltraId[]	= { 0xf0, 0x00, 0x01, 0x74, 0x01 };
 // 	const byte kAxeFxStdId[]	= { 0xf0, 0x00, 0x01, 0x74, 0x00 };
+// 	const byte kAxeFxUltraId[]	= { 0xf0, 0x00, 0x01, 0x74, 0x01 };
+// 	const byte kAxeFx2Id[]		= { 0xf0, 0x00, 0x01, 0x74, 0x03 };
 
 	switch (bytes[4])
 	{
-	case 0:
-	case 1:
+	case AxeStd:
+	case AxeUltra:
+	case Axe2:
 		return true;
 	}
 
@@ -241,6 +284,9 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 			mSwitchDisplay->SetIndicatorThreadSafe(false, mTempoPatch, 75);
 		}
 		return;
+	case 0x11:
+		// x y state change
+		return;
 	case 2:
 		ReceiveParamValue(&bytes[6], len - 6);
 		return;
@@ -248,7 +294,16 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 		ReceivePresetName(&bytes[6], len - 6);
 		return;
 	case 0xe:
-		ReceivePresetEffects(&bytes[6], len - 6);
+		if (Axe2 == bytes[4])
+		{
+			_ASSERTE(Axe2 == mModel);
+			ReceivePresetEffectsV2(&bytes[6], len - 6);
+		}
+		else
+		{
+			_ASSERTE(Axe2 != mModel);
+			ReceivePresetEffects(&bytes[6], len - 6);
+		}
 		return;
 	case 8:
 		if (mCheckedFirmware)
@@ -259,8 +314,10 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 		// skip byte 6 - may as well update state whenever we get it
 //		StartReceivePatchDump(&bytes[7], len - 7);
 		return;
+	case 0x64:
+		// indicates an error or unsupported message
 	default:
-		if (0 && mTrace)
+		if (/*0 && */mTrace)
 		{
 			const std::string byteDump(::GetAsciiHexStr(&bytes[5], len - 5, true));
 			std::strstream traceMsg;
@@ -273,10 +330,26 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 AxeEffectBlockInfo *
 AxeFxManager::IdentifyBlockInfoUsingBypassId(const byte * bytes)
 {
-	const int effectIdLs = bytes[0];
-	const int effectIdMs = bytes[1];
-	const int parameterIdLs = bytes[2];
-	const int parameterIdMs = bytes[3];
+	int effectIdLs;
+	int effectIdMs;
+	int parameterIdLs;
+	int parameterIdMs;
+
+	if (Axe2 == mModel)
+	{
+		// TODO: not updated for axe2
+		effectIdLs = 0;
+		effectIdMs = 0;
+		parameterIdLs = 0;
+		parameterIdMs = 0;
+	}
+	else
+	{
+		effectIdLs = bytes[0];
+		effectIdMs = bytes[1];
+		parameterIdLs = bytes[2];
+		parameterIdMs = bytes[3];
+	}
 
 	for (AxeEffectBlocks::iterator it = mAxeEffectInfo.begin(); 
 		it != mAxeEffectInfo.end(); 
@@ -296,12 +369,29 @@ AxeFxManager::IdentifyBlockInfoUsingBypassId(const byte * bytes)
 AxeEffectBlockInfo *
 AxeFxManager::IdentifyBlockInfoUsingCc(const byte * bytes)
 {
-	const int effectIdLs = bytes[0];
-	const int effectIdMs = bytes[1];
-	const int effectId = effectIdMs << 4 | effectIdLs;
-	const int ccLs = bytes[2];
-	const int ccMs = bytes[3];
-	const int cc = ccMs << 4 | ccLs;
+	int effectId;
+	int cc;
+
+	if (Axe2 == mModel)
+	{
+		const int ccLs = bytes[0] >> 1;
+		const int ccMs = (bytes[1] & 1) << 6;
+		cc = ccMs | ccLs;
+
+		const int effectIdLs = bytes[2] >> 3;
+		const int effectIdMs = (bytes[3] << 4) & 0xff;
+		effectId = effectIdMs | effectIdLs;
+	}
+	else
+	{
+		const int effectIdLs = bytes[0];
+		const int effectIdMs = bytes[1] << 4;
+		effectId = effectIdMs | effectIdLs;
+
+		const int ccLs = bytes[2];
+		const int ccMs = bytes[3] << 4;
+		cc = ccMs | ccLs;
+	}
 
 	for (AxeEffectBlocks::iterator it = mAxeEffectInfo.begin(); 
 		it != mAxeEffectInfo.end(); 
@@ -323,16 +413,26 @@ AxeFxManager::IdentifyBlockInfoUsingCc(const byte * bytes)
 AxeEffectBlockInfo *
 AxeFxManager::IdentifyBlockInfoUsingEffectId(const byte * bytes)
 {
-	const int effectIdLs = bytes[0];
-	const int effectIdMs = bytes[1];
+	int effectId;
+	if (Axe2 == mModel)
+	{
+		const int effectIdLs = bytes[2] >> 3;
+		const int effectIdMs = (bytes[3] << 4) & 0xff;
+		effectId = effectIdMs | effectIdLs;
+	}
+	else
+	{
+		const int effectIdLs = bytes[0];
+		const int effectIdMs = bytes[1] << 4;
+		effectId = effectIdMs | effectIdLs;
+	}
 
 	for (AxeEffectBlocks::iterator it = mAxeEffectInfo.begin(); 
 		it != mAxeEffectInfo.end(); 
 		++it)
 	{
 		AxeEffectBlockInfo & cur = *it;
-		if (cur.mSysexEffectIdLs == effectIdLs &&
-			cur.mSysexEffectIdMs == effectIdMs)
+		if (cur.mSysexEffectId == effectId)
 			return &(*it);
 	}
 
@@ -357,6 +457,7 @@ AxeFxManager::GetBlockInfo(Patch * patch)
 void
 AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 {
+	// TODO: not updated for Axe2
 /*
 	0xdd effect ID LS nibble 
 	0xdd effect ID MS nibble 
@@ -729,7 +830,8 @@ AxeFxManager::RequestNextParamValue()
 	0xF7 sysex end 
 */
 
-	const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, mModel, 0x02, 0, 0, 0, 0, 0x0, 0x0, 0x00, 0xF7 };
+	// TODO: not updated for Axe-Fx 2
+	const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x02, 0, 0, 0, 0, 0x0, 0x0, 0x00, 0xF7 };
 	Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
 	AxeEffectBlockInfo * next = *mQueries.begin();
 	bb[6] = next->mSysexEffectIdLs;
@@ -745,12 +847,21 @@ AxeFxManager::RequestNextParamValue()
 void
 AxeFxManager::SendFirmwareVersionQuery()
 {
-	// request firmware vers : F0 00 01 74 01 08 00 00 F7
+	// request firmware vers (std\ultra): F0 00 01 74 01 08 00 00 F7
+	// axefx2: F0 00 01 74 03 08 0A 04 F7
 	if (!mMidiOut)
 		return;
 
+	// Axe-Fx 2
+	// --------
+	// send:		F0 00 01 74 03 08 0A 04 F7
+	// respond:		F0 00 01 74 03 08 02 00 0C F7	(for 2.0)
+	// respond:		F0 00 01 74 03 08 03 02 0f F7	(for 3.2)
+
 	QMutexLocker lock(&mQueryLock);
-	const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, 0, 0x08, 0, 0, 0xF7 };
+	const byte firstDataByte = Axe2 == mModel ? 0x0a : 0;
+	const byte secondDataByte = Axe2 == mModel ? 4 : 0;
+	const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x08, firstDataByte, secondDataByte, 0xF7 };
 	const Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
 	mMidiOut->MidiOut(bb);
 }
@@ -758,6 +869,7 @@ AxeFxManager::SendFirmwareVersionQuery()
 void
 AxeFxManager::StartReceivePatchDump(const byte * bytes, int len)
 {
+	// TODO: not updated for axe fx 2
 	int idx;
 	// header that is not passed into this method:
 	// F0 00 01 74 01 04 01
@@ -858,7 +970,9 @@ AxeFxManager::RequestEditBufferDump()
 	if (!mCheckedFirmware)
 		return;
 	mQueries.clear();
-	const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, mModel, 0x03, 0x01, 0x00, 0x00, 0xF7 };
+
+	// TODO: not updated for Axe-Fx 2
+	const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x03, 0x01, 0x00, 0x00, 0xF7 };
 	const Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
 	mPatchDumpBytesReceived = 0;
 	mMidiOut->MidiOut(bb);
@@ -871,12 +985,17 @@ AxeFxManager::ReceiveFirmwareVersionResponse(const byte * bytes, int len)
 	std::string model;
 	switch (bytes[4])
 	{
-	case 0:
+	case AxeStd:
 		model = "Standard ";
+		mModel = AxeStd;
 		break;
-	case 1:
+	case AxeUltra:
 		model = "Ultra ";
-		mModel = 1;
+		mModel = AxeUltra;
+		break;
+	case Axe2:
+		model = "II ";
+		mModel = Axe2;
 		break;
 	default:
 		model = "Unknown model ";
@@ -906,9 +1025,19 @@ AxeFxManager::RequestPresetName()
 	if (!mCheckedFirmware)
 		return;
 
-	const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, mModel, 0x0f, 0xF7 };
-	const Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
-	mMidiOut->MidiOut(bb);
+	if (Axe2 == mModel)
+	{
+		// 0x09 is an XOR checksum of all bytes prior to it (drop the high bit)
+		const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, Axe2, 0x0f, 0x09, 0xF7 };
+		const Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
+		mMidiOut->MidiOut(bb);
+	}
+	else
+	{
+		const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x0f, 0xF7 };
+		const Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
+		mMidiOut->MidiOut(bb);
+	}
 }
 
 void
@@ -956,9 +1085,19 @@ AxeFxManager::RequestPresetEffects()
 		cur->mEffectIsPresentInAxePatch = false;
 	}
 
-	const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, mModel, 0x0e, 0xF7 };
-	const Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
-	mMidiOut->MidiOut(bb);
+	if (Axe2 == mModel)
+	{
+		// 0x08 is an XOR checksum of all bytes prior to it (drop the high bit)
+		const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, Axe2, 0x0e, 0x08, 0xF7 };
+		const Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
+		mMidiOut->MidiOut(bb);
+	}
+	else
+	{
+		const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x0e, 0xF7 };
+		const Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
+		mMidiOut->MidiOut(bb);
+	}
 }
 
 void
@@ -1011,12 +1150,124 @@ AxeFxManager::ReceivePresetEffects(const byte * bytes, int len)
 		{
 			if (mTrace && !inf)
 			{
-				const std::string msg("Axe sync error: No inf\n");
+				const std::string msg("Axe sync error: No inf for ");
 				mTrace->Trace(msg);
+				const std::string byteDump(::GetAsciiHexStr(&bytes[idx], 5, true) + "\n");
+				mTrace->Trace(byteDump);
 			}
 		}
 	}
 
+	TurnOffLedsForNaEffects();
+}
+
+void
+AxeFxManager::ReceivePresetEffectsV2(const byte * bytes, int len)
+{
+	// request: F0 00 01 74 03 0e 08 F7
+	// response with compressor 1 bypassed (cc 43 0x2b):
+	//			02 56 7C 27 06 F7
+	// compressor 1 enabled:
+	//			03 56 7C 27 06 F7 
+	// compressor 1 enabled: (cc 44 0x2c)
+	//			03 58 7C 27 06 F7 
+	// comp 1 (cc 43 0x2b):
+	// 	56 7C 27 06
+	// 	56: 1010110
+	// 	2b: 101011
+	// comp 1 (cc 44 0x2c)
+	// 	58 7C 27 06
+	// 	58: 1011000
+	// 	2c:	101100
+	// comp 1 (none)
+	// 	00 7E 27 06
+	// comp 1 (pedal)
+	// 	02 7E 27 06
+	// comp 1 (cc 1 0x01)
+	// 	02 7C 27 06
+	// 	2: 10
+	// 	1: 1
+	// comp 1 (cc 127 0x7f)
+	// 	7E 7D 27 06
+	// 	7e: 1111110
+	// 	7f: 1111111
+
+	// amp 1 bypassed (cc 37 0x25):
+	//			02 4A 10 53 06 F7 
+	// amp 1 in X:
+	//			03 4A 10 53 06 F7
+	// amp 1 in X  (cc 38 0x26):
+	//			03 4C 10 53 06 F7 
+	// amp 1 in Y:
+	//			01 4A 10 53 06 F7
+
+	// for each effect there are 5 bytes:
+	//	1 (whole?) byte for the state: off(y):0 / on(y):1 / off(x)(no xy):2 / on(x)(no xy):3
+	//	1 byte: 7 bits for ccLs / 1 bit ?
+	//	1 byte: 6 bits ? / 1 bit for cc pedal or cc none / 1 bit for ccMs
+	//	1 byte: 5 bits for effectIdLs / 3 bits ?
+	//	1 byte: 4 bits ? / 4 bits for effectIdMs
+	for (int idx = 0; (idx + 5) < len; idx += 5)
+	{
+		if (0 && mTrace)
+		{
+			const std::string byteDump(::GetAsciiHexStr(&bytes[idx], 5, true) + "\n");
+			mTrace->Trace(byteDump);
+		}
+
+		AxeEffectBlockInfo * inf = NULL;
+		inf = IdentifyBlockInfoUsingCc(bytes + idx + 1);
+		if (!inf)
+		{
+			inf = IdentifyBlockInfoUsingEffectId(bytes + idx + 1);
+			if (inf && mTrace && inf->mNormalizedName != "feedback return")
+			{
+				std::strstream traceMsg;
+				traceMsg << "Axe sync warning: potentially unexpected sync for  " << inf->mName << " " << std::endl << std::ends;
+				mTrace->Trace(std::string(traceMsg.str()));
+			}
+		}
+
+		if (inf && inf->mPatch)
+		{
+			inf->mEffectIsPresentInAxePatch = true;
+			const byte kParamVal = bytes[idx];
+			const bool isX = (3 == kParamVal); // enabled X or no xy
+			const bool isY = (1 == kParamVal);
+			const bool isBypassed = (2 == kParamVal); // disabled X or no xy
+			const bool isBypassedY = (0 == kParamVal);
+
+			if (isBypassed || isBypassedY || isX || isY)
+			{
+				if (inf->mPatch->IsActive() != !(isBypassed || isBypassedY))
+					inf->mPatch->UpdateState(mSwitchDisplay, !(isBypassed || isBypassedY));
+			}
+			else if (mTrace)
+			{
+				const std::string byteDump(::GetAsciiHexStr(bytes + idx, 5, true));
+				std::strstream traceMsg;
+				traceMsg << "Unrecognized bypass param value for " << inf->mName << " " << byteDump.c_str() << std::endl << std::ends;
+				mTrace->Trace(std::string(traceMsg.str()));
+			}
+		}
+		else
+		{
+			if (mTrace && !inf)
+			{
+				const std::string msg("Axe sync error: No inf for ");
+				mTrace->Trace(msg);
+				const std::string byteDump(::GetAsciiHexStr(&bytes[idx], 5, true) + "\n");
+				mTrace->Trace(byteDump);
+			}
+		}
+	}
+
+	TurnOffLedsForNaEffects();
+}
+
+void
+AxeFxManager::TurnOffLedsForNaEffects()
+{
 	// turn off LEDs for all effects not in cur preset
 	for (AxeEffectBlocks::iterator it = mAxeEffectInfo.begin(); 
 		it != mAxeEffectInfo.end(); 
@@ -1128,6 +1379,13 @@ DefaultAxeCcs kDefaultAxeCcs[] =
 	{"external 7", 22},
 	{"external 8", 23},
 
+	// extra AxeFx II externals
+	{"external 9", 24},
+	{"external 10", 25},
+	{"external 11", 26},
+	{"external 12", 27},
+
+	// 2 loopers in AxeFx Std/Ultra
 	{"looper 1 record", 24},
 	{"looper 1 play", 25},
 	{"looper 1 once", 26},
@@ -1138,6 +1396,14 @@ DefaultAxeCcs kDefaultAxeCcs[] =
 	{"looper 2 once", 31},
 	{"looper 2 overdub", 32},
 	{"looper 2 reverse", 33},
+
+	// single looper in AxeFx II (?)
+	{"looper record", 28},
+	{"looper play", 29},
+	{"looper once", 30},
+	{"looper overdub", 31},
+	{"looper reverse", 32},
+	{"looper bypass", 33},
 
 	{"global preset effect toggle", 34},
 	{"volume increment", 35},
@@ -1205,6 +1471,29 @@ DefaultAxeCcs kDefaultAxeCcs[] =
 	{"vol/pan 4", 96},
 	{"wah-wah 1", 97},
 	{"wah-wah 2", 98},
+
+	// x/y ccs introduced in AxeFx II
+	{"amp 1 x/y", 100},
+	{"amp 2 x/y", 101},
+	{"cabinet 1 x/y", 102},
+	{"cabinet 2 x/y", 103},
+	{"chorus 1 x/y", 104},
+	{"chorus 2 x/y", 105},
+	{"delay 1 x/y", 106},
+	{"delay 2 x/y", 107},
+	{"drive 1 x/y", 108},
+	{"drive 2 x/y", 109},
+	{"flanger 1 x/y", 110},
+	{"flanger 2 x/y", 111},
+	{"phaser 1 x/y", 112},
+	{"phaser 2 x/y", 113},
+	{"pitch 1 x/y", 114},
+	{"pitch 2 x/y", 115},
+	{"reverb 1 x/y", 116},
+	{"reverb 2 x/y", 117},
+	{"wah-wah 1 x/y", 118},
+	{"wah-wah 2 x/y", 119},
+
 	{"", -1}
 };
 
@@ -1239,6 +1528,10 @@ SynonymNormalization(std::string & name)
 			name = name.substr(0, name.length() - 1);
 	}
 
+	pos = name.find(" xy");
+	if (std::string::npos != pos)
+		name.replace(pos, 3, " x/y");
+
 	switch (name[0])
 	{
 	case 'a':
@@ -1254,6 +1547,8 @@ SynonymNormalization(std::string & name)
 	case 'c':
 		MapName("cab 1", "cabinet 1");
 		MapName("cab 2", "cabinet 2");
+		MapName("cab 1 x/y", "cabinet 1 x/y");
+		MapName("cab 2 x/y", "cabinet 2 x/y");
 		MapName("comp 1", "compressor 1");
 		MapName("comp 2", "compressor 2");
 		MapName("crystals 1", "pitch 1");
@@ -1271,6 +1566,8 @@ SynonymNormalization(std::string & name)
 		MapName("diffuser 2", "multidelay 2");
 		MapName("dly 1", "delay 1");
 		MapName("dly 2", "delay 2");
+		MapName("dly 1 x/y", "delay 1 x/y");
+		MapName("dly 2 x/y", "delay 2 x/y");
 		break;
 	case 'e':
 		MapName("ext 1", "external 1");
@@ -1281,6 +1578,10 @@ SynonymNormalization(std::string & name)
 		MapName("ext 6", "external 6");
 		MapName("ext 7", "external 7");
 		MapName("ext 8", "external 8");
+		MapName("ext 9", "external 9");
+		MapName("ext 10", "external 10");
+		MapName("ext 11", "external 11");
+		MapName("ext 12", "external 12");
 		MapName("extern 1", "external 1");
 		MapName("extern 2", "external 2");
 		MapName("extern 3", "external 3");
@@ -1289,6 +1590,10 @@ SynonymNormalization(std::string & name)
 		MapName("extern 6", "external 6");
 		MapName("extern 7", "external 7");
 		MapName("extern 8", "external 8");
+		MapName("extern 9", "external 9");
+		MapName("extern 10", "external 10");
+		MapName("extern 11", "external 11");
+		MapName("extern 12", "external 12");
 		break;
 	case 'f':
 		MapName("fdbk ret", "feedback return");
@@ -1319,6 +1624,13 @@ SynonymNormalization(std::string & name)
 		MapName("loop 1 overdub", "looper 1 overdub");
 		MapName("loop 1 rev", "looper 1 reverse");
 		MapName("loop 1 reverse", "looper 1 reverse");
+		MapName("loop rec", "looper record");
+		MapName("loop record", "looper record");
+		MapName("loop play", "looper play");
+		MapName("loop once", "looper once");
+		MapName("loop overdub", "looper overdub");
+		MapName("loop rev", "looper reverse");
+		MapName("loop reverse", "looper reverse");
 		MapName("loop 2 rec", "looper 2 record");
 		MapName("loop 2 record", "looper 2 record");
 		MapName("loop 2 play", "looper 2 play");
@@ -1327,6 +1639,7 @@ SynonymNormalization(std::string & name)
 		MapName("loop 2 rev", "looper 2 reverse");
 		MapName("loop 2 reverse", "looper 2 reverse");
 		MapName("looper 1", "delay 1");
+		MapName("looper", "delay 1");
 		MapName("looper 2", "delay 2");
 		break;
 	case 'm':
@@ -1431,8 +1744,12 @@ SynonymNormalization(std::string & name)
 	case 'w':
 		MapName("wah 1", "wah-wah 1");
 		MapName("wah 2", "wah-wah 2");
+		MapName("wah 1 x/y", "wah-wah 1 x/y");
+		MapName("wah 2 x/y", "wah-wah 2 x/y");
 		MapName("wahwah 1", "wah-wah 1");
 		MapName("wahwah 2", "wah-wah 2");
+		MapName("wahwah 1 x/y", "wah-wah 1 x/y");
+		MapName("wahwah 2 x/y", "wah-wah 2 x/y");
 		MapName("whammy 1", "pitch 1");
 		MapName("whammy 2", "pitch 2");
 		break;

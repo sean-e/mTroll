@@ -1199,12 +1199,41 @@ EngineLoader::LoadDeviceChannelMap(TiXmlElement * pElem)
 		pElem->QueryIntAttribute("port", &port);
 		mDevicePorts[dev] = port;
 
-		if (dev == "AxeFx" || dev == "Axe-Fx")
+		if (dev == "AxeFx" || 
+			dev == "Axe-Fx" || 
+			dev == "AxeFx Ultra" ||
+			dev == "Axe-Fx Ultra" ||
+			dev == "AxeFx Std" ||
+			dev == "AxeFx Standard" ||
+			dev == "Axe-Fx Standard" ||
+			dev == "AxeFx II" ||
+			dev == "Axe-Fx II" ||
+			dev == "AxeFx 2" ||
+			dev == "Axe-Fx 2"
+			)
 		{
+			AxeFxModel axeModel(AxeStd);
+			int tmp = -1;
+			pElem->QueryIntAttribute("model", &tmp);
+			if (2 == tmp)
+				axeModel = Axe2;
+			else
+			{
+				int pos = dev.find("2");
+				if (std::string::npos != pos)
+					axeModel = Axe2;
+				else
+				{
+					pos = dev.find("II");
+					if (std::string::npos != pos)
+						axeModel = Axe2;
+				}
+			}
+
 			if (!mAxeFxManager)
 			{
 				const int axeCh = ::atoi(ch.c_str()) - 1;
-				mAxeFxManager = new AxeFxManager(mMainDisplay, mSwitchDisplay, mTraceDisplay, mApp->ApplicationDirectory(), axeCh);
+				mAxeFxManager = new AxeFxManager(mMainDisplay, mSwitchDisplay, mTraceDisplay, mApp->ApplicationDirectory(), axeCh, axeModel);
 				mAxeFxManager->AddRef();
 				mAxeSyncPort = -1 == port ? 1 : port;
 			}
