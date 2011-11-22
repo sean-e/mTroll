@@ -60,7 +60,6 @@ AxeFxManager::AxeFxManager(IMainDisplay * mainDisp,
 	// mQueryLock(QMutex::Recursive),
 	mMidiOut(NULL),
 	mCheckedFirmware(false),
-	mPatchDumpBytesReceived(0),
 	mAxeChannel(ch),
 	mModel(mod)
 {
@@ -263,16 +262,7 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 	// http://www.fractalaudio.com/forum/viewtopic.php?f=14&t=21524&start=10
 	// http://axefxwiki.guitarlogic.org/index.php?title=Axe-Fx_SysEx_Documentation
 	if (!::IsAxeFxSysex(bytes, len))
-	{
-		if (mPatchDumpBytesReceived)
-		{
-			// continuation of previous sysex received
-			ContinueReceivePatchDump(bytes, len);
-		}
-		else
-			; // not Axe sysex
 		return;
-	}
 
 	switch (bytes[5])
 	{
@@ -283,9 +273,6 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 			mTempoPatch->ActivateSwitchDisplay(mSwitchDisplay, true);
 			mSwitchDisplay->SetIndicatorThreadSafe(false, mTempoPatch, 75);
 		}
-		return;
-	case 0x11:
-		// x y state change
 		return;
 	case 2:
 		ReceiveParamValue(&bytes[6], len - 6);
@@ -311,13 +298,15 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 		ReceiveFirmwareVersionResponse(bytes, len);
 		return;
 	case 4:
-		// skip byte 6 - may as well update state whenever we get it
-//		StartReceivePatchDump(&bytes[7], len - 7);
+		// receive patch dump
+		return;
+	case 0x11:
+		// x y state change
 		return;
 	case 0x64:
 		// indicates an error or unsupported message
 	default:
-		if (/*0 && */mTrace)
+		if (0 && mTrace)
 		{
 			const std::string byteDump(::GetAsciiHexStr(&bytes[5], len - 5, true));
 			std::strstream traceMsg;
@@ -327,6 +316,7 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 	}
 }
 
+// this SyncFromAxe helper is not currently being used
 AxeEffectBlockInfo *
 AxeFxManager::IdentifyBlockInfoUsingBypassId(const byte * bytes)
 {
@@ -454,6 +444,7 @@ AxeFxManager::GetBlockInfo(Patch * patch)
 	return mAxeEffectInfo.end();
 }
 
+// this SyncFromAxe helper is not currently being used
 void
 AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 {
@@ -797,6 +788,7 @@ AxeFxManager::DelayedSyncFromAxe()
 	QCoreApplication::postEvent(this, new StartDelayedSyncTimer(this));
 }
 
+// this SyncFromAxe helper is not currently being used
 void
 AxeFxManager::RequestNextParamValue()
 {
@@ -863,118 +855,6 @@ AxeFxManager::SendFirmwareVersionQuery()
 	const byte secondDataByte = Axe2 == mModel ? 4 : 0;
 	const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x08, firstDataByte, secondDataByte, 0xF7 };
 	const Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
-	mMidiOut->MidiOut(bb);
-}
-
-void
-AxeFxManager::StartReceivePatchDump(const byte * bytes, int len)
-{
-	// TODO: not updated for axe fx 2
-	int idx;
-	// header that is not passed into this method:
-	// F0 00 01 74 01 04 01
-	mPatchDumpBytesReceived = len + 7;
-
-	// undetermined 6 bytes
-	// 00 00 05 03 00 00 
-// 	if (mTrace)
-// 	{
-// 		const std::string byteDump(::GetAsciiHexStr(&bytes[7], 6, true) + "\n");
-// 		mTrace->Trace(byteDump);
-// 	}
-
-	// patch name 21 * 2bytes = 42 bytes
-	// 05 04 0D 06 00 07 04 07 09 07 00 02 03 05 09 06 
-	// 0C 06 05 06 0E 06 03 06 05 06 00 02 00 02 00 02 
-	// 00 02 00 02 00 02 00 02 00 00 
-	const int kNameBufLen = 42;
-	std::string patchName;
-	for (idx = 6; (idx + 2) < len && (idx + 2 - 6) <= kNameBufLen; idx += 2)
-	{
-		const byte ls = bytes[idx];
-		const byte ms = bytes[idx + 1];
-		const int ch = ms << 4 | ls;
-		patchName += ch;
-	}
-
-	if (mMainDisplay && patchName.size())
-	{
-		patchName = "Axe-Fx " + patchName;
-		mMainDisplay->AppendText(patchName);
-	}
-	
-	// undetermined 22 bytes
-	// 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
-	// 00 00 00 00 00 00
-
-	// start of grid layout and effect ids
-	// 4 bytes per block in 4 x 12 grid starting at bytes[70]:
-	// 0A 06 00 00 0B 06 00 00 0C 06 00 00 0D 06 00 00 
-	// 04 07 00 00 05 07 00 00 00 00 00 00 00 00 00 00 
-	// 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
-	// 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
-	// 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
-	// 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
-	// 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
-	// 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
-	// 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
-	// 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
-	// 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
-	// 00 00 00 00 00 00 00 00 0C 07 00 00 0D 07 00 00
-
-	// record all effect blocks
-	mEditBufferEffectBlocks.clear();
-	const int kBlockCount = 4 * 12;
-	const int kBlockSize = 4 * kBlockCount;
-	const int kStopByte = kBlockSize + 70 + 1; // stop byte is one beyond
-	idx = 70;
-	for (int blockIdx = 0; 
-		(idx + 4) < len && (idx + 4) < kStopByte && blockIdx <= kBlockCount; 
-		idx += 4, blockIdx++)
-	{
-		if (0 && mTrace)
-		{
-			const std::string byteDump(::GetAsciiHexStr(&bytes[idx], 4, true) + "\n");
-			mTrace->Trace(byteDump);
-		}
-
-		const byte ls = bytes[idx];
-		const byte ms = bytes[idx + 1];
-		if (!ms && !ls)
-			continue;
-
-		const int effectId = ms << 4 | ls;
-		mEditBufferEffectBlocks.insert(effectId);
-	}
-}
-
-void
-AxeFxManager::ContinueReceivePatchDump(const byte * bytes, int len)
-{
-	mPatchDumpBytesReceived += len;
-	if (bytes[len - 1] == 0xf7)
-	{
-		// patch dump is 2060 bytes
-		mPatchDumpBytesReceived = 0;
-	}
-}
-
-void
-AxeFxManager::RequestEditBufferDump()
-{
-	if (!mCheckedFirmware)
-		SendFirmwareVersionQuery();
-
-	KillResponseTimer();
-	QMutexLocker lock(&mQueryLock);
-	if (!mCheckedFirmware)
-		return;
-	mQueries.clear();
-
-	// TODO: not updated for Axe-Fx 2
-	const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x03, 0x01, 0x00, 0x00, 0xF7 };
-	const Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
-	mPatchDumpBytesReceived = 0;
 	mMidiOut->MidiOut(bb);
 }
 

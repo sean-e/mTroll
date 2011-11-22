@@ -85,11 +85,6 @@ private:
 	void ReceivePresetEffectsV2(const byte * bytes, int len);
 	void TurnOffLedsForNaEffects();
 
-	// these aren't necessary any more - superseded by the previous 4
-	void RequestEditBufferDump();
-	void StartReceivePatchDump(const byte * bytes, int len);
-	void ContinueReceivePatchDump(const byte * bytes, int len);
-
 	void RequestNextParamValue();
 	void ReceiveParamValue(const byte * bytes, int len);
 	void KillResponseTimer();
@@ -115,7 +110,6 @@ private:
 	bool			mCheckedFirmware;
 	AxeFxModel		mModel;
 	std::set<int>	mEditBufferEffectBlocks; // at last update
-	int				mPatchDumpBytesReceived;
 };
 
 int GetDefaultAxeCc(const std::string &effectName, ITraceDisplay * trc);
