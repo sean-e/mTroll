@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010 Sean Echevarria
+ * Copyright (C) 2007-2008,2010-2011 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -382,7 +382,7 @@ PatchBank::PatchSwitchPressed(int switchNumber, IMainDisplay * mainDisplay, ISwi
 		}
 
 		if (curSwitchItem->mPatch->UpdateMainDisplayOnPress())
-			msgstr << curSwitchItem->mPatch->GetNumber() << " " << curSwitchItem->mPatch->GetName() << std::endl;
+			msgstr << curSwitchItem->mPatch->GetNumber() << " " << curSwitchItem->mPatch->GetDisplayText() << std::endl;
 		else
 			doDisplayUpdate = false;
 	}

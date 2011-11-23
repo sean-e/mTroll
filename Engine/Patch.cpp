@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010 Sean Echevarria
+ * Copyright (C) 2007-2011 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -53,7 +53,7 @@ Patch::AssignSwitch(int switchNumber, ISwitchDisplay * switchDisplay)
 	_ASSERTE(switchNumber != -1 && switchNumber >= 0);
 	mSwitchNumbers.push_back(switchNumber);
 	if (switchDisplay)
-		switchDisplay->SetSwitchText(switchNumber, mName);
+		switchDisplay->SetSwitchText(switchNumber, GetDisplayText());
 	UpdateDisplays(NULL, switchDisplay);
 }
 
@@ -90,13 +90,15 @@ Patch::UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay
 			++it)
 		{
 			switchDisplay->SetSwitchDisplay(*it, mPatchIsActive);
+			if (HasDisplayText())
+				switchDisplay->SetSwitchText(*it, GetDisplayText());
 		}
 	}
 
 	if (mainDisplay)
 	{
 		std::strstream msgstr;
-		msgstr << mNumber << " " << mName << std::endl << std::ends;
+		msgstr << mNumber << " " << GetDisplayText() << std::endl << std::ends;
 		mainDisplay->TextOut(msgstr.str());
 	}
 }

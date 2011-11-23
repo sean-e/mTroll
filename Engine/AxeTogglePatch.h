@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010 Sean Echevarria
+ * Copyright (C) 2010-2011 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -36,7 +36,11 @@
 //
 class AxeTogglePatch : public TogglePatch
 {
-	AxeFxManager * mAx;
+	AxeFxManager	* mAx;
+	bool			mHasDisplayText;
+	std::string		mActiveText;
+	std::string		mInactiveText;
+
 public:
 	AxeTogglePatch(int number, 
 				const std::string & name, 
@@ -49,6 +53,25 @@ public:
 	{
 		if (mAx)
 			mAx->AddRef();
+
+		std::string baseEffectName(name);
+		std::string xy(" x/y");
+		int xyPos = baseEffectName.find(xy);
+		if (-1 == xyPos)
+		{
+			xy = " X/Y";
+			xyPos = baseEffectName.find(xy);
+		}
+
+		if (-1 == xyPos)
+			mHasDisplayText = false;
+		else
+		{
+			mHasDisplayText = true;
+			baseEffectName.replace(xyPos, xy.length(), "");
+			mActiveText = baseEffectName + " X";
+			mInactiveText = baseEffectName + " Y";
+		}
 	}
 
 	virtual ~AxeTogglePatch()
@@ -57,6 +80,21 @@ public:
 			mAx->Release();
 	}
 
+	virtual const std::string & GetDisplayText() const 
+	{ 
+		if (mHasDisplayText)
+		{
+			if (mPatchIsActive)
+				return mActiveText;
+			else
+				return mInactiveText; 
+		}
+
+		return GetName();
+	}
+
+	virtual bool HasDisplayText() const { return mHasDisplayText; }
+	
 	virtual std::string GetPatchTypeStr() const { return "axeToggle"; }
 
 	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
