@@ -874,6 +874,10 @@ AxeFxManager::ReceiveFirmwareVersionResponse(const byte * bytes, int len)
 		mModel = AxeUltra;
 		break;
 	case Axe2:
+		if (len < 9)
+			return;
+		if (0xa == bytes[6] && 0x04 == bytes[7])
+			return; // our request got looped back
 		model = "II ";
 		mModel = Axe2;
 		break;
