@@ -105,6 +105,22 @@ PatchBank &
 MidiControlEngine::AddBank(int number,
 						   const std::string & name)
 {
+	if (mTrace)
+	{
+		for (Banks::iterator it = mBanks.begin();
+			it != mBanks.end();
+			++it)
+		{
+			PatchBank * curItem = *it;
+			if (curItem && curItem->GetBankNumber() == number)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Warning: multiple banks with bank number " << number << std::endl << std::ends;
+				mTrace->Trace(std::string(traceMsg.str()));
+			}
+		}
+	}
+
 	PatchBank * pBank = new PatchBank(number, name);
 	mBanks.push_back(pBank);
 	return * pBank;
@@ -113,7 +129,15 @@ MidiControlEngine::AddBank(int number,
 void
 MidiControlEngine::AddPatch(Patch * patch)
 {
-	mPatches[patch->GetNumber()] = patch;
+	const int patchNum = patch->GetNumber();
+	Patch * prev = mPatches[patchNum];
+	if (prev && mTrace)
+	{
+		std::strstream traceMsg;
+		traceMsg << "ERROR: multiple patches with patch number " << patchNum << std::endl << std::ends;
+		mTrace->Trace(std::string(traceMsg.str()));
+	}
+	mPatches[patchNum] = patch;
 }
 
 void
