@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2011 Sean Echevarria
+ * Copyright (C) 2010-2012 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -1302,6 +1302,10 @@ DefaultAxeCcs kDefaultAxeCcs[] =
 	{"looper overdub", 31},
 	{"looper reverse", 32},
 	{"looper bypass", 33},
+	// additional looper in AxeFx II fw 6
+	{"looper half", 120},
+	{"looper undo", 121},
+	{"looper metronome", 122},
 
 	{"global preset effect toggle", 34},
 	{"volume increment", 35},
@@ -1369,6 +1373,7 @@ DefaultAxeCcs kDefaultAxeCcs[] =
 	{"vol/pan 4", 96},
 	{"wah-wah 1", 97},
 	{"wah-wah 2", 98},
+	{"tone match", 99},
 
 	// x/y ccs introduced in AxeFx II
 	{"amp 1 x/y", 100},
@@ -1433,6 +1438,7 @@ SynonymNormalization(std::string & name)
 	switch (name[0])
 	{
 	case 'a':
+		MapName("amp match", "tone match");
 		MapName("arpeggiator 1", "pitch 1");
 		MapName("arpeggiator 2", "pitch 2");
 		break;
@@ -1468,6 +1474,8 @@ SynonymNormalization(std::string & name)
 		MapName("dly 2 x/y", "delay 2 x/y");
 		break;
 	case 'e':
+		MapName("eq match", "tone match");
+		MapName("eqmatch", "tone match");
 		MapName("ext 1", "external 1");
 		MapName("ext 2", "external 2");
 		MapName("ext 3", "external 3");
@@ -1509,6 +1517,9 @@ SynonymNormalization(std::string & name)
 		MapName("graphiceq 3", "graphic eq 3");
 		MapName("graphiceq 4", "graphic eq 4");
 		break;
+	case 'h':
+		MapName("half-speed", "looper half");
+		break;
 	case 'i':
 		MapName("in vol", "input volume");
 		MapName("input", "input volume");
@@ -1522,6 +1533,8 @@ SynonymNormalization(std::string & name)
 		MapName("loop 1 overdub", "looper 1 overdub");
 		MapName("loop 1 rev", "looper 1 reverse");
 		MapName("loop 1 reverse", "looper 1 reverse");
+		MapName("loop half-speed", "looper half");
+		MapName("loop metronome", "looper metronome");
 		MapName("loop rec", "looper record");
 		MapName("loop record", "looper record");
 		MapName("loop play", "looper play");
@@ -1529,6 +1542,7 @@ SynonymNormalization(std::string & name)
 		MapName("loop overdub", "looper overdub");
 		MapName("loop rev", "looper reverse");
 		MapName("loop reverse", "looper reverse");
+		MapName("loop undo", "looper undo");
 		MapName("loop 2 rec", "looper 2 record");
 		MapName("loop 2 record", "looper 2 record");
 		MapName("loop 2 play", "looper 2 play");
@@ -1536,14 +1550,16 @@ SynonymNormalization(std::string & name)
 		MapName("loop 2 overdub", "looper 2 overdub");
 		MapName("loop 2 rev", "looper 2 reverse");
 		MapName("loop 2 reverse", "looper 2 reverse");
-		MapName("looper 1", "delay 1");
 		MapName("looper", "delay 1");
+		MapName("looper 1", "delay 1");
 		MapName("looper 2", "delay 2");
+		MapName("looper half-speed", "looper half");
 		break;
 	case 'm':
 		MapName("mdly 1", "multidelay 1");
 		MapName("mdly 2", "multidelay 2");
 		MapName("megatap", "megatap delay");
+		MapName("metronome", "looper metronome");
 		MapName("mix 1", "mixer 1");
 		MapName("mix 2", "mixer 2");
 		MapName("multi comp 1", "multiband comp 1");
@@ -1620,6 +1636,7 @@ SynonymNormalization(std::string & name)
 		MapName("tap tempo", "taptempo");
 		MapName("ten tap 1", "multidelay 1");
 		MapName("ten tap 2", "multidelay 2");
+		MapName("tone", "tone match");
 		MapName("trem 1", "panner/tremolo 1");
 		MapName("trem 2", "panner/tremolo 2");
 		MapName("tremolo 1", "panner/tremolo 1");
