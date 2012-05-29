@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2011 Sean Echevarria
+ * Copyright (C) 2007-2012 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -163,6 +163,7 @@ private:
 	std::stack<int>			mForwardHistory;
 	enum HistoryNavMode		{ hmNone, hmBack, hmForward, hmWentBack, hmWentForward};
 	HistoryNavMode			mHistoryNavMode;
+	unsigned int			mSwitchPressedEventTime;
 
 	// retained in different form
 	Patches					mPatches;		// patchNum is key

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2011 Sean Echevarria
+ * Copyright (C) 2007-2012 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -35,6 +35,12 @@
 #include "ITrollApplication.h"
 #include "HexStringUtils.h"
 #include "AxeFxManager.h"
+#ifdef _WINDOWS
+	#include <windows.h>
+	#define CurTime	GetTickCount // time in ms (used to measure elapsed time between events, origin doesn't matter)
+#else
+	#define CurTime	??
+#endif // _WINDOWS
 
 
 struct DeletePatch
@@ -84,7 +90,8 @@ MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 	mDirectValueLastSent(0),
 	mDirectValue1LastSent(0),
 	mMidiOut(midiOut),
-	mAxeMgr(axMgr)
+	mAxeMgr(axMgr),
+	mSwitchPressedEventTime(0)
 {
 	if (mAxeMgr)
 		mAxeMgr->AddRef();
@@ -275,8 +282,12 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 		mTrace->Trace(std::string(msg.str()));
 	}
 
+	mSwitchPressedEventTime = CurTime();
 	if (emBank == mMode)
 	{
+		if (switchNumber == mModeSwitchNumber)
+			return;
+
 		if (mActiveBank)
 			mActiveBank->PatchSwitchPressed(switchNumber, mMainDisplay, mSwitchDisplay);
 		return;
@@ -323,13 +334,21 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 		mTrace->Trace(msg.str());
 	}
 
+	const int kLongPressMinDuration = 500; // milliseconds
+	const bool kIsLongPress = (CurTime() - mSwitchPressedEventTime) > kLongPressMinDuration;
 	switch (mMode)
 	{
 	case emBank:
 		// default mode
 		if (switchNumber == mModeSwitchNumber)
 		{
-			ChangeMode(emModeSelect);
+			if (kIsLongPress)
+			{
+				// TODO: long-press function of mode switch should be user-definable
+				HistoryBackward();
+			}
+			else
+				ChangeMode(emModeSelect);
 			return;
 		}
 
