@@ -905,20 +905,29 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 	{
 		if (!msg.empty())
 		{
-			if (emBank != mMode)
+			if (emBankNav == mMode)
+				msg = "Escape Navigation";
+			else if (emBank != mMode)
 				msg = "Exit " + msg;
 			mSwitchDisplay->SetSwitchText(mModeSwitchNumber, msg);
 		}
 
-		if (mMode == emBank)
+		switch (mMode)
 		{
+		case emBank:
 			mSwitchDisplay->EnableDisplayUpdate(true);
-			mSwitchDisplay->SetSwitchDisplay(mModeSwitchNumber, true);
-		}
-		else
-		{
+			mSwitchDisplay->SetSwitchDisplay(mModeSwitchNumber, false);
+			break;
+		case emModeSelect:
+		case emBankNav:
 			mSwitchDisplay->EnableDisplayUpdate(false);
-			mSwitchDisplay->ForceSwitchDisplay(mModeSwitchNumber, false);
+			mSwitchDisplay->ForceSwitchDisplay(mModeSwitchNumber, true);
+			mSwitchDisplay->ForceSwitchDisplay(mDecrementSwitchNumber, true);
+			mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, true);
+			break;
+		default:
+			mSwitchDisplay->EnableDisplayUpdate(false);
+			mSwitchDisplay->ForceSwitchDisplay(mModeSwitchNumber, true);
 		}
 	}
 }
@@ -1084,11 +1093,15 @@ MidiControlEngine::SwitchReleased_NavAndDescMode(int switchNumber)
 	{
 		// bank inc/dec does not commit bank
 		NavigateBankRelative(1);
+		mSwitchDisplay->ForceSwitchDisplay(mDecrementSwitchNumber, true);
+		mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, true);
 	}
 	else if (switchNumber == mDecrementSwitchNumber)
 	{
 		// bank inc/dec does not commit bank
 		NavigateBankRelative(-1);
+		mSwitchDisplay->ForceSwitchDisplay(mDecrementSwitchNumber, true);
+		mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, true);
 	}
 	else if (switchNumber == mModeSwitchNumber)
 	{
@@ -1122,12 +1135,16 @@ MidiControlEngine::SwitchReleased_ModeSelect(int switchNumber)
 		ChangeMode(emBankNav);
 		mBankNavigationIndex = mActiveBankIndex;
 		NavigateBankRelative(-1);
+		mSwitchDisplay->ForceSwitchDisplay(mDecrementSwitchNumber, true);
+		mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, true);
 	}
 	else if (switchNumber == mIncrementSwitchNumber)
 	{
 		ChangeMode(emBankNav);
 		mBankNavigationIndex = mActiveBankIndex;
 		NavigateBankRelative(1);
+		mSwitchDisplay->ForceSwitchDisplay(mDecrementSwitchNumber, true);
+		mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, true);
 	}
 	else if (switchNumber == GetSwitchNumber(kModeRecall))
 	{
@@ -1149,6 +1166,8 @@ MidiControlEngine::SwitchReleased_ModeSelect(int switchNumber)
 		ChangeMode(emBankDesc);
 		mBankNavigationIndex = mActiveBankIndex;
 		NavigateBankRelative(0);
+		mSwitchDisplay->ForceSwitchDisplay(mDecrementSwitchNumber, true);
+		mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, true);
 	}
 	else if (switchNumber == GetSwitchNumber(kModeBankDirect))
 		ChangeMode(emBankDirect);
