@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2011 Sean Echevarria
+ * Copyright (C) 2007-2012 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -32,6 +32,7 @@
 class IMainDisplay;
 class ISwitchDisplay;
 class IMidiOut;
+class MidiControlEngine;
 
 
 class Patch
@@ -59,6 +60,7 @@ public:
 	// used to update state of patch without exec
 	virtual void UpdateState(ISwitchDisplay * switchDisplay, bool active);
 	virtual bool UpdateMainDisplayOnPress() const {return true;}
+	virtual void CompleteInit(MidiControlEngine * eng, ITraceDisplay * trc) { }
 
 	virtual void Deactivate(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 

@@ -179,6 +179,19 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 	}
 
 	std::sort(mBanks.begin(), mBanks.end(), SortByBankNumber);
+	for (Patches::iterator it = mPatches.begin();
+		it != mPatches.end();
+		)
+	{
+		Patch * curItem = (*it).second;
+		if (curItem)
+		{
+			curItem->CompleteInit(this, mTrace);
+			++it;
+		}
+		else
+			mPatches.erase(it++);
+	}
 
 	PatchBank * defaultsBank = NULL;
 	if (mBanks.begin() != mBanks.end())

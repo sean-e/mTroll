@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2011 Sean Echevarria
+ * Copyright (C) 2007-2012 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -49,6 +49,7 @@
 #include "ITrollApplication.h"
 #include "AxeTogglePatch.h"
 #include "AxeFxProgramChange.h"
+#include "PatchListSequencePatch.h"
 
 
 static PatchBank::PatchState GetLoadState(const std::string & tmpLoad);
@@ -483,7 +484,6 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 
 		std::string patchType;
 		pElem->QueryValueAttribute("type", &patchType);
-		const bool isSeq = patchType == "sequence";
 
 		std::string device;
 		if (pElem->Attribute("device"))
@@ -524,6 +524,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		IMidiOut * midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[midiOutPortNumber]);
 
 		PatchCommands cmds, cmds2;
+		std::vector<int> intList;
 		TiXmlHandle hRoot(NULL);
 		hRoot = TiXmlHandle(pElem);
 
@@ -604,6 +605,24 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				continue;
 			else if (patchElement == "globalExpr")
 				continue;
+			else if (patchElement == "patchListItem")
+			{
+				std::string patchNumStr;
+				if (childElem->GetText())
+					patchNumStr = childElem->GetText();
+				const int num = ::atoi(patchNumStr.c_str());
+				if (0 <num)
+				{
+					intList.push_back(num);
+				}
+				else if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: no (or invalid) patch number specified in patchListItem in patch " << patchName << std::endl << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
+				continue;
+			}
 			else
 			{
 				std::string chStr;
@@ -842,6 +861,8 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		}
 		else if (patchType == "sequence")
 			newPatch = new SequencePatch(patchNumber, patchName, midiOut, cmds);
+		else if (patchType == "patchListSequence")
+			newPatch = new PatchListSequencePatch(patchNumber, patchName, intList);
 		else if (patchType == "AxeFxTapTempo")
 		{
 			if (!cmds.size() && !cmds2.size() && -1 != patchDefaultCh)
