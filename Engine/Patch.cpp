@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2011 Sean Echevarria
+ * Copyright (C) 2007-2012 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -51,10 +51,25 @@ void
 Patch::AssignSwitch(int switchNumber, ISwitchDisplay * switchDisplay)
 {
 	_ASSERTE(switchNumber != -1 && switchNumber >= 0);
-	mSwitchNumbers.push_back(switchNumber);
+	mSwitchNumbers.insert(switchNumber);
 	if (switchDisplay)
 		switchDisplay->SetSwitchText(switchNumber, GetDisplayText());
 	UpdateDisplays(NULL, switchDisplay);
+}
+
+void
+Patch::RemoveSwitch(int switchNumber, ISwitchDisplay * switchDisplay)
+{
+	if (mSwitchNumbers.empty())
+		return;
+
+	if (switchDisplay)
+	{
+		switchDisplay->SetSwitchDisplay(switchNumber, false);
+		switchDisplay->ClearSwitchText(switchNumber);
+	}
+
+	mSwitchNumbers.erase(switchNumber);
 }
 
 void
@@ -65,7 +80,7 @@ Patch::ClearSwitch(ISwitchDisplay * switchDisplay)
 
 	if (switchDisplay)
 	{
-		for (std::vector<int>::iterator it = mSwitchNumbers.begin(); 
+		for (std::set<int>::iterator it = mSwitchNumbers.begin(); 
 			it != mSwitchNumbers.end();
 			++it)
 		{
@@ -85,7 +100,7 @@ Patch::UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay
 
 	if (switchDisplay)
 	{
-		for (std::vector<int>::const_iterator it = mSwitchNumbers.begin(); 
+		for (std::set<int>::const_iterator it = mSwitchNumbers.begin(); 
 			it != mSwitchNumbers.end();
 			++it)
 		{
@@ -122,7 +137,7 @@ Patch::ActivateSwitchDisplay(ISwitchDisplay * switchDisplay,
 
 	if (switchDisplay)
 	{
-		for (std::vector<int>::const_iterator it = mSwitchNumbers.begin(); 
+		for (std::set<int>::const_iterator it = mSwitchNumbers.begin(); 
 			it != mSwitchNumbers.end();
 			++it)
 		{

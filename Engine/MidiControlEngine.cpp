@@ -347,15 +347,27 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 		mTrace->Trace(msg.str());
 	}
 
+	PatchBank::SwitchPressDuration dur;
 	const int kLongPressMinDuration = 500; // milliseconds
-	const bool kIsLongPress = (CurTime() - mSwitchPressedEventTime) > kLongPressMinDuration;
+	const int kExtendedPressMinDuration = 3000; // milliseconds
+	const unsigned int kDuration = CurTime() - mSwitchPressedEventTime;
+	if (kDuration > kLongPressMinDuration)
+	{
+		if (kDuration > kExtendedPressMinDuration)
+			dur = PatchBank::spdExtended;
+		else
+			dur = PatchBank::spdLong;
+	}
+	else
+		dur = PatchBank::spdShort;
+
 	switch (mMode)
 	{
 	case emBank:
 		// default mode
 		if (switchNumber == mModeSwitchNumber)
 		{
-			if (kIsLongPress)
+			if (PatchBank::spdShort != dur)
 			{
 				// TODO: long-press function of mode switch should be user-definable
 				HistoryBackward();
@@ -366,7 +378,7 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 		}
 
 		if (mActiveBank)
-			mActiveBank->PatchSwitchReleased(switchNumber, mMainDisplay, mSwitchDisplay);
+			mActiveBank->PatchSwitchReleased(switchNumber, mMainDisplay, mSwitchDisplay, dur);
 		return;
 
 	case emCreated:

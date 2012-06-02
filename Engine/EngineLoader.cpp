@@ -54,7 +54,7 @@
 
 static PatchBank::PatchState GetLoadState(const std::string & tmpLoad);
 static PatchBank::PatchSyncState GetSyncState(const std::string & tmpLoad);
-
+static PatchBank::SecondFunctionOperation GetSecondFuncOp(const std::string & tmp);
 
 EngineLoader::EngineLoader(ITrollApplication * app,
 						   IMidiOutGenerator * midiOutGenerator,
@@ -992,6 +992,11 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 				}
 
 				std::string tmp;
+				childElem->QueryValueAttribute("secondFunction", &tmp);
+				const PatchBank::SwitchFunctionAssignment swFunc = (tmp.length()) ? PatchBank::ssSecondary : PatchBank::ssPrimary;
+				const PatchBank::SecondFunctionOperation sfoOp = ::GetSecondFuncOp(tmp);
+				tmp.clear();
+
 				childElem->QueryValueAttribute("loadState", &tmp);
 				const PatchBank::PatchState loadState = ::GetLoadState(tmp);
 				tmp.clear();
@@ -1012,7 +1017,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 // 					traceMsg << "Warning load of config file: bank " << bankName << " has a PatchMap with both override and sync attributes (might not work)" << std::endl << std::ends;
 // 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 // 				}
-				bank.AddPatchMapping(switchNumber - 1, patchNumber, loadState, unloadState, stateOverride, syncState);
+				bank.AddPatchMapping(switchNumber - 1, patchNumber, swFunc, sfoOp, loadState, unloadState, stateOverride, syncState);
 			}
 			else if (childElem->ValueStr() == "ExclusiveSwitchGroup")
 			{
@@ -1288,4 +1293,22 @@ GetSyncState(const std::string & syncState)
 		return PatchBank::syncOutOfPhase;
 	else
 		return PatchBank::syncIgnore;
+}
+
+PatchBank::SecondFunctionOperation
+GetSecondFuncOp(const std::string & secFuncOp)
+{
+	// secondFunction="manual|auto|autoOn|autoOff"
+	if (secFuncOp == "manual")
+		return PatchBank::sfoManual;
+	else if (secFuncOp == "auto")
+		return PatchBank::sfoAuto;
+	else if (secFuncOp == "autoOn")
+		return PatchBank::sfoAutoEnable;
+	else if (secFuncOp == "autoOff")
+		return PatchBank::sfoAutoDisable;
+	else if (secFuncOp == "immediateToggle")
+		return PatchBank::sfoStatelessToggle;
+	else
+		return PatchBank::sfoManual;
 }

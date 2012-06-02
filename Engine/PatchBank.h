@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2012 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -43,6 +43,13 @@ public:
 	PatchBank(int number, const std::string & name);
 	~PatchBank();
 
+	enum SwitchFunctionAssignment
+	{ 
+		ssPrimary,		// default
+		ssSecondary,	// long-press secondary function
+		ssCount
+	};
+
 	enum PatchState 
 	{
 		stIgnore,		// default; only state valid for ptMomentary
@@ -57,8 +64,27 @@ public:
 		syncOutOfPhase	// PatchState of sibling patches sync opposite of master patch
 	};
 
+	enum SwitchPressDuration
+	{
+		spdShort,		// normal
+		spdLong,		// long-press: invoke second function using defined SecondFunctionOperation mode
+		spdExtended		// extra-long: invoke second function in sfoManual mode (ignore SecondFunctionOperation mode)
+	};
+
+	enum SecondFunctionOperation
+	{
+		sfoNone,			// no secondary function
+
+		// secondFunction="manual|auto|autoOn|autoOff|immediateToggle"
+		sfoManual,			// long-press simply changes switch display; default
+		sfoAutoEnable,		// long-press changes switch display and presses switch to enable
+		sfoAutoDisable,		// long-press changes switch display; user must press again to enable; press to disable also does 'long-press' to toggle back
+		sfoAuto,			// long-press changes switch display and presses switch to enable; press to disable also does 'long-press' to toggle back
+		sfoStatelessToggle	// long-press activates second (presses switch of second), reverts back to primary
+	};
+
 	// creation/init
-	void AddPatchMapping(int switchNumber, int patchNumber, PatchState patchLoadState, PatchState patchUnloadState, PatchState patchStateOverride, PatchSyncState patchSyncState);
+	void AddPatchMapping(int switchNumber, int patchNumber, SwitchFunctionAssignment st, SecondFunctionOperation sfoOp, PatchState patchLoadState, PatchState patchUnloadState, PatchState patchStateOverride, PatchSyncState patchSyncState);
 	void InitPatches(const MidiControlEngine::Patches & patches, ITraceDisplay * traceDisp);
 	void CalibrateExprSettings(const PedalCalibration * pedalCalibration, MidiControlEngine * eng, ITraceDisplay * traceDisp);
 	void SetDefaultMappings(const PatchBank & defaultMapping);
@@ -69,7 +95,7 @@ public:
 	void DisplayDetailedPatchInfo(int switchNumber, IMainDisplay * mainDisplay);
 
 	void PatchSwitchPressed(int switchNumber, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
-	void PatchSwitchReleased(int switchNumber, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
+	void PatchSwitchReleased(int switchNumber, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay, SwitchPressDuration dur);
 	void ResetPatches(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 
 	int GetBankNumber() const {return mNumber;}
@@ -80,6 +106,12 @@ public:
 	void CreateExclusiveGroup(GroupSwitches * switches);
 
 private:
+	bool SwitchHasSecondaryLogic(int switchNumber) { return mPatches[switchNumber].mSfOp != sfoNone; }
+	void ToggleDualFunctionState(int switchNumber, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
+	void PatchSwitchPressed(SwitchFunctionAssignment st, int switchNumber, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
+	void PatchSwitchReleased(SwitchFunctionAssignment st, int switchNumber, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
+
+private:
 	struct PatchMap
 	{
 		int					mPatchNumber;	// needed for load of document
@@ -87,14 +119,16 @@ private:
 		PatchState			mPatchStateAtBankUnload;
 		PatchState			mPatchStateOverride; // press of switch prevents toggle from changing
 		PatchSyncState		mPatchSyncState;
+		SecondFunctionOperation mSfOp;
 		Patch				*mPatch;		// non-retained runtime state; weak ref
 
-		PatchMap(int patchNumber, PatchState loadState, PatchState unloadState, PatchState stateOverride, PatchSyncState patchSyncState) :
+		PatchMap(int patchNumber, PatchState loadState, PatchState unloadState, PatchState stateOverride, PatchSyncState patchSyncState, SecondFunctionOperation sfOp) :
 			mPatchNumber(patchNumber),
 			mPatchStateAtBankLoad(loadState),
 			mPatchStateAtBankUnload(unloadState),
 			mPatchStateOverride(stateOverride),
 			mPatchSyncState(patchSyncState),
+			mSfOp(sfOp),
 			mPatch(NULL)
 		{
 		}
@@ -105,15 +139,47 @@ private:
 			mPatchStateAtBankUnload(rhs.mPatchStateAtBankUnload),
 			mPatchStateOverride(rhs.mPatchStateOverride),
 			mPatchSyncState(rhs.mPatchSyncState),
+			mSfOp(rhs.mSfOp),
 			mPatch(rhs.mPatch)
 		{
 		}
 	};
 	typedef std::vector<PatchMap*> PatchVect;
 
+	struct DualPatchVect
+	{
+		SwitchFunctionAssignment	mCurrentSwitchState;	// events affect primary or secondary patches
+		SecondFunctionOperation		mSfOp;					// assigned from first secondary patch
+		PatchVect					mPrimaryPatches;
+		PatchVect					mSecondaryPatches;
+
+		DualPatchVect() : mCurrentSwitchState(ssPrimary), mSfOp(sfoNone) { }
+
+		PatchVect &					GetPatchVect()
+		{
+			return GetPatchVect(mCurrentSwitchState);
+		}
+
+		PatchVect &					GetPatchVect(SwitchFunctionAssignment ss)
+		{
+			if (ssPrimary == ss)
+				return mPrimaryPatches;
+			else // any other value is considered secondary
+				return mSecondaryPatches;
+		}
+
+		const PatchVect &			GetPatchVectConst(SwitchFunctionAssignment ss) const
+		{
+			if (ssPrimary == ss)
+				return mPrimaryPatches;
+			else // any other value is considered secondary
+				return mSecondaryPatches;
+		}
+	};
+
 	struct DeletePatchMaps
 	{
-		void operator()(const std::pair<int, PatchVect> & pr);
+		void operator()(const std::pair<int, DualPatchVect> & pr);
 	};
 
 	const int					mNumber;	// unique across all patchBanks
@@ -121,7 +187,7 @@ private:
 	// a switch in a bank can have multiple patches
 	// only the first patch associated with a switch gets control of the switch
 	// only the name of the first patch will be displayed
-	typedef std::map<int, PatchVect> PatchMaps;
+	typedef std::map<int, DualPatchVect> PatchMaps;
 	PatchMaps					mPatches;	// switchNumber is key
 
 	// support for exclusive switch groups

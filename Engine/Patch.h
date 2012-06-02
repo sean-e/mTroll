@@ -26,7 +26,7 @@
 #define Patch_h__
 
 #include <string>
-#include <vector>
+#include <set>
 #include "ExpressionPedals.h"
 
 class IMainDisplay;
@@ -45,6 +45,7 @@ public:
 
 	void AssignSwitch(int switchNumber, ISwitchDisplay * switchDisplay);
 	void ClearSwitch(ISwitchDisplay * switchDisplay);
+	void RemoveSwitch(int switchNumber, ISwitchDisplay * switchDisplay);
 
 	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) = 0;
 	virtual void SwitchReleased(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) { }
@@ -86,7 +87,7 @@ protected:
 private:
 	const int				mNumber;	// unique across patches
 	const std::string		mName;
-	std::vector<int>		mSwitchNumbers;
+	std::set<int>			mSwitchNumbers;
 };
 
 extern ExpressionPedals * gActivePatchPedals;
