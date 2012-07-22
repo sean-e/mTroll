@@ -1625,11 +1625,23 @@ SynonymNormalization(std::string & name)
 		MapName("extern 12", "external 12");
 		break;
 	case 'f':
+		MapName("fb ret", "feedback return");
+		MapName("fb rtrn", "feedback return");
+		MapName("fb return", "feedback return");
 		MapName("fdbk ret", "feedback return");
 		MapName("fdbk rtrn", "feedback return");
 		MapName("fdbk return", "feedback return");
+		MapName("feed ret", "feedback return");
+		MapName("feed rtrn", "feedback return");
+		MapName("feed return", "feedback return");
 		MapName("feedback ret", "feedback return");
 		MapName("feedback rtrn", "feedback return");
+
+		MapName("fb send", "feedback send");
+		MapName("fdbk send", "feedback send");
+		MapName("feedsend", "feedback send");
+		MapName("feed send", "feedback send");
+
 		MapName("fx loop", "effects loop");
 		break;
 	case 'g':
