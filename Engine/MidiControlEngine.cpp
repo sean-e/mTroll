@@ -1446,7 +1446,7 @@ MidiControlEngine::SwitchPressed_ProgramChangeDirect(int switchNumber)
 			}
 			mMidiOut->MidiOut(bytes);
 
-			if (sJustDidProgramChange && mAxeMgr && mAxeMgr->GetAxeChannel() && mDirectChangeChannel)
+			if (sJustDidProgramChange && mAxeMgr && mAxeMgr->GetAxeChannel() == mDirectChangeChannel)
 				mAxeMgr->DelayedNameSyncFromAxe();
 		}
 	}
