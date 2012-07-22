@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2011 Sean Echevarria
+ * Copyright (C) 2010-2012 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -52,7 +52,7 @@ public:
 	{
 		__super::Exec();
 		if (mAxeMgr)
-			mAxeMgr->DelayedSyncFromAxe();
+			mAxeMgr->DelayedNameSyncFromAxe();
 	}
 
 private:

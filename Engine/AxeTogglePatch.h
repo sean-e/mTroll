@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2011 Sean Echevarria
+ * Copyright (C) 2010-2012 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -101,7 +101,12 @@ public:
 	{
 		TogglePatch::SwitchPressed(mainDisplay, switchDisplay);
 		if (mAx)
-			mAx->SyncFromAxe(this);
+		{
+			// Due to getting a response from the Axe-Fx II before state of
+			// externals was accurate (Feedback Return mute mapped to Extern
+			// 8 came back inaccurate when SyncEffectsFromAxe called immediately).
+			mAx->DelayedEffectsSyncFromAxe();
+		}
 	}
 
 	void ClearAxeMgr() 

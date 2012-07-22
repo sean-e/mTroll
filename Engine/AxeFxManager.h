@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2011 Sean Echevarria
+ * Copyright (C) 2010-2012 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -63,12 +63,17 @@ public:
 	void CompleteInit(IMidiOut * midiOut);
 	void SetTempoPatch(Patch * patch);
 	bool SetSyncPatch(Patch * patch, int bypassCc = -1);
-	void DelayedSyncFromAxe();
 	int GetAxeChannel() const { return mAxeChannel; }
-	void SyncFromAxe(Patch * patch);
+	void SyncPatchFromAxe(Patch * patch);
+
+	// delayed requests for sync
+	void DelayedNameSyncFromAxe();
+	void DelayedEffectsSyncFromAxe();
 
 public slots:
-	void SyncFromAxe();
+	// immediate requests for sync (called by the delayed requests)
+	void SyncNameAndEffectsFromAxe();
+	void SyncEffectsFromAxe();
 
 private:
 	AxeEffectBlockInfo * IdentifyBlockInfoUsingBypassId(const byte * bytes);
@@ -104,7 +109,8 @@ private:
 	QMutex			mQueryLock;
 	std::list<AxeEffectBlockInfo *> mQueries;
 	QTimer			* mQueryTimer;
-	QTimer			* mDelayedSyncTimer;
+	QTimer			* mDelayedNameSyncTimer;
+	QTimer			* mDelayedEffectsSyncTimer;
 	int				mTimeoutCnt;
 	clock_t			mLastTimeout;
 	bool			mCheckedFirmware;

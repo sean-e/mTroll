@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010 Sean Echevarria
+ * Copyright (C) 2010,2012 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -52,7 +52,7 @@ public:
 	virtual void SwitchPressed(IMainDisplay *, ISwitchDisplay *)
 	{
 		if (mAxe)
-			mAxe->SyncFromAxe();
+			mAxe->SyncNameAndEffectsFromAxe();
 	}
 
 	virtual void BankTransitionActivation() {SwitchPressed(NULL, NULL);}

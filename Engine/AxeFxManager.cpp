@@ -42,7 +42,16 @@
 
 // Consider: restrict effect bypasses to mEffectIsPresentInAxePatch?
 
+#ifdef _DEBUG
+static const int kDbgFlag = 1;
+#else
+static const int kDbgFlag = 0;
+#endif
+
 static void SynonymNormalization(std::string & name);
+
+static const int kDefaultNameSyncTimerInterval = 100;
+static const int kDefaultEffectsSyncTimerInterval = 40;
 
 AxeFxManager::AxeFxManager(IMainDisplay * mainDisp, 
 						   ISwitchDisplay * switchDisp,
@@ -68,10 +77,15 @@ AxeFxManager::AxeFxManager(IMainDisplay * mainDisp,
 	mQueryTimer->setSingleShot(true);
 	mQueryTimer->setInterval(2000);
 
-	mDelayedSyncTimer = new QTimer(this);
-	connect(mDelayedSyncTimer, SIGNAL(timeout()), this, SLOT(SyncFromAxe()));
-	mDelayedSyncTimer->setSingleShot(true);
-	mDelayedSyncTimer->setInterval(100);
+	mDelayedNameSyncTimer = new QTimer(this);
+	connect(mDelayedNameSyncTimer, SIGNAL(timeout()), this, SLOT(SyncNameAndEffectsFromAxe()));
+	mDelayedNameSyncTimer->setSingleShot(true);
+	mDelayedNameSyncTimer->setInterval(kDefaultNameSyncTimerInterval);
+
+	mDelayedEffectsSyncTimer = new QTimer(this);
+	connect(mDelayedEffectsSyncTimer, SIGNAL(timeout()), this, SLOT(SyncEffectsFromAxe()));
+	mDelayedEffectsSyncTimer->setSingleShot(true);
+	mDelayedEffectsSyncTimer->setInterval(kDefaultEffectsSyncTimerInterval);
 
 	AxemlLoader ldr(mTrace);
 	if (Axe2 == mModel)
@@ -88,10 +102,15 @@ AxeFxManager::AxeFxManager(IMainDisplay * mainDisp,
 
 AxeFxManager::~AxeFxManager()
 {
-	if (mDelayedSyncTimer->isActive())
-		mDelayedSyncTimer->stop();
-	delete mDelayedSyncTimer;
-	mDelayedSyncTimer = NULL;
+	if (mDelayedNameSyncTimer->isActive())
+		mDelayedNameSyncTimer->stop();
+	delete mDelayedNameSyncTimer;
+	mDelayedNameSyncTimer = NULL;
+
+	if (mDelayedEffectsSyncTimer->isActive())
+		mDelayedEffectsSyncTimer->stop();
+	delete mDelayedEffectsSyncTimer;
+	mDelayedEffectsSyncTimer = NULL;
 
 	QMutexLocker lock(&mQueryLock);
 	if (mQueryTimer->isActive())
@@ -275,7 +294,21 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 		}
 		return;
 	case 2:
-		ReceiveParamValue(&bytes[6], len - 6);
+		if (Axe2 == bytes[4])
+		{
+			_ASSERTE(Axe2 == mModel);
+			// ReceiveParamValue hasn't been updated for Axe-FX II
+			if (kDbgFlag && mTrace)
+			{
+				const std::string msg("AxeFx2: received param value?\n");
+				mTrace->Trace(msg);
+			}
+		}
+		else
+		{
+			_ASSERTE(Axe2 != mModel);
+			ReceiveParamValue(&bytes[6], len - 6);
+		}
 		return;
 	case 0xf:
 		ReceivePresetName(&bytes[6], len - 6);
@@ -299,14 +332,29 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 		return;
 	case 4:
 		// receive patch dump
+		if (kDbgFlag && mTrace)
+		{
+			const std::string msg("AxeFx: received patch dump\n");
+			mTrace->Trace(msg);
+		}
 		return;
 	case 0x11:
 		// x y state change
+		if (kDbgFlag && mTrace)
+		{
+			const std::string msg("AxeFx: X/Y state change\n");
+			mTrace->Trace(msg);
+		}
 		return;
 	case 0x64:
 		// indicates an error or unsupported message
+		if (kDbgFlag && mTrace)
+		{
+			const std::string msg("AxeFx: error or unsupported message\n");
+			mTrace->Trace(msg);
+		}
 	default:
-		if (0 && mTrace)
+		if (kDbgFlag && mTrace)
 		{
 			const std::string byteDump(::GetAsciiHexStr(&bytes[5], len - 5, true));
 			std::strstream traceMsg;
@@ -572,16 +620,21 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 	QCoreApplication::postEvent(this, new CreateSendNextQueryTimer(this));
 }
 
-// consider: queue sync requests so that multiple patches on a single 
-// switch result in a single request (handle on a timer)
 void
-AxeFxManager::SyncFromAxe()
+AxeFxManager::SyncNameAndEffectsFromAxe()
 {
 	RequestPresetName();
 }
 
 void
-AxeFxManager::SyncFromAxe(Patch * patch)
+AxeFxManager::SyncEffectsFromAxe()
+{
+	RequestPresetEffects();
+}
+
+// this SyncFromAxe helper is not currently being used
+void
+AxeFxManager::SyncPatchFromAxe(Patch * patch)
 {
 	// We have two methods to sync bypass state.
 	// First is to use RequestPresetEffects.
@@ -670,6 +723,7 @@ AxeFxManager::KillResponseTimer()
 	QCoreApplication::postEvent(this, new StopQueryTimer(this));
 }
 
+// this SyncFromAxe helper is not currently being used
 void
 AxeFxManager::QueryTimedOut()
 {
@@ -737,12 +791,12 @@ public:
 };
 
 void
-AxeFxManager::DelayedSyncFromAxe()
+AxeFxManager::DelayedNameSyncFromAxe()
 {
-	if (!mDelayedSyncTimer)
+	if (!mDelayedNameSyncTimer)
 		return;
 
-	if (mDelayedSyncTimer->isActive())
+	if (mDelayedNameSyncTimer->isActive())
 	{
 		class StopDelayedSyncTimer : public QEvent
 		{
@@ -758,12 +812,20 @@ AxeFxManager::DelayedSyncFromAxe()
 
 			~StopDelayedSyncTimer()
 			{
-				mMgr->mDelayedSyncTimer->stop();
+				mMgr->mDelayedNameSyncTimer->stop();
 				mMgr->Release();
 			}
 		};
 
 		QCoreApplication::postEvent(this, new StopDelayedSyncTimer(this));
+
+		// reduce interval since timer was already active
+		mDelayedNameSyncTimer->setInterval(kDefaultNameSyncTimerInterval / 2);
+	}
+	else
+	{
+		// restore default interval
+		mDelayedNameSyncTimer->setInterval(kDefaultNameSyncTimerInterval);
 	}
 
 	class StartDelayedSyncTimer : public QEvent
@@ -780,7 +842,67 @@ AxeFxManager::DelayedSyncFromAxe()
 
 		~StartDelayedSyncTimer()
 		{
-			mMgr->mDelayedSyncTimer->start();
+			mMgr->mDelayedNameSyncTimer->start();
+			mMgr->Release();
+		}
+	};
+
+	QCoreApplication::postEvent(this, new StartDelayedSyncTimer(this));
+}
+
+void
+AxeFxManager::DelayedEffectsSyncFromAxe()
+{
+	if (!mDelayedEffectsSyncTimer)
+		return;
+
+	if (mDelayedEffectsSyncTimer->isActive())
+	{
+		class StopDelayedSyncTimer : public QEvent
+		{
+			AxeFxManager *mMgr;
+
+		public:
+			StopDelayedSyncTimer(AxeFxManager * mgr) : 
+			  QEvent(User), 
+				  mMgr(mgr)
+			{
+				mMgr->AddRef();
+			}
+
+			~StopDelayedSyncTimer()
+			{
+				mMgr->mDelayedEffectsSyncTimer->stop();
+				mMgr->Release();
+			}
+		};
+
+		QCoreApplication::postEvent(this, new StopDelayedSyncTimer(this));
+
+		// reduce interval since timer was already active
+		mDelayedEffectsSyncTimer->setInterval(kDefaultEffectsSyncTimerInterval / 2);
+	}
+	else
+	{
+		// restore default interval
+		mDelayedEffectsSyncTimer->setInterval(kDefaultEffectsSyncTimerInterval);
+	}
+
+	class StartDelayedSyncTimer : public QEvent
+	{
+		AxeFxManager *mMgr;
+
+	public:
+		StartDelayedSyncTimer(AxeFxManager * mgr) : 
+		  QEvent(User), 
+		  mMgr(mgr)
+		{
+			mMgr->AddRef();
+		}
+
+		~StartDelayedSyncTimer()
+		{
+			mMgr->mDelayedEffectsSyncTimer->start();
 			mMgr->Release();
 		}
 	};
@@ -1091,9 +1213,10 @@ AxeFxManager::ReceivePresetEffectsV2(const byte * bytes, int len)
 	//	1 byte: 6 bits ? / 1 bit for cc pedal or cc none / 1 bit for ccMs
 	//	1 byte: 5 bits for effectIdLs / 3 bits ?
 	//	1 byte: 4 bits ? / 4 bits for effectIdMs
+	//	
 	for (int idx = 0; (idx + 5) < len; idx += 5)
 	{
-		if (0 && mTrace)
+		if (kDbgFlag && mTrace)
 		{
 			const std::string byteDump(::GetAsciiHexStr(&bytes[idx], 5, true) + "\n");
 			mTrace->Trace(byteDump);
