@@ -351,7 +351,7 @@ PatchBank::PatchSwitchPressed(SwitchFunctionAssignment st,
 			// exclusive groups don't really support secondary functions.
 			// keep secondary function groups separate from primary function groups.
 			// basically unsupported for now.
-			PatchVect & prevPatches = mPatches[switchNumber].GetPatchVect(st);
+			PatchVect & prevPatches = mPatches[kCurSwitchNumber].GetPatchVect(st);
 			for (it = prevPatches.begin();
 				 it != prevPatches.end();
 				 ++it)
