@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2011 Sean Echevarria
+ * Copyright (C) 2007-2012 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -103,6 +103,7 @@ public: // IMainDisplay
 	virtual void		ClearDisplay();
 	virtual void		ClearTransientText();
 	virtual void		TransientTextOut(const std::string & txt);
+	virtual std::string GetCurrentText();
 
 public: // ITraceDisplay
 	virtual void		Trace(const std::string & txt);

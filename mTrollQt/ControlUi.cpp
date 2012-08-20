@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2011 Sean Echevarria
+ * Copyright (C) 2007-2012 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -504,6 +504,11 @@ ControlUi::ClearTransientText()
 		new RestoreMainTextEvent(this, mMainDisplay));
 }
 
+std::string
+ControlUi::GetCurrentText()
+{
+	return mMainText.toAscii().constData();
+}
 
 // ITraceDisplay
 void
