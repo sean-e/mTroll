@@ -68,7 +68,7 @@ AxeFxManager::AxeFxManager(IMainDisplay * mainDisp,
 	mTempoPatch(NULL),
 	// mQueryLock(QMutex::Recursive),
 	mMidiOut(NULL),
-	mCheckedFirmware(false),
+	mFirmwareMajorVersion(0),
 	mAxeChannel(ch),
 	mModel(mod)
 {
@@ -326,7 +326,7 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 		}
 		return;
 	case 8:
-		if (mCheckedFirmware)
+		if (mFirmwareMajorVersion)
 			return;
 		ReceiveFirmwareVersionResponse(bytes, len);
 		return;
@@ -340,11 +340,16 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 		return;
 	case 0x11:
 		// x y state change
+//		DelayedEffectsSyncFromAxe();
 		if (kDbgFlag && mTrace)
 		{
 			const std::string msg("AxeFx: X/Y state change\n");
 			mTrace->Trace(msg);
 		}
+		return;
+	case 0x14:
+		// preset loaded
+		DelayedNameSyncFromAxe(true);
 		return;
 	case 0x64:
 		// indicates an error or unsupported message
@@ -791,10 +796,18 @@ public:
 };
 
 void
-AxeFxManager::DelayedNameSyncFromAxe()
+AxeFxManager::DelayedNameSyncFromAxe(bool force /*= false*/)
 {
 	if (!mDelayedNameSyncTimer)
 		return;
+
+	if (!force && Axe2 == mModel && mFirmwareMajorVersion > 5)
+	{
+		// Axe-Fx II sends preset loaded message, so we can ignore our 
+		// unforced calls to DelalyedNameSyncFromAxe.
+		// Don't know what firmware version that started in - assume v6+.
+		return;
+	}
 
 	if (mDelayedNameSyncTimer->isActive())
 	{
@@ -818,14 +831,6 @@ AxeFxManager::DelayedNameSyncFromAxe()
 		};
 
 		QCoreApplication::postEvent(this, new StopDelayedSyncTimer(this));
-
-		// reduce interval since timer was already active
-		mDelayedNameSyncTimer->setInterval(kDefaultNameSyncTimerInterval / 2);
-	}
-	else
-	{
-		// restore default interval
-		mDelayedNameSyncTimer->setInterval(kDefaultNameSyncTimerInterval);
 	}
 
 	class StartDelayedSyncTimer : public QEvent
@@ -878,14 +883,6 @@ AxeFxManager::DelayedEffectsSyncFromAxe()
 		};
 
 		QCoreApplication::postEvent(this, new StopDelayedSyncTimer(this));
-
-		// reduce interval since timer was already active
-		mDelayedEffectsSyncTimer->setInterval(kDefaultEffectsSyncTimerInterval / 2);
-	}
-	else
-	{
-		// restore default interval
-		mDelayedEffectsSyncTimer->setInterval(kDefaultEffectsSyncTimerInterval);
 	}
 
 	class StartDelayedSyncTimer : public QEvent
@@ -917,14 +914,14 @@ AxeFxManager::RequestNextParamValue()
 	if (!mMidiOut)
 		return;
 
-	if (!mCheckedFirmware)
+	if (!mFirmwareMajorVersion)
 		SendFirmwareVersionQuery();
 
 	QMutexLocker lock(&mQueryLock);
 	if (mQueries.begin() == mQueries.end())
 		return;
 
-	if (!mCheckedFirmware)
+	if (!mFirmwareMajorVersion)
 		return;
 
 /* MIDI_SET_PARAMETER (or GET)
@@ -1010,25 +1007,22 @@ AxeFxManager::ReceiveFirmwareVersionResponse(const byte * bytes, int len)
 	if (mTrace)
 	{
 		std::strstream traceMsg;
-		if (len >= 8)
-			traceMsg << "Axe-Fx " << model << "version " << (int) bytes[6] << "." << (int) bytes[7] << std::endl << std::ends;
-		else
-			traceMsg << "Axe-Fx " << model << "version " << (int) bytes[6] << "." << (int) bytes[7] << std::endl << std::ends;
+		traceMsg << "Axe-Fx " << model << "version " << (int) bytes[6] << "." << (int) bytes[7] << std::endl << std::ends;
 		mTrace->Trace(std::string(traceMsg.str()));
 	}
 
-	mCheckedFirmware = true;
+	mFirmwareMajorVersion = (int) bytes[6];
 }
 
 void
 AxeFxManager::RequestPresetName()
 {
-	if (!mCheckedFirmware)
+	if (!mFirmwareMajorVersion)
 		SendFirmwareVersionQuery();
 
 	KillResponseTimer();
 	QMutexLocker lock(&mQueryLock);
-	if (!mCheckedFirmware)
+	if (!mFirmwareMajorVersion)
 		return;
 
 	if (Axe2 == mModel)
@@ -1055,8 +1049,14 @@ AxeFxManager::ReceivePresetName(const byte * bytes, int len)
 	std::string patchName((const char *)bytes, 21);
 	if (mMainDisplay && patchName.size())
 	{
-		patchName = "Axe-Fx " + patchName;
-		mMainDisplay->AppendText(patchName);
+		const std::string kPrefix("Axe-Fx preset: ");
+		std::string curText(mMainDisplay->GetCurrentText());
+		int pos = curText.rfind(kPrefix);
+		if (std::string::npos != pos)
+			curText = curText.substr(0, pos);
+
+		curText += kPrefix + patchName;
+		mMainDisplay->TextOut(curText);
 	}
 
 	RequestPresetEffects();
@@ -1065,12 +1065,12 @@ AxeFxManager::ReceivePresetName(const byte * bytes, int len)
 void
 AxeFxManager::RequestPresetEffects()
 {
-	if (!mCheckedFirmware)
+	if (!mFirmwareMajorVersion)
 		SendFirmwareVersionQuery();
 
 	KillResponseTimer();
 	QMutexLocker lock(&mQueryLock);
-	if (!mCheckedFirmware)
+	if (!mFirmwareMajorVersion)
 		return;
 
 	// default to no fx in patch, but don't update LEDs until later

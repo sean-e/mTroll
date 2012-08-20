@@ -67,7 +67,7 @@ public:
 	void SyncPatchFromAxe(Patch * patch);
 
 	// delayed requests for sync
-	void DelayedNameSyncFromAxe();
+	void DelayedNameSyncFromAxe(bool force = false);
 	void DelayedEffectsSyncFromAxe();
 
 public slots:
@@ -113,7 +113,7 @@ private:
 	QTimer			* mDelayedEffectsSyncTimer;
 	int				mTimeoutCnt;
 	clock_t			mLastTimeout;
-	bool			mCheckedFirmware;
+	int				mFirmwareMajorVersion;
 	AxeFxModel		mModel;
 	std::set<int>	mEditBufferEffectBlocks; // at last update
 };
