@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2012 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -44,13 +44,20 @@ public:
 
 	virtual void SwitchPressed(IMainDisplay *, ISwitchDisplay *)
 	{
+		// handle bank change on release instead of press so that 
+		// release does not get handled by new patchbank
+		// (noted after secondary function support implemented)
+	}
+
+	virtual void SwitchReleased(IMainDisplay *, ISwitchDisplay *)
+	{
 		mEngine->LoadBankByNumber(mBankNumber);
 	}
 
 	virtual bool UpdateMainDisplayOnPress() const {return false;}
 
-	virtual void BankTransitionActivation() {SwitchPressed(NULL, NULL);}
-	virtual void BankTransitionDeactivation() {SwitchPressed(NULL, NULL);}
+	virtual void BankTransitionActivation() {SwitchReleased(NULL, NULL);}
+	virtual void BankTransitionDeactivation() {SwitchReleased(NULL, NULL);}
 
 private:
 	MidiControlEngine	* mEngine;
@@ -75,13 +82,20 @@ protected:
 public:
 	virtual void SwitchPressed(IMainDisplay *, ISwitchDisplay *)
 	{
+		// handle bank change on release instead of press so that 
+		// release does not get handled by new patchbank
+		// (noted after secondary function support implemented)
+	}
+
+	virtual void SwitchReleased(IMainDisplay *, ISwitchDisplay *)
+	{
 		mEngine->LoadBankRelative(mSteps);
 	}
 
 	virtual bool UpdateMainDisplayOnPress() const {return false;}
 
-	virtual void BankTransitionActivation() {SwitchPressed(NULL, NULL);}
-	virtual void BankTransitionDeactivation() {SwitchPressed(NULL, NULL);}
+	virtual void BankTransitionActivation() {SwitchReleased(NULL, NULL);}
+	virtual void BankTransitionDeactivation() {SwitchReleased(NULL, NULL);}
 
 private:
 	MidiControlEngine	* mEngine;
