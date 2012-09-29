@@ -56,6 +56,18 @@ public:
 
 	virtual bool HasDisplayText() const { return true; }
 
+	virtual bool IsPatchVolatile() const 
+	{ 
+		return true;
+	}
+
+	virtual void DeactivateVolatilePatch() 
+	{
+		gActivePatchPedals = NULL;
+		if (mCurrentSubPatch)
+			return mCurrentSubPatch->DeactivateVolatilePatch();
+	}
+
 	virtual const std::string & GetDisplayText() const 
 	{ 
 		if (!mCurrentSubPatch)
@@ -86,6 +98,7 @@ public:
 		{
 			mPatchIsActive = false;
 			mCurIndex = 0;
+			DeactivateVolatilePatch();
 			mCurrentSubPatch = NULL;
 		}
 
@@ -107,6 +120,7 @@ public:
 		mCurIndex = 0;
 		if (mCurrentSubPatch)
 		{
+			DeactivateVolatilePatch();
 			mCurrentSubPatch->Deactivate(NULL, NULL);
 			mCurrentSubPatch = NULL;
 		}
@@ -119,6 +133,7 @@ public:
 		mCurIndex = 0;
 		if (mCurrentSubPatch)
 		{
+			DeactivateVolatilePatch();
 			mCurrentSubPatch->Deactivate(NULL, NULL);
 			mCurrentSubPatch = NULL;
 		}
@@ -132,6 +147,7 @@ public:
 		mCurIndex = mPatches.size() + 1;
 		if (mCurrentSubPatch)
 		{
+			DeactivateVolatilePatch();
 			mCurrentSubPatch->Deactivate(NULL, NULL);
 			mCurrentSubPatch = NULL;
 		}
