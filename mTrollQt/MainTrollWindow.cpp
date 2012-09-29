@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010 Sean Echevarria
+ * Copyright (C) 2007-2010,2012 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -164,22 +164,29 @@ MainTrollWindow::Refresh()
 	mUi->GetPreferredSize(width, height);
 	if (width && height)
 	{
-		if (isMaximized())
-		{
 #ifdef _WINDOWS
-			// don't resize if maximized, but do change the size that
-			// will be used when it becomes unmaximized.
-			// Is there a way to do this with Qt?
-			WINDOWPLACEMENT wp;
-			::ZeroMemory(&wp, sizeof(WINDOWPLACEMENT));
-			::GetWindowPlacement(winId(), &wp);
-			wp.rcNormalPosition.right = wp.rcNormalPosition.left + width;
-			wp.rcNormalPosition.bottom = wp.rcNormalPosition.top + height;
+		// don't resize if maximized, but do change the size that
+		// will be used when it becomes unmaximized.
+		// Is there a way to do this with Qt?
+		WINDOWPLACEMENT wp;
+		::ZeroMemory(&wp, sizeof(WINDOWPLACEMENT));
+		::GetWindowPlacement(winId(), &wp);
+		if (SW_MAXIMIZE == wp.showCmd)
+		{
+			NONCLIENTMETRICS ncm;
+			::ZeroMemory(&ncm, sizeof(NONCLIENTMETRICS));
+			ncm.cbSize = sizeof(NONCLIENTMETRICS);
+			::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &ncm, 0);
+			wp.rcNormalPosition.right = wp.rcNormalPosition.left + width + (ncm.iBorderWidth * 2);
+			wp.rcNormalPosition.bottom = wp.rcNormalPosition.top + height + ncm.iCaptionHeight + (ncm.iBorderWidth * 2);
 			::SetWindowPlacement(winId(), &wp);
-#endif
 		}
 		else
 			resize(width, height);
+#else
+		if (!isMaximized())
+			resize(width, height);
+#endif
 	}
 
 	QApplication::restoreOverrideCursor();
