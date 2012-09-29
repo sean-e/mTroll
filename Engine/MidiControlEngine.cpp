@@ -100,6 +100,7 @@ MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 
 MidiControlEngine::~MidiControlEngine()
 {
+	gActivePatchPedals = NULL;
 	if (mAxeMgr)
 		mAxeMgr->Release();
 	std::for_each(mBanks.begin(), mBanks.end(), DeletePtr<PatchBank>());
