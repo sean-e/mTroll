@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2012 Sean Echevarria
+ * Copyright (C) 2010-2013 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -83,6 +83,9 @@ private:
 	void SendFirmwareVersionQuery();
 	void ReceiveFirmwareVersionResponse(const byte * bytes, int len);
 
+	void EnableLooperStatusMonitor(bool enable);
+	void ReceiveLooperStatus(const byte * bytes, int len);
+
 	void RequestPresetName();
 	void ReceivePresetName(const byte * bytes, int len);
 	void RequestPresetEffects();
@@ -116,6 +119,7 @@ private:
 	int				mFirmwareMajorVersion;
 	AxeFxModel		mModel;
 	std::set<int>	mEditBufferEffectBlocks; // at last update
+	int				mLooperState;
 };
 
 int GetDefaultAxeCc(const std::string &effectName, ITraceDisplay * trc);

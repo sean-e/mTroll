@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2012 Sean Echevarria
+ * Copyright (C) 2007-2013 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -791,19 +791,41 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				if (patchType.empty())
 					patchType = "AxeToggle";
 
+				int scene = 0;
+				size_t pos = patchName.find("Scene");
+				if (std::string::npos == pos)
+					pos = patchName.find("scene");
+				if (std::string::npos != pos)
+				{
+					const std::string sceneStr(&patchName.c_str()[pos + 5]);
+					if (!sceneStr.empty())
+					{
+						if (sceneStr.length() > 1 && sceneStr[0] == ' ')
+							scene = ::atoi(&sceneStr.c_str()[1]);
+						else
+							scene = ::atoi(sceneStr.c_str());
+
+						if (scene)
+							patchType = "normal";
+					}
+				}
+
 				// default to A (127)
 				bytes.push_back(0xb0 | patchDefaultCh);
 				bytes.push_back(axeCc);
-				bytes.push_back(127);
+				bytes.push_back(scene ? (scene - 1) : 127);
 				cmds.push_back(new MidiCommandString(midiOut, bytes));
 				bytes.clear();
 
-				// default to B (0)
-				bytes.push_back(0xb0 | patchDefaultCh);
-				bytes.push_back(axeCc);
-				bytes.push_back(0);
-				cmds2.push_back(new MidiCommandString(midiOut, bytes));
-				bytes.clear();
+				if (!scene)
+				{
+					// default to B (0)
+					bytes.push_back(0xb0 | patchDefaultCh);
+					bytes.push_back(axeCc);
+					bytes.push_back(0);
+					cmds2.push_back(new MidiCommandString(midiOut, bytes));
+					bytes.clear();
+				}
 
 				int invert = 0;
 				pElem->QueryIntAttribute("invert", &invert);

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2012 Sean Echevarria
+ * Copyright (C) 2010-2013 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -70,7 +70,8 @@ AxeFxManager::AxeFxManager(IMainDisplay * mainDisp,
 	mMidiOut(NULL),
 	mFirmwareMajorVersion(0),
 	mAxeChannel(ch),
-	mModel(mod)
+	mModel(mod),
+	mLooperState(0)
 {
 	mQueryTimer = new QTimer(this);
 	connect(mQueryTimer, SIGNAL(timeout()), this, SLOT(QueryTimedOut()));
@@ -339,7 +340,7 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 		}
 		return;
 	case 0x11:
-		// x y state change
+		// x y state change (prior to axeII fw9?)
 //		DelayedEffectsSyncFromAxe();
 		if (kDbgFlag && mTrace)
 		{
@@ -350,6 +351,14 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 	case 0x14:
 		// preset loaded
 		DelayedNameSyncFromAxe(true);
+		return;
+	case 0x21:
+		// x/y change or scene selected
+		DelayedEffectsSyncFromAxe();
+		return;
+	case 0x23:
+		// looper status
+		ReceiveLooperStatus(&bytes[6], len - 6);
 		return;
 	case 0x64:
 		// indicates an error or unsupported message
@@ -1012,6 +1021,8 @@ AxeFxManager::ReceiveFirmwareVersionResponse(const byte * bytes, int len)
 	}
 
 	mFirmwareMajorVersion = (int) bytes[6];
+	if (Axe2 == mModel && 7 < mFirmwareMajorVersion)
+		EnableLooperStatusMonitor(true);
 }
 
 void
@@ -1309,6 +1320,66 @@ AxeFxManager::TurnOffLedsForNaEffects()
 	}
 }
 
+void
+AxeFxManager::EnableLooperStatusMonitor(bool enable)
+{
+	if (Axe2 != mModel || mFirmwareMajorVersion < 6)
+		return;
+
+	// http://forum.fractalaudio.com/other-midi-controllers/39161-using-sysex-recall-present-effect-bypass-status-info-available.html#post737573
+	// enable status monitor
+	//		F0 00 01 74 03 23 01 24 F7
+	// disable status
+	//		F0 00 01 74 03 23 00 25 F7
+	QMutexLocker lock(&mQueryLock);
+	const byte rawBytes[] = 
+	{ 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x23, enable ? 1 : 0, enable ? 0x24 : 0x25, 0xF7 };
+	const Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
+	mMidiOut->MidiOut(bb);
+}
+
+void
+AxeFxManager::ReceiveLooperStatus(const byte * bytes, int len)
+{
+	// http://forum.fractalaudio.com/other-midi-controllers/39161-using-sysex-recall-present-effect-bypass-status-info-available.html#post737573
+	if (len < 4)
+		return;
+
+	mLooperState = bytes[0];
+/*
+		looper message format from the AxeFX II is:
+			F0 00 01 74 03 23 <status> <position> <checksum> F7
+
+			status is a bitfield:
+			Record - 1st bit
+			Play - 2nd bit
+			Once - 3rd bit
+			Dub - 4th bit
+			Reverse - 5th bit
+			HalfSpeed - 6th bit
+			Undo - 7th bit
+
+			examples:
+			00: Stopped
+			01: Recording
+			02: Playback
+			06: Play Once
+			0A: overdub
+			0E: Play Once + overdub
+
+		During playback/stacking, <position> seems to range from 0 to 99 (i.e. maximum value of 63H).
+
+		During recording, It looks to me like it ranges from 0 to 127 (i.e. maximum value of 7FH) but 
+		it might repeat itself before it gets to the maximum recording time and starts playing back 
+		automatically on modes other than "MONO". I think this means if you want to show the recording 
+		position correctly, you will need to take the mode into account and keep track of how many 
+		times the position has looped around. I don't think Axe-Edit handles this correctly, it looks 
+		to me like it jumps when I am recording. I am not sure this is intended behaviour, I'm still 
+		working it out the exact details. 
+*/
+}
+
+
 void 
 NormalizeAxeEffectName(std::string &effectName) 
 {
@@ -1430,7 +1501,19 @@ DefaultAxeCcs kDefaultAxeCcs[] =
 	{"looper undo", 121},
 	{"looper metronome", 122},
 
+	{"scene increment", 123},
+	{"scene decrement", 124},
+
 	{"global preset effect toggle", 34},
+	{"scene", 34},	// Axe-Fx II v9 replaces global preset effect toggle
+	{"scene 1", 34},
+	{"scene 2", 34},
+	{"scene 3", 34},
+	{"scene 4", 34},
+	{"scene 5", 34},
+	{"scene 6", 34},
+	{"scene 7", 34},
+	{"scene 8", 34},
 	{"volume increment", 35},
 	{"volume decrement", 36},
 
@@ -1762,6 +1845,8 @@ SynonymNormalization(std::string & name)
 		MapName("ringmod", "ring mod");
 		break;
 	case 's':
+		MapName("scene inc", "scene increment");
+		MapName("scene dec", "scene decrement");
 		MapName("send", "feedback send");
 		MapName("shift 1", "pitch 1");
 		MapName("shift 2", "pitch 2");
