@@ -75,9 +75,9 @@ GetBuildDate()
 	tmp = tmp.right(tmp.length() - 4);
 	int kBuildDay = 0, kBuildYear = 0;
 #if defined(Q_OS_WIN)
-	sscanf_s(tmp.toStdString().c_str(), "%d %d", &kBuildDay, &kBuildYear);
+	sscanf_s(tmp.toUtf8(), "%d %d", &kBuildDay, &kBuildYear);
 #else
-	sscanf(tmp.toStdString().c_str(), "%d %d", &kBuildDay, &kBuildYear);
+	sscanf(tmp.toUtf8(), "%d %d", &kBuildDay, &kBuildYear);
 #endif
 
 	QString date;
