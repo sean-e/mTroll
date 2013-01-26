@@ -1,4 +1,7 @@
+glob:ipch/*
 glob:*.ncb
+glob:*.opensdf
+glob:*.sdf
 glob:*.suo
 glob:mtrollQt.zip
 glob:*.sean.e.user

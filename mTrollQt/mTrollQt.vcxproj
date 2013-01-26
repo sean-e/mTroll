@@ -1,0 +1,316 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Template|Win32">
+      <Configuration>Template</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{3D33E5B3-BA0F-45D2-AAE7-A939F9F4B985}</ProjectGuid>
+    <RootNamespace>mTrollQt</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfAtl>false</UseOfAtl>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v100</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfAtl>false</UseOfAtl>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v100</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\</IntDir>
+    <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</IgnoreImportLibrary>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</IntDir>
+    <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</IgnoreImportLibrary>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</GenerateManifest>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Template|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Template|Win32'" />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <TargetEnvironment>Win32</TargetEnvironment>
+      <GenerateStublessProxies>true</GenerateStublessProxies>
+      <TypeLibraryName>$(IntDir)mControlUI.tlb</TypeLibraryName>
+      <HeaderFileName>mControlUI.h</HeaderFileName>
+      <DllDataFileName>
+      </DllDataFileName>
+      <InterfaceIdentifierFileName>mControlUI_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>mControlUI_p.c</ProxyFileName>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;tmp\moc\debug_shared;.;$(QTDIR)\mkspecs\win32-msvc2012;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;UNICODE;WIN32;QT_LARGEFILE_SUPPORT;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;STRICT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>.\..\Monome40h\FTD2XX.lib;$(QTDIR)\lib\qtmaind.lib;$(QTDIR)\lib\Qt5Guid.lib;$(QTDIR)\lib\Qt5Widgetsd.lib;$(QTDIR)\lib\Qt5Cored.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>msvcrtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <DelayLoadDLLs>FTD2XX.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <TargetEnvironment>Win32</TargetEnvironment>
+      <GenerateStublessProxies>true</GenerateStublessProxies>
+      <TypeLibraryName>$(IntDir)mControlUI.tlb</TypeLibraryName>
+      <HeaderFileName>mControlUI.h</HeaderFileName>
+      <DllDataFileName>
+      </DllDataFileName>
+      <InterfaceIdentifierFileName>mControlUI_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>mControlUI_p.c</ProxyFileName>
+    </Midl>
+    <ClCompile>
+      <Optimization>Full</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;tmp\moc\release_shared;.;$(QTDIR)\mkspecs\win32-msvc2012;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>QT_NO_DEBUG;NDEBUG;_WINDOWS;UNICODE;WIN32;QT_LARGEFILE_SUPPORT;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;STRICT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>.\..\Monome40h\FTD2XX.lib;$(QTDIR)\lib\qtmain.lib;$(QTDIR)\lib\Qt5Gui.lib;$(QTDIR)\lib\Qt5Widgets.lib;$(QTDIR)\lib\Qt5Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <DelayLoadDLLs>FTD2XX.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>del release\BuildDate.obj</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="AboutDlg.cpp" />
+    <ClCompile Include="BuildDate.cpp" />
+    <ClCompile Include="ControlUi.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainTrollWindow.cpp" />
+    <ClCompile Include="..\Engine\AxeFxManager.cpp" />
+    <ClCompile Include="..\Engine\AxemlLoader.cpp" />
+    <ClCompile Include="..\Engine\EngineLoader.cpp" />
+    <ClCompile Include="..\Engine\ExpressionPedals.cpp" />
+    <ClCompile Include="..\Engine\HexStringUtils.cpp" />
+    <ClCompile Include="..\Engine\MidiControlEngine.cpp" />
+    <ClCompile Include="..\Engine\Patch.cpp" />
+    <ClCompile Include="..\Engine\PatchBank.cpp" />
+    <ClCompile Include="..\Engine\UiLoader.cpp" />
+    <ClCompile Include="..\tinyxml\tinyxml.cpp" />
+    <ClCompile Include="..\tinyxml\tinyxmlerror.cpp" />
+    <ClCompile Include="..\tinyxml\tinyxmlparser.cpp" />
+    <ClCompile Include="..\Monome40h\qt\Monome40hFtqt.cpp" />
+    <ClCompile Include="..\midi\WinMidiIn.cpp" />
+    <ClCompile Include="..\midi\WinMidiOut.cpp" />
+    <ClCompile Include="Release\moc_AxeFxManager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Debug\moc_AxeFxManager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Release\moc_ControlUi.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Debug\moc_ControlUi.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Release\moc_MainTrollWindow.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Debug\moc_MainTrollWindow.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AboutDlg.h" />
+    <CustomBuild Include="ControlUi.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MOC ControlUi.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 ControlUi.h -o debug\moc_ControlUi.cpp
+</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;ControlUi.h;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">debug\moc_ControlUi.cpp;%(Outputs)</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MOC ControlUi.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 ControlUi.h -o release\moc_ControlUi.cpp
+</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;ControlUi.h;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">release\moc_ControlUi.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="MainTrollWindow.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MOC MainTrollWindow.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 MainTrollWindow.h -o debug\moc_MainTrollWindow.cpp
+</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;MainTrollWindow.h;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">debug\moc_MainTrollWindow.cpp;%(Outputs)</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MOC MainTrollWindow.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 MainTrollWindow.h -o release\moc_MainTrollWindow.cpp
+</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;MainTrollWindow.h;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">release\moc_MainTrollWindow.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <ClInclude Include="win\resource.h" />
+    <CustomBuild Include="..\Engine\AxeFxManager.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MOC AxeFxManager.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 ..\Engine\AxeFxManager.h -o debug\moc_AxeFxManager.cpp
+</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;..\Engine\AxeFxManager.h;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">debug\moc_AxeFxManager.cpp;%(Outputs)</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MOC AxeFxManager.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 ..\Engine\AxeFxManager.h -o release\moc_AxeFxManager.cpp
+</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;..\Engine\AxeFxManager.h;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">release\moc_AxeFxManager.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <ClInclude Include="..\Engine\AxeFxProgramChange.h" />
+    <ClInclude Include="..\Engine\AxemlLoader.h" />
+    <ClInclude Include="..\Engine\AxeTogglePatch.h" />
+    <ClInclude Include="..\Engine\DeletePtr.h" />
+    <ClInclude Include="..\Engine\EngineLoader.h" />
+    <ClInclude Include="..\Engine\ExpressionPedals.h" />
+    <ClInclude Include="..\Engine\HexStringUtils.h" />
+    <ClInclude Include="..\Engine\IMainDisplay.h" />
+    <ClInclude Include="..\Engine\IMidiControlUi.h" />
+    <ClInclude Include="..\Engine\IMidiIn.h" />
+    <ClInclude Include="..\Engine\IMidiInGenerator.h" />
+    <ClInclude Include="..\Engine\IMidiInSubscriber.h" />
+    <ClInclude Include="..\Engine\IMidiOut.h" />
+    <ClInclude Include="..\Engine\IMidiOutGenerator.h" />
+    <ClInclude Include="..\Engine\IPatchCommand.h" />
+    <ClInclude Include="..\Engine\ISwitchDisplay.h" />
+    <ClInclude Include="..\Engine\ITraceDisplay.h" />
+    <ClInclude Include="..\Engine\ITrollApplication.h" />
+    <ClInclude Include="..\Engine\MetaPatch_BankHistory.h" />
+    <ClInclude Include="..\Engine\MetaPatch_BankNav.h" />
+    <ClInclude Include="..\Engine\MetaPatch_LoadBank.h" />
+    <ClInclude Include="..\Engine\MetaPatch_ResetBankPatches.h" />
+    <ClInclude Include="..\Engine\MetaPatch_SyncAxeFx.h" />
+    <ClInclude Include="..\Engine\MidiCommandString.h" />
+    <ClInclude Include="..\Engine\MidiControlEngine.h" />
+    <ClInclude Include="..\Engine\MomentaryPatch.h" />
+    <ClInclude Include="..\Engine\NormalPatch.h" />
+    <ClInclude Include="..\Engine\Patch.h" />
+    <ClInclude Include="..\Engine\PatchBank.h" />
+    <ClInclude Include="..\Engine\PatchListSequencePatch.h" />
+    <ClInclude Include="..\Engine\RefirePedalCommand.h" />
+    <ClInclude Include="..\Engine\ScopeSet.h" />
+    <ClInclude Include="..\Engine\SequencePatch.h" />
+    <ClInclude Include="..\Engine\SleepCommand.h" />
+    <ClInclude Include="..\Engine\TogglePatch.h" />
+    <ClInclude Include="..\Engine\TwoStatePatch.h" />
+    <ClInclude Include="..\Engine\UiLoader.h" />
+    <ClInclude Include="..\tinyxml\tinyxml.h" />
+    <ClInclude Include="..\Monome40h\FTD2XX.H" />
+    <ClInclude Include="..\Monome40h\IMonome40h.h" />
+    <ClInclude Include="..\Monome40h\IMonome40hInputSubscriber.h" />
+    <ClInclude Include="..\Monome40h\qt\Monome40hFtqt.h" />
+    <ClInclude Include="..\Monome40h\MonomeSerialProtocol.h" />
+    <ClInclude Include="..\midi\WinMidiIn.h" />
+    <ClInclude Include="..\midi\WinMidiOut.h" />
+    <ClInclude Include="..\winUtil\KeepDisplayOn.h" />
+    <ClInclude Include="..\winUtil\SEHexception.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="win\mTrollQt.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\data\1024x600.ui.xml" />
+    <None Include="..\COPYING" />
+    <None Include="..\data\mtrollConfig.xsl" />
+    <None Include="qtNotes.txt" />
+    <None Include="..\data\testdata.config.xml" />
+    <None Include="..\data\testdata.ui.xml" />
+    <None Include="..\data\testdata2.ui.xml" />
+    <None Include="..\data\testdataWithErrors.config.xml" />
+    <None Include="..\data\testdataWithXsl.config.xml" />
+    <None Include="..\todo.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="mTrollQt.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

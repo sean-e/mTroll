@@ -1,0 +1,315 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{c49e329a-6158-44ed-8607-7cccd67456ef}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{3759ec77-1105-4e2e-b517-dcb24d21a9fc}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{3d771361-a44b-41f9-816d-36083ff26224}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;jpg;jpeg;jpe;manifest</Extensions>
+    </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{831eca1e-2e9b-462a-9040-b930a4e44897}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tinyXML">
+      <UniqueIdentifier>{d085afeb-71b7-4ae1-a009-93a633ca95a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Text Files">
+      <UniqueIdentifier>{42a209db-2078-4935-9436-6aefd74a01fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Monome40h">
+      <UniqueIdentifier>{f4961bf5-7714-49a7-a353-a3ec0c2d7c8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="midi">
+      <UniqueIdentifier>{57d136ac-7e14-4e86-8f75-023f257c0b51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="winUtils">
+      <UniqueIdentifier>{e5db1af2-3b85-4b21-a50a-da9833694c42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Moc Generated Source">
+      <UniqueIdentifier>{d7d9294b-43f4-4f01-8e06-5083fa1e016d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AboutDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BuildDate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ControlUi.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MainTrollWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\AxeFxManager.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\AxemlLoader.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\EngineLoader.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\ExpressionPedals.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\HexStringUtils.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\MidiControlEngine.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Patch.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\PatchBank.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\UiLoader.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\tinyxml\tinyxml.cpp">
+      <Filter>tinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="..\tinyxml\tinyxmlerror.cpp">
+      <Filter>tinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="..\tinyxml\tinyxmlparser.cpp">
+      <Filter>tinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Monome40h\qt\Monome40hFtqt.cpp">
+      <Filter>Monome40h</Filter>
+    </ClCompile>
+    <ClCompile Include="..\midi\WinMidiIn.cpp">
+      <Filter>midi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\midi\WinMidiOut.cpp">
+      <Filter>midi</Filter>
+    </ClCompile>
+    <ClCompile Include="Release\moc_AxeFxManager.cpp">
+      <Filter>Moc Generated Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug\moc_AxeFxManager.cpp">
+      <Filter>Moc Generated Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Release\moc_ControlUi.cpp">
+      <Filter>Moc Generated Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug\moc_ControlUi.cpp">
+      <Filter>Moc Generated Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Release\moc_MainTrollWindow.cpp">
+      <Filter>Moc Generated Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug\moc_MainTrollWindow.cpp">
+      <Filter>Moc Generated Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AboutDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="win\resource.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\AxeFxProgramChange.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\AxemlLoader.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\AxeTogglePatch.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\DeletePtr.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\EngineLoader.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\ExpressionPedals.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\HexStringUtils.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\IMainDisplay.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\IMidiControlUi.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\IMidiIn.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\IMidiInGenerator.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\IMidiInSubscriber.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\IMidiOut.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\IMidiOutGenerator.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\IPatchCommand.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\ISwitchDisplay.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\ITraceDisplay.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\ITrollApplication.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\MetaPatch_BankHistory.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\MetaPatch_BankNav.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\MetaPatch_LoadBank.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\MetaPatch_ResetBankPatches.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\MetaPatch_SyncAxeFx.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\MidiCommandString.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\MidiControlEngine.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\MomentaryPatch.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\NormalPatch.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Patch.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\PatchBank.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\PatchListSequencePatch.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\RefirePedalCommand.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\ScopeSet.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\SequencePatch.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\SleepCommand.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\TogglePatch.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\TwoStatePatch.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\UiLoader.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tinyxml\tinyxml.h">
+      <Filter>tinyXML</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Monome40h\FTD2XX.H">
+      <Filter>Monome40h</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Monome40h\IMonome40h.h">
+      <Filter>Monome40h</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Monome40h\IMonome40hInputSubscriber.h">
+      <Filter>Monome40h</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Monome40h\qt\Monome40hFtqt.h">
+      <Filter>Monome40h</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Monome40h\MonomeSerialProtocol.h">
+      <Filter>Monome40h</Filter>
+    </ClInclude>
+    <ClInclude Include="..\midi\WinMidiIn.h">
+      <Filter>midi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\midi\WinMidiOut.h">
+      <Filter>midi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\winUtil\KeepDisplayOn.h">
+      <Filter>winUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\winUtil\SEHexception.h">
+      <Filter>winUtils</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="win\mTrollQt.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\data\1024x600.ui.xml">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="..\COPYING">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="..\data\mtrollConfig.xsl">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="qtNotes.txt">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="..\data\testdata.config.xml">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="..\data\testdata.ui.xml">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="..\data\testdata2.ui.xml">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="..\data\testdataWithErrors.config.xml">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="..\data\testdataWithXsl.config.xml">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="..\todo.txt">
+      <Filter>Text Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="ControlUi.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="MainTrollWindow.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Engine\AxeFxManager.h">
+      <Filter>Engine</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>
