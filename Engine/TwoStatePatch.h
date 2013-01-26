@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010 Sean Echevarria
+ * Copyright (C) 2007-2010,2013 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -29,6 +29,7 @@
 #include "Patch.h"
 #include "IPatchCommand.h"
 #include <algorithm>
+#include <xfunctional>
 #include "DeletePtr.h"
 
 
