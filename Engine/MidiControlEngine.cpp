@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2012 Sean Echevarria
+ * Copyright (C) 2007-2013 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -853,13 +853,13 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 				msg << "ADC " << idx;
 				if (mApplication->IsAdcOverridden(idx))
 				{
-					msg << " forced off" << std::endl << std::ends;
+					msg << " forced off" << std::ends;
 					mSwitchDisplay->SetSwitchText(idx, msg.str());
 					mSwitchDisplay->ForceSwitchDisplay(idx, true);
 				}
 				else
 				{
-					msg << " normal" << std::endl << std::ends;
+					msg << " normal" << std::ends;
 					mSwitchDisplay->SetSwitchText(idx, msg.str());
 					mSwitchDisplay->ForceSwitchDisplay(idx, false);
 				}
@@ -968,7 +968,7 @@ MidiControlEngine::UpdateBankModeSwitchDisplay()
 	if (mActiveBank)
 	{
 		std::strstream msg;
-		msg << mActiveBank->GetBankNumber() << ": " << mActiveBank->GetBankName() << std::endl << std::ends;
+		msg << mActiveBank->GetBankNumber() << ": " << mActiveBank->GetBankName() << std::ends;
 		mSwitchDisplay->SetSwitchText(mModeSwitchNumber, msg.str());
 	}
 	else

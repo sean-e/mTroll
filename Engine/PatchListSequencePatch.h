@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2012 Sean Echevarria
+ * Copyright (C) 2012-2013 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -74,7 +74,7 @@ public:
 			return GetName();
 
 		std::strstream msgstr;
-		msgstr << mCurrentSubPatch->GetName() << " (" << mCurrentSubPatch->GetNumber() << ")" << std::endl << std::ends;
+		msgstr << mCurrentSubPatch->GetName() << " (" << mCurrentSubPatch->GetNumber() << ")" << std::ends;
 		static std::string sSubPatchDisplayText;
 		sSubPatchDisplayText = msgstr.str();
 		return sSubPatchDisplayText;
