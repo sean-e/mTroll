@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2012 Sean Echevarria
+ * Copyright (C) 2007-2013 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -25,6 +25,7 @@
 #ifndef ControlUi_h__
 #define ControlUi_h__
 
+#include <time.h>
 #include <map>
 #include <QWidget>
 #include <QFont>
@@ -337,6 +338,10 @@ private:
 	DWORD						mFrameHighlightColor;
 	QString						mMainText;
 	bool						mSwitchLedUpdateEnabled;
+
+	// workaround for double fire of pressed signal when using touch
+	int							mLastUiButtonPressed;
+	clock_t						mLastUiButtonEventTime;
 
 	struct SwitchTextDisplayConfig
 	{

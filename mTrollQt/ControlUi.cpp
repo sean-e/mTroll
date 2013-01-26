@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2012 Sean Echevarria
+ * Copyright (C) 2007-2013 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -83,7 +83,9 @@ ControlUi::ControlUi(QWidget * parent, ITrollApplication * app) :
 	mSystemPowerOverride(NULL),
 	mBackgroundColor(0x1a1a1a),
 	mFrameHighlightColor(0x5a5a5a),
-	mSwitchLedUpdateEnabled(true)
+	mSwitchLedUpdateEnabled(true),
+	mLastUiButtonPressed(-1),
+	mLastUiButtonEventTime(0)
 {
 }
 
@@ -357,6 +359,18 @@ ControlUi::ButtonPressed(const int idx)
 {
 	if (!mStupidSwitchStates[idx])
 	{
+		clock_t curTime = ::clock();
+		if (idx == mLastUiButtonPressed && 
+			0 != mLastUiButtonEventTime &&
+			curTime < (mLastUiButtonEventTime + 50))
+		{
+			// ignore press due to Qt emitting pressed twice when using touch
+			mLastUiButtonEventTime = 0;
+			return;
+		}
+
+		mLastUiButtonEventTime = curTime;
+		mLastUiButtonPressed = idx;
 		byte row, col;
 		if (RowColFromSwitchNumber(idx, row, col))
 			SwitchPressed(row, col);
@@ -368,6 +382,16 @@ ControlUi::ButtonReleased(const int idx)
 {
 	if (mStupidSwitchStates[idx])
 	{
+		if (0 == mLastUiButtonEventTime)
+		{
+			// ignore release (though touch doesn't appear to emit 
+			// a release signal)
+			return;
+		}
+
+		// reset so that next press is honored (otherwise potentially ignored)
+		mLastUiButtonEventTime = ::clock();
+
 		byte row, col;
 		if (RowColFromSwitchNumber(idx, row, col))
 			SwitchReleased(row, col);
@@ -507,7 +531,7 @@ ControlUi::ClearTransientText()
 std::string
 ControlUi::GetCurrentText()
 {
-	return mMainText.toAscii().constData();
+	return std::string(mMainText.toUtf8());
 }
 
 // ITraceDisplay
@@ -789,9 +813,21 @@ ControlUi::CreateSwitch(int id,
 	pressedColorStr += ::GetAsciiHexStr(&((byte*)&pressedColor)[1], 1, false);
 	pressedColorStr += ::GetAsciiHexStr(&((byte*)&pressedColor)[0], 1, false);
 
+	const DWORD normalColor(mFrameHighlightColor); // yeah, this could overflow...
+	std::string normalColorStr;
+	normalColorStr += ::GetAsciiHexStr(&((byte*)&normalColor)[2], 1, false);
+	normalColorStr += ::GetAsciiHexStr(&((byte*)&normalColor)[1], 1, false);
+	normalColorStr += ::GetAsciiHexStr(&((byte*)&normalColor)[0], 1, false);
+
 	// http://doc.qt.nokia.com/4.4/stylesheet-examples.html#customizing-qpushbutton
+	// http://doc.qt.digia.com/4.4/stylesheet-examples.html#customizing-qpushbutton
+	// http://qt-project.org/doc/qt-5.0/qtwidgets/stylesheet-examples.html#customizing-qpushbutton
 	QString buttonStyleSheet(
 	" \
+	QPushButton { \
+		border: none; \
+		background-color: #" + QString(normalColorStr.c_str()) + "; \
+	} \
 	QPushButton:pressed { \
 		padding-left: 2px; \
 		padding-top: 2px; \
@@ -804,10 +840,10 @@ ControlUi::CreateSwitch(int id,
 	QString qSlot;
 
 	qSlot = QString("1UiButtonPressed_%1()").arg(id);
-	connect(curSwitch, SIGNAL(pressed()), qSlot.toAscii().constData());
+	connect(curSwitch, SIGNAL(pressed()), qSlot.toUtf8().constData());
 
 	qSlot = QString("1UiButtonReleased_%1()").arg(id);
-	connect(curSwitch, SIGNAL(released()), qSlot.toAscii().constData());
+	connect(curSwitch, SIGNAL(released()), qSlot.toUtf8().constData());
 
 	std::string::size_type pos = label.find("&");
 	if (std::string::npos != pos && pos+1 < label.length())
@@ -1345,7 +1381,7 @@ ControlUi::DisplayTime()
 		if (mMainDisplay)
 		{
 			const QString ts(QDateTime::currentDateTime().toString("h:mm:ss ap \nddd, MMM d, yyyy"));
-			const std::string msg(ts.toAscii());
+			const std::string msg(ts.toUtf8());
 			TextOut(msg);
 		}
 	}
