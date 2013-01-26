@@ -75,6 +75,7 @@ MainTrollWindow::MainTrollWindow() :
 			background: #888888; \
 		} \
 	");
+
 	menuBar()->setStyleSheet(menuBarStyle);
 #if defined(Q_OS_WIN)
 	::UnregisterTouchWindow((HWND)menuBar()->winId());
