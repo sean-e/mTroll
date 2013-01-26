@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2012 Sean Echevarria
+ * Copyright (C) 2007-2010,2012-2013 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -54,6 +54,7 @@ MainTrollWindow::MainTrollWindow() :
 	QSettings settings;
 
 	// http://doc.qt.nokia.com/4.4/stylesheet-examples.html#customizing-qmenubar
+	// http://qt-project.org/doc/qt-5.0/qtwidgets/stylesheet-examples.html#customizing-qmenubar
 	QString menuBarStyle(" \
 		QMenuBar { \
 			background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, \
@@ -62,7 +63,7 @@ MainTrollWindow::MainTrollWindow() :
  \
 		QMenuBar::item { \
 			spacing: 3px; /* spacing between menu bar items */ \
-			padding: 1px 4px; \
+			padding: 1px 10px; \
 			background: transparent; \
 		} \
  \
@@ -75,18 +76,60 @@ MainTrollWindow::MainTrollWindow() :
 		} \
 	");
 	menuBar()->setStyleSheet(menuBarStyle);
+#if defined(Q_OS_WIN)
+	::UnregisterTouchWindow((HWND)menuBar()->winId());
+#endif
+
+	QString touchMenuStyle(" \
+		QMenu::item { \
+		    padding: 15px; \
+			background: white; \
+			foreground: black; \
+			font: bold 14px; \
+			min-width: 13em; \
+		} \
+\
+		QMenu::item:selected { \
+			background: #505050; \
+			border: 1px solid black; \
+			color: white; \
+		} \
+\
+	");
+
+	bool hasTouchInput = false;
+#if defined(Q_OS_WIN)
+	// http://msdn.microsoft.com/en-us/library/windows/desktop/dd371581%28v=vs.85%29.aspx
+	int systemDigitizer = ::GetSystemMetrics(SM_DIGITIZER);
+	if (systemDigitizer & NID_READY)
+	{
+		if (systemDigitizer & (NID_EXTERNAL_TOUCH | NID_INTEGRATED_TOUCH | NID_MULTI_INPUT))
+			hasTouchInput = true;
+	}
+#endif
 
 	QMenu * fileMenu = menuBar()->addMenu(tr("&File"));
+#if defined(Q_OS_WIN)
+	::UnregisterTouchWindow((HWND)fileMenu->winId());
+#endif
+	if (hasTouchInput)
+		fileMenu->setStyleSheet(touchMenuStyle);
 	fileMenu->addAction(tr("&Open..."), this, SLOT(OpenFile()), QKeySequence(tr("Ctrl+O")));
 	fileMenu->addAction(tr("&Refresh"), this, SLOT(Refresh()), QKeySequence(tr("F5")));
 	fileMenu->addAction(tr("Re&connect to monome device"), this, SLOT(Reconnect()), QKeySequence(tr("Ctrl+R")));
 	fileMenu->addAction(tr("&Toggle trace window visibility"), this, SLOT(ToggleTraceWindow()), QKeySequence(tr("Ctrl+T")));
-	fileMenu->addSeparator();
+	if (!hasTouchInput)
+		fileMenu->addSeparator();
 	fileMenu->addAction(tr("E&xit"), this, SLOT(close()));
 	// http://doc.qt.nokia.com/4.4/stylesheet-examples.html#customizing-qmenu
 
 	QString slotName;
 	QMenu * adcMenu = menuBar()->addMenu(tr("&Pedal Overrides"));
+#if defined(Q_OS_WIN)
+	::UnregisterTouchWindow((HWND)adcMenu->winId());
+#endif
+	if (hasTouchInput)
+		adcMenu->setStyleSheet(touchMenuStyle);
 	for (int idx = 0; idx < ExpressionPedals::PedalCount; ++idx)
 	{
 		mAdcForceDisable[idx] = settings.value(kAdcOverride.arg(idx), false).toBool();
@@ -94,11 +137,16 @@ MainTrollWindow::MainTrollWindow() :
 		mAdcOverrideActions[idx]->setCheckable(true);
 		mAdcOverrideActions[idx]->setChecked(mAdcForceDisable[idx]);
 		slotName = QString("1ToggleAdc%1Override(bool)").arg(idx);
-		connect(mAdcOverrideActions[idx], SIGNAL(toggled(bool)), this, slotName.toAscii().constData());
+		connect(mAdcOverrideActions[idx], SIGNAL(toggled(bool)), this, slotName.toUtf8().constData());
 		adcMenu->addAction(mAdcOverrideActions[idx]);
 	}
 
 	QMenu * helpMenu = menuBar()->addMenu(tr("&Help"));
+#if defined(Q_OS_WIN)
+	::UnregisterTouchWindow((HWND)helpMenu->winId());
+#endif
+	if (hasTouchInput)
+		helpMenu->setStyleSheet(touchMenuStyle);
 	helpMenu->addAction(tr("&About mTroll..."), this, SLOT(About()));
 
 	mUiFilename = settings.value(kActiveUiFile, "testdata.ui.xml").value<QString>();
@@ -154,10 +202,8 @@ MainTrollWindow::Refresh()
 	mUi = new ControlUi(this, this);
 	setCentralWidget(mUi);	// Qt deletes the previous central widget
 
-	QByteArray tmp(mUiFilename.toAscii());
-	const std::string uiFile(tmp.constData(), tmp.count());
-	tmp = mConfigFilename.toAscii();
-	const std::string cfgFile(tmp.constData(), tmp.count());
+	const std::string uiFile(mUiFilename.toUtf8());
+	const std::string cfgFile(mConfigFilename.toUtf8());
 	mUi->Load(uiFile, cfgFile, mAdcForceDisable);
 
 	int width, height;
@@ -170,7 +216,7 @@ MainTrollWindow::Refresh()
 		// Is there a way to do this with Qt?
 		WINDOWPLACEMENT wp;
 		::ZeroMemory(&wp, sizeof(WINDOWPLACEMENT));
-		::GetWindowPlacement(winId(), &wp);
+		::GetWindowPlacement((HWND)winId(), &wp);
 		if (SW_MAXIMIZE == wp.showCmd)
 		{
 			NONCLIENTMETRICS ncm;
@@ -179,7 +225,7 @@ MainTrollWindow::Refresh()
 			::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &ncm, 0);
 			wp.rcNormalPosition.right = wp.rcNormalPosition.left + width + (ncm.iBorderWidth * 2);
 			wp.rcNormalPosition.bottom = wp.rcNormalPosition.top + height + ncm.iCaptionHeight + (ncm.iBorderWidth * 2);
-			::SetWindowPlacement(winId(), &wp);
+			::SetWindowPlacement((HWND)winId(), &wp);
 		}
 		else
 			resize(width, height);
