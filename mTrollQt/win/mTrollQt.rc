@@ -72,7 +72,7 @@ BEGIN
             VALUE "FileDescription", "mTroll MIDI Controller"
             VALUE "FileVersion", "1, 0, 0, 0"
             VALUE "InternalName", "mTroll"
-            VALUE "LegalCopyright", "Copyright 2007-2011 Sean Echevarria"
+            VALUE "LegalCopyright", "Copyright 2007-2013 Sean Echevarria"
             VALUE "OriginalFilename", "mTroll.exe"
             VALUE "ProductName", "mTroll"
             VALUE "ProductVersion", "1, 0, 0, 0"
