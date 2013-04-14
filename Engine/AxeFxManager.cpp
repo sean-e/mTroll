@@ -92,12 +92,12 @@ AxeFxManager::AxeFxManager(IMainDisplay * mainDisp,
 	if (Axe2 == mModel)
 	{
 		// C:\Program Files (x86)\Fractal Audio\Axe-Edit 1.0\Configs\II\default.axeml
-		ldr.Load(mModel, appPath + "/axefx2.default.axeml", mAxeEffectInfo);
+		ldr.Load(mModel, appPath + "/config/axefx2.default.axeml", mAxeEffectInfo);
 	}
 	else
 	{
 		// C:\Program Files (x86)\Fractal Audio\Axe-Edit 1.0\Configs\Ultra\default.axeml
-		ldr.Load(mModel, appPath + "/default.axeml", mAxeEffectInfo);
+		ldr.Load(mModel, appPath + "/config/default.axeml", mAxeEffectInfo);
 	}
 }
 

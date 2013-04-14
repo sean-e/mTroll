@@ -150,8 +150,8 @@ MainTrollWindow::MainTrollWindow() :
 		helpMenu->setStyleSheet(touchMenuStyle);
 	helpMenu->addAction(tr("&About mTroll..."), this, SLOT(About()));
 
-	mUiFilename = settings.value(kActiveUiFile, "testdata.ui.xml").value<QString>();
-	mConfigFilename = settings.value(kActiveConfigFile, "testdata.config.xml").value<QString>();
+	mUiFilename = settings.value(kActiveUiFile, "config/testdata.ui.xml").value<QString>();
+	mConfigFilename = settings.value(kActiveConfigFile, "config/testdata.config.xml").value<QString>();
 
 	Refresh();
 }
