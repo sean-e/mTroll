@@ -3,7 +3,10 @@ glob:*.ncb
 glob:*.opensdf
 glob:*.sdf
 glob:*.suo
+glob:mTrollQt.vcxproj.user
 glob:mtrollQt.zip
 glob:*.sean.e.user
 glob:mTrollQt/Debug/*
 glob:mTrollQt/Release/*
+glob:setup/mTrollSetup.exe
+glob:ReleaseDependencies/*
