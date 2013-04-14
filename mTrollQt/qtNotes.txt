@@ -7,7 +7,7 @@ cd qt
 configure -platform win32-msvc2008
 nmake
 
-[VS directory settings changes]
+[VS directory settings changes (as of Qt4.4)]
 add these dirs to VC include dirs:
 	c:\...\qt\include
 	c:\...\qt\include\qt
@@ -16,7 +16,7 @@ add these dirs to VC include dirs:
 and this dir to VC source dirs:
 	c:\...\qt\src
 
-[qt project settings]
+[qt project settings (as of Qt4.4)]
 no mfc / no atl
 addl inc dirs dbg: "..\..\..\include\QtCore","..\..\..\include\QtCore","..\..\..\include\QtGui","..\..\..\include\QtGui","..\..\..\include","c:\Users\sean.e\src\qt\include\ActiveQt","tmp\moc\debug_shared",".",..\..\..\mkspecs\win32-msvc2005
 			  rel: "..\..\..\include\QtCore","..\..\..\include\QtCore","..\..\..\include\QtGui","..\..\..\include\QtGui","..\..\..\include","c:\Users\sean.e\src\qt\include\ActiveQt","tmp\moc\release_shared",".",..\..\..\mkspecs\win32-msvc2005
@@ -29,7 +29,7 @@ link input: ignore msvcrtd.lib / msvcrt.lib
 link input addl dependencies dbg: c:\Users\sean.e\src\qt\lib\qtmaind.lib c:\Users\sean.e\src\qt\lib\QtGuid4.lib c:\Users\sean.e\src\qt\lib\QtCored4.lib
 							 rel: c:\Users\sean.e\src\qt\lib\qtmain.lib c:\Users\sean.e\src\qt\lib\QtGui4.lib c:\Users\sean.e\src\qt\lib\QtCore4.lib
 
-[qt moc Custom Build Steps for QT_OBJECT header file]
+[qt moc Custom Build Steps for QT_OBJECT header file (as of Qt4.4)]
 cmd line:	$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"c:\Users\sean.e\src\qt\include\ActiveQt" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2005 -D_MSC_VER=1400 -DWIN32 ControlUi.h -o debug\moc_ControlUi.cpp
 desc:		MOC ControlUi.h
 Outputs:	debug\moc_ControlUi.cpp
@@ -45,3 +45,27 @@ exclude from debug config build
 
 Add debug\moc_ControlUi.cpp to Moc Generated Source folder
 exclude from release config build
+
+
+
+[building qt 5 (not required)]
+(needs perl and python)
+cd qt
+configure -debug-and-release -force-debug-info -opensource -no-opengl -no-icu -platform win32-msvc2012
+nmake
+
+
+[qt 5 runtime dependencies - place in .\ReleaseDependencies directory for Inno Setup]
+D3DCompiler_43.dll			defeat by building Qt with: -no-opengl
+icudt49.dll					defeat by building Qt with: -no-icu
+icuin49.dll					defeat by building Qt with: -no-icu
+icuuc49.dll					defeat by building Qt with: -no-icu
+libEGL.dll					defeat by building Qt with: -no-opengl
+libGLESv2.dll					defeat by building Qt with: -no-opengl
+msvcp100.dll
+msvcr100.dll
+Qt5Core.dll
+Qt5Gui.dll
+Qt5Widgets.dll
+platforms\qminimal.dll
+platforms\qwindows.dll
