@@ -1,0 +1,8 @@
+
+; define version either on cmd-line like:
+; iscc.exe /dmTrollAppVersion=2013.xx.xx mTrollSetup.iss
+; or set it below
+
+#ifndef mTrollAppVersion
+#define mTrollAppVersion "2013.04.14"
+#endif
