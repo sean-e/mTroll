@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010-2012 Sean Echevarria
+ * Copyright (C) 2007-2008,2010-2013 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -361,6 +361,9 @@ PatchBank::PatchSwitchPressed(SwitchFunctionAssignment st,
 					continue;
 
 				curSwitchItem->mPatch->Deactivate(mainDisplay, switchDisplay);
+
+				// force displays off for all other patches in group
+				curSwitchItem->mPatch->UpdateDisplays(mainDisplay, switchDisplay);
 			}
 		}
 	}
