@@ -360,6 +360,14 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 		// looper status
 		ReceiveLooperStatus(&bytes[6], len - 6);
 		return;
+	case 0x29:
+		// set scene ??
+		if (kDbgFlag && mTrace)
+		{
+			const std::string msg("AxeFx: scene change??\n");
+			mTrace->Trace(msg);
+		}
+		return;
 	case 0x64:
 		// indicates an error or unsupported message
 		if (kDbgFlag && mTrace)
