@@ -758,15 +758,47 @@ PatchBank::ResetPatches(IMainDisplay * mainDisplay,
 }
 
 void
-PatchBank::CreateExclusiveGroup(GroupSwitches * switches)
+PatchBank::CreateExclusiveGroup(GroupSwitches * switchNumbers)
 {
-	mGroups.push_front(switches);
+	mGroups.push_front(switchNumbers);
 
-	for (GroupSwitches::iterator switchIt = switches->begin();
-		switchIt != switches->end();
+	for (GroupSwitches::iterator switchIt = switchNumbers->begin();
+		switchIt != switchNumbers->end();
 		++switchIt)
 	{
 		const int kCurSwitchNumber = *switchIt;
-		mGroupFromSwitch[kCurSwitchNumber] = switches;
+		mGroupFromSwitch[kCurSwitchNumber] = switchNumbers;
+	}
+}
+
+void
+PatchBank::ResetExclusiveGroup(ISwitchDisplay * switchDisplay, 
+							   int switchNumberToSet)
+{
+	GroupSwitches * grp = mGroupFromSwitch[switchNumberToSet];
+	if (!grp)
+		return;
+
+	for (GroupSwitches::iterator switchIt = grp->begin();
+		switchIt != grp->end();
+		++switchIt)
+	{
+		const int kCurSwitchNumber = *switchIt;
+		const bool enabled = kCurSwitchNumber == switchNumberToSet;
+
+		// exclusive groups don't really support secondary functions.
+		// keep secondary function groups separate from primary function groups.
+		// basically unsupported for now.
+		PatchVect & prevPatches = mPatches[kCurSwitchNumber].GetPatchVect(ssPrimary);
+		for (PatchVect::iterator it = prevPatches.begin();
+			it != prevPatches.end();
+			++it)
+		{
+			PatchMap * curSwitchItem = *it;
+			if (!curSwitchItem || !curSwitchItem->mPatch)
+				continue;
+
+			curSwitchItem->mPatch->UpdateState(switchDisplay, enabled);
+		}
 	}
 }

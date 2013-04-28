@@ -475,6 +475,13 @@ MidiControlEngine::ResetBankPatches()
 		mActiveBank->ResetPatches(mMainDisplay, mSwitchDisplay);
 }
 
+void
+MidiControlEngine::ResetExclusiveGroup(int activeSwitch)
+{
+	if (mActiveBank)
+		mActiveBank->ResetExclusiveGroup(mSwitchDisplay, activeSwitch);
+}
+
 bool
 MidiControlEngine::NavigateBankRelative(int relativeBankIndex)
 {

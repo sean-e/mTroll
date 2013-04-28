@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010,2012 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2012-2013 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -97,6 +97,7 @@ public:
 	void PatchSwitchPressed(int switchNumber, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 	void PatchSwitchReleased(int switchNumber, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay, SwitchPressDuration dur);
 	void ResetPatches(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
+	void ResetExclusiveGroup(ISwitchDisplay * switchDisplay, int switchNumberToSet);
 
 	int GetBankNumber() const {return mNumber;}
 	const std::string & GetBankName() const {return mName;}

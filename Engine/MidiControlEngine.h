@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2012 Sean Echevarria
+ * Copyright (C) 2007-2013 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -97,6 +97,7 @@ public:
 	virtual void			AdcValueChanged(int port, int curValue);
 	void					RefirePedal(int pedal);
 	void					ResetBankPatches();
+	void					ResetExclusiveGroup(int switchNumberToActivate);
 	void					LoadBankByNumber(int bankNumber);
 	void					LoadBankRelative(int relativeBankIndex);
 

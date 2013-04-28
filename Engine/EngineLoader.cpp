@@ -50,6 +50,7 @@
 #include "AxeTogglePatch.h"
 #include "AxeFxProgramChange.h"
 #include "PatchListSequencePatch.h"
+#include "MetaPatch_ResetExclusiveGroup.h"
 
 
 static PatchBank::PatchState GetLoadState(const std::string & tmpLoad);
@@ -438,6 +439,21 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 				}
 			}
+			else if (tmp == "ResetExclusiveGroup")
+			{
+				int activeSwitch = -1;
+				pElem->QueryIntAttribute("activeSwitch", &activeSwitch);
+				if (-1 != activeSwitch)
+				{
+					mEngine->AddPatch(new MetaPatch_ResetExclusiveGroup(mEngine, patchNumber, patchName, activeSwitch));
+				}
+				else if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: engineMetaPatch " << patchName << " missing ResetExclusiveGroup switch target" << std::endl << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
+			}
 			else if (tmp == "BankHistoryBackward")
 				 mEngine->AddPatch(new MetaPatch_BankHistoryBackward(mEngine, patchNumber, patchName));
 			else if (tmp == "BankHistoryForward")
@@ -806,7 +822,13 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 							scene = ::atoi(sceneStr.c_str());
 
 						if (scene)
-							patchType = "normal";
+						{
+							// there is no axe-fx sync for scenes, so change to unsync'd patch type
+							if (patchType == "AxeToggle")
+								patchType = "toggle";
+							else if (patchType == "AxeMomentary")
+								patchType = "momentary";
+						}
 					}
 				}
 
