@@ -86,6 +86,37 @@ PatchBank::AddPatchMapping(int switchNumber,
 void
 PatchBank::SetDefaultMappings(const PatchBank & defaultMapping)
 {
+	// propagate switch groups from default bank
+	if (&defaultMapping != this && defaultMapping.mGroups.size())
+	{
+		PatchMaps & pm = mPatches;
+		std::for_each(defaultMapping.mGroups.begin(), defaultMapping.mGroups.end(), 
+			[this, &pm](GroupSwitches * grp)
+		{
+			PatchMaps & pm2 = pm;
+			PatchBank::GroupSwitches * grpCpy = new PatchBank::GroupSwitches;
+			std::for_each(grp->begin(), grp->end(), [&pm2, &grpCpy](int num)
+			{
+				// only insert if num is not already assigned (num of switch has been assigned a patch).
+				// this means that a group might be smaller in the current bank than the default bank.
+				for (int idx2 = PatchBank::ssPrimary; idx2 < PatchBank::ssCount; ++idx2)
+				{
+					PatchBank::SwitchFunctionAssignment ss = static_cast<PatchBank::SwitchFunctionAssignment>(idx2);
+					PatchBank::PatchVect & curPatches = pm2[num].GetPatchVect(ss);
+					if (curPatches.size())
+						return;
+				}
+
+				grpCpy->insert(num);
+			});
+
+			if (grpCpy->size())
+				CreateExclusiveGroup(grpCpy);
+			else
+				delete grpCpy;
+		});
+	}
+
 	for (int idx = ssPrimary; idx < ssCount; ++idx)
 	{
 		SwitchFunctionAssignment ss = static_cast<SwitchFunctionAssignment>(idx);
