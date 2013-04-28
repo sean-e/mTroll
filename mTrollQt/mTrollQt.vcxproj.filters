@@ -263,6 +263,9 @@
     <ClInclude Include="..\winUtil\SEHexception.h">
       <Filter>winUtils</Filter>
     </ClInclude>
+    <ClInclude Include="..\Engine\MetaPatch_ResetExclusiveGroup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="win\mTrollQt.rc">
