@@ -211,7 +211,9 @@ AxeFxManager::SetSyncPatch(Patch * patch, int bypassCc /*= -1*/)
 		normalizedEffectName != "tuner" &&
 		normalizedEffectName != "global preset effect toggle" &&
 		normalizedEffectName != "volume increment" &&
-		normalizedEffectName != "volume decrement")
+		normalizedEffectName != "volume decrement" &&
+		normalizedEffectName != "scene increment" &&
+		normalizedEffectName != "scene decrement")
 	{
 		std::string msg("Warning: no Axe-Fx effect found to sync for '" + patch->GetName() + "'\n");
 		mTrace->Trace(msg);
@@ -1479,7 +1481,7 @@ DefaultAxeCcs kDefaultAxeCcs[] =
 	{"external 7", 22},
 	{"external 8", 23},
 
-	// extra AxeFx II externals
+	// extra AxeFx II externals (overlap w/ AxeFx std/ultra loopers)
 	{"external 9", 24},
 	{"external 10", 25},
 	{"external 11", 26},
@@ -1497,14 +1499,14 @@ DefaultAxeCcs kDefaultAxeCcs[] =
 	{"looper 2 overdub", 32},
 	{"looper 2 reverse", 33},
 
-	// single looper in AxeFx II (?)
+	// single looper in AxeFx II (overlap w/ AxeFx std/ultra loopers)
 	{"looper record", 28},
 	{"looper play", 29},
 	{"looper once", 30},
 	{"looper overdub", 31},
 	{"looper reverse", 32},
-	{"looper bypass", 33},
-	// additional looper in AxeFx II fw 6
+	{"looper", 33},
+	// additional looper controls in AxeFx II fw 6
 	{"looper half", 120},
 	{"looper undo", 121},
 	{"looper metronome", 122},
@@ -1673,6 +1675,8 @@ SynonymNormalization(std::string & name)
 		MapName("crystals 2", "pitch 2");
 		break;
 	case 'd':
+		MapName("dec scene", "scene decrement");
+		MapName("decrement scene", "scene decrement");
 		MapName("delay 1 (reverse)", "delay 1");
 		MapName("delay 2 (reverse)", "delay 2");
 		MapName("detune 1", "pitch 1");
@@ -1745,9 +1749,12 @@ SynonymNormalization(std::string & name)
 		break;
 	case 'h':
 		MapName("half-speed", "looper half");
+		MapName("half speed", "looper half");
 		break;
 	case 'i':
 		MapName("in vol", "input volume");
+		MapName("inc scene", "scene increment");
+		MapName("increment scene", "scene increment");
 		MapName("input", "input volume");
 		MapName("input vol", "input volume");
 		break;
@@ -1760,6 +1767,7 @@ SynonymNormalization(std::string & name)
 		MapName("loop 1 rev", "looper 1 reverse");
 		MapName("loop 1 reverse", "looper 1 reverse");
 		MapName("loop half-speed", "looper half");
+		MapName("loop half speed", "looper half");
 		MapName("loop metronome", "looper metronome");
 		MapName("loop rec", "looper record");
 		MapName("loop record", "looper record");
@@ -1776,10 +1784,11 @@ SynonymNormalization(std::string & name)
 		MapName("loop 2 overdub", "looper 2 overdub");
 		MapName("loop 2 rev", "looper 2 reverse");
 		MapName("loop 2 reverse", "looper 2 reverse");
-		MapName("looper", "delay 1");
+// 		MapName("looper", "delay 1");
 		MapName("looper 1", "delay 1");
 		MapName("looper 2", "delay 2");
 		MapName("looper half-speed", "looper half");
+		MapName("looper half speed", "looper half");
 		break;
 	case 'm':
 		MapName("mdly 1", "multidelay 1");
@@ -1794,6 +1803,7 @@ SynonymNormalization(std::string & name)
 		MapName("multi delay 2", "multidelay 2");
 		break;
 	case 'n':
+		MapName("next scene", "scene increment");
 		MapName("noise gate", "noisegate");
 		break;
 	case 'o':
@@ -1824,6 +1834,7 @@ SynonymNormalization(std::string & name)
 		MapName("plex dly 2", "multidelay 2");
 		MapName("plex shift 1", "multidelay 1");
 		MapName("plex shift 2", "multidelay 2");
+		MapName("previous scene", "scene decrement");
 		break;
 	case 'q':
 		MapName("quad 1", "quad chorus 1");
