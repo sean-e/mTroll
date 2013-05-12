@@ -537,8 +537,8 @@
 		<patch name="Axe Loop Metronome" number="721" device="Axe-Fx" />
 		<patch name="Axe Looper" number="722" device="Axe-Fx" />
 
-		<patch name="Axe Volume Increment" number="725" type="AxeMomentary" device="Axe-Fx" singleState="1" />
-		<patch name="Axe Volume Decrement" number="726" type="AxeMomentary" device="Axe-Fx" singleState="1" />
+		<patch name="Axe Volume Decrement" number="725" type="AxeMomentary" device="Axe-Fx" singleState="1" />
+		<patch name="Axe Volume Increment" number="726" type="AxeMomentary" device="Axe-Fx" singleState="1" />
 		
 		<patch name="Axe Amp 1" number="727" device="Axe-Fx" />
 		<patch name="Axe Amp 2" number="728" device="Axe-Fx" />
@@ -675,8 +675,8 @@
 			<ControlChange group="A" controller="10" value="0" />
 			<ControlChange group="B" controller="10" value="127" />
 		</patch>
-		<patch name="Decrement Scene" number="864" device="Axe-Fx" />
-		<patch name="Increment Scene" number="865" device="Axe-Fx" />
+		<patch name="Decrement Scene" number="864" type="AxeMomentary" device="Axe-Fx" singleState="1" />
+		<patch name="Increment Scene" number="865" type="AxeMomentary" device="Axe-Fx" singleState="1" />
 
 		<!-- Meta patches -->
 		<engineMetaPatch name="Reset Patches" number="900" action="ResetBankPatches" />
@@ -1794,8 +1794,8 @@
 			<PatchMap switch="11" patch="864" />
 			<PatchMap switch="12" patch="865" />
 			<PatchMap switch="13" patch="" />
-			<PatchMap switch="14" patch="" />
-			<PatchMap switch="15" patch="" />
+			<PatchMap switch="14" patch="725" />
+			<PatchMap switch="15" patch="726" />
 			<PatchMap switch="22" patch="901" />
 		</bank>
 
