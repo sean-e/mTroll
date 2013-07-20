@@ -8,5 +8,5 @@ glob:mtrollQt.zip
 glob:*.sean.e.user
 glob:mTrollQt/Debug/*
 glob:mTrollQt/Release/*
-glob:setup/mTrollSetup.exe
+glob:setup/mTrollSetup*.exe
 glob:ReleaseDependencies/*
