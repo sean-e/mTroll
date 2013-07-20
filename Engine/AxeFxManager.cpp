@@ -51,7 +51,7 @@ static const int kDbgFlag = 0;
 static void SynonymNormalization(std::string & name);
 
 static const int kDefaultNameSyncTimerInterval = 100;
-static const int kDefaultEffectsSyncTimerInterval = 40;
+static const int kDefaultEffectsSyncTimerInterval = 20;
 
 AxeFxManager::AxeFxManager(IMainDisplay * mainDisp, 
 						   ISwitchDisplay * switchDisp,
@@ -71,8 +71,12 @@ AxeFxManager::AxeFxManager(IMainDisplay * mainDisp,
 	mFirmwareMajorVersion(0),
 	mAxeChannel(ch),
 	mModel(mod),
-	mLooperState(0)
+	mLooperState(0),
+	mCurrentScene(0)
 {
+	::memset(mScenes, 0, sizeof(mScenes));
+	::memset(mLooperPatches, 0, sizeof(mLooperPatches));
+
 	mQueryTimer = new QTimer(this);
 	connect(mQueryTimer, SIGNAL(timeout()), this, SLOT(QueryTimedOut()));
 	mQueryTimer->setSingleShot(true);
@@ -146,6 +150,28 @@ AxeFxManager::SetTempoPatch(Patch * patch)
 		mTrace->Trace(msg);
 	}
 	mTempoPatch = patch;
+}
+
+void
+AxeFxManager::SetScenePatch(int scene, Patch * patch)
+{
+	if (scene < 1 || scene > AxeScenes)
+	{
+		if (mTrace)
+		{
+			std::string msg("Warning: invalid Axe-Fx scene number (use 1-8)\n");
+			mTrace->Trace(msg);
+		}
+		return;
+	}
+
+	if (mScenes[scene - 1] && mTrace)
+	{
+		std::string msg("Warning: multiple Axe-Fx patches for same scene\n");
+		mTrace->Trace(msg);
+	}
+
+	mScenes[scene - 1] = patch;
 }
 
 bool
@@ -288,14 +314,6 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 
 	switch (bytes[5])
 	{
-	case 0x10:
-		// Tempo: f0 00 01 74 01 10 f7
-		if (mTempoPatch)
-		{
-			mTempoPatch->ActivateSwitchDisplay(mSwitchDisplay, true);
-			mSwitchDisplay->SetIndicatorThreadSafe(false, mTempoPatch, 75);
-		}
-		return;
 	case 2:
 		if (Axe2 == bytes[4])
 		{
@@ -313,8 +331,21 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 			ReceiveParamValue(&bytes[6], len - 6);
 		}
 		return;
-	case 0xf:
-		ReceivePresetName(&bytes[6], len - 6);
+	case 4:
+		// receive patch dump
+		if (kDbgFlag && mTrace)
+		{
+			const std::string msg("AxeFx: received patch dump\n");
+			mTrace->Trace(msg);
+		}
+		return;
+	case 8:
+		if (mFirmwareMajorVersion)
+			return;
+		ReceiveFirmwareVersionResponse(bytes, len);
+		return;
+	case 0xd:
+		// tuner info
 		return;
 	case 0xe:
 		if (Axe2 == bytes[4])
@@ -328,17 +359,15 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 			ReceivePresetEffects(&bytes[6], len - 6);
 		}
 		return;
-	case 8:
-		if (mFirmwareMajorVersion)
-			return;
-		ReceiveFirmwareVersionResponse(bytes, len);
+	case 0xf:
+		ReceivePresetName(&bytes[6], len - 6);
 		return;
-	case 4:
-		// receive patch dump
-		if (kDbgFlag && mTrace)
+	case 0x10:
+		// Tempo: f0 00 01 74 01 10 f7
+		if (mTempoPatch)
 		{
-			const std::string msg("AxeFx: received patch dump\n");
-			mTrace->Trace(msg);
+			mTempoPatch->ActivateSwitchDisplay(mSwitchDisplay, true);
+			mSwitchDisplay->SetIndicatorThreadSafe(false, mTempoPatch, 75);
 		}
 		return;
 	case 0x11:
@@ -354,6 +383,9 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 		// preset loaded
 		DelayedNameSyncFromAxe(true);
 		return;
+	case 0x20:
+		// routing grid layout
+		return;
 	case 0x21:
 		// x/y change or scene selected
 		DelayedEffectsSyncFromAxe();
@@ -363,19 +395,25 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 		ReceiveLooperStatus(&bytes[6], len - 6);
 		return;
 	case 0x29:
-		// set scene ??
-		if (kDbgFlag && mTrace)
-		{
-			const std::string msg("AxeFx: scene change??\n");
-			mTrace->Trace(msg);
-		}
+		// scene status/update
+		ReceiveSceneStatus(&bytes[6], len - 6);
 		return;
 	case 0x64:
 		// indicates an error or unsupported message
 		if (kDbgFlag && mTrace)
 		{
-			const std::string msg("AxeFx: error or unsupported message\n");
-			mTrace->Trace(msg);
+			if ((len - 5) > 2 && bytes[6] == 0x23)
+			{
+				// ignore looper status monitor ack.
+				// the message to enable the monitor is required, the status messages are not 
+				// otherwise sent; but no idea why 0x64 is sent as ack.
+				break;
+			}
+			else
+			{
+				const std::string msg("AxeFx: error or unsupported message\n");
+				mTrace->Trace(msg);
+			}
 		}
 	default:
 		if (kDbgFlag && mTrace)
@@ -1070,14 +1108,8 @@ AxeFxManager::ReceivePresetName(const byte * bytes, int len)
 	std::string patchName((const char *)bytes, 21);
 	if (mMainDisplay && patchName.size())
 	{
-		const std::string kPrefix("Axe-Fx preset: ");
-		std::string curText(mMainDisplay->GetCurrentText());
-		int pos = curText.rfind(kPrefix);
-		if (std::string::npos != pos)
-			curText = curText.substr(0, pos);
-
-		curText += kPrefix + patchName;
-		mMainDisplay->TextOut(curText);
+		mCurrentAxePresetName = patchName;
+		DisplayPresetStatus();
 	}
 
 	RequestPresetEffects();
@@ -1237,7 +1269,7 @@ AxeFxManager::ReceivePresetEffectsV2(const byte * bytes, int len)
 	//	
 	for (int idx = 0; (idx + 5) < len; idx += 5)
 	{
-		if (kDbgFlag && mTrace)
+		if (0 && kDbgFlag && mTrace)
 		{
 			const std::string byteDump(::GetAsciiHexStr(&bytes[idx], 5, true) + "\n");
 			mTrace->Trace(byteDump);
@@ -1348,6 +1380,46 @@ AxeFxManager::EnableLooperStatusMonitor(bool enable)
 	mMidiOut->MidiOut(bb);
 }
 
+enum AxeFxLooperState
+{ 
+	// independent states
+	loopStateStopped	= 0, 
+	loopStateRecord		= 1, 
+	loopStatePlay		= 2,
+
+	// state modifiers
+	loopStatePlayOnce	= 1 << 2, 
+	loopStateOverdub	= 1 << 3, 
+	loopStateReverse	= 1 << 4, 
+	loopStateHalfSpeed	= 1 << 5, 
+	loopStateUndo		= 1 << 6 
+};
+
+static std::string
+GetLooperStateDesc(int loopState)
+{
+	std::string stateStr;
+	if (loopState & loopStateRecord)
+		stateStr.append("recording");
+	else if (loopState & loopStatePlay)
+		stateStr.append("playing");
+	else
+		stateStr.append("stopped");
+
+	if (loopState & loopStatePlayOnce)
+		stateStr.append(", once");
+	if (loopState & loopStateOverdub)
+		stateStr.append(", overdub");
+	if (loopState & loopStateUndo)
+		stateStr.append(", undo");
+	if (loopState & loopStateReverse)
+		stateStr.append(", reverse");
+	if (loopState & loopStateHalfSpeed)
+		stateStr.append(", 1/2 speed");
+
+	return stateStr;
+}
+
 void
 AxeFxManager::ReceiveLooperStatus(const byte * bytes, int len)
 {
@@ -1355,39 +1427,157 @@ AxeFxManager::ReceiveLooperStatus(const byte * bytes, int len)
 	if (len < 4)
 		return;
 
-	mLooperState = bytes[0];
-/*
-		looper message format from the AxeFX II is:
-			F0 00 01 74 03 23 <status> <position> <checksum> F7
+	const int newLoopState = bytes[0];
+	if (mLooperState == newLoopState)
+		return;
 
-			status is a bitfield:
-			Record - 1st bit
-			Play - 2nd bit
-			Once - 3rd bit
-			Dub - 4th bit
-			Reverse - 5th bit
-			HalfSpeed - 6th bit
-			Undo - 7th bit
+	if (((mLooperState & loopStateRecord) != (newLoopState & loopStateRecord)) && mLooperPatches[loopPatchRecord])
+	{
+		if ((mLooperState & loopStateRecord) && !(newLoopState & loopStateRecord))
+			mLooperPatches[loopPatchRecord]->UpdateState(mSwitchDisplay, false);
+		else
+			mLooperPatches[loopPatchRecord]->UpdateState(mSwitchDisplay, true);
+	}
 
-			examples:
-			00: Stopped
-			01: Recording
-			02: Playback
-			06: Play Once
-			0A: overdub
-			0E: Play Once + overdub
+	if (((mLooperState & loopStatePlay) != (newLoopState & loopStatePlay)) && mLooperPatches[loopPatchPlay])
+	{
+		if ((mLooperState & loopStatePlay) && !(newLoopState & loopStatePlay))
+			mLooperPatches[loopPatchPlay]->UpdateState(mSwitchDisplay, false);
+		else
+			mLooperPatches[loopPatchPlay]->UpdateState(mSwitchDisplay, true);
+	}
 
-		During playback/stacking, <position> seems to range from 0 to 99 (i.e. maximum value of 63H).
+	if (((mLooperState & loopStatePlayOnce) != (newLoopState & loopStatePlayOnce)) && mLooperPatches[loopPatchPlayOnce])
+	{
+		if ((mLooperState & loopStatePlayOnce) && !(newLoopState & loopStatePlayOnce))
+			mLooperPatches[loopPatchPlayOnce]->UpdateState(mSwitchDisplay, false);
+		else
+			mLooperPatches[loopPatchPlayOnce]->UpdateState(mSwitchDisplay, true);
+	}
 
-		During recording, It looks to me like it ranges from 0 to 127 (i.e. maximum value of 7FH) but 
-		it might repeat itself before it gets to the maximum recording time and starts playing back 
-		automatically on modes other than "MONO". I think this means if you want to show the recording 
-		position correctly, you will need to take the mode into account and keep track of how many 
-		times the position has looped around. I don't think Axe-Edit handles this correctly, it looks 
-		to me like it jumps when I am recording. I am not sure this is intended behaviour, I'm still 
-		working it out the exact details. 
-*/
+	if (((mLooperState & loopStateUndo) != (newLoopState & loopStateUndo)) && mLooperPatches[loopPatchUndo])
+	{
+		if ((mLooperState & loopStateUndo) && !(newLoopState & loopStateUndo))
+			mLooperPatches[loopPatchUndo]->UpdateState(mSwitchDisplay, false);
+		else
+			mLooperPatches[loopPatchUndo]->UpdateState(mSwitchDisplay, true);
+	}
+
+	if (((mLooperState & loopStateOverdub) != (newLoopState & loopStateOverdub)) && mLooperPatches[loopPatchOverdub])
+	{
+		if ((mLooperState & loopStateOverdub) && !(newLoopState & loopStateOverdub))
+			mLooperPatches[loopPatchOverdub]->UpdateState(mSwitchDisplay, false);
+		else
+			mLooperPatches[loopPatchOverdub]->UpdateState(mSwitchDisplay, true);
+	}
+
+	if (((mLooperState & loopStateReverse) != (newLoopState & loopStateReverse)) && mLooperPatches[loopPatchReverse])
+	{
+		if ((mLooperState & loopStateReverse) && !(newLoopState & loopStateReverse))
+			mLooperPatches[loopPatchReverse]->UpdateState(mSwitchDisplay, false);
+		else
+			mLooperPatches[loopPatchReverse]->UpdateState(mSwitchDisplay, true);
+	}
+
+	if (((mLooperState & loopStateHalfSpeed) != (newLoopState & loopStateHalfSpeed)) && mLooperPatches[loopPatchHalf])
+	{
+		if ((mLooperState & loopStateHalfSpeed) && !(newLoopState & loopStateHalfSpeed))
+			mLooperPatches[loopPatchHalf]->UpdateState(mSwitchDisplay, false);
+		else
+			mLooperPatches[loopPatchHalf]->UpdateState(mSwitchDisplay, true);
+	}
+
+	mLooperState = newLoopState;
+
+	if (mMainDisplay)
+	{
+		std::strstream traceMsg;
+		traceMsg << "Axe-Fx looper: " << GetLooperStateDesc(mLooperState) << std::endl << std::ends;
+		mMainDisplay->TransientTextOut(std::string(traceMsg.str()));
+	}
 }
+
+void
+AxeFxManager::SetLooperPatch(Patch * patch)
+{
+	if (mModel != Axe2)
+		return;
+
+	std::string name(patch->GetName());
+	::NormalizeAxeEffectName(name);
+	LoopPatchIdx idx = loopPatchCnt;
+	if (-1 != name.find("looper record"))
+		idx = loopPatchRecord;
+	else if (-1 != name.find("looper play"))
+		idx = loopPatchPlay;
+	else if (-1 != name.find("looper once"))
+		idx = loopPatchPlayOnce;
+	else if (-1 != name.find("looper undo"))
+		idx = loopPatchUndo;
+	else if (-1 != name.find("looper overdub"))
+		idx = loopPatchOverdub;
+	else if (-1 != name.find("looper reverse"))
+		idx = loopPatchReverse;
+	else if (-1 != name.find("looper half"))
+		idx = loopPatchHalf;
+	else
+		return;
+
+	if (mLooperPatches[idx] && mTrace)
+	{
+		std::string msg("Warning: multiple Axe-Fx patches for same looper command\n");
+		mTrace->Trace(msg);
+	}
+
+	mLooperPatches[idx] = patch;
+}
+
+void
+AxeFxManager::ReceiveSceneStatus(const byte * bytes, int len)
+{
+	if (len < 1)
+		return;
+
+	if (mCurrentScene == bytes[0])
+		return;
+
+	if (mScenes[mCurrentScene])
+		mScenes[mCurrentScene]->UpdateState(mSwitchDisplay, false);
+
+	mCurrentScene = bytes[0];
+
+	if (mScenes[mCurrentScene])
+		mScenes[mCurrentScene]->UpdateState(mSwitchDisplay, true);
+
+	if (mCurrentAxePresetName.empty())
+		RequestPresetName();
+	else
+		DisplayPresetStatus();
+}
+
+void
+AxeFxManager::DisplayPresetStatus()
+{
+	if (!mMainDisplay)
+		return;
+
+	const std::string kPrefix("Axe-Fx preset: ");
+	std::string curText(mMainDisplay->GetCurrentText());
+	int pos = curText.rfind(kPrefix);
+	if (std::string::npos != pos)
+		curText = curText.substr(0, pos);
+	curText += kPrefix + mCurrentAxePresetName;
+
+	if (Axe2 == mModel && mFirmwareMajorVersion > 8)
+	{
+		char sceneBuf[4];
+		::_itoa_s(mCurrentScene + 1, sceneBuf, 10);
+		curText += std::string("\nAxe-Fx scene: ") + sceneBuf;
+	}
+
+	mMainDisplay->TextOut(curText);
+}
+
 
 
 void 
@@ -1772,6 +1962,7 @@ SynonymNormalization(std::string & name)
 		MapName("loop rec", "looper record");
 		MapName("loop record", "looper record");
 		MapName("loop play", "looper play");
+		MapName("loop play once", "looper once");
 		MapName("loop once", "looper once");
 		MapName("loop overdub", "looper overdub");
 		MapName("loop rev", "looper reverse");

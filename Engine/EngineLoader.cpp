@@ -788,6 +788,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			}
 		}
 
+		int axeFxScene = 0;
 		int overrideCc = -1;
 		if (device == "Axe-Fx" && 
 			(patchType.empty() || patchType == "AxeToggle" || patchType == "AxeMomentary") && 
@@ -807,7 +808,6 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				if (patchType.empty())
 					patchType = "AxeToggle";
 
-				int scene = 0;
 				size_t pos = patchName.find("Scene");
 				if (std::string::npos == pos)
 					pos = patchName.find("scene");
@@ -817,11 +817,11 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 					if (!sceneStr.empty())
 					{
 						if (sceneStr.length() > 1 && sceneStr[0] == ' ')
-							scene = ::atoi(&sceneStr.c_str()[1]);
+							axeFxScene = ::atoi(&sceneStr.c_str()[1]);
 						else
-							scene = ::atoi(sceneStr.c_str());
+							axeFxScene = ::atoi(sceneStr.c_str());
 
-						if (scene)
+						if (axeFxScene)
 						{
 							// there is no axe-fx sync for scenes, so change to unsync'd patch type
 							if (patchType == "AxeToggle")
@@ -835,11 +835,11 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				// default to A (127)
 				bytes.push_back(0xb0 | patchDefaultCh);
 				bytes.push_back(axeCc);
-				bytes.push_back(scene ? (scene - 1) : 127);
+				bytes.push_back(axeFxScene ? (axeFxScene - 1) : 127);
 				cmds.push_back(new MidiCommandString(midiOut, bytes));
 				bytes.clear();
 
-				if (!scene)
+				if (!axeFxScene)
 				{
 					// default to B (0)
 					bytes.push_back(0xb0 | patchDefaultCh);
@@ -946,6 +946,14 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			continue;
 
 		mEngine->AddPatch(newPatch);
+		if (mAxeFxManager)
+		{
+			if (axeFxScene)
+				mAxeFxManager->SetScenePatch(axeFxScene, newPatch);
+			else
+				mAxeFxManager->SetLooperPatch(newPatch);
+		}
+
 		ExpressionPedals & pedals = newPatch->GetPedals();
 		for (childElem = hRoot.FirstChildElement().Element(); 
 			 childElem; 

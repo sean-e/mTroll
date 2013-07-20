@@ -705,9 +705,6 @@
 		<engineMetaPatch name="Loopers"   number="960" action="LoadBank" bankNumber="120" />
 		<engineMetaPatch name="Externals" number="961" action="LoadBank" bankNumber="121" />
 		<engineMetaPatch name="Scenes"    number="962" action="LoadBank" bankNumber="122" />
-
-		<!-- used to make Scene 1 LED active when changing Axe presets -->
-		<engineMetaPatch name="Scene Reset" number="970" action="ResetExclusiveGroup" activeSwitch="10" />
 	</patches>
 
 
@@ -763,18 +760,6 @@
 			<PatchMap switch="8"  patch="7" />
 			<PatchMap switch="9"  patch="8" />
 			<PatchMap switch="10" patch="9" />
-
-			<!-- reset scene group when preset switch pressed -->
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 10" number="11">
 			<PatchMap switch="1"  patch="10" />
@@ -787,17 +772,6 @@
 			<PatchMap switch="8"  patch="17" />
 			<PatchMap switch="9"  patch="18" />
 			<PatchMap switch="10" patch="19" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 20" number="12">
 			<PatchMap switch="1"  patch="20" />
@@ -810,17 +784,6 @@
 			<PatchMap switch="8"  patch="27" />
 			<PatchMap switch="9"  patch="28" />
 			<PatchMap switch="10" patch="29" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 30" number="13">
 			<PatchMap switch="1"  patch="30" />
@@ -833,17 +796,6 @@
 			<PatchMap switch="8"  patch="37" />
 			<PatchMap switch="9"  patch="38" />
 			<PatchMap switch="10" patch="39" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 40" number="14">
 			<PatchMap switch="1"  patch="40" />
@@ -856,17 +808,6 @@
 			<PatchMap switch="8"  patch="47" />
 			<PatchMap switch="9"  patch="48" />
 			<PatchMap switch="10" patch="49" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 50" number="15">
 			<PatchMap switch="1"  patch="50" />
@@ -879,17 +820,6 @@
 			<PatchMap switch="8"  patch="57" />
 			<PatchMap switch="9"  patch="58" />
 			<PatchMap switch="10" patch="59" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 60" number="16">
 			<PatchMap switch="1"  patch="60" />
@@ -902,17 +832,6 @@
 			<PatchMap switch="8"  patch="67" />
 			<PatchMap switch="9"  patch="68" />
 			<PatchMap switch="10" patch="69" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 70" number="17">
 			<PatchMap switch="1"  patch="70" />
@@ -925,17 +844,6 @@
 			<PatchMap switch="8"  patch="77" />
 			<PatchMap switch="9"  patch="78" />
 			<PatchMap switch="10" patch="79" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 80" number="18">
 			<PatchMap switch="1"  patch="80" />
@@ -948,17 +856,6 @@
 			<PatchMap switch="8"  patch="87" />
 			<PatchMap switch="9"  patch="88" />
 			<PatchMap switch="10" patch="89" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 90" number="19">
 			<PatchMap switch="1"  patch="90" />
@@ -971,17 +868,6 @@
 			<PatchMap switch="8"  patch="97" />
 			<PatchMap switch="9"  patch="98" />
 			<PatchMap switch="10" patch="99" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 100" number="20">
 			<PatchMap switch="1"  patch="100" />
@@ -994,17 +880,6 @@
 			<PatchMap switch="8"  patch="107" />
 			<PatchMap switch="9"  patch="108" />
 			<PatchMap switch="10" patch="109" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 110" number="21">
 			<PatchMap switch="1"  patch="110" />
@@ -1017,17 +892,6 @@
 			<PatchMap switch="8"  patch="117" />
 			<PatchMap switch="9"  patch="118" />
 			<PatchMap switch="10" patch="119" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 120" number="22">
 			<PatchMap switch="1"  patch="120" />
@@ -1040,17 +904,6 @@
 			<PatchMap switch="8"  patch="127" />
 			<PatchMap switch="9"  patch="128" />
 			<PatchMap switch="10" patch="129" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 130" number="23">
 			<PatchMap switch="1"  patch="130" />
@@ -1063,17 +916,6 @@
 			<PatchMap switch="8"  patch="137" />
 			<PatchMap switch="9"  patch="138" />
 			<PatchMap switch="10" patch="139" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 140" number="24">
 			<PatchMap switch="1"  patch="140" />
@@ -1086,17 +928,6 @@
 			<PatchMap switch="8"  patch="147" />
 			<PatchMap switch="9"  patch="148" />
 			<PatchMap switch="10" patch="149" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 150" number="25">
 			<PatchMap switch="1"  patch="150" />
@@ -1109,17 +940,6 @@
 			<PatchMap switch="8"  patch="157" />
 			<PatchMap switch="9"  patch="158" />
 			<PatchMap switch="10" patch="159" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 160" number="26">
 			<PatchMap switch="1"  patch="160" />
@@ -1132,17 +952,6 @@
 			<PatchMap switch="8"  patch="167" />
 			<PatchMap switch="9"  patch="168" />
 			<PatchMap switch="10" patch="169" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 170" number="27">
 			<PatchMap switch="1"  patch="170" />
@@ -1155,17 +964,6 @@
 			<PatchMap switch="8"  patch="177" />
 			<PatchMap switch="9"  patch="178" />
 			<PatchMap switch="10" patch="179" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 180" number="28">
 			<PatchMap switch="1"  patch="180" />
@@ -1178,17 +976,6 @@
 			<PatchMap switch="8"  patch="187" />
 			<PatchMap switch="9"  patch="188" />
 			<PatchMap switch="10" patch="189" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 190" number="29">
 			<PatchMap switch="1"  patch="190" />
@@ -1201,17 +988,6 @@
 			<PatchMap switch="8"  patch="179" />
 			<PatchMap switch="9"  patch="198" />
 			<PatchMap switch="10" patch="199" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 200" number="30">
 			<PatchMap switch="1"  patch="200" />
@@ -1224,17 +1000,6 @@
 			<PatchMap switch="8"  patch="207" />
 			<PatchMap switch="9"  patch="208" />
 			<PatchMap switch="10" patch="209" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 210" number="31">
 			<PatchMap switch="1"  patch="210" />
@@ -1247,17 +1012,6 @@
 			<PatchMap switch="8"  patch="217" />
 			<PatchMap switch="9"  patch="218" />
 			<PatchMap switch="10" patch="219" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 220" number="32">
 			<PatchMap switch="1"  patch="220" />
@@ -1270,17 +1024,6 @@
 			<PatchMap switch="8"  patch="227" />
 			<PatchMap switch="9"  patch="228" />
 			<PatchMap switch="10" patch="229" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 230" number="33">
 			<PatchMap switch="1"  patch="230" />
@@ -1293,17 +1036,6 @@
 			<PatchMap switch="8"  patch="237" />
 			<PatchMap switch="9"  patch="238" />
 			<PatchMap switch="10" patch="239" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 240" number="34">
 			<PatchMap switch="1"  patch="240" />
@@ -1316,17 +1048,6 @@
 			<PatchMap switch="8"  patch="247" />
 			<PatchMap switch="9"  patch="248" />
 			<PatchMap switch="10" patch="249" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 250" number="35">
 			<PatchMap switch="1"  patch="250" />
@@ -1339,17 +1060,6 @@
 			<PatchMap switch="8"  patch="257" />
 			<PatchMap switch="9"  patch="258" />
 			<PatchMap switch="10" patch="259" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 260" number="36">
 			<PatchMap switch="1"  patch="260" />
@@ -1362,17 +1072,6 @@
 			<PatchMap switch="8"  patch="267" />
 			<PatchMap switch="9"  patch="268" />
 			<PatchMap switch="10" patch="269" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 270" number="37">
 			<PatchMap switch="1"  patch="270" />
@@ -1385,17 +1084,6 @@
 			<PatchMap switch="8"  patch="277" />
 			<PatchMap switch="9"  patch="278" />
 			<PatchMap switch="10" patch="279" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 280" number="38">
 			<PatchMap switch="1"  patch="280" />
@@ -1408,17 +1096,6 @@
 			<PatchMap switch="8"  patch="287" />
 			<PatchMap switch="9"  patch="288" />
 			<PatchMap switch="10" patch="289" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 290" number="39">
 			<PatchMap switch="1"  patch="290" />
@@ -1431,17 +1108,6 @@
 			<PatchMap switch="8"  patch="297" />
 			<PatchMap switch="9"  patch="298" />
 			<PatchMap switch="10" patch="299" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 300" number="40">
 			<PatchMap switch="1"  patch="300" />
@@ -1454,17 +1120,6 @@
 			<PatchMap switch="8"  patch="307" />
 			<PatchMap switch="9"  patch="308" />
 			<PatchMap switch="10" patch="309" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 310" number="41">
 			<PatchMap switch="1"  patch="310" />
@@ -1477,17 +1132,6 @@
 			<PatchMap switch="8"  patch="317" />
 			<PatchMap switch="9"  patch="318" />
 			<PatchMap switch="10" patch="319" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 320" number="42">
 			<PatchMap switch="1"  patch="320" />
@@ -1500,17 +1144,6 @@
 			<PatchMap switch="8"  patch="327" />
 			<PatchMap switch="9"  patch="328" />
 			<PatchMap switch="10" patch="329" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 330" number="43">
 			<PatchMap switch="1"  patch="330" />
@@ -1523,17 +1156,6 @@
 			<PatchMap switch="8"  patch="337" />
 			<PatchMap switch="9"  patch="338" />
 			<PatchMap switch="10" patch="339" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 340" number="44">
 			<PatchMap switch="1"  patch="340" />
@@ -1546,17 +1168,6 @@
 			<PatchMap switch="8"  patch="347" />
 			<PatchMap switch="9"  patch="348" />
 			<PatchMap switch="10" patch="349" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 350" number="45">
 			<PatchMap switch="1"  patch="350" />
@@ -1569,17 +1180,6 @@
 			<PatchMap switch="8"  patch="357" />
 			<PatchMap switch="9"  patch="358" />
 			<PatchMap switch="10" patch="359" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 360" number="46">
 			<PatchMap switch="1"  patch="360" />
@@ -1592,17 +1192,6 @@
 			<PatchMap switch="8"  patch="367" />
 			<PatchMap switch="9"  patch="368" />
 			<PatchMap switch="10" patch="369" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 370" number="47">
 			<PatchMap switch="1"  patch="370" />
@@ -1615,28 +1204,12 @@
 			<PatchMap switch="8"  patch="377" />
 			<PatchMap switch="9"  patch="378" />
 			<PatchMap switch="10" patch="379" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
-			<PatchMap switch="5"  patch="970" />
-			<PatchMap switch="6"  patch="970" />
-			<PatchMap switch="7"  patch="970" />
-			<PatchMap switch="8"  patch="970" />
-			<PatchMap switch="9"  patch="970" />
-			<PatchMap switch="10" patch="970" />
 		</bank>
 		<bank name="Axe-Fx 380" number="48">
 			<PatchMap switch="1"  patch="380" />
 			<PatchMap switch="2"  patch="381" />
 			<PatchMap switch="3"  patch="382" />
 			<PatchMap switch="4"  patch="383" />
-
-			<PatchMap switch="1"  patch="970" />
-			<PatchMap switch="2"  patch="970" />
-			<PatchMap switch="3"  patch="970" />
-			<PatchMap switch="4"  patch="970" />
 		</bank>
 
 		<bank name="Reveal 1" number="100">

@@ -62,6 +62,8 @@ public:
 
 	void CompleteInit(IMidiOut * midiOut);
 	void SetTempoPatch(Patch * patch);
+	void SetScenePatch(int scene, Patch * patch);
+	void SetLooperPatch(Patch * patch);
 	bool SetSyncPatch(Patch * patch, int bypassCc = -1);
 	int GetAxeChannel() const { return mAxeChannel; }
 	void SyncPatchFromAxe(Patch * patch);
@@ -85,9 +87,12 @@ private:
 
 	void EnableLooperStatusMonitor(bool enable);
 	void ReceiveLooperStatus(const byte * bytes, int len);
+	void ReceiveSceneStatus(const byte * bytes, int len);
 
 	void RequestPresetName();
 	void ReceivePresetName(const byte * bytes, int len);
+	void DisplayPresetStatus();
+
 	void RequestPresetEffects();
 	void ReceivePresetEffects(const byte * bytes, int len);
 	void ReceivePresetEffectsV2(const byte * bytes, int len);
@@ -108,6 +113,10 @@ private:
 	ISwitchDisplay	* mSwitchDisplay;
 	IMidiOut		* mMidiOut;
 	Patch			* mTempoPatch;
+	enum { AxeScenes = 8 };
+	Patch			* mScenes[AxeScenes];
+	enum LoopPatchIdx { loopPatchRecord, loopPatchPlay, loopPatchPlayOnce, loopPatchUndo, loopPatchOverdub, loopPatchReverse, loopPatchHalf, loopPatchCnt };
+	Patch			* mLooperPatches[loopPatchCnt];
 	AxeEffectBlocks	mAxeEffectInfo;
 	QMutex			mQueryLock;
 	std::list<AxeEffectBlockInfo *> mQueries;
@@ -120,6 +129,8 @@ private:
 	AxeFxModel		mModel;
 	std::set<int>	mEditBufferEffectBlocks; // at last update
 	int				mLooperState;
+	int				mCurrentScene;
+	std::string		mCurrentAxePresetName;
 };
 
 int GetDefaultAxeCc(const std::string &effectName, ITraceDisplay * trc);
