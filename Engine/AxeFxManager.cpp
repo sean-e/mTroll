@@ -72,7 +72,8 @@ AxeFxManager::AxeFxManager(IMainDisplay * mainDisp,
 	mAxeChannel(ch),
 	mModel(mod),
 	mLooperState(0),
-	mCurrentScene(0)
+	mCurrentAxePreset(-1),
+	mCurrentScene(-1)
 {
 	::memset(mScenes, 0, sizeof(mScenes));
 	::memset(mLooperPatches, 0, sizeof(mLooperPatches));
@@ -381,6 +382,7 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 		return;
 	case 0x14:
 		// preset loaded
+		ReceivePresetNumber(&bytes[6], len - 6);
 		DelayedNameSyncFromAxe(true);
 		return;
 	case 0x20:
@@ -1363,6 +1365,20 @@ AxeFxManager::TurnOffLedsForNaEffects()
 }
 
 void
+AxeFxManager::ReceivePresetNumber(const byte * bytes, int len)
+{
+	if (len < 3)
+		return;
+
+	mCurrentAxePresetName.clear();
+	// 0xdd Preset Number bits 6-0
+	// 0xdd Preset Number bits 13-7
+	const int presetMs = bytes[0] << 7;
+	const int presetLs = bytes[1];
+	mCurrentAxePreset = presetMs | presetLs;
+}
+
+void
 AxeFxManager::EnableLooperStatusMonitor(bool enable)
 {
 	if (Axe2 != mModel || mFirmwareMajorVersion < 6)
@@ -1541,7 +1557,7 @@ AxeFxManager::ReceiveSceneStatus(const byte * bytes, int len)
 	if (mCurrentScene == bytes[0])
 		return;
 
-	if (mScenes[mCurrentScene])
+	if (mCurrentScene > -1 && mScenes[mCurrentScene])
 		mScenes[mCurrentScene]->UpdateState(mSwitchDisplay, false);
 
 	mCurrentScene = bytes[0];
@@ -1566,9 +1582,20 @@ AxeFxManager::DisplayPresetStatus()
 	int pos = curText.rfind(kPrefix);
 	if (std::string::npos != pos)
 		curText = curText.substr(0, pos);
-	curText += kPrefix + mCurrentAxePresetName;
+	
+	if (mCurrentAxePreset > -1 && mCurrentAxePreset < 1000)
+	{
+		char presetBuf[4];
+		::_itoa_s(mCurrentAxePreset + 1, presetBuf, 10);
+		if (mCurrentAxePresetName.empty())
+			curText += kPrefix + presetBuf;
+		else
+			curText += kPrefix + presetBuf + " " + mCurrentAxePresetName;
+	}
+	else if (!mCurrentAxePresetName.empty())
+		curText += kPrefix + mCurrentAxePresetName;
 
-	if (Axe2 == mModel && mFirmwareMajorVersion > 8)
+	if (Axe2 == mModel && mFirmwareMajorVersion > 8 && -1 != mCurrentScene)
 	{
 		char sceneBuf[4];
 		::_itoa_s(mCurrentScene + 1, sceneBuf, 10);
@@ -1577,6 +1604,7 @@ AxeFxManager::DisplayPresetStatus()
 
 	mMainDisplay->TextOut(curText);
 }
+
 
 
 

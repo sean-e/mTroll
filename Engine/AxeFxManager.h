@@ -87,6 +87,7 @@ private:
 
 	void EnableLooperStatusMonitor(bool enable);
 	void ReceiveLooperStatus(const byte * bytes, int len);
+	void ReceivePresetNumber(const byte * bytes, int len);
 	void ReceiveSceneStatus(const byte * bytes, int len);
 
 	void RequestPresetName();
@@ -130,6 +131,7 @@ private:
 	std::set<int>	mEditBufferEffectBlocks; // at last update
 	int				mLooperState;
 	int				mCurrentScene;
+	int				mCurrentAxePreset;
 	std::string		mCurrentAxePresetName;
 };
 
