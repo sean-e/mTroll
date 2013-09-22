@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008 Sean Echevarria
+ * Copyright (C) 2007-2008,2013 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -50,6 +50,8 @@ public:
 	virtual void MidiOut(byte singleByte, bool useIndicator = true);
 	virtual void MidiOut(byte byte1, byte byte2, bool useIndicator = true);
 	virtual void MidiOut(byte byte1, byte byte2, byte byte3, bool useIndicator = true);
+	virtual bool SuspendMidiOut();
+	virtual bool ResumeMidiOut();
 	virtual void CloseMidiOut();
 
 private:
@@ -61,6 +63,7 @@ private:
 	void MidiOut(DWORD shortMsg, bool useIndicator = true);
 	void IndicateActivity();
 	void TurnOffIndicator();
+	void ReleaseMidiOut();
 	static void CALLBACK TimerProc(HWND, UINT, UINT_PTR id, DWORD);
 	static void CALLBACK MidiOutCallbackProc(HMIDIOUT hmo, UINT wMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2);
 
@@ -75,6 +78,7 @@ private:
 	bool						mMidiOutError;
 	UINT_PTR					mTimerId;
 	LONG						mTimerEventCount;
+	unsigned int				mDeviceIdx;
 };
 
 #endif // WinMidiOut_h__

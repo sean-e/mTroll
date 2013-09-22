@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2013 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -42,7 +42,8 @@ WinMidiOut::WinMidiOut(ITraceDisplay * trace) :
 	mActivityIndicatorIndex(0),
 	mEnableActivityIndicator(false),
 	mTimerEventCount(0),
-	mTimerId(0)
+	mTimerId(0),
+	mDeviceIdx(0)
 {
 	for (int idx = 0; idx < MIDIHDR_CNT; ++idx)
 		ZeroMemory(&mMidiHdrs[idx], sizeof(MIDIHDR));
@@ -117,6 +118,7 @@ bool
 WinMidiOut::OpenMidiOut(unsigned int deviceIdx)
 {
 	_ASSERTE(!mMidiOut);
+	mDeviceIdx = deviceIdx;
 	MMRESULT res = ::midiOutOpen(&mMidiOut, deviceIdx, (DWORD_PTR)MidiOutCallbackProc, (DWORD_PTR)this, CALLBACK_FUNCTION);
 	if (MMSYSERR_NOERROR != res)
 		ReportMidiError(res, __LINE__);
@@ -391,12 +393,36 @@ WinMidiOut::TimerProc(HWND,
 	}
 }
 
+bool
+WinMidiOut::SuspendMidiOut()
+{
+	if (mMidiOut)
+	{
+		ReleaseMidiOut();
+		return true;
+	}
+
+	return false;
+}
+
+bool
+WinMidiOut::ResumeMidiOut()
+{
+	return OpenMidiOut(mDeviceIdx);
+}
+
 void
 WinMidiOut::CloseMidiOut()
 {
 	mEnableActivityIndicator = false;
 	mActivityIndicator = NULL;
 	mTimerEventCount = 0;
+	ReleaseMidiOut();
+}
+
+void
+WinMidiOut::ReleaseMidiOut()
+{
 	if (mMidiOut)
 	{
 		MMRESULT res = ::midiOutReset(mMidiOut);
@@ -447,6 +473,8 @@ WinMidiOut::ReportError(LPCTSTR msg,
 	errMsg.Format(msg, param1, param2);
 	ReportError(errMsg);
 }
+
+
 
 CString
 GetMidiErrorText(MMRESULT resultCode)

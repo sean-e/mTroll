@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010 Sean Echevarria
+ * Copyright (C) 2010,2013 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -46,6 +46,8 @@ public:
 	virtual bool IsMidiInOpen() const = 0;
 	virtual bool Subscribe(IMidiInSubscriber* sub) = 0;
 	virtual void Unsubscribe(IMidiInSubscriber* sub) = 0;
+	virtual bool SuspendMidiIn() = 0;
+	virtual bool ResumeMidiIn() = 0;
 	virtual void CloseMidiIn() = 0;
 };
 

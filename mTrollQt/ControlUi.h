@@ -84,6 +84,8 @@ public:
 			void ToggleTraceWindow();
 			void UpdateAdcs(const bool adcOverrides[ExpressionPedals::PedalCount]);
 			bool EnableTimeDisplay(bool enable);
+			bool SuspendMidi();
+			bool ResumeMidi();
 
 			void GetPreferredSize(int & width, int & height) const {width = mPreferredWidth; height = mPreferredHeight;}
 

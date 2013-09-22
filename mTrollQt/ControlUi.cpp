@@ -1478,3 +1478,59 @@ ControlUi::CreateMidiIn(unsigned int deviceIdx)
 	return NULL;
 #endif // USE_MIDI_IN
 }
+
+bool
+ControlUi::SuspendMidi()
+{
+	bool anySuspended = false;
+	std::for_each(mMidiOuts.begin(), mMidiOuts.end(), 
+		[&anySuspended](std::pair<unsigned int, IMidiOut *> pr)
+	{
+		if (pr.second->SuspendMidiOut())
+			anySuspended = true;
+	});
+
+	std::for_each(mMidiIns.begin(), mMidiIns.end(), 
+		[&anySuspended](const std::pair<unsigned int, IMidiIn *> pr)
+	{
+		if (pr.second->SuspendMidiIn())
+			anySuspended = true;
+	});
+
+	if (anySuspended)
+	{
+		std::strstream msg;
+		msg << "Suspended MIDI connections" << std::endl << std::ends;
+		Trace(msg.str());
+	}
+
+	return anySuspended;
+}
+
+bool
+ControlUi::ResumeMidi()
+{
+	bool allResumed = true;
+	std::for_each(mMidiOuts.begin(), mMidiOuts.end(), 
+		[&allResumed](std::pair<unsigned int, IMidiOut *> pr)
+	{
+		if (!pr.second->ResumeMidiOut())
+			allResumed = false;
+	});
+
+	std::for_each(mMidiIns.begin(), mMidiIns.end(), 
+		[&allResumed](const std::pair<unsigned int, IMidiIn *> pr)
+	{
+		if (!pr.second->ResumeMidiIn())
+			allResumed = false;
+	});
+
+	if (allResumed)
+	{
+		std::strstream msg;
+		msg << "Resumed MIDI connections" << std::endl << std::ends;
+		Trace(msg.str());
+	}
+
+	return allResumed;
+}

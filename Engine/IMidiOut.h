@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008 Sean Echevarria
+ * Copyright (C) 2007-2008,2013 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -52,6 +52,8 @@ public:
 	virtual void MidiOut(byte singleByte, bool useIndicator = true) = 0;
 	virtual void MidiOut(byte byte1, byte byte2, bool useIndicator = true) = 0;
 	virtual void MidiOut(byte byte1, byte byte2, byte byte3, bool useIndicator = true) = 0;
+	virtual bool SuspendMidiOut() = 0;
+	virtual bool ResumeMidiOut() = 0;
 	virtual void CloseMidiOut() = 0;
 };
 

@@ -44,7 +44,8 @@
 
 MainTrollWindow::MainTrollWindow() : 
 	QMainWindow(),
-	mUi(NULL)
+	mUi(NULL),
+	mMidiSuspendAction(NULL)
 {
 	QCoreApplication::setOrganizationName(kOrganizationKey);
 	QCoreApplication::setOrganizationDomain(kOrganizationDomain);
@@ -119,6 +120,13 @@ MainTrollWindow::MainTrollWindow() :
 	fileMenu->addAction(tr("&Refresh"), this, SLOT(Refresh()), QKeySequence(tr("F5")));
 	fileMenu->addAction(tr("Re&connect to monome device"), this, SLOT(Reconnect()), QKeySequence(tr("Ctrl+R")));
 	fileMenu->addAction(tr("&Toggle trace window visibility"), this, SLOT(ToggleTraceWindow()), QKeySequence(tr("Ctrl+T")));
+
+	mMidiSuspendAction = new QAction(tr("Suspend &MIDI connections"), this);
+	mMidiSuspendAction->setCheckable(true);
+	mMidiSuspendAction->setChecked(false);
+	connect(mMidiSuspendAction, SIGNAL(toggled(bool)), this, "1SuspendMidiToggle(bool)");
+	fileMenu->addAction(mMidiSuspendAction);
+
 	if (!hasTouchInput)
 		fileMenu->addSeparator();
 	fileMenu->addAction(tr("E&xit"), this, SLOT(close()));
@@ -313,4 +321,19 @@ MainTrollWindow::ApplicationDirectory()
 	const QString path(QApplication::applicationDirPath());
 	const std::string pathStd(path.toLatin1());
 	return pathStd;
+}
+
+void
+MainTrollWindow::SuspendMidiToggle(bool checked)
+{
+	if (checked)
+	{
+		if (mUi)
+			mUi->SuspendMidi();
+	}
+	else 
+	{
+		if (mUi)
+			mUi->ResumeMidi();
+	}
 }

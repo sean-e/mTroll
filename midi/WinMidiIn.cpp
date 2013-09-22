@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010 Sean Echevarria
+ * Copyright (C) 2010,2013 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -269,25 +269,12 @@ WinMidiIn::MidiInCallbackProc(HMIDIIN hmi,
 void
 WinMidiIn::CloseMidiIn()
 {
-	if (mThread)
-	{
-		_ASSERTE(mDoneEvent);
-		::SetEvent(mDoneEvent);
-		::WaitForSingleObjectEx(mThread, 30000, FALSE);
-		_ASSERTE(mThreadState == tsNotStarted);
-		::CloseHandle(mThread);
-		mThread = NULL;
-		mThreadId = 0;
-	}
-
-	_ASSERTE(!mMidiIn);
-
+	ReleaseMidiIn();
 	for (MidiInSubscribers::const_iterator it = mInputSubscribers.begin();
 		it != mInputSubscribers.end(); ++it)
 	{
 		(*it)->Closed(this);
 	}
-
 	mInputSubscribers.clear();
 }
 
@@ -370,6 +357,43 @@ WinMidiIn::Unsubscribe(IMidiInSubscriber* sub)
 		_ASSERTE(!"don't unsubscribe to midi in events until thread has stopped");
 	}
 }
+
+bool
+WinMidiIn::SuspendMidiIn()
+{
+	if (mMidiIn)
+	{
+		ReleaseMidiIn();
+		return true;
+	}
+
+	return false;
+}
+
+bool
+WinMidiIn::ResumeMidiIn()
+{
+	return OpenMidiIn(mDeviceIdx);
+}
+
+void
+WinMidiIn::ReleaseMidiIn()
+{
+	if (mThread)
+	{
+		_ASSERTE(mDoneEvent);
+		::SetEvent(mDoneEvent);
+		::WaitForSingleObjectEx(mThread, 30000, FALSE);
+		_ASSERTE(mThreadState == tsNotStarted);
+		::CloseHandle(mThread);
+		mThread = NULL;
+		mThreadId = 0;
+	}
+
+	_ASSERTE(!mMidiIn);
+}
+
+
 
 CString
 GetMidiErrorText(MMRESULT resultCode)

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010 Sean Echevarria
+ * Copyright (C) 2007-2010,2013 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -43,6 +43,7 @@ public:
 private slots:
 	void About();
 	void OpenFile();
+	void SuspendMidiToggle(bool checked);
 	virtual void Refresh();
 	virtual void Reconnect();
 	virtual void ToggleTraceWindow();
@@ -63,6 +64,7 @@ private:
 	QString		mUiFilename;
 	bool		mAdcForceDisable[ExpressionPedals::PedalCount];
 	QAction		* mAdcOverrideActions[ExpressionPedals::PedalCount];
+	QAction		* mMidiSuspendAction;
 
 private:
 	void ToggleAdcOverride(int adc, bool checked);

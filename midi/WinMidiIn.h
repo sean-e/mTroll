@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010 Sean Echevarria
+ * Copyright (C) 2010,2013 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -47,11 +47,14 @@ public:
 	virtual bool IsMidiInOpen() const {return mMidiIn != NULL;}
 	virtual bool Subscribe(IMidiInSubscriber* sub);
 	virtual void Unsubscribe(IMidiInSubscriber* sub);
+	virtual bool SuspendMidiIn();
+	virtual bool ResumeMidiIn();
 	virtual void CloseMidiIn();
 
 private:
 	static unsigned int __stdcall ServiceThread(void * _this);
 	void ServiceThread();
+	void ReleaseMidiIn();
 	void ReportMidiError(MMRESULT resultCode, unsigned int lineNumber);
 	void ReportError(LPCTSTR msg);
 	void ReportError(LPCTSTR msg, int param1);
