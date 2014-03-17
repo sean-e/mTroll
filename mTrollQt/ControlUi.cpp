@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2013 Sean Echevarria
+ * Copyright (C) 2007-2014 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -1014,6 +1014,25 @@ ControlUi::CreateMidiOut(unsigned int deviceIdx,
 	return mMidiOuts[deviceIdx];
 }
 
+unsigned int
+ControlUi::GetMidiOutDeviceIndex(const std::string &deviceName)
+{
+	XMidiOut midiOut(nullptr);
+	std::string devNameLower(deviceName);
+	std::transform(devNameLower.begin(), devNameLower.end(), devNameLower.begin(), ::tolower);
+	const unsigned int kCnt = midiOut.GetMidiOutDeviceCount();
+	for (unsigned int idx = 0; idx < kCnt; ++idx)
+	{
+		std::string curName(midiOut.GetMidiOutDeviceName(idx));
+		std::transform(curName.begin(), curName.end(), curName.begin(), ::tolower);
+		if (-1 != curName.find(devNameLower))
+			return idx;
+	}
+
+	return -1;
+}
+
+
 IMidiOut *
 ControlUi::GetMidiOut(unsigned int deviceIdx)
 {
@@ -1478,6 +1497,29 @@ ControlUi::CreateMidiIn(unsigned int deviceIdx)
 	return NULL;
 #endif // USE_MIDI_IN
 }
+
+unsigned int
+ControlUi::GetMidiInDeviceIndex(const std::string &deviceName)
+{
+#ifdef USE_MIDI_IN
+	XMidiIn midiIn(nullptr);
+	std::string devNameLower(deviceName);
+	std::transform(devNameLower.begin(), devNameLower.end(), devNameLower.begin(), ::tolower);
+	const unsigned int kCnt = midiIn.GetMidiInDeviceCount();
+	for (unsigned int idx = 0; idx < kCnt; ++idx)
+	{
+		std::string curName(midiIn.GetMidiInDeviceName(idx));
+		std::transform(curName.begin(), curName.end(), curName.begin(), ::tolower);
+		if (-1 != curName.find(devNameLower))
+			return idx;
+	}
+
+	return -1;
+#else
+	return NULL;
+#endif // USE_MIDI_IN
+}
+
 
 bool
 ControlUi::SuspendMidi()

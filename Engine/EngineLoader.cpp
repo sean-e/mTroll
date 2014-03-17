@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2013 Sean Echevarria
+ * Copyright (C) 2007-2014 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -222,6 +222,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 	}
 
 	// <midiDevice port="1" outIdx="3" activityIndicatorId="100" />
+	// <midiDevice port="2" out="Axe-Fx II" in="Axe-Fx II" activityIndicatorId="100" />
 	pChildElem = hRoot.FirstChild("midiDevices").FirstChildElement().Element();
 	for ( ; pChildElem; pChildElem = pChildElem->NextSiblingElement())
 	{
@@ -229,11 +230,42 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 		int inDeviceIdx = -1;
 		int activityIndicatorId = -1;
 		int port = 1;
+		std::string inDevice, outDevice;
 
+		if (pChildElem->Attribute("in"))
+			inDevice = pChildElem->Attribute("in");
+		if (pChildElem->Attribute("out"))
+			outDevice = pChildElem->Attribute("out");
 		pChildElem->QueryIntAttribute("inIdx", &inDeviceIdx);
 		pChildElem->QueryIntAttribute("port", &port);
 		pChildElem->QueryIntAttribute("outIdx", &deviceIdx);
 		pChildElem->QueryIntAttribute("activityIndicatorId", &activityIndicatorId);
+
+		if (!outDevice.empty())
+		{
+			unsigned int idx = mMidiOutGenerator->GetMidiOutDeviceIndex(outDevice);
+			if (-1 != idx)
+				deviceIdx = idx;
+			else if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file midiDevices section: MidiOut device name not found: " << outDevice << std::endl << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
+		}
+
+		if (!inDevice.empty() && mMidiInGenerator)
+		{
+			unsigned int idx = mMidiInGenerator->GetMidiInDeviceIndex(inDevice);
+			if (-1 != idx)
+				inDeviceIdx = idx;
+			else if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file midiDevices section: MidiIn device name not found: " << inDevice << std::endl << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
+		}
 
 		if (-1 == inDeviceIdx || -1 != deviceIdx)
 		{

@@ -42,7 +42,7 @@
 		</switches>
 
 		<midiDevices>
-			<midiDevice port="1" activityIndicatorId="23" outIdx="1" inIdx="0" />
+			<midiDevice port="1" activityIndicatorId="23" out="Axe-Fx II" in="Axe-Fx II" />
 		</midiDevices>
 
 		<!-- port attr on expression block is required -->
