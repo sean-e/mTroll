@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2012 Sean Echevarria
+ * Copyright (C) 2010-2012,2014 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -69,8 +69,14 @@ public:
 		{
 			mHasDisplayText = true;
 			baseEffectName.replace(xyPos, xy.length(), "");
-			mActiveText = baseEffectName + " X";
-			mInactiveText = baseEffectName + " Y";
+			// originally, I had X as active and Y as inactive but I prefer
+			// LED off for X and on for Y
+			mActiveText = baseEffectName + " Y";
+			mInactiveText = baseEffectName + " X";
+			// swap commands to support inverted LED behavior for X and Y.
+			// see also UpdateState call in AxeFxManager::ReceivePresetEffectsV2
+			// for the other change required to support LED inversion for X/Y.
+			mCmdsA.swap(mCmdsB);
 		}
 	}
 

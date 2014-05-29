@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2013 Sean Echevarria
+ * Copyright (C) 2010-2014 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -1310,8 +1310,12 @@ AxeFxManager::ReceivePresetEffectsV2(const byte * bytes, int len)
 					const bool isX = isActive || isBypassed;
 					const bool isY = isActiveY || isBypassedY;
 					_ASSERTE(isX ^ isY);
-					if (inf->mXyPatch->IsActive() != isX)
-						inf->mXyPatch->UpdateState(mSwitchDisplay, isX);
+					// Axe-FxII considers X active and Y inactive, but I prefer
+					// LED off for X and on for Y.  Original behavior below was to
+					// use isX instead of isY.  See AxeTogglePatch::AxeTogglePatch
+					// for the other change required for LED inversion of X/Y.
+					if (inf->mXyPatch->IsActive() != isY)
+						inf->mXyPatch->UpdateState(mSwitchDisplay, isY);
 				}
 			}
 			else if (mTrace)
