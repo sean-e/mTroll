@@ -251,6 +251,12 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 				std::strstream traceMsg;
 				traceMsg << "Error loading config file midiDevices section: MidiOut device name not found: " << outDevice << std::endl << std::ends;
 				mTraceDisplay->Trace(std::string(traceMsg.str()));
+
+				if (-1 == deviceIdx)
+				{
+					// do not default to -1 if name was specified (if idx specified, then try it)
+					continue;
+				}
 			}
 		}
 
@@ -264,27 +270,45 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 				std::strstream traceMsg;
 				traceMsg << "Error loading config file midiDevices section: MidiIn device name not found: " << inDevice << std::endl << std::ends;
 				mTraceDisplay->Trace(std::string(traceMsg.str()));
+
+				if (-1 == inDeviceIdx)
+				{
+					// do not default to -1 if name was specified (if idx specified, then try it)
+					continue;
+				}
 			}
 		}
 
 		if (-1 == inDeviceIdx || -1 != deviceIdx)
 		{
 			if (-1 == deviceIdx)
-				deviceIdx = 1; // maintain back compat with original behavior
-			mMidiOutPortToDeviceIdxMap[port] = deviceIdx;
-			mMidiOutGenerator->CreateMidiOut(mMidiOutPortToDeviceIdxMap[port], activityIndicatorId);
+			{
+				// maintain back compat with original behavior
+				deviceIdx = 1;
+			}
+
+			// first successful port binding is last one attempted for that port
+			if (mMidiOutPortToDeviceIdxMap.find(port) == mMidiOutPortToDeviceIdxMap.end())
+			{
+				if (mMidiOutGenerator->CreateMidiOut(deviceIdx, activityIndicatorId))
+					mMidiOutPortToDeviceIdxMap[port] = deviceIdx;
+			}
 		}
 
-		if (-1 != inDeviceIdx)
+		if (-1 != inDeviceIdx && mMidiInGenerator)
 		{
-			mMidiInPortToDeviceIdxMap[port] = inDeviceIdx;
-			if (mMidiInGenerator)
+			// first successful port binding is last one attempted for that port
+			if (mMidiInPortToDeviceIdxMap.find(port) == mMidiInPortToDeviceIdxMap.end())
 			{
-				IMidiIn * midiIn = mMidiInGenerator->CreateMidiIn(mMidiInPortToDeviceIdxMap[port]);
-				if (mAxeFxManager && port == mAxeSyncPort && midiIn)
+				IMidiIn * midiIn = mMidiInGenerator->CreateMidiIn(inDeviceIdx);
+				if (midiIn)
 				{
-					if (midiIn->Subscribe(mAxeFxManager))
-						mAxeFxManager->AddRef();
+					mMidiInPortToDeviceIdxMap[port] = inDeviceIdx;
+					if (mAxeFxManager && port == mAxeSyncPort && midiIn)
+					{
+						if (midiIn->Subscribe(mAxeFxManager))
+							mAxeFxManager->AddRef();
+					}
 				}
 			}
 		}
@@ -304,6 +328,22 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 	//   <adc inputNumber="" enable="" />
 	// </expression>
 	ExpressionPedals & globalPedals = mEngine->GetPedals();
+	int defaultExprPedalMidiOutPortNumber = -1;
+	pChildElem = hRoot.FirstChild("expression").Element();
+	if (pChildElem)
+	{
+		pChildElem->QueryIntAttribute("port", &defaultExprPedalMidiOutPortNumber);
+		if (-1 == defaultExprPedalMidiOutPortNumber && mMidiOutPortToDeviceIdxMap.begin() != mMidiOutPortToDeviceIdxMap.end())
+			defaultExprPedalMidiOutPortNumber = (*mMidiOutPortToDeviceIdxMap.begin()).second;
+		if (-1 == defaultExprPedalMidiOutPortNumber)
+			return false;
+		IMidiOut * globalExprPedalMidiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[defaultExprPedalMidiOutPortNumber]);
+		if (!globalExprPedalMidiOut)
+			return false;
+
+		globalPedals.InitMidiOut(globalExprPedalMidiOut);
+	}
+
 	pChildElem = hRoot.FirstChild("expression").FirstChildElement().Element();
 	for ( ; pChildElem; pChildElem = pChildElem->NextSiblingElement())
 	{
@@ -348,22 +388,6 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 				pc.mTopToggleDeadzoneSize = topToggleDeadzoneSize;
 			}
 		}
-	}
-
-	int midiOutPortNumber = -1;
-	pChildElem = hRoot.FirstChild("expression").Element();
-	if (pChildElem)
-	{
-		pChildElem->QueryIntAttribute("port", &midiOutPortNumber);
-		if (-1 == midiOutPortNumber && mMidiOutPortToDeviceIdxMap.begin() != mMidiOutPortToDeviceIdxMap.end())
-			midiOutPortNumber = (*mMidiOutPortToDeviceIdxMap.begin()).second;
-		if (-1 == midiOutPortNumber)
-			return false;
-		IMidiOut * globalExprPedalMidiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[midiOutPortNumber]);
-		if (!globalExprPedalMidiOut)
-			return false;
-
-		globalPedals.InitMidiOut(globalExprPedalMidiOut);
 	}
 
 	pChildElem = hRoot.FirstChild("switches").FirstChildElement().Element();
@@ -994,7 +1018,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			const std::string patchElement = childElem->ValueStr();
 			if (patchElement == "localExpr")
 			{
-				// <localExpr inputNumber="1" assignmentNumber="1" channel="" controller="" min="" max="" invert="0" enable="" />
+				// <localExpr inputNumber="1" assignmentNumber="1" channel="" controller="" min="" max="" invert="0" enable="" port="2" />
 				LoadExpressionPedalSettings(childElem, pedals, patchDefaultCh + 1);
 			}
 			else if (patchElement == "globalExpr")
@@ -1152,6 +1176,7 @@ EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem,
 	int isDoubleByte = 0;
 	int bottomTogglePatchNumber = -1;
 	int topTogglePatchNumber = -1;
+	int midiOutPortNumber = -1;
 	ExpressionControl::SweepCurve curve = ExpressionControl::scLinear;
 
 	childElem->QueryIntAttribute("inputNumber", &exprInputNumber);
@@ -1227,6 +1252,14 @@ EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem,
 		initParams.mTopTogglePatchNumber = topTogglePatchNumber;
 		initParams.mCurve = curve;
 		pedals.Init(exprInputNumber - 1, assignmentIndex - 1, initParams);
+
+		childElem->QueryIntAttribute("port", &midiOutPortNumber);
+		if (-1 != midiOutPortNumber)
+		{
+			IMidiOut * midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[midiOutPortNumber]);
+			if (midiOut)
+				pedals.InitMidiOut(midiOut, exprInputNumber - 1, assignmentIndex - 1);
+		}
 	}
 	else if (enable)
 	{

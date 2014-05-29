@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010 Sean Echevarria
+ * Copyright (C) 2007-2010,2014 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -162,16 +162,19 @@ public:
 		mMaxAdcVal(PedalCalibration::MaxAdcVal), 
 		mActiveAdcRangeStart(0),
 		mActiveAdcRangeEnd(PedalCalibration::MaxAdcVal),
-		mAdcValRange(PedalCalibration::MaxAdcVal)
+		mAdcValRange(PedalCalibration::MaxAdcVal),
+		mMidiOut(nullptr)
 	{ }
 
 	void Init(const InitParams & params);
+	void InitMidiOut(IMidiOut * midiOut) { mMidiOut = midiOut; }
 
 	void Calibrate(const PedalCalibration & calibrationSetting, MidiControlEngine * eng, ITraceDisplay * traceDisp);
-	void AdcValueChange(IMainDisplay * mainDisplay, IMidiOut * midiOut, int newVal);
-	void Refire(IMainDisplay * mainDisplay, IMidiOut * midiOut);
+	void AdcValueChange(IMainDisplay * mainDisplay, int newVal);
+	void Refire(IMainDisplay * mainDisplay);
 
 private:
+	IMidiOut			*mMidiOut;
 	bool				mEnabled;
 	bool				mInverted;
 	bool				mIsDoubleByte;
@@ -210,22 +213,28 @@ public:
 		mPedalControlData[idx].Init(params);
 	}
 
+	void InitMidiOut(int idx, IMidiOut * midiOut) 
+	{ 
+		_ASSERTE(idx < ccsPerPedals);
+		mPedalControlData[idx].InitMidiOut(midiOut); 
+	}
+
 	void Calibrate(const PedalCalibration & calibrationSetting, MidiControlEngine * eng, ITraceDisplay * traceDisp)
 	{
 		mPedalControlData[0].Calibrate(calibrationSetting, eng, traceDisp);
 		mPedalControlData[1].Calibrate(calibrationSetting, eng, traceDisp);
 	}
 
-	void AdcValueChange(IMainDisplay * mainDisplay, IMidiOut * midiOut, int newVal)
+	void AdcValueChange(IMainDisplay * mainDisplay, int newVal)
 	{
-		mPedalControlData[0].AdcValueChange(mainDisplay, midiOut, newVal);
-		mPedalControlData[1].AdcValueChange(mainDisplay, midiOut, newVal);
+		mPedalControlData[0].AdcValueChange(mainDisplay, newVal);
+		mPedalControlData[1].AdcValueChange(mainDisplay, newVal);
 	}
 
-	void Refire(IMainDisplay * mainDisplay, IMidiOut * midiOut)
+	void Refire(IMainDisplay * mainDisplay)
 	{
-		mPedalControlData[0].Refire(mainDisplay, midiOut);
-		mPedalControlData[1].Refire(mainDisplay, midiOut);
+		mPedalControlData[0].Refire(mainDisplay);
+		mPedalControlData[1].Refire(mainDisplay);
 	}
 
 private:
@@ -238,13 +247,15 @@ class ExpressionPedals
 public:
 	enum {PedalCount = 4};
 
-	ExpressionPedals(IMidiOut * midiOut = NULL) : mHasAnyNondefault(false), mMidiOut(midiOut)
+	ExpressionPedals(IMidiOut * midiOut = NULL) : mHasAnyNondefault(false)
 	{
 		int idx;
 		for (idx = 0; idx < PedalCount; ++idx)
 			mGlobalEnables[idx] = true;
 		for (idx = 0; idx < PedalCount; ++idx)
 			mPedalEnables[idx] = false;
+
+		InitMidiOut(midiOut);
 	}
 
 	bool HasAnySettings() const { return mHasAnyNondefault; }
@@ -256,7 +267,20 @@ public:
 		mHasAnyNondefault = true;
 	}
 
-	void InitMidiOut(IMidiOut * midiOut) {mMidiOut = midiOut;}
+	void InitMidiOut(IMidiOut * midiOut) 
+	{
+		for (int idx = 0; idx < PedalCount; ++idx)
+		{
+			mPedals[idx].InitMidiOut(0, midiOut);
+			mPedals[idx].InitMidiOut(1, midiOut);
+		}
+	}
+
+	void InitMidiOut(IMidiOut * midiOut, int pedal, int ccIdx) 
+	{
+		_ASSERTE(pedal < PedalCount);
+		mPedals[pedal].InitMidiOut(ccIdx, midiOut);
+	}
 
 	void Init(int pedal, 
 			  int idx, 
@@ -279,9 +303,8 @@ public:
 						int newVal)
 	{
 		_ASSERTE(pedal < PedalCount);
-		_ASSERTE(mMidiOut);
 		if (mPedalEnables[pedal])
-			mPedals[pedal].AdcValueChange(mainDisplay, mMidiOut, newVal);
+			mPedals[pedal].AdcValueChange(mainDisplay, newVal);
 		return mGlobalEnables[pedal];
 	}
 
@@ -289,15 +312,13 @@ public:
 				int pedal)
 	{
 		_ASSERTE(pedal < PedalCount);
-		_ASSERTE(mMidiOut);
 		if (mPedalEnables[pedal])
-			mPedals[pedal].Refire(mainDisplay, mMidiOut);
+			mPedals[pedal].Refire(mainDisplay);
 		return mGlobalEnables[pedal];
 	}
 
 private:
 	bool					mHasAnyNondefault;
-	IMidiOut				* mMidiOut;
 	bool					mGlobalEnables[PedalCount];
 	bool					mPedalEnables[PedalCount];	// true if either cc is enabled for a pedal
 	ExpressionPedal			mPedals[PedalCount];

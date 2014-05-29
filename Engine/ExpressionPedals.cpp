@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2011 Sean Echevarria
+ * Copyright (C) 2007-2011,2014 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -191,12 +191,12 @@ ExpressionControl::Calibrate(const PedalCalibration & calibrationSetting,
 
 void
 ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay, 
-								  IMidiOut * midiOut, 
-								  int newAdcVal)
+								  int newVal)
 {
 	if (!mEnabled)
 		return;
 
+	_ASSERTE(mMidiOut);
 	int newCcVal;
 	bool showStatus = false;
 	bool doCcSend = true;
@@ -208,9 +208,9 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 	bool topDeadzone = false;
 
 	// unaffected by toggle zones
-	const int cappedAdcVal = newAdcVal < mMinAdcVal ? 
+	const int cappedAdcVal = newVal < mMinAdcVal ? 
 			mMinAdcVal : 
-			(newAdcVal > mMaxAdcVal) ? mMaxAdcVal : newAdcVal;
+			(newVal > mMaxAdcVal) ? mMaxAdcVal : newVal;
 
 	int adcVal = cappedAdcVal - mActiveAdcRangeStart;
 	switch (mSweepCurve)
@@ -414,36 +414,36 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 				if (oldCoarseCcVal < newCoarseCcVal)
 				{
 					for (oldFineCcVal += kFineIncVal; oldFineCcVal < 127; oldFineCcVal += kFineIncVal)
-						midiOut->MidiOut(mMidiData[0], fineCh, oldFineCcVal, false);
+						mMidiOut->MidiOut(mMidiData[0], fineCh, oldFineCcVal, false);
 
 					oldFineCcVal = 0;
-					midiOut->MidiOut(mMidiData[0], coarseCh, ++oldCoarseCcVal, false);
+					mMidiOut->MidiOut(mMidiData[0], coarseCh, ++oldCoarseCcVal, false);
 				}
 				else
 				{
 					for (oldFineCcVal -= kFineIncVal; oldFineCcVal > 0 && oldFineCcVal < 127; oldFineCcVal -= kFineIncVal)
-						midiOut->MidiOut(mMidiData[0], fineCh, oldFineCcVal, false);
+						mMidiOut->MidiOut(mMidiData[0], fineCh, oldFineCcVal, false);
 
 					oldFineCcVal = 127;
-					midiOut->MidiOut(mMidiData[0], coarseCh, --oldCoarseCcVal, false);
+					mMidiOut->MidiOut(mMidiData[0], coarseCh, --oldCoarseCcVal, false);
 				}
 			}
 
 			if (oldFineCcVal < newFineCcVal)
 			{
 				for (oldFineCcVal += kFineIncVal; oldFineCcVal < newFineCcVal; oldFineCcVal += kFineIncVal)
-					midiOut->MidiOut(mMidiData[0], fineCh, oldFineCcVal, false);
+					mMidiOut->MidiOut(mMidiData[0], fineCh, oldFineCcVal, false);
 			}
 			else if (oldFineCcVal > newFineCcVal)
 			{
 				for (oldFineCcVal -= kFineIncVal; oldFineCcVal > newFineCcVal && oldFineCcVal < 127; oldFineCcVal -= kFineIncVal)
-					midiOut->MidiOut(mMidiData[0], fineCh, oldFineCcVal, false);
+					mMidiOut->MidiOut(mMidiData[0], fineCh, oldFineCcVal, false);
 			}
 
-			midiOut->MidiOut(mMidiData[0], fineCh, newFineCcVal, showStatus);
+			mMidiOut->MidiOut(mMidiData[0], fineCh, newFineCcVal, showStatus);
 #else
-			midiOut->MidiOut(mMidiData[0], mMidiData[1], newCoarseCcVal, showStatus);
-			midiOut->MidiOut(mMidiData[0], mMidiData[1] + 32, newFineCcVal, showStatus);
+			mMidiOut->MidiOut(mMidiData[0], mMidiData[1], newCoarseCcVal, showStatus);
+			mMidiOut->MidiOut(mMidiData[0], mMidiData[1] + 32, newFineCcVal, showStatus);
 #endif
 
 			mMidiData[4] = mMidiData[3];
@@ -478,7 +478,7 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 		{
 			mMidiData[3] = mMidiData[2];
 			mMidiData[2] = newCcVal;
-			midiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], showStatus);
+			mMidiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], showStatus);
 		}
 	}
 
@@ -516,16 +516,16 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 			{
 				if (mIsDoubleByte)
 				{
-					displayMsg << "adc ch(" << (int) mChannel << "), ctrl(" << (int) mControlNumber << "): " << newAdcVal << " -> " << (int) mMidiData[2] << std::endl;
-					displayMsg << "adc ch(" << (int) mChannel << "), ctrl(" << ((int) mControlNumber) + 31 << "): " << newAdcVal << " -> " << (int) mMidiData[3] << std::endl << std::ends;
+					displayMsg << "adc ch(" << (int) mChannel << "), ctrl(" << (int) mControlNumber << "): " << newVal << " -> " << (int) mMidiData[2] << std::endl;
+					displayMsg << "adc ch(" << (int) mChannel << "), ctrl(" << ((int) mControlNumber) + 31 << "): " << newVal << " -> " << (int) mMidiData[3] << std::endl << std::ends;
 				}
 				else
 				{
 #ifdef PEDAL_TEST
 					// to ease insert into spreadsheet
-					displayMsg << newAdcVal << ", " << (int) mMidiData[2] << std::endl << std::ends;
+					displayMsg << newVal << ", " << (int) mMidiData[2] << std::endl << std::ends;
 #else
-					displayMsg << "adc ch(" << (int) mChannel << "), ctrl(" << (int) mControlNumber << "): " << newAdcVal << " -> " << (int) mMidiData[2] << std::endl << std::ends;
+					displayMsg << "adc ch(" << (int) mChannel << "), ctrl(" << (int) mControlNumber << "): " << newVal << " -> " << (int) mMidiData[2] << std::endl << std::ends;
 #endif
 				}
 	
@@ -543,25 +543,26 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 }
 
 void
-ExpressionControl::Refire(IMainDisplay * mainDisplay,
-						  IMidiOut * midiOut)
+ExpressionControl::Refire(IMainDisplay * mainDisplay)
 {
 	if (!mEnabled)
 		return;
+
+	_ASSERTE(mMidiOut);
 
 	// the refire command may not work as intended if a toggle is present
 	if (mIsDoubleByte)
 	{
 		if (0xff != mMidiData[2] && 0xff != mMidiData[3])
 		{
-			midiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], true);
-			midiOut->MidiOut(mMidiData[0], mMidiData[1] + 32, mMidiData[3], true);
+			mMidiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], true);
+			mMidiOut->MidiOut(mMidiData[0], mMidiData[1] + 32, mMidiData[3], true);
 		}
 	}
 	else
 	{
 		if (mMidiData[2] != 0xff)
-			midiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], true);
+			mMidiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], true);
 	}
 }
 
@@ -620,10 +621,10 @@ void TestPedals()
 
 	int idx;
 	for (idx = 0; idx <= PedalCalibration::MaxAdcVal; ++idx)
-		ctl.AdcValueChange(&disp, &midi, idx);
+		ctl.AdcValueChange(&disp, idx);
 
 // 	for (idx = PedalCalibration::MaxAdcVal + 1; idx > 0; )
-// 		ctl.AdcValueChange(&disp, &midi, --idx);
+// 		ctl.AdcValueChange(&disp, --idx);
 }
 
 #endif
