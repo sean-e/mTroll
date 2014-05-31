@@ -568,6 +568,31 @@ ControlUi::Trace(const std::string & txt)
 
 
 // ISwitchDisplay
+class UpdateSwitchDisplayEvent : public ControlUiEvent
+{
+	ControlUi::SwitchLed * mLed;
+	DWORD mColor;
+	DWORD mFrameHighlightColor;
+
+public:
+	UpdateSwitchDisplayEvent(ControlUi::SwitchLed * led, DWORD color, DWORD frameHighlightColor) : 
+		ControlUiEvent(User),
+		mLed(led),
+		mColor(color),
+		mFrameHighlightColor(frameHighlightColor)
+	{
+	}
+
+	virtual void exec()
+	{
+		QPalette pal;
+		pal.setColor(QPalette::Window, mColor);
+		pal.setColor(QPalette::Light, mColor);
+		pal.setColor(QPalette::Dark, mFrameHighlightColor);
+		mLed->setPalette(pal);
+	}
+};
+
 void
 ControlUi::SetSwitchDisplay(int switchNumber, 
 							bool isOn)
@@ -596,34 +621,30 @@ ControlUi::ForceSwitchDisplay(int switchNumber,
 	if (!mLeds[switchNumber] || !mLeds[switchNumber]->isEnabled())
 		return;
 
-
-	class UpdateSwitchDisplayEvent : public ControlUiEvent
-	{
-		ControlUi::SwitchLed * mLed;
-		DWORD mColor;
-		DWORD mFrameHighlightColor;
-
-	public:
-		UpdateSwitchDisplayEvent(ControlUi::SwitchLed * led, DWORD color, DWORD frameHighlightColor) : 
-			ControlUiEvent(User),
-			mLed(led),
-			mColor(color),
-			mFrameHighlightColor(frameHighlightColor)
-		{
-		}
-
-		virtual void exec()
-		{
-			QPalette pal;
-			pal.setColor(QPalette::Window, mColor);
-			pal.setColor(QPalette::Light, mColor);
-			pal.setColor(QPalette::Dark, mFrameHighlightColor);
-			mLed->setPalette(pal);
-		}
-	};
-
 	QCoreApplication::postEvent(this, 
 		new UpdateSwitchDisplayEvent(mLeds[switchNumber], isOn ? mLedConfig.mOnColor : mLedConfig.mOffColor, mFrameHighlightColor));
+}
+
+void
+ControlUi::DimSwitchDisplay(int switchNumber)
+{
+	if (!mSwitchLedUpdateEnabled)
+		return;
+
+	_ASSERTE(switchNumber < kMaxButtons);
+
+	if (mHardwareUi)
+	{
+		byte row, col;
+		if (RowColFromSwitchNumber(switchNumber, row, col))
+			mHardwareUi->EnableLed(row, col, false);
+	}
+
+	if (!mLeds[switchNumber] || !mLeds[switchNumber]->isEnabled())
+		return;
+
+	QCoreApplication::postEvent(this, 
+		new UpdateSwitchDisplayEvent(mLeds[switchNumber], mLedConfig.mDimColor, mFrameHighlightColor));
 }
 
 class LabelTextOutEvent : public ControlUiEvent
@@ -739,6 +760,13 @@ ControlUi::SetSwitchLedConfig(int width,
 	mLedConfig.mHeight = height;
 	mLedConfig.mOnColor = onColor;
 	mLedConfig.mOffColor = offColor;
+
+	float onOpacity = 0.25f;
+	float offOpacity = 1.0f - onOpacity;
+	BYTE R = (BYTE)((float)GetRValue(offColor) * offOpacity + (float)GetRValue(onColor) * onOpacity);
+	BYTE G = (BYTE)((float)GetGValue(offColor) * offOpacity + (float)GetGValue(onColor) * onOpacity);
+	BYTE B = (BYTE)((float)GetBValue(offColor) * offOpacity + (float)GetBValue(onColor) * onOpacity);
+	mLedConfig.mDimColor = RGB(R, G, B);
 }
 
 void

@@ -1301,8 +1301,7 @@ AxeFxManager::ReceivePresetEffectsV2(const byte * bytes, int len)
 
 			if (isBypassed || isBypassedY || isActive || isActiveY)
 			{
-				if (inf->mPatch->IsActive() != !(isBypassed || isBypassedY))
-					inf->mPatch->UpdateState(mSwitchDisplay, !(isBypassed || isBypassedY));
+				inf->mPatch->UpdateState(mSwitchDisplay, !(isBypassed || isBypassedY));
 
 				if (inf->mXyPatch)
 				{
@@ -1314,8 +1313,7 @@ AxeFxManager::ReceivePresetEffectsV2(const byte * bytes, int len)
 					// LED off for X and on for Y.  Original behavior below was to
 					// use isX instead of isY.  See AxeTogglePatch::AxeTogglePatch
 					// for the other change required for LED inversion of X/Y.
-					if (inf->mXyPatch->IsActive() != isY)
-						inf->mXyPatch->UpdateState(mSwitchDisplay, isY);
+					inf->mXyPatch->UpdateState(mSwitchDisplay, isY);
 				}
 			}
 			else if (mTrace)
@@ -1361,9 +1359,9 @@ AxeFxManager::TurnOffLedsForNaEffects()
 
 		if (!cur->mEffectIsPresentInAxePatch)
 		{
-			cur->mPatch->UpdateState(mSwitchDisplay, false);
+			cur->mPatch->Disable(mSwitchDisplay);
 			if (cur->mXyPatch)
-				cur->mXyPatch->UpdateState(mSwitchDisplay, false);
+				cur->mXyPatch->Disable(mSwitchDisplay);
 		}
 	}
 }
@@ -1582,10 +1580,10 @@ AxeFxManager::DisplayPresetStatus()
 		return;
 
 	const std::string kPrefix("Axe-Fx preset: ");
-	std::string curText(mMainDisplay->GetCurrentText());
-	int pos = curText.rfind(kPrefix);
-	if (std::string::npos != pos)
-		curText = curText.substr(0, pos);
+	std::string curText;//(mMainDisplay->GetCurrentText());
+// 	int pos = curText.rfind(kPrefix);
+// 	if (std::string::npos != pos)
+// 		curText = curText.substr(0, pos);
 	
 	if (mCurrentAxePreset > -1 && mCurrentAxePreset < 1000)
 	{
@@ -1606,7 +1604,8 @@ AxeFxManager::DisplayPresetStatus()
 		curText += std::string("\nAxe-Fx scene: ") + sceneBuf;
 	}
 
-	mMainDisplay->TextOut(curText);
+	if (curText.length())
+		mMainDisplay->TextOut(curText);
 }
 
 

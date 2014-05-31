@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2013 Sean Echevarria
+ * Copyright (C) 2010-2014 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -67,6 +67,7 @@ public:
 	bool SetSyncPatch(Patch * patch, int bypassCc = -1);
 	int GetAxeChannel() const { return mAxeChannel; }
 	void SyncPatchFromAxe(Patch * patch);
+	AxeFxModel GetModel() const { return mModel; }
 
 	// delayed requests for sync
 	void DelayedNameSyncFromAxe(bool force = false);

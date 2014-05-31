@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2012 Sean Echevarria
+ * Copyright (C) 2007-2012,2014 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -60,6 +60,7 @@ public:
 	void ActivateSwitchDisplay(ISwitchDisplay * switchDisplay, bool activate) const;
 	// used to update state of patch without exec
 	virtual void UpdateState(ISwitchDisplay * switchDisplay, bool active);
+	virtual void Disable(ISwitchDisplay * switchDisplay);
 	virtual bool UpdateMainDisplayOnPress() const {return true;}
 	virtual void CompleteInit(MidiControlEngine * eng, ITraceDisplay * trc) { }
 
@@ -82,6 +83,8 @@ private:
 protected:
 	ExpressionPedals		mPedals;
 	bool					mPatchIsActive;
+	bool					mPatchSupportsDisabledState;
+	bool					mPatchIsDisabled;
 	bool					mOverridePedals;
 
 private:

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2012 Sean Echevarria
+ * Copyright (C) 2007-2012,2014 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -39,7 +39,9 @@ Patch::Patch(int number,
 	mName(name),
 	mPatchIsActive(false),
 	mPedals(midiOut),
-	mOverridePedals(false)
+	mOverridePedals(false),
+	mPatchSupportsDisabledState(false),
+	mPatchIsDisabled(false)
 {
 }
 
@@ -104,7 +106,11 @@ Patch::UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay
 			it != mSwitchNumbers.end();
 			++it)
 		{
-			switchDisplay->SetSwitchDisplay(*it, mPatchIsActive);
+			if (mPatchSupportsDisabledState && !mPatchIsDisabled && !mPatchIsActive)
+				switchDisplay->DimSwitchDisplay(*it);
+			else
+				switchDisplay->SetSwitchDisplay(*it, mPatchIsActive);
+
 			if (HasDisplayText())
 				switchDisplay->SetSwitchText(*it, GetDisplayText());
 		}
@@ -150,8 +156,28 @@ void
 Patch::UpdateState(ISwitchDisplay * switchDisplay, bool active)
 {
 	if (mPatchIsActive == active)
-		return;
+	{
+		if (!mPatchSupportsDisabledState)
+			return;
+
+		if (!mPatchIsDisabled)
+			return;
+	}
 
 	mPatchIsActive = active;
+	if (mPatchSupportsDisabledState && mPatchIsDisabled)
+		mPatchIsDisabled = false;
+	UpdateDisplays(NULL, switchDisplay);
+}
+
+void
+Patch::Disable(ISwitchDisplay * switchDisplay)
+{
+	_ASSERTE(mPatchSupportsDisabledState);
+	if (!mPatchIsActive && mPatchIsDisabled)
+		return;
+
+	mPatchIsActive = false;
+	mPatchIsDisabled = true;
 	UpdateDisplays(NULL, switchDisplay);
 }

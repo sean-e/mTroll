@@ -52,7 +52,11 @@ public:
 		mAx(axeMgr)
 	{
 		if (mAx)
+		{
 			mAx->AddRef();
+			if (mAx->GetModel() >= Axe2)
+				mPatchSupportsDisabledState = true;
+		}
 
 		std::string baseEffectName(name);
 		std::string xy(" x/y");

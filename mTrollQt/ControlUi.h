@@ -117,6 +117,7 @@ public: // ITraceDisplay
 public: // ISwitchDisplay
 	virtual void		SetSwitchDisplay(int switchNumber, bool isOn);
 	virtual void		ForceSwitchDisplay(int switchNumber, bool isOn);
+	virtual void		DimSwitchDisplay(int switchNumber);
 	virtual void		SetSwitchText(int switchNumber, const std::string & txt);
 	virtual void		ClearSwitchText(int switchNumber);
 	virtual void		InvertLeds(bool invert);
@@ -378,6 +379,7 @@ private:
 		int						mWidth;
 		DWORD					mOnColor;
 		DWORD					mOffColor;
+		DWORD					mDimColor;
 	};
 	LedConfig					mLedConfig;
 };
