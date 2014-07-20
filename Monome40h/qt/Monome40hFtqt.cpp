@@ -589,6 +589,11 @@ Monome40hFtqt::DeviceServiceThread()
 		}
 	}
 
+	// turn off all LEDs
+	for (int idx = 0; idx < 8; ++idx)
+		EnableLedRow(idx, 0);
+
+	// service pending commands
 	ServiceCommands();
 
 	::FT_W32_CloseHandle(mFtDevice);
