@@ -3,10 +3,14 @@ glob:*.ncb
 glob:*.opensdf
 glob:*.sdf
 glob:*.suo
+glob:*.atsuo
 glob:mTrollQt.vcxproj.user
 glob:mtrollQt.zip
 glob:*.sean.e.user
+glob:*.vadbg
 glob:mTrollQt/Debug/*
 glob:mTrollQt/Release/*
 glob:setup/mTrollSetup*.exe
 glob:ReleaseDependencies/*
+glob:avarice.exe
+glob:cygwin1.dll
