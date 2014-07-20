@@ -1,0 +1,17 @@
+To flash the monome:
+
+Prerequisites:
+- jtag
+- winavr for avarice (avarice.exe + cygwin1.dll from install\bin)
+
+Steps:
+- plug jtag into serial port
+- connect to monome (red side of cable to jtag connector pin 1)
+- connect pc usb to monome (red led on jtag will light)
+- run avarice:
+
+makefile rule was:
+avarice --erase --program --file $(TARGET).hex --jtag /dev/tty.usbserial-1B1 --jtag-bitrate 500KHz
+
+for windows, replace /dev/tty.usb* with /dev/ttyS0 (instead of COM1 per http://www.avrfreaks.net/wiki/index.php/Documentation:Things_That_Are_Broken#Mega128_Programming)
+avarice --erase --program --file monome40h.hex --jtag /dev/ttyS0 --jtag-bitrate 500KHz
