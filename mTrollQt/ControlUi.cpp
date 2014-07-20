@@ -77,6 +77,7 @@ ControlUi::ControlUi(QWidget * parent, ITrollApplication * app) :
 	mMaxSwitchId(0),
 	mHardwareUi(NULL),
 	mLedIntensity(0),
+	mLedIntensityDimmed(0),
 	mInvertLeds(false),
 	mTimeDisplayTimer(NULL),
 	mDisplayTime(false),
@@ -321,6 +322,16 @@ ControlUi::LoadMonome(bool displayStartSequence)
 					if (displayStartSequence)
 						MonomeStartupSequence();
 					mHardwareUi->SetLedIntensity(mLedIntensity);
+
+#ifdef PER_LED_INTENSITY
+					// dimmed LED intensity calculated based on normal LED intensity
+// 					mLedIntensityDimmed = mLedIntensity / 4;
+// 					if (mLedIntensityDimmed < 1)
+// 						mLedIntensityDimmed = 1;
+// 
+// 					if (mLedIntensityDimmed == mLedIntensity)
+// 						mLedIntensityDimmed = 0;
+#endif // PER_LED_INTENSITY
 				}
 			}
 		}
@@ -637,7 +648,13 @@ ControlUi::DimSwitchDisplay(int switchNumber)
 	{
 		byte row, col;
 		if (RowColFromSwitchNumber(switchNumber, row, col))
+		{
+#ifdef PER_LED_INTENSITY
+			mHardwareUi->EnableLed(row, col, mLedIntensityDimmed);
+#else
 			mHardwareUi->EnableLed(row, col, false);
+#endif // PER_LED_INTENSITY
+		}
 	}
 
 	if (!mLeds[switchNumber] || !mLeds[switchNumber]->isEnabled())

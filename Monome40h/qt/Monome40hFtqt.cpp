@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2009 Sean Echevarria
+ * Copyright (C) 2007-2009,2014 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -337,8 +337,27 @@ Monome40hFtqt::EnableLed(byte row,
 						 byte col, 
 						 bool enable)
 {
+#ifdef PER_LED_INTENSITY
+	DispatchCommand(new MonomeSetLed(enable ? mLedBrightness : 0, row, col));
+#else
 	DispatchCommand(new MonomeSetLed(enable, row, col));
+#endif // PER_LED_INTENSITY
 }
+
+#ifdef PER_LED_INTENSITY
+void
+Monome40hFtqt::EnableLed(byte row, 
+						 byte col, 
+						 byte intensity)
+{
+	if (0 > intensity)
+		intensity = 0;
+	else if (15 < intensity)
+		intensity = 15;
+
+	DispatchCommand(new MonomeSetLed(intensity, row, col));
+}
+#endif // PER_LED_INTENSITY
 
 void
 Monome40hFtqt::SetLedIntensity(byte brightness)

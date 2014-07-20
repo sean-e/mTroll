@@ -1,5 +1,5 @@
 /*
-Original code copyright (c) 2007 Sean Echevarria ( http://www.creepingfog.com/sean/ )
+Original code copyright (c) 2007,2014 Sean Echevarria ( http://www.creepingfog.com/sean/ )
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any
@@ -78,8 +78,13 @@ private:
 class MonomeSetLed : public MonomeSerialProtocolData
 {
 public:
+#ifdef PER_LED_INTENSITY
+	MonomeSetLed(byte intensity, byte row, byte col) : 
+		MonomeSerialProtocolData(MonomeSerialProtocolData::setLed, intensity, col, row) { }
+#else
 	MonomeSetLed(bool enable, byte row, byte col) : 
 		MonomeSerialProtocolData(MonomeSerialProtocolData::setLed, enable ? 1 : 0, col, row) { }
+#endif // PER_LED_INTENSITY
 };
 
 class MonomeSetLedIntensity : public MonomeSerialProtocolData 

@@ -333,6 +333,7 @@ private:
 	typedef std::map<unsigned int, IMidiIn*> MidiIns;
 	MidiIns						mMidiIns;
 	int							mLedIntensity;
+	byte						mLedIntensityDimmed;
 	bool						mInvertLeds;
 	KeepDisplayOn				* mSystemPowerOverride;
 	QRect						mMainDisplayRc;

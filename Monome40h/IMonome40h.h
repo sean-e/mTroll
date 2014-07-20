@@ -1,5 +1,5 @@
 /*
-Original code copyright (c) 2007-2008 Sean Echevarria ( http://www.creepingfog.com/sean/ )
+Original code copyright (c) 2007-2008,2014 Sean Echevarria ( http://www.creepingfog.com/sean/ )
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any
@@ -24,6 +24,11 @@ distribution.
 #ifndef IMonome40h_h__
 #define IMonome40h_h__
 
+// Define PER_LED_INTENSITY if using the per LED Intensity firmware mod:
+// ( http://monome.org/docs/tech:source_files:40h_per_led_intensity )
+// see directory: mTroll\Monome40h\40hFirmware\PerLedIntensity(pwm) 
+//#define PER_LED_INTENSITY
+
 class IMonome40hSwitchSubscriber;
 class IMonome40hAdcSubscriber;
 typedef unsigned char byte;
@@ -40,6 +45,9 @@ public:
 
 	// monome 40h controls
 	virtual void EnableLed(byte row, byte col, bool on) = 0;
+#ifdef PER_LED_INTENSITY
+	virtual void EnableLed(byte row, byte col, byte intensity) = 0;
+#endif // PER_LED_INTENSITY
 	virtual void SetLedIntensity(byte brightness) = 0;
 	virtual void EnableLedRow(byte row, byte columnValues) = 0;
 	virtual void EnableLedColumn(byte column, byte rowValues) = 0;
