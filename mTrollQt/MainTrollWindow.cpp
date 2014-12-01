@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2012-2013 Sean Echevarria
+ * Copyright (C) 2007-2010,2012-2014 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -50,6 +50,7 @@ MainTrollWindow::MainTrollWindow() :
 	QCoreApplication::setOrganizationName(kOrganizationKey);
 	QCoreApplication::setOrganizationDomain(kOrganizationDomain);
 	QCoreApplication::setApplicationName(kAppKey);
+// 	QWidget::setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
 
 	setWindowTitle(tr("mTroll MIDI Controller"));
 	QSettings settings;
@@ -79,6 +80,9 @@ MainTrollWindow::MainTrollWindow() :
 
 	menuBar()->setStyleSheet(menuBarStyle);
 #if defined(Q_OS_WIN)
+// 	DWORD dwStyle = ::GetWindowLong((HWND)winId(), GWL_STYLE);
+// 	DWORD dwNewStyle = (dwStyle & ~WS_THICKFRAME) | WS_BORDER;
+// 	::SetWindowLong((HWND)winId(), GWL_STYLE, dwNewStyle);
 	::UnregisterTouchWindow((HWND)menuBar()->winId());
 #endif
 

@@ -1182,16 +1182,20 @@ EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem,
 	childElem->QueryIntAttribute("inputNumber", &exprInputNumber);
 	childElem->QueryIntAttribute("assignmentNumber", &assignmentIndex);
 	childElem->QueryIntAttribute("channel", &channel);
-	if (-1 == channel)
 	{
 		std::string tmp;
 		if (childElem->Attribute("device"))
 			tmp = childElem->Attribute("device");
 		if (!tmp.empty())
 		{
-			tmp = mDeviceChannels[tmp];
-			if (!tmp.empty())
-				channel = ::atoi(tmp.c_str());
+			midiOutPortNumber = mDevicePorts[tmp]; // see if a port mapping was set up for the device
+
+			if (-1 == channel)
+			{
+				tmp = mDeviceChannels[tmp];
+				if (!tmp.empty())
+					channel = ::atoi(tmp.c_str());
+			}
 		}
 	}
 

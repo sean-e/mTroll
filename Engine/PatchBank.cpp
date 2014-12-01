@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010-2013 Sean Echevarria
+ * Copyright (C) 2007-2008,2010-2014 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -65,6 +65,7 @@ void PatchBank::DeletePatchMaps::operator()(const std::pair<int, DualPatchVect> 
 void
 PatchBank::AddPatchMapping(int switchNumber, 
 						   int patchNumber, 
+						   const std::string &overrideName,
 						   SwitchFunctionAssignment st, 
 						   SecondFunctionOperation sfoOp, 
 						   PatchState patchLoadState, 
@@ -73,7 +74,7 @@ PatchBank::AddPatchMapping(int switchNumber,
 						   PatchSyncState patchSyncState)
 {
 	PatchVect & curPatches = mPatches[switchNumber].GetPatchVect(st);
-	curPatches.push_back(new PatchMap(patchNumber, patchLoadState, patchUnloadState, patchStateOverride, patchSyncState, sfoOp));
+	curPatches.push_back(new PatchMap(patchNumber, overrideName, patchLoadState, patchUnloadState, patchStateOverride, patchSyncState, sfoOp));
 	if (ssSecondary == st)
 	{
 		if (!SwitchHasSecondaryLogic(switchNumber))
@@ -255,6 +256,8 @@ PatchBank::Load(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 				{
 					once = false;
 					curItem->mPatch->AssignSwitch((*it).first, switchDisplay);
+					if (curItem->mOverrideSwitchName.length() && switchDisplay)
+						switchDisplay->SetSwitchText((*it).first, curItem->mOverrideSwitchName);
 				}
 				else
 					curItem->mPatch->OverridePedals(false);
@@ -634,6 +637,8 @@ PatchBank::ToggleDualFunctionState(int switchNumber,
 				continue;
 
 			curItem->mPatch->AssignSwitch(switchNumber, switchDisplay);
+			if (curItem->mOverrideSwitchName.length() && switchDisplay)
+				switchDisplay->SetSwitchText(switchNumber, curItem->mOverrideSwitchName);
 			break;
 		}
 	}
@@ -674,9 +679,17 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 						if (temporaryDisplay)
 							curItem->mPatch->ClearSwitch(NULL);
 						if (ssPrimary == ss && ssPrimary == (*it).second.mCurrentSwitchState)
+						{
 							curItem->mPatch->AssignSwitch((*it).first, switchDisplay);
+							if (curItem->mOverrideSwitchName.length() && switchDisplay)
+								switchDisplay->SetSwitchText((*it).first, curItem->mOverrideSwitchName);
+						}
 						else if (ssSecondary == ss && ssSecondary == (*it).second.mCurrentSwitchState)
+						{
 							curItem->mPatch->AssignSwitch((*it).first, switchDisplay);
+							if (curItem->mOverrideSwitchName.length() && switchDisplay)
+								switchDisplay->SetSwitchText((*it).first, curItem->mOverrideSwitchName);
+						}
 
 						if (ssSecondary == idx)
 							info << "sw " << std::setw(2) << ((*it).first + 1) << " (2nd): " << std::setw(3) << curItem->mPatch->GetNumber() << " " << curItem->mPatch->GetName() << std::endl;
