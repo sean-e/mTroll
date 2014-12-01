@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010,2012-2014 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2012-2013 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -84,7 +84,7 @@ public:
 	};
 
 	// creation/init
-	void AddPatchMapping(int switchNumber, int patchNumber, const std::string &overrideName, SwitchFunctionAssignment st, SecondFunctionOperation sfoOp, PatchState patchLoadState, PatchState patchUnloadState, PatchState patchStateOverride, PatchSyncState patchSyncState);
+	void AddPatchMapping(int switchNumber, int patchNumber, SwitchFunctionAssignment st, SecondFunctionOperation sfoOp, PatchState patchLoadState, PatchState patchUnloadState, PatchState patchStateOverride, PatchSyncState patchSyncState);
 	void InitPatches(const MidiControlEngine::Patches & patches, ITraceDisplay * traceDisp);
 	void CalibrateExprSettings(const PedalCalibration * pedalCalibration, MidiControlEngine * eng, ITraceDisplay * traceDisp);
 	void SetDefaultMappings(const PatchBank & defaultMapping);
@@ -116,7 +116,6 @@ private:
 	struct PatchMap
 	{
 		int					mPatchNumber;	// needed for load of document
-		std::string			mOverrideSwitchName;
 		PatchState			mPatchStateAtBankLoad;
 		PatchState			mPatchStateAtBankUnload;
 		PatchState			mPatchStateOverride; // press of switch prevents toggle from changing
@@ -124,9 +123,8 @@ private:
 		SecondFunctionOperation mSfOp;
 		Patch				*mPatch;		// non-retained runtime state; weak ref
 
-		PatchMap(int patchNumber, std::string overrideName, PatchState loadState, PatchState unloadState, PatchState stateOverride, PatchSyncState patchSyncState, SecondFunctionOperation sfOp) :
+		PatchMap(int patchNumber, PatchState loadState, PatchState unloadState, PatchState stateOverride, PatchSyncState patchSyncState, SecondFunctionOperation sfOp) :
 			mPatchNumber(patchNumber),
-			mOverrideSwitchName(overrideName),
 			mPatchStateAtBankLoad(loadState),
 			mPatchStateAtBankUnload(unloadState),
 			mPatchStateOverride(stateOverride),
@@ -138,7 +136,6 @@ private:
 
 		PatchMap(const PatchMap & rhs) :
 			mPatchNumber(rhs.mPatchNumber),
-			mOverrideSwitchName(rhs.mOverrideSwitchName),
 			mPatchStateAtBankLoad(rhs.mPatchStateAtBankLoad),
 			mPatchStateAtBankUnload(rhs.mPatchStateAtBankUnload),
 			mPatchStateOverride(rhs.mPatchStateOverride),
