@@ -1105,6 +1105,10 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 				const PatchBank::SecondFunctionOperation sfoOp = ::GetSecondFuncOp(tmp);
 				tmp.clear();
 
+				std::string nameOverride;
+				if (childElem->Attribute("name"))
+					nameOverride = childElem->Attribute("name");
+
 				childElem->QueryValueAttribute("loadState", &tmp);
 				const PatchBank::PatchState loadState = ::GetLoadState(tmp);
 				tmp.clear();
@@ -1125,7 +1129,8 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 // 					traceMsg << "Warning load of config file: bank " << bankName << " has a PatchMap with both override and sync attributes (might not work)" << std::endl << std::ends;
 // 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 // 				}
-				bank.AddPatchMapping(switchNumber - 1, patchNumber, swFunc, sfoOp, loadState, unloadState, stateOverride, syncState);
+
+				bank.AddPatchMapping(switchNumber - 1, patchNumber, nameOverride, swFunc, sfoOp, loadState, unloadState, stateOverride, syncState);
 			}
 			else if (childElem->ValueStr() == "ExclusiveSwitchGroup")
 			{
