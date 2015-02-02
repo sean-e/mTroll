@@ -4,22 +4,94 @@
 	<html>
 		<head>
 			<style type="text/css">
-				table.PatchMapTableCls { display:none; }
-				div.TableDiv:hover table.PatchMapTableCls { display:block; }
-				table { border:0; }
-				th { text-align:left; }
-				td { vertical-align:top; }
-			</style>
+        table.HiddenTableCls { display:none; }
+        div.TableDiv:hover table.HiddenTableCls { display:block; }
+        table { border:0; }
+        th { text-align:left; }
+        td { vertical-align:top; }
+      </style>
 		</head>
 		<body>
 			<h4>Contents</h4>
 			<div>
+				<a href="#pcMidiDevices">PC MIDI Port Map</a><br />
+				<a href="#devices">Device Map</a><br />
+				<a href="#switches">Switches</a><br />
 				<a href="#banks">Banks</a><br />
 				<a href="#patches">Patches</a><br />
 				<a href="#metapatches">Meta Patches</a><br />
 			</div>
 			
-			<h4><a name="patches">Patches</a></h4>
+			<h4><a name="pcMidiDevices">PC MIDI Port Map</a></h4>
+			<table>
+				<tr bgcolor="#9acd32">
+          <th>MIDI Port</th>
+          <th>PC Out</th>
+          <th>PC In</th>
+				</tr>
+				<xsl:for-each select="MidiControlSettings/SystemConfig/midiDevices/midiDevice">
+            <tr>
+						  <td><xsl:value-of select="@port"/></td>
+              <td>
+                <xsl:if test="@out != ''">
+                  <xsl:value-of select="@out"/>
+                </xsl:if>
+                <xsl:if test="@outIdx != ''">
+                  <xsl:value-of select="@outIdx"/>
+                </xsl:if>
+              </td>
+              <td>
+                <xsl:if test="@in != ''">
+                  <xsl:value-of select="@in"/>
+                </xsl:if>
+                <xsl:if test="@inIdx != ''">
+                  <xsl:value-of select="@inIdx"/>
+                </xsl:if>
+              </td>
+            </tr>
+				</xsl:for-each>
+			</table>
+
+			
+			<h4><a name="devices">Device Map</a></h4>
+			<table>
+				<tr bgcolor="#9acd32">
+					<th>MIDI Channel</th>
+					<th>MIDI Port</th>
+					<th>Device</th>
+				</tr>
+				<xsl:for-each select="MidiControlSettings/DeviceChannelMap/Device">
+          <xsl:if test=". != ''">
+            <tr>
+						  <td><xsl:value-of select="@channel"/></td>
+						  <td><xsl:value-of select="@port"/></td>
+              <td><xsl:value-of select="."/></td>
+            </tr>
+          </xsl:if>
+				</xsl:for-each>
+			</table>
+
+
+			<h4><a name="switches">Switches</a></h4>
+			<table>
+				<tr bgcolor="#9acd32">
+					<th>Name</th>
+					<th>ID</th>
+					<th>Load Bank Target</th>
+				</tr>
+				<xsl:for-each select="MidiControlSettings/SystemConfig/switches/switch">
+          <tr>
+						<td><xsl:value-of select="@name"/></td>
+						<td><xsl:value-of select="@id"/></td>
+            <xsl:if test="@bank != ''">
+              <td><xsl:value-of select="@bank"/></td>
+            </xsl:if>
+          </tr>
+				</xsl:for-each>
+			</table>
+
+
+      <h4><a name="patches">Patches</a></h4>
 			<table>
 				<xsl:variable name="displayStrings" select="0" />
 				<tr bgcolor="#9acd32">
@@ -76,7 +148,7 @@
 						<td><xsl:value-of select="@name"/></td>
 						<td><xsl:value-of select="@action"/></td>
 						<xsl:variable name="bankNum" select="@bankNumber" />
-						<xsl:if test="$bankNum!=''">
+						<xsl:if test="$bankNum != ''">
 							<td>
 								<xsl:element name="a">
 									<xsl:attribute name="href">
@@ -117,7 +189,7 @@
 						<td>
 							<div class="TableDiv">
 								<span>[view]</span>
-								<table class="PatchMapTableCls">
+								<table class="HiddenTableCls">
 									<xsl:for-each select="PatchMap">
 										<tr>
 											<xsl:variable name="patchNumber" select="@patch"/>
@@ -149,7 +221,7 @@
 				</xsl:for-each>
 			</table>
 
-			<!-- add lines to that links to banks will cause target to be first vis line -->
+			<!-- add lines so that links to banks will cause target to be first vis line -->
 			<div>
 				<br />
 				<br />
