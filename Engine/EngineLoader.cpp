@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2014 Sean Echevarria
+ * Copyright (C) 2007-2015 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -223,7 +223,9 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 
 	// <midiDevice port="1" outIdx="3" activityIndicatorId="100" />
 	// <midiDevice port="2" out="Axe-Fx II" in="Axe-Fx II" activityIndicatorId="100" />
-	pChildElem = hRoot.FirstChild("midiDevices").FirstChildElement().Element();
+	pChildElem = hRoot.FirstChild("MidiDevices").FirstChildElement().Element();
+	if (!pChildElem)
+		pChildElem = hRoot.FirstChild("midiDevices").FirstChildElement().Element();
 	for ( ; pChildElem; pChildElem = pChildElem->NextSiblingElement())
 	{
 		int deviceIdx = -1;
@@ -444,6 +446,10 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		std::string patchName;
 		if (pElem->ValueStr() == "engineMetaPatch")
 		{
+
+			// #todo: remove metapatches and replace with patchmap attributes 
+			// w/ auto-gen'd patches with negative patch numbers
+
 			if (pElem->Attribute("name"))
 				patchName = pElem->Attribute("name");
 			int patchNumber = -1;
@@ -1106,7 +1112,9 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 				tmp.clear();
 
 				std::string nameOverride;
-				if (childElem->Attribute("name"))
+				if (childElem->Attribute("label"))
+					nameOverride = childElem->Attribute("label");
+				else if (childElem->Attribute("name"))
 					nameOverride = childElem->Attribute("name");
 
 				childElem->QueryValueAttribute("loadState", &tmp);
@@ -1316,7 +1324,7 @@ EngineLoader::LoadDeviceChannelMap(TiXmlElement * pElem)
 	std::string dev;
 	for ( ; pElem; pElem = pElem->NextSiblingElement())
 	{
-		if (pElem->ValueStr() != "Device")
+		if (pElem->ValueStr() != "device" && pElem->ValueStr() != "Device")
 		{
 			if (mTraceDisplay)
 			{
