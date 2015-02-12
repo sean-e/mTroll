@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2012,2014 Sean Echevarria
+ * Copyright (C) 2007-2012,2014-2015 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -51,7 +51,8 @@ public:
 	virtual void SwitchReleased(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) { }
 
 	void UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) const;
-	const std::string & GetName() const {return mName;}
+	const std::string & GetName() const { return mName; }
+	void SetName(const std::string& name) { mName = name; }
 	virtual bool HasDisplayText() const { return false; }
 	virtual const std::string & GetDisplayText() const { return mName; }
 	int GetNumber() const {return mNumber;}
@@ -89,7 +90,7 @@ protected:
 
 private:
 	const int				mNumber;	// unique across patches
-	const std::string		mName;
+	std::string				mName;
 	std::set<int>			mSwitchNumbers;
 };
 
