@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2014 Sean Echevarria
+ * Copyright (C) 2007-2015 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -373,11 +373,10 @@ ControlUi::ButtonPressed(const int idx)
 	{
 		clock_t curTime = ::clock();
 		if (idx == mLastUiButtonPressed && 
-			0 != mLastUiButtonEventTime &&
-			curTime < (mLastUiButtonEventTime + 50))
+			curTime < (mLastUiButtonEventTime + 100))
 		{
 			// ignore press due to Qt emitting pressed twice when using touch
-			mLastUiButtonEventTime = 0;
+			mLastUiButtonEventTime = curTime;
 			return;
 		}
 
@@ -394,14 +393,6 @@ ControlUi::ButtonReleased(const int idx)
 {
 	if (mStupidSwitchStates[idx])
 	{
-		if (0 == mLastUiButtonEventTime)
-		{
-			// ignore release (though touch doesn't appear to emit 
-			// a release signal)
-			return;
-		}
-
-		// reset so that next press is honored (otherwise potentially ignored)
 		mLastUiButtonEventTime = ::clock();
 
 		byte row, col;
