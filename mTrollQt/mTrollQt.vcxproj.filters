@@ -303,6 +303,9 @@
     <None Include="..\todo.txt">
       <Filter>Text Files</Filter>
     </None>
+    <None Include="..\setup\mTrollVersion.txt">
+      <Filter>Text Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="ControlUi.h">

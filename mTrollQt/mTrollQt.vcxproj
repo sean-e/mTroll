@@ -298,6 +298,7 @@
     <None Include="..\data\1024x600.ui.xml" />
     <None Include="..\COPYING" />
     <None Include="..\data\mtrollConfig.xsl" />
+    <None Include="..\setup\mTrollVersion.txt" />
     <None Include="qtNotes.txt" />
     <None Include="..\data\testdata.config.xml" />
     <None Include="..\data\testdata.ui.xml" />
