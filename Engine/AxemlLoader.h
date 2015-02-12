@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2011 Sean Echevarria
+ * Copyright (C) 2010-2011,2015 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -36,7 +36,8 @@ enum AxeFxModel
 {
 	AxeStd = 0,
 	AxeUltra = 1,
-	Axe2 = 3
+	Axe2 = 3,
+	Axe2XL = 6
 };
 
 struct AxeEffectBlockInfo

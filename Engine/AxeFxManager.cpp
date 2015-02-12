@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2014 Sean Echevarria
+ * Copyright (C) 2010-2015 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -94,7 +94,7 @@ AxeFxManager::AxeFxManager(IMainDisplay * mainDisp,
 	mDelayedEffectsSyncTimer->setInterval(kDefaultEffectsSyncTimerInterval);
 
 	AxemlLoader ldr(mTrace);
-	if (Axe2 == mModel)
+	if (Axe2 <= mModel)
 	{
 		// C:\Program Files (x86)\Fractal Audio\Axe-Edit 1.0\Configs\II\default.axeml
 		ldr.Load(mModel, appPath + "/config/axefx2.default.axeml", mAxeEffectInfo);
@@ -299,6 +299,7 @@ IsAxeFxSysex(const byte * bytes, const int len)
 	case AxeStd:
 	case AxeUltra:
 	case Axe2:
+	case Axe2XL:
 		return true;
 	}
 
@@ -316,9 +317,9 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 	switch (bytes[5])
 	{
 	case 2:
-		if (Axe2 == bytes[4])
+		if (Axe2 <= bytes[4])
 		{
-			_ASSERTE(Axe2 == mModel);
+			_ASSERTE(Axe2 == mModel || Axe2XL == mModel);
 			// ReceiveParamValue hasn't been updated for Axe-FX II
 			if (kDbgFlag && mTrace)
 			{
@@ -328,7 +329,7 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 		}
 		else
 		{
-			_ASSERTE(Axe2 != mModel);
+			_ASSERTE(Axe2 > mModel);
 			ReceiveParamValue(&bytes[6], len - 6);
 		}
 		return;
@@ -349,14 +350,14 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 		// tuner info
 		return;
 	case 0xe:
-		if (Axe2 == bytes[4])
+		if (Axe2 <= bytes[4])
 		{
-			_ASSERTE(Axe2 == mModel);
+			_ASSERTE(Axe2 == mModel || Axe2XL == mModel);
 			ReceivePresetEffectsV2(&bytes[6], len - 6);
 		}
 		else
 		{
-			_ASSERTE(Axe2 != mModel);
+			_ASSERTE(Axe2 > mModel);
 			ReceivePresetEffects(&bytes[6], len - 6);
 		}
 		return;
@@ -437,7 +438,7 @@ AxeFxManager::IdentifyBlockInfoUsingBypassId(const byte * bytes)
 	int parameterIdLs;
 	int parameterIdMs;
 
-	if (Axe2 == mModel)
+	if (Axe2 <= mModel)
 	{
 		// TODO: not updated for axe2
 		effectIdLs = 0;
@@ -474,7 +475,7 @@ AxeFxManager::IdentifyBlockInfoUsingCc(const byte * bytes)
 	int effectId;
 	int cc;
 
-	if (Axe2 == mModel)
+	if (Axe2 <= mModel)
 	{
 		const int ccLs = bytes[0] >> 1;
 		const int ccMs = (bytes[1] & 1) << 6;
@@ -516,7 +517,7 @@ AxeEffectBlockInfo *
 AxeFxManager::IdentifyBlockInfoUsingEffectId(const byte * bytes)
 {
 	int effectId;
-	if (Axe2 == mModel)
+	if (Axe2 <= mModel)
 	{
 		const int effectIdLs = bytes[2] >> 3;
 		const int effectIdMs = (bytes[3] << 4) & 0xff;
@@ -560,7 +561,7 @@ AxeFxManager::GetBlockInfo(Patch * patch)
 void
 AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 {
-	// TODO: not updated for Axe2
+	// TODO: not updated for Axe2/Axe2XL
 /*
 	0xdd effect ID LS nibble 
 	0xdd effect ID MS nibble 
@@ -860,7 +861,7 @@ AxeFxManager::DelayedNameSyncFromAxe(bool force /*= false*/)
 	if (!mDelayedNameSyncTimer)
 		return;
 
-	if (!force && Axe2 == mModel && mFirmwareMajorVersion > 5)
+	if (!force && Axe2 <= mModel && mFirmwareMajorVersion > 5)
 	{
 		// Axe-Fx II sends preset loaded message, so we can ignore our 
 		// unforced calls to DelalyedNameSyncFromAxe.
@@ -1029,9 +1030,13 @@ AxeFxManager::SendFirmwareVersionQuery()
 	// respond:		F0 00 01 74 03 08 03 02 0f F7	(for 3.2)
 
 	QMutexLocker lock(&mQueryLock);
-	const byte firstDataByte = Axe2 == mModel ? 0x0a : 0;
-	const byte secondDataByte = Axe2 == mModel ? 4 : 0;
-	const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x08, firstDataByte, secondDataByte, 0xF7 };
+	const byte firstDataByte = Axe2 <= mModel ? 0x0a : 0;
+	byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x08, firstDataByte, 0x00, 0xF7 };
+	if (Axe2 <= mModel)
+	{
+		byte chkSum = (rawBytes[0] ^ rawBytes[1] ^ rawBytes[2] ^ rawBytes[3] ^ rawBytes[4] ^ rawBytes[5] ^ rawBytes[6]) & 0x7f;
+		rawBytes[7] = chkSum;
+	}
 	const Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
 	mMidiOut->MidiOut(bb);
 }
@@ -1040,7 +1045,24 @@ void
 AxeFxManager::ReceiveFirmwareVersionResponse(const byte * bytes, int len)
 {
 	// response to firmware version request: F0 00 01 74 01 08 0A 03 F7
+	if (len < 9)
+		return;
+
 	std::string model;
+	switch (bytes[4])
+	{
+	case AxeStd:
+	case AxeUltra:
+		if (0 == bytes[6] && 0 == bytes[7])
+			return; // our request got looped back
+		break;
+	case Axe2:
+	case Axe2XL:
+		if (0xa == bytes[6] && 0x04 == bytes[7])
+			return; // our request got looped back
+		break;
+	}
+
 	switch (bytes[4])
 	{
 	case AxeStd:
@@ -1052,12 +1074,12 @@ AxeFxManager::ReceiveFirmwareVersionResponse(const byte * bytes, int len)
 		mModel = AxeUltra;
 		break;
 	case Axe2:
-		if (len < 9)
-			return;
-		if (0xa == bytes[6] && 0x04 == bytes[7])
-			return; // our request got looped back
 		model = "II ";
 		mModel = Axe2;
+		break;
+	case Axe2XL:
+		model = "II XL";
+		mModel = Axe2XL;
 		break;
 	default:
 		model = "Unknown model ";
@@ -1071,7 +1093,7 @@ AxeFxManager::ReceiveFirmwareVersionResponse(const byte * bytes, int len)
 	}
 
 	mFirmwareMajorVersion = (int) bytes[6];
-	if (Axe2 == mModel && 7 < mFirmwareMajorVersion)
+	if (Axe2 <= mModel && 7 < mFirmwareMajorVersion)
 		EnableLooperStatusMonitor(true);
 }
 
@@ -1086,10 +1108,12 @@ AxeFxManager::RequestPresetName()
 	if (!mFirmwareMajorVersion)
 		return;
 
-	if (Axe2 == mModel)
+	if (Axe2 <= mModel)
 	{
-		// 0x09 is an XOR checksum of all bytes prior to it (drop the high bit)
-		const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, Axe2, 0x0f, 0x09, 0xF7 };
+		// final 0x00 is a placeholder for the checksum
+		byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x0f, 0x00, 0xF7 };
+		byte chkSum = (rawBytes[0] ^ rawBytes[1] ^ rawBytes[2] ^ rawBytes[3] ^ rawBytes[4] ^ rawBytes[5]) & 0x7f;
+		rawBytes[6] = chkSum;
 		const Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
 		mMidiOut->MidiOut(bb);
 	}
@@ -1146,10 +1170,12 @@ AxeFxManager::RequestPresetEffects()
 		cur->mEffectIsPresentInAxePatch = false;
 	}
 
-	if (Axe2 == mModel)
+	if (Axe2 <= mModel)
 	{
-		// 0x08 is an XOR checksum of all bytes prior to it (drop the high bit)
-		const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, Axe2, 0x0e, 0x08, 0xF7 };
+		// final 0x00 is a placeholder for the checksum
+		byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x0e, 0x00, 0xF7 };
+		byte chkSum = (rawBytes[0] ^ rawBytes[1] ^ rawBytes[2] ^ rawBytes[3] ^ rawBytes[4] ^ rawBytes[5]) & 0x7f;
+		rawBytes[6] = chkSum;
 		const Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
 		mMidiOut->MidiOut(bb);
 	}
@@ -1383,7 +1409,7 @@ AxeFxManager::ReceivePresetNumber(const byte * bytes, int len)
 void
 AxeFxManager::EnableLooperStatusMonitor(bool enable)
 {
-	if (Axe2 != mModel || mFirmwareMajorVersion < 6)
+	if (Axe2 > mModel || mFirmwareMajorVersion < 6)
 		return;
 
 	// http://forum.fractalaudio.com/other-midi-controllers/39161-using-sysex-recall-present-effect-bypass-status-info-available.html#post737573
@@ -1518,7 +1544,7 @@ AxeFxManager::ReceiveLooperStatus(const byte * bytes, int len)
 void
 AxeFxManager::SetLooperPatch(Patch * patch)
 {
-	if (mModel != Axe2)
+	if (mModel < Axe2)
 		return;
 
 	std::string name(patch->GetName());
@@ -1597,7 +1623,7 @@ AxeFxManager::DisplayPresetStatus()
 	else if (!mCurrentAxePresetName.empty())
 		curText += kPrefix + mCurrentAxePresetName;
 
-	if (Axe2 == mModel && mFirmwareMajorVersion > 8 && -1 != mCurrentScene)
+	if (Axe2 <= mModel && mFirmwareMajorVersion > 8 && -1 != mCurrentScene)
 	{
 		char sceneBuf[4];
 		::_itoa_s(mCurrentScene + 1, sceneBuf, 10);
