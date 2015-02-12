@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010,2012 Sean Echevarria
+ * Copyright (C) 2010,2012,2015 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -36,7 +36,6 @@ public:
 		Patch(number, name),
 		mAxe(axe)
 	{
-		_ASSERTE(mAxe);
 		if (mAxe)
 			mAxe->AddRef();
 	}
