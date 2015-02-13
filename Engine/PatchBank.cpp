@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010-2014 Sean Echevarria
+ * Copyright (C) 2007-2008,2010-2015 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -471,7 +471,12 @@ PatchBank::PatchSwitchPressed(SwitchFunctionAssignment st,
 		}
 
 		if (curSwitchItem->mPatch->UpdateMainDisplayOnPress())
-			msgstr << curSwitchItem->mPatch->GetNumber() << " " << curSwitchItem->mPatch->GetDisplayText() << std::endl;
+		{
+			const int patchNum = curSwitchItem->mPatch->GetNumber();
+			if (patchNum > 0)
+				msgstr << patchNum << " ";
+			msgstr << curSwitchItem->mPatch->GetDisplayText() << std::endl;
+		}
 		else
 			doDisplayUpdate = false;
 	}
@@ -673,6 +678,7 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 					if (!curItem || !curItem->mPatch)
 						continue;
 
+					const int patchNum = curItem->mPatch->GetNumber();
 					if (once)
 					{
 						once = false;
@@ -691,10 +697,12 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 								switchDisplay->SetSwitchText((*it).first, curItem->mOverrideSwitchName);
 						}
 
+						info << "sw " << std::setw(2) << ((*it).first + 1);
 						if (ssSecondary == idx)
-							info << "sw " << std::setw(2) << ((*it).first + 1) << " (2nd): " << std::setw(3) << curItem->mPatch->GetNumber() << " " << curItem->mPatch->GetName() << std::endl;
-						else
-							info << "sw " << std::setw(2) << ((*it).first + 1) << ": " << std::setw(3) << curItem->mPatch->GetNumber() << " " << curItem->mPatch->GetName() << std::endl;
+							info << " (2nd)";
+						info << ": ";
+						if (patchNum > 0)
+							info << std::setw(3) << patchNum << " ";
 		
 						if (temporaryDisplay)
 						{
@@ -704,8 +712,12 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 					}
 					else
 					{
-						info << "       " << std::setw(3) << curItem->mPatch->GetNumber() << " " << curItem->mPatch->GetName() << std::endl;
+						info << "       ";
+						if (patchNum > 0)
+							info << std::setw(3) << patchNum << " ";
 					}
+
+					info << curItem->mPatch->GetName() << std::endl;
 				}
 			}
 		}
@@ -752,10 +764,14 @@ PatchBank::DisplayDetailedPatchInfo(int switchNumber, IMainDisplay * mainDisplay
 // 				if (cnt == 1)
 // 					info << "(Hidden patches)" << std::endl;
 
-				info << std::setw(3) << curItem->mPatch->GetNumber() << " " 
-					<< (curItem->mPatch->IsActive() ? "ON     " : "off    ") 
+				const int patchNum = curItem->mPatch->GetNumber();
+				if (patchNum > 0)
+					info << std::setw(3) << patchNum << " ";
+
+				info << (curItem->mPatch->IsActive() ? "ON     " : "off    ") 
 					<< std::setiosflags(std::ios::left) << std::setw(10) << curItem->mPatch->GetPatchTypeStr() 
 					<< curItem->mPatch->GetName() << std::endl;
+
 				++cnt;
 			}
 
