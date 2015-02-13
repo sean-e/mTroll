@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010,2012 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2012,2015 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -58,6 +58,32 @@ public:
 
 	virtual void BankTransitionActivation() {SwitchReleased(NULL, NULL);}
 	virtual void BankTransitionDeactivation() {SwitchReleased(NULL, NULL);}
+
+	virtual void CompleteInit(MidiControlEngine * eng, ITraceDisplay * trc) 
+	{
+		__super::CompleteInit(eng, trc);
+
+		std::string name(GetName());
+		if (name == "meta load bank")
+		{
+			// update name of auto-gen'd LoadBank patches
+			const int bankNum = GetBankNumber();
+			std::string bankName = eng->GetBankNameByNum(bankNum);
+			if (!bankName.empty())
+			{
+				name = "[" + bankName + "]";
+				SetName(name);
+			}
+			else if (trc)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error: failed to identify name of bank used by LoadBank command; bank number " << bankNum << std::endl << std::ends;
+				trc->Trace(std::string(traceMsg.str()));
+			}
+		}
+	}
+
+	int GetBankNumber() const { return mBankNumber; }
 
 private:
 	MidiControlEngine	* mEngine;
