@@ -46,7 +46,7 @@
 		<switchAssembly number="20" top="5" left="5" >
 			<switchTextDisplay />
 			<switchLed vOffset="53" hOffset="105" />
-			<switch label="&amp;Mode" vOffset="50" />
+			<switch label="&amp;Menu" vOffset="50" />
 		</switchAssembly>
 		<switchAssembly number="90" incrementalVpos="0" incrementalHpos="280" />
 		<switchAssembly number="23" incrementalVpos="0" incrementalHpos="280" >

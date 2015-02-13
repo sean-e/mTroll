@@ -1,13 +1,13 @@
 <?xml version="1.0" ?>
 <MidiControlUiSettings>
-	<frame width="1024" height="590" backgroundColor="1a1a1a" frameHighlightColor="5a5a5a" />
-	<mainTextDisplay top="330" left="2" width="745" height="230" font-name="Lucida Console" font-height="45" foregroundColor="ffcc00" backgroundColor="0" />
-	<traceTextDisplay top="330" left="750" width="270" height="230" font-height="8" />
-	<hardware ledBrightness="1" />
+	<frame width="1024" height="590" backgroundColor="1a1a1a" frameHighlightColor="333333" />
+	<mainTextDisplay top="265" left="2" width="745" height="237" font-name="Lucida Console" font-height="35" foregroundColor="ffcc00" backgroundColor="0" />
+	<traceTextDisplay top="265" left="750" width="270" height="237" font-height="8" />
+	<hardware ledBrightness="2" />
 
 	<switchAssemblyConfig>
-			<switch font-name="Tahoma" font-weight="bold" font-height="10" width="75" height="23" foregroundColor="bbbbbb" />
-	    <switchTextDisplay font-name="Tahoma" font-height="19" foregroundColor="00ff00" backgroundColor="0" width="203" height="32" />
+		<switch font-name="Tahoma" font-weight="bold" font-height="10" width="75" height="23" foregroundColor="bbbbbb" />
+	    <switchTextDisplay font-name="Tahoma" font-height="19" foregroundColor="00ff00" backgroundColor="0" width="203" height="36" />
 	    <switchLed width="30" height="15" onColor="ffff00" offColor="3a3a3a" />
 	</switchAssemblyConfig>
 
@@ -45,8 +45,8 @@
 	<switchAssemblies>
 		<switchAssembly number="20" top="1" left="1" >
 			<switchTextDisplay />
-			<switchLed vOffset="38" hOffset="112" />
-			<switch label="&amp;Mode" vOffset="35" />
+			<switchLed vOffset="41" hOffset="112" />
+			<switch label="&amp;Menu" vOffset="39" />
 		</switchAssembly>
 			<switchAssembly number="30" incrementalVpos="0" incrementalHpos="205" />
 			<switchAssembly number="23" incrementalVpos="0" incrementalHpos="205" >
@@ -54,117 +54,117 @@
 		</switchAssembly>
 		<switchAssembly number="21" incrementalVpos="0" incrementalHpos="205" >
 			<switchTextDisplay />
-			<switchLed vOffset="38" hOffset="112" />
-			<switch label="&amp;Prev" vOffset="35" />
+			<switchLed vOffset="41" hOffset="112" />
+			<switch label="&amp;Prev" vOffset="39" />
 			</switchAssembly>
 		<switchAssembly number="22" incrementalVpos="0" incrementalHpos="205" >
 			<switchTextDisplay />
-			<switchLed vOffset="38" hOffset="112" />
-			<switch label="&amp;Next" vOffset="35" />
+			<switchLed vOffset="41" hOffset="112" />
+			<switch label="&amp;Next" vOffset="39" />
 	    </switchAssembly>
 
 	    <switchAssembly number="0" incrementalVpos="65" left="1" >
 			<switchTextDisplay />
-			<switchLed vOffset="38" hOffset="112" />
-			<switch label="&amp;1" vOffset="35" />
+			<switchLed vOffset="41" hOffset="112" />
+			<switch label="&amp;1" vOffset="39" />
 	    </switchAssembly>
 	    <switchAssembly number="1" incrementalVpos="0" incrementalHpos="205" >
 			<switchTextDisplay />
-			<switchLed vOffset="38" hOffset="112" />
-			<switch label="&amp;2" vOffset="35" />
+			<switchLed vOffset="41" hOffset="112" />
+			<switch label="&amp;2" vOffset="39" />
 	    </switchAssembly>
 	    <switchAssembly number="2" incrementalVpos="0" incrementalHpos="205" >
 			<switchTextDisplay />
-			<switchLed vOffset="38" hOffset="112" />
-			<switch label="&amp;3" vOffset="35" />
+			<switchLed vOffset="41" hOffset="112" />
+			<switch label="&amp;3" vOffset="39" />
 	    </switchAssembly>
 	    <switchAssembly number="3" incrementalVpos="0" incrementalHpos="205" >
 			<switchTextDisplay />
-			<switchLed vOffset="38" hOffset="112" />
-			<switch label="&amp;4" vOffset="35" />
+			<switchLed vOffset="41" hOffset="112" />
+			<switch label="&amp;4" vOffset="39" />
 	    </switchAssembly>
 		<switchAssembly number="4" incrementalVpos="0" incrementalHpos="205" >
 			<switchTextDisplay />
-			<switchLed vOffset="38" hOffset="112" />
-			<switch label="&amp;5" vOffset="35" />
+			<switchLed vOffset="41" hOffset="112" />
+			<switch label="&amp;5" vOffset="39" />
 		</switchAssembly>
 
 	    <switchAssembly number="5" incrementalVpos="65" left="1" >
 			<switchTextDisplay />
-			<switchLed vOffset="38" hOffset="112" />
-			<switch label="&amp;6" vOffset="35" />
+			<switchLed vOffset="41" hOffset="112" />
+			<switch label="&amp;6" vOffset="39" />
 	    </switchAssembly>
 	    <switchAssembly number="6" incrementalVpos="0" incrementalHpos="205" >
 			<switchTextDisplay />
-			<switchLed vOffset="38" hOffset="112" />
-			<switch label="&amp;7" vOffset="35" />
+			<switchLed vOffset="41" hOffset="112" />
+			<switch label="&amp;7" vOffset="39" />
 	    </switchAssembly>
 	    <switchAssembly number="7" incrementalVpos="0" incrementalHpos="205" >
 			<switchTextDisplay />
-			<switchLed vOffset="38" hOffset="112" />
-			<switch label="&amp;8" vOffset="35" />
+			<switchLed vOffset="41" hOffset="112" />
+			<switch label="&amp;8" vOffset="39" />
 	    </switchAssembly>
 		<switchAssembly number="8" incrementalVpos="0" incrementalHpos="205" >
 			<switchTextDisplay />
-			<switchLed vOffset="38" hOffset="112" />
-			<switch label="&amp;9" vOffset="35" />
+			<switchLed vOffset="41" hOffset="112" />
+			<switch label="&amp;9" vOffset="39" />
 		</switchAssembly>
 		<switchAssembly number="9" incrementalVpos="0" incrementalHpos="205" >
 			<switchTextDisplay />
-			<switchLed vOffset="38" hOffset="112" />
-			<switch label="1&amp;0" vOffset="35" />
+			<switchLed vOffset="41" hOffset="112" />
+			<switch label="1&amp;0" vOffset="39" />
 		</switchAssembly>
 
 	    <switchAssembly number="10" incrementalVpos="65" left="1" >
 			<switchTextDisplay />
-			<switchLed vOffset="38" hOffset="112" />
-			<switch label="&amp;A" vOffset="35" />
+			<switchLed vOffset="41" hOffset="112" />
+			<switch label="&amp;A" vOffset="39" />
 	    </switchAssembly>
 	    <switchAssembly number="11" incrementalVpos="0" incrementalHpos="205" >
 			<switchTextDisplay />
-			<switchLed vOffset="38" hOffset="112" />
-			<switch label="&amp;B" vOffset="35" />
+			<switchLed vOffset="41" hOffset="112" />
+			<switch label="&amp;B" vOffset="39" />
 	    </switchAssembly>
 		<switchAssembly number="12" incrementalVpos="0" incrementalHpos="205" >
 			<switchTextDisplay />
-			<switchLed vOffset="38" hOffset="112" />
-			<switch label="&amp;C" vOffset="35" />
+			<switchLed vOffset="41" hOffset="112" />
+			<switch label="&amp;C" vOffset="39" />
 	    </switchAssembly>
 	    <switchAssembly number="13" incrementalVpos="0" incrementalHpos="205" >
 			<switchTextDisplay />
-			<switchLed vOffset="38" hOffset="112" />
-			<switch label="&amp;D" vOffset="35" />
+			<switchLed vOffset="41" hOffset="112" />
+			<switch label="&amp;D" vOffset="39" />
 	    </switchAssembly>
 	    <switchAssembly number="14" incrementalVpos="0" incrementalHpos="205" >
 			<switchTextDisplay />
-			<switchLed vOffset="38" hOffset="112" />
-			<switch label="&amp;E" vOffset="35" />
+			<switchLed vOffset="41" hOffset="112" />
+			<switch label="&amp;E" vOffset="39" />
 	    </switchAssembly>
 
-		<switchAssembly number="15" incrementalVpos="65" left="1" >
+		<switchAssembly number="15" incrementalVpos="310" left="1" >
 			<switchTextDisplay />
-			<switchLed vOffset="38" hOffset="112" />
-			<switch label="Aux&amp;V" vOffset="35" />
+			<switchLed vOffset="41" hOffset="112" />
+			<switch label="Aux&amp;V" vOffset="39" />
 		</switchAssembly>
 		<switchAssembly number="16" incrementalVpos="0" incrementalHpos="205" >
 			<switchTextDisplay />
-			<switchLed vOffset="38" hOffset="112" />
-			<switch label="Aux&amp;W" vOffset="35" />
+			<switchLed vOffset="41" hOffset="112" />
+			<switch label="Aux&amp;W" vOffset="39" />
 		</switchAssembly>
 		<switchAssembly number="17" incrementalVpos="0" incrementalHpos="205" >
 			<switchTextDisplay />
-			<switchLed vOffset="38" hOffset="112" />
-			<switch label="Aux&amp;X" vOffset="35" />
+			<switchLed vOffset="41" hOffset="112" />
+			<switch label="Aux&amp;X" vOffset="39" />
 		</switchAssembly>
 		<switchAssembly number="18" incrementalVpos="0" incrementalHpos="205" >
 			<switchTextDisplay />
-			<switchLed vOffset="38" hOffset="112" />
-			<switch label="Aux&amp;Y" vOffset="35" />
+			<switchLed vOffset="41" hOffset="112" />
+			<switch label="Aux&amp;Y" vOffset="39" />
 		</switchAssembly>
 		<switchAssembly number="19" incrementalVpos="0" incrementalHpos="205" >
 			<switchTextDisplay />
-			<switchLed vOffset="38" hOffset="112" />
-			<switch label="Aux&amp;Z" vOffset="35" />
+			<switchLed vOffset="41" hOffset="112" />
+			<switch label="Aux&amp;Z" vOffset="39" />
 		</switchAssembly>
 
 	</switchAssemblies>

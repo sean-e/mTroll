@@ -4,45 +4,48 @@
 	<SystemConfig>
 		<powerup bank="10" />
 		<switches>
-			<!-- 'mode', 'decrement' and 'increment' switch nodes are required.
+			<!-- 'menu', 'decrement' and 'increment' switch nodes are required.
 				switch id attributes are 0-based and map to the switchMappings block in the .ui.xml file.
-				Mode switch is like a '2nd' or alternate function switch.
-				Increment and decrement switches are reserved by the engine after pressing MODE.
+				Menu switch is like a '2nd' or alternate function switch.
+				Increment and decrement switches are reserved by the engine after pressing Menu.
 				Increment and decrement switches are available for patches in the default startup mode.  -->
-			<switch name="mode" id="20" />
-			<switch name="decrement" id="21" />
-			<switch name="increment" id="22" />
+			<switch command="menu" id="20" />
+			<switch command="decrement" id="21" />
+			<switch command="increment" id="22" />
 
 			<!-- Optional assignments that define what functions are available and on what switch
-				when you press the MODE switch. 
+				when you press the Menu switch. 
 				If this section is not used, then default assignments will be made. -->
-			<switch name="recall" id="0" />
-			<switch name="back" id="1" />
-			<switch name="forward" id="2" />
-			<switch name="time" id="3" />
-			<switch name="programChangeDirect" id="4" />
-			<switch name="controlChangeDirect" id="5" />
-			<switch name="adcOverride" id="6" />
-			<switch name="toggleTraceWindow" id="7" />
-			<switch name="bankDirect" id="15" />
-			<switch name="adcDisplay" id="16" />
-			<switch name="testLeds" id="17" />
-			<switch name="bankDescription" id="18" />
-			<switch name="toggleLedInversion" id="19" />
+			<switch command="recall" id="0" />
+			<switch command="back" id="1" />
+			<switch command="forward" id="2" />
+			<switch command="time" id="3" />
+			<switch command="programChangeDirect" id="4" />
+			<switch command="controlChangeDirect" id="5" />
+			<switch command="adcOverride" id="6" />
+			<switch command="toggleTraceWindow" id="7" />
+			<switch command="bankDirect" id="15" />
+			<switch command="adcDisplay" id="16" />
+			<switch command="testLeds" id="17" />
+			<switch command="bankDescription" id="18" />
+			<switch command="toggleLedInversion" id="19" />
 
 			<!-- Optional bank load assignments. Make sure these don't conflict with defaults if 
 				defaults aren't specified.
-				These can be used to jump directly to any particular bank after pressing the MODE switch. -->
-			<switch name="bankLoad" id="9" bank="122" />
-			<switch name="bankLoad" id="10" bank="1" />
-			<switch name="bankLoad" id="11" bank="100" />
-			<switch name="bankLoad" id="12" bank="103" />
-			<switch name="bankLoad" id="13" bank="120" />
-			<switch name="bankLoad" id="14" bank="121" />
+				These can be used to jump directly to any particular bank after pressing the Menu switch. -->
+			<switch command="LoadBank" id="9" bankNumber="122" />
+			<switch command="LoadBank" id="10" bankNumber="1" />
+			<switch command="LoadBank" id="11" bankNumber="100" />
+			<switch command="LoadBank" id="12" bankNumber="103" />
+			<switch command="LoadBank" id="13" bankNumber="120" />
+			<switch command="LoadBank" id="14" bankNumber="121" />
 		</switches>
 
 		<midiDevices>
 			<midiDevice port="1" activityIndicatorId="23" out="Axe-Fx II" in="Axe-Fx II" />
+
+			<!-- default device if the named devices fail -->
+			<midiDevice port="1" activityIndicatorId="23" outIdx="0" />
 		</midiDevices>
 
 		<!-- port attr on expression block is required -->
@@ -677,34 +680,6 @@
 		</patch>
 		<patch name="Decrement Scene" number="864" type="AxeMomentary" device="Axe-Fx" singleState="1" />
 		<patch name="Increment Scene" number="865" type="AxeMomentary" device="Axe-Fx" singleState="1" />
-
-		<!-- Meta patches -->
-		<engineMetaPatch name="Reset Patches" number="900" action="ResetBankPatches" />
-		<engineMetaPatch name="Back" number="901" action="BankHistoryBackward" />
-		<engineMetaPatch name="Forward" number="902" action="BankHistoryForward" />
-		<engineMetaPatch name="Recall Bank" number="903" action="BankHistoryRecall" />
-		<engineMetaPatch name="Sync Axe-Fx" number="904" action="SyncAxeFx" />
-		<engineMetaPatch name="Prev Bank" number="905" action="LoadPreviousBank" />
-		<engineMetaPatch name="Next Bank" number="906" action="LoadNextBank" />
-
-		<!-- sort of a bank index -->
-		<engineMetaPatch name="Goto Axe 51" number="911" action="LoadBank" bankNumber="15" />
-		<engineMetaPatch name="Goto Axe 101" number="912" action="LoadBank" bankNumber="20" />
-		<engineMetaPatch name="Goto Axe 151" number="913" action="LoadBank" bankNumber="25" />
-		<engineMetaPatch name="Goto Axe 201" number="914" action="LoadBank" bankNumber="30" />
-		<engineMetaPatch name="Goto Axe 251" number="915" action="LoadBank" bankNumber="35" />
-		<engineMetaPatch name="Goto Axe 301" number="916" action="LoadBank" bankNumber="40" />
-		<engineMetaPatch name="Goto Axe 351" number="917" action="LoadBank" bankNumber="45" />
-
-		<!-- Reveal is just a jump to another bank -->
-		<engineMetaPatch name="Reveal 1"  number="950" action="LoadBank" bankNumber="100" />
-		<engineMetaPatch name="Reveal 2"  number="951" action="LoadBank" bankNumber="101" />
-		<engineMetaPatch name="Reveal 3"  number="952" action="LoadBank" bankNumber="102" />
-		<engineMetaPatch name="Reveal 4"  number="953" action="LoadBank" bankNumber="103" />
-		<engineMetaPatch name="Reveal 5"  number="954" action="LoadBank" bankNumber="104" />
-		<engineMetaPatch name="Loopers"   number="960" action="LoadBank" bankNumber="120" />
-		<engineMetaPatch name="Externals" number="961" action="LoadBank" bankNumber="121" />
-		<engineMetaPatch name="Scenes"    number="962" action="LoadBank" bankNumber="122" />
 	</patches>
 
 
@@ -722,31 +697,31 @@
 			<PatchMap switch="15" patch="855" override="A" />
 
 			<!-- Previous and Next Bank switches are not required. -->
-			<PatchMap switch="22" patch="905" />
-			<!-- long press of prev loads reveal 1 -->
-			<PatchMap switch="22" patch="950" secondFunction="immediateToggle" />
-			<PatchMap switch="23" patch="906" />
-			<!-- long press of next loads tuner -->
+			<PatchMap switch="22" command="LoadPreviousBank" />
+			<!-- long press of Prev loads reveal 1 -->
+			<PatchMap switch="22" command="LoadBank" bankNumber="100" secondFunction="immediateToggle" />
+			<PatchMap switch="23" command="LoadNextBank" />
+			<!-- long press of Next loads tuner -->
 			<PatchMap switch="23" patch="705" secondFunction="auto" />
 		</bank>
 
 		<bank name="Directory" number="1">
-			<PatchMap switch="1" patch="911" loadState="" unloadState="" />
-			<PatchMap switch="2" patch="912" loadState="" unloadState="" />
-			<PatchMap switch="3" patch="913" loadState="" unloadState="" />
-			<PatchMap switch="4" patch="914" loadState="" unloadState="" />
-			<PatchMap switch="5" patch="915" loadState="" unloadState="" />
-			<PatchMap switch="6" patch="916" loadState="" unloadState="" />
-			<PatchMap switch="7" patch="917" loadState="" unloadState="" />
+			<PatchMap switch="1" label="Goto Axe 51"  command="LoadBank" bankNumber="15" />
+			<PatchMap switch="2" label="Goto Axe 101" command="LoadBank" bankNumber="20" />
+			<PatchMap switch="3" label="Goto Axe 151" command="LoadBank" bankNumber="25" />
+			<PatchMap switch="4" label="Goto Axe 201" command="LoadBank" bankNumber="30" />
+			<PatchMap switch="5" label="Goto Axe 251" command="LoadBank" bankNumber="35" />
+			<PatchMap switch="6" label="Goto Axe 301" command="LoadBank" bankNumber="40" />
+			<PatchMap switch="7" label="Goto Axe 351" command="LoadBank" bankNumber="45" />
 			<!-- empty patch number in PatchMap will override the default, if any exists -->
-			<PatchMap switch="8" patch="" />
-			<PatchMap switch="9" patch="961" />
-			<PatchMap switch="10" patch="960" />
-			<PatchMap switch="11" patch="950" />
-			<PatchMap switch="12" patch="951" />
-			<PatchMap switch="13" patch="952" />
-			<PatchMap switch="14" patch="953" />
-			<PatchMap switch="15" patch="962" />
+			<PatchMap switch="8"  patch="" />
+			<PatchMap switch="9"  label="Externals" command="LoadBank" bankNumber="121" />
+			<PatchMap switch="10" label="Loopers"   command="LoadBank" bankNumber="120" />
+			<PatchMap switch="11" label="Reveal 1"  command="LoadBank" bankNumber="100" />
+			<PatchMap switch="12" label="Reveal 2"  command="LoadBank" bankNumber="101" />
+			<PatchMap switch="13" label="Reveal 3"  command="LoadBank" bankNumber="102" />
+			<PatchMap switch="14" label="Reveal 4"  command="LoadBank" bankNumber="103" />
+			<PatchMap switch="15" label="Scenes"    command="LoadBank" bankNumber="122" />
 		</bank>
 
 		<bank name="Axe-Fx 1" number="10">
@@ -1231,7 +1206,7 @@
 			<PatchMap switch="18" patch="" />
 			<PatchMap switch="19" patch="" />
 			<PatchMap switch="20" patch="" />
-			<PatchMap switch="22" patch="901" />
+			<PatchMap switch="22" command="BankHistoryBackward" />
 			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
 		</bank>
 		<bank name="Reveal 2" number="101">
@@ -1255,7 +1230,7 @@
 			<PatchMap switch="18" patch="" />
 			<PatchMap switch="19" patch="" />
 			<PatchMap switch="20" patch="" />
-			<PatchMap switch="22" patch="901" />
+			<PatchMap switch="22" command="BankHistoryBackward" />
 			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
 		</bank>
 		<bank name="Reveal 3" number="102">
@@ -1273,8 +1248,8 @@
 			<PatchMap switch="12" patch="748" />
 			<PatchMap switch="13" patch="782" />
 			<PatchMap switch="14" patch="704" />
-			<PatchMap switch="15" patch="904" />
-			<PatchMap switch="22" patch="901" />
+			<PatchMap switch="15" command="SyncAxeFx" />
+			<PatchMap switch="22" command="BankHistoryBackward" />
 			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
 		</bank>
 		<bank name="Reveal 4 X/Y 1" number="103">
@@ -1288,7 +1263,7 @@
 			<PatchMap switch="8" patch="815" />
 			<PatchMap switch="9" patch="817" />
 			<PatchMap switch="10" patch="819" />
-			<PatchMap switch="22" patch="901" />
+			<PatchMap switch="22" command="BankHistoryBackward" />
 			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
 		</bank>
 		<bank name="Reveal 5 X/Y 2" number="104">
@@ -1302,7 +1277,7 @@
 			<PatchMap switch="8" patch="816" />
 			<PatchMap switch="9" patch="818" />
 			<PatchMap switch="10" patch="820" />
-			<PatchMap switch="22" patch="901" />
+			<PatchMap switch="22" command="BankHistoryBackward" />
 			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
 		</bank>
 
@@ -1317,7 +1292,7 @@
 			<PatchMap switch="8" patch="719" />
 			<PatchMap switch="9" patch="704" />
 			<PatchMap switch="10" patch="721" />
-			<PatchMap switch="22" patch="901" />
+			<PatchMap switch="22" command="BankHistoryBackward" />
 		</bank>
 		<bank name="Externals" number="121">
 			<PatchMap switch="1" patch="830" />
@@ -1349,7 +1324,7 @@
 			<PatchMap switch="14" patch="709" />
 			<PatchMap switch="14" patch="518" secondFunction="immediateToggle"/>
 			<PatchMap switch="15" patch="" />
-			<PatchMap switch="22" patch="901" />
+			<PatchMap switch="22" command="BankHistoryBackward" />
 		</bank>
 		<bank name="Scenes" number="122">
 			<ExclusiveSwitchGroup>1 2 3 4 5 6 7 8</ExclusiveSwitchGroup>
@@ -1369,7 +1344,7 @@
 			<PatchMap switch="13" patch="" />
 			<PatchMap switch="14" patch="725" />
 			<PatchMap switch="15" patch="726" />
-			<PatchMap switch="22" patch="901" />
+			<PatchMap switch="22" command="BankHistoryBackward" />
 		</bank>
 
 	</banks>

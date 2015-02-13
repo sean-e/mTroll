@@ -149,7 +149,7 @@
 
 		<switchAssembly number="20" incrementalVpos="110" left="5" >
 			<switchTextDisplay />
-			<switch label="&amp;Mode" vOffset="30" />
+			<switch label="&amp;Menu" vOffset="30" />
 		</switchAssembly>
 		<switchAssembly number="40" incrementalVpos="0" incrementalHpos="165" comment="this is just a spacer" />
 		<switchAssembly number="41" incrementalVpos="0" incrementalHpos="165" comment="this is just a spacer" />

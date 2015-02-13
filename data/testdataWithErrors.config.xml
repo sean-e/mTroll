@@ -3,9 +3,9 @@
 	<SystemConfig filterPC="0">
 		<powerup timeout="0" bank="1" patch="0" />
 		<switches>
-			<switch name="mode" id="20" />
-			<switch name="decrement" id="21" />
-			<switch name="increment" id="22" />
+			<switch command="menu" id="20" />
+			<switch command="decrement" id="21" />
+			<switch command="increment" id="22" />
 		</switches>
 		<midiDevices>
 			<midiDevice port="1" outIdx="0" activityIndicatorId="23" />

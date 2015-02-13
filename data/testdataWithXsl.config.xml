@@ -4,9 +4,9 @@
 	<SystemConfig filterPC="0">
 		<powerup timeout="0" bank="1" patch="0" />
 		<switches>
-			<switch name="mode" id="20" />
-			<switch name="decrement" id="21" />
-			<switch name="increment" id="22" />
+			<switch command="menu" id="20" />
+			<switch command="decrement" id="21" />
+			<switch command="increment" id="22" />
 		</switches>
 		<midiDevices>
 			<midiDevice port="1" outIdx="0" activityIndicatorId="23" />
@@ -87,10 +87,6 @@
 		</patch>
 		<patch name="Default Toggle 2" number="31" type="toggle" port="1">
 		</patch>
-		<engineMetaPatch name="Reset bank (meta)" number="50" action="ResetBankPatches" />
-		<engineMetaPatch name="Load bank 1 (meta)" number="51" action="LoadBank" bankNumber="1" />
-		<engineMetaPatch name="Load bank 2 (meta)" number="52" action="LoadBank" bankNumber="2" />
-		<engineMetaPatch name="Load bank 3 (meta)" number="53" action="LoadBank" bankNumber="3" />
 	</patches>
 	<banks>
 		<bank name="These are the defaults" number="0">
@@ -104,7 +100,7 @@
 			<PatchMap switch="6" patch="10" loadState="" unloadState="" />
 			<PatchMap switch="7" patch="11" loadState="" unloadState="" />
 			<PatchMap switch="8" patch="12" loadState="" unloadState="" />
-			<PatchMap switch="11" patch="20" loadState="" unloadState="" />
+			<PatchMap switch="11" label="Overridden label" patch="20" loadState="" unloadState="" />
 			<PatchMap switch="12" patch="21" loadState="" unloadState="" />
 			<PatchMap switch="13" patch="22" loadState="" unloadState="" />
 			<PatchMap switch="14" patch="23" loadState="" unloadState="" />
@@ -118,7 +114,7 @@
 			<PatchMap switch="12" patch="26" loadState="" unloadState="B" />
 		</bank>
 		<bank name="Third Bank" number="3">
-			<PatchMap switch="1" patch="50" loadState="" unloadState="" />
+			<PatchMap switch="1" command="ResetBankPatches" />
 			<PatchMap switch="6" patch="20" loadState="" unloadState="" />
 			<PatchMap switch="7" patch="21" loadState="" unloadState="" />
 			<PatchMap switch="8" patch="22" loadState="" unloadState="" />
@@ -136,7 +132,7 @@
 			<PatchMap switch="2" patch="1" loadState="" unloadState="" />
 			<PatchMap switch="7" patch="2" loadState="" unloadState="" />
 			<PatchMap switch="12" patch="3" loadState="" unloadState="" />
-			<PatchMap switch="5" patch="52" loadState="" unloadState="" />
+			<PatchMap switch="5" command="LoadBank" bankNumber="2" />
 		</bank>
 	</banks>
 </MidiControlSettings>
