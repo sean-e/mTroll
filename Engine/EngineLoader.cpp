@@ -51,6 +51,7 @@
 #include "AxeFxProgramChange.h"
 #include "PatchListSequencePatch.h"
 #include "MetaPatch_ResetExclusiveGroup.h"
+#include "MetaPatch_BankNav.h"
 
 
 static PatchBank::PatchState GetLoadState(const std::string & tmpLoad);
@@ -210,14 +211,18 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 	{
 		std::string name;
 		int id = 0;
-		pChildElem->QueryValueAttribute("name", &name);
+		pChildElem->QueryValueAttribute("command", &name);
+		if (name.empty())
+			pChildElem->QueryValueAttribute("name", &name); // original version
 		pChildElem->QueryIntAttribute("id", &id);
 
 		if (name == "increment" && id > 0)
 			incrementSwitch = id;
 		else if (name == "decrement" && id > 0)
 			decrementSwitch = id;
-		else if (name == "mode" && id > 0)
+		else if (name == "menu" && id > 0)
+			modeSwitch = id;
+		else if (name == "mode" && id > 0) // original version
 			modeSwitch = id;
 	}
 
@@ -396,8 +401,13 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 	for ( ; pChildElem; pChildElem = pChildElem->NextSiblingElement())
 	{
 		std::string name;
-		pChildElem->QueryValueAttribute("name", &name);
-		if (name.empty() || name == "mode" || name == "increment" || name == "decrement")
+		pChildElem->QueryValueAttribute("command", &name);
+		if (name.empty())
+		{
+			// original version used name instead of command
+			pChildElem->QueryValueAttribute("name", &name);
+		}
+		if (name.empty() || name == "mode" || name == "menu" || name == "increment" || name == "decrement")
 			continue;
 
 		int switchNumber = -1;
@@ -405,8 +415,20 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 		if (-1 == switchNumber)
 			continue;
 
+		if (name == "LoadBank")
+		{
+			int bnkNum = -1;
+			pChildElem->QueryIntAttribute("bankNumber", &bnkNum);
+			if (-1 == bnkNum)
+				continue;
+
+			mEngine->AssignCustomBankLoad(switchNumber, bnkNum);
+			continue;
+		}
+
 		if (name == "bankLoad")
 		{
+			// original version of LoadBank
 			int bnkNum = -1;
 			pChildElem->QueryIntAttribute("bank", &bnkNum);
 			if (-1 == bnkNum)
@@ -446,10 +468,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		std::string patchName;
 		if (pElem->ValueStr() == "engineMetaPatch")
 		{
-
-			// #todo: remove metapatches and replace with patchmap attributes 
-			// w/ auto-gen'd patches with negative patch numbers
-
+			// engineMetaPatch is superceded by PatchMap commands
 			if (pElem->Attribute("name"))
 				patchName = pElem->Attribute("name");
 			int patchNumber = -1;
@@ -466,13 +485,15 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			}
 
 			std::string tmp;
-			pElem->QueryValueAttribute("action", &tmp);
+			pElem->QueryValueAttribute("command", &tmp);
+			if (tmp.empty())
+				pElem->QueryValueAttribute("action", &tmp);
 			if (tmp.empty())
 			{
 				if (mTraceDisplay)
 				{
 					std::strstream traceMsg;
-					traceMsg << "Error loading config file: engineMetaPatch " << patchName << " missing action" << std::endl << std::ends;
+					traceMsg << "Error loading config file: engineMetaPatch " << patchName << " missing command/action" << std::endl << std::ends;
 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 				}
 				continue;
@@ -689,7 +710,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				if (childElem->GetText())
 					patchNumStr = childElem->GetText();
 				const int num = ::atoi(patchNumStr.c_str());
-				if (0 <num)
+				if (-1 != num)
 				{
 					intList.push_back(num);
 				}
@@ -1050,6 +1071,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 void
 EngineLoader::LoadBanks(TiXmlElement * pElem)
 {
+	int autoGenPatchNumber = (int)ReservedPatchNumbers::kAutoGenPatchNumberStart;
 	for ( ; pElem; pElem = pElem->NextSiblingElement())
 	{
 		if (pElem->ValueStr() != "bank")
@@ -1090,10 +1112,9 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 		{
 			if (childElem->ValueStr() == "PatchMap")
 			{
+				std::string tmp;
 				int switchNumber = -1;
 				childElem->QueryIntAttribute("switch", &switchNumber);
-				int patchNumber = -1;
-				childElem->QueryIntAttribute("patch", &patchNumber);
 				if (switchNumber <= 0)
 				{
 					if (mTraceDisplay)
@@ -1105,18 +1126,191 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 					continue;
 				}
 
-				std::string tmp;
-				childElem->QueryValueAttribute("secondFunction", &tmp);
-				const PatchBank::SwitchFunctionAssignment swFunc = (tmp.length()) ? PatchBank::ssSecondary : PatchBank::ssPrimary;
-				const PatchBank::SecondFunctionOperation sfoOp = ::GetSecondFuncOp(tmp);
-				tmp.clear();
-
 				std::string nameOverride;
 				if (childElem->Attribute("label"))
 					nameOverride = childElem->Attribute("label");
 				else if (childElem->Attribute("name"))
 					nameOverride = childElem->Attribute("name");
 
+				int patchNumber = -1;
+				childElem->QueryIntAttribute("patch", &patchNumber);
+				// patch may be empty; not an error; retain value of -1
+
+				if (childElem->Attribute("command"))
+				{
+					// handle engineMetaPatch functionality without an explicit engineMetaPatch ("command" instead of "action")
+					childElem->QueryValueAttribute("command", &tmp);
+					if (tmp.empty())
+					{
+						if (mTraceDisplay)
+						{
+							std::strstream traceMsg;
+							traceMsg << "Error loading config file: PatchMap for switch " << switchNumber << " in bank " << bankNumber << " missing action" << std::endl << std::ends;
+							mTraceDisplay->Trace(std::string(traceMsg.str()));
+						}
+						continue;
+					}
+
+					std::string gendPatchName(nameOverride);
+					bool isAutoGendPatchNumber = false;
+					if (-1 == patchNumber)
+					{
+						patchNumber = autoGenPatchNumber--;
+						isAutoGendPatchNumber = true;
+					}
+
+					if (tmp == "ResetBankPatches")
+					{
+						if (!isAutoGendPatchNumber)
+						{
+							gendPatchName = "Reset bank patches";
+							mEngine->AddPatch(new MetaPatch_ResetBankPatches(mEngine, patchNumber, gendPatchName));
+						}
+						else
+							patchNumber = ReservedPatchNumbers::kResetBankPatches;
+					}
+					else if (tmp == "SyncAxeFx")
+					{
+						if (!isAutoGendPatchNumber)
+						{
+							gendPatchName = "Sync Axe-FX";
+							mEngine->AddPatch(new MetaPatch_SyncAxeFx(mAxeFxManager, patchNumber, gendPatchName));
+						}
+						else
+							patchNumber = ReservedPatchNumbers::kSyncAxeFx;
+					}
+					else if (tmp == "LoadNextBank")
+					{
+						if (!isAutoGendPatchNumber)
+						{
+							gendPatchName = "[next]";
+							mEngine->AddPatch(new MetaPatch_LoadNextBank(mEngine, patchNumber, gendPatchName));
+						}
+						else
+							patchNumber = ReservedPatchNumbers::kLoadNextBank;
+					}
+					else if (tmp == "LoadPreviousBank")
+					{
+						if (!isAutoGendPatchNumber)
+						{
+							gendPatchName = "[previous]";
+							mEngine->AddPatch(new MetaPatch_LoadPreviousBank(mEngine, patchNumber, gendPatchName));
+						}
+						else
+							patchNumber = ReservedPatchNumbers::kLoadPrevBank;
+					}
+					else if (tmp == "NavNextBank")
+					{
+						if (!isAutoGendPatchNumber)
+						{
+							gendPatchName = "Nav next";
+							mEngine->AddPatch(new MetaPatch_BankNavNext(mEngine, patchNumber, gendPatchName));
+						}
+						else
+							patchNumber = ReservedPatchNumbers::kBankNavNext;
+					}
+					else if (tmp == "NavPreviousBank")
+					{
+						if (!isAutoGendPatchNumber)
+						{
+							gendPatchName = "Nav previous";
+							mEngine->AddPatch(new MetaPatch_BankNavPrevious(mEngine, patchNumber, gendPatchName));
+						}
+						else
+							patchNumber = ReservedPatchNumbers::kBankNavPrev;
+					}
+					else if (tmp == "BankHistoryBackward")
+					{
+						if (!isAutoGendPatchNumber)
+						{
+							gendPatchName = "[back]";
+							mEngine->AddPatch(new MetaPatch_BankHistoryBackward(mEngine, patchNumber, gendPatchName));
+						}
+						else
+							patchNumber = ReservedPatchNumbers::kBankHistoryBackward;
+					}
+					else if (tmp == "BankHistoryForward")
+					{
+						if (!isAutoGendPatchNumber)
+						{
+							gendPatchName = "[forward]";
+							mEngine->AddPatch(new MetaPatch_BankHistoryForward(mEngine, patchNumber, gendPatchName));
+						}
+						else
+							patchNumber = ReservedPatchNumbers::kBankHistoryForward;
+					}
+					else if (tmp == "BankHistoryRecall")
+					{
+						if (!isAutoGendPatchNumber)
+						{
+							gendPatchName = "[recall]";
+							mEngine->AddPatch(new MetaPatch_BankHistoryRecall(mEngine, patchNumber, gendPatchName));
+						}
+						else
+							patchNumber = ReservedPatchNumbers::kBankHistoryRecall;
+					}
+					else if (tmp == "LoadBank")
+					{
+						int bankNumber = -1;
+						childElem->QueryIntAttribute("bankNumber", &bankNumber);
+						if (-1 != bankNumber)
+						{
+							if (nameOverride.empty())
+								nameOverride = "meta load bank";
+							mEngine->AddPatch(new MetaPatch_LoadBank(mEngine, patchNumber, nameOverride, bankNumber));
+							nameOverride.clear();
+						}
+						else
+						{
+							if (mTraceDisplay)
+							{
+								std::strstream traceMsg;
+								traceMsg << "Error loading config file: PatchMap " << nameOverride << " missing LoadBank target" << std::endl << std::ends;
+								mTraceDisplay->Trace(std::string(traceMsg.str()));
+							}
+							continue;
+						}
+					}
+					else if (tmp == "ResetExclusiveGroup")
+					{
+						int activeSwitch = -1;
+						childElem->QueryIntAttribute("activeSwitch", &activeSwitch);
+						if (-1 != activeSwitch)
+						{
+							if (nameOverride.empty())
+								nameOverride = "Reset exclusive group";
+							mEngine->AddPatch(new MetaPatch_ResetExclusiveGroup(mEngine, patchNumber, nameOverride, activeSwitch));
+							nameOverride.clear();
+						}
+						else 
+						{
+							if (mTraceDisplay)
+							{
+								std::strstream traceMsg;
+								traceMsg << "Error loading config file: PatchMap " << nameOverride << " missing ResetExclusiveGroup switch target" << std::endl << std::ends;
+								mTraceDisplay->Trace(std::string(traceMsg.str()));
+							}
+							continue;
+						}
+					}
+					else
+					{
+						if (mTraceDisplay)
+						{
+							std::strstream traceMsg;
+							traceMsg << "Error loading config file: PatchMap " << nameOverride << " unknown command " << tmp << std::endl << std::ends;
+							mTraceDisplay->Trace(std::string(traceMsg.str()));
+						}
+						continue;
+					}
+				}
+
+				tmp.clear();
+				childElem->QueryValueAttribute("secondFunction", &tmp);
+				const PatchBank::SwitchFunctionAssignment swFunc = (tmp.length()) ? PatchBank::ssSecondary : PatchBank::ssPrimary;
+				const PatchBank::SecondFunctionOperation sfoOp = ::GetSecondFuncOp(tmp);
+
+				tmp.clear();
 				childElem->QueryValueAttribute("loadState", &tmp);
 				const PatchBank::PatchState loadState = ::GetLoadState(tmp);
 				tmp.clear();
@@ -1369,7 +1563,11 @@ EngineLoader::LoadDeviceChannelMap(TiXmlElement * pElem)
 			dev == "AxeFx II" ||
 			dev == "Axe-Fx II" ||
 			dev == "AxeFx 2" ||
-			dev == "Axe-Fx 2"
+			dev == "Axe-Fx 2" ||
+			dev == "AxeFx II XL" ||
+			dev == "Axe-Fx II XL" ||
+			dev == "AxeFx 2 XL" ||
+			dev == "Axe-Fx 2 XL"
 			)
 		{
 			AxeFxModel axeModel(AxeStd);
@@ -1377,16 +1575,24 @@ EngineLoader::LoadDeviceChannelMap(TiXmlElement * pElem)
 			pElem->QueryIntAttribute("model", &tmp);
 			if (2 == tmp)
 				axeModel = Axe2;
+			else if (6 == tmp)
+				axeModel = Axe2XL;
 			else
 			{
-				int pos = dev.find("2");
+				int pos = dev.find("XL");
 				if (std::string::npos != pos)
-					axeModel = Axe2;
+					axeModel = Axe2XL;
 				else
 				{
-					pos = dev.find("II");
+					pos = dev.find("2");
 					if (std::string::npos != pos)
 						axeModel = Axe2;
+					else
+					{
+						pos = dev.find("II");
+						if (std::string::npos != pos)
+							axeModel = Axe2;
+					}
 				}
 			}
 

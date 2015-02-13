@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2013 Sean Echevarria
+ * Copyright (C) 2007-2013,2015 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -41,6 +41,10 @@
 #else
 	#define CurTime	??
 #endif // _WINDOWS
+#include "MetaPatch_LoadBank.h"
+#include "MetaPatch_BankHistory.h"
+#include "MetaPatch_ResetBankPatches.h"
+#include "MetaPatch_SyncAxeFx.h"
 
 
 struct DeletePatch
@@ -57,8 +61,6 @@ SortByBankNumber(const PatchBank* lhs, const PatchBank* rhs)
 	return lhs->GetBankNumber() < rhs->GetBankNumber();
 }
 
-const int kBankNavNextPatchNumber = -2; // reserved patch number
-const int kBankNavPrevPatchNumber = -3; // reserved patch number
 
 MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 									 IMainDisplay * mainDisplay, 
@@ -158,6 +160,16 @@ MidiControlEngine::SetPowerup(int powerupBank,
 	mPowerUpTimeout = powerupTimeout;
 }
 
+const std::string
+MidiControlEngine::GetBankNameByNum(int bankNumberNotIndex)
+{
+	const int bankIdx = GetBankIndex(bankNumberNotIndex);
+	PatchBank * bnk = GetBank(bankIdx);
+	if (bnk)
+		return bnk->GetBankName();
+	return std::string();
+}
+
 void
 MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSettings)
 {
@@ -180,6 +192,17 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 	}
 
 	std::sort(mBanks.begin(), mBanks.end(), SortByBankNumber);
+
+	AddPatch(new MetaPatch_BankNavNext(this, ReservedPatchNumbers::kBankNavNext, "Nav next"));
+	AddPatch(new MetaPatch_BankNavPrevious(this, ReservedPatchNumbers::kBankNavPrev, "Nav previous"));
+	AddPatch(new MetaPatch_LoadNextBank(this, ReservedPatchNumbers::kLoadNextBank, "[next]"));
+	AddPatch(new MetaPatch_LoadPreviousBank(this, ReservedPatchNumbers::kLoadPrevBank, "[previous]"));
+	AddPatch(new MetaPatch_BankHistoryBackward(this, ReservedPatchNumbers::kBankHistoryBackward, "[back]"));
+	AddPatch(new MetaPatch_BankHistoryForward(this, ReservedPatchNumbers::kBankHistoryForward, "[forward]"));
+	AddPatch(new MetaPatch_BankHistoryRecall(this, ReservedPatchNumbers::kBankHistoryRecall, "[recall]"));
+	AddPatch(new MetaPatch_ResetBankPatches(this, ReservedPatchNumbers::kResetBankPatches, "Reset bank patches"));
+	AddPatch(new MetaPatch_SyncAxeFx(mAxeMgr, ReservedPatchNumbers::kSyncAxeFx, "Sync Axe-FX"));
+
 	for (Patches::iterator it = mPatches.begin();
 		it != mPatches.end();
 		)
@@ -206,16 +229,14 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 	}
 
 	PatchBank tmpDefaultBank(0, "nav default");
-	AddPatch(new MetaPatch_BankNavNext(this, kBankNavNextPatchNumber, "Next Bank"));
-	AddPatch(new MetaPatch_BankNavPrevious(this, kBankNavPrevPatchNumber, "Prev Bank"));
 
 	// this is how we allow users to override Next and Prev switches in their banks
 	// while at the same time reserving them for use by our modes.
 	// If their default bank specifies a mapping for mIncrementSwitchNumber or 
 	// mDecrementSwitchNumber, they will not get Next or Prev at all.
 	// CHANGED: no longer add Next and prev by default
-// 	tmpDefaultBank.AddPatchMapping(mIncrementSwitchNumber, kBankNavNextPatchNumber, PatchBank::stIgnore, PatchBank::stIgnore);
-// 	tmpDefaultBank.AddPatchMapping(mDecrementSwitchNumber, kBankNavPrevPatchNumber, PatchBank::stIgnore, PatchBank::stIgnore);
+// 	tmpDefaultBank.AddPatchMapping(mIncrementSwitchNumber, ReservedPatchNumbers::kBankNavNext, PatchBank::stIgnore, PatchBank::stIgnore);
+// 	tmpDefaultBank.AddPatchMapping(mDecrementSwitchNumber, ReservedPatchNumbers::kBankNavPrev, PatchBank::stIgnore, PatchBank::stIgnore);
 
 	if (defaultsBank)
 		defaultsBank->SetDefaultMappings(tmpDefaultBank);  // add Next and Prev to their default bank
@@ -238,7 +259,14 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 	if (mTrace)
 	{
 		std::strstream traceMsg;
-		traceMsg << "Loaded " << mBanks.size() << " banks, " << mPatches.size() << " patches" << std::endl << std::ends;
+		int userDefinedPatchCnt = 0;
+		std::for_each(mPatches.begin(), mPatches.end(), 
+			[&userDefinedPatchCnt](const std::pair<int, Patch *> & pr)
+		{
+			if (pr.second && pr.second->GetNumber() >= 0)
+				++userDefinedPatchCnt;
+		});
+		traceMsg << "Loaded " << mBanks.size() << " banks, " << userDefinedPatchCnt << " patches" << std::endl << std::ends;
 		mTrace->Trace(std::string(traceMsg.str()));
 	}
 
@@ -782,7 +810,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		}
 		break;
 	case emModeSelect:
-		msg = "Mode Select";
+		msg = "Menu";
 		if (mSwitchDisplay)
 		{
 			// override possible user override in this mode
@@ -812,8 +840,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 				PatchBank * bnk = GetBank(GetBankIndex(it->second));
 				if (bnk)
 				{
-					std::string txt("Bank: ");
-					txt += bnk->GetBankName();
+					std::string txt("[" + bnk->GetBankName() + "]");
 					mSwitchDisplay->SetSwitchText(it->first, txt);
 					mSwitchDisplay->ForceSwitchDisplay(it->first, true);
 				}
@@ -1031,13 +1058,13 @@ MidiControlEngine::SetupModeSelectSwitch(EngineModeSwitch m)
 	switch (m)
 	{
 	case kModeRecall:
-		txt = "Recall last bank";
+		txt = "[recall]";
 		break;
 	case kModeBack:
-		txt = "Go back (bank history)";
+		txt = "[back (bank history)]";
 		break;
 	case kModeForward:
-		txt = "Go forward (bank history)";
+		txt = "[forward (bank history)]";
 		break;
 	case kModeBankDesc:
 		txt = "Describe banks...";
@@ -1218,6 +1245,8 @@ MidiControlEngine::SwitchReleased_ModeSelect(int switchNumber)
 	}
 	else if (switchNumber == GetSwitchNumber(kModeTestLeds))
 	{
+		if (mMainDisplay)
+			mMainDisplay->TextOut("Testing LEDs...");
 		if (mSwitchDisplay)
 		{
 			mSwitchDisplay->EnableDisplayUpdate(true);

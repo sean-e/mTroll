@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2013 Sean Echevarria
+ * Copyright (C) 2007-2013,2015 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -58,7 +58,7 @@ public:
 					  int modeSwitchNumber);
 	~MidiControlEngine();
 
-	// These are the switch numbers used in "Mode Select" mode (default values 
+	// These are the switch numbers used in "Menu" mode (default values 
 	// that can be overridden in the config xml file <switches> section)
 	enum EngineModeSwitch
 	{
@@ -86,6 +86,7 @@ public:
 	void					FilterRedundantProgChg(bool filter) {mFilterRedundantProgramChanges = filter;}
 	void					AssignCustomBankLoad(int switchNumber, int bankNumber);
 	void					AssignModeSwitchNumber(EngineModeSwitch mode, int switchNumber);
+	const std::string		GetBankNameByNum(int bankNumberNotIndex);
 	void					CompleteInit(const PedalCalibration * pedalCalibrationSettings);
 
 	ExpressionPedals &		GetPedals() {return mGlobalPedals;}
@@ -185,6 +186,30 @@ private:
 	int						mDecrementSwitchNumber;
 	std::map<EngineModeSwitch, int>		mOtherModeSwitchNumbers;
 	std::map<int, int>		mBankLoadSwitchNumbers;
+};
+
+
+// reserved patch numbers
+// patch number reservations
+// -1 to -1000 are reserved for engine
+// -1001 to -2000 are user-defined patch numbers of auto-generated patches defined via patchmaps (not required)
+// -2000 to -XXX are auto-generated patches (defined in patchmaps)
+// 
+enum /*class*/ ReservedPatchNumbers
+{
+	// engine commands
+	kBankNavNext							= -2,
+	kBankNavPrev							= -3,
+	kLoadNextBank							= -4,
+	kLoadPrevBank							= -5,
+	kBankHistoryBackward					= -6,
+	kBankHistoryForward						= -7,
+	kBankHistoryRecall						= -8,
+	kResetBankPatches						= -9,
+	kSyncAxeFx								= -10,
+
+	// auto-gen'd patches
+	kAutoGenPatchNumberStart				= -2000
 };
 
 #endif // MidiControlEngine_h__
