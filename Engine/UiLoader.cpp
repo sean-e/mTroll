@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2015 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -86,6 +86,7 @@ UiLoader::LoadAssembyConfig(TiXmlElement * pElem)
 	bool boldFont;
 	int bgColor, fgColor;
 	int width, height;
+	int vOffset, hOffset;
 
 	pElem = hRoot.FirstChild("switch").Element();
 	if (!pElem)
@@ -95,16 +96,22 @@ UiLoader::LoadAssembyConfig(TiXmlElement * pElem)
 	fontWeight.clear();
 	fontHeight = 10;
 	width = height = 0;
+	vOffset = hOffset = 0;
 	fgColor = -1;
 
 	pElem->QueryHexAttribute("foregroundColor", &fgColor);
-	pElem->QueryValueAttribute("font-name", &fontname);
+	// QueryValueAttribute does not work with string when there are 
+	// spaces (truncated at whitespace); use Attribute instead
+	if (pElem->Attribute("font-name"))
+		fontname = pElem->Attribute("font-name");
 	pElem->QueryValueAttribute("font-weight", &fontWeight);
 	pElem->QueryIntAttribute("font-height", &fontHeight);
 	pElem->QueryIntAttribute("height", &height);
 	pElem->QueryIntAttribute("width", &width);
+	pElem->QueryIntAttribute("vOffset", &vOffset);
+	pElem->QueryIntAttribute("hOffset", &hOffset);
 	boldFont = (fontWeight == "bold");
-	mUi->SetSwitchConfig(width, height, fontname, fontHeight, boldFont, (unsigned int) fgColor);
+	mUi->SetSwitchConfig(width, height, vOffset, hOffset, fontname, fontHeight, boldFont, (unsigned int) fgColor);
 
 	pElem = hRoot.FirstChild("switchTextDisplay").Element();
 	if (!pElem)
@@ -116,16 +123,22 @@ UiLoader::LoadAssembyConfig(TiXmlElement * pElem)
 	bgColor = 0;
 	fgColor = 0xffffff;
 	width = height = 0;
+	vOffset = hOffset = 0;
 
 	pElem->QueryHexAttribute("foregroundColor", &fgColor);
 	pElem->QueryHexAttribute("backgroundColor", &bgColor);
-	pElem->QueryValueAttribute("font-name", &fontname);
+	// QueryValueAttribute does not work with string when there are 
+	// spaces (truncated at whitespace); use Attribute instead
+	if (pElem->Attribute("font-name"))
+		fontname = pElem->Attribute("font-name");
 	pElem->QueryValueAttribute("font-weight", &fontWeight);
 	pElem->QueryIntAttribute("font-height", &fontHeight);
 	pElem->QueryIntAttribute("height", &height);
 	pElem->QueryIntAttribute("width", &width);
+	pElem->QueryIntAttribute("vOffset", &vOffset);
+	pElem->QueryIntAttribute("hOffset", &hOffset);
 	boldFont = (fontWeight == "bold");
-	mUi->SetSwitchTextDisplayConfig(width, height, fontname, fontHeight, boldFont, (unsigned int) bgColor, (unsigned int) fgColor);
+	mUi->SetSwitchTextDisplayConfig(width, height, vOffset, hOffset, fontname, fontHeight, boldFont, (unsigned int) bgColor, (unsigned int) fgColor);
 
 	pElem = hRoot.FirstChild("switchLed").Element();
 	if (!pElem)
@@ -134,12 +147,15 @@ UiLoader::LoadAssembyConfig(TiXmlElement * pElem)
 	bgColor = 0;
 	fgColor = 0xffffff;
 	width = height = 0;
+	vOffset = hOffset = 0;
 
 	pElem->QueryHexAttribute("onColor", &fgColor);
 	pElem->QueryHexAttribute("offColor", &bgColor);
 	pElem->QueryIntAttribute("height", &height);
 	pElem->QueryIntAttribute("width", &width);
-	mUi->SetSwitchLedConfig(width, height, (unsigned int) fgColor, (unsigned int) bgColor);
+	pElem->QueryIntAttribute("vOffset", &vOffset);
+	pElem->QueryIntAttribute("hOffset", &hOffset);
+	mUi->SetSwitchLedConfig(width, height, vOffset, hOffset, (unsigned int) fgColor, (unsigned int) bgColor);
 
 	return true;
 }
@@ -212,9 +228,12 @@ UiLoader::LoadSwitchAssembly(TiXmlElement * pElem)
 	hRoot = TiXmlHandle(pElem);
 
 	int vOffset, hOffset;
+	int tmp = -1;
 	int idNumber = -1;
 	int top = -1;
 	int left = -1;
+	int width = 0;
+	int height = 0;
 
 	vOffset = hOffset = 0;
 	pElem->QueryIntAttribute("number", &idNumber);
@@ -240,16 +259,43 @@ UiLoader::LoadSwitchAssembly(TiXmlElement * pElem)
 	pElem = hRoot.FirstChild("switchTextDisplay").Element();
 	if (pElem)
 	{
-		vOffset = hOffset = 0;
+		vOffset = hOffset = width = height = 0;
 		pElem->QueryIntAttribute("vOffset", &vOffset);
 		pElem->QueryIntAttribute("hOffset", &hOffset);
-		mUi->CreateSwitchTextDisplay(idNumber, top + vOffset, left + hOffset);
+
+		tmp = -1;
+		pElem->QueryIntAttribute("top", &tmp);
+		if (-1 != tmp)
+			top = tmp;
+
+		tmp = -1;
+		pElem->QueryIntAttribute("left", &tmp);
+		if (-1 != tmp)
+			left = tmp;
+
+		tmp = -1;
+		pElem->QueryIntAttribute("width", &tmp);
+		if (-1 != tmp)
+			width = tmp;
+
+		tmp = -1;
+		pElem->QueryIntAttribute("height", &height);
+		if (-1 != tmp)
+			height = tmp;
+
+		if (width && height)
+			mUi->CreateSwitchTextDisplay(idNumber, top + vOffset, left + hOffset, width, height);
+		else if (width)
+			mUi->CreateSwitchTextDisplay(idNumber, top + vOffset, left + hOffset, width);
+		else
+			mUi->CreateSwitchTextDisplay(idNumber, top + vOffset, left + hOffset);
 	}
 
 	pElem = hRoot.FirstChild("switchLed").Element();
 	if (pElem)
 	{
-		vOffset = hOffset = 0;
+		vOffset = hOffset = width = height = 0;
+		tmp = -1;
 		pElem->QueryIntAttribute("vOffset", &vOffset);
 		pElem->QueryIntAttribute("hOffset", &hOffset);
 		mUi->CreateSwitchLed(idNumber, top + vOffset, left + hOffset);
@@ -258,7 +304,8 @@ UiLoader::LoadSwitchAssembly(TiXmlElement * pElem)
 	pElem = hRoot.FirstChild("switch").Element();
 	if (pElem)
 	{
-		vOffset = hOffset = 0;
+		vOffset = hOffset = width = height = 0;
+		tmp = -1;
 		pElem->QueryIntAttribute("vOffset", &vOffset);
 		pElem->QueryIntAttribute("hOffset", &hOffset);
 		std::string label;
@@ -279,7 +326,10 @@ UiLoader::LoadOtherStuffAndFinalize(TiXmlElement * pElem)
 	if (pElem)
 	{
 		std::string fontname("courier");
-		pElem->QueryValueAttribute("font-name", &fontname);
+		// QueryValueAttribute does not work with string when there are 
+		// spaces (truncated at whitespace); use Attribute instead
+		if (pElem->Attribute("font-name"))
+			fontname = pElem->Attribute("font-name");
 
 		std::string fontWeight;
 		pElem->QueryValueAttribute("font-weight", &fontWeight);
@@ -317,7 +367,10 @@ UiLoader::LoadOtherStuffAndFinalize(TiXmlElement * pElem)
 	if (pElem)
 	{
 		std::string fontname("courier new");
-		pElem->QueryValueAttribute("font-name", &fontname);
+		// QueryValueAttribute does not work with string when there are 
+		// spaces (truncated at whitespace); use Attribute instead
+		if (pElem->Attribute("font-name"))
+			fontname = pElem->Attribute("font-name");
 
 		std::string fontWeight;
 		pElem->QueryValueAttribute("font-weight", &fontWeight);
