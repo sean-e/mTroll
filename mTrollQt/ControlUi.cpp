@@ -761,6 +761,8 @@ ControlUi::AddSwitchMapping(int switchNumber,
 void
 ControlUi::SetSwitchLedConfig(int width, 
 							  int height, 
+							  int vOffset, 
+							  int hOffset,
 							  unsigned int onColor, 
 							  unsigned int offColor)
 {
@@ -768,6 +770,8 @@ ControlUi::SetSwitchLedConfig(int width,
 	mLedConfig.mHeight = height;
 	mLedConfig.mOnColor = onColor;
 	mLedConfig.mOffColor = offColor;
+	mLedConfig.mVoffset = vOffset;
+	mLedConfig.mHoffset = hOffset;
 
 	float onOpacity = 0.25f;
 	float offOpacity = 1.0f - onOpacity;
@@ -789,7 +793,7 @@ ControlUi::CreateSwitchLed(int id,
 	curSwitchLed->setFrameShape(QFrame::Panel);
 	curSwitchLed->setFrameShadow(QFrame::Sunken);
 	curSwitchLed->setAutoFillBackground(true);
-	curSwitchLed->move(left, top);
+	curSwitchLed->move(left + mLedConfig.mVoffset, top + mLedConfig.mHoffset);
 	curSwitchLed->resize(mLedConfig.mWidth, mLedConfig.mHeight);
 
 	QPalette pal;
@@ -806,6 +810,8 @@ ControlUi::CreateSwitchLed(int id,
 void
 ControlUi::SetSwitchConfig(int width, 
 						   int height, 
+						   int vOffset, 
+						   int hOffset,
 						   const std::string & fontName, 
 						   int fontHeight, 
 						   bool bold, 
@@ -813,6 +819,8 @@ ControlUi::SetSwitchConfig(int width,
 {
 	mSwitchConfig.mWidth = width;
 	mSwitchConfig.mHeight = height;
+	mSwitchConfig.mVoffset = vOffset;
+	mSwitchConfig.mHoffset = hOffset;
 	mSwitchConfig.mFontname = fontName.c_str();
 	mSwitchConfig.mFontHeight = fontHeight;
 	mSwitchConfig.mBold = bold;
@@ -831,7 +839,7 @@ ControlUi::CreateSwitch(int id,
 {
 	Switch * curSwitch = new Switch(label.c_str(), this);
 	curSwitch->setFont(mSwitchButtonFont);
-	curSwitch->move(left, top);
+	curSwitch->move(left + mSwitchConfig.mHoffset, top + mSwitchConfig.mVoffset);
 	curSwitch->resize(mSwitchConfig.mWidth, mSwitchConfig.mHeight);
 
 	curSwitch->setFlat(true);
@@ -901,6 +909,8 @@ ControlUi::CreateSwitch(int id,
 void
 ControlUi::SetSwitchTextDisplayConfig(int width, 
 									  int height, 
+									  int vOffset, 
+									  int hOffset,
 									  const std::string & fontName, 
 									  int fontHeight, 
 									  bool bold, 
@@ -914,6 +924,8 @@ ControlUi::SetSwitchTextDisplayConfig(int width,
 	mSwitchTextDisplayConfig.mBold = bold;
 	mSwitchTextDisplayConfig.mFgColor = fgColor;
 	mSwitchTextDisplayConfig.mBgColor = bgColor;
+	mSwitchTextDisplayConfig.mVoffset = vOffset;
+	mSwitchTextDisplayConfig.mHoffset = hOffset;
 }
 
 void
@@ -921,13 +933,34 @@ ControlUi::CreateSwitchTextDisplay(int id,
 								   int top, 
 								   int left)
 {
+	CreateSwitchTextDisplay(id, top, left, mSwitchTextDisplayConfig.mWidth, mSwitchTextDisplayConfig.mHeight);
+}
+
+void
+ControlUi::CreateSwitchTextDisplay(int id, 
+								   int top, 
+								   int left,
+								   int width)
+{
+	CreateSwitchTextDisplay(id, top, left, width, mSwitchTextDisplayConfig.mHeight);
+}
+
+void
+ControlUi::CreateSwitchTextDisplay(int id, 
+								   int top, 
+								   int left,
+								   int width,
+								   int height)
+{
 	SwitchTextDisplay * curSwitchDisplay = new SwitchTextDisplay(this);
-	curSwitchDisplay->setMargin(2);
+	curSwitchDisplay->setIndent(2);
+	curSwitchDisplay->setMargin(0);
 	curSwitchDisplay->setFrameShape(QFrame::Panel);
 	curSwitchDisplay->setFrameShadow(QFrame::Sunken);
 	curSwitchDisplay->setAutoFillBackground(true);
-	curSwitchDisplay->move(left, top);
-	curSwitchDisplay->resize(mSwitchTextDisplayConfig.mWidth, mSwitchTextDisplayConfig.mHeight);
+	curSwitchDisplay->move(left + mSwitchTextDisplayConfig.mHoffset, top + mSwitchTextDisplayConfig.mVoffset);
+	curSwitchDisplay->resize(width, height);
+	curSwitchDisplay->setAlignment(Qt::AlignTop | Qt::AlignLeft);
 
 	QFont font(mSwitchTextDisplayConfig.mFontname, mSwitchTextDisplayConfig.mFontHeight, mSwitchTextDisplayConfig.mBold ? QFont::Bold : QFont::Normal);
     curSwitchDisplay->setFont(font);
@@ -965,10 +998,18 @@ ControlUi::CreateMainDisplay(int top,
 	mMainDisplay->setLineWrapMode(QPlainTextEdit::NoWrap);
 	mMainDisplayRc.setTopLeft(QPoint(left, top));
 	mMainDisplayRc.setBottomRight(QPoint(left+width, top+height));
+
+	// trying to get touch to perform scroll instead of selection
+	mMainDisplay->setTextInteractionFlags(Qt::NoTextInteraction);
+	mMainDisplay->setAttribute(Qt::WA_AcceptTouchEvents, false);
+	if (mMainDisplay->viewport())
+		mMainDisplay->viewport()->setAttribute(Qt::WA_AcceptTouchEvents, false);
+
 	mMainDisplay->move(left, top);
 	mMainDisplay->resize(width, height);
 
 	QFont font(fontName.c_str(), fontHeight, bold ? QFont::Bold : QFont::Normal);
+	font.setLetterSpacing(QFont::PercentageSpacing, 90);
     mMainDisplay->setFont(font);
 
 	QPalette pal;
