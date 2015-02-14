@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010,2015 Sean Echevarria
+ * Copyright (C) 2007-2008,2010 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -37,16 +37,14 @@ class IMidiControlUi
 public:
 	virtual void	AddSwitchMapping(int switchNumber, int row, int col) = 0;
 
-	virtual void	SetSwitchLedConfig(int width, int height, int vOffset, int hOffset, unsigned int onColor, unsigned int offColor) = 0;
+	virtual void	SetSwitchLedConfig(int width, int height, unsigned int onColor, unsigned int offColor) = 0;
 	virtual void	CreateSwitchLed(int id, int top, int left) = 0;
 
-	virtual void	SetSwitchConfig(int width, int height, int vOffset, int hOffset, const std::string & fontName, int fontHeight, bool bold, unsigned int fgColor) = 0;
+	virtual void	SetSwitchConfig(int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int fgColor) = 0;
 	virtual void	CreateSwitch(int id, const std::string & label, int top, int left) = 0;
 
-	virtual void	SetSwitchTextDisplayConfig(int width, int height, int vOffset, int hOffset, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor) = 0;
+	virtual void	SetSwitchTextDisplayConfig(int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor) = 0;
 	virtual void	CreateSwitchTextDisplay(int id, int top, int left) = 0;
-	virtual void	CreateSwitchTextDisplay(int id, int top, int left, int width) = 0;
-	virtual void	CreateSwitchTextDisplay(int id, int top, int left, int width, int height) = 0;
 
 	virtual void	CreateMainDisplay(int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor) = 0;
 	virtual void	CreateTraceDisplay(int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold) = 0;

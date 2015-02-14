@@ -681,7 +681,6 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 					const int patchNum = curItem->mPatch->GetNumber();
 					if (once)
 					{
-						// primary patch
 						once = false;
 						if (temporaryDisplay)
 							curItem->mPatch->ClearSwitch(NULL);
@@ -698,11 +697,10 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 								switchDisplay->SetSwitchText((*it).first, curItem->mOverrideSwitchName);
 						}
 
-						info << "sw" << std::setw(2) << ((*it).first + 1);
+						info << "sw " << std::setw(2) << ((*it).first + 1);
 						if (ssSecondary == idx)
-							info << "-2:";
-						else
-							info << ":  ";
+							info << " (2nd)";
+						info << ": ";
 						if (patchNum > 0)
 							info << std::setw(3) << patchNum << " ";
 		
@@ -714,7 +712,6 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 					}
 					else
 					{
-						// secondary patches
 						info << "       ";
 						if (patchNum > 0)
 							info << std::setw(3) << patchNum << " ";
