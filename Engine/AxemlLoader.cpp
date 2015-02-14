@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2011 Sean Echevarria
+ * Copyright (C) 2010-2011,2015 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -152,7 +152,10 @@ AxemlLoader::LoadParameterLists(TiXmlElement* pElem)
 			continue;
 
 		std::string effectType;
-		pElem->QueryValueAttribute("name", &effectType);
+		// QueryValueAttribute does not work with string when there are 
+		// spaces (truncated at whitespace); use Attribute instead
+		if (pElem->Attribute("name"))
+			effectType = pElem->Attribute("name");
 		if (effectType.empty())
 			continue;
 
@@ -167,7 +170,10 @@ AxemlLoader::LoadParameterLists(TiXmlElement* pElem)
 				continue;
 
 			std::string paramName;
-			childElem->QueryValueAttribute("name", &paramName);
+			// QueryValueAttribute does not work with string when there are 
+			// spaces (truncated at whitespace); use Attribute instead
+			if (childElem->Attribute("name"))
+				paramName = childElem->Attribute("name");
 			if (paramName.empty())
 				continue;
 
