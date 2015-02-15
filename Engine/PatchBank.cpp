@@ -40,7 +40,8 @@ static std::list<Patch *>	sActiveVolatilePatches;
 PatchBank::PatchBank(int number, 
 					 const std::string & name) :
 	mNumber(number),
-	mName(name)
+	mName(name),
+	mLoaded(false)
 {
 }
 
@@ -225,6 +226,7 @@ PatchBank::CalibrateExprSettings(const PedalCalibration * pedalCalibration, Midi
 void
 PatchBank::Load(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 {
+	mLoaded = true;
 	for (PatchMaps::iterator it = mPatches.begin();
 		it != mPatches.end();
 		++it)
@@ -273,6 +275,7 @@ PatchBank::Load(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 void
 PatchBank::Unload(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 {
+	mLoaded = false;
 	for (PatchMaps::iterator it = mPatches.begin();
 		it != mPatches.end();
 		++it)
@@ -611,8 +614,10 @@ PatchBank::ToggleDualFunctionState(int switchNumber,
 								   IMainDisplay * mainDisplay, 
 								   ISwitchDisplay * switchDisplay)
 {
-	// clear switch assignment of current functions (extract of Unload)
+	if (mLoaded)
 	{
+		// clear switch assignment of current functions (extract of Unload).
+		// only do if loaded, since unload should have already handled
 		PatchVect & patches = mPatches[switchNumber].GetPatchVect();
 		for (PatchVect::iterator it2 = patches.begin();
 			it2 != patches.end();
@@ -630,8 +635,11 @@ PatchBank::ToggleDualFunctionState(int switchNumber,
 	mPatches[switchNumber].mCurrentSwitchState = 
 		(mPatches[switchNumber].mCurrentSwitchState == ssPrimary) ? ssSecondary : ssPrimary;
 
-	// assign switch to first current function (extract of Load)
+	if (mLoaded)
 	{
+		// assign switch to first current function (extract of Load).
+		// only do if loaded, since we don't want to modify switches under control
+		// of another now loaded bank
 		PatchVect & patches = mPatches[switchNumber].GetPatchVect();
 		for (PatchVect::iterator it2 = patches.begin();
 			it2 != patches.end();
@@ -644,6 +652,9 @@ PatchBank::ToggleDualFunctionState(int switchNumber,
 			curItem->mPatch->AssignSwitch(switchNumber, switchDisplay);
 			if (curItem->mOverrideSwitchName.length() && switchDisplay)
 				switchDisplay->SetSwitchText(switchNumber, curItem->mOverrideSwitchName);
+
+			// update main display to note new function state registered
+			curItem->mPatch->UpdateDisplays(mainDisplay, NULL);
 			break;
 		}
 	}

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010,2012-2014 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2012-2015 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -200,6 +200,7 @@ private:
 
 	Groups				mGroups;					// this is just a store - for freeing GroupSwitches
 	SwitchToGroupMap	mGroupFromSwitch;
+	bool				mLoaded;
 };
 
 #endif // PatchBank_h__
