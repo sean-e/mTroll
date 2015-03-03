@@ -505,26 +505,7 @@ PatchBank::PatchSwitchReleased(int switchNumber,
 			// long press changes switch mode; handle transition
 			ToggleDualFunctionState(switchNumber, mainDisplay, switchDisplay);
 			if (ssPrimary == mPatches[switchNumber].mCurrentSwitchState)
-			{
-				// back in primary mode, no more work to do, except update main display
-				if (mLoaded)
-				{
-					PatchVect & patches = mPatches[switchNumber].GetPatchVect();
-					for (PatchVect::iterator it2 = patches.begin();
-						it2 != patches.end();
-						++it2)
-					{
-						PatchMap * curItem = *it2;
-						if (!curItem || !curItem->mPatch)
-							continue;
-
-						// update main display to note new function state registered
-						curItem->mPatch->UpdateDisplays(mainDisplay, NULL);
-						break;
-					}
-				}
-				return;
-			}
+				return; // back in primary mode, no more work to do
 
 			// now in secondary mode
 
@@ -673,8 +654,7 @@ PatchBank::ToggleDualFunctionState(int switchNumber,
 				switchDisplay->SetSwitchText(switchNumber, curItem->mOverrideSwitchName);
 
 			// update main display to note new function state registered
-			if (mPatches[switchNumber].mCurrentSwitchState == ssSecondary)
-				curItem->mPatch->UpdateDisplays(mainDisplay, NULL);
+			curItem->mPatch->UpdateDisplays(mainDisplay, NULL);
 			break;
 		}
 	}
