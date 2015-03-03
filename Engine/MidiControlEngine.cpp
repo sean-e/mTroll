@@ -1304,15 +1304,17 @@ MidiControlEngine::SwitchReleased_BankDirect(int switchNumber)
 		}
 		else if (switchNumber == mIncrementSwitchNumber)
 		{
-			// commit
-			ChangeMode(emBank);
-			mBankNavigationIndex = mActiveBankIndex;
 			const int bnkIdx = GetBankIndex(::atoi(mDirectNumber.c_str()));
 			if (bnkIdx != -1)
+			{
+				// commit
+				ChangeMode(emBank);
+				mBankNavigationIndex = mActiveBankIndex;
 				LoadBank(bnkIdx);
+			}
 			else if (mMainDisplay)
 				mMainDisplay->TextOut("Invalid bank number");
-			updateMainDisplay = false;
+			return;
 		}
 	}
 
