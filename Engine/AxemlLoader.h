@@ -37,7 +37,8 @@ enum AxeFxModel
 	AxeStd = 0,
 	AxeUltra = 1,
 	Axe2 = 3,
-	Axe2XL = 6
+	Axe2XL = 6,
+	Axe2XLPlus = 7
 };
 
 struct AxeEffectBlockInfo

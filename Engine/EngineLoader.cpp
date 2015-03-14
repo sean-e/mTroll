@@ -54,6 +54,11 @@
 #include "MetaPatch_BankNav.h"
 
 
+#ifdef _MSC_VER
+#pragma warning(disable:4482)
+#endif
+
+
 static PatchBank::PatchState GetLoadState(const std::string & tmpLoad);
 static PatchBank::PatchSyncState GetSyncState(const std::string & tmpLoad);
 static PatchBank::SecondFunctionOperation GetSecondFuncOp(const std::string & tmp);
@@ -1577,11 +1582,24 @@ EngineLoader::LoadDeviceChannelMap(TiXmlElement * pElem)
 				axeModel = Axe2;
 			else if (6 == tmp)
 				axeModel = Axe2XL;
+			else if (7 == tmp)
+				axeModel = Axe2XLPlus;
 			else
 			{
 				int pos = dev.find("XL");
 				if (std::string::npos != pos)
+				{
 					axeModel = Axe2XL;
+					pos = dev.find("+");
+					if (std::string::npos != pos)
+						axeModel = Axe2XLPlus;
+					else
+					{
+						pos = dev.find("Plus");
+						if (std::string::npos != pos)
+							axeModel = Axe2XLPlus;
+					}
+				}
 				else
 				{
 					pos = dev.find("2");

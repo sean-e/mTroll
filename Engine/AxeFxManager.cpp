@@ -300,6 +300,7 @@ IsAxeFxSysex(const byte * bytes, const int len)
 	case AxeUltra:
 	case Axe2:
 	case Axe2XL:
+	case Axe2XLPlus:
 		return true;
 	}
 
@@ -319,7 +320,7 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 	case 2:
 		if (Axe2 <= bytes[4])
 		{
-			_ASSERTE(Axe2 == mModel || Axe2XL == mModel);
+			_ASSERTE(Axe2 == mModel || Axe2XL == mModel || Axe2XLPlus == mModel);
 			// ReceiveParamValue hasn't been updated for Axe-FX II
 			if (kDbgFlag && mTrace)
 			{
@@ -352,7 +353,7 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 	case 0xe:
 		if (Axe2 <= bytes[4])
 		{
-			_ASSERTE(Axe2 == mModel || Axe2XL == mModel);
+			_ASSERTE(Axe2 == mModel || Axe2XL == mModel || Axe2XLPlus == mModel);
 			ReceivePresetEffectsV2(&bytes[6], len - 6);
 		}
 		else
@@ -561,7 +562,7 @@ AxeFxManager::GetBlockInfo(Patch * patch)
 void
 AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 {
-	// TODO: not updated for Axe2/Axe2XL
+	// TODO: not updated for Axe2/Axe2XL/Axe2XLPlus
 /*
 	0xdd effect ID LS nibble 
 	0xdd effect ID MS nibble 
@@ -1058,6 +1059,7 @@ AxeFxManager::ReceiveFirmwareVersionResponse(const byte * bytes, int len)
 		break;
 	case Axe2:
 	case Axe2XL:
+	case Axe2XLPlus:
 		if (0xa == bytes[6] && 0x04 == bytes[7])
 			return; // our request got looped back
 		break;
@@ -1080,6 +1082,10 @@ AxeFxManager::ReceiveFirmwareVersionResponse(const byte * bytes, int len)
 	case Axe2XL:
 		model = "II XL";
 		mModel = Axe2XL;
+		break;
+	case Axe2XLPlus:
+		model = "II XL+";
+		mModel = Axe2XLPlus;
 		break;
 	default:
 		model = "Unknown model ";
