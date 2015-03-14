@@ -47,6 +47,11 @@
 #include "MetaPatch_SyncAxeFx.h"
 
 
+#ifdef _MSC_VER
+#pragma warning(disable:4482)
+#endif
+
+
 struct DeletePatch
 {
 	void operator()(const std::pair<int, Patch *> & pr)
