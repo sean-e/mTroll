@@ -733,11 +733,11 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				childElem->QueryValueAttribute("channel", &chStr);
 				if (chStr.empty())
 				{
-					std::string device;
+					std::string device2;
 					if (childElem->Attribute("device"))
-						device = childElem->Attribute("device");
-					if (!device.empty())
-						chStr = mDeviceChannels[device];
+						device2 = childElem->Attribute("device");
+					if (!device2.empty())
+						chStr = mDeviceChannels[device2];
 					if (patchDefaultCh < 0 || patchDefaultCh > 15)
 					{
 						if (chStr.empty())
@@ -1065,8 +1065,8 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				if (exprInputNumber > 0 &&
 					exprInputNumber <= ExpressionPedals::PedalCount)
 				{
-					ExpressionPedals & pedals = newPatch->GetPedals();
-					pedals.EnableGlobal(exprInputNumber - 1, !!enable);
+					ExpressionPedals & pedals2 = newPatch->GetPedals();
+					pedals2.EnableGlobal(exprInputNumber - 1, !!enable);
 				}
 			}
 		}
@@ -1256,13 +1256,13 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 					}
 					else if (tmp == "LoadBank")
 					{
-						int bankNumber = -1;
-						childElem->QueryIntAttribute("bankNumber", &bankNumber);
-						if (-1 != bankNumber)
+						int bankNum = -1;
+						childElem->QueryIntAttribute("bankNum", &bankNum);
+						if (-1 != bankNum)
 						{
 							if (nameOverride.empty())
 								nameOverride = "meta load bank";
-							mEngine->AddPatch(new MetaPatch_LoadBank(mEngine, patchNumber, nameOverride, bankNumber));
+							mEngine->AddPatch(new MetaPatch_LoadBank(mEngine, patchNumber, nameOverride, bankNum));
 							nameOverride.clear();
 						}
 						else
@@ -1487,8 +1487,12 @@ EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem,
 		}
 	}
 
-	if (enable && mAdcEnables[exprInputNumber - 1] == adc_default)
-		mAdcEnables[exprInputNumber - 1] = adc_used;
+	if (enable)
+	{
+		_ASSERTE(exprInputNumber > 0);
+		if (exprInputNumber > 0 && mAdcEnables[exprInputNumber - 1] == adc_default)
+			mAdcEnables[exprInputNumber - 1] = adc_used;
+	}
 }
 
 void

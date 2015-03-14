@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2011,2014 Sean Echevarria
+ * Copyright (C) 2007-2011,2014-2015 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -442,8 +442,11 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 
 			mMidiOut->MidiOut(mMidiData[0], fineCh, newFineCcVal, showStatus);
 #else
-			mMidiOut->MidiOut(mMidiData[0], mMidiData[1], newCoarseCcVal, showStatus);
-			mMidiOut->MidiOut(mMidiData[0], mMidiData[1] + 32, newFineCcVal, showStatus);
+			if (mMidiOut)
+			{
+				mMidiOut->MidiOut(mMidiData[0], mMidiData[1], newCoarseCcVal, showStatus);
+				mMidiOut->MidiOut(mMidiData[0], mMidiData[1] + 32, newFineCcVal, showStatus);
+			}
 #endif
 
 			mMidiData[4] = mMidiData[3];
@@ -478,7 +481,8 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 		{
 			mMidiData[3] = mMidiData[2];
 			mMidiData[2] = newCcVal;
-			mMidiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], showStatus);
+			if (mMidiOut)
+				mMidiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], showStatus);
 		}
 	}
 
@@ -561,7 +565,7 @@ ExpressionControl::Refire(IMainDisplay * mainDisplay)
 	}
 	else
 	{
-		if (mMidiData[2] != 0xff)
+		if (mMidiData[2] != 0xff && mMidiOut)
 			mMidiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], true);
 	}
 }

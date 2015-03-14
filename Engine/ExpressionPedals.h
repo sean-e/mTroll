@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2014 Sean Echevarria
+ * Copyright (C) 2007-2010,2014-2015 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -210,13 +210,15 @@ public:
 			  const ExpressionControl::InitParams & params)
 	{
 		_ASSERTE(idx < ccsPerPedals);
-		mPedalControlData[idx].Init(params);
+		if (idx < ccsPerPedals)
+			mPedalControlData[idx].Init(params);
 	}
 
 	void InitMidiOut(int idx, IMidiOut * midiOut) 
 	{ 
 		_ASSERTE(idx < ccsPerPedals);
-		mPedalControlData[idx].InitMidiOut(midiOut); 
+		if (idx < ccsPerPedals)
+			mPedalControlData[idx].InitMidiOut(midiOut); 
 	}
 
 	void Calibrate(const PedalCalibration & calibrationSetting, MidiControlEngine * eng, ITraceDisplay * traceDisp)
@@ -263,8 +265,11 @@ public:
 	void EnableGlobal(int pedal, bool enable)
 	{
 		_ASSERTE(pedal < PedalCount);
-		mGlobalEnables[pedal] = enable;
-		mHasAnyNondefault = true;
+		if (pedal < PedalCount)
+		{
+			mGlobalEnables[pedal] = enable;
+			mHasAnyNondefault = true;
+		}
 	}
 
 	void InitMidiOut(IMidiOut * midiOut) 
@@ -279,7 +284,8 @@ public:
 	void InitMidiOut(IMidiOut * midiOut, int pedal, int ccIdx) 
 	{
 		_ASSERTE(pedal < PedalCount);
-		mPedals[pedal].InitMidiOut(ccIdx, midiOut);
+		if (pedal < PedalCount)
+			mPedals[pedal].InitMidiOut(ccIdx, midiOut);
 	}
 
 	void Init(int pedal, 
@@ -287,9 +293,12 @@ public:
 			  const ExpressionControl::InitParams & params)
 	{
 		_ASSERTE(pedal < PedalCount);
-		mPedals[pedal].Init(idx, params);
-		mPedalEnables[pedal] = true;
-		mHasAnyNondefault = true;
+		if (pedal < PedalCount)
+		{
+			mPedals[pedal].Init(idx, params);
+			mPedalEnables[pedal] = true;
+			mHasAnyNondefault = true;
+		}
 	}
 
 	void Calibrate(const PedalCalibration * calibrationSetting, MidiControlEngine * eng, ITraceDisplay * traceDisp)
@@ -303,18 +312,28 @@ public:
 						int newVal)
 	{
 		_ASSERTE(pedal < PedalCount);
-		if (mPedalEnables[pedal])
-			mPedals[pedal].AdcValueChange(mainDisplay, newVal);
-		return mGlobalEnables[pedal];
+		if (pedal < PedalCount)
+		{
+			if (mPedalEnables[pedal])
+				mPedals[pedal].AdcValueChange(mainDisplay, newVal);
+			return mGlobalEnables[pedal];
+		}
+
+		return false;
 	}
 
 	bool Refire(IMainDisplay * mainDisplay, 
 				int pedal)
 	{
 		_ASSERTE(pedal < PedalCount);
-		if (mPedalEnables[pedal])
-			mPedals[pedal].Refire(mainDisplay);
-		return mGlobalEnables[pedal];
+		if (pedal < PedalCount)
+		{
+			if (mPedalEnables[pedal])
+				mPedals[pedal].Refire(mainDisplay);
+			return mGlobalEnables[pedal];
+		}
+
+		return false;
 	}
 
 private:

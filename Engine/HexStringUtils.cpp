@@ -1,5 +1,5 @@
 /*
-Original code copyright (c) 2007-2009,2010 Sean Echevarria ( http://www.creepingfog.com/sean/ )
+Original code copyright (c) 2007-2009,2010,2015 Sean Echevarria ( http://www.creepingfog.com/sean/ )
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any
@@ -96,7 +96,7 @@ ValidateString(const std::string & inString,
 
 	for (int idx = 0; idx < len;)
 	{
-		char ch = inString[idx++];
+		unsigned char ch = (unsigned char) inString[idx++];
 		if (isspace(ch))
 			continue;
 		if (!isxdigit(ch) || idx == len)
@@ -137,7 +137,7 @@ GetAsciiHexStr(const Bytes & inBytes,
 std::string
 GetAsciiHexStr(const byte * inBytes, size_t sz, bool format /*= true*/)
 {
-	std::string tmp, retval;
+	std::string retval;
 	for (size_t idx = 0; idx < sz; idx++)
 	{
 		char tmp[6];
@@ -159,7 +159,7 @@ GetAsciiHexStr(const byte * inBytes, size_t sz, bool format /*= true*/)
 std::string
 GetAsciiStr(const byte * inBytes, size_t sz)
 {
-	std::string tmp, retval;
+	std::string retval;
 	for (size_t idx = 0; idx < sz && inBytes[idx]; idx++)
 	{
 		char tmp[2];

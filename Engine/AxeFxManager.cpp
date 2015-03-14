@@ -1588,13 +1588,25 @@ AxeFxManager::ReceiveSceneStatus(const byte * bytes, int len)
 	if (len < 1)
 		return;
 
-	if (mCurrentScene == bytes[0])
+	int newScene = bytes[0];
+	if (mCurrentScene == newScene)
 		return;
+
+	if (newScene >= AxeScenes)
+	{
+		_ASSERTE(newScene < AxeScenes);
+		if (mTrace)
+		{
+			std::string msg("Warning: invalid scene number received\n");
+			mTrace->Trace(msg);
+		}
+		return;
+	}
 
 	if (mCurrentScene > -1 && mScenes[mCurrentScene])
 		mScenes[mCurrentScene]->UpdateState(mSwitchDisplay, false);
 
-	mCurrentScene = bytes[0];
+	mCurrentScene = newScene;
 
 	if (mScenes[mCurrentScene])
 		mScenes[mCurrentScene]->UpdateState(mSwitchDisplay, true);

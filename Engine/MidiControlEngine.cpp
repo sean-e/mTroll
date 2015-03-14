@@ -888,18 +888,18 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			mSwitchDisplay->EnableDisplayUpdate(false);
 			for (int idx = 0; idx < 4; ++idx)
 			{
-				std::strstream msg;
-				msg << "ADC " << idx;
+				std::strstream msg2;
+				msg2 << "ADC " << idx;
 				if (mApplication->IsAdcOverridden(idx))
 				{
-					msg << " forced off" << std::ends;
-					mSwitchDisplay->SetSwitchText(idx, msg.str());
+					msg2 << " forced off" << std::ends;
+					mSwitchDisplay->SetSwitchText(idx, msg2.str());
 					mSwitchDisplay->ForceSwitchDisplay(idx, true);
 				}
 				else
 				{
-					msg << " normal" << std::ends;
-					mSwitchDisplay->SetSwitchText(idx, msg.str());
+					msg2 << " normal" << std::ends;
+					mSwitchDisplay->SetSwitchText(idx, msg2.str());
 					mSwitchDisplay->ForceSwitchDisplay(idx, false);
 				}
 			}
@@ -1340,7 +1340,8 @@ MidiControlEngine::SwitchReleased_BankDirect(int switchNumber)
 		{
 			PatchBank * bnk = GetBank(bnkIdx);
 			_ASSERTE(bnk);
-			mMainDisplay->TextOut(mDirectNumber + " " + bnk->GetBankName());
+			if (bnk)
+				mMainDisplay->TextOut(mDirectNumber + " " + bnk->GetBankName());
 		}
 	}
 }
