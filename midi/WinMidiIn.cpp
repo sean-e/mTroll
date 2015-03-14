@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010,2013 Sean Echevarria
+ * Copyright (C) 2010,2013,2015 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -382,7 +382,8 @@ WinMidiIn::ReleaseMidiIn()
 	if (mThread)
 	{
 		_ASSERTE(mDoneEvent);
-		::SetEvent(mDoneEvent);
+		if (mDoneEvent)
+			::SetEvent(mDoneEvent);
 		::WaitForSingleObjectEx(mThread, 30000, FALSE);
 		_ASSERTE(mThreadState == tsNotStarted);
 		::CloseHandle(mThread);
@@ -399,6 +400,6 @@ CString
 GetMidiErrorText(MMRESULT resultCode)
 {
 	TCHAR	errMsg[MAXERRORLENGTH];
-	::midiInGetErrorText(resultCode, errMsg, sizeof(TCHAR)*MAXERRORLENGTH);
+	::midiInGetErrorText(resultCode, errMsg, MAXERRORLENGTH);
 	return errMsg;
 }

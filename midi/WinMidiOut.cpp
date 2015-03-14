@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010,2013 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2013,2015 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -480,6 +480,6 @@ CString
 GetMidiErrorText(MMRESULT resultCode)
 {
 	TCHAR	errMsg[MAXERRORLENGTH];
-	::midiOutGetErrorText(resultCode, errMsg, sizeof(TCHAR)*MAXERRORLENGTH);
+	::midiOutGetErrorText(resultCode, errMsg, MAXERRORLENGTH);
 	return errMsg;
 }
