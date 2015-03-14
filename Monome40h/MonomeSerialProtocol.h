@@ -1,5 +1,5 @@
 /*
-Original code copyright (c) 2007,2014 Sean Echevarria ( http://www.creepingfog.com/sean/ )
+Original code copyright (c) 2007,2014-2015 Sean Echevarria ( http://www.creepingfog.com/sean/ )
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any
@@ -65,8 +65,6 @@ protected:
 		mData[0] = ((command & 0x0f) << 4) | (data1 & 0x0f);
 		mData[1] = ((data2 & 0x0f) << 4) | (data3 & 0x0f);
 	}
-
-	byte & operator[](int idx) {_ASSERTE(0 == idx || 1 == idx); return mData[idx];}
 
 public:
 	const byte * Data() const {return mData;}
