@@ -1257,7 +1257,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 					else if (tmp == "LoadBank")
 					{
 						int bankNum = -1;
-						childElem->QueryIntAttribute("bankNum", &bankNum);
+						childElem->QueryIntAttribute("bankNumber", &bankNum);
 						if (-1 != bankNum)
 						{
 							if (nameOverride.empty())
