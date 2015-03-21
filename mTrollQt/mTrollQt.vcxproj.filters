@@ -300,9 +300,6 @@
     <None Include="..\data\testdataWithXsl.config.xml">
       <Filter>Text Files</Filter>
     </None>
-    <None Include="..\todo.txt">
-      <Filter>Text Files</Filter>
-    </None>
     <None Include="..\setup\mTrollVersion.txt">
       <Filter>Text Files</Filter>
     </None>
