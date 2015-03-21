@@ -1877,6 +1877,8 @@ DefaultAxeCcs kDefaultAxeCcs[] =
 	{"reverb 2 x/y", 117},
 	{"wah-wah 1 x/y", 118},
 	{"wah-wah 2 x/y", 119},
+	{"rotary 1 x/y", 125},		// firmware v18
+	{"rotary 2 x/y", 126},		// firmware v18
 
 	{"", -1}
 };
