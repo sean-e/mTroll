@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2013 Sean Echevarria
+ * Copyright (C) 2007-2010,2013,2015 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -64,38 +64,8 @@ protected:
 	virtual void BankTransitionActivation() { ExecCommandsA(); }
 	virtual void BankTransitionDeactivation() { ExecCommandsB(); }
 
-	void ExecCommandsA()
-	{
-		std::for_each(mCmdsA.begin(), mCmdsA.end(), std::mem_fun(&IPatchCommand::Exec));
-		mPatchIsActive = true;
-
-		if (!mOverridePedals)
-		{
-			if (psDisallow != mPedalSupport)
-			{
-				if (mPedals.HasAnySettings())
-				{
-					// do this here rather than SwitchPressed to that pedals can be
-					// set on bank load rather than only during patch load
-					gActivePatchPedals = &mPedals;
-				}
-				else
-					gActivePatchPedals = NULL;
-			}
-		}
-	}
-
-	void ExecCommandsB()
-	{
-		std::for_each(mCmdsB.begin(), mCmdsB.end(), std::mem_fun(&IPatchCommand::Exec));
-		mPatchIsActive = false;
-
-		if (!mOverridePedals)
-		{
-			if (psAllowOnlyActive == mPedalSupport && gActivePatchPedals == &mPedals)
-				gActivePatchPedals = NULL;
-		}
-	}
+	virtual void ExecCommandsA();
+	virtual void ExecCommandsB();
 
 private:
 	TwoStatePatch();

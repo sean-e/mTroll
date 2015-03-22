@@ -114,6 +114,12 @@
     <ClCompile Include="Debug\moc_MainTrollWindow.cpp">
       <Filter>Moc Generated Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\Engine\PersistentPedalOverridePatch.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\TwoStatePatch.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AboutDlg.h">
@@ -264,7 +270,10 @@
       <Filter>winUtils</Filter>
     </ClInclude>
     <ClInclude Include="..\Engine\MetaPatch_ResetExclusiveGroup.h">
-      <Filter>Header Files</Filter>
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\PersistentPedalOverridePatch.h">
+      <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

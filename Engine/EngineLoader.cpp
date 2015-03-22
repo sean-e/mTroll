@@ -52,6 +52,7 @@
 #include "PatchListSequencePatch.h"
 #include "MetaPatch_ResetExclusiveGroup.h"
 #include "MetaPatch_BankNav.h"
+#include "PersistentPedalOverridePatch.h"
 
 
 #ifdef _MSC_VER
@@ -960,6 +961,8 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			newPatch = new NormalPatch(patchNumber, patchName, midiOut, cmds, cmds2);
 		else if (patchType == "toggle")
 			newPatch = new TogglePatch(patchNumber, patchName, midiOut, cmds, cmds2);
+		else if (patchType == "persistentPedalOverride")
+			newPatch = new PersistentPedalOverridePatch(patchNumber, patchName, midiOut, cmds, cmds2);
 		else if (patchType == "AxeToggle")
 		{
 			AxeTogglePatch * axePatch = new AxeTogglePatch(patchNumber, patchName, midiOut, cmds, cmds2, mAxeFxManager);
