@@ -417,7 +417,7 @@ PatchBank::PatchSwitchPressed(SwitchFunctionAssignment st,
 	}
 
 	// do standard pressed processing (send A)
-	bool once = true;
+	bool once = (st == ssPrimary);
 	std::strstream msgstr;
 	for (it = curPatches.begin();
 		 it != curPatches.end();
@@ -607,7 +607,7 @@ PatchBank::PatchSwitchReleased(SwitchFunctionAssignment st,
 {
 	PatchVect & curPatches = mPatches[switchNumber].GetPatchVect(st);
 
-	bool once = true;
+	bool once = (st == ssPrimary);
 	for (PatchVect::iterator it = curPatches.begin();
 		 it != curPatches.end();
 		 ++it)
