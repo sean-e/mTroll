@@ -441,7 +441,7 @@ AxeFxManager::IdentifyBlockInfoUsingBypassId(const byte * bytes)
 
 	if (Axe2 <= mModel)
 	{
-		// TODO: not updated for axe2
+		// #notUpdatedForAxe2: not updated for axe2/etc
 		effectIdLs = 0;
 		effectIdMs = 0;
 		parameterIdLs = 0;
@@ -562,7 +562,7 @@ AxeFxManager::GetBlockInfo(Patch * patch)
 void
 AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 {
-	// TODO: not updated for Axe2/Axe2XL/Axe2XLPlus
+	// #notUpdatedForAxe2: not updated for Axe2/Axe2XL/Axe2XLPlus
 /*
 	0xdd effect ID LS nibble 
 	0xdd effect ID MS nibble 
@@ -1002,7 +1002,7 @@ AxeFxManager::RequestNextParamValue()
 	0xF7 sysex end 
 */
 
-	// TODO: not updated for Axe-Fx 2
+	// #notUpdatedForAxe2: not updated for Axe-Fx 2
 	const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x02, 0, 0, 0, 0, 0x0, 0x0, 0x00, 0xF7 };
 	Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
 	AxeEffectBlockInfo * next = *mQueries.begin();

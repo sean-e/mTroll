@@ -403,7 +403,7 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 		{
 			if (PatchBank::spdShort != dur)
 			{
-				// TODO: long-press function of mode switch should be user-definable
+				// #consider: long-press function of mode switch could be user-definable
 				HistoryBackward();
 			}
 			else
