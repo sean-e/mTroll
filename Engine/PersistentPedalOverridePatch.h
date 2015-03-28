@@ -31,7 +31,7 @@
 // PersistentPedalOverridePatch
 // -----------------------------------------------------------------------------
 // responds to SwitchPressed; SwitchReleased does not affect patch state
-// supports expression pedals
+// supports expression pedals - it exists for expression pedals
 //
 class PersistentPedalOverridePatch : public TogglePatch
 {

@@ -37,7 +37,10 @@ PersistentPedalOverridePatch::SwitchPressed(IMainDisplay * mainDisplay, ISwitchD
 	__super::SwitchPressed(mainDisplay, switchDisplay);
 
 	if (prev && prev != sActiveOverride)
+	{
+		// update switch of override patch that this one replaced
 		prev->UpdateDisplays(nullptr, switchDisplay);
+	}
 }
 
 void
@@ -45,6 +48,7 @@ PersistentPedalOverridePatch::ExecCommandsA()
 {
 	if (sActiveOverride && sActiveOverride != this)
 	{
+		// update state of override patch that this one replaced
 		sActiveOverride->ExecCommandsB();
 		sInactivePedals = gActivePatchPedals;
 		gActivePatchPedals = &mPedals;
