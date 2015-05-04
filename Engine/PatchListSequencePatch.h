@@ -31,6 +31,7 @@
 #include <strstream>
 #include "DeletePtr.h"
 #include "MidiControlEngine.h"
+#include "PersistentPedalOverridePatch.h"
 
 
 // PatchListSequencePatch
@@ -63,9 +64,11 @@ public:
 
 	virtual void DeactivateVolatilePatch() 
 	{
-		gActivePatchPedals = NULL;
 		if (mCurrentSubPatch)
-			return mCurrentSubPatch->DeactivateVolatilePatch();
+			mCurrentSubPatch->DeactivateVolatilePatch();
+
+		if (!PersistentPedalOverridePatch::PedalOverridePatchIsActive())
+			gActivePatchPedals = NULL;
 	}
 
 	virtual const std::string & GetDisplayText() const 
@@ -89,7 +92,8 @@ public:
 		if (mCurrentSubPatch)
 			mCurrentSubPatch->Deactivate(mainDisplay, switchDisplay);
 
-		gActivePatchPedals = NULL;
+		if (!PersistentPedalOverridePatch::PedalOverridePatchIsActive())
+			gActivePatchPedals = NULL;
 
 		if (mCurIndex < mPatches.size())
 		{
