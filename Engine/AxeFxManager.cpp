@@ -1099,8 +1099,13 @@ AxeFxManager::ReceiveFirmwareVersionResponse(const byte * bytes, int len)
 	}
 
 	mFirmwareMajorVersion = (int) bytes[6];
-	if (Axe2 <= mModel && 7 < mFirmwareMajorVersion)
-		EnableLooperStatusMonitor(true);
+	if (Axe2 <= mModel)
+	{
+		if (7 < mFirmwareMajorVersion)
+			EnableLooperStatusMonitor(true);
+
+		SyncNameAndEffectsFromAxe();
+	}
 }
 
 void
