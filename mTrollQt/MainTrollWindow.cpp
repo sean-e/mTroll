@@ -397,8 +397,30 @@ void
 MainTrollWindow::Exit(ExitAction action)
 {
 	mShutdownOnExit = action;
-	// exit application
-	close();
+
+	// ExitEvent
+	// --------------------------------------------------------------------
+	// Because Exit can be called from the hardware monitoring thread,
+	// handle via postEvent on ui thread.
+	//
+	class ExitEvent : public QEvent
+	{
+		ControlUi * mWnd;
+	public:
+		ExitEvent(ControlUi * wnd) :
+			QEvent(User),
+			mWnd(wnd)
+		{
+		}
+
+		virtual void exec()
+		{
+			mWnd->ExitEventFired();
+		}
+	};
+
+	if (mUi)
+		QCoreApplication::postEvent(mUi, new ExitEvent(mUi));
 }
 
 bool

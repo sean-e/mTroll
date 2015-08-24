@@ -148,6 +148,9 @@ private: // IMidiControlUi
 	virtual void		SetLedDisplayState(bool invert) { mInvertLeds = invert; }
 	virtual void		SetColors(unsigned int backgroundColor, unsigned int frameHighlightColor) { mFrameHighlightColor = frameHighlightColor; mBackgroundColor = backgroundColor; }
 
+public slots:
+	void ExitEventFired();
+
 private slots:
 	void DisplayTime();
 

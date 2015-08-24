@@ -62,6 +62,7 @@
 	#endif
 	#define SLEEP	sleep
 #endif
+#include "MainTrollWindow.h"
 
 const int kMaxRows = 8, kMaxCols = 8;
 const int kMaxButtons = kMaxRows * kMaxCols;
@@ -1492,6 +1493,17 @@ void
 ControlUi::StopTimer()
 {
 	mDisplayTime = false;
+}
+
+void
+ControlUi::ExitEventFired()
+{
+	Unload();
+
+	// exit application
+	MainTrollWindow *wnd = dynamic_cast<MainTrollWindow *>(mParent);
+	if (nullptr != wnd)
+		wnd->close();
 }
 
 IMidiIn *
