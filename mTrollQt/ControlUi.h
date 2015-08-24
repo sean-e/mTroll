@@ -29,7 +29,6 @@
 #include <map>
 #include <QWidget>
 #include <QFont>
-#include <QDateTime>
 
 #include "../Engine/IMainDisplay.h"
 #include "../Engine/ISwitchDisplay.h"
@@ -347,7 +346,6 @@ private:
 	DWORD						mFrameHighlightColor;
 	QString						mMainText;
 	bool						mSwitchLedUpdateEnabled;
-	QDateTime					mStartTime;
 
 	// workaround for double fire of pressed signal when using touch
 	int							mLastUiButtonPressed;

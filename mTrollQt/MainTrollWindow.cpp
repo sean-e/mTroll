@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2012-2013 Sean Echevarria
+ * Copyright (C) 2007-2010,2012-2013,2015 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -32,6 +32,10 @@
 #include "AboutDlg.h"
 #include "ControlUi.h"
 #include "..\Engine\ScopeSet.h"
+#if defined(Q_OS_WIN)
+#include <windows.h>
+#include <powrprof.h>
+#endif
 
 
 #define kOrganizationKey	QString("Fester")
@@ -45,7 +49,9 @@
 MainTrollWindow::MainTrollWindow() : 
 	QMainWindow(),
 	mUi(NULL),
-	mMidiSuspendAction(NULL)
+	mMidiSuspendAction(NULL),
+	mStartTime(QDateTime::currentDateTime()),
+	mShutdownOnExit(soeExit)
 {
 	QCoreApplication::setOrganizationName(kOrganizationKey);
 	QCoreApplication::setOrganizationDomain(kOrganizationDomain);
@@ -166,6 +172,21 @@ MainTrollWindow::MainTrollWindow() :
 
 MainTrollWindow::~MainTrollWindow()
 {
+	switch (mShutdownOnExit)
+	{
+	case soeExit:
+		break;
+	case soeExitAndSleep:
+#if defined(Q_OS_WIN)
+		SetSuspendState(FALSE, FALSE, FALSE);
+#endif
+		break;
+	case soeExitAndHibernate:
+#if defined(Q_OS_WIN)
+		SetSuspendState(TRUE, FALSE, FALSE);
+#endif
+		break;
+	}
 }
 
 void
@@ -305,6 +326,53 @@ MainTrollWindow::ToggleAdcOverride(int adc,
 	QSettings settings;
 	for (int idx = 0; idx < ExpressionPedals::PedalCount; ++idx)
 		settings.setValue(kAdcOverride.arg(idx), mAdcForceDisable[idx]);
+}
+
+std::string
+MainTrollWindow::GetElapsedTimeStr()
+{
+	const int kSecsInMinute = 60;
+	const int kSecsInHour = kSecsInMinute * 60;
+	const int kSecsInDay = kSecsInHour * 24;
+	QDateTime now(QDateTime::currentDateTime());
+	QString ts(now.toString("h:mm:ss ap \nddd, MMM d, yyyy"));
+
+	qint64 secs = mStartTime.secsTo(now);
+	const int days = secs > kSecsInDay ? secs / kSecsInDay : 0;
+	if (days)
+		secs -= (days * kSecsInDay);
+	const int hours = secs > kSecsInHour ? secs / kSecsInHour : 0;
+	if (hours)
+		secs -= (hours * kSecsInHour);
+	const int minutes = secs > kSecsInMinute ? secs / kSecsInMinute : 0;
+	if (minutes)
+		secs -= (minutes * kSecsInMinute);
+
+	QString tmp;
+	if (days)
+		tmp.sprintf("\nelapsed: %d days, %d:%02d:%02d", days, hours, minutes, secs);
+	else if (hours)
+		tmp.sprintf("\nelapsed: %d hours, %02d:%02d", hours, minutes, secs);
+	else
+		tmp.sprintf("\nelapsed: %02d:%02d", minutes, secs);
+	ts += tmp;
+
+	const std::string msg(ts.toUtf8());
+	return msg;
+}
+
+void
+MainTrollWindow::ResetTime()
+{
+	mStartTime = QDateTime::currentDateTime();
+}
+
+void
+MainTrollWindow::Exit(ExitAction action)
+{
+	mShutdownOnExit = action;
+	// exit application
+	close();
 }
 
 bool

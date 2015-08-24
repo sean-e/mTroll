@@ -448,9 +448,7 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 		return;
 
 	case emTimeDisplay:
-		// any switch press/release cancels mode
-		mApplication->EnableTimeDisplay(false);
-		EscapeToDefaultMode();
+		SwitchReleased_TimeDisplay(switchNumber);
 		return;
 	}
 }
@@ -860,8 +858,16 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			if (kUnassignedSwitchNumber != switchNumber)
 			{
 				mSwitchDisplay->EnableDisplayUpdate(false);
-				mSwitchDisplay->SetSwitchText(switchNumber, "Any button to exit");
+				mSwitchDisplay->SetSwitchText(switchNumber, "Exit Time Display");
 				mSwitchDisplay->ForceSwitchDisplay(switchNumber, true);
+				mSwitchDisplay->SetSwitchText(switchNumber + 1, "Reset elapsed time");
+				mSwitchDisplay->ForceSwitchDisplay(switchNumber + 1, true);
+				mSwitchDisplay->SetSwitchText(switchNumber + 2, "Exit mTroll");
+				mSwitchDisplay->ForceSwitchDisplay(switchNumber + 2, true);
+				mSwitchDisplay->SetSwitchText(switchNumber + 3, "Exit + sleep");
+				mSwitchDisplay->ForceSwitchDisplay(switchNumber + 3, true);
+				mSwitchDisplay->SetSwitchText(switchNumber + 4, "Exit + hibernate");
+				mSwitchDisplay->ForceSwitchDisplay(switchNumber + 4, true);
 			}
 			if (!mApplication || !mApplication->EnableTimeDisplay(true))
 				EscapeToDefaultMode();
@@ -1149,6 +1155,29 @@ MidiControlEngine::SwitchReleased_AdcOverrideMode(int switchNumber)
 			mApplication->ToggleAdcOverride(switchNumber);
 		ChangeMode(emAdcOverride);
 	}
+}
+
+void
+MidiControlEngine::SwitchReleased_TimeDisplay(int switchNumber)
+{
+	int timeModeSwitchNumber = GetSwitchNumber(kModeTime);
+	if (kUnassignedSwitchNumber == timeModeSwitchNumber)
+		return;
+
+	if (timeModeSwitchNumber == switchNumber ||
+		mModeSwitchNumber == switchNumber)
+	{
+		mApplication->EnableTimeDisplay(false);
+		EscapeToDefaultMode();
+	}
+	else if (switchNumber == timeModeSwitchNumber + 1)
+		mApplication->ResetTime();
+	else if (switchNumber == timeModeSwitchNumber + 2)
+		mApplication->Exit(ITrollApplication::soeExit);
+	else if (switchNumber == timeModeSwitchNumber + 3)
+		mApplication->Exit(ITrollApplication::soeExitAndSleep);
+	else if (switchNumber == timeModeSwitchNumber + 4)
+		mApplication->Exit(ITrollApplication::soeExitAndHibernate);
 }
 
 void

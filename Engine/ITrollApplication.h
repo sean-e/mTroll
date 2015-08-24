@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010 Sean Echevarria
+ * Copyright (C) 2010,2015 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -32,12 +32,16 @@
 class ITrollApplication
 {
 public:
+	enum ExitAction { soeExit, soeExitAndSleep, soeExitAndHibernate };
 	virtual void Reconnect() = 0;
 	virtual void ToggleTraceWindow() = 0;
 	virtual bool IsAdcOverridden(int adc) = 0;
 	virtual void ToggleAdcOverride(int adc) = 0;
 	virtual bool EnableTimeDisplay(bool enable) = 0;
 	virtual std::string ApplicationDirectory() = 0;
+	virtual std::string GetElapsedTimeStr() = 0;
+	virtual void ResetTime() = 0;
+	virtual void Exit(ExitAction action) = 0;
 };
 
 #endif // ITrollApplication_h__

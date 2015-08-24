@@ -143,6 +143,7 @@ private:
 	void					SwitchReleased_ProgramChangeDirect(int switchNumber);
 	void					SwitchPressed_ControlChangeDirect(int switchNumber);
 	void					SwitchReleased_ControlChangeDirect(int switchNumber);
+	void					SwitchReleased_TimeDisplay(int switchNumber);
 
 private:
 	// non-retained runtime state

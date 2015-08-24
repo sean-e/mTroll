@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2013 Sean Echevarria
+ * Copyright (C) 2007-2010,2013,2015 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -26,6 +26,7 @@
 #define MainTrollWindow_h__
 
 #include <QMainWindow>
+#include <QDateTime>
 #include "..\Engine\ExpressionPedals.h"
 #include "..\Engine\ITrollApplication.h"
 
@@ -57,6 +58,9 @@ private:
 	virtual bool IsAdcOverridden(int adc) { if (adc >=0 && adc < 4) return mAdcForceDisable[adc]; return false;}
 	virtual void ToggleAdcOverride(int adc) { if (adc >=0 && adc < 4) ToggleAdcOverride(adc, !mAdcForceDisable[adc]); }
 	virtual bool EnableTimeDisplay(bool enable);
+	virtual std::string GetElapsedTimeStr() override;
+	virtual void ResetTime() override;
+	virtual void Exit(ExitAction action);
 
 private:
 	ControlUi	* mUi;
@@ -65,6 +69,8 @@ private:
 	bool		mAdcForceDisable[ExpressionPedals::PedalCount];
 	QAction		* mAdcOverrideActions[ExpressionPedals::PedalCount];
 	QAction		* mMidiSuspendAction;
+	QDateTime	mStartTime;
+	ExitAction	mShutdownOnExit;
 
 private:
 	void ToggleAdcOverride(int adc, bool checked);

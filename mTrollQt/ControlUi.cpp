@@ -35,6 +35,7 @@
 #include <QDateTime>
 
 #include "ControlUi.h"
+#include "../Engine/ITrollApplication.h"
 #include "../Engine/EngineLoader.h"
 #include "../Engine/MidiControlEngine.h"
 #include "../Engine/UiLoader.h"
@@ -86,8 +87,7 @@ ControlUi::ControlUi(QWidget * parent, ITrollApplication * app) :
 	mFrameHighlightColor(0x5a5a5a),
 	mSwitchLedUpdateEnabled(true),
 	mLastUiButtonPressed(-1),
-	mLastUiButtonEventTime(0),
-	mStartTime(QDateTime::currentDateTime())
+	mLastUiButtonEventTime(0)
 {
 }
 
@@ -1477,33 +1477,7 @@ ControlUi::DisplayTime()
 	{
 		if (mMainDisplay)
 		{
-			const int kSecsInMinute = 60;
-			const int kSecsInHour = kSecsInMinute * 60;
-			const int kSecsInDay = kSecsInHour * 24;
-			QDateTime now(QDateTime::currentDateTime());
-			QString ts(now.toString("h:mm:ss ap \nddd, MMM d, yyyy"));
-
-			qint64 secs = mStartTime.secsTo(now);
-			const int days = secs > kSecsInDay ? secs / kSecsInDay : 0;
-			if (days)
-				secs -= (days * kSecsInDay);
-			const int hours = secs > kSecsInHour ? secs / kSecsInHour : 0;
-			if (hours)
-				secs -= (hours * kSecsInHour);
-			const int minutes = secs > kSecsInMinute ? secs / kSecsInMinute : 0;
-			if (minutes)
-				secs -= (minutes * kSecsInMinute);
-
-			QString tmp;
-			if (days)
-				tmp.sprintf("\nelapsed: %d days, %d:%02d:%02d", days, hours, minutes, secs);
-			else if (hours)
-				tmp.sprintf("\nelapsed: %d hours, %02d:%02d", hours, minutes, secs);
-			else
-				tmp.sprintf("\nelapsed: %02d:%02d", minutes, secs);
-			ts += tmp;
-
-			const std::string msg(ts.toUtf8());
+			const std::string msg(mApp->GetElapsedTimeStr());
 			TextOut(msg);
 		}
 	}
