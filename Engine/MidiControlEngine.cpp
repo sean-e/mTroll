@@ -858,16 +858,19 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			if (kUnassignedSwitchNumber != switchNumber)
 			{
 				mSwitchDisplay->EnableDisplayUpdate(false);
+
 				mSwitchDisplay->SetSwitchText(switchNumber, "Exit Time Display");
 				mSwitchDisplay->ForceSwitchDisplay(switchNumber, true);
-				mSwitchDisplay->SetSwitchText(switchNumber + 1, "Reset elapsed time");
+				mSwitchDisplay->SetSwitchText(switchNumber + 1, "Pause/Resume time");
 				mSwitchDisplay->ForceSwitchDisplay(switchNumber + 1, true);
-				mSwitchDisplay->SetSwitchText(switchNumber + 2, "Exit mTroll");
+				mSwitchDisplay->SetSwitchText(switchNumber + 2, "Reset elapsed time");
 				mSwitchDisplay->ForceSwitchDisplay(switchNumber + 2, true);
-				mSwitchDisplay->SetSwitchText(switchNumber + 3, "Exit + sleep");
+				mSwitchDisplay->SetSwitchText(switchNumber + 3, "Exit mTroll");
 				mSwitchDisplay->ForceSwitchDisplay(switchNumber + 3, true);
-				mSwitchDisplay->SetSwitchText(switchNumber + 4, "Exit + hibernate");
+				mSwitchDisplay->SetSwitchText(switchNumber + 4, "Exit + sleep");
 				mSwitchDisplay->ForceSwitchDisplay(switchNumber + 4, true);
+				mSwitchDisplay->SetSwitchText(switchNumber + 5, "Exit + hibernate");
+				mSwitchDisplay->ForceSwitchDisplay(switchNumber + 5, true);
 			}
 			if (!mApplication || !mApplication->EnableTimeDisplay(true))
 				EscapeToDefaultMode();
@@ -1171,12 +1174,14 @@ MidiControlEngine::SwitchReleased_TimeDisplay(int switchNumber)
 		EscapeToDefaultMode();
 	}
 	else if (switchNumber == timeModeSwitchNumber + 1)
-		mApplication->ResetTime();
+		mApplication->PauseOrResumeTime();
 	else if (switchNumber == timeModeSwitchNumber + 2)
-		mApplication->Exit(ITrollApplication::soeExit);
+		mApplication->ResetTime();
 	else if (switchNumber == timeModeSwitchNumber + 3)
-		mApplication->Exit(ITrollApplication::soeExitAndSleep);
+		mApplication->Exit(ITrollApplication::soeExit);
 	else if (switchNumber == timeModeSwitchNumber + 4)
+		mApplication->Exit(ITrollApplication::soeExitAndSleep);
+	else if (switchNumber == timeModeSwitchNumber + 5)
 		mApplication->Exit(ITrollApplication::soeExitAndHibernate);
 }
 

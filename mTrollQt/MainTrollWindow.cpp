@@ -51,6 +51,7 @@ MainTrollWindow::MainTrollWindow() :
 	mUi(NULL),
 	mMidiSuspendAction(NULL),
 	mStartTime(QDateTime::currentDateTime()),
+	mPauseTime(mStartTime),
 	mShutdownOnExit(soeExit)
 {
 	QCoreApplication::setOrganizationName(kOrganizationKey);
@@ -336,6 +337,8 @@ MainTrollWindow::GetElapsedTimeStr()
 	const int kSecsInDay = kSecsInHour * 24;
 	QDateTime now(QDateTime::currentDateTime());
 	QString ts(now.toString("h:mm:ss ap \nddd, MMM d, yyyy"));
+	if (mPauseTime != mStartTime)
+		now = mPauseTime;
 
 	qint64 secs = mStartTime.secsTo(now);
 	const int days = secs > kSecsInDay ? secs / kSecsInDay : 0;
@@ -364,7 +367,30 @@ MainTrollWindow::GetElapsedTimeStr()
 void
 MainTrollWindow::ResetTime()
 {
-	mStartTime = QDateTime::currentDateTime();
+	mStartTime = mPauseTime = QDateTime::currentDateTime();
+}
+
+void
+MainTrollWindow::PauseOrResumeTime()
+{
+	if (mPauseTime == mStartTime)
+	{
+		// pause
+		mPauseTime = QDateTime::currentDateTime();
+	}
+	else
+	{
+		// resume
+		// calculate amount of time paused
+		QDateTime now = QDateTime::currentDateTime();
+		qint64 diff = mPauseTime.secsTo(now);
+
+		// increase mStartTime by the duration of the pause
+		mStartTime = mStartTime.addSecs(diff);
+
+		// resume by setting pause time to (new) start time
+		mPauseTime = mStartTime;
+	}
 }
 
 void

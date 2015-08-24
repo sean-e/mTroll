@@ -60,6 +60,7 @@ private:
 	virtual bool EnableTimeDisplay(bool enable);
 	virtual std::string GetElapsedTimeStr() override;
 	virtual void ResetTime() override;
+	virtual void PauseOrResumeTime() override;
 	virtual void Exit(ExitAction action);
 
 private:
@@ -70,6 +71,7 @@ private:
 	QAction		* mAdcOverrideActions[ExpressionPedals::PedalCount];
 	QAction		* mMidiSuspendAction;
 	QDateTime	mStartTime;
+	QDateTime	mPauseTime;
 	ExitAction	mShutdownOnExit;
 
 private:

@@ -1467,7 +1467,7 @@ ControlUi::CreateTimeDisplayTimer()
 	if (!mTimeDisplayTimer)
 		mTimeDisplayTimer = new QTimer(this);
 	connect(mTimeDisplayTimer, SIGNAL(timeout()), this, SLOT(DisplayTime()));
-	mTimeDisplayTimer->start(1000);
+	mTimeDisplayTimer->start(100);
 }
 
 void

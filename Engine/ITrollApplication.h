@@ -40,6 +40,7 @@ public:
 	virtual bool EnableTimeDisplay(bool enable) = 0;
 	virtual std::string ApplicationDirectory() = 0;
 	virtual std::string GetElapsedTimeStr() = 0;
+	virtual void PauseOrResumeTime() = 0;
 	virtual void ResetTime() = 0;
 	virtual void Exit(ExitAction action) = 0;
 };
