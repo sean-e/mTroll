@@ -1105,7 +1105,7 @@ MidiControlEngine::SetupModeSelectSwitch(EngineModeSwitch m)
 		txt = "ADC overrides...";
 		break;
 	case kModeTime:
-		txt = "Display time...";
+		txt = "Time + utils...";
 		break;
 	case kModeToggleLedInversion:
 		txt = "Toggle LED Inversion";
