@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010-2015 Sean Echevarria
+ * Copyright (C) 2007-2008,2010-2016 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -91,13 +91,14 @@ PatchBank::SetDefaultMappings(const PatchBank & defaultMapping)
 	// propagate switch groups from default bank
 	if (&defaultMapping != this && defaultMapping.mGroups.size())
 	{
-		PatchMaps & pm = mPatches;
 		std::for_each(defaultMapping.mGroups.begin(), defaultMapping.mGroups.end(), 
-			[this, &pm](GroupSwitches * grp)
+			[this](GroupSwitches * grp)
 		{
-			PatchMaps & pm2 = pm;
+			bool useThisMapping = true;
+			PatchMaps & pm2 = mPatches;
+			SwitchToGroupMap & nonDefaultMappings = mGroupFromSwitch;
 			PatchBank::GroupSwitches * grpCpy = new PatchBank::GroupSwitches;
-			std::for_each(grp->begin(), grp->end(), [&pm2, &grpCpy](int num)
+			std::for_each(grp->begin(), grp->end(), [&pm2, &grpCpy, &nonDefaultMappings, &useThisMapping](int num)
 			{
 				// only insert if num is not already assigned (num of switch has been assigned a patch).
 				// this means that a group might be smaller in the current bank than the default bank.
@@ -109,10 +110,17 @@ PatchBank::SetDefaultMappings(const PatchBank & defaultMapping)
 						return;
 				}
 
-				grpCpy->insert(num);
+				if (nonDefaultMappings.find(num) != nonDefaultMappings.end())
+				{
+					// this default group has buttons that are already assigned a group, so 
+					// reject this entire default group
+					useThisMapping = false;
+				}
+				else
+					grpCpy->insert(num);
 			});
 
-			if (grpCpy->size())
+			if (grpCpy->size() && useThisMapping)
 				CreateExclusiveGroup(grpCpy);
 			else
 				delete grpCpy;
