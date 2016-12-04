@@ -4,6 +4,7 @@ glob:*.opensdf
 glob:*.sdf
 glob:*.suo
 glob:*.atsuo
+glob:*.vc.db
 glob:mTrollQt.vcxproj.user
 glob:mtrollQt.zip
 glob:*.sean.e.user
