@@ -1,6 +1,6 @@
 /*
 * mTroll MIDI Controller
-* Copyright (C) 2015 Sean Echevarria
+* Copyright (C) 2015-2016 Sean Echevarria
 *
 * This file is part of mTroll.
 *
@@ -29,7 +29,6 @@
 void
 TwoStatePatch::ExecCommandsA()
 {
-	std::for_each(mCmdsA.begin(), mCmdsA.end(), std::mem_fun(&IPatchCommand::Exec));
 	mPatchIsActive = true;
 
 	if (!mOverridePedals)
@@ -52,6 +51,8 @@ TwoStatePatch::ExecCommandsA()
 			}
 		}
 	}
+
+	std::for_each(mCmdsA.begin(), mCmdsA.end(), std::mem_fun(&IPatchCommand::Exec));
 }
 
 void
