@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2012,2014 Sean Echevarria
+ * Copyright (C) 2010-2012,2014,2017 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -90,17 +90,17 @@ public:
 			mAx->Release();
 	}
 
-	virtual const std::string & GetDisplayText() const 
+	virtual const std::string & GetDisplayText(bool checkState /*= false*/) const
 	{ 
 		if (mHasDisplayText)
 		{
-			if (mPatchIsActive)
+			if (IsActive())
 				return mActiveText;
 			else
 				return mInactiveText; 
 		}
 
-		return GetName();
+		return TogglePatch::GetDisplayText(checkState);
 	}
 
 	virtual bool HasDisplayText() const { return mHasDisplayText; }

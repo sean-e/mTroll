@@ -515,7 +515,7 @@ PatchBank::PatchSwitchPressed(SwitchFunctionAssignment st,
 			const int patchNum = curSwitchItem->mPatch->GetNumber();
 			if (patchNum > 0)
 				msgstr << patchNum << " ";
-			msgstr << curSwitchItem->mPatch->GetDisplayText() << std::endl;
+			msgstr << curSwitchItem->mPatch->GetDisplayText(true) << std::endl;
 		}
 		else
 			doDisplayUpdate = false;

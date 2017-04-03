@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2012-2013,2015 Sean Echevarria
+ * Copyright (C) 2012-2013,2015,2017 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -71,7 +71,7 @@ public:
 			gActivePatchPedals = NULL;
 	}
 
-	virtual const std::string & GetDisplayText() const 
+	virtual const std::string & GetDisplayText(bool /*checkState = false*/) const
 	{ 
 		if (!mCurrentSubPatch)
 			return GetName();

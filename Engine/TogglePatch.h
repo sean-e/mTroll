@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2009 Sean Echevarria
+ * Copyright (C) 2007-2009,2017 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -49,12 +49,22 @@ public:
 
 	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 	{
-		if (mPatchIsActive)
+		if (IsActive())
 			ExecCommandsB();
 		else
 			ExecCommandsA();
 
 		UpdateDisplays(mainDisplay, switchDisplay);
+	}
+
+	virtual const std::string & GetDisplayText(bool checkState = false) const
+	{
+		if (!checkState || IsActive())
+			return GetName();
+
+		// don't display the patch name when it has just been toggled off
+		static const std::string empty("");
+		return empty;
 	}
 };
 

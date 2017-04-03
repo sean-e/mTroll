@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2012,2014-2015 Sean Echevarria
+ * Copyright (C) 2007-2012,2014-2015,2017 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -54,7 +54,7 @@ public:
 	const std::string & GetName() const { return mName; }
 	void SetName(const std::string& name) { mName = name; }
 	virtual bool HasDisplayText() const { return false; }
-	virtual const std::string & GetDisplayText() const { return mName; }
+	virtual const std::string & GetDisplayText(bool checkState = false) const { return mName; }
 	int GetNumber() const {return mNumber;}
 	bool IsActive() const {return mPatchIsActive;}
 	// used to drive led display without exec
