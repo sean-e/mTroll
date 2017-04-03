@@ -3,3 +3,11 @@
 ################################################################################
 
 *.sdf
+*.db
+*.idb
+*.intermediate.manifest
+*.lastbuildstate
+*.opendb
+*.res
+*.tlog
+moc_*.cpp
