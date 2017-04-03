@@ -384,31 +384,60 @@ PatchBank::PatchSwitchPressed(SwitchFunctionAssignment st,
 	GroupSwitches * grp = mGroupFromSwitch[switchNumber];
 	if (grp)
 	{
-		// turn off any in group that are active
+		bool isRepress = false;
+		bool isAnyPatchInGroupActiveThatIsNotCurrentSwitch = false;
 		for (GroupSwitches::iterator switchIt = grp->begin();
 			switchIt != grp->end();
 			++switchIt)
 		{
 			const int kCurSwitchNumber = *switchIt;
-			if (kCurSwitchNumber == switchNumber)
-				continue; // don't deactivate if pressing the same switch multiple times
-
-			// exclusive groups don't really support secondary functions.
-			// keep secondary function groups separate from primary function groups.
-			// basically unsupported for now.
 			PatchVect & prevPatches = mPatches[kCurSwitchNumber].GetPatchVect(st);
 			for (it = prevPatches.begin();
-				 it != prevPatches.end();
-				 ++it)
+				it != prevPatches.end();
+				++it)
 			{
 				PatchMap * curSwitchItem = *it;
 				if (!curSwitchItem || !curSwitchItem->mPatch)
 					continue;
 
-				curSwitchItem->mPatch->Deactivate(mainDisplay, switchDisplay);
+				if (kCurSwitchNumber == switchNumber)
+					isRepress = true;
+				else if (curSwitchItem->mPatch->IsActive())
+					isAnyPatchInGroupActiveThatIsNotCurrentSwitch = true;
 
-				// force displays off for all other patches in group
-				curSwitchItem->mPatch->UpdateDisplays(mainDisplay, switchDisplay);
+				// only check the first patch
+				break;
+			}
+		}
+
+		if (!isRepress || isAnyPatchInGroupActiveThatIsNotCurrentSwitch)
+		{
+			// turn off any in group that are active
+			for (GroupSwitches::iterator switchIt = grp->begin();
+				switchIt != grp->end();
+				++switchIt)
+			{
+				const int kCurSwitchNumber = *switchIt;
+				if (kCurSwitchNumber == switchNumber)
+					continue; // don't deactivate if pressing the same switch multiple times
+
+				// exclusive groups don't really support secondary functions.
+				// keep secondary function groups separate from primary function groups.
+				// basically unsupported for now.
+				PatchVect & prevPatches = mPatches[kCurSwitchNumber].GetPatchVect(st);
+				for (it = prevPatches.begin();
+					it != prevPatches.end();
+					++it)
+				{
+					PatchMap * curSwitchItem = *it;
+					if (!curSwitchItem || !curSwitchItem->mPatch)
+						continue;
+
+					curSwitchItem->mPatch->Deactivate(mainDisplay, switchDisplay);
+
+					// force displays off for all other patches in group
+					curSwitchItem->mPatch->UpdateDisplays(mainDisplay, switchDisplay);
+				}
 			}
 		}
 	}
