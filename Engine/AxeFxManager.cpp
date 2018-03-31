@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2015 Sean Echevarria
+ * Copyright (C) 2010-2015,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -1430,7 +1430,7 @@ AxeFxManager::EnableLooperStatusMonitor(bool enable)
 	//		F0 00 01 74 03 23 00 25 F7
 	QMutexLocker lock(&mQueryLock);
 	const byte rawBytes[] = 
-	{ 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x23, enable ? 1 : 0, enable ? 0x24 : 0x25, 0xF7 };
+	{ 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x23, byte(enable ? 1 : 0), byte(enable ? 0x24 : 0x25), 0xF7 };
 	const Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
 	mMidiOut->MidiOut(bb);
 }
