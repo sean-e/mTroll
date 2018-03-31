@@ -56,16 +56,9 @@ nmake
 
 
 [qt 5 runtime dependencies - place in .\ReleaseDependencies directory for Inno Setup]
-D3DCompiler_43.dll			defeat by building Qt with: -no-opengl
-icudt49.dll					defeat by building Qt with: -no-icu
-icuin49.dll					defeat by building Qt with: -no-icu
-icuuc49.dll					defeat by building Qt with: -no-icu
-libEGL.dll					defeat by building Qt with: -no-opengl
-libGLESv2.dll					defeat by building Qt with: -no-opengl
-msvcp100.dll
-msvcr100.dll
 Qt5Core.dll
 Qt5Gui.dll
 Qt5Widgets.dll
-platforms\qminimal.dll
-platforms\qwindows.dll
+concrt140.dll
+msvcp140.dll
+vcruntime140.dll
