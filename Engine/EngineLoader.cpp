@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2015 Sean Echevarria
+ * Copyright (C) 2007-2015, 2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -474,7 +474,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		std::string patchName;
 		if (pElem->ValueStr() == "engineMetaPatch")
 		{
-			// engineMetaPatch is superceded by PatchMap commands
+			// engineMetaPatch is superceded by switch commands
 			if (pElem->Attribute("name"))
 				patchName = pElem->Attribute("name");
 			int patchNumber = -1;
@@ -1118,17 +1118,20 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 			 childElem; 
 			 childElem = childElem->NextSiblingElement())
 		{
-			if (childElem->ValueStr() == "PatchMap")
+			if (childElem->ValueStr() == "switch" ||
+				childElem->ValueStr() == "PatchMap") // PatchMap was the old name for switch
 			{
 				std::string tmp;
 				int switchNumber = -1;
-				childElem->QueryIntAttribute("switch", &switchNumber);
+				childElem->QueryIntAttribute("number", &switchNumber);
+				if (switchNumber <= 0)
+					childElem->QueryIntAttribute("switch", &switchNumber); // switch was the old name for number (when used with PatchMap)
 				if (switchNumber <= 0)
 				{
 					if (mTraceDisplay)
 					{
 						std::strstream traceMsg;
-						traceMsg << "Error loading config file: invalid switch in PatchMap for bank " << bankName << std::endl << std::ends;
+						traceMsg << "Error loading config file: invalid switch number for bank " << bankName << std::endl << std::ends;
 						mTraceDisplay->Trace(std::string(traceMsg.str()));
 					}
 					continue;
@@ -1153,7 +1156,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						if (mTraceDisplay)
 						{
 							std::strstream traceMsg;
-							traceMsg << "Error loading config file: PatchMap for switch " << switchNumber << " in bank " << bankNumber << " missing action" << std::endl << std::ends;
+							traceMsg << "Error loading config file: switch " << switchNumber << " in bank " << bankNumber << " missing action" << std::endl << std::ends;
 							mTraceDisplay->Trace(std::string(traceMsg.str()));
 						}
 						continue;
@@ -1273,7 +1276,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 							if (mTraceDisplay)
 							{
 								std::strstream traceMsg;
-								traceMsg << "Error loading config file: PatchMap " << nameOverride << " missing LoadBank target" << std::endl << std::ends;
+								traceMsg << "Error loading config file: switch " << nameOverride << " missing LoadBank target" << std::endl << std::ends;
 								mTraceDisplay->Trace(std::string(traceMsg.str()));
 							}
 							continue;
@@ -1295,7 +1298,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 							if (mTraceDisplay)
 							{
 								std::strstream traceMsg;
-								traceMsg << "Error loading config file: PatchMap " << nameOverride << " missing ResetExclusiveGroup switch target" << std::endl << std::ends;
+								traceMsg << "Error loading config file: switch " << nameOverride << " missing ResetExclusiveGroup switch target" << std::endl << std::ends;
 								mTraceDisplay->Trace(std::string(traceMsg.str()));
 							}
 							continue;
@@ -1306,7 +1309,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						if (mTraceDisplay)
 						{
 							std::strstream traceMsg;
-							traceMsg << "Error loading config file: PatchMap " << nameOverride << " unknown command " << tmp << std::endl << std::ends;
+							traceMsg << "Error loading config file: switch " << nameOverride << " unknown command " << tmp << std::endl << std::ends;
 							mTraceDisplay->Trace(std::string(traceMsg.str()));
 						}
 						continue;
@@ -1336,11 +1339,11 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 // 					mTraceDisplay)
 // 				{
 // 					std::strstream traceMsg;
-// 					traceMsg << "Warning load of config file: bank " << bankName << " has a PatchMap with both override and sync attributes (might not work)" << std::endl << std::ends;
+// 					traceMsg << "Warning load of config file: bank " << bankName << " has a switch with both override and sync attributes (might not work)" << std::endl << std::ends;
 // 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 // 				}
 
-				bank.AddPatchMapping(switchNumber - 1, patchNumber, nameOverride, swFunc, sfoOp, loadState, unloadState, stateOverride, syncState);
+				bank.AddSwitchAssignment(switchNumber - 1, patchNumber, nameOverride, swFunc, sfoOp, loadState, unloadState, stateOverride, syncState);
 			}
 			else if (childElem->ValueStr() == "ExclusiveSwitchGroup")
 			{

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2013,2015 Sean Echevarria
+ * Copyright (C) 2007-2013,2015,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -240,8 +240,8 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 	// If their default bank specifies a mapping for mIncrementSwitchNumber or 
 	// mDecrementSwitchNumber, they will not get Next or Prev at all.
 	// CHANGED: no longer add Next and prev by default
-// 	tmpDefaultBank.AddPatchMapping(mIncrementSwitchNumber, ReservedPatchNumbers::kBankNavNext, PatchBank::stIgnore, PatchBank::stIgnore);
-// 	tmpDefaultBank.AddPatchMapping(mDecrementSwitchNumber, ReservedPatchNumbers::kBankNavPrev, PatchBank::stIgnore, PatchBank::stIgnore);
+// 	tmpDefaultBank.AddSwitchAssignment(mIncrementSwitchNumber, ReservedPatchNumbers::kBankNavNext, PatchBank::stIgnore, PatchBank::stIgnore);
+// 	tmpDefaultBank.AddSwitchAssignment(mDecrementSwitchNumber, ReservedPatchNumbers::kBankNavPrev, PatchBank::stIgnore, PatchBank::stIgnore);
 
 	if (defaultsBank)
 		defaultsBank->SetDefaultMappings(tmpDefaultBank);  // add Next and Prev to their default bank

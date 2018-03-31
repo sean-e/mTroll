@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010,2012-2015 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2012-2015,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -84,7 +84,7 @@ public:
 	};
 
 	// creation/init
-	void AddPatchMapping(int switchNumber, int patchNumber, const std::string &overrideName, SwitchFunctionAssignment st, SecondFunctionOperation sfoOp, PatchState patchLoadState, PatchState patchUnloadState, PatchState patchStateOverride, PatchSyncState patchSyncState);
+	void AddSwitchAssignment(int switchNumber, int patchNumber, const std::string &overrideName, SwitchFunctionAssignment st, SecondFunctionOperation sfoOp, PatchState patchLoadState, PatchState patchUnloadState, PatchState patchStateOverride, PatchSyncState patchSyncState);
 	void InitPatches(const MidiControlEngine::Patches & patches, ITraceDisplay * traceDisp);
 	void CalibrateExprSettings(const PedalCalibration * pedalCalibration, MidiControlEngine * eng, ITraceDisplay * traceDisp);
 	void SetDefaultMappings(const PatchBank & defaultMapping);
@@ -103,7 +103,7 @@ public:
 	const std::string & GetBankName() const {return mName;}
 
 	// support for exclusive switch groups
-	typedef std::set<int> GroupSwitches;			// contains the switches for an exclusive group
+	using GroupSwitches = std::set<int>;			// contains the switches for an exclusive group
 	void CreateExclusiveGroup(GroupSwitches * switches);
 
 private:
@@ -113,7 +113,7 @@ private:
 	void PatchSwitchReleased(SwitchFunctionAssignment st, int switchNumber, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 
 private:
-	struct PatchMap
+	struct BankPatchState
 	{
 		int					mPatchNumber;	// needed for load of document
 		std::string			mOverrideSwitchName;
@@ -124,7 +124,7 @@ private:
 		SecondFunctionOperation mSfOp;
 		Patch				*mPatch;		// non-retained runtime state; weak ref
 
-		PatchMap(int patchNumber, std::string overrideName, PatchState loadState, PatchState unloadState, PatchState stateOverride, PatchSyncState patchSyncState, SecondFunctionOperation sfOp) :
+		BankPatchState(int patchNumber, std::string overrideName, PatchState loadState, PatchState unloadState, PatchState stateOverride, PatchSyncState patchSyncState, SecondFunctionOperation sfOp) :
 			mPatchNumber(patchNumber),
 			mOverrideSwitchName(overrideName),
 			mPatchStateAtBankLoad(loadState),
@@ -132,11 +132,11 @@ private:
 			mPatchStateOverride(stateOverride),
 			mPatchSyncState(patchSyncState),
 			mSfOp(sfOp),
-			mPatch(NULL)
+			mPatch(nullptr)
 		{
 		}
 
-		PatchMap(const PatchMap & rhs) :
+		BankPatchState(const BankPatchState & rhs) :
 			mPatchNumber(rhs.mPatchNumber),
 			mOverrideSwitchName(rhs.mOverrideSwitchName),
 			mPatchStateAtBankLoad(rhs.mPatchStateAtBankLoad),
@@ -148,7 +148,7 @@ private:
 		{
 		}
 	};
-	typedef std::vector<PatchMap*> PatchVect;
+	using PatchVect = std::vector<BankPatchState*>;
 
 	struct DualPatchVect
 	{
@@ -191,12 +191,12 @@ private:
 	// a switch in a bank can have multiple patches
 	// only the first patch associated with a switch gets control of the switch
 	// only the name of the first patch will be displayed
-	typedef std::map<int, DualPatchVect> PatchMaps;
+	using PatchMaps = std::map<int, DualPatchVect>;
 	PatchMaps					mPatches;	// switchNumber is key
 
 	// support for exclusive switch groups
-	typedef std::list<GroupSwitches*>	Groups;					// contains all of the GroupSwitches for the current bank
-	typedef std::map<int, GroupSwitches *> SwitchToGroupMap;	// weak ref to GroupSwitches - lookup group from switchnumber - many to one
+	using Groups = std::list<GroupSwitches*>;					// contains all of the GroupSwitches for the current bank
+	using SwitchToGroupMap = std::map<int, GroupSwitches *>;	// weak ref to GroupSwitches - lookup group from switch number - many to one
 
 	Groups				mGroups;					// this is just a store - for freeing GroupSwitches
 	SwitchToGroupMap	mGroupFromSwitch;

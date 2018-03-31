@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2013,2015 Sean Echevarria
+ * Copyright (C) 2007-2013,2015,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -79,7 +79,7 @@ public:
 	};
 
 	// initialization
-	typedef std::map<int, Patch*> Patches;
+	using Patches = std::map<int, Patch*>;
 	PatchBank &				AddBank(int number, const std::string & name);
 	void					AddPatch(Patch * patch);
 	void					SetPowerup(int powerupBank, int powerupPatch, int powerupTimeout);
@@ -170,7 +170,7 @@ private:
 
 	// retained in different form
 	Patches					mPatches;		// patchNum is key
-	typedef std::vector<PatchBank*> Banks;
+	using Banks = std::vector<PatchBank*>;
 	Banks					mBanks;			// compressed; bankNum is not index
 
 	// retained state
@@ -193,8 +193,8 @@ private:
 // reserved patch numbers
 // patch number reservations
 // -1 to -1000 are reserved for engine
-// -1001 to -2000 are user-defined patch numbers of auto-generated patches defined via patchmaps (not required)
-// -2000 to -XXX are auto-generated patches (defined in patchmaps)
+// -1001 to -2000 are user-defined patch numbers of auto-generated patches defined via bank switch (not required)
+// -2000 to -XXX are auto-generated patches (defined via bank switch)
 // 
 enum /*class*/ ReservedPatchNumbers
 {

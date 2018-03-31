@@ -109,53 +109,53 @@
 	</patches>
 	<banks>
 		<bank name="These are the defaults" number="0">
-			<PatchMap switch="16" patch="30" />
-			<PatchMap switch="20" patch="31" />
+			<switch number="16" patch="30" />
+			<switch number="20" patch="31" />
 		</bank>
 		<bank name="First Bank" number="1">
-			<PatchMap switch="1" patch="1" loadState="" unloadState="" />
-			<PatchMap switch="2" patch="2" loadState="" unloadState="" />
-			<PatchMap switch="3" patch="3" loadState="" unloadState="" />
-			<PatchMap switch="6" patch="10" loadState="" unloadState="" />
-			<PatchMap switch="7" patch="11" loadState="" unloadState="" />
-			<PatchMap switch="8" patch="12" loadState="" unloadState="" />
-			<PatchMap switch="11" patch="20" loadState="" unloadState="" />
-			<PatchMap switch="12" patch="21" loadState="" unloadState="" />
-			<PatchMap switch="13" patch="22" loadState="" unloadState="" />
-			<PatchMap switch="14" patch="23" loadState="" unloadState="" />
-			<PatchMap switch="15" patch="32" loadState="" unloadState="" />
+			<switch number="1" patch="1" loadState="" unloadState="" />
+			<switch number="2" patch="2" loadState="" unloadState="" />
+			<switch number="3" patch="3" loadState="" unloadState="" />
+			<switch number="6" patch="10" loadState="" unloadState="" />
+			<switch number="7" patch="11" loadState="" unloadState="" />
+			<switch number="8" patch="12" loadState="" unloadState="" />
+			<switch number="11" patch="20" loadState="" unloadState="" />
+			<switch number="12" patch="21" loadState="" unloadState="" />
+			<switch number="13" patch="22" loadState="" unloadState="" />
+			<switch number="14" patch="23" loadState="" unloadState="" />
+			<switch number="15" patch="32" loadState="" unloadState="" />
 		</bank>
 		<bank name="Second Bank" number="2">
-			<PatchMap switch="1" patch="20" loadState="" unloadState="" />
-			<PatchMap switch="2" patch="21" loadState="" unloadState="" />
-			<PatchMap switch="3" patch="22" loadState="" unloadState="" />
-			<PatchMap switch="4" patch="23" loadState="" unloadState="" />
-			<PatchMap switch="11" patch="25" loadState="A" unloadState="" />
-			<PatchMap switch="12" patch="26" loadState="" unloadState="B" />
-			<PatchMap switch="13" patch="33" loadState="" unloadState="" />
+			<switch number="1" patch="20" loadState="" unloadState="" />
+			<switch number="2" patch="21" loadState="" unloadState="" />
+			<switch number="3" patch="22" loadState="" unloadState="" />
+			<switch number="4" patch="23" loadState="" unloadState="" />
+			<switch number="11" patch="25" loadState="A" unloadState="" />
+			<switch number="12" patch="26" loadState="" unloadState="B" />
+			<switch number="13" patch="33" loadState="" unloadState="" />
 		</bank>
 		<bank name="Third Bank" number="3">
-			<PatchMap switch="1" command="ResetBankPatches" />
-			<PatchMap switch="6" patch="20" loadState="" unloadState="" />
-			<PatchMap switch="7" patch="21" loadState="" unloadState="" />
-			<PatchMap switch="8" patch="22" loadState="" unloadState="" />
-			<PatchMap switch="9" patch="23" loadState="" unloadState="" />
-			<PatchMap switch="11" patch="24" loadState="" unloadState="" />
-			<PatchMap switch="11" patch="1" loadState="" unloadState="" />
-			<PatchMap switch="11" patch="2" loadState="" unloadState="" />
-			<PatchMap switch="11" patch="3" loadState="" unloadState="" />
-			<PatchMap switch="16" patch="1" loadState="" unloadState="" />
-			<PatchMap switch="17" patch="2" loadState="" unloadState="" />
-			<PatchMap switch="18" patch="3" loadState="" unloadState="" />
+			<switch number="1" command="ResetBankPatches" />
+			<switch number="6" patch="20" loadState="" unloadState="" />
+			<switch number="7" patch="21" loadState="" unloadState="" />
+			<switch number="8" patch="22" loadState="" unloadState="" />
+			<switch number="9" patch="23" loadState="" unloadState="" />
+			<switch number="11" patch="24" loadState="" unloadState="" />
+			<switch number="11" patch="1" loadState="" unloadState="" />
+			<switch number="11" patch="2" loadState="" unloadState="" />
+			<switch number="11" patch="3" loadState="" unloadState="" />
+			<switch number="16" patch="1" loadState="" unloadState="" />
+			<switch number="17" patch="2" loadState="" unloadState="" />
+			<switch number="18" patch="3" loadState="" unloadState="" />
 		</bank>
 		<bank name="Fourth Bank" number="4">
 			<ExclusiveSwitchGroup>2 7 12</ExclusiveSwitchGroup>
-			<PatchMap switch="2" patch="1" loadState="" unloadState="" />
-			<PatchMap switch="7" patch="2" loadState="" unloadState="" />
-			<PatchMap switch="12" patch="3" loadState="" unloadState="" />
-			<PatchMap switch="5" command="LoadBank" bankNumber="2" />
-			<PatchMap switch="9" patch="25" />
-			<PatchMap switch="10" patch="26" />
+			<switch number="2" patch="1" loadState="" unloadState="" />
+			<switch number="7" patch="2" loadState="" unloadState="" />
+			<switch number="12" patch="3" loadState="" unloadState="" />
+			<switch number="5" command="LoadBank" bankNumber="2" />
+			<switch number="9" patch="25" />
+			<switch number="10" patch="26" />
 		</bank>
 	</banks>
 </MidiControlSettings>

@@ -252,11 +252,11 @@
                 <div class="TableDiv">
                   <span>[view]</span>
                   <table class="HiddenTableCls">
-                    <xsl:for-each select="PatchMap">
+                    <xsl:for-each select="switch">
                       <tr>
                         <xsl:variable name="patchNumber" select="@patch"/>
                         <td>
-                          <xsl:value-of select="@switch"/>
+                          <xsl:value-of select="@number"/>
                           <xsl:text>&#160;&#160;</xsl:text>
                         </td>
                         <td>

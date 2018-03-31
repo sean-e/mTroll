@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010-2016 Sean Echevarria
+ * Copyright (C) 2007-2008,2010-2016,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -59,12 +59,12 @@ PatchBank::~PatchBank()
 
 void PatchBank::DeletePatchMaps::operator()(const std::pair<int, DualPatchVect> & pr)
 {
-	std::for_each(pr.second.mPrimaryPatches.begin(), pr.second.mPrimaryPatches.end(), DeletePtr<PatchMap>());
-	std::for_each(pr.second.mSecondaryPatches.begin(), pr.second.mSecondaryPatches.end(), DeletePtr<PatchMap>());
+	std::for_each(pr.second.mPrimaryPatches.begin(), pr.second.mPrimaryPatches.end(), DeletePtr<BankPatchState>());
+	std::for_each(pr.second.mSecondaryPatches.begin(), pr.second.mSecondaryPatches.end(), DeletePtr<BankPatchState>());
 }
 
 void
-PatchBank::AddPatchMapping(int switchNumber, 
+PatchBank::AddSwitchAssignment(int switchNumber, 
 						   int patchNumber, 
 						   const std::string &overrideName,
 						   SwitchFunctionAssignment st, 
@@ -75,7 +75,7 @@ PatchBank::AddPatchMapping(int switchNumber,
 						   PatchSyncState patchSyncState)
 {
 	PatchVect & curPatches = mPatches[switchNumber].GetPatchVect(st);
-	curPatches.push_back(new PatchMap(patchNumber, overrideName, patchLoadState, patchUnloadState, patchStateOverride, patchSyncState, sfoOp));
+	curPatches.push_back(new BankPatchState(patchNumber, overrideName, patchLoadState, patchUnloadState, patchStateOverride, patchSyncState, sfoOp));
 	if (ssSecondary == st)
 	{
 		if (!SwitchHasSecondaryLogic(switchNumber))
@@ -89,7 +89,7 @@ void
 PatchBank::SetDefaultMappings(const PatchBank & defaultMapping)
 {
 	// propagate switch groups from default bank
-	if (&defaultMapping != this && defaultMapping.mGroups.size())
+	if (&defaultMapping != this && !defaultMapping.mGroups.empty())
 	{
 		std::for_each(defaultMapping.mGroups.begin(), defaultMapping.mGroups.end(), 
 			[this](GroupSwitches * grp)
@@ -106,7 +106,7 @@ PatchBank::SetDefaultMappings(const PatchBank & defaultMapping)
 				{
 					PatchBank::SwitchFunctionAssignment ss = static_cast<PatchBank::SwitchFunctionAssignment>(idx2);
 					PatchBank::PatchVect & curPatches = pm2[num].GetPatchVect(ss);
-					if (curPatches.size())
+					if (!curPatches.empty())
 						return;
 				}
 
@@ -120,7 +120,7 @@ PatchBank::SetDefaultMappings(const PatchBank & defaultMapping)
 					grpCpy->insert(num);
 			});
 
-			if (grpCpy->size() && useThisMapping)
+			if (!grpCpy->empty() && useThisMapping)
 				CreateExclusiveGroup(grpCpy);
 			else
 				delete grpCpy;
@@ -137,7 +137,7 @@ PatchBank::SetDefaultMappings(const PatchBank & defaultMapping)
 		{
 			const int switchNumber = (*it).first;
 			PatchVect & curPatches = mPatches[switchNumber].GetPatchVect(ss);
-			if (curPatches.size())
+			if (!curPatches.empty())
 				continue;
 
 			if (ssSecondary == ss)
@@ -148,8 +148,8 @@ PatchBank::SetDefaultMappings(const PatchBank & defaultMapping)
 				it2 != patches.end();
 				++it2)
 			{
-				PatchMap * curItem = *it2;
-				curPatches.push_back(new PatchMap(*curItem));
+				BankPatchState * curItem = *it2;
+				curPatches.push_back(new BankPatchState(*curItem));
 			}
 		}
 	}
@@ -172,7 +172,7 @@ PatchBank::InitPatches(const MidiControlEngine::Patches & enginePatches,
 				 )
 			{
 				bool inc = true;
-				PatchMap * curItem = *it2;
+				BankPatchState * curItem = *it2;
 				if (curItem)
 				{
 					MidiControlEngine::Patches::const_iterator patchIt = enginePatches.find(curItem->mPatchNumber);
@@ -220,7 +220,7 @@ PatchBank::CalibrateExprSettings(const PedalCalibration * pedalCalibration, Midi
 				it2 != patches.end();
 				++it2)
 			{
-				PatchMap * curItem = *it2;
+				BankPatchState * curItem = *it2;
 				if (curItem && curItem->mPatch)
 				{
 					ExpressionPedals & pedals = curItem->mPatch->GetPedals();
@@ -248,7 +248,7 @@ PatchBank::Load(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 				it2 != patches.end();
 				++it2)
 			{
-				PatchMap * curItem = *it2;
+				BankPatchState * curItem = *it2;
 				if (!curItem || !curItem->mPatch)
 					continue;
 
@@ -297,7 +297,7 @@ PatchBank::Unload(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 				it2 != patches.end();
 				++it2)
 			{
-				PatchMap * curItem = *it2;
+				BankPatchState * curItem = *it2;
 				if (!curItem || !curItem->mPatch)
 					continue;
 
@@ -353,7 +353,7 @@ PatchBank::PatchSwitchPressed(SwitchFunctionAssignment st,
 		 it != curPatches.end();
 		 ++it)
 	{
-		PatchMap * curSwitchItem = *it;
+		BankPatchState * curSwitchItem = *it;
 		if (!curSwitchItem || !curSwitchItem->mPatch)
 			continue;
 
@@ -396,7 +396,7 @@ PatchBank::PatchSwitchPressed(SwitchFunctionAssignment st,
 				it != prevPatches.end();
 				++it)
 			{
-				PatchMap * curSwitchItem = *it;
+				BankPatchState * curSwitchItem = *it;
 				if (!curSwitchItem || !curSwitchItem->mPatch)
 					continue;
 
@@ -429,7 +429,7 @@ PatchBank::PatchSwitchPressed(SwitchFunctionAssignment st,
 					it != prevPatches.end();
 					++it)
 				{
-					PatchMap * curSwitchItem = *it;
+					BankPatchState * curSwitchItem = *it;
 					if (!curSwitchItem || !curSwitchItem->mPatch)
 						continue;
 
@@ -448,7 +448,7 @@ PatchBank::PatchSwitchPressed(SwitchFunctionAssignment st,
 	bool masterPatchIsActive = false;
 	if (it != curPatches.end())
 	{
-		PatchMap * curSwitchItem = *it;
+		BankPatchState * curSwitchItem = *it;
 		if (curSwitchItem && curSwitchItem->mPatch && curSwitchItem->mPatch->IsActive())
 			masterPatchIsActive = true; // master patch is just the first
 	}
@@ -460,7 +460,7 @@ PatchBank::PatchSwitchPressed(SwitchFunctionAssignment st,
 		 it != curPatches.end();
 		 ++it)
 	{
-		PatchMap * curSwitchItem = *it;
+		BankPatchState * curSwitchItem = *it;
 		if (!curSwitchItem || !curSwitchItem->mPatch)
 			continue;
 
@@ -483,21 +483,21 @@ PatchBank::PatchSwitchPressed(SwitchFunctionAssignment st,
 			if (syncInPhase == curSwitchItem->mPatchSyncState)
 			{
 				if (curSwitchItem->mPatch->IsActive() != masterPatchIsActive)
-					curSwitchItem->mPatch->SwitchPressed(NULL, switchDisplay);
+					curSwitchItem->mPatch->SwitchPressed(nullptr, switchDisplay);
 			}
 			else
 			{
 				if (curSwitchItem->mPatch->IsActive() == masterPatchIsActive)
-					curSwitchItem->mPatch->SwitchPressed(NULL, switchDisplay);
+					curSwitchItem->mPatch->SwitchPressed(nullptr, switchDisplay);
 			}
 		}
 
 		if (stIgnore == curSwitchItem->mPatchStateOverride ||
 			(stA == curSwitchItem->mPatchStateOverride && !curSwitchItem->mPatch->IsActive()) ||
 			(stB == curSwitchItem->mPatchStateOverride && curSwitchItem->mPatch->IsActive()))
-			curSwitchItem->mPatch->SwitchPressed(NULL, switchDisplay);
+			curSwitchItem->mPatch->SwitchPressed(nullptr, switchDisplay);
 		else
-			curSwitchItem->mPatch->UpdateDisplays(NULL, switchDisplay);
+			curSwitchItem->mPatch->UpdateDisplays(nullptr, switchDisplay);
 
 		if (once)
 			once = false;
@@ -551,12 +551,12 @@ PatchBank::PatchSwitchReleased(int switchNumber,
 						it2 != patches.end();
 						++it2)
 					{
-						PatchMap * curItem = *it2;
+						BankPatchState * curItem = *it2;
 						if (!curItem || !curItem->mPatch)
 							continue;
 
 						// update main display to note new function state registered
-						curItem->mPatch->UpdateDisplays(mainDisplay, NULL);
+						curItem->mPatch->UpdateDisplays(mainDisplay, nullptr);
 						break;
 					}
 				}
@@ -649,7 +649,7 @@ PatchBank::PatchSwitchReleased(SwitchFunctionAssignment st,
 		 it != curPatches.end();
 		 ++it)
 	{
-		PatchMap * curSwitchItem = *it;
+		BankPatchState * curSwitchItem = *it;
 		if (!curSwitchItem || !curSwitchItem->mPatch)
 			continue;
 
@@ -679,7 +679,7 @@ PatchBank::ToggleDualFunctionState(int switchNumber,
 			it2 != patches.end();
 			++it2)
 		{
-			PatchMap * curItem = *it2;
+			BankPatchState * curItem = *it2;
 			if (!curItem || !curItem->mPatch)
 				continue;
 
@@ -701,7 +701,7 @@ PatchBank::ToggleDualFunctionState(int switchNumber,
 			it2 != patches.end();
 			++it2)
 		{
-			PatchMap * curItem = *it2;
+			BankPatchState * curItem = *it2;
 			if (!curItem || !curItem->mPatch)
 				continue;
 
@@ -711,7 +711,7 @@ PatchBank::ToggleDualFunctionState(int switchNumber,
 
 			// update main display to note new function state registered
 			if (mPatches[switchNumber].mCurrentSwitchState == ssSecondary)
-				curItem->mPatch->UpdateDisplays(mainDisplay, NULL);
+				curItem->mPatch->UpdateDisplays(mainDisplay, nullptr);
 			break;
 		}
 	}
@@ -742,7 +742,7 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 					it2 != patches.end();
 					++it2)
 				{
-					PatchMap * curItem = *it2;
+					BankPatchState * curItem = *it2;
 					if (!curItem || !curItem->mPatch)
 						continue;
 
@@ -752,7 +752,7 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 						// primary patch
 						once = false;
 						if (temporaryDisplay)
-							curItem->mPatch->ClearSwitch(NULL);
+							curItem->mPatch->ClearSwitch(nullptr);
 						if (ssPrimary == ss && ssPrimary == (*it).second.mCurrentSwitchState)
 						{
 							curItem->mPatch->AssignSwitch((*it).first, switchDisplay);
@@ -777,7 +777,7 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 						if (temporaryDisplay)
 						{
 //							curItem->mPatch->AssignSwitch(-1, NULL);
-							curItem->mPatch->ClearSwitch(NULL);
+							curItem->mPatch->ClearSwitch(nullptr);
 						}
 					}
 					else
@@ -818,14 +818,14 @@ PatchBank::DisplayDetailedPatchInfo(int switchNumber, IMainDisplay * mainDisplay
 			int cnt = 0;
 			SwitchFunctionAssignment ss = static_cast<SwitchFunctionAssignment>(idx);
 			PatchVect & patches = (*it).second.GetPatchVect(ss);
-			if (ssSecondary == ss && patches.size())
+			if (ssSecondary == ss && !patches.empty())
 				info << "switch " << std::setw(2) << (switchNumber + 1) << " secondary" << std::endl;
 
 			for (PatchVect::iterator it2 = patches.begin();
 				it2 != patches.end();
 				++it2)
 			{
-				PatchMap * curItem = *it2;
+				BankPatchState * curItem = *it2;
 				if (!curItem || !curItem->mPatch)
 					continue;
 
@@ -871,7 +871,7 @@ PatchBank::ResetPatches(IMainDisplay * mainDisplay,
 				it2 != patches.end();
 				++it2)
 			{
-				PatchMap * curItem = *it2;
+				BankPatchState * curItem = *it2;
 				if (!curItem || !curItem->mPatch)
 					continue;
 
@@ -925,7 +925,7 @@ PatchBank::ResetExclusiveGroup(ISwitchDisplay * switchDisplay,
 			it != prevPatches.end();
 			++it)
 		{
-			PatchMap * curSwitchItem = *it;
+			BankPatchState * curSwitchItem = *it;
 			if (!curSwitchItem || !curSwitchItem->mPatch)
 				continue;
 
