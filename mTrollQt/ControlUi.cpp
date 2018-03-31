@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2015 Sean Echevarria
+ * Copyright (C) 2007-2015,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -842,6 +842,14 @@ ControlUi::CreateSwitch(int id,
 	curSwitch->setFont(mSwitchButtonFont);
 	curSwitch->move(left + mSwitchConfig.mHoffset, top + mSwitchConfig.mVoffset);
 	curSwitch->resize(mSwitchConfig.mWidth, mSwitchConfig.mHeight);
+
+#if defined(Q_OS_WIN)
+	GESTURECONFIG config;
+	config.dwID = 0;
+	config.dwWant = 0;
+	config.dwBlock = GC_ALLGESTURES;
+	SetGestureConfig((HWND)curSwitch->winId(), 0, 1, &config, sizeof(config));
+#endif
 
 	curSwitch->setFlat(true);
 	QPalette pal;
