@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008 Sean Echevarria
+ * Copyright (C) 2007-2008,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -36,6 +36,13 @@ int main(int argc, char **argv)
 #if defined(_WINDOWS)
 	::_set_se_translator(::trans_func);
 #endif // _WINDOWS
+
+	// High DPI support
+	//   http://blog.qt.io/blog/2016/01/26/high-dpi-support-in-qt-5-6/
+	//   http://doc.qt.io/qt-5/highdpi.html
+	//   https://stackoverflow.com/questions/32313658/qt-high-dpi-support-on-windows
+	QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
 	QApplication app(argc, argv);
 	MainTrollWindow mainWin;
 	mainWin.show();
