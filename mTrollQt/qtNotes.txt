@@ -59,6 +59,7 @@ nmake
 Qt5Core.dll
 Qt5Gui.dll
 Qt5Widgets.dll
+platforms\qwindows.dll
 concrt140.dll
 msvcp140.dll
 vcruntime140.dll
