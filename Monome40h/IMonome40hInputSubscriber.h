@@ -1,5 +1,5 @@
 /*
-Original code copyright (c) 2007 Sean Echevarria ( http://www.creepingfog.com/sean/ )
+Original code copyright (c) 2007,2018 Sean Echevarria ( http://www.creepingfog.com/sean/ )
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any
@@ -24,7 +24,7 @@ distribution.
 #ifndef IMonomeInput_h__
 #define IMonomeInput_h__
 
-typedef unsigned char byte;
+using byte = unsigned char;
 
 
 // IMonome40hSwitchSubscriber

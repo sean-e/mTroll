@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008 Sean Echevarria
+ * Copyright (C) 2007-2008,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -39,17 +39,17 @@ public:
 		_ASSERTE(mEngine);
 	}
 
-	virtual std::string GetPatchTypeStr() const {return "meta: BankNavNext";}
+	virtual std::string GetPatchTypeStr() const override {return "meta: BankNavNext";}
 
-	virtual void SwitchPressed(IMainDisplay *, ISwitchDisplay *)
+	virtual void SwitchPressed(IMainDisplay *, ISwitchDisplay *) override
 	{
 		mEngine->EnterNavMode();
 	}
 
-	virtual bool UpdateMainDisplayOnPress() const {return false;}
+	virtual bool UpdateMainDisplayOnPress() const override {return false;}
 
-	virtual void BankTransitionActivation() {}
-	virtual void BankTransitionDeactivation() {}
+	virtual void BankTransitionActivation() override {}
+	virtual void BankTransitionDeactivation() override {}
 
 private:
 	MidiControlEngine	* mEngine;
@@ -66,17 +66,17 @@ public:
 		_ASSERTE(mEngine);
 	}
 
-	virtual std::string GetPatchTypeStr() const {return "meta: BankNavPrevious";}
+	virtual std::string GetPatchTypeStr() const override {return "meta: BankNavPrevious";}
 
-	virtual void SwitchPressed(IMainDisplay *, ISwitchDisplay *)
+	virtual void SwitchPressed(IMainDisplay *, ISwitchDisplay *) override
 	{
 		mEngine->EnterNavMode();
 	}
 
-	virtual bool UpdateMainDisplayOnPress() const {return false;}
+	virtual bool UpdateMainDisplayOnPress() const override {return false;}
 
-	virtual void BankTransitionActivation() {}
-	virtual void BankTransitionDeactivation() {}
+	virtual void BankTransitionActivation() override {}
+	virtual void BankTransitionDeactivation() override {}
 
 private:
 	MidiControlEngine	* mEngine;

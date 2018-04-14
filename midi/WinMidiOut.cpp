@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010,2013,2015 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2013,2015,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -30,34 +30,34 @@
 #pragma comment(lib, "winmm.lib")
 
 static CString GetMidiErrorText(MMRESULT resultCode);
-static WinMidiOut * sOutOnTimer = NULL;
+static WinMidiOut * sOutOnTimer = nullptr;
 
 
 WinMidiOut::WinMidiOut(ITraceDisplay * trace) : 
 	mTrace(trace), 
-	mMidiOut(NULL), 
+	mMidiOut(nullptr),
 	mMidiOutError(false),
 	mCurMidiHdrIdx(0),
-	mActivityIndicator(NULL),
+	mActivityIndicator(nullptr),
 	mActivityIndicatorIndex(0),
 	mEnableActivityIndicator(false),
 	mTimerEventCount(0),
 	mTimerId(0),
 	mDeviceIdx(0)
 {
-	for (int idx = 0; idx < MIDIHDR_CNT; ++idx)
-		ZeroMemory(&mMidiHdrs[idx], sizeof(MIDIHDR));
+	for (auto & midiHdr : mMidiHdrs)
+		ZeroMemory(&midiHdr, sizeof(MIDIHDR));
 
-	mTimerId = ::SetTimer(NULL, mTimerId, 150, TimerProc);
+	mTimerId = ::SetTimer(nullptr, mTimerId, 150, TimerProc);
 }
 
 WinMidiOut::~WinMidiOut()
 {
-	::KillTimer(NULL, mTimerId);
+	::KillTimer(nullptr, mTimerId);
 
 	if (sOutOnTimer == this)
 	{
-		sOutOnTimer = NULL;
+		sOutOnTimer = nullptr;
 		TurnOffIndicator();
 	}
 
@@ -139,7 +139,7 @@ WinMidiOut::MidiOut(const Bytes & bytes)
 {
 	if (!mMidiOut)
 	{
-		if (0 && mTrace)
+		if (false && mTrace)
 			mTrace->Trace("midiout is not open.\n");
 		return false;
 	}
@@ -254,7 +254,7 @@ WinMidiOut::MidiOut(const Bytes & bytes)
 			::Sleep(kDelayTime);
 	}
 
-	if (0 && mTrace && !mMidiOutError)
+	if (false && mTrace && !mMidiOutError)
 		mTrace->Trace("Transmission complete.\n");
 
 	return true;
@@ -344,7 +344,7 @@ WinMidiOut::IndicateActivity()
 	{
 		if (sOutOnTimer == this)
 		{
-			sOutOnTimer = NULL;
+			sOutOnTimer = nullptr;
 			TurnOffIndicator();
 		}
 
@@ -366,7 +366,7 @@ WinMidiOut::IndicateActivity()
 	}
 
 	mActivityIndicator->SetSwitchDisplay(mActivityIndicatorIndex, true);
-	mTimerId = ::SetTimer(NULL, mTimerId, 150, TimerProc);
+	mTimerId = ::SetTimer(nullptr, mTimerId, 150, TimerProc);
 	sOutOnTimer = this;
 }
 
@@ -387,7 +387,7 @@ WinMidiOut::TimerProc(HWND,
 	if (_this)
 	{
 		if (!::InterlockedDecrement(&_this->mTimerEventCount))
-			sOutOnTimer = NULL;
+			sOutOnTimer = nullptr;
 
 		_this->TurnOffIndicator();
 	}
@@ -415,7 +415,7 @@ void
 WinMidiOut::CloseMidiOut()
 {
 	mEnableActivityIndicator = false;
-	mActivityIndicator = NULL;
+	mActivityIndicator = nullptr;
 	mTimerEventCount = 0;
 	ReleaseMidiOut();
 }
@@ -428,7 +428,7 @@ WinMidiOut::ReleaseMidiOut()
 		MMRESULT res = ::midiOutReset(mMidiOut);
 		res = ::midiOutClose(mMidiOut);
 		if (res == MMSYSERR_NOERROR)
-			mMidiOut = NULL;
+			mMidiOut = nullptr;
 		else
 			ReportMidiError(res, __LINE__);
 	}

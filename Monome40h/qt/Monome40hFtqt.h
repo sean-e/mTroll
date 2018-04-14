@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2009,2014 Sean Echevarria
+ * Copyright (C) 2007-2009,2014,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -43,26 +43,26 @@ public:
 	virtual ~Monome40hFtqt();
 
 public: // IMonome40h
-	virtual void EnableLed(byte row, byte col, bool on);
+	virtual void EnableLed(byte row, byte col, bool on) override;
 #ifdef PER_LED_INTENSITY
 	virtual void EnableLed(byte row, byte col, byte intensity);
 #endif // PER_LED_INTENSITY
-	virtual void SetLedIntensity(byte brightness);
-	virtual void TestLed(bool on);
-	virtual void EnableAdc(byte port, bool on);
-	virtual void Shutdown(bool state);
-	virtual void EnableLedRow(byte row, byte columnValues);
-	virtual void EnableLedColumn(byte column, byte rowValues);
+	virtual void SetLedIntensity(byte brightness) override;
+	virtual void TestLed(bool on) override;
+	virtual void EnableAdc(byte port, bool on) override;
+	virtual void Shutdown(bool state) override;
+	virtual void EnableLedRow(byte row, byte columnValues) override;
+	virtual void EnableLedColumn(byte column, byte rowValues) override;
 
-	virtual bool Subscribe(IMonome40hSwitchSubscriber * sub);
-	virtual bool Unsubscribe(IMonome40hSwitchSubscriber * sub);
-	virtual bool Subscribe(IMonome40hAdcSubscriber * sub);
-	virtual bool Unsubscribe(IMonome40hAdcSubscriber * sub);
+	virtual bool Subscribe(IMonome40hSwitchSubscriber * sub) override;
+	virtual bool Unsubscribe(IMonome40hSwitchSubscriber * sub) override;
+	virtual bool Subscribe(IMonome40hAdcSubscriber * sub) override;
+	virtual bool Unsubscribe(IMonome40hAdcSubscriber * sub) override;
 
-	virtual int LocateMonomeDeviceIdx();
-	virtual std::string GetDeviceSerialNumber(int devidx);
-	virtual bool AcquireDevice(const std::string & devSerialNum);
-	virtual bool IsAdcEnabled(int portIdx) const;
+	virtual int LocateMonomeDeviceIdx() override;
+	virtual std::string GetDeviceSerialNumber(int devidx) override;
+	virtual bool AcquireDevice(const std::string & devSerialNum) override;
+	virtual bool IsAdcEnabled(int portIdx) const override;
 
 	void DeviceServiceThread();
 
@@ -77,11 +77,11 @@ private:
 	std::string						mDevSerialNumber;
 	IMonome40hSwitchSubscriber		* mInputSubscriber;
 	IMonome40hAdcSubscriber			* mAdcInputSubscriber;
-	typedef std::list<const MonomeSerialProtocolData *> OutputCommandQueue;
+	using OutputCommandQueue = std::list<const MonomeSerialProtocolData *>;
 	QMutex							mOutputCommandsLock;
 	OutputCommandQueue				mOutputCommandQueue;
 	ITraceDisplay					* mTrace;
-	typedef void * FT_HANDLE;
+	using FT_HANDLE = void *;
 	FT_HANDLE						mFtDevice;
 	QThread							* mThread;
 	Qt::HANDLE						mThreadId;

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2009 Sean Echevarria
+ * Copyright (C) 2009,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -41,7 +41,7 @@ public:
 	{
 	}
 
-	void Exec()
+	virtual void Exec() override
 	{
 		mEngine->RefirePedal(mPedalNumber);
 	}

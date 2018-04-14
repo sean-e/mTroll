@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2012-2013,2015 Sean Echevarria
+ * Copyright (C) 2007-2010,2012-2013,2015,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -48,8 +48,8 @@
 
 MainTrollWindow::MainTrollWindow() : 
 	QMainWindow(),
-	mUi(NULL),
-	mMidiSuspendAction(NULL),
+	mUi(nullptr),
+	mMidiSuspendAction(nullptr),
 	mStartTime(QDateTime::currentDateTime()),
 	mPauseTime(mStartTime),
 	mShutdownOnExit(soeExit)

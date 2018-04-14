@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2014-2015 Sean Echevarria
+ * Copyright (C) 2007-2010,2014-2015,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -79,8 +79,8 @@ struct PedalToggle
 		mMaxActivateAdcVal(0),
 		mMaxDeactivateAdcVal(0),
 		mTogglePatchNumber(-1),
-		mPatch(NULL),
-		mSwitchDisplay(NULL)
+		mPatch(nullptr),
+		mSwitchDisplay(nullptr)
 	{
 	}
 
@@ -251,11 +251,10 @@ public:
 
 	ExpressionPedals(IMidiOut * midiOut = NULL) : mHasAnyNondefault(false)
 	{
-		int idx;
-		for (idx = 0; idx < PedalCount; ++idx)
-			mGlobalEnables[idx] = true;
-		for (idx = 0; idx < PedalCount; ++idx)
-			mPedalEnables[idx] = false;
+		for (auto & globalEnable : mGlobalEnables)
+			globalEnable = true;
+		for (auto & pedalEnable : mPedalEnables)
+			pedalEnable = false;
 
 		InitMidiOut(midiOut);
 	}
@@ -274,10 +273,10 @@ public:
 
 	void InitMidiOut(IMidiOut * midiOut) 
 	{
-		for (int idx = 0; idx < PedalCount; ++idx)
+		for (auto & pedal : mPedals)
 		{
-			mPedals[idx].InitMidiOut(0, midiOut);
-			mPedals[idx].InitMidiOut(1, midiOut);
+			pedal.InitMidiOut(0, midiOut);
+			pedal.InitMidiOut(1, midiOut);
 		}
 	}
 

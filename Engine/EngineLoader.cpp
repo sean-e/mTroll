@@ -70,18 +70,18 @@ EngineLoader::EngineLoader(ITrollApplication * app,
 						   IMainDisplay * mainDisplay,
 						   ISwitchDisplay * switchDisplay,
 						   ITraceDisplay * traceDisplay) :
-	mEngine(NULL),
+	mEngine(nullptr),
 	mApp(app),
 	mMidiOutGenerator(midiOutGenerator),
 	mMidiInGenerator(midiInGenerator),
 	mMainDisplay(mainDisplay),
 	mSwitchDisplay(switchDisplay),
 	mTraceDisplay(traceDisplay),
-	mAxeFxManager(NULL),
+	mAxeFxManager(nullptr),
 	mAxeSyncPort(-1)
 {
-	for (int idx = 0; idx < 4; ++idx)
-		mAdcEnables[idx] = adc_default;
+	for (auto & adcEnable : mAdcEnables)
+		adcEnable = adc_default;
 }
 
 EngineLoader::~EngineLoader()
@@ -131,7 +131,7 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 		return mEngine;
 	}
 
-	TiXmlHandle hRoot(NULL);
+	TiXmlHandle hRoot(nullptr);
 	hRoot = TiXmlHandle(pElem);
 
 	// load DeviceChannelMap before SystemConfig so that pedals can use Devices
@@ -162,7 +162,7 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 		mMidiInGenerator->OpenMidiIns();
 	if (mAxeFxManager)
 	{
-		IMidiOut * midiOut = NULL;
+		IMidiOut * midiOut = nullptr;
 		std::string axeName("AxeFx");
 		std::map<std::string, int>::iterator it = mDevicePorts.find(axeName);
 		if (it == mDevicePorts.end())
@@ -181,7 +181,7 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 	mEngine->CompleteInit(mAdcCalibration);
 
 	MidiControlEngine * createdEngine = mEngine;
-	mEngine = NULL;
+	mEngine = nullptr;
 	return createdEngine;
 }
 
@@ -201,7 +201,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 
 	pElem->QueryIntAttribute("filterPC", &filterPC);
 
-	TiXmlHandle hRoot(NULL);
+	TiXmlHandle hRoot(nullptr);
 	hRoot = TiXmlHandle(pElem);
 
 	TiXmlElement * pChildElem = hRoot.FirstChild("powerup").Element();
@@ -327,8 +327,8 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 		}
 	}
 
-	IMidiOut * engOut = NULL; // for direct program change use
-	if (mMidiOutPortToDeviceIdxMap.size())
+	IMidiOut * engOut = nullptr; // for direct program change use
+	if (!mMidiOutPortToDeviceIdxMap.empty())
 		engOut = mMidiOutGenerator->GetMidiOut((*mMidiOutPortToDeviceIdxMap.begin()).second);
 
 	mEngine = new MidiControlEngine(mApp, mMainDisplay, mSwitchDisplay, mTraceDisplay, 
@@ -630,7 +630,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 
 		PatchCommands cmds, cmds2;
 		std::vector<int> intList;
-		TiXmlHandle hRoot(NULL);
+		TiXmlHandle hRoot(nullptr);
 		hRoot = TiXmlHandle(pElem);
 
 		TiXmlElement * childElem;
@@ -639,7 +639,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			 childElem = childElem->NextSiblingElement())
 		{
 			Bytes bytes;
-			const std::string patchElement = childElem->ValueStr();
+			const std::string& patchElement = childElem->ValueStr();
 			std::string group;
 			childElem->QueryValueAttribute("group", &group);
 			if (group.empty())
@@ -868,7 +868,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				}
 			}
 
-			if (bytes.size())
+			if (!bytes.empty())
 			{
 				if (group == "B")
 					cmds2.push_back(new MidiCommandString(midiOut, bytes));
@@ -956,7 +956,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		}
 
 		bool patchTypeErr = false;
-		Patch * newPatch = NULL;
+		Patch * newPatch = nullptr;
 		if (patchType == "normal")
 			newPatch = new NormalPatch(patchNumber, patchName, midiOut, cmds, cmds2);
 		else if (patchType == "toggle")
@@ -1000,7 +1000,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			newPatch = new PatchListSequencePatch(patchNumber, patchName, intList);
 		else if (patchType == "AxeFxTapTempo")
 		{
-			if (!cmds.size() && !cmds2.size() && -1 != patchDefaultCh)
+			if (cmds.empty() && cmds2.empty() && -1 != patchDefaultCh)
 			{
 				const int cc = ::GetDefaultAxeCc("Tap Tempo", mTraceDisplay);
 				if (cc)
@@ -1111,7 +1111,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 
 		PatchBank & bank = mEngine->AddBank(bankNumber, bankName);
 
-		TiXmlHandle hRoot(NULL);
+		TiXmlHandle hRoot(nullptr);
 		hRoot = TiXmlHandle(pElem);
 
 		for (TiXmlElement * childElem = hRoot.FirstChildElement().Element(); 
@@ -1353,7 +1353,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 				PatchBank::GroupSwitches * switches = new PatchBank::GroupSwitches;
 
 				// split switchesStr - space token
-				while (switchesStr.size())
+				while (!switchesStr.empty())
 				{
 					const int curSwitch = ::atoi(switchesStr.c_str());
 					if (curSwitch)

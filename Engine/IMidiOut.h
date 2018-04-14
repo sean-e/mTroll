@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2013 Sean Echevarria
+ * Copyright (C) 2007-2008,2013,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -28,8 +28,8 @@
 #include <string>
 #include <vector>
 
-typedef unsigned char byte;
-typedef std::vector<byte> Bytes;
+using byte = unsigned char;
+using Bytes = std::vector<byte>;
 class ISwitchDisplay;
 
 
@@ -40,7 +40,7 @@ class ISwitchDisplay;
 class IMidiOut
 {
 public:
-	virtual ~IMidiOut() {}
+	virtual ~IMidiOut() = default;
 
 	virtual unsigned int GetMidiOutDeviceCount() const = 0;
 	virtual std::string GetMidiOutDeviceName(unsigned int deviceIdx) const = 0;

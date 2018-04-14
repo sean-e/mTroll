@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2013 Sean Echevarria
+ * Copyright (C) 2013,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -40,15 +40,15 @@ public:
 		_ASSERTE(mEngine);
 	}
 
-	virtual std::string GetPatchTypeStr() const {return "meta: resetExclusiveGroup";}
+	virtual std::string GetPatchTypeStr() const override {return "meta: resetExclusiveGroup";}
 
-	virtual void SwitchPressed(IMainDisplay *, ISwitchDisplay *)
+	virtual void SwitchPressed(IMainDisplay *, ISwitchDisplay *) override
 	{
 		mEngine->ResetExclusiveGroup(mSwitchNumberToSet);
 	}
 
-	virtual void BankTransitionActivation() {SwitchPressed(NULL, NULL);}
-	virtual void BankTransitionDeactivation() {SwitchPressed(NULL, NULL);}
+	virtual void BankTransitionActivation() override {SwitchPressed(nullptr, nullptr);}
+	virtual void BankTransitionDeactivation() override {SwitchPressed(nullptr, nullptr);}
 
 private:
 	MidiControlEngine	* mEngine;

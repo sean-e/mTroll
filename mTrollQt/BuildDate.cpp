@@ -1,5 +1,5 @@
 /*
-Original code copyright (c) 2007-2008 Sean Echevarria ( http://www.creepingfog.com/sean/ )
+Original code copyright (c) 2007-2008,2018 Sean Echevarria ( http://www.creepingfog.com/sean/ )
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any
@@ -51,9 +51,9 @@ MonthNumber(const QString & name)
 		{"dec",	12},
 	};
 
-	for (int idx = 0; idx < 12; idx++)
-		if (name == months[idx].mAbbr)
-			return months[idx].mNumber;
+	for (auto month : months)
+		if (name == month.mAbbr)
+			return month.mNumber;
 
 #if defined(Q_OS_WIN)
 	_ASSERTE(!"no month name match");

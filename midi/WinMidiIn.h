@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010,2013 Sean Echevarria
+ * Copyright (C) 2010,2013,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -41,15 +41,15 @@ public:
 	virtual ~WinMidiIn();
 
 	// IMidiIn
-	virtual unsigned int GetMidiInDeviceCount() const;
-	virtual std::string GetMidiInDeviceName(unsigned int deviceIdx) const;
-	virtual bool OpenMidiIn(unsigned int deviceIdx);
-	virtual bool IsMidiInOpen() const {return mMidiIn != NULL;}
-	virtual bool Subscribe(IMidiInSubscriber* sub);
-	virtual void Unsubscribe(IMidiInSubscriber* sub);
-	virtual bool SuspendMidiIn();
-	virtual bool ResumeMidiIn();
-	virtual void CloseMidiIn();
+	virtual unsigned int GetMidiInDeviceCount() const override;
+	virtual std::string GetMidiInDeviceName(unsigned int deviceIdx) const override;
+	virtual bool OpenMidiIn(unsigned int deviceIdx) override;
+	virtual bool IsMidiInOpen() const override {return mMidiIn != nullptr;}
+	virtual bool Subscribe(IMidiInSubscriber* sub) override;
+	virtual void Unsubscribe(IMidiInSubscriber* sub) override;
+	virtual bool SuspendMidiIn() override;
+	virtual bool ResumeMidiIn() override;
+	virtual void CloseMidiIn() override;
 
 private:
 	static unsigned int __stdcall ServiceThread(void * _this);
@@ -76,7 +76,7 @@ private:
 	HANDLE						mThread;
 	ThreadState					mThreadState;
 	DWORD						mThreadId;
-	typedef std::vector<IMidiInSubscriber*> MidiInSubscribers;
+	using MidiInSubscribers = std::vector<IMidiInSubscriber*>;
 	MidiInSubscribers			mInputSubscribers;
 };
 

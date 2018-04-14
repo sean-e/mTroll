@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2011,2014-2015 Sean Echevarria
+ * Copyright (C) 2007-2011,2014-2015,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -43,7 +43,7 @@ PedalToggle::Activate()
 		return false;
 
 	mPatch->OverridePedals(true);
-	mPatch->SwitchPressed(NULL, mSwitchDisplay);
+	mPatch->SwitchPressed(nullptr, mSwitchDisplay);
 	mPatch->OverridePedals(false);
 	return true;
 }
@@ -55,7 +55,7 @@ PedalToggle::Deactivate()
 		return false;
 
 	mPatch->OverridePedals(true);
-	mPatch->SwitchPressed(NULL, mSwitchDisplay);
+	mPatch->SwitchPressed(nullptr, mSwitchDisplay);
 	mPatch->OverridePedals(false);
 	return true;
 }

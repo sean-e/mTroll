@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010,2013,2015 Sean Echevarria
+ * Copyright (C) 2010,2013,2015,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -38,18 +38,18 @@ static CString GetMidiErrorText(MMRESULT resultCode);
 
 WinMidiIn::WinMidiIn(ITraceDisplay * trace) : 
 	mTrace(trace), 
-	mMidiIn(NULL), 
+	mMidiIn(nullptr),
 	mMidiInError(false),
-	mThread(NULL),
+	mThread(nullptr),
 	mThreadId(0),
 	mDeviceIdx(0),
 	mThreadState(tsNotStarted),
 	mCurMidiHdrIdx(0)
 {
-	for (int idx = 0; idx < MIDIHDR_CNT; ++idx)
-		ZeroMemory(&mMidiHdrs[idx], sizeof(MIDIHDR));
+	for (auto & midiHdr : mMidiHdrs)
+		ZeroMemory(&midiHdr, sizeof(MIDIHDR));
 	::InitializeCriticalSection(&mCs);
-	mDoneEvent = ::CreateEvent(NULL, FALSE, FALSE, NULL);
+	mDoneEvent = ::CreateEvent(nullptr, FALSE, FALSE, nullptr);
 }
 
 WinMidiIn::~WinMidiIn()
@@ -92,7 +92,7 @@ WinMidiIn::OpenMidiIn(unsigned int deviceIdx)
 	_ASSERTE(!mMidiIn);
 	mDeviceIdx = deviceIdx;
 	mThreadState = tsStarting;
-	mThread = (HANDLE)_beginthreadex(NULL, 0, ServiceThread, this, 0, (unsigned int*)&mThreadId);
+	mThread = (HANDLE)_beginthreadex(nullptr, 0, ServiceThread, this, 0, (unsigned int*)&mThreadId);
 	if (!mThread)
 		return false;
 
@@ -141,7 +141,7 @@ WinMidiIn::ServiceThread()
 
 		// Read all of the messages in this next loop, 
 		// removing each message as we read it.
-		while (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		while (::PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 		{
 			// If it is a quit message, exit.
 			if (msg.message == WM_QUIT)
@@ -180,12 +180,12 @@ WinMidiIn::ServiceThread()
 		res = ::midiInUnprepareHeader(mMidiIn, &mMidiHdrs[idx], (UINT)sizeof(MIDIHDR));
 		_ASSERTE(res == MMSYSERR_NOERROR);
 		::free(mMidiHdrs[idx].lpData);
-		mMidiHdrs[idx].lpData = NULL;
+		mMidiHdrs[idx].lpData = nullptr;
 	}
 
 	res = ::midiInClose(mMidiIn);
 	if (res == MMSYSERR_NOERROR)
-		mMidiIn = NULL;
+		mMidiIn = nullptr;
 	else
 		ReportMidiError(res, __LINE__);
 
@@ -349,7 +349,7 @@ WinMidiIn::Unsubscribe(IMidiInSubscriber* sub)
 			it != mInputSubscribers.end(); ++it)
 		{
 			if (*it == sub)
-				*it = NULL;
+				*it = nullptr;
 		}
 	}
 	else
@@ -387,7 +387,7 @@ WinMidiIn::ReleaseMidiIn()
 		::WaitForSingleObjectEx(mThread, 30000, FALSE);
 		_ASSERTE(mThreadState == tsNotStarted);
 		::CloseHandle(mThread);
-		mThread = NULL;
+		mThread = nullptr;
 		mThreadId = 0;
 	}
 

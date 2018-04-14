@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2015 Sean Echevarria
+ * Copyright (C) 2007-2015,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -74,9 +74,9 @@ public:
 	ControlUi(QWidget * parent, ITrollApplication * app);
 	virtual ~ControlUi();
 
-	typedef QFrame				SwitchLed;
-	typedef QLabel				SwitchTextDisplay;
-	typedef QPushButton			Switch;
+	using SwitchLed = QFrame;
+	using SwitchTextDisplay = QLabel;
+	using Switch = QPushButton;
 
 			void Load(const std::string & uiSettingsFile, const std::string & configSettingsFile, const bool adcOverrides[ExpressionPedals::PedalCount]);
 			void Unload();
@@ -89,64 +89,64 @@ public:
 			void GetPreferredSize(int & width, int & height) const {width = mPreferredWidth; height = mPreferredHeight;}
 
 public: // IMidiOutGenerator
-	virtual IMidiOut *	CreateMidiOut(unsigned int deviceIdx, int activityIndicatorIdx);
-	virtual IMidiOut *	GetMidiOut(unsigned int deviceIdx);
-	virtual unsigned int GetMidiOutDeviceIndex(const std::string &deviceName);
-	virtual void		OpenMidiOuts();
-	virtual void		CloseMidiOuts();
+	virtual IMidiOut *	CreateMidiOut(unsigned int deviceIdx, int activityIndicatorIdx) override;
+	virtual IMidiOut *	GetMidiOut(unsigned int deviceIdx) override;
+	virtual unsigned int GetMidiOutDeviceIndex(const std::string &deviceName) override;
+	virtual void		OpenMidiOuts() override;
+	virtual void		CloseMidiOuts() override;
 
 public: // IMidiInGenerator
-	virtual IMidiIn *	GetMidiIn(unsigned int deviceIdx);
-	virtual void		CloseMidiIns();
-	virtual void		OpenMidiIns();
-	virtual IMidiIn *	CreateMidiIn(unsigned int deviceIdx);
-	virtual unsigned int GetMidiInDeviceIndex(const std::string &deviceName);
+	virtual IMidiIn *	GetMidiIn(unsigned int deviceIdx) override;
+	virtual void		CloseMidiIns() override;
+	virtual void		OpenMidiIns() override;
+	virtual IMidiIn *	CreateMidiIn(unsigned int deviceIdx) override;
+	virtual unsigned int GetMidiInDeviceIndex(const std::string &deviceName) override;
 
 public: // IMainDisplay
-	virtual void		TextOut(const std::string & txt);
-	virtual void		AppendText(const std::string & text);
-	virtual void		ClearDisplay();
-	virtual void		ClearTransientText();
-	virtual void		TransientTextOut(const std::string & txt);
-	virtual std::string GetCurrentText();
+	virtual void		TextOut(const std::string & txt) override;
+	virtual void		AppendText(const std::string & text) override;
+	virtual void		ClearDisplay() override;
+	virtual void		ClearTransientText() override;
+	virtual void		TransientTextOut(const std::string & txt) override;
+	virtual std::string GetCurrentText() override;
 
 public: // ITraceDisplay
-	virtual void		Trace(const std::string & txt);
+	virtual void		Trace(const std::string & txt) override;
 
 public: // ISwitchDisplay
-	virtual void		SetSwitchDisplay(int switchNumber, bool isOn);
-	virtual void		ForceSwitchDisplay(int switchNumber, bool isOn);
-	virtual void		DimSwitchDisplay(int switchNumber);
-	virtual void		SetSwitchText(int switchNumber, const std::string & txt);
-	virtual void		ClearSwitchText(int switchNumber);
-	virtual void		InvertLeds(bool invert);
-	virtual bool		IsInverted() const { return mInvertLeds; }
+	virtual void		SetSwitchDisplay(int switchNumber, bool isOn) override;
+	virtual void		ForceSwitchDisplay(int switchNumber, bool isOn) override;
+	virtual void		DimSwitchDisplay(int switchNumber) override;
+	virtual void		SetSwitchText(int switchNumber, const std::string & txt) override;
+	virtual void		ClearSwitchText(int switchNumber) override;
+	virtual void		InvertLeds(bool invert) override;
+	virtual bool		IsInverted() const override { return mInvertLeds; }
 	virtual	void		Reconnect();
-	virtual void		TestLeds();
-	virtual void		SetIndicatorThreadSafe(bool isOn, Patch * patch, int time);
-	virtual void		EnableDisplayUpdate(bool enable) { mSwitchLedUpdateEnabled = enable; }
+	virtual void		TestLeds() override;
+	virtual void		SetIndicatorThreadSafe(bool isOn, Patch * patch, int time) override;
+	virtual void		EnableDisplayUpdate(bool enable) override { mSwitchLedUpdateEnabled = enable; }
 
 public: // IMonome40hSwitchSubscriber
-	virtual void		SwitchPressed(byte row, byte column);
-	virtual void		SwitchReleased(byte row, byte column);
+	virtual void		SwitchPressed(byte row, byte column) override;
+	virtual void		SwitchReleased(byte row, byte column) override;
 
 private: // IMidiControlUi
-	virtual void		AddSwitchMapping(int switchNumber, int row, int col);
-	virtual void		SetSwitchLedConfig(int width, int height, int vOffset, int hOffset, unsigned int onColor, unsigned int offColor);
-	virtual void		CreateSwitchLed(int id, int top, int left);
-	virtual void		SetSwitchConfig(int width, int height, int vOffset, int hOffset, const std::string & fontName, int fontHeight, bool bold, unsigned int fgColor);
-	virtual void		CreateSwitch(int id, const std::string & label, int top, int left);
-	virtual void		SetSwitchTextDisplayConfig(int width, int height, int vOffset, int hOffset, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor);
-	virtual void		CreateSwitchTextDisplay(int id, int top, int left);
-	virtual void		CreateSwitchTextDisplay(int id, int top, int left, int width);
-	virtual void		CreateSwitchTextDisplay(int id, int top, int left, int width, int height);
-	virtual void		CreateMainDisplay(int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor);
-	virtual void		CreateTraceDisplay(int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold);
-	virtual void		CreateStaticLabel(const std::string & label, int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor);
-	virtual void		SetMainSize(int width, int height);
-	virtual void		SetHardwareLedIntensity(short brightness) { mLedIntensity = brightness; }
-	virtual void		SetLedDisplayState(bool invert) { mInvertLeds = invert; }
-	virtual void		SetColors(unsigned int backgroundColor, unsigned int frameHighlightColor) { mFrameHighlightColor = frameHighlightColor; mBackgroundColor = backgroundColor; }
+	virtual void		AddSwitchMapping(int switchNumber, int row, int col) override;
+	virtual void		SetSwitchLedConfig(int width, int height, int vOffset, int hOffset, unsigned int onColor, unsigned int offColor) override;
+	virtual void		CreateSwitchLed(int id, int top, int left) override;
+	virtual void		SetSwitchConfig(int width, int height, int vOffset, int hOffset, const std::string & fontName, int fontHeight, bool bold, unsigned int fgColor) override;
+	virtual void		CreateSwitch(int id, const std::string & label, int top, int left) override;
+	virtual void		SetSwitchTextDisplayConfig(int width, int height, int vOffset, int hOffset, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor) override;
+	virtual void		CreateSwitchTextDisplay(int id, int top, int left) override;
+	virtual void		CreateSwitchTextDisplay(int id, int top, int left, int width) override;
+	virtual void		CreateSwitchTextDisplay(int id, int top, int left, int width, int height) override;
+	virtual void		CreateMainDisplay(int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor) override;
+	virtual void		CreateTraceDisplay(int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold) override;
+	virtual void		CreateStaticLabel(const std::string & label, int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor) override;
+	virtual void		SetMainSize(int width, int height) override;
+	virtual void		SetHardwareLedIntensity(short brightness) override { mLedIntensity = brightness; }
+	virtual void		SetLedDisplayState(bool invert) override { mInvertLeds = invert; }
+	virtual void		SetColors(unsigned int backgroundColor, unsigned int frameHighlightColor) override { mFrameHighlightColor = frameHighlightColor; mBackgroundColor = backgroundColor; }
 
 public slots:
 	void ExitEventFired();
@@ -288,7 +288,7 @@ private slots:
 	void UiButtonReleased_64() { ButtonReleased(64); }
 
 private:
-    virtual bool		event(QEvent *);
+	virtual bool		event(QEvent *) override;
 	void LoadUi(const std::string & uiSettingsFile);
 	void LoadMonome(bool displayStartSequence);
 	void LoadMidiSettings(const std::string & file, const bool adcOverrides[ExpressionPedals::PedalCount]);
@@ -332,9 +332,9 @@ private:
 	QFont						mTraceFont;
 	int							mPreferredHeight, mPreferredWidth;
 	int							mMaxSwitchId;
-	typedef std::map<unsigned int, IMidiOut*> MidiOuts;
+	using MidiOuts = std::map<unsigned int, IMidiOut*>;
 	MidiOuts					mMidiOuts;
-	typedef std::map<unsigned int, IMidiIn*> MidiIns;
+	using MidiIns = std::map<unsigned int, IMidiIn*>;
 	MidiIns						mMidiIns;
 	int							mLedIntensity;
 	byte						mLedIntensityDimmed;

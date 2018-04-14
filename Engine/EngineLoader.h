@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010 Sean Echevarria
+ * Copyright (C) 2007-2010,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -59,7 +59,7 @@ private:
 	void					LoadPatches(TiXmlElement * pElem);
 	void					LoadBanks(TiXmlElement * pElem);
 
-	typedef std::map<int, unsigned int> MidiPortToDeviceIdxMap;
+	using MidiPortToDeviceIdxMap = std::map<int, unsigned int>;
 	MidiPortToDeviceIdxMap	mMidiOutPortToDeviceIdxMap;
 	MidiPortToDeviceIdxMap	mMidiInPortToDeviceIdxMap;
 	enum AdcEnableState {adc_default, adc_used, adc_forceOn, adc_forceOff};

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2009 Sean Echevarria
+ * Copyright (C) 2007-2009,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -44,11 +44,11 @@ public:
 	{
 	}
 
-	virtual std::string GetPatchTypeStr() const { return "normal"; }
-	virtual bool IsPatchVolatile() const { return true; }
-	virtual void DeactivateVolatilePatch() { ExecCommandsB(); }
+	virtual std::string GetPatchTypeStr() const override { return "normal"; }
+	virtual bool IsPatchVolatile() const override { return true; }
+	virtual void DeactivateVolatilePatch() override { ExecCommandsB(); }
 
-	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
+	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) override
 	{
 		if (mPatchIsActive)
 		{

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2014 Sean Echevarria
+ * Copyright (C) 2010-2014,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -53,9 +53,9 @@ public:
 	virtual ~AxeFxManager();
 
 	// IMidiInSubscriber
-	virtual void ReceivedData(byte b1, byte b2, byte b3);
-	virtual void ReceivedSysex(const byte * bytes, int len);
-	virtual void Closed(IMidiIn * midIn);
+	virtual void ReceivedData(byte b1, byte b2, byte b3) override;
+	virtual void ReceivedSysex(const byte * bytes, int len) override;
+	virtual void Closed(IMidiIn * midIn) override;
 
 	void AddRef();
 	void Release();

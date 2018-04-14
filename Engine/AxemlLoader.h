@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2011,2015 Sean Echevarria
+ * Copyright (C) 2010-2011,2015,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -66,8 +66,8 @@ struct AxeEffectBlockInfo
 		mSysexBypassParameterIdMs(-1),
 		mBypassCC(0),
 		mEffectIsPresentInAxePatch(true),
-		mPatch(NULL),
-		mXyPatch(NULL)
+		mPatch(nullptr),
+		mXyPatch(nullptr)
 	{
 	}
 
@@ -81,8 +81,8 @@ struct AxeEffectBlockInfo
 		mSysexBypassParameterIdMs(-1),
 		mBypassCC(cc),
 		mEffectIsPresentInAxePatch(true),
-		mPatch(NULL),
-		mXyPatch(NULL)
+		mPatch(nullptr),
+		mXyPatch(nullptr)
 	{
 		mSysexEffectIdLs = mSysexEffectId & 0x0000000F;
 		mSysexEffectIdMs = (mSysexEffectId >> 4) & 0x0000000F;
@@ -96,7 +96,7 @@ struct AxeEffectBlockInfo
 	}
 };
 
-typedef std::vector<AxeEffectBlockInfo> AxeEffectBlocks;
+using AxeEffectBlocks = std::vector<AxeEffectBlockInfo>;
 
 
 // AxemlLoader

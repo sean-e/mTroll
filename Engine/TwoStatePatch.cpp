@@ -1,6 +1,6 @@
 /*
 * mTroll MIDI Controller
-* Copyright (C) 2015-2016 Sean Echevarria
+* Copyright (C) 2015-2016,2018 Sean Echevarria
 *
 * This file is part of mTroll.
 *
@@ -64,6 +64,6 @@ TwoStatePatch::ExecCommandsB()
 	if (!mOverridePedals)
 	{
 		if (psAllowOnlyActive == mPedalSupport && gActivePatchPedals == &mPedals)
-			gActivePatchPedals = NULL;
+			gActivePatchPedals = nullptr;
 	}
 }

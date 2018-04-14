@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010,2013 Sean Echevarria
+ * Copyright (C) 2010,2013,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -27,7 +27,7 @@
 
 #include <string>
 
-typedef unsigned char byte;
+using byte = unsigned char;
 class IMidiInSubscriber;
 
 
@@ -38,7 +38,7 @@ class IMidiInSubscriber;
 class IMidiIn
 {
 public:
-	virtual ~IMidiIn() {}
+	virtual ~IMidiIn() = default;
 
 	virtual unsigned int GetMidiInDeviceCount() const = 0;
 	virtual std::string GetMidiInDeviceName(unsigned int deviceIdx) const = 0;

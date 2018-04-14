@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2012 Sean Echevarria
+ * Copyright (C) 2010-2012,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -48,7 +48,7 @@ public:
 			mAxeMgr->Release();
 	}
 
-	void Exec()
+	void Exec() override
 	{
 		__super::Exec();
 		if (mAxeMgr)

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2011,2015 Sean Echevarria
+ * Copyright (C) 2010-2011,2015,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -76,7 +76,7 @@ AxemlLoader::Load(AxeFxModel model, const std::string & axeFile, AxeEffectBlocks
 		return false;
 	}
 
-	TiXmlHandle hRoot(NULL);
+	TiXmlHandle hRoot(nullptr);
 	hRoot = TiXmlHandle(pElem);
 	pElem = hRoot.FirstChild("EffectPool").FirstChildElement().Element();
 	if (!pElem)
@@ -135,7 +135,7 @@ AxemlLoader::LoadEffectPool(TiXmlElement* pElem)
 		const int cc = ::GetDefaultAxeCc(effectName, mTrace);
 		std::string normalizedName(effectName);
 		::NormalizeAxeEffectName(normalizedName);
-		mEffects.push_back(AxeEffectBlockInfo(effectId, effectName, normalizedName, effectType, cc));
+		mEffects.emplace_back(effectId, effectName, normalizedName, effectType, cc);
 	}
 }
 
@@ -160,7 +160,7 @@ AxemlLoader::LoadParameterLists(TiXmlElement* pElem)
 			continue;
 
 		bool foundBypass = false;
-		TiXmlHandle hRoot(NULL);
+		TiXmlHandle hRoot(nullptr);
 		hRoot = TiXmlHandle(pElem);
 		for (TiXmlElement *childElem = hRoot.FirstChildElement().Element(); 
 			 childElem; 
@@ -209,9 +209,8 @@ AxemlLoader::LoadParameterLists(TiXmlElement* pElem)
 void
 AxemlLoader::SetEffectBypass(const std::string & type, int bypassId)
 {
-	for (AxeEffectBlocks::iterator it = mEffects.begin(); it != mEffects.end(); ++it)
+	for (AxeEffectBlockInfo & cur : mEffects)
 	{
-		AxeEffectBlockInfo & cur = *it;
 		if (cur.mType == type)
 			cur.SetBypass(bypassId);
 		// don't break because there can be multiple instances in the EffectPool
@@ -221,9 +220,8 @@ AxemlLoader::SetEffectBypass(const std::string & type, int bypassId)
 void
 AxemlLoader::ReportMissingBypassIds()
 {
-	for (AxeEffectBlocks::iterator it = mEffects.begin(); it != mEffects.end(); ++it)
+	for (AxeEffectBlockInfo & cur : mEffects)
 	{
-		AxeEffectBlockInfo & cur = *it;
 		if (cur.mType == "FeedbackSend" || cur.mType == "Mixer")
 			continue; // these can't be bypassed
 

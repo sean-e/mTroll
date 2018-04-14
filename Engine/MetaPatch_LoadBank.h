@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010,2012,2015 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2012,2015,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -40,26 +40,26 @@ public:
 		_ASSERTE(mEngine);
 	}
 
-	virtual std::string GetPatchTypeStr() const {return "meta: LoadBank";}
+	virtual std::string GetPatchTypeStr() const override {return "meta: LoadBank";}
 
-	virtual void SwitchPressed(IMainDisplay *, ISwitchDisplay *)
+	virtual void SwitchPressed(IMainDisplay *, ISwitchDisplay *) override
 	{
 		// handle bank change on release instead of press so that 
 		// release does not get handled by new patchbank
 		// (noted after secondary function support implemented)
 	}
 
-	virtual void SwitchReleased(IMainDisplay *, ISwitchDisplay *)
+	virtual void SwitchReleased(IMainDisplay *, ISwitchDisplay *) override
 	{
 		mEngine->LoadBankByNumber(mBankNumber);
 	}
 
-	virtual bool UpdateMainDisplayOnPress() const {return false;}
+	virtual bool UpdateMainDisplayOnPress() const override {return false;}
 
-	virtual void BankTransitionActivation() {SwitchReleased(NULL, NULL);}
-	virtual void BankTransitionDeactivation() {SwitchReleased(NULL, NULL);}
+	virtual void BankTransitionActivation() override {SwitchReleased(nullptr, nullptr);}
+	virtual void BankTransitionDeactivation() override {SwitchReleased(nullptr, nullptr);}
 
-	virtual void CompleteInit(MidiControlEngine * eng, ITraceDisplay * trc) 
+	virtual void CompleteInit(MidiControlEngine * eng, ITraceDisplay * trc) override
 	{
 		__super::CompleteInit(eng, trc);
 
@@ -106,22 +106,22 @@ protected:
 	}
 
 public:
-	virtual void SwitchPressed(IMainDisplay *, ISwitchDisplay *)
+	virtual void SwitchPressed(IMainDisplay *, ISwitchDisplay *) override
 	{
 		// handle bank change on release instead of press so that 
 		// release does not get handled by new patchbank
 		// (noted after secondary function support implemented)
 	}
 
-	virtual void SwitchReleased(IMainDisplay *, ISwitchDisplay *)
+	virtual void SwitchReleased(IMainDisplay *, ISwitchDisplay *) override
 	{
 		mEngine->LoadBankRelative(mSteps);
 	}
 
-	virtual bool UpdateMainDisplayOnPress() const {return false;}
+	virtual bool UpdateMainDisplayOnPress() const override {return false;}
 
-	virtual void BankTransitionActivation() {SwitchReleased(NULL, NULL);}
-	virtual void BankTransitionDeactivation() {SwitchReleased(NULL, NULL);}
+	virtual void BankTransitionActivation() override {SwitchReleased(nullptr, nullptr);}
+	virtual void BankTransitionDeactivation() override {SwitchReleased(nullptr, nullptr);}
 
 private:
 	MidiControlEngine	* mEngine;
@@ -135,7 +135,7 @@ public:
 		MetaPatch_LoadBankRelative(engine, number, name, 1)
 	{ }
 
-	virtual std::string GetPatchTypeStr() const {return "meta: LoadNextBank";}
+	virtual std::string GetPatchTypeStr() const override {return "meta: LoadNextBank";}
 
 };
 
@@ -146,7 +146,7 @@ public:
 		MetaPatch_LoadBankRelative(engine, number, name, -1)
 	{ }
 
-	virtual std::string GetPatchTypeStr() const {return "meta: LoadPreviousBank";}
+	virtual std::string GetPatchTypeStr() const override {return "meta: LoadPreviousBank";}
 };
 
 #endif // MetaPatch_LoadBank_h__

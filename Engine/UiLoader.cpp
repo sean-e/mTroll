@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010,2015 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2015,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -46,7 +46,7 @@ UiLoader::UiLoader(IMidiControlUi * theUi,
 	if (pElem->ValueStr() != "MidiControlUiSettings")
 		return;
 
-	TiXmlHandle hRoot(NULL);
+	TiXmlHandle hRoot(nullptr);
 	hRoot = TiXmlHandle(pElem);
 
 	LoadFrameInfo(hRoot.ToElement());
@@ -77,7 +77,7 @@ UiLoader::LoadAssembyConfig(TiXmlElement * pElem)
     <switchLed width="26" height="10" onColor="65280" offColor="256" />
   </switchAssemblyConfig>
 */
-	TiXmlHandle hRoot(NULL);
+	TiXmlHandle hRoot(nullptr);
 	hRoot = TiXmlHandle(pElem);
 
 	std::string fontname;
@@ -168,7 +168,7 @@ UiLoader::LoadSwitchMappings(TiXmlElement * pElem)
 		<switchGridMap number="0" row="1" col="0" />
 	</switchMappings>
 */
-	TiXmlHandle hRoot(NULL);
+	TiXmlHandle hRoot(nullptr);
 	hRoot = TiXmlHandle(pElem);
 
 	for (TiXmlElement * childElem = hRoot.FirstChild().Element(); 
@@ -200,7 +200,7 @@ UiLoader::LoadSwitchAssemblies(TiXmlElement * pElem)
     </switchAssembly>
   </switchAssemblies>
 */
-	TiXmlHandle hRoot(NULL);
+	TiXmlHandle hRoot(nullptr);
 	hRoot = TiXmlHandle(pElem);
 
 	for (TiXmlElement * childElem = hRoot.FirstChild().Element(); 
@@ -224,7 +224,7 @@ UiLoader::LoadSwitchAssembly(TiXmlElement * pElem)
       <switch label="&amp;1" vOffset="45" hOffset="15" />
     </switchAssembly>
 */
-	TiXmlHandle hRoot(NULL);
+	TiXmlHandle hRoot(nullptr);
 	hRoot = TiXmlHandle(pElem);
 
 	int vOffset, hOffset;
@@ -318,7 +318,7 @@ UiLoader::LoadSwitchAssembly(TiXmlElement * pElem)
 void
 UiLoader::LoadOtherStuffAndFinalize(TiXmlElement * pElem)
 {
-	TiXmlHandle hRoot(NULL);
+	TiXmlHandle hRoot(nullptr);
 	hRoot = TiXmlHandle(pElem);
 
 	// <mainTextDisplay font-height="12" top="177" left="5" width="338" height="163" />
@@ -418,7 +418,7 @@ void
 UiLoader::LoadFrameInfo(TiXmlElement * pElem)
 {
 	// <frame height="567" width="817" />
-	TiXmlHandle hRoot(NULL);
+	TiXmlHandle hRoot(nullptr);
 	hRoot = TiXmlHandle(pElem);
 	pElem = hRoot.FirstChild("frame").Element();
 	if (pElem)

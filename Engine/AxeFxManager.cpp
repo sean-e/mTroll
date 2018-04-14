@@ -65,9 +65,9 @@ AxeFxManager::AxeFxManager(IMainDisplay * mainDisp,
 	mRefCnt(0),
 	mTimeoutCnt(0),
 	mLastTimeout(0),
-	mTempoPatch(NULL),
+	mTempoPatch(nullptr),
 	// mQueryLock(QMutex::Recursive),
-	mMidiOut(NULL),
+	mMidiOut(nullptr),
 	mFirmwareMajorVersion(0),
 	mAxeChannel(ch),
 	mModel(mod),
@@ -111,18 +111,18 @@ AxeFxManager::~AxeFxManager()
 	if (mDelayedNameSyncTimer->isActive())
 		mDelayedNameSyncTimer->stop();
 	delete mDelayedNameSyncTimer;
-	mDelayedNameSyncTimer = NULL;
+	mDelayedNameSyncTimer = nullptr;
 
 	if (mDelayedEffectsSyncTimer->isActive())
 		mDelayedEffectsSyncTimer->stop();
 	delete mDelayedEffectsSyncTimer;
-	mDelayedEffectsSyncTimer = NULL;
+	mDelayedEffectsSyncTimer = nullptr;
 
 	QMutexLocker lock(&mQueryLock);
 	if (mQueryTimer->isActive())
 		mQueryTimer->stop();
 	delete mQueryTimer;
-	mQueryTimer = NULL;
+	mQueryTimer = nullptr;
 }
 
 void
@@ -180,11 +180,8 @@ AxeFxManager::SetSyncPatch(Patch * patch, int bypassCc /*= -1*/)
 {
 	std::string normalizedEffectName(patch->GetName());
 	::NormalizeAxeEffectName(normalizedEffectName);
-	for (AxeEffectBlocks::iterator it = mAxeEffectInfo.begin(); 
-		it != mAxeEffectInfo.end(); 
-		++it)
+	for (AxeEffectBlockInfo & cur : mAxeEffectInfo)
 	{
-		AxeEffectBlockInfo & cur = *it;
 		if (cur.mNormalizedName == normalizedEffectName)
 		{
 			if (cur.mPatch && mTrace)
@@ -206,11 +203,8 @@ AxeFxManager::SetSyncPatch(Patch * patch, int bypassCc /*= -1*/)
 	if (-1 != xyPos)
 	{
 		normalizedEffectName.replace(xyPos, xy.length(), "");
-		for (AxeEffectBlocks::iterator it = mAxeEffectInfo.begin(); 
-			it != mAxeEffectInfo.end(); 
-			++it)
+		for (AxeEffectBlockInfo & cur : mAxeEffectInfo)
 		{
-			AxeEffectBlockInfo & cur = *it;
 			if (cur.mNormalizedName == normalizedEffectName)
 			{
 				if (cur.mXyPatch && mTrace)
@@ -455,19 +449,17 @@ AxeFxManager::IdentifyBlockInfoUsingBypassId(const byte * bytes)
 		parameterIdMs = bytes[3];
 	}
 
-	for (AxeEffectBlocks::iterator it = mAxeEffectInfo.begin(); 
-		it != mAxeEffectInfo.end(); 
-		++it)
+	for (auto & it : mAxeEffectInfo)
 	{
-		AxeEffectBlockInfo & cur = *it;
+		AxeEffectBlockInfo & cur = it;
 		if (cur.mSysexEffectIdLs == effectIdLs &&
 			cur.mSysexEffectIdMs == effectIdMs &&
 			cur.mSysexBypassParameterIdLs == parameterIdLs &&
 			cur.mSysexBypassParameterIdMs == parameterIdMs)
-			return &(*it);
+			return &it;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 AxeEffectBlockInfo *
@@ -497,16 +489,13 @@ AxeFxManager::IdentifyBlockInfoUsingCc(const byte * bytes)
 		cc = ccMs | ccLs;
 	}
 
-	for (AxeEffectBlocks::iterator it = mAxeEffectInfo.begin(); 
-		it != mAxeEffectInfo.end(); 
-		++it)
+	for (auto & cur : mAxeEffectInfo)
 	{
-		AxeEffectBlockInfo & cur = *it;
 		if (cur.mSysexEffectId == effectId && cur.mBypassCC == cc)
-			return &(*it);
+			return &cur;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 // This method is provided for last chance guess.  Only use if all other methods
@@ -531,16 +520,13 @@ AxeFxManager::IdentifyBlockInfoUsingEffectId(const byte * bytes)
 		effectId = effectIdMs | effectIdLs;
 	}
 
-	for (AxeEffectBlocks::iterator it = mAxeEffectInfo.begin(); 
-		it != mAxeEffectInfo.end(); 
-		++it)
+	for (auto & cur : mAxeEffectInfo)
 	{
-		AxeEffectBlockInfo & cur = *it;
 		if (cur.mSysexEffectId == effectId)
-			return &(*it);
+			return &cur;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 AxeEffectBlocks::iterator
@@ -593,7 +579,7 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 	}
 	else
 	{
-		AxeEffectBlockInfo * inf = NULL;
+		AxeEffectBlockInfo * inf = nullptr;
 
 		{
 			QMutexLocker lock(&mQueryLock);
@@ -627,7 +613,7 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 					if (inf->mPatch->IsActive() != notBypassed)
 						inf->mPatch->UpdateState(mSwitchDisplay, notBypassed);
 
-					if (0 && mTrace)
+					if (false && mTrace)
 					{
 						const std::string byteDump(::GetAsciiHexStr(bytes + 4, len - 6, true));
 						const std::string asciiDump(::GetAsciiStr(&bytes[6], len - 8));
@@ -705,7 +691,7 @@ AxeFxManager::SyncPatchFromAxe(Patch * patch)
 	// We have two methods to sync bypass state.
 	// First is to use RequestPresetEffects.
 	// Second is to use RequestParamValue.
-	if (1)
+	if (true)
 	{
 		// pro: if effect does not exist in preset, we'll know it by lack of return value 
 		// pro: less chance of Axe-Fx deadlock?
@@ -813,7 +799,7 @@ AxeFxManager::QueryTimedOut()
 	if (mTimeoutCnt > 5)
 	{
 		mTimeoutCnt = 0;
-		if (mQueries.size())
+		if (!mQueries.empty())
 		{
 			QMutexLocker lock(&mQueryLock);
 			mQueries.clear();
@@ -1143,7 +1129,7 @@ AxeFxManager::ReceivePresetName(const byte * bytes, int len)
 		return;
 
 	std::string patchName((const char *)bytes, 21);
-	if (mMainDisplay && patchName.size())
+	if (mMainDisplay && !patchName.empty())
 	{
 		mCurrentAxePresetName = patchName;
 		DisplayPresetStatus();
@@ -1164,21 +1150,18 @@ AxeFxManager::RequestPresetEffects()
 		return;
 
 	// default to no fx in patch, but don't update LEDs until later
-	for (AxeEffectBlocks::iterator it = mAxeEffectInfo.begin(); 
-		it != mAxeEffectInfo.end(); 
-		++it)
+	for (auto & cur : mAxeEffectInfo)
 	{
-		AxeEffectBlockInfo * cur = &(*it);
-		if (-1 == cur->mSysexBypassParameterId)
+		if (-1 == cur.mSysexBypassParameterId)
 			continue;
 
-		if (-1 == cur->mSysexEffectId)
+		if (-1 == cur.mSysexEffectId)
 			continue;
 
-		if (!cur->mPatch)
+		if (!cur.mPatch)
 			continue;
 
-		cur->mEffectIsPresentInAxePatch = false;
+		cur.mEffectIsPresentInAxePatch = false;
 	}
 
 	if (Axe2 <= mModel)
@@ -1205,13 +1188,13 @@ AxeFxManager::ReceivePresetEffects(const byte * bytes, int len)
 	// 0A 06 05 02 00
 	for (int idx = 0; (idx + 5) < len; idx += 5)
 	{
-		if (0 && mTrace)
+		if (false && mTrace)
 		{
 			const std::string byteDump(::GetAsciiHexStr(&bytes[idx], 5, true) + "\n");
 			mTrace->Trace(byteDump);
 		}
 
-		AxeEffectBlockInfo * inf = NULL;
+		AxeEffectBlockInfo * inf = nullptr;
 		inf = IdentifyBlockInfoUsingCc(bytes + idx);
 		if (!inf)
 		{
@@ -1308,13 +1291,13 @@ AxeFxManager::ReceivePresetEffectsV2(const byte * bytes, int len)
 	//	
 	for (int idx = 0; (idx + 5) < len; idx += 5)
 	{
-		if (0 && kDbgFlag && mTrace)
+		if (false && kDbgFlag && mTrace)
 		{
 			const std::string byteDump(::GetAsciiHexStr(&bytes[idx], 5, true) + "\n");
 			mTrace->Trace(byteDump);
 		}
 
-		AxeEffectBlockInfo * inf = NULL;
+		AxeEffectBlockInfo * inf = nullptr;
 		inf = IdentifyBlockInfoUsingCc(bytes + idx + 1);
 		if (!inf)
 		{
@@ -1380,25 +1363,22 @@ void
 AxeFxManager::TurnOffLedsForNaEffects()
 {
 	// turn off LEDs for all effects not in cur preset
-	for (AxeEffectBlocks::iterator it = mAxeEffectInfo.begin(); 
-		it != mAxeEffectInfo.end(); 
-		++it)
+	for (auto & cur : mAxeEffectInfo)
 	{
-		AxeEffectBlockInfo * cur = &(*it);
-		if (-1 == cur->mSysexBypassParameterId)
+		if (-1 == cur.mSysexBypassParameterId)
 			continue;
 
-		if (-1 == cur->mSysexEffectId)
+		if (-1 == cur.mSysexEffectId)
 			continue;
 
-		if (!cur->mPatch)
+		if (!cur.mPatch)
 			continue;
 
-		if (!cur->mEffectIsPresentInAxePatch)
+		if (!cur.mEffectIsPresentInAxePatch)
 		{
-			cur->mPatch->Disable(mSwitchDisplay);
-			if (cur->mXyPatch)
-				cur->mXyPatch->Disable(mSwitchDisplay);
+			cur.mPatch->Disable(mSwitchDisplay);
+			if (cur.mXyPatch)
+				cur.mXyPatch->Disable(mSwitchDisplay);
 		}
 	}
 }

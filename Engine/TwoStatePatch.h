@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2013,2015 Sean Echevarria
+ * Copyright (C) 2007-2010,2013,2015,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -61,8 +61,8 @@ protected:
 		std::for_each(mCmdsB.begin(), mCmdsB.end(), DeletePtr<IPatchCommand>());
 	}
 
-	virtual void BankTransitionActivation() { ExecCommandsA(); }
-	virtual void BankTransitionDeactivation() { ExecCommandsB(); }
+	virtual void BankTransitionActivation() override { ExecCommandsA(); }
+	virtual void BankTransitionDeactivation() override { ExecCommandsB(); }
 
 	virtual void ExecCommandsA();
 	virtual void ExecCommandsB();

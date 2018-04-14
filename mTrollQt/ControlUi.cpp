@@ -48,17 +48,17 @@
 	#include "../midi/WinMidiOut.h"
 	#include "../midi/WinMidiIn.h"
 	#define USE_MIDI_IN
-	typedef WinMidiOut	XMidiOut;
-	typedef WinMidiIn	XMidiIn;
+	using XMidiOut = WinMidiOut;
+	using XMidiIn = WinMidiIn;
 	#define SLEEP	Sleep
 #else
 	#error "include the midiOut header file for this platform"
-	typedef YourMidiOut		XMidiOut;
+	using XMidiOut = YourMidiOut;
 
 //	#define USE_MIDI_IN
 	#ifdef USE_MIDI_IN
 		#error "include the midiIn header file for this platform"
-		typedef YourMidiIn		XMidiIn;
+		using XMidiIn = YourMidiIn;
 	#endif
 	#define SLEEP	sleep
 #endif
@@ -71,19 +71,19 @@ ControlUi::ControlUi(QWidget * parent, ITrollApplication * app) :
 	QWidget(parent),
 	mParent(parent),
 	mApp(app),
-	mEngine(NULL),
-	mMainDisplay(NULL),
-	mTraceDisplay(NULL),
+	mEngine(nullptr),
+	mMainDisplay(nullptr),
+	mTraceDisplay(nullptr),
 	mPreferredHeight(0),
 	mPreferredWidth(0),
 	mMaxSwitchId(0),
-	mHardwareUi(NULL),
+	mHardwareUi(nullptr),
 	mLedIntensity(0),
 	mLedIntensityDimmed(0),
 	mInvertLeds(false),
-	mTimeDisplayTimer(NULL),
+	mTimeDisplayTimer(nullptr),
 	mDisplayTime(false),
-	mSystemPowerOverride(NULL),
+	mSystemPowerOverride(nullptr),
 	mBackgroundColor(0x1a1a1a),
 	mFrameHighlightColor(0x5a5a5a),
 	mSwitchLedUpdateEnabled(true),
@@ -161,30 +161,26 @@ ControlUi::Unload()
 	CloseMidiOuts();
 
 	delete mEngine;
-	mEngine = NULL;
+	mEngine = nullptr;
 
 	// clear leds
 	if (mHardwareUi)
 	{
-		for (std::map<int, bool>::iterator it = mStupidSwitchStates.begin();
-			it != mStupidSwitchStates.end();
-			++it)
-		{
-			SetSwitchDisplay((*it).first, false);
-		}
+		for (auto & mStupidSwitchState : mStupidSwitchStates)
+			SetSwitchDisplay(mStupidSwitchState.first, false);
 	}
 
 	QCoreApplication::removePostedEvents(this, QEvent::User);
 	mStupidSwitchStates.clear();
 
 	delete mHardwareUi;
-	mHardwareUi = NULL;
+	mHardwareUi = nullptr;
 
 	delete mMainDisplay;
-	mMainDisplay = NULL;
+	mMainDisplay = nullptr;
 
 	delete mTraceDisplay;
-	mTraceDisplay = NULL;
+	mTraceDisplay = nullptr;
 
 	mMaxSwitchId = 0;
 
@@ -210,10 +206,10 @@ ControlUi::Unload()
 	mRowColToSwitchNumber.clear();
 
 	delete mSystemPowerOverride;
-	mSystemPowerOverride = NULL;
+	mSystemPowerOverride = nullptr;
 
 	delete mTimeDisplayTimer;
-	mTimeDisplayTimer = NULL;
+	mTimeDisplayTimer = nullptr;
 
 	repaint();
 }
@@ -229,8 +225,8 @@ ControlUi::Load(const std::string & uiSettingsFile,
 	pal.setColor(QPalette::Window, mBackgroundColor);
 	mParent->setPalette(pal);
 
-	for (int idx = 0; idx < ExpressionPedals::PedalCount; ++idx)
-		mUserAdcSettings[idx] = false;
+	for (bool & userAdcSetting : mUserAdcSettings)
+		userAdcSetting = false;
 
 	LoadUi(uiSettingsFile);
 	LoadMonome(true);
@@ -242,11 +238,9 @@ ControlUi::Load(const std::string & uiSettingsFile,
 		mHardwareUi->Subscribe(mEngine);
 
 		bool anyMidiOutOpen = false;
-		for (MidiOuts::iterator it = mMidiOuts.begin();
-			it != mMidiOuts.end();
-			++it)
+		for (auto & mMidiOut : mMidiOuts)
 		{
-			IMidiOut * curOut = (*it).second;
+			IMidiOut * curOut = mMidiOut.second;
 			if (curOut && curOut->IsMidiOutOpen())
 			{
 				anyMidiOutOpen = true;
@@ -306,7 +300,7 @@ ControlUi::LoadUi(const std::string & uiSettingsFile)
 void
 ControlUi::LoadMonome(bool displayStartSequence)
 {
-	IMonome40h * monome = NULL;
+	IMonome40h * monome = nullptr;
 	try
 	{
 		monome = new Monome40hFtqt(this);
@@ -319,7 +313,7 @@ ControlUi::LoadMonome(bool displayStartSequence)
 				if (monome->AcquireDevice(devSerial))
 				{
 					mHardwareUi = monome;
-					monome = NULL;
+					monome = nullptr;
 					if (displayStartSequence)
 						MonomeStartupSequence();
 					mHardwareUi->SetLedIntensity(mLedIntensity);
@@ -415,7 +409,7 @@ public:
 	{
 	}
 
-	virtual void exec()
+	virtual void exec() override
 	{
 		const QString prevTxt(mLabel->toPlainText());
 		const QString newTxt(mUi->mMainText);
@@ -441,7 +435,7 @@ public:
 	{
 	}
 
-	virtual void exec()
+	virtual void exec() override
 	{
 		const QString prevTxt(mLabel->toPlainText());
 		if (mTransientText)
@@ -474,7 +468,7 @@ public:
 	{
 	}
 
-	virtual void exec()
+	virtual void exec() override
 	{
 		// assumes non-transient text
 		QString txt(mUi->mMainText);
@@ -555,7 +549,7 @@ ControlUi::Trace(const std::string & txt)
 		{
 		}
 
-		virtual void exec()
+		virtual void exec() override
 		{
 			mTextEdit->moveCursor(QTextCursor::End, QTextCursor::MoveAnchor);
 			mTextEdit->insertPlainText(mText);
@@ -586,7 +580,7 @@ public:
 	{
 	}
 
-	virtual void exec()
+	virtual void exec() override
 	{
 		QPalette pal;
 		pal.setColor(QPalette::Window, mColor);
@@ -669,7 +663,7 @@ public:
 	{
 	}
 
-	virtual void exec()
+	virtual void exec() override
 	{
 		const QString prevTxt(mLabel->text());
 		if (prevTxt != mText)
@@ -1128,16 +1122,14 @@ ControlUi::GetMidiOut(unsigned int deviceIdx)
 void
 ControlUi::OpenMidiOuts()
 {
-	for (MidiOuts::iterator it = mMidiOuts.begin();
-		it != mMidiOuts.end();
-		++it)
+	for (auto & mMidiOut : mMidiOuts)
 	{
-		IMidiOut * curOut = (*it).second;
+		IMidiOut * curOut = mMidiOut.second;
 		if (!curOut || curOut->IsMidiOutOpen())
 			continue;
 
 		std::strstream traceMsg;
-		const unsigned int kDeviceIdx = (*it).first;
+		const unsigned int kDeviceIdx = mMidiOut.first;
 
 		if (curOut->OpenMidiOut(kDeviceIdx))
 			traceMsg << "Opened MIDI out " << kDeviceIdx << " " << curOut->GetMidiOutDeviceName(kDeviceIdx) << std::endl << std::ends;
@@ -1151,11 +1143,9 @@ ControlUi::OpenMidiOuts()
 void
 ControlUi::CloseMidiOuts()
 {
-	for (MidiOuts::iterator it = mMidiOuts.begin();
-		it != mMidiOuts.end();
-		++it)
+	for (auto & mMidiOut : mMidiOuts)
 	{
-		IMidiOut * curOut = (*it).second;
+		IMidiOut * curOut = mMidiOut.second;
 		if (curOut && curOut->IsMidiOutOpen())
 			curOut->CloseMidiOut();
 	}
@@ -1223,7 +1213,7 @@ ControlUi::Reconnect()
 		for (int idx = 0; idx < kPorts; ++idx)
 			adcEnables[idx] = mHardwareUi->IsAdcEnabled(idx);
 		delete mHardwareUi;
-		mHardwareUi = NULL;
+		mHardwareUi = nullptr;
 	}
 
 	LoadMonome(false);
@@ -1523,11 +1513,9 @@ ControlUi::GetMidiIn(unsigned int deviceIdx)
 void
 ControlUi::CloseMidiIns()
 {
-	for (MidiIns::iterator it = mMidiIns.begin();
-		it != mMidiIns.end();
-		++it)
+	for (auto & mMidiIn : mMidiIns)
 	{
-		IMidiIn * curIn = (*it).second;
+		IMidiIn * curIn = mMidiIn.second;
 		if (curIn && curIn->IsMidiInOpen())
 			curIn->CloseMidiIn();
 	}
@@ -1536,16 +1524,14 @@ ControlUi::CloseMidiIns()
 void
 ControlUi::OpenMidiIns()
 {
-	for (MidiIns::iterator it = mMidiIns.begin();
-		it != mMidiIns.end();
-		++it)
+	for (auto & mMidiIn : mMidiIns)
 	{
-		IMidiIn * curIn = (*it).second;
+		IMidiIn * curIn = mMidiIn.second;
 		if (!curIn || curIn->IsMidiInOpen())
 			continue;
 
 		std::strstream traceMsg;
-		const unsigned int kDeviceIdx = (*it).first;
+		const unsigned int kDeviceIdx = mMidiIn.first;
 
 		if (curIn->OpenMidiIn(kDeviceIdx))
 			traceMsg << "Opened MIDI in " << kDeviceIdx << " " << curIn->GetMidiInDeviceName(kDeviceIdx) << std::endl << std::ends;

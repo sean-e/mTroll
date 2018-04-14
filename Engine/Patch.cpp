@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2012,2014-2015,2017 Sean Echevarria
+ * Copyright (C) 2007-2012,2014-2015,2017-2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -30,7 +30,7 @@
 #include "ITraceDisplay.h"
 
 
-ExpressionPedals * gActivePatchPedals = NULL;
+ExpressionPedals * gActivePatchPedals = nullptr;
 
 Patch::Patch(int number, 
 			 const std::string & name,
@@ -45,9 +45,7 @@ Patch::Patch(int number,
 {
 }
 
-Patch::~Patch()
-{
-}
+Patch::~Patch() = default;
 
 void
 Patch::AssignSwitch(int switchNumber, ISwitchDisplay * switchDisplay)
@@ -56,7 +54,7 @@ Patch::AssignSwitch(int switchNumber, ISwitchDisplay * switchDisplay)
 	mSwitchNumbers.insert(switchNumber);
 	if (switchDisplay)
 		switchDisplay->SetSwitchText(switchNumber, GetDisplayText());
-	UpdateDisplays(NULL, switchDisplay);
+	UpdateDisplays(nullptr, switchDisplay);
 }
 
 void
@@ -82,12 +80,10 @@ Patch::ClearSwitch(ISwitchDisplay * switchDisplay)
 
 	if (switchDisplay)
 	{
-		for (std::set<int>::iterator it = mSwitchNumbers.begin(); 
-			it != mSwitchNumbers.end();
-			++it)
+		for (const int switchNumber : mSwitchNumbers)
 		{
-			switchDisplay->SetSwitchDisplay(*it, false);
-			switchDisplay->ClearSwitchText(*it);
+			switchDisplay->SetSwitchDisplay(switchNumber, false);
+			switchDisplay->ClearSwitchText(switchNumber);
 		}
 	}
 
@@ -102,17 +98,15 @@ Patch::UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay
 
 	if (switchDisplay)
 	{
-		for (std::set<int>::const_iterator it = mSwitchNumbers.begin(); 
-			it != mSwitchNumbers.end();
-			++it)
+		for (const int switchNumber : mSwitchNumbers)
 		{
 			if (mPatchSupportsDisabledState && !mPatchIsDisabled && !mPatchIsActive)
-				switchDisplay->DimSwitchDisplay(*it);
+				switchDisplay->DimSwitchDisplay(switchNumber);
 			else
-				switchDisplay->SetSwitchDisplay(*it, mPatchIsActive);
+				switchDisplay->SetSwitchDisplay(switchNumber, mPatchIsActive);
 
 			if (HasDisplayText())
-				switchDisplay->SetSwitchText(*it, GetDisplayText());
+				switchDisplay->SetSwitchText(switchNumber, GetDisplayText());
 		}
 	}
 
@@ -145,12 +139,8 @@ Patch::ActivateSwitchDisplay(ISwitchDisplay * switchDisplay,
 
 	if (switchDisplay)
 	{
-		for (std::set<int>::const_iterator it = mSwitchNumbers.begin(); 
-			it != mSwitchNumbers.end();
-			++it)
-		{
-			switchDisplay->SetSwitchDisplay(*it, activate);
-		}
+		for (const int switchNumber : mSwitchNumbers)
+			switchDisplay->SetSwitchDisplay(switchNumber, activate);
 	}
 }
 
@@ -169,7 +159,7 @@ Patch::UpdateState(ISwitchDisplay * switchDisplay, bool active)
 	mPatchIsActive = active;
 	if (mPatchSupportsDisabledState && mPatchIsDisabled)
 		mPatchIsDisabled = false;
-	UpdateDisplays(NULL, switchDisplay);
+	UpdateDisplays(nullptr, switchDisplay);
 }
 
 void
@@ -181,5 +171,5 @@ Patch::Disable(ISwitchDisplay * switchDisplay)
 
 	mPatchIsActive = false;
 	mPatchIsDisabled = true;
-	UpdateDisplays(NULL, switchDisplay);
+	UpdateDisplays(nullptr, switchDisplay);
 }

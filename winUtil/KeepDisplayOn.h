@@ -1,5 +1,5 @@
 /*
-Original code copyright (c) 2007-2008 Sean Echevarria ( http://www.creepingfog.com/sean/ )
+Original code copyright (c) 2007-2008,2018 Sean Echevarria ( http://www.creepingfog.com/sean/ )
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any
@@ -51,12 +51,12 @@ public:
 	{
 		mPrevExecState = ::SetThreadExecutionState(ES_DISPLAY_REQUIRED | ES_SYSTEM_REQUIRED | ES_CONTINUOUS);
 		::SystemParametersInfo(SPI_GETSCREENSAVETIMEOUT, 0, &mPrevScreenSaver, 0);
-		::SystemParametersInfo(SPI_SETSCREENSAVETIMEOUT, FALSE, NULL, 0);
+		::SystemParametersInfo(SPI_SETSCREENSAVETIMEOUT, FALSE, nullptr, 0);
 	}
 
 	~KeepDisplayOn()
 	{
-		::SystemParametersInfo(SPI_SETSCREENSAVETIMEOUT, mPrevScreenSaver, NULL, 0);
+		::SystemParametersInfo(SPI_SETSCREENSAVETIMEOUT, mPrevScreenSaver, nullptr, 0);
 		::SetThreadExecutionState(mPrevExecState);
 	}
 

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2015 Sean Echevarria
+ * Copyright (C) 2015,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -51,12 +51,12 @@ public:
 			sActiveOverride = nullptr;
 	}
 
-	virtual std::string GetPatchTypeStr() const { return "persistentPedalOverride"; }
+	virtual std::string GetPatchTypeStr() const override { return "persistentPedalOverride"; }
 
-	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
+	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) override;
 
-	virtual void ExecCommandsA();
-	virtual void ExecCommandsB();
+	virtual void ExecCommandsA() override;
+	virtual void ExecCommandsB() override;
 
 	static bool PedalOverridePatchIsActive() { return sActiveOverride != nullptr; }
 	static void SetInactivePedals(ExpressionPedals * newPedals)

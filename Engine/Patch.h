@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2012,2014-2015,2017 Sean Echevarria
+ * Copyright (C) 2007-2012,2014-2015,2017-2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -75,7 +75,7 @@ public:
 	virtual void BankTransitionDeactivation() = 0;
 
 protected:
-	Patch(int number, const std::string & name, IMidiOut * midiOut = NULL);
+	Patch(int number, const std::string & name, IMidiOut * midiOut = nullptr);
 
 private:
 	Patch();

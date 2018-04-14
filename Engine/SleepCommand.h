@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2009-2010 Sean Echevarria
+ * Copyright (C) 2009-2010,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -44,7 +44,7 @@ public:
 	{
 	}
 
-	void Exec()
+	virtual void Exec() override
 	{
 		SLEEP(mSleepAmt); // amount in milliseconds
 	}

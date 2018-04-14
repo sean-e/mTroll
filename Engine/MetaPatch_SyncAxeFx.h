@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010,2012,2015 Sean Echevarria
+ * Copyright (C) 2010,2012,2015,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -46,16 +46,16 @@ public:
 			mAxe->Release();
 	}
 
-	virtual std::string GetPatchTypeStr() const {return "meta: syncAxeFx";}
+	virtual std::string GetPatchTypeStr() const override {return "meta: syncAxeFx";}
 
-	virtual void SwitchPressed(IMainDisplay *, ISwitchDisplay *)
+	virtual void SwitchPressed(IMainDisplay *, ISwitchDisplay *) override
 	{
 		if (mAxe)
 			mAxe->SyncNameAndEffectsFromAxe();
 	}
 
-	virtual void BankTransitionActivation() {SwitchPressed(NULL, NULL);}
-	virtual void BankTransitionDeactivation() {SwitchPressed(NULL, NULL);}
+	virtual void BankTransitionActivation() override {SwitchPressed(nullptr, nullptr);}
+	virtual void BankTransitionDeactivation() override {SwitchPressed(nullptr, nullptr);}
 
 private:
 	AxeFxManager	* mAxe;

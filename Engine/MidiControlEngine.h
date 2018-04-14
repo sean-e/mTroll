@@ -95,7 +95,7 @@ public:
 
 	void					SwitchPressed(int switchNumber);
 	void					SwitchReleased(int switchNumber);
-	virtual void			AdcValueChanged(int port, int curValue);
+	virtual void			AdcValueChanged(int port, int curValue) override;
 	void					RefirePedal(int pedal);
 	void					ResetBankPatches();
 	void					ResetExclusiveGroup(int switchNumberToActivate);

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2013,2015 Sean Echevarria
+ * Copyright (C) 2007-2010,2013,2015,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -46,22 +46,22 @@ private slots:
 	void OpenFile();
 	void SuspendMidiToggle(bool checked);
 	virtual void Refresh();
-	virtual void Reconnect();
-	virtual void ToggleTraceWindow();
-	virtual std::string ApplicationDirectory();
+	virtual void Reconnect() override;
+	virtual void ToggleTraceWindow() override;
+	virtual std::string ApplicationDirectory() override;
 	void ToggleAdc0Override(bool checked) { ToggleAdcOverride(0, checked); }
 	void ToggleAdc1Override(bool checked) { ToggleAdcOverride(1, checked); }
 	void ToggleAdc2Override(bool checked) { ToggleAdcOverride(2, checked); }
 	void ToggleAdc3Override(bool checked) { ToggleAdcOverride(3, checked); }
 
 private:
-	virtual bool IsAdcOverridden(int adc) { if (adc >=0 && adc < 4) return mAdcForceDisable[adc]; return false;}
-	virtual void ToggleAdcOverride(int adc) { if (adc >=0 && adc < 4) ToggleAdcOverride(adc, !mAdcForceDisable[adc]); }
-	virtual bool EnableTimeDisplay(bool enable);
+	virtual bool IsAdcOverridden(int adc) override { if (adc >=0 && adc < 4) return mAdcForceDisable[adc]; return false;}
+	virtual void ToggleAdcOverride(int adc) override { if (adc >=0 && adc < 4) ToggleAdcOverride(adc, !mAdcForceDisable[adc]); }
+	virtual bool EnableTimeDisplay(bool enable) override;
 	virtual std::string GetElapsedTimeStr() override;
 	virtual void ResetTime() override;
 	virtual void PauseOrResumeTime() override;
-	virtual void Exit(ExitAction action);
+	virtual void Exit(ExitAction action) override;
 
 private:
 	ControlUi	* mUi;

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2013 Sean Echevarria
+ * Copyright (C) 2007-2008,2013,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -40,19 +40,19 @@ public:
 	virtual ~WinMidiOut();
 
 	// IMidiOut
-	virtual unsigned int GetMidiOutDeviceCount() const;
-	virtual std::string GetMidiOutDeviceName(unsigned int deviceIdx) const;
-	virtual void SetActivityIndicator(ISwitchDisplay * activityIndicator, int activityIndicatorIdx);
-	virtual void EnableActivityIndicator(bool enable);
-	virtual bool OpenMidiOut(unsigned int deviceIdx);
-	virtual bool IsMidiOutOpen() const {return mMidiOut != NULL;}
-	virtual bool MidiOut(const Bytes & bytes);
-	virtual void MidiOut(byte singleByte, bool useIndicator = true);
-	virtual void MidiOut(byte byte1, byte byte2, bool useIndicator = true);
-	virtual void MidiOut(byte byte1, byte byte2, byte byte3, bool useIndicator = true);
-	virtual bool SuspendMidiOut();
-	virtual bool ResumeMidiOut();
-	virtual void CloseMidiOut();
+	virtual unsigned int GetMidiOutDeviceCount() const override;
+	virtual std::string GetMidiOutDeviceName(unsigned int deviceIdx) const override;
+	virtual void SetActivityIndicator(ISwitchDisplay * activityIndicator, int activityIndicatorIdx) override;
+	virtual void EnableActivityIndicator(bool enable) override;
+	virtual bool OpenMidiOut(unsigned int deviceIdx) override;
+	virtual bool IsMidiOutOpen() const override {return mMidiOut != nullptr;}
+	virtual bool MidiOut(const Bytes & bytes) override;
+	virtual void MidiOut(byte singleByte, bool useIndicator = true) override;
+	virtual void MidiOut(byte byte1, byte byte2, bool useIndicator = true) override;
+	virtual void MidiOut(byte byte1, byte byte2, byte byte3, bool useIndicator = true) override;
+	virtual bool SuspendMidiOut() override;
+	virtual bool ResumeMidiOut() override;
+	virtual void CloseMidiOut() override;
 
 private:
 	void ReportMidiError(MMRESULT resultCode, unsigned int lineNumber);

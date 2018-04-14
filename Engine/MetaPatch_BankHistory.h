@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2012 Sean Echevarria
+ * Copyright (C) 2007-2008,2012,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -39,24 +39,24 @@ public:
 		_ASSERTE(mEngine);
 	}
 
-	virtual std::string GetPatchTypeStr() const {return "meta: BankHistoryBackward";}
+	virtual std::string GetPatchTypeStr() const override {return "meta: BankHistoryBackward";}
 
-	virtual void SwitchPressed(IMainDisplay *, ISwitchDisplay *)
+	virtual void SwitchPressed(IMainDisplay *, ISwitchDisplay *) override
 	{
 		// handle bank change on release instead of press so that 
 		// release does not get handled by new patchbank
 		// (noted after secondary function support implemented)
 	}
 
-	virtual void SwitchReleased(IMainDisplay *, ISwitchDisplay *)
+	virtual void SwitchReleased(IMainDisplay *, ISwitchDisplay *) override
 	{
 		mEngine->HistoryBackward();
 	}
 
-	virtual bool UpdateMainDisplayOnPress() const {return false;}
+	virtual bool UpdateMainDisplayOnPress() const override {return false;}
 
-	virtual void BankTransitionActivation() {SwitchReleased(NULL, NULL);}
-	virtual void BankTransitionDeactivation() {SwitchReleased(NULL, NULL);}
+	virtual void BankTransitionActivation() override {SwitchReleased(nullptr, nullptr);}
+	virtual void BankTransitionDeactivation() override {SwitchReleased(nullptr, nullptr);}
 
 private:
 	MidiControlEngine	* mEngine;
@@ -73,24 +73,24 @@ public:
 		_ASSERTE(mEngine);
 	}
 
-	virtual std::string GetPatchTypeStr() const {return "meta: BankHistoryForward";}
+	virtual std::string GetPatchTypeStr() const override {return "meta: BankHistoryForward";}
 
-	virtual void SwitchPressed(IMainDisplay *, ISwitchDisplay *)
+	virtual void SwitchPressed(IMainDisplay *, ISwitchDisplay *) override
 	{
 		// handle bank change on release instead of press so that 
 		// release does not get handled by new patchbank
 		// (noted after secondary function support implemented)
 	}
 
-	virtual void SwitchReleased(IMainDisplay *, ISwitchDisplay *)
+	virtual void SwitchReleased(IMainDisplay *, ISwitchDisplay *) override
 	{
 		mEngine->HistoryForward();
 	}
 
-	virtual bool UpdateMainDisplayOnPress() const {return false;}
+	virtual bool UpdateMainDisplayOnPress() const override {return false;}
 
-	virtual void BankTransitionActivation() {SwitchReleased(NULL, NULL);}
-	virtual void BankTransitionDeactivation() {SwitchReleased(NULL, NULL);}
+	virtual void BankTransitionActivation() override {SwitchReleased(nullptr, nullptr);}
+	virtual void BankTransitionDeactivation() override {SwitchReleased(nullptr, nullptr);}
 
 private:
 	MidiControlEngine	* mEngine;
@@ -107,24 +107,24 @@ public:
 		_ASSERTE(mEngine);
 	}
 
-	virtual std::string GetPatchTypeStr() const {return "meta: BankHistoryRecall";}
+	virtual std::string GetPatchTypeStr() const override {return "meta: BankHistoryRecall";}
 
-	virtual void SwitchPressed(IMainDisplay *, ISwitchDisplay *)
+	virtual void SwitchPressed(IMainDisplay *, ISwitchDisplay *) override
 	{
 		// handle bank change on release instead of press so that 
 		// release does not get handled by new patchbank
 		// (noted after secondary function support implemented)
 	}
 
-	virtual void SwitchReleased(IMainDisplay *, ISwitchDisplay *)
+	virtual void SwitchReleased(IMainDisplay *, ISwitchDisplay *) override
 	{
 		mEngine->HistoryRecall();
 	}
 
-	virtual bool UpdateMainDisplayOnPress() const {return false;}
+	virtual bool UpdateMainDisplayOnPress() const override {return false;}
 
-	virtual void BankTransitionActivation() {SwitchReleased(NULL, NULL);}
-	virtual void BankTransitionDeactivation() {SwitchReleased(NULL, NULL);}
+	virtual void BankTransitionActivation() override {SwitchReleased(nullptr, nullptr);}
+	virtual void BankTransitionDeactivation() override {SwitchReleased(nullptr, nullptr);}
 
 private:
 	MidiControlEngine	* mEngine;

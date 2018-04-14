@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2012-2013,2015,2017 Sean Echevarria
+ * Copyright (C) 2012-2013,2015,2017-2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -44,7 +44,7 @@ public:
 	PatchListSequencePatch(int number, const std::string & name, std::vector<int> & patchList) :
 		Patch(number, name),
 		mCurIndex(0),
-		mCurrentSubPatch(NULL)
+		mCurrentSubPatch(nullptr)
 	{
 		mPatchNumbers.swap(patchList);
 	}
@@ -53,25 +53,25 @@ public:
 	{
 	}
 	
-	virtual std::string GetPatchTypeStr() const { return "patchListSequence"; }
+	virtual std::string GetPatchTypeStr() const override { return "patchListSequence"; }
 
-	virtual bool HasDisplayText() const { return true; }
+	virtual bool HasDisplayText() const override { return true; }
 
-	virtual bool IsPatchVolatile() const 
+	virtual bool IsPatchVolatile() const override
 	{ 
 		return true;
 	}
 
-	virtual void DeactivateVolatilePatch() 
+	virtual void DeactivateVolatilePatch() override
 	{
 		if (mCurrentSubPatch)
 			mCurrentSubPatch->DeactivateVolatilePatch();
 
 		if (!PersistentPedalOverridePatch::PedalOverridePatchIsActive())
-			gActivePatchPedals = NULL;
+			gActivePatchPedals = nullptr;
 	}
 
-	virtual const std::string & GetDisplayText(bool /*checkState = false*/) const
+	virtual const std::string & GetDisplayText(bool /*checkState = false*/) const override
 	{ 
 		if (!mCurrentSubPatch)
 			return GetName();
@@ -87,13 +87,13 @@ public:
 		return sSubPatchDisplayText;
 	}
 
-	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
+	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) override
 	{
 		if (mCurrentSubPatch)
 			mCurrentSubPatch->Deactivate(mainDisplay, switchDisplay);
 
 		if (!PersistentPedalOverridePatch::PedalOverridePatchIsActive())
-			gActivePatchPedals = NULL;
+			gActivePatchPedals = nullptr;
 
 		if (mCurIndex < mPatches.size())
 		{
@@ -107,47 +107,47 @@ public:
 			mPatchIsActive = false;
 			mCurIndex = 0;
 			DeactivateVolatilePatch();
-			mCurrentSubPatch = NULL;
+			mCurrentSubPatch = nullptr;
 		}
 
 		UpdateDisplays(mainDisplay, switchDisplay);
 	}
 
-	virtual void SwitchReleased(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) 
+	virtual void SwitchReleased(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) override
 	{
 		if (mCurrentSubPatch)
 			mCurrentSubPatch->SwitchReleased(mainDisplay, switchDisplay);
 	}
 
-	virtual void OverridePedals(bool overridePedals) 
+	virtual void OverridePedals(bool overridePedals) override
 	{
 	}
 
-	virtual void BankTransitionActivation()
+	virtual void BankTransitionActivation() override
 	{
 		mCurIndex = 0;
 		if (mCurrentSubPatch)
 		{
 			DeactivateVolatilePatch();
-			mCurrentSubPatch->Deactivate(NULL, NULL);
-			mCurrentSubPatch = NULL;
+			mCurrentSubPatch->Deactivate(nullptr, nullptr);
+			mCurrentSubPatch = nullptr;
 		}
-		SwitchPressed(NULL, NULL);
+		SwitchPressed(nullptr, nullptr);
 	}
 
-	virtual void BankTransitionDeactivation()
+	virtual void BankTransitionDeactivation() override
 	{
 		mPatchIsActive = false;
 		mCurIndex = 0;
 		if (mCurrentSubPatch)
 		{
 			DeactivateVolatilePatch();
-			mCurrentSubPatch->Deactivate(NULL, NULL);
-			mCurrentSubPatch = NULL;
+			mCurrentSubPatch->Deactivate(nullptr, nullptr);
+			mCurrentSubPatch = nullptr;
 		}
 	}
 
-	virtual void Deactivate(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
+	virtual void Deactivate(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) override
 	{
 		if (!IsActive())
 			return;
@@ -156,19 +156,16 @@ public:
 		if (mCurrentSubPatch)
 		{
 			DeactivateVolatilePatch();
-			mCurrentSubPatch->Deactivate(NULL, NULL);
-			mCurrentSubPatch = NULL;
+			mCurrentSubPatch->Deactivate(nullptr, nullptr);
+			mCurrentSubPatch = nullptr;
 		}
 		SwitchPressed(mainDisplay, switchDisplay);
 	}
 
-	virtual void CompleteInit(MidiControlEngine * eng, ITraceDisplay * trc)
+	virtual void CompleteInit(MidiControlEngine * eng, ITraceDisplay * trc) override
 	{
-		for (std::vector<int>::iterator it = mPatchNumbers.begin();
-			it != mPatchNumbers.end();
-			++it)
+		for (int curNum : mPatchNumbers)
 		{
-			int curNum = *it;
 			Patch * curPatch = eng->GetPatch(curNum);
 			// leave (empty) slot in sequence even if no patch located
 			mPatches.push_back(curPatch);

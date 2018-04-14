@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2009,2014 Sean Echevarria
+ * Copyright (C) 2007-2009,2014,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -48,7 +48,8 @@ public:
 	{
 		start(QThread::HighestPriority);
 	}
-	virtual void run()
+
+	virtual void run() override
 	{
 		m40h->DeviceServiceThread();
 	}
@@ -58,11 +59,11 @@ Monome40hFtqt::Monome40hFtqt(ITraceDisplay * trace) :
 	mTrace(trace),
 	mFtDevice(INVALID_HANDLE_VALUE),
 	mShouldContinueListening(true),
-	mThread(NULL),
-	mThreadId(NULL),
+	mThread(nullptr),
+	mThreadId(nullptr),
 	mServicingSubscribers(false),
-	mInputSubscriber(NULL),
-	mAdcInputSubscriber(NULL),
+	mInputSubscriber(nullptr),
+	mAdcInputSubscriber(nullptr),
 	mLedBrightness(10)
 {
 #ifdef _WINDOWS
@@ -90,7 +91,7 @@ int
 Monome40hFtqt::LocateMonomeDeviceIdx()
 {
 	int numDevs;
-	FT_STATUS ftStatus = ::FT_ListDevices(&numDevs, NULL, FT_LIST_NUMBER_ONLY);
+	FT_STATUS ftStatus = ::FT_ListDevices(&numDevs, nullptr, FT_LIST_NUMBER_ONLY);
 	if (FT_OK != ftStatus)
 	{
 		if (mTrace)
@@ -135,7 +136,7 @@ Monome40hFtqt::GetDeviceSerialNumber(int devIndex)
 {
 	std::strstream traceMsg;
 	int numDevs;
-	FT_STATUS ftStatus = ::FT_ListDevices(&numDevs, NULL, FT_LIST_NUMBER_ONLY);
+	FT_STATUS ftStatus = ::FT_ListDevices(&numDevs, nullptr, FT_LIST_NUMBER_ONLY);
 	if (FT_OK != ftStatus)
 	{
 		if (mTrace)
@@ -194,8 +195,8 @@ Monome40hFtqt::AcquireDevice()
 	}
 
 	mFtDevice = ::FT_W32_CreateFile((LPCSTR)mDevSerialNumber.c_str(), 
-		GENERIC_READ|GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 
-		FILE_ATTRIBUTE_NORMAL|FT_OPEN_BY_SERIAL_NUMBER, NULL);
+		GENERIC_READ|GENERIC_WRITE, 0, nullptr, OPEN_EXISTING,
+		FILE_ATTRIBUTE_NORMAL|FT_OPEN_BY_SERIAL_NUMBER, nullptr);
 	if (INVALID_HANDLE_VALUE == mFtDevice)
 	{
 		if (mTrace)
@@ -243,11 +244,11 @@ Monome40hFtqt::ReleaseDevice()
 	{
 		mThread->wait(5000);
 		delete mThread;
-		mThread = NULL;
+		mThread = nullptr;
 	}
 
 	// free queued commands - there shouldn't be any...
-	if (mTrace && mOutputCommandQueue.size())
+	if (mTrace && !mOutputCommandQueue.empty())
 	{
 		std::strstream traceMsg;
 		traceMsg << "WARNING: unsent monome commands still queued " << mOutputCommandQueue.size() << std::endl << std::ends;
@@ -279,7 +280,7 @@ Monome40hFtqt::Unsubscribe(IMonome40hSwitchSubscriber * sub)
 
 	if (mInputSubscriber == sub)
 	{
-		mInputSubscriber = NULL;
+		mInputSubscriber = nullptr;
 		return true;
 	}
 
@@ -301,7 +302,7 @@ Monome40hFtqt::Unsubscribe(IMonome40hAdcSubscriber * sub)
 
 	if (mAdcInputSubscriber == sub)
 	{
-		mAdcInputSubscriber = NULL;
+		mAdcInputSubscriber = nullptr;
 		return true;
 	}
 
@@ -313,18 +314,18 @@ Monome40hFtqt::Send(const MonomeSerialProtocolData & data)
 {
 	_ASSERTE(mFtDevice && INVALID_HANDLE_VALUE != mFtDevice);
 	DWORD bytesWritten = 0;
-	int retval = ::FT_W32_WriteFile(mFtDevice, (void*)data.Data(), 2, &bytesWritten, NULL);
+	int retval = ::FT_W32_WriteFile(mFtDevice, (void*)data.Data(), 2, &bytesWritten, nullptr);
 	if (retval && 2 > bytesWritten)
 	{
 		// timeout
 		if (1 == bytesWritten)
 		{
-			retval = ::FT_W32_WriteFile(mFtDevice, (void*)(data.Data()+1), 1, &bytesWritten, NULL);
+			retval = ::FT_W32_WriteFile(mFtDevice, (void*)(data.Data()+1), 1, &bytesWritten, nullptr);
 			_ASSERTE(retval && 1 == bytesWritten);
 		}
 		else
 		{
-			retval = ::FT_W32_WriteFile(mFtDevice, (void*)data.Data(), 2, &bytesWritten, NULL);
+			retval = ::FT_W32_WriteFile(mFtDevice, (void*)data.Data(), 2, &bytesWritten, nullptr);
 			_ASSERTE(retval && 2 == bytesWritten);
 		}
 	}
@@ -448,7 +449,7 @@ Monome40hFtqt::ReadInput(byte * readData)
 				{
 					if (prevValsForCurPort[idx] == adcValue)
 					{
-						if (0 && mTrace)
+						if (false && mTrace)
 						{
 							std::strstream displayMsg;
 							displayMsg << "adc val repeat: " << adcValue << std::endl << std::ends;
@@ -493,11 +494,11 @@ Monome40hFtqt::DeviceServiceThread()
 	mThreadId = QThread::currentThreadId();
 	while (mShouldContinueListening)
 	{
-		if (mOutputCommandQueue.size())
+		if (!mOutputCommandQueue.empty())
 			ServiceCommands();
 
 		bytesRead = 0;
-		int readRetVal = ::FT_W32_ReadFile(mFtDevice, readData, kDataLen, &bytesRead, NULL);
+		int readRetVal = ::FT_W32_ReadFile(mFtDevice, readData, kDataLen, &bytesRead, nullptr);
 		if (readRetVal)
 		{
 			consecutiveReadErrors = 0;
@@ -518,7 +519,7 @@ Monome40hFtqt::DeviceServiceThread()
 					for (int cnt = 0; cnt < 2; ++cnt)
 					{
 						bytesRead = 0;
-						::FT_W32_ReadFile(mFtDevice, &readData[1], 1, &bytesRead, NULL);
+						::FT_W32_ReadFile(mFtDevice, &readData[1], 1, &bytesRead, nullptr);
 						if (bytesRead)
 						{
 							if (1 != bytesRead && mTrace)
@@ -604,7 +605,7 @@ void
 Monome40hFtqt::ServiceCommands()
 {
 	QMutexLocker lock(&mOutputCommandsLock);
-	if (!mOutputCommandQueue.size())
+	if (mOutputCommandQueue.empty())
 		return;
 
 	for (OutputCommandQueue::iterator it = mOutputCommandQueue.begin();

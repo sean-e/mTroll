@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010 Sean Echevarria
+ * Copyright (C) 2010,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -25,7 +25,7 @@
 #ifndef IMidiInSubscriber_h__
 #define IMidiInSubscriber_h__
 
-typedef unsigned char byte;
+using byte = unsigned char;
 class IMidiIn;
 
 

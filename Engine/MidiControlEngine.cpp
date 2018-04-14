@@ -81,7 +81,7 @@ MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 	mSwitchDisplay(switchDisplay),
 	mTrace(traceDisplay),
 	mMode(emCreated),
-	mActiveBank(NULL),
+	mActiveBank(nullptr),
 	mActiveBankIndex(0),
 	mBankNavigationIndex(0),
 	mPowerUpTimeout(0),
@@ -107,7 +107,7 @@ MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 
 MidiControlEngine::~MidiControlEngine()
 {
-	gActivePatchPedals = NULL;
+	gActivePatchPedals = nullptr;
 	if (mAxeMgr)
 		mAxeMgr->Release();
 	std::for_each(mBanks.begin(), mBanks.end(), DeletePtr<PatchBank>());
@@ -122,11 +122,8 @@ MidiControlEngine::AddBank(int number,
 {
 	if (mTrace)
 	{
-		for (Banks::iterator it = mBanks.begin();
-			it != mBanks.end();
-			++it)
+		for (PatchBank * curItem : mBanks)
 		{
-			PatchBank * curItem = *it;
 			if (curItem && curItem->GetBankNumber() == number)
 			{
 				std::strstream traceMsg;
@@ -178,7 +175,7 @@ MidiControlEngine::GetBankNameByNum(int bankNumberNotIndex)
 void
 MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSettings)
 {
-	if (!mOtherModeSwitchNumbers.size())
+	if (mOtherModeSwitchNumbers.empty())
 	{
 		// set defaults
 		mOtherModeSwitchNumbers[kModeRecall] = kModeRecall;
@@ -222,7 +219,7 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 			mPatches.erase(it++);
 	}
 
-	PatchBank * defaultsBank = NULL;
+	PatchBank * defaultsBank = nullptr;
 	if (mBanks.begin() != mBanks.end())
 	{
 		defaultsBank = *mBanks.begin();
@@ -230,7 +227,7 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 		if (0 == defaultsBank->GetBankNumber())
 			defaultsBank->InitPatches(mPatches, mTrace); // init before calling SetDefaultMapping
 		else
-			defaultsBank = NULL;
+			defaultsBank = nullptr;
 	}
 
 	PatchBank tmpDefaultBank(0, "nav default");
@@ -287,13 +284,8 @@ MidiControlEngine::CalibrateExprSettings(const PedalCalibration * pedalCalibrati
 {
 	mGlobalPedals.Calibrate(pedalCalibrationSettings, this, mTrace);
 
-	for (Banks::iterator it = mBanks.begin();
-		it != mBanks.end();
-		++it)
-	{
-		PatchBank * curItem = *it;
+	for (PatchBank * curItem : mBanks)
 		curItem->CalibrateExprSettings(pedalCalibrationSettings, this, mTrace);
-	}
 }
 
 void
@@ -322,7 +314,7 @@ MidiControlEngine::LoadStartupBank()
 void
 MidiControlEngine::SwitchPressed(int switchNumber)
 {
-	if (0 && mTrace)
+	if (false && mTrace)
 	{
 		std::strstream msg;
 		msg << "SwitchPressed: " << switchNumber << std::endl << std::ends;
@@ -374,7 +366,7 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 void
 MidiControlEngine::SwitchReleased(int switchNumber)
 {
-	if (0 && mTrace)
+	if (false && mTrace)
 	{
 		std::strstream msg;
 		msg << "SwitchReleased: " << switchNumber << std::endl << std::ends;
@@ -637,7 +629,7 @@ MidiControlEngine::GetBank(int bankIndex)
 {
 	const int kBankCnt = mBanks.size();
 	if (bankIndex < 0 || bankIndex >= kBankCnt)
-		return NULL;
+		return nullptr;
 
 	PatchBank * bank = mBanks[bankIndex];
 	return bank;
@@ -1516,7 +1508,7 @@ MidiControlEngine::SwitchPressed_ProgramChangeDirect(int switchNumber)
 
 	if (mMidiOut)
 	{
-		if (bytes.size())
+		if (!bytes.empty())
 		{
 			if (mMainDisplay)
 			{
@@ -1669,7 +1661,7 @@ MidiControlEngine::SwitchPressed_ControlChangeDirect(int switchNumber)
 
 	if (mMidiOut)
 	{
-		if (bytes.size())
+		if (!bytes.empty())
 		{
 			if (mMainDisplay)
 			{
