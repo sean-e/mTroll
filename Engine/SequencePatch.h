@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010 Sean Echevarria
+ * Copyright (C) 2007-2010,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -28,7 +28,6 @@
 #include "IMidiOut.h"
 #include "IPatchCommand.h"
 #include <algorithm>
-#include "DeletePtr.h"
 
 
 // SequencePatch
@@ -46,10 +45,7 @@ public:
 		mCmds.swap(cmds);
 	}
 
-	~SequencePatch()
-	{
-		std::for_each(mCmds.begin(), mCmds.end(), DeletePtr<IPatchCommand>());
-	}
+	~SequencePatch() = default;
 	
 	virtual std::string GetPatchTypeStr() const { return "sequence"; }
 
@@ -58,7 +54,7 @@ public:
 		if (mCurIndex < mCmds.size())
 		{
 			mPatchIsActive = true;
-			IPatchCommand * curCmd = mCmds[mCurIndex++];
+			IPatchCommandPtr curCmd = mCmds[mCurIndex++];
 			if (curCmd)
 				curCmd->Exec();
 

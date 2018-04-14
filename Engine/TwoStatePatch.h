@@ -28,9 +28,6 @@
 #include "IMidiOut.h"
 #include "Patch.h"
 #include "IPatchCommand.h"
-#include <algorithm>
-#include <xfunctional>
-#include "DeletePtr.h"
 
 
 // TwoStatePatch
@@ -55,11 +52,7 @@ protected:
 		mCmdsB.swap(cmdsB);
 	}
 
-	~TwoStatePatch()
-	{
-		std::for_each(mCmdsA.begin(), mCmdsA.end(), DeletePtr<IPatchCommand>());
-		std::for_each(mCmdsB.begin(), mCmdsB.end(), DeletePtr<IPatchCommand>());
-	}
+	~TwoStatePatch() = default;
 
 	virtual void BankTransitionActivation() override { ExecCommandsA(); }
 	virtual void BankTransitionDeactivation() override { ExecCommandsB(); }

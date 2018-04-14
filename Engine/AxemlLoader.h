@@ -27,10 +27,13 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 class TiXmlElement;
 class ITraceDisplay;
 class Patch;
+
+using PatchPtr = std::shared_ptr<Patch>;
 
 enum AxeFxModel
 {
@@ -54,8 +57,8 @@ struct AxeEffectBlockInfo
 	int				mSysexBypassParameterIdLs;	//	derived
 	int				mBypassCC;					// unique per name
 	bool			mEffectIsPresentInAxePatch;	// unique per name
-	Patch			* mPatch;					// the patch assigned to this effectId
-	Patch			* mXyPatch;					// optional XY patch for this effectId
+	PatchPtr		mPatch;					// the patch assigned to this effectId
+	PatchPtr		mXyPatch;					// optional XY patch for this effectId
 
 	AxeEffectBlockInfo() :
 		mSysexEffectId(-1),
@@ -65,9 +68,7 @@ struct AxeEffectBlockInfo
 		mSysexBypassParameterIdLs(-1),
 		mSysexBypassParameterIdMs(-1),
 		mBypassCC(0),
-		mEffectIsPresentInAxePatch(true),
-		mPatch(nullptr),
-		mXyPatch(nullptr)
+		mEffectIsPresentInAxePatch(true)
 	{
 	}
 
@@ -80,9 +81,7 @@ struct AxeEffectBlockInfo
 		mSysexBypassParameterIdLs(-1),
 		mSysexBypassParameterIdMs(-1),
 		mBypassCC(cc),
-		mEffectIsPresentInAxePatch(true),
-		mPatch(nullptr),
-		mXyPatch(nullptr)
+		mEffectIsPresentInAxePatch(true)
 	{
 		mSysexEffectIdLs = mSysexEffectId & 0x0000000F;
 		mSysexEffectIdMs = (mSysexEffectId >> 4) & 0x0000000F;

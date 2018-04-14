@@ -26,8 +26,11 @@
 #define ISwitchDisplay_h__
 
 #include <string>
+#include <memory>
 
 class Patch;
+
+using PatchPtr = std::shared_ptr<Patch>;
 
 
 // ISwitchDisplay
@@ -42,7 +45,7 @@ public:
 	virtual void DimSwitchDisplay(int switchNumber) = 0;
 	virtual void SetSwitchText(int switchNumber, const std::string & txt) = 0;
 	virtual void ClearSwitchText(int switchNumber) = 0;
-	virtual void SetIndicatorThreadSafe(bool isOn, Patch * patch, int time) = 0;
+	virtual void SetIndicatorThreadSafe(bool isOn, PatchPtr patch, int time) = 0;
 	virtual void InvertLeds(bool invert) = 0;
 	virtual bool IsInverted() const = 0;
 	virtual void TestLeds() = 0;

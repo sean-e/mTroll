@@ -65,7 +65,6 @@ AxeFxManager::AxeFxManager(IMainDisplay * mainDisp,
 	mRefCnt(0),
 	mTimeoutCnt(0),
 	mLastTimeout(0),
-	mTempoPatch(nullptr),
 	// mQueryLock(QMutex::Recursive),
 	mMidiOut(nullptr),
 	mFirmwareMajorVersion(0),
@@ -108,21 +107,7 @@ AxeFxManager::AxeFxManager(IMainDisplay * mainDisp,
 
 AxeFxManager::~AxeFxManager()
 {
-	if (mDelayedNameSyncTimer->isActive())
-		mDelayedNameSyncTimer->stop();
-	delete mDelayedNameSyncTimer;
-	mDelayedNameSyncTimer = nullptr;
-
-	if (mDelayedEffectsSyncTimer->isActive())
-		mDelayedEffectsSyncTimer->stop();
-	delete mDelayedEffectsSyncTimer;
-	mDelayedEffectsSyncTimer = nullptr;
-
-	QMutexLocker lock(&mQueryLock);
-	if (mQueryTimer->isActive())
-		mQueryTimer->stop();
-	delete mQueryTimer;
-	mQueryTimer = nullptr;
+	Shutdown();
 }
 
 void
@@ -143,7 +128,7 @@ AxeFxManager::Release()
 }
 
 void
-AxeFxManager::SetTempoPatch(Patch * patch)
+AxeFxManager::SetTempoPatch(PatchPtr patch)
 {
 	if (mTempoPatch && mTrace)
 	{
@@ -154,7 +139,7 @@ AxeFxManager::SetTempoPatch(Patch * patch)
 }
 
 void
-AxeFxManager::SetScenePatch(int scene, Patch * patch)
+AxeFxManager::SetScenePatch(int scene, PatchPtr patch)
 {
 	if (scene < 1 || scene > AxeScenes)
 	{
@@ -176,7 +161,7 @@ AxeFxManager::SetScenePatch(int scene, Patch * patch)
 }
 
 bool
-AxeFxManager::SetSyncPatch(Patch * patch, int bypassCc /*= -1*/)
+AxeFxManager::SetSyncPatch(PatchPtr patch, int bypassCc /*= -1*/)
 {
 	std::string normalizedEffectName(patch->GetName());
 	::NormalizeAxeEffectName(normalizedEffectName);
@@ -530,7 +515,7 @@ AxeFxManager::IdentifyBlockInfoUsingEffectId(const byte * bytes)
 }
 
 AxeEffectBlocks::iterator
-AxeFxManager::GetBlockInfo(Patch * patch)
+AxeFxManager::GetBlockInfo(PatchPtr patch)
 {
 	for (AxeEffectBlocks::iterator it = mAxeEffectInfo.begin(); 
 		it != mAxeEffectInfo.end(); 
@@ -686,7 +671,7 @@ AxeFxManager::SyncEffectsFromAxe()
 
 // this SyncFromAxe helper is not currently being used
 void
-AxeFxManager::SyncPatchFromAxe(Patch * patch)
+AxeFxManager::SyncPatchFromAxe(PatchPtr patch)
 {
 	// We have two methods to sync bypass state.
 	// First is to use RequestPresetEffects.
@@ -841,6 +826,45 @@ public:
 		mMgr->Release();
 	}
 };
+
+void
+AxeFxManager::Shutdown()
+{
+	if (mDelayedNameSyncTimer)
+	{
+		if (mDelayedNameSyncTimer->isActive())
+			mDelayedNameSyncTimer->stop();
+		delete mDelayedNameSyncTimer;
+		mDelayedNameSyncTimer = nullptr;
+	}
+
+	if (mDelayedEffectsSyncTimer)
+	{
+		if (mDelayedEffectsSyncTimer->isActive())
+			mDelayedEffectsSyncTimer->stop();
+		delete mDelayedEffectsSyncTimer;
+		mDelayedEffectsSyncTimer = nullptr;
+	}
+
+	if (mQueryTimer)
+	{
+		QMutexLocker lock(&mQueryLock);
+		if (mQueryTimer->isActive())
+			mQueryTimer->stop();
+		delete mQueryTimer;
+		mQueryTimer = nullptr;
+	}
+
+	mQueries.clear();
+	mAxeEffectInfo.clear();
+	mTempoPatch = nullptr;
+
+	for (auto & cur : mLooperPatches)
+		cur = nullptr;
+
+	for (auto & cur : mScenes)
+		cur = nullptr;
+}
 
 void
 AxeFxManager::DelayedNameSyncFromAxe(bool force /*= false*/)
@@ -1533,7 +1557,7 @@ AxeFxManager::ReceiveLooperStatus(const byte * bytes, int len)
 }
 
 void
-AxeFxManager::SetLooperPatch(Patch * patch)
+AxeFxManager::SetLooperPatch(PatchPtr patch)
 {
 	if (mModel < Axe2)
 		return;

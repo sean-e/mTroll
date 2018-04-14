@@ -160,8 +160,12 @@ ControlUi::Unload()
 	CloseMidiIns();
 	CloseMidiOuts();
 
-	delete mEngine;
-	mEngine = nullptr;
+	if (mEngine)
+	{
+		mEngine->Shutdown();
+		delete mEngine;
+		mEngine = nullptr;
+	}
 
 	// clear leds
 	if (mHardwareUi)
@@ -697,7 +701,7 @@ SetIndicatorTimerCallback::TimerFired()
 }
 
 void
-ControlUi::SetIndicatorThreadSafe(bool isOn, Patch * patch, int time)
+ControlUi::SetIndicatorThreadSafe(bool isOn, PatchPtr patch, int time)
 {
 	// ClearIndicatorTimer
 	// --------------------------------------------------------------------
@@ -707,11 +711,11 @@ ControlUi::SetIndicatorThreadSafe(bool isOn, Patch * patch, int time)
 	{
 		int mTime;
 		ISwitchDisplay * mSwitchDisplay;
-		Patch * mPatch;
+		PatchPtr mPatch;
 		bool mOn;
 
 	public:
-		ClearIndicatorTimer(bool isOn, ISwitchDisplay * switchDisplay, Patch * patch, int time) : 
+		ClearIndicatorTimer(bool isOn, ISwitchDisplay * switchDisplay, PatchPtr patch, int time) :
 		  QEvent(User), 
 		  mTime(time),
 		  mPatch(patch),

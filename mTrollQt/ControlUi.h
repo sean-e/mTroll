@@ -123,7 +123,7 @@ public: // ISwitchDisplay
 	virtual bool		IsInverted() const override { return mInvertLeds; }
 	virtual	void		Reconnect();
 	virtual void		TestLeds() override;
-	virtual void		SetIndicatorThreadSafe(bool isOn, Patch * patch, int time) override;
+	virtual void		SetIndicatorThreadSafe(bool isOn, PatchPtr patch, int time) override;
 	virtual void		EnableDisplayUpdate(bool enable) override { mSwitchLedUpdateEnabled = enable; }
 
 public: // IMonome40hSwitchSubscriber
@@ -404,11 +404,11 @@ class SetIndicatorTimerCallback : public QObject
 {
 	Q_OBJECT;
 	ISwitchDisplay * mSwitchDisplay;
-	Patch * mPatch;
+	PatchPtr mPatch;
 	bool mOn;
 
 public:
-	SetIndicatorTimerCallback(bool on, ISwitchDisplay * switchDisplay, Patch * p) :
+	SetIndicatorTimerCallback(bool on, ISwitchDisplay * switchDisplay, PatchPtr p) :
 	  mSwitchDisplay(switchDisplay),
 	  mPatch(p),
 	  mOn(on)

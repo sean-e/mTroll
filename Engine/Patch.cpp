@@ -24,6 +24,7 @@
 
 #include "Patch.h"
 #include <strstream>
+#include <atomic>
 #include "IMidiOut.h"
 #include "IMainDisplay.h"
 #include "ISwitchDisplay.h"
@@ -31,6 +32,9 @@
 
 
 ExpressionPedals * gActivePatchPedals = nullptr;
+#ifdef ITEM_COUNTING
+std::atomic<int> gPatchCnt = 0;
+#endif
 
 Patch::Patch(int number, 
 			 const std::string & name,
@@ -43,9 +47,17 @@ Patch::Patch(int number,
 	mPatchSupportsDisabledState(false),
 	mPatchIsDisabled(false)
 {
+#ifdef ITEM_COUNTING
+	++gPatchCnt;
+#endif
 }
 
-Patch::~Patch() = default;
+Patch::~Patch()
+{
+#ifdef ITEM_COUNTING
+	--gPatchCnt;
+#endif
+}
 
 void
 Patch::AssignSwitch(int switchNumber, ISwitchDisplay * switchDisplay)

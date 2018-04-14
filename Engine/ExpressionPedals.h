@@ -25,6 +25,7 @@
 #ifndef ExpressionPedals_h__
 #define ExpressionPedals_h__
 
+#include <memory>
 #include "..\Monome40h\IMonome40hInputSubscriber.h"
 
 class Patch;
@@ -33,6 +34,8 @@ class IMidiOut;
 class ISwitchDisplay;
 class MidiControlEngine;
 class ITraceDisplay;
+
+using PatchPtr = std::shared_ptr<Patch>;
 
 
 struct PedalCalibration
@@ -69,7 +72,7 @@ struct PedalToggle
 	int					mMaxDeactivateAdcVal;		// top of zone that execs OFF command
 
 	// runtime state
-	Patch				* mPatch;
+	PatchPtr			mPatch;
 	ISwitchDisplay		* mSwitchDisplay;
 
 	PedalToggle() :

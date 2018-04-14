@@ -29,6 +29,7 @@
 #include <qmutex.h>
 #include <time.h>
 #include <set>
+#include <memory>
 #include "IMidiInSubscriber.h"
 #include "AxemlLoader.h"
 
@@ -39,6 +40,7 @@ class Patch;
 class IMidiOut;
 class QTimer;
 
+using PatchPtr = std::shared_ptr<Patch>;
 
 // AxeFxManager
 // ----------------------------------------------------------------------------
@@ -61,13 +63,14 @@ public:
 	void Release();
 
 	void CompleteInit(IMidiOut * midiOut);
-	void SetTempoPatch(Patch * patch);
-	void SetScenePatch(int scene, Patch * patch);
-	void SetLooperPatch(Patch * patch);
-	bool SetSyncPatch(Patch * patch, int bypassCc = -1);
+	void SetTempoPatch(PatchPtr patch);
+	void SetScenePatch(int scene, PatchPtr patch);
+	void SetLooperPatch(PatchPtr patch);
+	bool SetSyncPatch(PatchPtr patch, int bypassCc = -1);
 	int GetAxeChannel() const { return mAxeChannel; }
-	void SyncPatchFromAxe(Patch * patch);
+	void SyncPatchFromAxe(PatchPtr patch);
 	AxeFxModel GetModel() const { return mModel; }
+	void Shutdown();
 
 	// delayed requests for sync
 	void DelayedNameSyncFromAxe(bool force = false);
@@ -82,7 +85,7 @@ private:
 	AxeEffectBlockInfo * IdentifyBlockInfoUsingBypassId(const byte * bytes);
 	AxeEffectBlockInfo * IdentifyBlockInfoUsingCc(const byte * bytes);
 	AxeEffectBlockInfo * IdentifyBlockInfoUsingEffectId(const byte * bytes);
-	AxeEffectBlocks::iterator GetBlockInfo(Patch * patch);
+	AxeEffectBlocks::iterator GetBlockInfo(PatchPtr patch);
 	void SendFirmwareVersionQuery();
 	void ReceiveFirmwareVersionResponse(const byte * bytes, int len);
 
@@ -114,11 +117,11 @@ private:
 	ITraceDisplay	* mTrace;
 	ISwitchDisplay	* mSwitchDisplay;
 	IMidiOut		* mMidiOut;
-	Patch			* mTempoPatch;
+	PatchPtr		mTempoPatch;
 	enum { AxeScenes = 8 };
-	Patch			* mScenes[AxeScenes];
+	PatchPtr		mScenes[AxeScenes];
 	enum LoopPatchIdx { loopPatchRecord, loopPatchPlay, loopPatchPlayOnce, loopPatchUndo, loopPatchOverdub, loopPatchReverse, loopPatchHalf, loopPatchCnt };
-	Patch			* mLooperPatches[loopPatchCnt];
+	PatchPtr		mLooperPatches[loopPatchCnt];
 	AxeEffectBlocks	mAxeEffectInfo;
 	QMutex			mQueryLock;
 	std::list<AxeEffectBlockInfo *> mQueries;

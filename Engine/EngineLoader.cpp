@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2015, 2018 Sean Echevarria
+ * Copyright (C) 2007-2015,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -506,20 +506,20 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			}
 
 			if (tmp == "ResetBankPatches")
-				 mEngine->AddPatch(new MetaPatch_ResetBankPatches(mEngine, patchNumber, patchName));
+				 mEngine->AddPatch(std::make_shared<MetaPatch_ResetBankPatches>(mEngine, patchNumber, patchName));
 			else if (tmp == "SyncAxeFx")
-				 mEngine->AddPatch(new MetaPatch_SyncAxeFx(mAxeFxManager, patchNumber, patchName));
+				 mEngine->AddPatch(std::make_shared<MetaPatch_SyncAxeFx>(mAxeFxManager, patchNumber, patchName));
 			else if (tmp == "LoadNextBank")
-				mEngine->AddPatch(new MetaPatch_LoadNextBank(mEngine, patchNumber, patchName));
+				mEngine->AddPatch(std::make_shared<MetaPatch_LoadNextBank>(mEngine, patchNumber, patchName));
 			else if (tmp == "LoadPreviousBank")
-				mEngine->AddPatch(new MetaPatch_LoadPreviousBank(mEngine, patchNumber, patchName));
+				mEngine->AddPatch(std::make_shared<MetaPatch_LoadPreviousBank>(mEngine, patchNumber, patchName));
 			else if (tmp == "LoadBank")
 			{
 				int bankNumber = -1;
 				pElem->QueryIntAttribute("bankNumber", &bankNumber);
 				if (-1 != bankNumber)
 				{
-					mEngine->AddPatch(new MetaPatch_LoadBank(mEngine, patchNumber, patchName, bankNumber));
+					mEngine->AddPatch(std::make_shared<MetaPatch_LoadBank>(mEngine, patchNumber, patchName, bankNumber));
 				}
 				else if (mTraceDisplay)
 				{
@@ -534,7 +534,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				pElem->QueryIntAttribute("activeSwitch", &activeSwitch);
 				if (-1 != activeSwitch)
 				{
-					mEngine->AddPatch(new MetaPatch_ResetExclusiveGroup(mEngine, patchNumber, patchName, activeSwitch));
+					mEngine->AddPatch(std::make_shared<MetaPatch_ResetExclusiveGroup>(mEngine, patchNumber, patchName, activeSwitch));
 				}
 				else if (mTraceDisplay)
 				{
@@ -544,11 +544,11 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				}
 			}
 			else if (tmp == "BankHistoryBackward")
-				 mEngine->AddPatch(new MetaPatch_BankHistoryBackward(mEngine, patchNumber, patchName));
+				 mEngine->AddPatch(std::make_shared<MetaPatch_BankHistoryBackward>(mEngine, patchNumber, patchName));
 			else if (tmp == "BankHistoryForward")
-				 mEngine->AddPatch(new MetaPatch_BankHistoryForward(mEngine, patchNumber, patchName));
+				 mEngine->AddPatch(std::make_shared<MetaPatch_BankHistoryForward>(mEngine, patchNumber, patchName));
 			else if (tmp == "BankHistoryRecall")
-				 mEngine->AddPatch(new MetaPatch_BankHistoryRecall(mEngine, patchNumber, patchName));
+				 mEngine->AddPatch(std::make_shared<MetaPatch_BankHistoryRecall>(mEngine, patchNumber, patchName));
 			else
 			{
 				if (mTraceDisplay)
@@ -673,9 +673,9 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				if (-1 < pedalNumber)
 				{
 					if (group == "B")
-						cmds2.push_back(new RefirePedalCommand(mEngine, pedalNumber));
+						cmds2.push_back(std::make_shared<RefirePedalCommand>(mEngine, pedalNumber));
 					else
-						cmds.push_back(new RefirePedalCommand(mEngine, pedalNumber));
+						cmds.push_back(std::make_shared<RefirePedalCommand>(mEngine, pedalNumber));
 				}
 				else if (mTraceDisplay)
 				{
@@ -694,9 +694,9 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				if (0 < sleepAmt)
 				{
 					if (group == "B")
-						cmds2.push_back(new SleepCommand(sleepAmt));
+						cmds2.push_back(std::make_shared<SleepCommand>(sleepAmt));
 					else
-						cmds.push_back(new SleepCommand(sleepAmt));
+						cmds.push_back(std::make_shared<SleepCommand>(sleepAmt));
 				}
 				else if (mTraceDisplay)
 				{
@@ -816,9 +816,9 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 					bytes.push_back(0xc0 | ch);
 					bytes.push_back(data1);
 					if (group == "B")
-						cmds2.push_back(new AxeFxProgramChange(midiOut, bytes, mAxeFxManager));
+						cmds2.push_back(std::make_shared<AxeFxProgramChange>(midiOut, bytes, mAxeFxManager));
 					else
-						cmds.push_back(new AxeFxProgramChange(midiOut, bytes, mAxeFxManager));
+						cmds.push_back(std::make_shared<AxeFxProgramChange>(midiOut, bytes, mAxeFxManager));
 				}
 				else if (patchElement == "ControlChange")
 				{
@@ -871,9 +871,9 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			if (!bytes.empty())
 			{
 				if (group == "B")
-					cmds2.push_back(new MidiCommandString(midiOut, bytes));
+					cmds2.push_back(std::make_shared<MidiCommandString>(midiOut, bytes));
 				else
-					cmds.push_back(new MidiCommandString(midiOut, bytes));
+					cmds.push_back(std::make_shared<MidiCommandString>(midiOut, bytes));
 			}
 		}
 
@@ -925,7 +925,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				bytes.push_back(0xb0 | patchDefaultCh);
 				bytes.push_back(axeCc);
 				bytes.push_back(axeFxScene ? (axeFxScene - 1) : 127);
-				cmds.push_back(new MidiCommandString(midiOut, bytes));
+				cmds.push_back(std::make_shared<MidiCommandString>(midiOut, bytes));
 				bytes.clear();
 
 				if (!axeFxScene)
@@ -934,7 +934,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 					bytes.push_back(0xb0 | patchDefaultCh);
 					bytes.push_back(axeCc);
 					bytes.push_back(0);
-					cmds2.push_back(new MidiCommandString(midiOut, bytes));
+					cmds2.push_back(std::make_shared<MidiCommandString>(midiOut, bytes));
 					bytes.clear();
 				}
 
@@ -946,26 +946,21 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				int singleState = 0;
 				pElem->QueryIntAttribute("singleState", &singleState);
 				if (1 == singleState)
-				{
-					PatchCommands::iterator it = cmds2.begin();
-					if (it != cmds2.end())
-						delete *it;
 					cmds2.clear();
-				}
 			}
 		}
 
 		bool patchTypeErr = false;
-		Patch * newPatch = nullptr;
+		PatchPtr newPatch = nullptr;
 		if (patchType == "normal")
-			newPatch = new NormalPatch(patchNumber, patchName, midiOut, cmds, cmds2);
+			newPatch = std::make_shared<NormalPatch>(patchNumber, patchName, midiOut, cmds, cmds2);
 		else if (patchType == "toggle")
-			newPatch = new TogglePatch(patchNumber, patchName, midiOut, cmds, cmds2);
+			newPatch = std::make_shared<TogglePatch>(patchNumber, patchName, midiOut, cmds, cmds2);
 		else if (patchType == "persistentPedalOverride")
-			newPatch = new PersistentPedalOverridePatch(patchNumber, patchName, midiOut, cmds, cmds2);
+			newPatch = std::make_shared<PersistentPedalOverridePatch>(patchNumber, patchName, midiOut, cmds, cmds2);
 		else if (patchType == "AxeToggle")
 		{
-			AxeTogglePatch * axePatch = new AxeTogglePatch(patchNumber, patchName, midiOut, cmds, cmds2, mAxeFxManager);
+			auto axePatch = std::make_shared<AxeTogglePatch>(patchNumber, patchName, midiOut, cmds, cmds2, mAxeFxManager);
 			if (mAxeFxManager)
 			{
 				if (!mAxeFxManager->SetSyncPatch(axePatch, overrideCc))
@@ -981,10 +976,10 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			newPatch = axePatch;
 		}
 		else if (patchType == "momentary")
-			newPatch = new MomentaryPatch(patchNumber, patchName, midiOut, cmds, cmds2);
+			newPatch = std::make_shared<MomentaryPatch>(patchNumber, patchName, midiOut, cmds, cmds2);
 		else if (patchType == "AxeMomentary")
 		{
-			newPatch = new MomentaryPatch(patchNumber, patchName, midiOut, cmds, cmds2);
+			newPatch = std::make_shared<MomentaryPatch>(patchNumber, patchName, midiOut, cmds, cmds2);
 			if (mAxeFxManager)
 				mAxeFxManager->SetSyncPatch(newPatch, overrideCc);
 			else if (mTraceDisplay)
@@ -995,9 +990,9 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			}
 		}
 		else if (patchType == "sequence")
-			newPatch = new SequencePatch(patchNumber, patchName, midiOut, cmds);
+			newPatch = std::make_shared<SequencePatch>(patchNumber, patchName, midiOut, cmds);
 		else if (patchType == "patchListSequence")
-			newPatch = new PatchListSequencePatch(patchNumber, patchName, intList);
+			newPatch = std::make_shared<PatchListSequencePatch>(patchNumber, patchName, intList);
 		else if (patchType == "AxeFxTapTempo")
 		{
 			if (cmds.empty() && cmds2.empty() && -1 != patchDefaultCh)
@@ -1009,11 +1004,11 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 					bytes.push_back(0xb0 | patchDefaultCh);
 					bytes.push_back(cc);
 					bytes.push_back(127);
-					cmds.push_back(new MidiCommandString(midiOut, bytes));
+					cmds.push_back(std::make_shared<MidiCommandString>(midiOut, bytes));
 				}
 			}
 
-			newPatch = new MomentaryPatch(patchNumber, patchName, midiOut, cmds, cmds2);
+			newPatch = std::make_shared<MomentaryPatch>(patchNumber, patchName, midiOut, cmds, cmds2);
 			if (mAxeFxManager)
 				mAxeFxManager->SetTempoPatch(newPatch);
 			else if (mTraceDisplay)
@@ -1109,7 +1104,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 			continue;
 		}
 
-		PatchBank & bank = mEngine->AddBank(bankNumber, bankName);
+		PatchBankPtr bank = mEngine->AddBank(bankNumber, bankName);
 
 		TiXmlHandle hRoot(nullptr);
 		hRoot = TiXmlHandle(pElem);
@@ -1175,7 +1170,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						if (!isAutoGendPatchNumber)
 						{
 							gendPatchName = "Reset bank patches";
-							mEngine->AddPatch(new MetaPatch_ResetBankPatches(mEngine, patchNumber, gendPatchName));
+							mEngine->AddPatch(std::make_shared<MetaPatch_ResetBankPatches>(mEngine, patchNumber, gendPatchName));
 						}
 						else
 							patchNumber = ReservedPatchNumbers::kResetBankPatches;
@@ -1185,7 +1180,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						if (!isAutoGendPatchNumber)
 						{
 							gendPatchName = "Sync Axe-FX";
-							mEngine->AddPatch(new MetaPatch_SyncAxeFx(mAxeFxManager, patchNumber, gendPatchName));
+							mEngine->AddPatch(std::make_shared<MetaPatch_SyncAxeFx>(mAxeFxManager, patchNumber, gendPatchName));
 						}
 						else
 							patchNumber = ReservedPatchNumbers::kSyncAxeFx;
@@ -1195,7 +1190,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						if (!isAutoGendPatchNumber)
 						{
 							gendPatchName = "[next]";
-							mEngine->AddPatch(new MetaPatch_LoadNextBank(mEngine, patchNumber, gendPatchName));
+							mEngine->AddPatch(std::make_shared<MetaPatch_LoadNextBank>(mEngine, patchNumber, gendPatchName));
 						}
 						else
 							patchNumber = ReservedPatchNumbers::kLoadNextBank;
@@ -1205,7 +1200,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						if (!isAutoGendPatchNumber)
 						{
 							gendPatchName = "[previous]";
-							mEngine->AddPatch(new MetaPatch_LoadPreviousBank(mEngine, patchNumber, gendPatchName));
+							mEngine->AddPatch(std::make_shared<MetaPatch_LoadPreviousBank>(mEngine, patchNumber, gendPatchName));
 						}
 						else
 							patchNumber = ReservedPatchNumbers::kLoadPrevBank;
@@ -1215,7 +1210,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						if (!isAutoGendPatchNumber)
 						{
 							gendPatchName = "Nav next";
-							mEngine->AddPatch(new MetaPatch_BankNavNext(mEngine, patchNumber, gendPatchName));
+							mEngine->AddPatch(std::make_shared<MetaPatch_BankNavNext>(mEngine, patchNumber, gendPatchName));
 						}
 						else
 							patchNumber = ReservedPatchNumbers::kBankNavNext;
@@ -1225,7 +1220,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						if (!isAutoGendPatchNumber)
 						{
 							gendPatchName = "Nav previous";
-							mEngine->AddPatch(new MetaPatch_BankNavPrevious(mEngine, patchNumber, gendPatchName));
+							mEngine->AddPatch(std::make_shared<MetaPatch_BankNavPrevious>(mEngine, patchNumber, gendPatchName));
 						}
 						else
 							patchNumber = ReservedPatchNumbers::kBankNavPrev;
@@ -1235,7 +1230,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						if (!isAutoGendPatchNumber)
 						{
 							gendPatchName = "[back]";
-							mEngine->AddPatch(new MetaPatch_BankHistoryBackward(mEngine, patchNumber, gendPatchName));
+							mEngine->AddPatch(std::make_shared<MetaPatch_BankHistoryBackward>(mEngine, patchNumber, gendPatchName));
 						}
 						else
 							patchNumber = ReservedPatchNumbers::kBankHistoryBackward;
@@ -1245,7 +1240,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						if (!isAutoGendPatchNumber)
 						{
 							gendPatchName = "[forward]";
-							mEngine->AddPatch(new MetaPatch_BankHistoryForward(mEngine, patchNumber, gendPatchName));
+							mEngine->AddPatch(std::make_shared<MetaPatch_BankHistoryForward>(mEngine, patchNumber, gendPatchName));
 						}
 						else
 							patchNumber = ReservedPatchNumbers::kBankHistoryForward;
@@ -1255,7 +1250,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						if (!isAutoGendPatchNumber)
 						{
 							gendPatchName = "[recall]";
-							mEngine->AddPatch(new MetaPatch_BankHistoryRecall(mEngine, patchNumber, gendPatchName));
+							mEngine->AddPatch(std::make_shared<MetaPatch_BankHistoryRecall>(mEngine, patchNumber, gendPatchName));
 						}
 						else
 							patchNumber = ReservedPatchNumbers::kBankHistoryRecall;
@@ -1268,7 +1263,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						{
 							if (nameOverride.empty())
 								nameOverride = "meta load bank";
-							mEngine->AddPatch(new MetaPatch_LoadBank(mEngine, patchNumber, nameOverride, bankNum));
+							mEngine->AddPatch(std::make_shared<MetaPatch_LoadBank>(mEngine, patchNumber, nameOverride, bankNum));
 							nameOverride.clear();
 						}
 						else
@@ -1290,7 +1285,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						{
 							if (nameOverride.empty())
 								nameOverride = "Reset exclusive group";
-							mEngine->AddPatch(new MetaPatch_ResetExclusiveGroup(mEngine, patchNumber, nameOverride, activeSwitch));
+							mEngine->AddPatch(std::make_shared<MetaPatch_ResetExclusiveGroup>(mEngine, patchNumber, nameOverride, activeSwitch));
 							nameOverride.clear();
 						}
 						else 
@@ -1343,14 +1338,14 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 // 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 // 				}
 
-				bank.AddSwitchAssignment(switchNumber - 1, patchNumber, nameOverride, swFunc, sfoOp, loadState, unloadState, stateOverride, syncState);
+				bank->AddSwitchAssignment(switchNumber - 1, patchNumber, nameOverride, swFunc, sfoOp, loadState, unloadState, stateOverride, syncState);
 			}
 			else if (childElem->ValueStr() == "ExclusiveSwitchGroup")
 			{
 				std::string switchesStr;
 				if (childElem->GetText())
 					switchesStr = childElem->GetText();
-				PatchBank::GroupSwitches * switches = new PatchBank::GroupSwitches;
+				PatchBank::GroupSwitchesPtr switches = std::make_shared<PatchBank::GroupSwitches>();
 
 				// split switchesStr - space token
 				while (!switchesStr.empty())
@@ -1366,7 +1361,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 					switchesStr = switchesStr.substr(spacePos + 1);
 				}
 
-				bank.CreateExclusiveGroup(switches);
+				bank->CreateExclusiveGroup(switches);
 			} 
 			else if (mTraceDisplay)
 			{

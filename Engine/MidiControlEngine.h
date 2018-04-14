@@ -28,6 +28,7 @@
 #include <map>
 #include <vector>
 #include <stack>
+#include <memory>
 
 #include "Patch.h"
 #include "ExpressionPedals.h"
@@ -42,6 +43,8 @@ class IMidiOut;
 class Patch;
 class PatchBank;
 class AxeFxManager;
+
+using PatchBankPtr = std::shared_ptr<PatchBank>;
 
 
 class MidiControlEngine : public IMonome40hAdcSubscriber
@@ -79,18 +82,19 @@ public:
 	};
 
 	// initialization
-	using Patches = std::map<int, Patch*>;
-	PatchBank &				AddBank(int number, const std::string & name);
-	void					AddPatch(Patch * patch);
+	using Patches = std::map<int, PatchPtr>;
+	PatchBankPtr			AddBank(int number, const std::string & name);
+	void					AddPatch(PatchPtr patch);
 	void					SetPowerup(int powerupBank, int powerupPatch, int powerupTimeout);
 	void					FilterRedundantProgChg(bool filter) {mFilterRedundantProgramChanges = filter;}
 	void					AssignCustomBankLoad(int switchNumber, int bankNumber);
 	void					AssignModeSwitchNumber(EngineModeSwitch mode, int switchNumber);
 	const std::string		GetBankNameByNum(int bankNumberNotIndex);
 	void					CompleteInit(const PedalCalibration * pedalCalibrationSettings);
+	void					Shutdown();
 
 	ExpressionPedals &		GetPedals() {return mGlobalPedals;}
-	Patch *					GetPatch(int number);
+	PatchPtr				GetPatch(int number);
 	ISwitchDisplay *		GetSwitchDisplay() const { return mSwitchDisplay; }
 
 	void					SwitchPressed(int switchNumber);
@@ -111,7 +115,7 @@ private:
 	void					LoadStartupBank();
 	bool					NavigateBankRelative(int relativeBankIndex);
 	bool					LoadBank(int bankIndex);
-	PatchBank *				GetBank(int bankIndex);
+	PatchBankPtr			GetBank(int bankIndex);
 	int						GetBankIndex(int bankNumber);
 	void					UpdateBankModeSwitchDisplay();
 	void					CalibrateExprSettings(const PedalCalibration * pedalCalibrationSettings);
@@ -154,7 +158,7 @@ private:
 	IMidiOut *				mMidiOut; // only used for emProgramChangeDirect/emControlChangeDirect
 	AxeFxManager *			mAxeMgr;
 
-	PatchBank *				mActiveBank;
+	PatchBankPtr			mActiveBank;
 	int						mActiveBankIndex;
 	EngineMode				mMode;
 	int						mBankNavigationIndex;
@@ -170,7 +174,7 @@ private:
 
 	// retained in different form
 	Patches					mPatches;		// patchNum is key
-	using Banks = std::vector<PatchBank*>;
+	using Banks = std::vector<PatchBankPtr>;
 	Banks					mBanks;			// compressed; bankNum is not index
 
 	// retained state

@@ -137,9 +137,6 @@
     <ClInclude Include="..\Engine\AxeTogglePatch.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="..\Engine\DeletePtr.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
     <ClInclude Include="..\Engine\EngineLoader.h">
       <Filter>Engine</Filter>
     </ClInclude>

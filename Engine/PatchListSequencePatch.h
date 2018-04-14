@@ -29,10 +29,12 @@
 #include "IPatchCommand.h"
 #include <algorithm>
 #include <strstream>
-#include "DeletePtr.h"
+#include <memory>
 #include "MidiControlEngine.h"
 #include "PersistentPedalOverridePatch.h"
 
+
+using PatchPtr = std::shared_ptr<Patch>;
 
 // PatchListSequencePatch
 // -----------------------------------------------------------------------------
@@ -166,7 +168,7 @@ public:
 	{
 		for (int curNum : mPatchNumbers)
 		{
-			Patch * curPatch = eng->GetPatch(curNum);
+			PatchPtr curPatch = eng->GetPatch(curNum);
 			// leave (empty) slot in sequence even if no patch located
 			mPatches.push_back(curPatch);
 			
@@ -182,8 +184,8 @@ public:
 private:
 	size_t					mCurIndex;
 	std::vector<int>		mPatchNumbers;
-	std::vector<Patch*>		mPatches;
-	Patch *					mCurrentSubPatch;
+	std::vector<PatchPtr>	mPatches;
+	PatchPtr				mCurrentSubPatch;
 };
 
 #endif // PatchListSequencePatch_h__

@@ -84,7 +84,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;tmp\moc\debug_shared;.;$(QTDIR)\mkspecs\win32-msvc2012;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;UNICODE;WIN32;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;STRICT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;ITEM_COUNTING;_WINDOWS;UNICODE;WIN32;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;STRICT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Async</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -252,7 +252,6 @@
     <ClInclude Include="..\Engine\AxeFxProgramChange.h" />
     <ClInclude Include="..\Engine\AxemlLoader.h" />
     <ClInclude Include="..\Engine\AxeTogglePatch.h" />
-    <ClInclude Include="..\Engine\DeletePtr.h" />
     <ClInclude Include="..\Engine\EngineLoader.h" />
     <ClInclude Include="..\Engine\ExpressionPedals.h" />
     <ClInclude Include="..\Engine\HexStringUtils.h" />

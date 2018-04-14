@@ -30,7 +30,6 @@
 #include "ISwitchDisplay.h"
 #include "ITraceDisplay.h"
 #include "MetaPatch_BankNav.h"
-#include "DeletePtr.h"
 #include "SleepCommand.h"
 #include "ITrollApplication.h"
 #include "HexStringUtils.h"
@@ -52,16 +51,8 @@
 #endif
 
 
-struct DeletePatch
-{
-	void operator()(const std::pair<int, Patch *> & pr)
-	{
-		delete pr.second;
-	}
-};
-
 static bool
-SortByBankNumber(const PatchBank* lhs, const PatchBank* rhs)
+SortByBankNumber(const PatchBankPtr lhs, const PatchBankPtr rhs)
 {
 	return lhs->GetBankNumber() < rhs->GetBankNumber();
 }
@@ -107,22 +98,16 @@ MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 
 MidiControlEngine::~MidiControlEngine()
 {
-	gActivePatchPedals = nullptr;
-	if (mAxeMgr)
-		mAxeMgr->Release();
-	std::for_each(mBanks.begin(), mBanks.end(), DeletePtr<PatchBank>());
-	mBanks.clear();
-	std::for_each(mPatches.begin(), mPatches.end(), DeletePatch());
-	mPatches.clear();
+	Shutdown();
 }
 
-PatchBank &
+PatchBankPtr
 MidiControlEngine::AddBank(int number,
 						   const std::string & name)
 {
 	if (mTrace)
 	{
-		for (PatchBank * curItem : mBanks)
+		for (const PatchBankPtr& curItem : mBanks)
 		{
 			if (curItem && curItem->GetBankNumber() == number)
 			{
@@ -133,16 +118,16 @@ MidiControlEngine::AddBank(int number,
 		}
 	}
 
-	PatchBank * pBank = new PatchBank(number, name);
+	PatchBankPtr pBank = std::make_shared<PatchBank>(number, name);
 	mBanks.push_back(pBank);
-	return * pBank;
+	return pBank;
 }
 
 void
-MidiControlEngine::AddPatch(Patch * patch)
+MidiControlEngine::AddPatch(PatchPtr patch)
 {
 	const int patchNum = patch->GetNumber();
-	Patch * prev = mPatches[patchNum];
+	PatchPtr prev = mPatches[patchNum];
 	if (prev && mTrace)
 	{
 		std::strstream traceMsg;
@@ -166,7 +151,7 @@ const std::string
 MidiControlEngine::GetBankNameByNum(int bankNumberNotIndex)
 {
 	const int bankIdx = GetBankIndex(bankNumberNotIndex);
-	PatchBank * bnk = GetBank(bankIdx);
+	PatchBankPtr bnk = GetBank(bankIdx);
 	if (bnk)
 		return bnk->GetBankName();
 	return std::string();
@@ -195,21 +180,21 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 
 	std::sort(mBanks.begin(), mBanks.end(), SortByBankNumber);
 
-	AddPatch(new MetaPatch_BankNavNext(this, ReservedPatchNumbers::kBankNavNext, "Nav next"));
-	AddPatch(new MetaPatch_BankNavPrevious(this, ReservedPatchNumbers::kBankNavPrev, "Nav previous"));
-	AddPatch(new MetaPatch_LoadNextBank(this, ReservedPatchNumbers::kLoadNextBank, "[next]"));
-	AddPatch(new MetaPatch_LoadPreviousBank(this, ReservedPatchNumbers::kLoadPrevBank, "[previous]"));
-	AddPatch(new MetaPatch_BankHistoryBackward(this, ReservedPatchNumbers::kBankHistoryBackward, "[back]"));
-	AddPatch(new MetaPatch_BankHistoryForward(this, ReservedPatchNumbers::kBankHistoryForward, "[forward]"));
-	AddPatch(new MetaPatch_BankHistoryRecall(this, ReservedPatchNumbers::kBankHistoryRecall, "[recall]"));
-	AddPatch(new MetaPatch_ResetBankPatches(this, ReservedPatchNumbers::kResetBankPatches, "Reset bank patches"));
-	AddPatch(new MetaPatch_SyncAxeFx(mAxeMgr, ReservedPatchNumbers::kSyncAxeFx, "Sync Axe-FX"));
+	AddPatch(std::make_shared<MetaPatch_BankNavNext>(this, ReservedPatchNumbers::kBankNavNext, "Nav next"));
+	AddPatch(std::make_shared<MetaPatch_BankNavPrevious>(this, ReservedPatchNumbers::kBankNavPrev, "Nav previous"));
+	AddPatch(std::make_shared<MetaPatch_LoadNextBank>(this, ReservedPatchNumbers::kLoadNextBank, "[next]"));
+	AddPatch(std::make_shared<MetaPatch_LoadPreviousBank>(this, ReservedPatchNumbers::kLoadPrevBank, "[previous]"));
+	AddPatch(std::make_shared<MetaPatch_BankHistoryBackward>(this, ReservedPatchNumbers::kBankHistoryBackward, "[back]"));
+	AddPatch(std::make_shared<MetaPatch_BankHistoryForward>(this, ReservedPatchNumbers::kBankHistoryForward, "[forward]"));
+	AddPatch(std::make_shared<MetaPatch_BankHistoryRecall>(this, ReservedPatchNumbers::kBankHistoryRecall, "[recall]"));
+	AddPatch(std::make_shared<MetaPatch_ResetBankPatches>(this, ReservedPatchNumbers::kResetBankPatches, "Reset bank patches"));
+	AddPatch(std::make_shared<MetaPatch_SyncAxeFx>(mAxeMgr, ReservedPatchNumbers::kSyncAxeFx, "Sync Axe-FX"));
 
 	for (Patches::iterator it = mPatches.begin();
 		it != mPatches.end();
 		)
 	{
-		Patch * curItem = (*it).second;
+		PatchPtr curItem = (*it).second;
 		if (curItem)
 		{
 			curItem->CompleteInit(this, mTrace);
@@ -219,7 +204,7 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 			mPatches.erase(it++);
 	}
 
-	PatchBank * defaultsBank = nullptr;
+	PatchBankPtr defaultsBank;
 	if (mBanks.begin() != mBanks.end())
 	{
 		defaultsBank = *mBanks.begin();
@@ -230,7 +215,7 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 			defaultsBank = nullptr;
 	}
 
-	PatchBank tmpDefaultBank(0, "nav default");
+	PatchBankPtr tmpDefaultBank = std::make_shared<PatchBank>(0, "nav default");
 
 	// this is how we allow users to override Next and Prev switches in their banks
 	// while at the same time reserving them for use by our modes.
@@ -243,16 +228,16 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 	if (defaultsBank)
 		defaultsBank->SetDefaultMappings(tmpDefaultBank);  // add Next and Prev to their default bank
 	else
-		defaultsBank = &tmpDefaultBank; // no default bank specified, use our manufactured one
+		defaultsBank = tmpDefaultBank; // no default bank specified, use our manufactured one
 
 	int itIdx = 0;
 	for (Banks::iterator it = mBanks.begin();
 		it != mBanks.end();
 		++it, ++itIdx)
 	{
-		PatchBank * curItem = *it;
+		PatchBankPtr curItem = *it;
 		curItem->InitPatches(mPatches, mTrace);
-		curItem->SetDefaultMappings(*defaultsBank);
+		curItem->SetDefaultMappings(defaultsBank);
 	}
 
 	CalibrateExprSettings(pedalCalibrationSettings);
@@ -263,7 +248,7 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 		std::strstream traceMsg;
 		int userDefinedPatchCnt = 0;
 		std::for_each(mPatches.begin(), mPatches.end(), 
-			[&userDefinedPatchCnt](const std::pair<int, Patch *> & pr)
+			[&userDefinedPatchCnt](const std::pair<int, PatchPtr> & pr)
 		{
 			if (pr.second && pr.second->GetNumber() >= 0)
 				++userDefinedPatchCnt;
@@ -280,11 +265,23 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 }
 
 void
+MidiControlEngine::Shutdown()
+{
+	gActivePatchPedals = nullptr;
+	if (mAxeMgr)
+	{
+		mAxeMgr->Shutdown();
+		mAxeMgr->Release();
+		mAxeMgr = nullptr;
+	}
+}
+
+void
 MidiControlEngine::CalibrateExprSettings(const PedalCalibration * pedalCalibrationSettings)
 {
 	mGlobalPedals.Calibrate(pedalCalibrationSettings, this, mTrace);
 
-	for (PatchBank * curItem : mBanks)
+	for (const PatchBankPtr& curItem : mBanks)
 		curItem->CalibrateExprSettings(pedalCalibrationSettings, this, mTrace);
 }
 
@@ -297,7 +294,7 @@ MidiControlEngine::LoadStartupBank()
 		it != mBanks.end();
 		++it, ++itIdx)
 	{
-		PatchBank * curItem = *it;
+		PatchBankPtr curItem = *it;
 		if (curItem->GetBankNumber() == mPowerUpBank)
 		{
 			powerUpBankIndex = itIdx;
@@ -536,7 +533,7 @@ MidiControlEngine::NavigateBankRelative(int relativeBankIndex)
 		mSwitchDisplay->EnableDisplayUpdate(true);
 
 	// display bank info
-	PatchBank * bank = GetBank(mBankNavigationIndex);
+	PatchBankPtr bank = GetBank(mBankNavigationIndex);
 	if (!bank)
 		return false;
 
@@ -561,7 +558,7 @@ MidiControlEngine::LoadBankRelative(int relativeBankIndex)
 	ChangeMode(emBank);
 	LoadBank(mBankNavigationIndex);
 
-	PatchBank * bank = GetBank(mBankNavigationIndex);
+	PatchBankPtr bank = GetBank(mBankNavigationIndex);
 	if (!bank)
 	{
 		if (mTrace)
@@ -594,7 +591,7 @@ MidiControlEngine::LoadBankByNumber(int bankNumber)
 	ChangeMode(emBank);
 	LoadBank(bankidx);
 
-	PatchBank * bank = GetBank(bankidx);
+	PatchBankPtr bank = GetBank(bankidx);
 	if (!bank)
 	{
 		if (mTrace)
@@ -617,28 +614,28 @@ MidiControlEngine::GetBankIndex(int bankNumber)
 		it != mBanks.end();
 		++it, ++idx)
 	{
-		PatchBank * curItem = *it;
+		PatchBankPtr curItem = *it;
 		if (curItem->GetBankNumber() == bankNumber)
 			return idx;
 	}
 	return -1;
 }
 
-PatchBank *
+PatchBankPtr
 MidiControlEngine::GetBank(int bankIndex)
 {
 	const int kBankCnt = mBanks.size();
 	if (bankIndex < 0 || bankIndex >= kBankCnt)
 		return nullptr;
 
-	PatchBank * bank = mBanks[bankIndex];
+	PatchBankPtr bank = mBanks[bankIndex];
 	return bank;
 }
 
 bool
 MidiControlEngine::LoadBank(int bankIndex)
 {
-	PatchBank * bank = GetBank(bankIndex);
+	PatchBankPtr bank = GetBank(bankIndex);
 	if (!bank)
 		return false;
 
@@ -688,7 +685,7 @@ MidiControlEngine::HistoryBackward()
 	LoadBank(bankIdx);
 	mHistoryNavMode = hmWentBack;
 
-	PatchBank * bank = GetBank(bankIdx);
+	PatchBankPtr bank = GetBank(bankIdx);
 	if (!bank)
 		return;
 
@@ -709,7 +706,7 @@ MidiControlEngine::HistoryForward()
 	LoadBank(bankIdx);
 	mHistoryNavMode = hmWentForward;
 
-	PatchBank * bank = GetBank(bankIdx);
+	PatchBankPtr bank = GetBank(bankIdx);
 	if (!bank)
 		return;
 
@@ -832,7 +829,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			for (std::map<int, int>::const_iterator it = mBankLoadSwitchNumbers.begin();
 				it != mBankLoadSwitchNumbers.end(); ++it)
 			{
-				PatchBank * bnk = GetBank(GetBankIndex(it->second));
+				PatchBankPtr bnk = GetBank(GetBankIndex(it->second));
 				if (bnk)
 				{
 					std::string txt("[" + bnk->GetBankName() + "]");
@@ -1025,7 +1022,7 @@ MidiControlEngine::EscapeToDefaultMode()
 	NavigateBankRelative(0);
 }
 
-Patch *
+PatchPtr
 MidiControlEngine::GetPatch(int number)
 {
 	return mPatches[number];
@@ -1207,7 +1204,7 @@ MidiControlEngine::SwitchReleased_NavAndDescMode(int switchNumber)
 	}
 	else if (emBankDesc == mMode)
 	{
-		PatchBank * bank = GetBank(mBankNavigationIndex);
+		PatchBankPtr bank = GetBank(mBankNavigationIndex);
 		if (bank)
 		{
 			bank->DisplayInfo(mMainDisplay, mSwitchDisplay, true, true);
@@ -1364,7 +1361,7 @@ MidiControlEngine::SwitchReleased_BankDirect(int switchNumber)
 		}
 		else
 		{
-			PatchBank * bnk = GetBank(bnkIdx);
+			PatchBankPtr bnk = GetBank(bnkIdx);
 			_ASSERTE(bnk);
 			if (bnk)
 				mMainDisplay->TextOut(mDirectNumber + " " + bnk->GetBankName());

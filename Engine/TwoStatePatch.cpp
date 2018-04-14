@@ -52,13 +52,16 @@ TwoStatePatch::ExecCommandsA()
 		}
 	}
 
-	std::for_each(mCmdsA.begin(), mCmdsA.end(), std::mem_fun(&IPatchCommand::Exec));
+	for (const auto& cmd : mCmdsA)
+		cmd->Exec();
 }
 
 void
 TwoStatePatch::ExecCommandsB()
 {
-	std::for_each(mCmdsB.begin(), mCmdsB.end(), std::mem_fun(&IPatchCommand::Exec));
+	for (const auto &cmd : mCmdsB)
+		cmd->Exec();
+
 	mPatchIsActive = false;
 
 	if (!mOverridePedals)

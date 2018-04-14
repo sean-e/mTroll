@@ -27,6 +27,7 @@
 
 
 #include <vector>
+#include <memory>
 
 
 class IPatchCommand
@@ -38,6 +39,7 @@ public:
 };
 
 
-using PatchCommands = std::vector<IPatchCommand*>;
+using IPatchCommandPtr = std::shared_ptr<IPatchCommand>;
+using PatchCommands = std::vector<IPatchCommandPtr>;
 
 #endif // IPatchCommand_h__

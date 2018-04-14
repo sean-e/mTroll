@@ -30,6 +30,7 @@
 #include <string>
 #include <set>
 #include <list>
+#include <memory>
 #include "MidiControlEngine.h"
 
 class Patch;
@@ -87,7 +88,7 @@ public:
 	void AddSwitchAssignment(int switchNumber, int patchNumber, const std::string &overrideName, SwitchFunctionAssignment st, SecondFunctionOperation sfoOp, PatchState patchLoadState, PatchState patchUnloadState, PatchState patchStateOverride, PatchSyncState patchSyncState);
 	void InitPatches(const MidiControlEngine::Patches & patches, ITraceDisplay * traceDisp);
 	void CalibrateExprSettings(const PedalCalibration * pedalCalibration, MidiControlEngine * eng, ITraceDisplay * traceDisp);
-	void SetDefaultMappings(const PatchBank & defaultMapping);
+	void SetDefaultMappings(const PatchBankPtr defaultMapping);
 
 	void Load(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 	void Unload(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
@@ -104,7 +105,8 @@ public:
 
 	// support for exclusive switch groups
 	using GroupSwitches = std::set<int>;			// contains the switches for an exclusive group
-	void CreateExclusiveGroup(GroupSwitches * switches);
+	using GroupSwitchesPtr = std::shared_ptr<GroupSwitches>;
+	void CreateExclusiveGroup(GroupSwitchesPtr switches);
 
 private:
 	bool SwitchHasSecondaryLogic(int switchNumber) { return mPatches[switchNumber].mSfOp != sfoNone; }
@@ -122,7 +124,7 @@ private:
 		PatchState			mPatchStateOverride; // press of switch prevents toggle from changing
 		PatchSyncState		mPatchSyncState;
 		SecondFunctionOperation mSfOp;
-		Patch				*mPatch;		// non-retained runtime state; weak ref
+		PatchPtr			mPatch;		// non-retained runtime state
 
 		BankPatchState(int patchNumber, std::string overrideName, PatchState loadState, PatchState unloadState, PatchState stateOverride, PatchSyncState patchSyncState, SecondFunctionOperation sfOp) :
 			mPatchNumber(patchNumber),
@@ -148,7 +150,8 @@ private:
 		{
 		}
 	};
-	using PatchVect = std::vector<BankPatchState*>;
+	using BankPatchStatePtr = std::shared_ptr<BankPatchState>;
+	using PatchVect = std::vector<BankPatchStatePtr>;
 
 	struct DualPatchVect
 	{
@@ -181,11 +184,6 @@ private:
 		}
 	};
 
-	struct DeletePatchMaps
-	{
-		void operator()(const std::pair<int, DualPatchVect> & pr);
-	};
-
 	const int					mNumber;	// unique across all patchBanks
 	const std::string			mName;
 	// a switch in a bank can have multiple patches
@@ -195,12 +193,14 @@ private:
 	PatchMaps					mPatches;	// switchNumber is key
 
 	// support for exclusive switch groups
-	using Groups = std::list<GroupSwitches*>;					// contains all of the GroupSwitches for the current bank
-	using SwitchToGroupMap = std::map<int, GroupSwitches *>;	// weak ref to GroupSwitches - lookup group from switch number - many to one
+	using Groups = std::list<GroupSwitchesPtr>;					// contains all of the GroupSwitches for the current bank
+	using SwitchToGroupMap = std::map<int, GroupSwitchesPtr>;	// lookup group from switch number - many to one
 
-	Groups				mGroups;					// this is just a store - for freeing GroupSwitches
+	Groups				mGroups;
 	SwitchToGroupMap	mGroupFromSwitch;
 	bool				mLoaded;
 };
+
+using PatchBankPtr = std::shared_ptr<PatchBank>;
 
 #endif // PatchBank_h__

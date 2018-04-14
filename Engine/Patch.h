@@ -27,6 +27,7 @@
 
 #include <string>
 #include <set>
+#include <memory>
 #include "ExpressionPedals.h"
 
 class IMainDisplay;
@@ -94,6 +95,7 @@ private:
 	std::set<int>			mSwitchNumbers;
 };
 
+using PatchPtr = std::shared_ptr<Patch>;
 extern ExpressionPedals * gActivePatchPedals;
 
 #endif // Patch_h__
