@@ -84,12 +84,6 @@ EngineLoader::EngineLoader(ITrollApplication * app,
 		adcEnable = adc_default;
 }
 
-EngineLoader::~EngineLoader()
-{
-	if (mAxeFxManager)
-		mAxeFxManager->Release();
-}
-
 MidiControlEnginePtr
 EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 {
@@ -318,10 +312,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 				{
 					mMidiInPortToDeviceIdxMap[port] = inDeviceIdx;
 					if (mAxeFxManager && port == mAxeSyncPort && midiIn)
-					{
-						if (midiIn->Subscribe(mAxeFxManager))
-							mAxeFxManager->AddRef();
-					}
+						mAxeFxManager->SubscribeToMidiIn(midiIn);
 				}
 			}
 		}
@@ -1622,8 +1613,7 @@ EngineLoader::LoadDeviceChannelMap(TiXmlElement * pElem)
 			if (!mAxeFxManager)
 			{
 				const int axeCh = ::atoi(ch.c_str()) - 1;
-				mAxeFxManager = new AxeFxManager(mMainDisplay, mSwitchDisplay, mTraceDisplay, mApp->ApplicationDirectory(), axeCh, axeModel);
-				mAxeFxManager->AddRef();
+				mAxeFxManager = std::make_shared<AxeFxManager>(mMainDisplay, mSwitchDisplay, mTraceDisplay, mApp->ApplicationDirectory(), axeCh, axeModel);
 				mAxeSyncPort = -1 == port ? 1 : port;
 			}
 			else if (mTraceDisplay)

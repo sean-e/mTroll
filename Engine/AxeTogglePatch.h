@@ -36,7 +36,7 @@
 //
 class AxeTogglePatch : public TogglePatch
 {
-	AxeFxManager	* mAx;
+	AxeFxManagerPtr	mAx;
 	bool			mHasDisplayText;
 	std::string		mActiveText;
 	std::string		mInactiveText;
@@ -47,16 +47,12 @@ public:
 				IMidiOut * midiOut, 
 				PatchCommands & cmdsA, 
 				PatchCommands & cmdsB,
-				AxeFxManager * axeMgr) :
+				AxeFxManagerPtr axeMgr) :
 		TogglePatch(number, name, midiOut, cmdsA, cmdsB),
 		mAx(axeMgr)
 	{
-		if (mAx)
-		{
-			mAx->AddRef();
-			if (mAx->GetModel() >= Axe2)
-				mPatchSupportsDisabledState = true;
-		}
+		if (mAx && mAx->GetModel() >= Axe2)
+			mPatchSupportsDisabledState = true;
 
 		std::string baseEffectName(name);
 		std::string xy(" x/y");
@@ -84,11 +80,7 @@ public:
 		}
 	}
 
-	virtual ~AxeTogglePatch()
-	{
-		if (mAx)
-			mAx->Release();
-	}
+	virtual ~AxeTogglePatch() = default;
 
 	virtual const std::string & GetDisplayText(bool checkState /*= false*/) const override
 	{ 
@@ -122,10 +114,7 @@ public:
 	void ClearAxeMgr() 
 	{
 		if (mAx)
-		{
-			mAx->Release();
 			mAx = nullptr;
-		}
 	}
 
 };

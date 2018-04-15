@@ -39,14 +39,19 @@ class ISwitchDisplay;
 class Patch;
 class IMidiOut;
 class QTimer;
+class AxeFxManager;
 
 using PatchPtr = std::shared_ptr<Patch>;
+using AxeFxManagerPtr = std::shared_ptr<AxeFxManager>;
 
 // AxeFxManager
 // ----------------------------------------------------------------------------
 // Manages extended Axe-Fx support
 //
-class AxeFxManager : public QObject, public IMidiInSubscriber
+class AxeFxManager : 
+	public QObject, 
+	public IMidiInSubscriber, 
+	public std::enable_shared_from_this<AxeFxManager>
 {
 	Q_OBJECT;
 	friend class StartQueryTimer;
@@ -59,10 +64,8 @@ public:
 	virtual void ReceivedSysex(const byte * bytes, int len) override;
 	virtual void Closed(IMidiIn * midIn) override;
 
-	void AddRef();
-	void Release();
-
 	void CompleteInit(IMidiOut * midiOut);
+	void SubscribeToMidiIn(IMidiIn * midiIn);
 	void SetTempoPatch(PatchPtr patch);
 	void SetScenePatch(int scene, PatchPtr patch);
 	void SetLooperPatch(PatchPtr patch);
@@ -137,6 +140,7 @@ private:
 	int				mCurrentScene;
 	int				mCurrentAxePreset;
 	std::string		mCurrentAxePresetName;
+	AxeFxManagerPtr	mMidiInReferenceToThis;
 };
 
 int GetDefaultAxeCc(const std::string &effectName, ITraceDisplay * trc);

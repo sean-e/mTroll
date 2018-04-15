@@ -34,19 +34,13 @@ class AxeFxProgramChange : public MidiCommandString
 public:
 	AxeFxProgramChange(IMidiOut * midiOut, 
 					  Bytes & midiString,
-					  AxeFxManager * mgr) :
+					  AxeFxManagerPtr mgr) :
 		MidiCommandString(midiOut, midiString),
 		mAxeMgr(mgr)
 	{
-		if (mAxeMgr)
-			mAxeMgr->AddRef();
 	}
 
-	~AxeFxProgramChange()
-	{
-		if (mAxeMgr)
-			mAxeMgr->Release();
-	}
+	~AxeFxProgramChange() = default;
 
 	void Exec() override
 	{
@@ -59,7 +53,7 @@ private:
 	AxeFxProgramChange();
 
 private:
-	AxeFxManager * mAxeMgr;
+	AxeFxManagerPtr		mAxeMgr;
 };
 
 #endif // AxeFxProgramChange_h__

@@ -42,13 +42,14 @@ class IMonome40h;
 class AxeFxManager;
 
 using MidiControlEnginePtr = std::shared_ptr<MidiControlEngine>;
+using AxeFxManagerPtr = std::shared_ptr<AxeFxManager>;
 
 
 class EngineLoader
 {
 public:
 	EngineLoader(ITrollApplication * app, IMidiOutGenerator * midiOutGenerator, IMidiInGenerator * midiInGenerator, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay, ITraceDisplay * traceDisplay);
-	~EngineLoader();
+	~EngineLoader() = default;
 
 	MidiControlEnginePtr	CreateEngine(const std::string & engineSettingsFile);
 	void					InitMonome(IMonome40h * monome, 
@@ -76,7 +77,7 @@ private:
 	IMidiInGenerator *		mMidiInGenerator;
 	ISwitchDisplay *		mSwitchDisplay;
 	ITraceDisplay *			mTraceDisplay;
-	AxeFxManager *			mAxeFxManager;
+	AxeFxManagerPtr			mAxeFxManager;
 	std::map<std::string, std::string> mDeviceChannels; // outboard device channels
 	std::map<std::string, int> mDevicePorts; // computer midi ports used to address outboard devices
 	int						mAxeSyncPort;

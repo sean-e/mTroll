@@ -111,23 +111,6 @@ AxeFxManager::~AxeFxManager()
 }
 
 void
-AxeFxManager::AddRef()
-{
-	// this should only happen on the UI thread, otherwise mRefCnt needs 
-	// to be thread protected
-	++mRefCnt;
-}
-
-void
-AxeFxManager::Release()
-{
-	// this should only happen on the UI thread, otherwise mRefCnt needs 
-	// to be thread protected
-	if (!--mRefCnt)
-		delete this;
-}
-
-void
 AxeFxManager::SetTempoPatch(PatchPtr patch)
 {
 	if (mTempoPatch && mTrace)
@@ -242,10 +225,17 @@ AxeFxManager::CompleteInit(IMidiOut * midiOut)
 }
 
 void
+AxeFxManager::SubscribeToMidiIn(IMidiIn * midiIn)
+{
+	mMidiInReferenceToThis = shared_from_this();
+	midiIn->Subscribe(this);
+}
+
+void
 AxeFxManager::Closed(IMidiIn * midIn)
 {
 	midIn->Unsubscribe(this);
-	Release();
+	mMidiInReferenceToThis = nullptr;
 }
 
 void
@@ -637,24 +627,22 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 	// post an event to kick off the next query
 	class CreateSendNextQueryTimer : public QEvent
 	{
-		AxeFxManager *mMgr;
+		AxeFxManagerPtr mMgr;
 
 	public:
-		CreateSendNextQueryTimer(AxeFxManager * mgr) : 
+		CreateSendNextQueryTimer(AxeFxManagerPtr mgr) :
 		  QEvent(User), 
 		  mMgr(mgr)
 		{
-			mMgr->AddRef();
 		}
 
 		~CreateSendNextQueryTimer()
 		{
 			mMgr->RequestNextParamValue();
-			mMgr->Release();
 		}
 	};
 
-	QCoreApplication::postEvent(this, new CreateSendNextQueryTimer(this));
+	QCoreApplication::postEvent(this, new CreateSendNextQueryTimer(shared_from_this()));
 }
 
 void
@@ -740,24 +728,22 @@ AxeFxManager::KillResponseTimer()
 
 	class StopQueryTimer : public QEvent
 	{
-		AxeFxManager *mMgr;
+		AxeFxManagerPtr mMgr;
 
 	public:
-		StopQueryTimer(AxeFxManager * mgr) : 
+		StopQueryTimer(AxeFxManagerPtr mgr) :
 		  QEvent(User), 
 		  mMgr(mgr)
 		{
-			mMgr->AddRef();
 		}
 
 		~StopQueryTimer()
 		{
 			mMgr->mQueryTimer->stop();
-			mMgr->Release();
 		}
 	};
 
-	QCoreApplication::postEvent(this, new StopQueryTimer(this));
+	QCoreApplication::postEvent(this, new StopQueryTimer(shared_from_this()));
 }
 
 // this SyncFromAxe helper is not currently being used
@@ -810,20 +796,18 @@ AxeFxManager::QueryTimedOut()
 
 class StartQueryTimer : public QEvent
 {
-	AxeFxManager *mMgr;
+	AxeFxManagerPtr mMgr;
 
 public:
-	StartQueryTimer(AxeFxManager * mgr) : 
+	StartQueryTimer(AxeFxManagerPtr mgr) :
 	  QEvent(User), 
 	  mMgr(mgr)
 	{
-		mMgr->AddRef();
 	}
 
 	~StartQueryTimer()
 	{
 		mMgr->mQueryTimer->start();
-		mMgr->Release();
 	}
 };
 
@@ -884,46 +868,42 @@ AxeFxManager::DelayedNameSyncFromAxe(bool force /*= false*/)
 	{
 		class StopDelayedSyncTimer : public QEvent
 		{
-			AxeFxManager *mMgr;
+			AxeFxManagerPtr mMgr;
 
 		public:
-			StopDelayedSyncTimer(AxeFxManager * mgr) : 
+			StopDelayedSyncTimer(AxeFxManagerPtr mgr) :
 			  QEvent(User), 
 				  mMgr(mgr)
 			{
-				mMgr->AddRef();
 			}
 
 			~StopDelayedSyncTimer()
 			{
 				mMgr->mDelayedNameSyncTimer->stop();
-				mMgr->Release();
 			}
 		};
 
-		QCoreApplication::postEvent(this, new StopDelayedSyncTimer(this));
+		QCoreApplication::postEvent(this, new StopDelayedSyncTimer(shared_from_this()));
 	}
 
 	class StartDelayedSyncTimer : public QEvent
 	{
-		AxeFxManager *mMgr;
+		AxeFxManagerPtr mMgr;
 
 	public:
-		StartDelayedSyncTimer(AxeFxManager * mgr) : 
+		StartDelayedSyncTimer(AxeFxManagerPtr mgr) :
 		  QEvent(User), 
 		  mMgr(mgr)
 		{
-			mMgr->AddRef();
 		}
 
 		~StartDelayedSyncTimer()
 		{
 			mMgr->mDelayedNameSyncTimer->start();
-			mMgr->Release();
 		}
 	};
 
-	QCoreApplication::postEvent(this, new StartDelayedSyncTimer(this));
+	QCoreApplication::postEvent(this, new StartDelayedSyncTimer(shared_from_this()));
 }
 
 void
@@ -936,46 +916,42 @@ AxeFxManager::DelayedEffectsSyncFromAxe()
 	{
 		class StopDelayedSyncTimer : public QEvent
 		{
-			AxeFxManager *mMgr;
+			AxeFxManagerPtr mMgr;
 
 		public:
-			StopDelayedSyncTimer(AxeFxManager * mgr) : 
+			StopDelayedSyncTimer(AxeFxManagerPtr mgr) :
 			  QEvent(User), 
 				  mMgr(mgr)
 			{
-				mMgr->AddRef();
 			}
 
 			~StopDelayedSyncTimer()
 			{
 				mMgr->mDelayedEffectsSyncTimer->stop();
-				mMgr->Release();
 			}
 		};
 
-		QCoreApplication::postEvent(this, new StopDelayedSyncTimer(this));
+		QCoreApplication::postEvent(this, new StopDelayedSyncTimer(shared_from_this()));
 	}
 
 	class StartDelayedSyncTimer : public QEvent
 	{
-		AxeFxManager *mMgr;
+		AxeFxManagerPtr mMgr;
 
 	public:
-		StartDelayedSyncTimer(AxeFxManager * mgr) : 
+		StartDelayedSyncTimer(AxeFxManagerPtr mgr) :
 		  QEvent(User), 
 		  mMgr(mgr)
 		{
-			mMgr->AddRef();
 		}
 
 		~StartDelayedSyncTimer()
 		{
 			mMgr->mDelayedEffectsSyncTimer->start();
-			mMgr->Release();
 		}
 	};
 
-	QCoreApplication::postEvent(this, new StartDelayedSyncTimer(this));
+	QCoreApplication::postEvent(this, new StartDelayedSyncTimer(shared_from_this()));
 }
 
 // this SyncFromAxe helper is not currently being used
@@ -1021,7 +997,7 @@ AxeFxManager::RequestNextParamValue()
 	bb[8] = next->mSysexBypassParameterIdLs;
 	bb[9] = next->mSysexBypassParameterIdMs;
 
-	QCoreApplication::postEvent(this, new StartQueryTimer(this));
+	QCoreApplication::postEvent(this, new StartQueryTimer(shared_from_this()));
 
 	mMidiOut->MidiOut(bb);
 }

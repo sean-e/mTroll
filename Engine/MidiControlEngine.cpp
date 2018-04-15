@@ -63,7 +63,7 @@ MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 									 ISwitchDisplay * switchDisplay, 
 									 ITraceDisplay * traceDisplay,
 									 IMidiOut * midiOut,
-									 AxeFxManager * axMgr,
+									 AxeFxManagerPtr axMgr,
 									 int incrementSwitchNumber,
 									 int decrementSwitchNumber,
 									 int modeSwitchNumber) :
@@ -91,8 +91,6 @@ MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 	mAxeMgr(axMgr),
 	mSwitchPressedEventTime(0)
 {
-	if (mAxeMgr)
-		mAxeMgr->AddRef();
 	mBanks.reserve(999);
 }
 
@@ -271,7 +269,6 @@ MidiControlEngine::Shutdown()
 	if (mAxeMgr)
 	{
 		mAxeMgr->Shutdown();
-		mAxeMgr->Release();
 		mAxeMgr = nullptr;
 	}
 }

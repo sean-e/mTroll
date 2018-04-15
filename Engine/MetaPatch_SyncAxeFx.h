@@ -32,19 +32,13 @@
 class MetaPatch_SyncAxeFx : public Patch
 {
 public:
-	MetaPatch_SyncAxeFx(AxeFxManager * axe, int number, const std::string & name) : 
+	MetaPatch_SyncAxeFx(AxeFxManagerPtr axe, int number, const std::string & name) :
 		Patch(number, name),
 		mAxe(axe)
 	{
-		if (mAxe)
-			mAxe->AddRef();
 	}
 
-	~MetaPatch_SyncAxeFx()
-	{
-		if (mAxe)
-			mAxe->Release();
-	}
+	~MetaPatch_SyncAxeFx() = default;
 
 	virtual std::string GetPatchTypeStr() const override {return "meta: syncAxeFx";}
 
@@ -58,7 +52,7 @@ public:
 	virtual void BankTransitionDeactivation() override {SwitchPressed(nullptr, nullptr);}
 
 private:
-	AxeFxManager	* mAxe;
+	AxeFxManagerPtr	mAxe;
 };
 
 #endif // MetaPatch_SyncAxeFx_h__
