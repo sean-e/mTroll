@@ -153,7 +153,7 @@ ControlUi::Unload()
 
 	if (mHardwareUi)
 	{
-		mHardwareUi->Unsubscribe(mEngine);
+		mHardwareUi->Unsubscribe(mEngine.get());
 		mHardwareUi->Unsubscribe(this);
 	}
 
@@ -163,7 +163,6 @@ ControlUi::Unload()
 	if (mEngine)
 	{
 		mEngine->Shutdown();
-		delete mEngine;
 		mEngine = nullptr;
 	}
 
@@ -239,7 +238,7 @@ ControlUi::Load(const std::string & uiSettingsFile,
 	if (mHardwareUi)
 	{
 		mHardwareUi->Subscribe(this);
-		mHardwareUi->Subscribe(mEngine);
+		mHardwareUi->Subscribe(mEngine.get());
 
 		bool anyMidiOutOpen = false;
 		for (auto & mMidiOut : mMidiOuts)
@@ -353,7 +352,13 @@ void
 ControlUi::LoadMidiSettings(const std::string & file, 
 							const bool adcOverrides[ExpressionPedals::PedalCount])
 {
-	delete mEngine;
+	if (mEngine)
+	{
+		_ASSERTE(!"unexpected engine instance");
+		mEngine->Shutdown();
+		mEngine = nullptr;
+	}
+
 	EngineLoader ldr(mApp, this, this, this, this, this);
 	mEngine = ldr.CreateEngine(file);
 	if (mEngine)
@@ -1212,7 +1217,7 @@ ControlUi::Reconnect()
 
 	if (mHardwareUi)
 	{
-		mHardwareUi->Unsubscribe(mEngine);
+		mHardwareUi->Unsubscribe(mEngine.get());
 		mHardwareUi->Unsubscribe(this);
 		for (int idx = 0; idx < kPorts; ++idx)
 			adcEnables[idx] = mHardwareUi->IsAdcEnabled(idx);
@@ -1228,7 +1233,7 @@ ControlUi::Reconnect()
 			mHardwareUi->EnableAdc(idx, adcEnables[idx]);
 
 		mHardwareUi->Subscribe(this);
-		mHardwareUi->Subscribe(mEngine);
+		mHardwareUi->Subscribe(mEngine.get());
 	}
 
 	QApplication::restoreOverrideCursor();

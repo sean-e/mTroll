@@ -90,7 +90,7 @@ EngineLoader::~EngineLoader()
 		mAxeFxManager->Release();
 }
 
-MidiControlEngine *
+MidiControlEnginePtr
 EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 {
 	TiXmlDocument doc(engineSettingsFile);
@@ -180,7 +180,7 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 	}
 	mEngine->CompleteInit(mAdcCalibration);
 
-	MidiControlEngine * createdEngine = mEngine;
+	MidiControlEnginePtr createdEngine = mEngine;
 	mEngine = nullptr;
 	return createdEngine;
 }
@@ -331,7 +331,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 	if (!mMidiOutPortToDeviceIdxMap.empty())
 		engOut = mMidiOutGenerator->GetMidiOut((*mMidiOutPortToDeviceIdxMap.begin()).second);
 
-	mEngine = new MidiControlEngine(mApp, mMainDisplay, mSwitchDisplay, mTraceDisplay, 
+	mEngine = std::make_shared<MidiControlEngine>(mApp, mMainDisplay, mSwitchDisplay, mTraceDisplay,
 		engOut, mAxeFxManager, incrementSwitch, decrementSwitch, modeSwitch);
 	mEngine->SetPowerup(powerupBank, powerupPatch, powerupTimeout);
 	mEngine->FilterRedundantProgChg(filterPC ? true : false);
@@ -506,20 +506,20 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			}
 
 			if (tmp == "ResetBankPatches")
-				 mEngine->AddPatch(std::make_shared<MetaPatch_ResetBankPatches>(mEngine, patchNumber, patchName));
+				 mEngine->AddPatch(std::make_shared<MetaPatch_ResetBankPatches>(mEngine.get(), patchNumber, patchName));
 			else if (tmp == "SyncAxeFx")
 				 mEngine->AddPatch(std::make_shared<MetaPatch_SyncAxeFx>(mAxeFxManager, patchNumber, patchName));
 			else if (tmp == "LoadNextBank")
-				mEngine->AddPatch(std::make_shared<MetaPatch_LoadNextBank>(mEngine, patchNumber, patchName));
+				mEngine->AddPatch(std::make_shared<MetaPatch_LoadNextBank>(mEngine.get(), patchNumber, patchName));
 			else if (tmp == "LoadPreviousBank")
-				mEngine->AddPatch(std::make_shared<MetaPatch_LoadPreviousBank>(mEngine, patchNumber, patchName));
+				mEngine->AddPatch(std::make_shared<MetaPatch_LoadPreviousBank>(mEngine.get(), patchNumber, patchName));
 			else if (tmp == "LoadBank")
 			{
 				int bankNumber = -1;
 				pElem->QueryIntAttribute("bankNumber", &bankNumber);
 				if (-1 != bankNumber)
 				{
-					mEngine->AddPatch(std::make_shared<MetaPatch_LoadBank>(mEngine, patchNumber, patchName, bankNumber));
+					mEngine->AddPatch(std::make_shared<MetaPatch_LoadBank>(mEngine.get(), patchNumber, patchName, bankNumber));
 				}
 				else if (mTraceDisplay)
 				{
@@ -534,7 +534,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				pElem->QueryIntAttribute("activeSwitch", &activeSwitch);
 				if (-1 != activeSwitch)
 				{
-					mEngine->AddPatch(std::make_shared<MetaPatch_ResetExclusiveGroup>(mEngine, patchNumber, patchName, activeSwitch));
+					mEngine->AddPatch(std::make_shared<MetaPatch_ResetExclusiveGroup>(mEngine.get(), patchNumber, patchName, activeSwitch));
 				}
 				else if (mTraceDisplay)
 				{
@@ -544,11 +544,11 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				}
 			}
 			else if (tmp == "BankHistoryBackward")
-				 mEngine->AddPatch(std::make_shared<MetaPatch_BankHistoryBackward>(mEngine, patchNumber, patchName));
+				 mEngine->AddPatch(std::make_shared<MetaPatch_BankHistoryBackward>(mEngine.get(), patchNumber, patchName));
 			else if (tmp == "BankHistoryForward")
-				 mEngine->AddPatch(std::make_shared<MetaPatch_BankHistoryForward>(mEngine, patchNumber, patchName));
+				 mEngine->AddPatch(std::make_shared<MetaPatch_BankHistoryForward>(mEngine.get(), patchNumber, patchName));
 			else if (tmp == "BankHistoryRecall")
-				 mEngine->AddPatch(std::make_shared<MetaPatch_BankHistoryRecall>(mEngine, patchNumber, patchName));
+				 mEngine->AddPatch(std::make_shared<MetaPatch_BankHistoryRecall>(mEngine.get(), patchNumber, patchName));
 			else
 			{
 				if (mTraceDisplay)
@@ -673,9 +673,9 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				if (-1 < pedalNumber)
 				{
 					if (group == "B")
-						cmds2.push_back(std::make_shared<RefirePedalCommand>(mEngine, pedalNumber));
+						cmds2.push_back(std::make_shared<RefirePedalCommand>(mEngine.get(), pedalNumber));
 					else
-						cmds.push_back(std::make_shared<RefirePedalCommand>(mEngine, pedalNumber));
+						cmds.push_back(std::make_shared<RefirePedalCommand>(mEngine.get(), pedalNumber));
 				}
 				else if (mTraceDisplay)
 				{
@@ -1170,7 +1170,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						if (!isAutoGendPatchNumber)
 						{
 							gendPatchName = "Reset bank patches";
-							mEngine->AddPatch(std::make_shared<MetaPatch_ResetBankPatches>(mEngine, patchNumber, gendPatchName));
+							mEngine->AddPatch(std::make_shared<MetaPatch_ResetBankPatches>(mEngine.get(), patchNumber, gendPatchName));
 						}
 						else
 							patchNumber = ReservedPatchNumbers::kResetBankPatches;
@@ -1190,7 +1190,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						if (!isAutoGendPatchNumber)
 						{
 							gendPatchName = "[next]";
-							mEngine->AddPatch(std::make_shared<MetaPatch_LoadNextBank>(mEngine, patchNumber, gendPatchName));
+							mEngine->AddPatch(std::make_shared<MetaPatch_LoadNextBank>(mEngine.get(), patchNumber, gendPatchName));
 						}
 						else
 							patchNumber = ReservedPatchNumbers::kLoadNextBank;
@@ -1200,7 +1200,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						if (!isAutoGendPatchNumber)
 						{
 							gendPatchName = "[previous]";
-							mEngine->AddPatch(std::make_shared<MetaPatch_LoadPreviousBank>(mEngine, patchNumber, gendPatchName));
+							mEngine->AddPatch(std::make_shared<MetaPatch_LoadPreviousBank>(mEngine.get(), patchNumber, gendPatchName));
 						}
 						else
 							patchNumber = ReservedPatchNumbers::kLoadPrevBank;
@@ -1210,7 +1210,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						if (!isAutoGendPatchNumber)
 						{
 							gendPatchName = "Nav next";
-							mEngine->AddPatch(std::make_shared<MetaPatch_BankNavNext>(mEngine, patchNumber, gendPatchName));
+							mEngine->AddPatch(std::make_shared<MetaPatch_BankNavNext>(mEngine.get(), patchNumber, gendPatchName));
 						}
 						else
 							patchNumber = ReservedPatchNumbers::kBankNavNext;
@@ -1220,7 +1220,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						if (!isAutoGendPatchNumber)
 						{
 							gendPatchName = "Nav previous";
-							mEngine->AddPatch(std::make_shared<MetaPatch_BankNavPrevious>(mEngine, patchNumber, gendPatchName));
+							mEngine->AddPatch(std::make_shared<MetaPatch_BankNavPrevious>(mEngine.get(), patchNumber, gendPatchName));
 						}
 						else
 							patchNumber = ReservedPatchNumbers::kBankNavPrev;
@@ -1230,7 +1230,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						if (!isAutoGendPatchNumber)
 						{
 							gendPatchName = "[back]";
-							mEngine->AddPatch(std::make_shared<MetaPatch_BankHistoryBackward>(mEngine, patchNumber, gendPatchName));
+							mEngine->AddPatch(std::make_shared<MetaPatch_BankHistoryBackward>(mEngine.get(), patchNumber, gendPatchName));
 						}
 						else
 							patchNumber = ReservedPatchNumbers::kBankHistoryBackward;
@@ -1240,7 +1240,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						if (!isAutoGendPatchNumber)
 						{
 							gendPatchName = "[forward]";
-							mEngine->AddPatch(std::make_shared<MetaPatch_BankHistoryForward>(mEngine, patchNumber, gendPatchName));
+							mEngine->AddPatch(std::make_shared<MetaPatch_BankHistoryForward>(mEngine.get(), patchNumber, gendPatchName));
 						}
 						else
 							patchNumber = ReservedPatchNumbers::kBankHistoryForward;
@@ -1250,7 +1250,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						if (!isAutoGendPatchNumber)
 						{
 							gendPatchName = "[recall]";
-							mEngine->AddPatch(std::make_shared<MetaPatch_BankHistoryRecall>(mEngine, patchNumber, gendPatchName));
+							mEngine->AddPatch(std::make_shared<MetaPatch_BankHistoryRecall>(mEngine.get(), patchNumber, gendPatchName));
 						}
 						else
 							patchNumber = ReservedPatchNumbers::kBankHistoryRecall;
@@ -1263,7 +1263,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						{
 							if (nameOverride.empty())
 								nameOverride = "meta load bank";
-							mEngine->AddPatch(std::make_shared<MetaPatch_LoadBank>(mEngine, patchNumber, nameOverride, bankNum));
+							mEngine->AddPatch(std::make_shared<MetaPatch_LoadBank>(mEngine.get(), patchNumber, nameOverride, bankNum));
 							nameOverride.clear();
 						}
 						else
@@ -1285,7 +1285,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						{
 							if (nameOverride.empty())
 								nameOverride = "Reset exclusive group";
-							mEngine->AddPatch(std::make_shared<MetaPatch_ResetExclusiveGroup>(mEngine, patchNumber, nameOverride, activeSwitch));
+							mEngine->AddPatch(std::make_shared<MetaPatch_ResetExclusiveGroup>(mEngine.get(), patchNumber, nameOverride, activeSwitch));
 							nameOverride.clear();
 						}
 						else 

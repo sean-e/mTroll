@@ -319,7 +319,7 @@ private:
 	QWidget						* mParent;
 	ITrollApplication			* mApp;
 	IMonome40h					* mHardwareUi;
-	MidiControlEngine			* mEngine;
+	MidiControlEnginePtr		mEngine;
 	QPlainTextEdit				* mMainDisplay;
 	QPlainTextEdit				* mTraceDisplay;
 	std::map<int, SwitchLed*>	mLeds;

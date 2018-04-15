@@ -193,6 +193,7 @@ private:
 	std::map<int, int>		mBankLoadSwitchNumbers;
 };
 
+using MidiControlEnginePtr = std::shared_ptr<MidiControlEngine>;
 
 // reserved patch numbers
 // patch number reservations

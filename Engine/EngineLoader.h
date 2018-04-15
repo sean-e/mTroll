@@ -27,6 +27,7 @@
 
 #include <string>
 #include <map>
+#include <memory>
 #include "ExpressionPedals.h"
 
 class MidiControlEngine;
@@ -40,6 +41,8 @@ class TiXmlElement;
 class IMonome40h;
 class AxeFxManager;
 
+using MidiControlEnginePtr = std::shared_ptr<MidiControlEngine>;
+
 
 class EngineLoader
 {
@@ -47,7 +50,7 @@ public:
 	EngineLoader(ITrollApplication * app, IMidiOutGenerator * midiOutGenerator, IMidiInGenerator * midiInGenerator, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay, ITraceDisplay * traceDisplay);
 	~EngineLoader();
 
-	MidiControlEngine *		CreateEngine(const std::string & engineSettingsFile);
+	MidiControlEnginePtr	CreateEngine(const std::string & engineSettingsFile);
 	void					InitMonome(IMonome40h * monome, 
 										const bool adcOverrides[ExpressionPedals::PedalCount],
 										bool userAdcSettings[ExpressionPedals::PedalCount]);
@@ -66,7 +69,7 @@ private:
 	AdcEnableState			mAdcEnables[ExpressionPedals::PedalCount];
 	PedalCalibration		mAdcCalibration[ExpressionPedals::PedalCount];
 
-	MidiControlEngine *		mEngine;
+	MidiControlEnginePtr	mEngine;
 	ITrollApplication *		mApp;
 	IMainDisplay *			mMainDisplay;
 	IMidiOutGenerator *		mMidiOutGenerator;
