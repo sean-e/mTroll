@@ -37,7 +37,7 @@ class NormalPatch : public TwoStatePatch
 public:
 	NormalPatch(int number, 
 				const std::string & name, 
-				IMidiOut * midiOut, 
+				IMidiOutPtr midiOut, 
 				PatchCommands & cmdsA, 
 				PatchCommands & cmdsB) :
 		TwoStatePatch(number, name, midiOut, cmdsA, cmdsB, psAllow)

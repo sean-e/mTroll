@@ -22,6 +22,7 @@
  * Contact Sean: "fester" at the domain of the original project site
  */
 
+#include <atomic>
 #include "..\midi\WinMidiOut.h"
 #include "..\Engine\ITraceDisplay.h"
 #include "..\Engine\ISwitchDisplay.h"
@@ -31,6 +32,9 @@
 
 static CString GetMidiErrorText(MMRESULT resultCode);
 static WinMidiOut * sOutOnTimer = nullptr;
+#ifdef ITEM_COUNTING
+std::atomic<int> gWinMidiOutCnt = 0;
+#endif
 
 
 WinMidiOut::WinMidiOut(ITraceDisplay * trace) : 
@@ -45,6 +49,10 @@ WinMidiOut::WinMidiOut(ITraceDisplay * trace) :
 	mTimerId(0),
 	mDeviceIdx(0)
 {
+#ifdef ITEM_COUNTING
+	++gWinMidiOutCnt;
+#endif
+
 	for (auto & midiHdr : mMidiHdrs)
 		ZeroMemory(&midiHdr, sizeof(MIDIHDR));
 
@@ -62,6 +70,10 @@ WinMidiOut::~WinMidiOut()
 	}
 
 	CloseMidiOut();
+
+#ifdef ITEM_COUNTING
+	--gWinMidiOutCnt;
+#endif
 }
 
 // IMidiOut

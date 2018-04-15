@@ -38,7 +38,7 @@ class PersistentPedalOverridePatch : public TogglePatch
 public:
 	PersistentPedalOverridePatch(int number,
 		const std::string & name,
-		IMidiOut * midiOut,
+		IMidiOutPtr midiOut,
 		PatchCommands & cmdsA,
 		PatchCommands & cmdsB) :
 		TogglePatch(number, name, midiOut, cmdsA, cmdsB)

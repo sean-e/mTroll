@@ -22,6 +22,7 @@
  * Contact Sean: "fester" at the domain of the original project site
  */
 
+#include <atomic>
 #include "WinMidiIn.h"
 #include "..\Engine\IMidiInSubscriber.h"
 #include "..\Engine\ITraceDisplay.h"
@@ -32,6 +33,9 @@
 #pragma comment(lib, "winmm.lib")
 
 static CString GetMidiErrorText(MMRESULT resultCode);
+#ifdef ITEM_COUNTING
+std::atomic<int> gWinMidiInCnt = 0;
+#endif
 
 // http://home.roadrunner.com/~jgglatt/tech/lowmidi.htm
 // http://msdn.microsoft.com/en-us/library/dd798458%28v=VS.85%29.aspx
@@ -46,6 +50,10 @@ WinMidiIn::WinMidiIn(ITraceDisplay * trace) :
 	mThreadState(tsNotStarted),
 	mCurMidiHdrIdx(0)
 {
+#ifdef ITEM_COUNTING
+	++gWinMidiInCnt;
+#endif
+
 	for (auto & midiHdr : mMidiHdrs)
 		ZeroMemory(&midiHdr, sizeof(MIDIHDR));
 	::InitializeCriticalSection(&mCs);
@@ -58,6 +66,10 @@ WinMidiIn::~WinMidiIn()
 	if (mDoneEvent && mDoneEvent != INVALID_HANDLE_VALUE)
 		::CloseHandle(mDoneEvent);
 	::DeleteCriticalSection(&mCs);
+
+#ifdef ITEM_COUNTING
+	--gWinMidiInCnt;
+#endif
 }
 
 // IMidiIn
@@ -270,11 +282,8 @@ void
 WinMidiIn::CloseMidiIn()
 {
 	ReleaseMidiIn();
-	for (MidiInSubscribers::const_iterator it = mInputSubscribers.begin();
-		it != mInputSubscribers.end(); ++it)
-	{
-		(*it)->Closed(this);
-	}
+	for (auto & curItem : mInputSubscribers)
+		curItem->Closed(shared_from_this());
 	mInputSubscribers.clear();
 }
 
@@ -319,14 +328,13 @@ WinMidiIn::ReportError(LPCTSTR msg,
 }
 
 bool
-WinMidiIn::Subscribe(IMidiInSubscriber* sub)
+WinMidiIn::Subscribe(IMidiInSubscriberPtr sub)
 {
 	if (mThreadState != tsRunning)
 	{
-		for (MidiInSubscribers::const_iterator it = mInputSubscribers.begin();
-			it != mInputSubscribers.end(); ++it)
+		for (auto & inputSubscriber : mInputSubscribers)
 		{
-			if (*it == sub)
+			if (inputSubscriber == sub)
 				return false;
 		}
 
@@ -341,15 +349,14 @@ WinMidiIn::Subscribe(IMidiInSubscriber* sub)
 }
 
 void
-WinMidiIn::Unsubscribe(IMidiInSubscriber* sub)
+WinMidiIn::Unsubscribe(IMidiInSubscriberPtr sub)
 {
 	if (mThreadState != tsRunning)
 	{
-		for (MidiInSubscribers::iterator it = mInputSubscribers.begin();
-			it != mInputSubscribers.end(); ++it)
+		for (auto & inputSubscriber : mInputSubscribers)
 		{
-			if (*it == sub)
-				*it = nullptr;
+			if (inputSubscriber == sub)
+				inputSubscriber = nullptr;
 		}
 	}
 	else

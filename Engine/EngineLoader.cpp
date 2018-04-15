@@ -156,7 +156,7 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 		mMidiInGenerator->OpenMidiIns();
 	if (mAxeFxManager)
 	{
-		IMidiOut * midiOut = nullptr;
+		IMidiOutPtr midiOut;
 		std::string axeName("AxeFx");
 		std::map<std::string, int>::iterator it = mDevicePorts.find(axeName);
 		if (it == mDevicePorts.end())
@@ -307,7 +307,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 			// first successful port binding is last one attempted for that port
 			if (mMidiInPortToDeviceIdxMap.find(port) == mMidiInPortToDeviceIdxMap.end())
 			{
-				IMidiIn * midiIn = mMidiInGenerator->CreateMidiIn(inDeviceIdx);
+				IMidiInPtr midiIn = mMidiInGenerator->CreateMidiIn(inDeviceIdx);
 				if (midiIn)
 				{
 					mMidiInPortToDeviceIdxMap[port] = inDeviceIdx;
@@ -318,7 +318,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 		}
 	}
 
-	IMidiOut * engOut = nullptr; // for direct program change use
+	IMidiOutPtr engOut; // for direct program change use
 	if (!mMidiOutPortToDeviceIdxMap.empty())
 		engOut = mMidiOutGenerator->GetMidiOut((*mMidiOutPortToDeviceIdxMap.begin()).second);
 
@@ -341,7 +341,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 			defaultExprPedalMidiOutPortNumber = (*mMidiOutPortToDeviceIdxMap.begin()).second;
 		if (-1 == defaultExprPedalMidiOutPortNumber)
 			return false;
-		IMidiOut * globalExprPedalMidiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[defaultExprPedalMidiOutPortNumber]);
+		IMidiOutPtr globalExprPedalMidiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[defaultExprPedalMidiOutPortNumber]);
 		if (!globalExprPedalMidiOut)
 			return false;
 
@@ -617,7 +617,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		if (-1 == midiOutPortNumber)
 			midiOutPortNumber = 1;
 
-		IMidiOut * midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[midiOutPortNumber]);
+		IMidiOutPtr midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[midiOutPortNumber]);
 
 		PatchCommands cmds, cmds2;
 		std::vector<int> intList;
@@ -1464,7 +1464,7 @@ EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem,
 		childElem->QueryIntAttribute("port", &midiOutPortNumber);
 		if (-1 != midiOutPortNumber)
 		{
-			IMidiOut * midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[midiOutPortNumber]);
+			IMidiOutPtr midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[midiOutPortNumber]);
 			if (midiOut)
 				pedals.InitMidiOut(midiOut, exprInputNumber - 1, assignmentIndex - 1);
 		}

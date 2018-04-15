@@ -38,7 +38,7 @@ class TogglePatch : public TwoStatePatch
 public:
 	TogglePatch(int number, 
 				const std::string & name, 
-				IMidiOut * midiOut, 
+				IMidiOutPtr midiOut, 
 				PatchCommands & cmdsA, 
 				PatchCommands & cmdsB) :
 		TwoStatePatch(number, name, midiOut, cmdsA, cmdsB, psAllowOnlyActive)

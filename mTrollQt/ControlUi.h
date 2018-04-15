@@ -59,7 +59,7 @@ class ITrollApplication;
 class ControlUi : public QWidget, 
 						 IMainDisplay, 
 						 ISwitchDisplay, 
-						 ITraceDisplay,
+						 public ITraceDisplay,
 						 IMidiControlUi,
 						 IMidiOutGenerator,
 						 IMidiInGenerator,
@@ -89,17 +89,17 @@ public:
 			void GetPreferredSize(int & width, int & height) const {width = mPreferredWidth; height = mPreferredHeight;}
 
 public: // IMidiOutGenerator
-	virtual IMidiOut *	CreateMidiOut(unsigned int deviceIdx, int activityIndicatorIdx) override;
-	virtual IMidiOut *	GetMidiOut(unsigned int deviceIdx) override;
+	virtual IMidiOutPtr	CreateMidiOut(unsigned int deviceIdx, int activityIndicatorIdx) override;
+	virtual IMidiOutPtr	GetMidiOut(unsigned int deviceIdx) override;
 	virtual unsigned int GetMidiOutDeviceIndex(const std::string &deviceName) override;
 	virtual void		OpenMidiOuts() override;
 	virtual void		CloseMidiOuts() override;
 
 public: // IMidiInGenerator
-	virtual IMidiIn *	GetMidiIn(unsigned int deviceIdx) override;
+	virtual IMidiInPtr	GetMidiIn(unsigned int deviceIdx) override;
 	virtual void		CloseMidiIns() override;
 	virtual void		OpenMidiIns() override;
-	virtual IMidiIn *	CreateMidiIn(unsigned int deviceIdx) override;
+	virtual IMidiInPtr	CreateMidiIn(unsigned int deviceIdx) override;
 	virtual unsigned int GetMidiInDeviceIndex(const std::string &deviceName) override;
 
 public: // IMainDisplay
@@ -332,9 +332,9 @@ private:
 	QFont						mTraceFont;
 	int							mPreferredHeight, mPreferredWidth;
 	int							mMaxSwitchId;
-	using MidiOuts = std::map<unsigned int, IMidiOut*>;
+	using MidiOuts = std::map<unsigned int, IMidiOutPtr>;
 	MidiOuts					mMidiOuts;
-	using MidiIns = std::map<unsigned int, IMidiIn*>;
+	using MidiIns = std::map<unsigned int, IMidiInPtr>;
 	MidiIns						mMidiIns;
 	int							mLedIntensity;
 	byte						mLedIntensityDimmed;

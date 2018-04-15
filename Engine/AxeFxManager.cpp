@@ -29,6 +29,7 @@
 #include <QEvent>
 #include <QApplication>
 #include <QTimer>
+#include <atomic>
 #include "AxeFxManager.h"
 #include "ITraceDisplay.h"
 #include "HexStringUtils.h"
@@ -52,6 +53,9 @@ static void SynonymNormalization(std::string & name);
 
 static const int kDefaultNameSyncTimerInterval = 100;
 static const int kDefaultEffectsSyncTimerInterval = 20;
+#ifdef ITEM_COUNTING
+std::atomic<int> gAxeFxMgrCnt = 0;
+#endif
 
 AxeFxManager::AxeFxManager(IMainDisplay * mainDisp, 
 						   ISwitchDisplay * switchDisp,
@@ -74,6 +78,10 @@ AxeFxManager::AxeFxManager(IMainDisplay * mainDisp,
 	mCurrentAxePreset(-1),
 	mCurrentScene(-1)
 {
+#ifdef ITEM_COUNTING
+	++gAxeFxMgrCnt;
+#endif
+
 	::memset(mScenes, 0, sizeof(mScenes));
 	::memset(mLooperPatches, 0, sizeof(mLooperPatches));
 
@@ -108,6 +116,10 @@ AxeFxManager::AxeFxManager(IMainDisplay * mainDisp,
 AxeFxManager::~AxeFxManager()
 {
 	Shutdown();
+
+#ifdef ITEM_COUNTING
+	--gAxeFxMgrCnt;
+#endif
 }
 
 void
@@ -212,7 +224,7 @@ AxeFxManager::SetSyncPatch(PatchPtr patch, int bypassCc /*= -1*/)
 }
 
 void
-AxeFxManager::CompleteInit(IMidiOut * midiOut)
+AxeFxManager::CompleteInit(IMidiOutPtr midiOut)
 {
 	mMidiOut = midiOut;
 	if (!mMidiOut && mTrace)
@@ -225,17 +237,15 @@ AxeFxManager::CompleteInit(IMidiOut * midiOut)
 }
 
 void
-AxeFxManager::SubscribeToMidiIn(IMidiIn * midiIn)
+AxeFxManager::SubscribeToMidiIn(IMidiInPtr midiIn)
 {
-	mMidiInReferenceToThis = shared_from_this();
-	midiIn->Subscribe(this);
+	midiIn->Subscribe(shared_from_this());
 }
 
 void
-AxeFxManager::Closed(IMidiIn * midIn)
+AxeFxManager::Closed(IMidiInPtr midIn)
 {
-	midIn->Unsubscribe(this);
-	mMidiInReferenceToThis = nullptr;
+	midIn->Unsubscribe(shared_from_this());
 }
 
 void
@@ -642,7 +652,7 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 		}
 	};
 
-	QCoreApplication::postEvent(this, new CreateSendNextQueryTimer(shared_from_this()));
+	QCoreApplication::postEvent(this, new CreateSendNextQueryTimer(GetSharedThis()));
 }
 
 void
@@ -743,7 +753,7 @@ AxeFxManager::KillResponseTimer()
 		}
 	};
 
-	QCoreApplication::postEvent(this, new StopQueryTimer(shared_from_this()));
+	QCoreApplication::postEvent(this, new StopQueryTimer(GetSharedThis()));
 }
 
 // this SyncFromAxe helper is not currently being used
@@ -883,7 +893,7 @@ AxeFxManager::DelayedNameSyncFromAxe(bool force /*= false*/)
 			}
 		};
 
-		QCoreApplication::postEvent(this, new StopDelayedSyncTimer(shared_from_this()));
+		QCoreApplication::postEvent(this, new StopDelayedSyncTimer(GetSharedThis()));
 	}
 
 	class StartDelayedSyncTimer : public QEvent
@@ -903,7 +913,7 @@ AxeFxManager::DelayedNameSyncFromAxe(bool force /*= false*/)
 		}
 	};
 
-	QCoreApplication::postEvent(this, new StartDelayedSyncTimer(shared_from_this()));
+	QCoreApplication::postEvent(this, new StartDelayedSyncTimer(GetSharedThis()));
 }
 
 void
@@ -931,7 +941,7 @@ AxeFxManager::DelayedEffectsSyncFromAxe()
 			}
 		};
 
-		QCoreApplication::postEvent(this, new StopDelayedSyncTimer(shared_from_this()));
+		QCoreApplication::postEvent(this, new StopDelayedSyncTimer(GetSharedThis()));
 	}
 
 	class StartDelayedSyncTimer : public QEvent
@@ -951,7 +961,7 @@ AxeFxManager::DelayedEffectsSyncFromAxe()
 		}
 	};
 
-	QCoreApplication::postEvent(this, new StartDelayedSyncTimer(shared_from_this()));
+	QCoreApplication::postEvent(this, new StartDelayedSyncTimer(GetSharedThis()));
 }
 
 // this SyncFromAxe helper is not currently being used
@@ -997,7 +1007,7 @@ AxeFxManager::RequestNextParamValue()
 	bb[8] = next->mSysexBypassParameterIdLs;
 	bb[9] = next->mSysexBypassParameterIdMs;
 
-	QCoreApplication::postEvent(this, new StartQueryTimer(shared_from_this()));
+	QCoreApplication::postEvent(this, new StartQueryTimer(GetSharedThis()));
 
 	mMidiOut->MidiOut(bb);
 }

@@ -32,7 +32,7 @@
 class AxeFxProgramChange : public MidiCommandString
 {
 public:
-	AxeFxProgramChange(IMidiOut * midiOut, 
+	AxeFxProgramChange(IMidiOutPtr midiOut, 
 					  Bytes & midiString,
 					  AxeFxManagerPtr mgr) :
 		MidiCommandString(midiOut, midiString),

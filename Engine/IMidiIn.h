@@ -26,16 +26,19 @@
 #define IMidiIn_h__
 
 #include <string>
+#include <memory>
 
 using byte = unsigned char;
 class IMidiInSubscriber;
+
+using IMidiInSubscriberPtr = std::shared_ptr<IMidiInSubscriber>;
 
 
 // IMidiIn
 // ----------------------------------------------------------------------------
 // use to receive MIDI
 //
-class IMidiIn
+class IMidiIn : public std::enable_shared_from_this<IMidiIn>
 {
 public:
 	virtual ~IMidiIn() = default;
@@ -44,11 +47,13 @@ public:
 	virtual std::string GetMidiInDeviceName(unsigned int deviceIdx) const = 0;
 	virtual bool OpenMidiIn(unsigned int deviceIdx) = 0;
 	virtual bool IsMidiInOpen() const = 0;
-	virtual bool Subscribe(IMidiInSubscriber* sub) = 0;
-	virtual void Unsubscribe(IMidiInSubscriber* sub) = 0;
+	virtual bool Subscribe(IMidiInSubscriberPtr sub) = 0;
+	virtual void Unsubscribe(IMidiInSubscriberPtr sub) = 0;
 	virtual bool SuspendMidiIn() = 0;
 	virtual bool ResumeMidiIn() = 0;
 	virtual void CloseMidiIn() = 0;
 };
+
+using IMidiInPtr = std::shared_ptr<IMidiIn>;
 
 #endif // IMidiIn_h__

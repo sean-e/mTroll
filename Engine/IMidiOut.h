@@ -27,6 +27,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 using byte = unsigned char;
 using Bytes = std::vector<byte>;
@@ -37,7 +38,7 @@ class ISwitchDisplay;
 // ----------------------------------------------------------------------------
 // use to send MIDI
 //
-class IMidiOut
+class IMidiOut : public std::enable_shared_from_this<IMidiOut>
 {
 public:
 	virtual ~IMidiOut() = default;
@@ -56,5 +57,7 @@ public:
 	virtual bool ResumeMidiOut() = 0;
 	virtual void CloseMidiOut() = 0;
 };
+
+using IMidiOutPtr = std::shared_ptr<IMidiOut>;
 
 #endif // IMidiOut_h__

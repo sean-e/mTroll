@@ -45,8 +45,8 @@ public:
 	virtual std::string GetMidiInDeviceName(unsigned int deviceIdx) const override;
 	virtual bool OpenMidiIn(unsigned int deviceIdx) override;
 	virtual bool IsMidiInOpen() const override {return mMidiIn != nullptr;}
-	virtual bool Subscribe(IMidiInSubscriber* sub) override;
-	virtual void Unsubscribe(IMidiInSubscriber* sub) override;
+	virtual bool Subscribe(IMidiInSubscriberPtr sub) override;
+	virtual void Unsubscribe(IMidiInSubscriberPtr sub) override;
 	virtual bool SuspendMidiIn() override;
 	virtual bool ResumeMidiIn() override;
 	virtual void CloseMidiIn() override;
@@ -76,7 +76,7 @@ private:
 	HANDLE						mThread;
 	ThreadState					mThreadState;
 	DWORD						mThreadId;
-	using MidiInSubscribers = std::vector<IMidiInSubscriber*>;
+	using MidiInSubscribers = std::vector<IMidiInSubscriberPtr>;
 	MidiInSubscribers			mInputSubscribers;
 };
 

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2014 Sean Echevarria
+ * Copyright (C) 2007-2008,2014,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -28,6 +28,8 @@
 
 class IMidiOut;
 
+using IMidiOutPtr = std::shared_ptr<IMidiOut>;
+
 // IMidiOutGenerator
 // ----------------------------------------------------------------------------
 // use to create IMidiOut
@@ -35,8 +37,8 @@ class IMidiOut;
 class IMidiOutGenerator
 {
 public:
-	virtual IMidiOut *	CreateMidiOut(unsigned int deviceIdx, int activityIndicatorIdx) = 0;
-	virtual IMidiOut *	GetMidiOut(unsigned int deviceIdx) = 0;
+	virtual IMidiOutPtr	CreateMidiOut(unsigned int deviceIdx, int activityIndicatorIdx) = 0;
+	virtual IMidiOutPtr	GetMidiOut(unsigned int deviceIdx) = 0;
 	virtual unsigned int GetMidiOutDeviceIndex(const std::string &deviceName) = 0;
 	virtual void		OpenMidiOuts() = 0;
 	virtual void		CloseMidiOuts() = 0;

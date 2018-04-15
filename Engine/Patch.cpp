@@ -38,7 +38,7 @@ std::atomic<int> gPatchCnt = 0;
 
 Patch::Patch(int number, 
 			 const std::string & name,
-			 IMidiOut * midiOut /*= NULL*/) :
+			 IMidiOutPtr midiOut /*= NULL*/) :
 	mNumber(number),
 	mName(name),
 	mPatchIsActive(false),

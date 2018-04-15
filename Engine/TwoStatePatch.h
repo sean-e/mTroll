@@ -41,7 +41,7 @@ protected:
 
 	TwoStatePatch(int number, 
 				  const std::string & name, 
-				  IMidiOut * midiOut, 
+				  IMidiOutPtr midiOut, 
 				  PatchCommands & cmdsA, 
 				  PatchCommands & cmdsB, 
 				  PedalSupport pedalSupport) :

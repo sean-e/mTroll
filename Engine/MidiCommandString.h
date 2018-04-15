@@ -32,7 +32,7 @@
 class MidiCommandString : public IPatchCommand
 {
 public:
-	MidiCommandString(IMidiOut * midiOut, 
+	MidiCommandString(IMidiOutPtr midiOut, 
 					  Bytes & midiString) :
 		mMidiOut(midiOut)
 	{
@@ -63,7 +63,7 @@ private:
 	MidiCommandString();
 
 private:
-	IMidiOut	*mMidiOut;
+	IMidiOutPtr	mMidiOut;
 	Bytes	mCommandString;
 };
 

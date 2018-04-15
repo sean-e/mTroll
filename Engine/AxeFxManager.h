@@ -43,6 +43,7 @@ class AxeFxManager;
 
 using PatchPtr = std::shared_ptr<Patch>;
 using AxeFxManagerPtr = std::shared_ptr<AxeFxManager>;
+using IMidiOutPtr = std::shared_ptr<IMidiOut>;
 
 // AxeFxManager
 // ----------------------------------------------------------------------------
@@ -50,8 +51,7 @@ using AxeFxManagerPtr = std::shared_ptr<AxeFxManager>;
 //
 class AxeFxManager : 
 	public QObject, 
-	public IMidiInSubscriber, 
-	public std::enable_shared_from_this<AxeFxManager>
+	public IMidiInSubscriber
 {
 	Q_OBJECT;
 	friend class StartQueryTimer;
@@ -62,10 +62,10 @@ public:
 	// IMidiInSubscriber
 	virtual void ReceivedData(byte b1, byte b2, byte b3) override;
 	virtual void ReceivedSysex(const byte * bytes, int len) override;
-	virtual void Closed(IMidiIn * midIn) override;
+	virtual void Closed(IMidiInPtr midIn) override;
 
-	void CompleteInit(IMidiOut * midiOut);
-	void SubscribeToMidiIn(IMidiIn * midiIn);
+	void CompleteInit(IMidiOutPtr midiOut);
+	void SubscribeToMidiIn(IMidiInPtr midiIn);
 	void SetTempoPatch(PatchPtr patch);
 	void SetScenePatch(int scene, PatchPtr patch);
 	void SetLooperPatch(PatchPtr patch);
@@ -85,6 +85,13 @@ public slots:
 	void SyncEffectsFromAxe();
 
 private:
+	// basically an overload of IMidiInSubscriber::shared_from_this() but returning 
+	// AxeFxManagerPtr instead of IMidiInSubscriberPtr
+	AxeFxManagerPtr GetSharedThis()
+	{
+		return std::dynamic_pointer_cast<AxeFxManager>(IMidiInSubscriber::shared_from_this());
+	}
+
 	AxeEffectBlockInfo * IdentifyBlockInfoUsingBypassId(const byte * bytes);
 	AxeEffectBlockInfo * IdentifyBlockInfoUsingCc(const byte * bytes);
 	AxeEffectBlockInfo * IdentifyBlockInfoUsingEffectId(const byte * bytes);
@@ -119,7 +126,7 @@ private:
 	IMainDisplay	* mMainDisplay;
 	ITraceDisplay	* mTrace;
 	ISwitchDisplay	* mSwitchDisplay;
-	IMidiOut		* mMidiOut;
+	IMidiOutPtr		mMidiOut;
 	PatchPtr		mTempoPatch;
 	enum { AxeScenes = 8 };
 	PatchPtr		mScenes[AxeScenes];
@@ -140,7 +147,6 @@ private:
 	int				mCurrentScene;
 	int				mCurrentAxePreset;
 	std::string		mCurrentAxePresetName;
-	AxeFxManagerPtr	mMidiInReferenceToThis;
 };
 
 int GetDefaultAxeCc(const std::string &effectName, ITraceDisplay * trc);

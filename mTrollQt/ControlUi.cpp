@@ -97,22 +97,6 @@ ControlUi::~ControlUi()
 	Unload();
 }
 
-struct DeleteMidiOut
-{
-	void operator()(const std::pair<unsigned int, IMidiOut *> & pr)
-	{
-		delete pr.second;
-	}
-};
-
-struct DeleteMidiIn
-{
-	void operator()(const std::pair<unsigned int, IMidiIn *> & pr)
-	{
-		delete pr.second;
-	}
-};
-
 struct DeleteSwitchLed
 {
 	void operator()(const std::pair<int, ControlUi::SwitchLed *> & pr)
@@ -190,10 +174,7 @@ ControlUi::Unload()
 	QFont tmp;
 	mTraceFont = mSwitchButtonFont = tmp;
 
-	for_each(mMidiOuts.begin(), mMidiOuts.end(), DeleteMidiOut());
 	mMidiOuts.clear();
-
-	for_each(mMidiIns.begin(), mMidiIns.end(), DeleteMidiIn());
 	mMidiIns.clear();
 
 	for_each(mLeds.begin(), mLeds.end(), DeleteSwitchLed());
@@ -243,7 +224,7 @@ ControlUi::Load(const std::string & uiSettingsFile,
 		bool anyMidiOutOpen = false;
 		for (auto & mMidiOut : mMidiOuts)
 		{
-			IMidiOut * curOut = mMidiOut.second;
+			IMidiOutPtr curOut = mMidiOut.second;
 			if (curOut && curOut->IsMidiOutOpen())
 			{
 				anyMidiOutOpen = true;
@@ -265,7 +246,7 @@ ControlUi::LoadUi(const std::string & uiSettingsFile)
 	UiLoader ldr(this, uiSettingsFile);
 
 	Trace("Midi Output Devices:\n");
-	IMidiOut * midiOut = CreateMidiOut(0, -1);
+	IMidiOutPtr midiOut = CreateMidiOut(0, -1);
 	if (midiOut)
 	{
 		const int kMidiOutCnt = midiOut->GetMidiOutDeviceCount();
@@ -280,7 +261,7 @@ ControlUi::LoadUi(const std::string & uiSettingsFile)
 		mMidiOuts.erase(0);
 	}
 
-	IMidiIn * midiIn = CreateMidiIn(0);
+	IMidiInPtr midiIn = CreateMidiIn(0);
 	if (midiIn)
 	{
 		Trace("Midi Input Devices:\n");
@@ -1090,12 +1071,12 @@ ControlUi::SetMainSize(int width,
 	mPreferredWidth = width;
 }
 
-IMidiOut *
+IMidiOutPtr
 ControlUi::CreateMidiOut(unsigned int deviceIdx,
 						 int activityIndicatorIdx)
 {
 	if (!mMidiOuts[deviceIdx])
-		mMidiOuts[deviceIdx] = new XMidiOut(this);
+		mMidiOuts[deviceIdx] = std::make_shared<XMidiOut>(this);
 
 	if (activityIndicatorIdx > 0)
 		mMidiOuts[deviceIdx]->SetActivityIndicator(this, activityIndicatorIdx);
@@ -1122,7 +1103,7 @@ ControlUi::GetMidiOutDeviceIndex(const std::string &deviceName)
 }
 
 
-IMidiOut *
+IMidiOutPtr
 ControlUi::GetMidiOut(unsigned int deviceIdx)
 {
 	return mMidiOuts[deviceIdx];
@@ -1133,7 +1114,7 @@ ControlUi::OpenMidiOuts()
 {
 	for (auto & mMidiOut : mMidiOuts)
 	{
-		IMidiOut * curOut = mMidiOut.second;
+		IMidiOutPtr curOut = mMidiOut.second;
 		if (!curOut || curOut->IsMidiOutOpen())
 			continue;
 
@@ -1154,7 +1135,7 @@ ControlUi::CloseMidiOuts()
 {
 	for (auto & mMidiOut : mMidiOuts)
 	{
-		IMidiOut * curOut = mMidiOut.second;
+		IMidiOutPtr curOut = mMidiOut.second;
 		if (curOut && curOut->IsMidiOutOpen())
 			curOut->CloseMidiOut();
 	}
@@ -1513,7 +1494,7 @@ ControlUi::ExitEventFired()
 		wnd->close();
 }
 
-IMidiIn *
+IMidiInPtr
 ControlUi::GetMidiIn(unsigned int deviceIdx)
 {
 	return mMidiIns[deviceIdx];
@@ -1524,7 +1505,7 @@ ControlUi::CloseMidiIns()
 {
 	for (auto & mMidiIn : mMidiIns)
 	{
-		IMidiIn * curIn = mMidiIn.second;
+		IMidiInPtr curIn = mMidiIn.second;
 		if (curIn && curIn->IsMidiInOpen())
 			curIn->CloseMidiIn();
 	}
@@ -1535,7 +1516,7 @@ ControlUi::OpenMidiIns()
 {
 	for (auto & mMidiIn : mMidiIns)
 	{
-		IMidiIn * curIn = mMidiIn.second;
+		IMidiInPtr curIn = mMidiIn.second;
 		if (!curIn || curIn->IsMidiInOpen())
 			continue;
 
@@ -1551,12 +1532,12 @@ ControlUi::OpenMidiIns()
 	}
 }
 
-IMidiIn *
+IMidiInPtr
 ControlUi::CreateMidiIn(unsigned int deviceIdx)
 {
 #ifdef USE_MIDI_IN
 	if (!mMidiIns[deviceIdx])
-		mMidiIns[deviceIdx] = new XMidiIn(this);
+		mMidiIns[deviceIdx] = std::make_shared<XMidiIn>(this);
 
 	return mMidiIns[deviceIdx];
 #else
@@ -1591,19 +1572,13 @@ bool
 ControlUi::SuspendMidi()
 {
 	bool anySuspended = false;
-	std::for_each(mMidiOuts.begin(), mMidiOuts.end(), 
-		[&anySuspended](std::pair<unsigned int, IMidiOut *> pr)
-	{
-		if (pr.second->SuspendMidiOut())
+	for (auto & curOut : mMidiOuts)
+		if (curOut.second->SuspendMidiOut())
 			anySuspended = true;
-	});
 
-	std::for_each(mMidiIns.begin(), mMidiIns.end(), 
-		[&anySuspended](const std::pair<unsigned int, IMidiIn *> pr)
-	{
-		if (pr.second->SuspendMidiIn())
+	for (auto & curIn : mMidiIns)
+		if (curIn.second->SuspendMidiIn())
 			anySuspended = true;
-	});
 
 	if (anySuspended)
 	{
@@ -1619,19 +1594,13 @@ bool
 ControlUi::ResumeMidi()
 {
 	bool allResumed = true;
-	std::for_each(mMidiOuts.begin(), mMidiOuts.end(), 
-		[&allResumed](std::pair<unsigned int, IMidiOut *> pr)
-	{
-		if (!pr.second->ResumeMidiOut())
+	for (auto & curOut : mMidiOuts)
+		if (!curOut.second->ResumeMidiOut())
 			allResumed = false;
-	});
 
-	std::for_each(mMidiIns.begin(), mMidiIns.end(), 
-		[&allResumed](const std::pair<unsigned int, IMidiIn *> pr)
-	{
-		if (!pr.second->ResumeMidiIn())
+	for (auto & curIn : mMidiIns)
+		if (!curIn.second->ResumeMidiIn())
 			allResumed = false;
-	});
 
 	if (allResumed)
 	{

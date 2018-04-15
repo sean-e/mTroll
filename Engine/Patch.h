@@ -35,6 +35,8 @@ class ISwitchDisplay;
 class IMidiOut;
 class MidiControlEngine;
 
+using IMidiOutPtr = std::shared_ptr<IMidiOut>;
+
 
 class Patch
 {
@@ -76,7 +78,7 @@ public:
 	virtual void BankTransitionDeactivation() = 0;
 
 protected:
-	Patch(int number, const std::string & name, IMidiOut * midiOut = nullptr);
+	Patch(int number, const std::string & name, IMidiOutPtr midiOut = nullptr);
 
 private:
 	Patch();

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010,2014 Sean Echevarria
+ * Copyright (C) 2010,2014,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -28,6 +28,9 @@
 
 class IMidiIn;
 
+using IMidiInPtr = std::shared_ptr<IMidiIn>;
+
+
 // IMidiInGenerator
 // ----------------------------------------------------------------------------
 // use to create IMidiIn
@@ -35,8 +38,8 @@ class IMidiIn;
 class IMidiInGenerator
 {
 public:
-	virtual IMidiIn *	CreateMidiIn(unsigned int deviceIdx) = 0;
-	virtual IMidiIn *	GetMidiIn(unsigned int deviceIdx) = 0;
+	virtual IMidiInPtr	CreateMidiIn(unsigned int deviceIdx) = 0;
+	virtual IMidiInPtr	GetMidiIn(unsigned int deviceIdx) = 0;
 	virtual unsigned int GetMidiInDeviceIndex(const std::string &deviceName) = 0;
 	virtual void		OpenMidiIns() = 0;
 	virtual void		CloseMidiIns() = 0;

@@ -36,6 +36,7 @@ class MidiControlEngine;
 class ITraceDisplay;
 
 using PatchPtr = std::shared_ptr<Patch>;
+using IMidiOutPtr = std::shared_ptr<IMidiOut>;
 
 
 struct PedalCalibration
@@ -170,14 +171,14 @@ public:
 	{ }
 
 	void Init(const InitParams & params);
-	void InitMidiOut(IMidiOut * midiOut) { mMidiOut = midiOut; }
+	void InitMidiOut(IMidiOutPtr midiOut) { mMidiOut = midiOut; }
 
 	void Calibrate(const PedalCalibration & calibrationSetting, MidiControlEngine * eng, ITraceDisplay * traceDisp);
 	void AdcValueChange(IMainDisplay * mainDisplay, int newVal);
 	void Refire(IMainDisplay * mainDisplay);
 
 private:
-	IMidiOut			*mMidiOut;
+	IMidiOutPtr			mMidiOut;
 	bool				mEnabled;
 	bool				mInverted;
 	bool				mIsDoubleByte;
@@ -217,7 +218,7 @@ public:
 			mPedalControlData[idx].Init(params);
 	}
 
-	void InitMidiOut(int idx, IMidiOut * midiOut) 
+	void InitMidiOut(int idx, IMidiOutPtr midiOut) 
 	{ 
 		_ASSERTE(idx < ccsPerPedals);
 		if (idx < ccsPerPedals)
@@ -252,7 +253,7 @@ class ExpressionPedals
 public:
 	enum {PedalCount = 4};
 
-	ExpressionPedals(IMidiOut * midiOut = NULL) : mHasAnyNondefault(false)
+	ExpressionPedals(IMidiOutPtr midiOut = nullptr) : mHasAnyNondefault(false)
 	{
 		for (auto & globalEnable : mGlobalEnables)
 			globalEnable = true;
@@ -274,7 +275,7 @@ public:
 		}
 	}
 
-	void InitMidiOut(IMidiOut * midiOut) 
+	void InitMidiOut(IMidiOutPtr midiOut) 
 	{
 		for (auto & pedal : mPedals)
 		{
@@ -283,7 +284,7 @@ public:
 		}
 	}
 
-	void InitMidiOut(IMidiOut * midiOut, int pedal, int ccIdx) 
+	void InitMidiOut(IMidiOutPtr midiOut, int pedal, int ccIdx) 
 	{
 		_ASSERTE(pedal < PedalCount);
 		if (pedal < PedalCount)

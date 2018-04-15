@@ -46,6 +46,7 @@ class AxeFxManager;
 
 using PatchBankPtr = std::shared_ptr<PatchBank>;
 using AxeFxManagerPtr = std::shared_ptr<AxeFxManager>;
+using IMidiOutPtr = std::shared_ptr<IMidiOut>;
 
 
 class MidiControlEngine : public IMonome40hAdcSubscriber
@@ -55,7 +56,7 @@ public:
 					  IMainDisplay * mainDisplay, 
 					  ISwitchDisplay * switchDisplay,
 					  ITraceDisplay * traceDisplay,
-					  IMidiOut * midiOut,
+					  IMidiOutPtr midiOut,
 					  AxeFxManagerPtr axMgr,
 					  int incrementSwitchNumber,
 					  int decrementSwitchNumber,
@@ -156,7 +157,7 @@ private:
 	IMainDisplay *			mMainDisplay;
 	ITraceDisplay *			mTrace;
 	ISwitchDisplay *		mSwitchDisplay;
-	IMidiOut *				mMidiOut; // only used for emProgramChangeDirect/emControlChangeDirect
+	IMidiOutPtr				mMidiOut; // only used for emProgramChangeDirect/emControlChangeDirect
 	AxeFxManagerPtr			mAxeMgr;
 
 	PatchBankPtr			mActiveBank;

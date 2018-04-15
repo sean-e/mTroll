@@ -38,7 +38,7 @@
 class SequencePatch : public Patch
 {
 public:
-	SequencePatch(int number, const std::string & name, IMidiOut * midiOut, PatchCommands & cmds) :
+	SequencePatch(int number, const std::string & name, IMidiOutPtr midiOut, PatchCommands & cmds) :
 		Patch(number, name, midiOut),
 		mCurIndex(0)
 	{

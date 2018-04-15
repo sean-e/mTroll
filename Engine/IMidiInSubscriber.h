@@ -25,20 +25,25 @@
 #ifndef IMidiInSubscriber_h__
 #define IMidiInSubscriber_h__
 
+#include <memory>
+
 using byte = unsigned char;
 class IMidiIn;
 
+using IMidiInPtr = std::shared_ptr<IMidiIn>;
 
 // IMidiInSubscriber
 // ----------------------------------------------------------------------------
 // Implement to get notification of MIDI IN events
 //
-class IMidiInSubscriber
+class IMidiInSubscriber : public std::enable_shared_from_this<IMidiInSubscriber>
 {
 public:
 	virtual void ReceivedData(byte b1, byte b2, byte b3) = 0;
 	virtual void ReceivedSysex(const byte * bytes, int len) = 0;
-	virtual void Closed(IMidiIn * midIn) = 0;
+	virtual void Closed(IMidiInPtr midIn) = 0;
 };
+
+using IMidiInSubscriberPtr = std::shared_ptr<IMidiInSubscriber>;
 
 #endif // IMidiInSubscriber_h__

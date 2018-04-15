@@ -24,6 +24,7 @@
 
 #include <algorithm>
 #include <strstream>
+#include <atomic>
 #include "MidiControlEngine.h"
 #include "PatchBank.h"
 #include "IMainDisplay.h"
@@ -50,6 +51,10 @@
 #pragma warning(disable:4482)
 #endif
 
+#ifdef ITEM_COUNTING
+std::atomic<int> gMidiControlEngCnt = 0;
+#endif
+
 
 static bool
 SortByBankNumber(const PatchBankPtr lhs, const PatchBankPtr rhs)
@@ -62,7 +67,7 @@ MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 									 IMainDisplay * mainDisplay, 
 									 ISwitchDisplay * switchDisplay, 
 									 ITraceDisplay * traceDisplay,
-									 IMidiOut * midiOut,
+									 IMidiOutPtr midiOut,
 									 AxeFxManagerPtr axMgr,
 									 int incrementSwitchNumber,
 									 int decrementSwitchNumber,
@@ -91,12 +96,20 @@ MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 	mAxeMgr(axMgr),
 	mSwitchPressedEventTime(0)
 {
+#ifdef ITEM_COUNTING
+	++gMidiControlEngCnt;
+#endif
+
 	mBanks.reserve(999);
 }
 
 MidiControlEngine::~MidiControlEngine()
 {
 	Shutdown();
+
+#ifdef ITEM_COUNTING
+	--gMidiControlEngCnt;
+#endif
 }
 
 PatchBankPtr

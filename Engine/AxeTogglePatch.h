@@ -44,7 +44,7 @@ class AxeTogglePatch : public TogglePatch
 public:
 	AxeTogglePatch(int number, 
 				const std::string & name, 
-				IMidiOut * midiOut, 
+				IMidiOutPtr midiOut, 
 				PatchCommands & cmdsA, 
 				PatchCommands & cmdsB,
 				AxeFxManagerPtr axeMgr) :
@@ -116,7 +116,6 @@ public:
 		if (mAx)
 			mAx = nullptr;
 	}
-
 };
 
 #endif // AxeTogglePatch_h__

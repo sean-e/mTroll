@@ -38,7 +38,7 @@ class MomentaryPatch : public TwoStatePatch
 public:
 	MomentaryPatch(int number, 
 					const std::string & name, 
-					IMidiOut * midiOut, 
+					IMidiOutPtr midiOut, 
 					PatchCommands & cmdsA, 
 					PatchCommands & cmdsB) :
 		TwoStatePatch(number, name, midiOut, cmdsA, cmdsB, psDisallow)
