@@ -508,9 +508,9 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 			if (doCcSend)
 			{
 				if (newCcVal == mMinCcVal)
-					displayMsg << "______ min ______" << std::endl;
+					displayMsg << "........";
 				else if (newCcVal == mMaxCcVal)
-					displayMsg << "|||||| MAX ||||||" << std::endl;
+					displayMsg << "||||||||";
 			}
 			if (bottomDeadzone || topDeadzone)
 				displayMsg << "pedal deadzone" << std::endl;
@@ -520,8 +520,8 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 			{
 				if (mIsDoubleByte)
 				{
-					displayMsg << "adc ch(" << (int) mChannel << "), ctrl(" << (int) mControlNumber << "): " << newVal << " -> " << (int) mMidiData[2] << std::endl;
-					displayMsg << "adc ch(" << (int) mChannel << "), ctrl(" << ((int) mControlNumber) + 31 << "): " << newVal << " -> " << (int) mMidiData[3] << std::endl << std::ends;
+					displayMsg << "  [ch " << (int) mChannel << ", ctrl " << (int) mControlNumber << "] " << newVal << " -> " << (int) mMidiData[2] << std::endl;
+					displayMsg << "  [ch " << (int) mChannel << ", ctrl " << ((int) mControlNumber) + 31 << "] " << newVal << " -> " << (int) mMidiData[3] << std::endl << std::ends;
 				}
 				else
 				{
@@ -529,7 +529,7 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 					// to ease insert into spreadsheet
 					displayMsg << newVal << ", " << (int) mMidiData[2] << std::endl << std::ends;
 #else
-					displayMsg << "adc ch(" << (int) mChannel << "), ctrl(" << (int) mControlNumber << "): " << newVal << " -> " << (int) mMidiData[2] << std::endl << std::ends;
+					displayMsg << "  [ch " << (int) mChannel << ", ctrl " << (int) mControlNumber << "] " << newVal << " -> " << (int) mMidiData[2] << std::endl << std::ends;
 #endif
 				}
 	
