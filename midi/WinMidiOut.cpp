@@ -108,7 +108,7 @@ WinMidiOut::SetActivityIndicator(ISwitchDisplay * activityIndicator,
 {
 	mActivityIndicator = activityIndicator;
 	mActivityIndicatorIndex = activityIndicatorIdx;
-	mEnableActivityIndicator = mActivityIndicator > 0 && mActivityIndicator != NULL;
+	mEnableActivityIndicator = mActivityIndicatorIndex > 0 && mActivityIndicator != nullptr;
 }
 
 void
@@ -116,7 +116,7 @@ WinMidiOut::EnableActivityIndicator(bool enable)
 {
 	if (enable)
 	{
-		mEnableActivityIndicator = mActivityIndicator > 0 && mActivityIndicator != NULL;
+		mEnableActivityIndicator = mActivityIndicatorIndex > 0 && mActivityIndicator != nullptr;
 		mTimerEventCount = 0;
 	}
 	else
@@ -371,14 +371,15 @@ WinMidiOut::IndicateActivity()
 		{
 			if (!::InterlockedDecrement(&mTimerEventCount))
 			{
-				// whoops - don't go to 0 else the timer will go negative
+				// whoops - don't go to 0 else the timer will make the count go negative
 				::InterlockedIncrement(&mTimerEventCount);
 			}
 		}
 	}
 
 	mActivityIndicator->SetSwitchDisplay(mActivityIndicatorIndex, true);
-	mTimerId = ::SetTimer(nullptr, mTimerId, 150, TimerProc);
+	// this seems to sometimes cause indicator to remain on
+	// mTimerId = ::SetTimer(nullptr, mTimerId, 150, TimerProc);
 	sOutOnTimer = this;
 }
 
