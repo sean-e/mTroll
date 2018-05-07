@@ -402,7 +402,11 @@ public:
 	virtual void exec() override
 	{
 		const QString prevTxt(mLabel->toPlainText());
-		const QString newTxt(mUi->mMainText);
+		// if RestoreMainTextEvent is being used, leave a blank line
+		// at the top of the display to prevent repeated shifting of
+		// display text which can occur when expression pedals are 
+		// in use.
+		const QString newTxt(QString("\n") + mUi->mMainText);
 		if (prevTxt != newTxt)
 			mLabel->setPlainText(newTxt);
 	}
