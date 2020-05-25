@@ -610,6 +610,15 @@ AxeFx3Manager::DelayedEffectsSyncFromAxe()
 	QCoreApplication::postEvent(this, new StartDelayedSyncTimer(GetSharedThis()));
 }
 
+Bytes
+AxeFx3Manager::GetTapTempoCommandString()
+{
+	// Axe-Fx 3 Tempo Tap command 10H
+	Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, 0x10, 0x10 };
+	::AppendChecksumAndTerminate(bytes);
+	return bytes;
+}
+
 void
 AxeFx3Manager::SendFirmwareVersionQuery()
 {

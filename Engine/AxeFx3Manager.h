@@ -84,6 +84,8 @@ public:
 	void DelayedNameSyncFromAxe(bool force = false) override;
 	void DelayedEffectsSyncFromAxe() override;
 
+	Bytes GetTapTempoCommandString();
+
 public slots:
 	// immediate requests for sync (called by the delayed requests)
 	void SyncNameAndEffectsFromAxe() override;
