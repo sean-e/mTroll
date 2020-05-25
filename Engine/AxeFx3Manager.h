@@ -119,7 +119,6 @@ private:
 	void KillResponseTimer();
 
 private:
-	int				mRefCnt;
 	int				mAxeChannel;
 	IMainDisplay	* mMainDisplay;
 	ITraceDisplay	* mTrace;
