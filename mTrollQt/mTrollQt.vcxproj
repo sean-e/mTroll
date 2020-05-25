@@ -208,6 +208,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Engine\AxeFx3EffectIds.h" />
     <ClInclude Include="..\Engine\AxeFxModel.h" />
     <ClInclude Include="..\Engine\IAxeFx.h" />
     <ClInclude Include="..\Engine\MetaPatch_ResetExclusiveGroup.h" />

@@ -287,6 +287,9 @@
     <ClInclude Include="..\Engine\IAxeFx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Engine\AxeFx3EffectIds.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="win\mTrollQt.rc">
