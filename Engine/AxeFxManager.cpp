@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2015,2018 Sean Echevarria
+ * Copyright (C) 2010-2015,2018,2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -66,7 +66,6 @@ AxeFxManager::AxeFxManager(IMainDisplay * mainDisp,
 	mSwitchDisplay(switchDisp),
 	mMainDisplay(mainDisp),
 	mTrace(pTrace),
-	mRefCnt(0),
 	mTimeoutCnt(0),
 	mLastTimeout(0),
 	// mQueryLock(QMutex::Recursive),

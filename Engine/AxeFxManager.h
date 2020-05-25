@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2014,2018 Sean Echevarria
+ * Copyright (C) 2010-2014,2018,2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -121,7 +121,6 @@ private slots:
 	void QueryTimedOut();
 
 private:
-	int				mRefCnt;
 	int				mAxeChannel;
 	IMainDisplay	* mMainDisplay;
 	ITraceDisplay	* mTrace;
