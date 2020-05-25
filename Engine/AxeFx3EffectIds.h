@@ -1,6 +1,6 @@
 #pragma once
 
-namespace AxeFx3
+namespace FractalAudio::AxeFx3
 {
 
 // From Revision 1.4 of http://www.fractalaudio.com/downloads/misc/Axe-Fx%20III%20MIDI%20for%203rd%20Party%20Devices.pdf
