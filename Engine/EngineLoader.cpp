@@ -652,6 +652,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 
 		IMidiOutPtr midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[midiOutPortNumber]);
 
+		IAxeFxPtr mgr = GetAxeMgr(pElem);
 		PatchCommands cmds, cmds2;
 		std::vector<int> intList;
 		TiXmlHandle hRoot(nullptr);
@@ -840,7 +841,6 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 					bytes.push_back(0xc0 | ch);
 					bytes.push_back(data1);
 
-					IAxeFxPtr mgr = GetAxeMgr(childElem);
 					if (group == "B")
 						cmds2.push_back(std::make_shared<AxeFxProgramChange>(midiOut, bytes, mgr));
 					else
@@ -905,8 +905,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 
 		int axeFxScene = 0;
 		int overrideCc = -1;
-		IAxeFxPtr mgrTmp = GetAxeMgr(pElem);
-		if (mgrTmp && 
+		if (mgr && 
 			(patchType.empty() || patchType == "AxeToggle" || patchType == "AxeMomentary") && 
 			cmds.empty() && cmds2.empty() &&
 			patchDefaultCh != -1)
@@ -915,7 +914,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			pElem->QueryIntAttribute("cc", &axeCc);
 			if (axeCc)
 				overrideCc = axeCc; // no default (like Feedback Return) or overridden from default
-			else if (mgrTmp->GetModel() == Axe3)
+			else if (mgr->GetModel() == Axe3)
 				; // #axe3FinishThis init cc
 			else
 				axeCc = ::GetDefaultAxeCc(patchName, mTraceDisplay); // fallback to default
@@ -989,7 +988,6 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			newPatch = std::make_shared<PersistentPedalOverridePatch>(patchNumber, patchName, midiOut, cmds, cmds2);
 		else if (patchType == "AxeToggle")
 		{
-			IAxeFxPtr mgr = GetAxeMgr(childElem);
 			auto axePatch = std::make_shared<AxeTogglePatch>(patchNumber, patchName, midiOut, cmds, cmds2, mgr);
 			if (mgr)
 			{
@@ -1009,7 +1007,6 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			newPatch = std::make_shared<MomentaryPatch>(patchNumber, patchName, midiOut, cmds, cmds2);
 		else if (patchType == "AxeMomentary")
 		{
-			IAxeFxPtr mgr = GetAxeMgr(childElem);
 			newPatch = std::make_shared<MomentaryPatch>(patchNumber, patchName, midiOut, cmds, cmds2);
 			if (mgr)
 				mgr->SetSyncPatch(newPatch, overrideCc);
@@ -1026,7 +1023,6 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			newPatch = std::make_shared<PatchListSequencePatch>(patchNumber, patchName, intList);
 		else if (patchType == "AxeFxTapTempo")
 		{
-			IAxeFxPtr mgr = GetAxeMgr(childElem);
 			if (cmds.empty() && cmds2.empty())
 			{
 				if (mgr && mgr->GetModel() == Axe3)
@@ -1073,7 +1069,6 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		if (!newPatch)
 			continue;
 
-		IAxeFxPtr mgr = GetAxeMgr(childElem);
 		mEngine->AddPatch(newPatch);
 		if (mgr)
 		{
@@ -1117,16 +1112,18 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 IAxeFxPtr
 EngineLoader::GetAxeMgr(TiXmlElement * pElem)
 {
-	if (pElem)
+	if (mAxeFx3Manager || mAxeFxManager)
 	{
-		std::string devStr;
-		pElem->QueryValueAttribute("device", &devStr);
-		if (!devStr.empty())
+		if (pElem && pElem->Attribute("device"))
 		{
-			if (devStr == mAxe3DeviceName)
-				return mAxeFx3Manager;
-			if (devStr == mAxeDeviceName)
-				return mAxeFxManager;
+			const std::string devStr(pElem->Attribute("device"));
+			if (!devStr.empty())
+			{
+				if (devStr == mAxe3DeviceName)
+					return mAxeFx3Manager;
+				if (devStr == mAxeDeviceName)
+					return mAxeFxManager;
+			}
 		}
 	}
 	return nullptr;
