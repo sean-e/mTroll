@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2014,2018 Sean Echevarria
+ * Copyright (C) 2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -33,6 +33,7 @@
 #include "IMidiInSubscriber.h"
 #include "AxemlLoader.h"
 #include "IAxeFx.h"
+#include "HexStringUtils.h"
 
 class IMainDisplay;
 class ITraceDisplay;
@@ -112,7 +113,6 @@ private:
 	void DisplayPresetStatus();
 
 	void RequestPresetEffects();
-	void ReceivePresetEffects(const byte * bytes, int len);
 	void ReceivePresetEffectsV2(const byte * bytes, int len);
 	void TurnOffLedsForNaEffects();
 
@@ -148,7 +148,6 @@ private:
 	std::string		mCurrentAxeSceneName;
 };
 
-int GetDefaultAxeCc(const std::string &effectName, ITraceDisplay * trc);
-void NormalizeAxeEffectName(std::string & effectName);
+void AppendChecksumAndTerminate(Bytes &data);
 
 #endif // AxeFx3Manager_h__
