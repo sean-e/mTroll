@@ -39,6 +39,7 @@
 #include "IMidiOut.h"
 #include "IMainDisplay.h"
 #include "AxeFxManager.h"
+#include "AxeFx3EffectIds.h"
 
 
 #ifdef _DEBUG
@@ -52,6 +53,9 @@ static const int kDefaultEffectsSyncTimerInterval = 20;
 #ifdef ITEM_COUNTING
 std::atomic<int> gAxeFx3MgrCnt = 0;
 #endif
+
+static void NormalizeAxe3EffectName(std::string &effectName);
+static void Axe3SynonymNormalization(std::string & name);
 
 AxeFx3Manager::AxeFx3Manager(IMainDisplay * mainDisp, 
 						   ISwitchDisplay * switchDisp,
@@ -145,7 +149,7 @@ bool
 AxeFx3Manager::SetSyncPatch(PatchPtr patch, int bypassCc /*= -1*/)
 {
 	std::string normalizedEffectName(patch->GetName());
-	::NormalizeAxeEffectName(normalizedEffectName);
+	::NormalizeAxe3EffectName(normalizedEffectName);
 	for (AxeEffectBlockInfo & cur : mAxeEffectInfo)
 	{
 		if (cur.mNormalizedName == normalizedEffectName)
@@ -261,8 +265,6 @@ IsAxeFx3Sysex(const byte * bytes, const int len)
 void
 AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 {
-	// http://www.fractalaudio.com/forum/viewtopic.php?f=14&t=21524&start=10
-	// http://axefxwiki.guitarlogic.org/index.php?title=Axe-Fx_SysEx_Documentation
 	if (!::IsAxeFx3Sysex(bytes, len))
 		return;
 
@@ -877,6 +879,7 @@ AxeFx3Manager::ReceivePresetNumber(const byte * bytes, int len)
 		return;
 
 	mCurrentAxePresetName.clear();
+	mCurrentAxeSceneName.clear();
 	// 0xdd Preset Number bits 6-0
 	// 0xdd Preset Number bits 13-7
 	const int presetMs = bytes[0] << 7;
@@ -1020,7 +1023,7 @@ void
 AxeFx3Manager::SetLooperPatch(PatchPtr patch)
 {
 	std::string name(patch->GetName());
-	::NormalizeAxeEffectName(name);
+	::NormalizeAxe3EffectName(name);
 	LoopPatchIdx idx = loopPatchCnt;
 	if (-1 != name.find("looper record"))
 		idx = loopPatchRecord;
@@ -1112,6 +1115,8 @@ AxeFx3Manager::DisplayPresetStatus()
 		char sceneBuf[4];
 		::_itoa_s(mCurrentScene + 1, sceneBuf, 10);
 		curText += std::string("\nAxe-Fx scene: ") + sceneBuf;
+		if (!mCurrentAxeSceneName.empty())
+			curText += std::string(" ") + mCurrentAxeSceneName;
 	}
 
 	if (curText.length())
@@ -1126,4 +1131,315 @@ AppendChecksumAndTerminate(Bytes &data)
 		chkSum ^= b;
 	data.push_back(chkSum & 0x7F);
 	data.push_back(0xF7);
+}
+
+void
+NormalizeAxe3EffectName(std::string &effectName)
+{
+	std::transform(effectName.begin(), effectName.end(), effectName.begin(), ::tolower);
+
+	int pos = effectName.find("axe");
+	if (-1 != pos)
+	{
+		std::string searchStr;
+
+		searchStr = "axe ";
+		pos = effectName.find(searchStr);
+		if (-1 == pos)
+		{
+			searchStr = "axefx ";
+			pos = effectName.find(searchStr);
+		}
+		if (-1 == pos)
+		{
+			searchStr = "axe-fx ";
+			pos = effectName.find(searchStr);
+		}
+
+		if (-1 != pos)
+			effectName = effectName.substr(pos + searchStr.length());
+	}
+
+	Axe3SynonymNormalization(effectName);
+}
+
+void
+Axe3SynonymNormalization(std::string & name)
+{
+#define MapName(subst, legit) if (name == subst) { name = legit; return; }
+
+	int pos = name.find('(');
+	if (std::string::npos != pos)
+	{
+		name = name.substr(0, pos);
+		while (name.at(name.length() - 1) == ' ')
+			name = name.substr(0, name.length() - 1);
+	}
+
+	pos = name.find(" xy");
+	if (std::string::npos != pos)
+		name.replace(pos, 3, " x/y");
+
+	switch (name[0])
+	{
+	case 'a':
+		MapName("amp match", "tone match");
+		MapName("arpeggiator 1", "pitch 1");
+		MapName("arpeggiator 2", "pitch 2");
+		break;
+	case 'b':
+		MapName("band delay 1", "multidelay 1");
+		MapName("band delay 2", "multidelay 2");
+		MapName("band dly 1", "multidelay 1");
+		MapName("band dly 2", "multidelay 2");
+		break;
+	case 'c':
+		MapName("cab 1", "cabinet 1");
+		MapName("cab 2", "cabinet 2");
+		MapName("cab 1 x/y", "cabinet 1 x/y");
+		MapName("cab 2 x/y", "cabinet 2 x/y");
+		MapName("comp 1", "compressor 1");
+		MapName("comp 2", "compressor 2");
+		MapName("crystals 1", "pitch 1");
+		MapName("crystals 2", "pitch 2");
+		break;
+	case 'd':
+		MapName("dec scene", "scene decrement");
+		MapName("decrement scene", "scene decrement");
+		MapName("delay 1 (reverse)", "delay 1");
+		MapName("delay 2 (reverse)", "delay 2");
+		MapName("detune 1", "pitch 1");
+		MapName("detune 2", "pitch 2");
+		MapName("device complete bypass toggle", "output");
+		MapName("diff 1", "multidelay 1");
+		MapName("diff 2", "multidelay 2");
+		MapName("diffuser 1", "multidelay 1");
+		MapName("diffuser 2", "multidelay 2");
+		MapName("dly 1", "delay 1");
+		MapName("dly 2", "delay 2");
+		MapName("dly 1 x/y", "delay 1 x/y");
+		MapName("dly 2 x/y", "delay 2 x/y");
+		break;
+	case 'e':
+		MapName("eq match", "tone match");
+		MapName("eqmatch", "tone match");
+		MapName("ext 1", "external 1");
+		MapName("ext 2", "external 2");
+		MapName("ext 3", "external 3");
+		MapName("ext 4", "external 4");
+		MapName("ext 5", "external 5");
+		MapName("ext 6", "external 6");
+		MapName("ext 7", "external 7");
+		MapName("ext 8", "external 8");
+		MapName("ext 9", "external 9");
+		MapName("ext 10", "external 10");
+		MapName("ext 11", "external 11");
+		MapName("ext 12", "external 12");
+		MapName("extern 1", "external 1");
+		MapName("extern 2", "external 2");
+		MapName("extern 3", "external 3");
+		MapName("extern 4", "external 4");
+		MapName("extern 5", "external 5");
+		MapName("extern 6", "external 6");
+		MapName("extern 7", "external 7");
+		MapName("extern 8", "external 8");
+		MapName("extern 9", "external 9");
+		MapName("extern 10", "external 10");
+		MapName("extern 11", "external 11");
+		MapName("extern 12", "external 12");
+		break;
+	case 'f':
+		MapName("fb ret", "feedback return");
+		MapName("fb rtrn", "feedback return");
+		MapName("fb return", "feedback return");
+		MapName("fdbk ret", "feedback return");
+		MapName("fdbk rtrn", "feedback return");
+		MapName("fdbk return", "feedback return");
+		MapName("feed ret", "feedback return");
+		MapName("feed rtrn", "feedback return");
+		MapName("feed return", "feedback return");
+		MapName("feedback ret", "feedback return");
+		MapName("feedback rtrn", "feedback return");
+
+		MapName("fb send", "feedback send");
+		MapName("fdbk send", "feedback send");
+		MapName("feedsend", "feedback send");
+		MapName("feed send", "feedback send");
+
+		MapName("fx loop", "effects loop");
+		break;
+	case 'g':
+		MapName("gate 1", "gate/expander 1");
+		MapName("gate 2", "gate/expander 2");
+		MapName("graphiceq 1", "graphic eq 1");
+		MapName("graphiceq 2", "graphic eq 2");
+		MapName("graphiceq 3", "graphic eq 3");
+		MapName("graphiceq 4", "graphic eq 4");
+		break;
+	case 'h':
+		MapName("half-speed", "looper half");
+		MapName("half speed", "looper half");
+		break;
+	case 'i':
+		MapName("in vol", "input volume");
+		MapName("inc scene", "scene increment");
+		MapName("increment scene", "scene increment");
+		MapName("input", "input volume");
+		MapName("input vol", "input volume");
+		break;
+	case 'l':
+		MapName("loop 1 rec", "looper 1 record");
+		MapName("loop 1 record", "looper 1 record");
+		MapName("loop 1 play", "looper 1 play");
+		MapName("loop 1 once", "looper 1 once");
+		MapName("loop 1 overdub", "looper 1 overdub");
+		MapName("loop 1 rev", "looper 1 reverse");
+		MapName("loop 1 reverse", "looper 1 reverse");
+		MapName("loop half-speed", "looper half");
+		MapName("loop half speed", "looper half");
+		MapName("loop metronome", "looper metronome");
+		MapName("loop rec", "looper record");
+		MapName("loop record", "looper record");
+		MapName("loop play", "looper play");
+		MapName("loop play once", "looper once");
+		MapName("loop once", "looper once");
+		MapName("loop overdub", "looper overdub");
+		MapName("loop rev", "looper reverse");
+		MapName("loop reverse", "looper reverse");
+		MapName("loop undo", "looper undo");
+		MapName("loop 2 rec", "looper 2 record");
+		MapName("loop 2 record", "looper 2 record");
+		MapName("loop 2 play", "looper 2 play");
+		MapName("loop 2 once", "looper 2 once");
+		MapName("loop 2 overdub", "looper 2 overdub");
+		MapName("loop 2 rev", "looper 2 reverse");
+		MapName("loop 2 reverse", "looper 2 reverse");
+		// 		MapName("looper", "delay 1");
+		MapName("looper 1", "delay 1");
+		MapName("looper 2", "delay 2");
+		MapName("looper half-speed", "looper half");
+		MapName("looper half speed", "looper half");
+		break;
+	case 'm':
+		MapName("mdly 1", "multidelay 1");
+		MapName("mdly 2", "multidelay 2");
+		MapName("megatap", "megatap delay");
+		MapName("metronome", "looper metronome");
+		MapName("mix 1", "mixer 1");
+		MapName("mix 2", "mixer 2");
+		MapName("multi comp 1", "multiband comp 1");
+		MapName("multi comp 2", "multiband comp 2");
+		MapName("multi delay 1", "multidelay 1");
+		MapName("multi delay 2", "multidelay 2");
+		break;
+	case 'n':
+		MapName("next scene", "scene increment");
+		MapName("noise gate", "noisegate");
+		break;
+	case 'o':
+		MapName("octave 1", "pitch 1");
+		MapName("octave 2", "pitch 2");
+		MapName("out", "output");
+		MapName("out 1 vol", "out 1 volume");
+		MapName("out 2 vol", "out 2 volume");
+		MapName("output 1 vol", "out 1 volume");
+		MapName("output 2 vol", "out 2 volume");
+		break;
+	case 'p':
+		MapName("pan/trem 1", "panner/tremolo 1");
+		MapName("pan/trem 2", "panner/tremolo 2");
+		MapName("para eq 1", "parametric eq 1");
+		MapName("para eq 2", "parametric eq 2");
+		MapName("para eq 3", "parametric eq 3");
+		MapName("para eq 4", "parametric eq 4");
+		MapName("pitch 1 (whammy)", "pitch 1");
+		MapName("pitch 2 (whammy)", "pitch 2");
+		MapName("plex 1", "multidelay 1");
+		MapName("plex 2", "multidelay 2");
+		MapName("plex delay 1", "multidelay 1");
+		MapName("plex delay 2", "multidelay 2");
+		MapName("plex detune 1", "multidelay 1");
+		MapName("plex detune 2", "multidelay 2");
+		MapName("plex dly 1", "multidelay 1");
+		MapName("plex dly 2", "multidelay 2");
+		MapName("plex shift 1", "multidelay 1");
+		MapName("plex shift 2", "multidelay 2");
+		MapName("previous scene", "scene decrement");
+		break;
+	case 'q':
+		MapName("quad 1", "quad chorus 1");
+		MapName("quad 2", "quad chorus 2");
+		MapName("quad delay 1", "multidelay 1");
+		MapName("quad delay 2", "multidelay 2");
+		MapName("quad dly 1", "multidelay 1");
+		MapName("quad dly 2", "multidelay 2");
+		MapName("quad series 1", "multidelay 1");
+		MapName("quad series 2", "multidelay 2");
+		MapName("quad tap 1", "multidelay 1");
+		MapName("quad tap 2", "multidelay 2");
+		MapName("quadchorus 1", "quad chorus 1");
+		MapName("quadchorus 2", "quad chorus 2");
+		break;
+	case 'r':
+		MapName("return", "feedback return");
+		MapName("reverse 1", "delay 1");
+		MapName("reverse 2", "delay 2");
+		MapName("reverse delay 1", "delay 1");
+		MapName("reverse delay 2", "delay 2");
+		MapName("reverse dly 1", "delay 1");
+		MapName("reverse dly 2", "delay 2");
+		MapName("rhythm tap 1", "multidelay 1");
+		MapName("rhythm tap 2", "multidelay 2");
+		MapName("ring modulator", "ring mod");
+		MapName("ringmod", "ring mod");
+		break;
+	case 's':
+		MapName("scene inc", "scene increment");
+		MapName("scene dec", "scene decrement");
+		MapName("send", "feedback send");
+		MapName("shift 1", "pitch 1");
+		MapName("shift 2", "pitch 2");
+		break;
+	case 't':
+		MapName("tap", "taptempo");
+		MapName("tap tempo", "taptempo");
+		MapName("ten tap 1", "multidelay 1");
+		MapName("ten tap 2", "multidelay 2");
+		MapName("tone", "tone match");
+		MapName("trem 1", "panner/tremolo 1");
+		MapName("trem 2", "panner/tremolo 2");
+		MapName("tremolo 1", "panner/tremolo 1");
+		MapName("tremolo 2", "panner/tremolo 2");
+		break;
+	case 'v':
+		MapName("vol dec", "volume decrement");
+		MapName("vol decrement", "volume decrement");
+		MapName("vol inc", "volume increment");
+		MapName("vol increment", "volume increment");
+		MapName("vol 1", "vol/pan 1");
+		MapName("vol 2", "vol/pan 2");
+		MapName("vol 3", "vol/pan 3");
+		MapName("vol 4", "vol/pan 4");
+		MapName("volume 1", "vol/pan 1");
+		MapName("volume 2", "vol/pan 2");
+		MapName("volume 3", "vol/pan 3");
+		MapName("volume 4", "vol/pan 4");
+		break;
+	case 'w':
+		MapName("wah 1", "wah-wah 1");
+		MapName("wah 2", "wah-wah 2");
+		MapName("wah 1 x/y", "wah-wah 1 x/y");
+		MapName("wah 2 x/y", "wah-wah 2 x/y");
+		MapName("wahwah 1", "wah-wah 1");
+		MapName("wahwah 2", "wah-wah 2");
+		MapName("wahwah 1 x/y", "wah-wah 1 x/y");
+		MapName("wahwah 2 x/y", "wah-wah 2 x/y");
+		MapName("whammy 1", "pitch 1");
+		MapName("whammy 2", "pitch 2");
+		break;
+	case 'x':
+		MapName("x-over 1", "crossover 1");
+		MapName("x-over 2", "crossover 2");
+		break;
+	}
 }
