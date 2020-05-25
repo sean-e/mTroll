@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2013,2015,2018 Sean Echevarria
+ * Copyright (C) 2007-2013,2015,2018,2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -34,7 +34,6 @@
 #include "SleepCommand.h"
 #include "ITrollApplication.h"
 #include "HexStringUtils.h"
-#include "AxeFxManager.h"
 #ifdef _WINDOWS
 	#include <windows.h>
 	#define CurTime	GetTickCount // time in ms (used to measure elapsed time between events, origin doesn't matter)
@@ -68,7 +67,8 @@ MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 									 ISwitchDisplay * switchDisplay, 
 									 ITraceDisplay * traceDisplay,
 									 IMidiOutPtr midiOut,
-									 AxeFxManagerPtr axMgr,
+									 IAxeFxPtr axMgr,
+									 IAxeFxPtr ax3Mgr,
 									 int incrementSwitchNumber,
 									 int decrementSwitchNumber,
 									 int modeSwitchNumber) :
@@ -93,12 +93,16 @@ MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 	mDirectValueLastSent(0),
 	mDirectValue1LastSent(0),
 	mMidiOut(midiOut),
-	mAxeMgr(axMgr),
 	mSwitchPressedEventTime(0)
 {
 #ifdef ITEM_COUNTING
 	++gMidiControlEngCnt;
 #endif
+
+	if (axMgr)
+		mAxeMgrs.push_back(axMgr);
+	if (ax3Mgr)
+		mAxeMgrs.push_back(ax3Mgr);
 
 	mBanks.reserve(999);
 }
@@ -199,7 +203,11 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 	AddPatch(std::make_shared<MetaPatch_BankHistoryForward>(this, ReservedPatchNumbers::kBankHistoryForward, "[forward]"));
 	AddPatch(std::make_shared<MetaPatch_BankHistoryRecall>(this, ReservedPatchNumbers::kBankHistoryRecall, "[recall]"));
 	AddPatch(std::make_shared<MetaPatch_ResetBankPatches>(this, ReservedPatchNumbers::kResetBankPatches, "Reset bank patches"));
-	AddPatch(std::make_shared<MetaPatch_SyncAxeFx>(mAxeMgr, ReservedPatchNumbers::kSyncAxeFx, "Sync Axe-FX"));
+	{
+		auto metPatch = std::make_shared<MetaPatch_SyncAxeFx>(ReservedPatchNumbers::kSyncAxeFx, "Sync Axe-FX");
+		metPatch->AddAxeManagers(mAxeMgrs);
+		AddPatch(metPatch);
+	}
 
 	for (Patches::iterator it = mPatches.begin();
 		it != mPatches.end();
@@ -279,11 +287,9 @@ void
 MidiControlEngine::Shutdown()
 {
 	gActivePatchPedals = nullptr;
-	if (mAxeMgr)
-	{
-		mAxeMgr->Shutdown();
-		mAxeMgr = nullptr;
-	}
+	for (const auto& mgr : mAxeMgrs)
+		mgr->Shutdown();
+	mAxeMgrs.clear();
 }
 
 void
@@ -1524,8 +1530,14 @@ MidiControlEngine::SwitchPressed_ProgramChangeDirect(int switchNumber)
 			}
 			mMidiOut->MidiOut(bytes);
 
-			if (sJustDidProgramChange && mAxeMgr && mAxeMgr->GetAxeChannel() == mDirectChangeChannel)
-				mAxeMgr->DelayedNameSyncFromAxe();
+			if (sJustDidProgramChange)
+			{
+				for (const auto& mgr : mAxeMgrs)
+				{
+					if (mgr->GetChannel() == mDirectChangeChannel)
+						mgr->DelayedNameSyncFromAxe();
+				}
+			}
 		}
 	}
 	else if (mMainDisplay)

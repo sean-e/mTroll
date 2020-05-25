@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010,2012,2015,2018 Sean Echevarria
+ * Copyright (C) 2010,2012,2015,2018,2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -26,33 +26,37 @@
 #define MetaPatch_SyncAxeFx_h__
 
 #include "Patch.h"
-#include "AxeFxManager.h"
+#include "IAxeFx.h"
 
 
 class MetaPatch_SyncAxeFx : public Patch
 {
 public:
-	MetaPatch_SyncAxeFx(AxeFxManagerPtr axe, int number, const std::string & name) :
-		Patch(number, name),
-		mAxe(axe)
+	MetaPatch_SyncAxeFx(int number, const std::string & name) :
+		Patch(number, name)
 	{
 	}
 
 	~MetaPatch_SyncAxeFx() = default;
 
+	void AddAxeManagers(std::vector<IAxeFxPtr> &mgrs)
+	{
+		mAxes = mgrs;
+	}
+
 	virtual std::string GetPatchTypeStr() const override {return "meta: syncAxeFx";}
 
 	virtual void SwitchPressed(IMainDisplay *, ISwitchDisplay *) override
 	{
-		if (mAxe)
-			mAxe->SyncNameAndEffectsFromAxe();
+		for (const auto &axe : mAxes)
+			axe->SyncNameAndEffectsFromAxe();
 	}
 
 	virtual void BankTransitionActivation() override {SwitchPressed(nullptr, nullptr);}
 	virtual void BankTransitionDeactivation() override {SwitchPressed(nullptr, nullptr);}
 
 private:
-	AxeFxManagerPtr	mAxe;
+	std::vector<IAxeFxPtr>	mAxes;
 };
 
 #endif // MetaPatch_SyncAxeFx_h__

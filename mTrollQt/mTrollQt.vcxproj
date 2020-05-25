@@ -169,6 +169,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Engine\AxeFx3Manager.cpp" />
     <ClCompile Include="..\Engine\PersistentPedalOverridePatch.cpp" />
     <ClCompile Include="..\Engine\TwoStatePatch.cpp" />
     <ClCompile Include="AboutDlg.cpp" />
@@ -191,6 +192,12 @@
     <ClCompile Include="..\Monome40h\qt\Monome40hFtqt.cpp" />
     <ClCompile Include="..\midi\WinMidiIn.cpp" />
     <ClCompile Include="..\midi\WinMidiOut.cpp" />
+    <ClCompile Include="Release\moc_AxeFx3Manager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Debug\moc_AxeFx3Manager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Release\moc_AxeFxManager.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -211,6 +218,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Engine\AxeFxModel.h" />
+    <ClInclude Include="..\Engine\IAxeFx.h" />
     <ClInclude Include="..\Engine\MetaPatch_ResetExclusiveGroup.h" />
     <ClInclude Include="..\Engine\PersistentPedalOverridePatch.h" />
     <ClInclude Include="AboutDlg.h" />
@@ -239,6 +248,18 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">release\moc_MainTrollWindow.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <ClInclude Include="win\resource.h" />
+    <CustomBuild Include="..\Engine\AxeFx3Manager.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MOC AxeFx3Manager.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 ..\Engine\AxeFx3Manager.h -o debug\moc_AxeFx3Manager.cpp
+</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;..\Engine\AxeFx3Manager.h;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">debug\moc_AxeFx3Manager.cpp;%(Outputs)</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MOC AxeFx3Manager.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 ..\Engine\AxeFx3Manager.h -o release\moc_AxeFx3Manager.cpp
+</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;..\Engine\AxeFx3Manager.h;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">release\moc_AxeFx3Manager.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
     <CustomBuild Include="..\Engine\AxeFxManager.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MOC AxeFxManager.h</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 ..\Engine\AxeFxManager.h -o debug\moc_AxeFxManager.cpp

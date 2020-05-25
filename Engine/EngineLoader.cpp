@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2015,2018 Sean Echevarria
+ * Copyright (C) 2007-2015,2018,2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -45,6 +45,7 @@
 #include "RefirePedalCommand.h"
 #include "SleepCommand.h"
 #include "AxeFxManager.h"
+#include "AxeFx3Manager.h"
 #include "IMidiIn.h"
 #include "ITrollApplication.h"
 #include "AxeTogglePatch.h"
@@ -78,7 +79,9 @@ EngineLoader::EngineLoader(ITrollApplication * app,
 	mSwitchDisplay(switchDisplay),
 	mTraceDisplay(traceDisplay),
 	mAxeFxManager(nullptr),
-	mAxeSyncPort(-1)
+	mAxeFx3Manager(nullptr),
+	mAxeSyncPort(-1),
+	mAxe3SyncPort(-1)
 {
 	for (auto & adcEnable : mAdcEnables)
 		adcEnable = adc_default;
@@ -154,24 +157,43 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 	mMidiOutGenerator->OpenMidiOuts();
 	if (mMidiInGenerator)
 		mMidiInGenerator->OpenMidiIns();
+
+	if (mAxeFx3Manager)
+	{
+		IMidiOutPtr midiOut;
+		std::vector<std::string> axeNames = {"AxeFx3", "Axe-Fx3", "Axe-Fx 3", "AxeFxIII", "Axe-Fx III" };
+		for (const auto& axeName : axeNames)
+		{
+			std::map<std::string, int>::iterator it = mDevicePorts.find(axeName);
+			if (it != mDevicePorts.end())
+			{
+				int port = mDevicePorts[axeName];
+				midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[port]);
+				break;
+			}
+		}
+
+		mAxeFx3Manager->CompleteInit(midiOut);
+	}
+
 	if (mAxeFxManager)
 	{
 		IMidiOutPtr midiOut;
-		std::string axeName("AxeFx");
-		std::map<std::string, int>::iterator it = mDevicePorts.find(axeName);
-		if (it == mDevicePorts.end())
+		std::vector<std::string> axeNames = { "AxeFx", "Axe-Fx" };
+		for (const auto& axeName : axeNames)
 		{
-			axeName = "Axe-Fx";
-			it = mDevicePorts.find(axeName);
+			std::map<std::string, int>::iterator it = mDevicePorts.find(axeName);
+			if (it != mDevicePorts.end())
+			{
+				int port = mDevicePorts[axeName];
+				midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[port]);
+				break;
+			}
 		}
 
-		if (it != mDevicePorts.end())
-		{
-			int port = mDevicePorts[axeName];
-			midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[port]);
-		}
 		mAxeFxManager->CompleteInit(midiOut);
 	}
+
 	mEngine->CompleteInit(mAdcCalibration);
 
 	MidiControlEnginePtr createdEngine = mEngine;
@@ -311,6 +333,8 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 				if (midiIn)
 				{
 					mMidiInPortToDeviceIdxMap[port] = inDeviceIdx;
+					if (mAxeFx3Manager && port == mAxe3SyncPort && midiIn)
+						mAxeFx3Manager->SubscribeToMidiIn(midiIn);
 					if (mAxeFxManager && port == mAxeSyncPort && midiIn)
 						mAxeFxManager->SubscribeToMidiIn(midiIn);
 				}
@@ -323,7 +347,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 		engOut = mMidiOutGenerator->GetMidiOut((*mMidiOutPortToDeviceIdxMap.begin()).second);
 
 	mEngine = std::make_shared<MidiControlEngine>(mApp, mMainDisplay, mSwitchDisplay, mTraceDisplay,
-		engOut, mAxeFxManager, incrementSwitch, decrementSwitch, modeSwitch);
+		engOut, mAxeFxManager, mAxeFx3Manager, incrementSwitch, decrementSwitch, modeSwitch);
 	mEngine->SetPowerup(powerupBank, powerupPatch, powerupTimeout);
 	mEngine->FilterRedundantProgChg(filterPC ? true : false);
 
@@ -499,7 +523,16 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			if (tmp == "ResetBankPatches")
 				 mEngine->AddPatch(std::make_shared<MetaPatch_ResetBankPatches>(mEngine.get(), patchNumber, patchName));
 			else if (tmp == "SyncAxeFx")
-				 mEngine->AddPatch(std::make_shared<MetaPatch_SyncAxeFx>(mAxeFxManager, patchNumber, patchName));
+			{
+				auto metPatch = std::make_shared<MetaPatch_SyncAxeFx>(patchNumber, patchName);
+				std::vector<IAxeFxPtr> mgrs;
+				if (mAxeFx3Manager)
+					mgrs.push_back(mAxeFx3Manager);
+				if (mAxeFxManager)
+					mgrs.push_back(mAxeFxManager);
+				metPatch->AddAxeManagers(mgrs);
+				mEngine->AddPatch(metPatch);
+			}
 			else if (tmp == "LoadNextBank")
 				mEngine->AddPatch(std::make_shared<MetaPatch_LoadNextBank>(mEngine.get(), patchNumber, patchName));
 			else if (tmp == "LoadPreviousBank")
@@ -806,10 +839,12 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 
 					bytes.push_back(0xc0 | ch);
 					bytes.push_back(data1);
+
+					IAxeFxPtr mgr = GetAxeMgr(childElem);
 					if (group == "B")
-						cmds2.push_back(std::make_shared<AxeFxProgramChange>(midiOut, bytes, mAxeFxManager));
+						cmds2.push_back(std::make_shared<AxeFxProgramChange>(midiOut, bytes, mgr));
 					else
-						cmds.push_back(std::make_shared<AxeFxProgramChange>(midiOut, bytes, mAxeFxManager));
+						cmds.push_back(std::make_shared<AxeFxProgramChange>(midiOut, bytes, mgr));
 				}
 				else if (patchElement == "ControlChange")
 				{
@@ -870,7 +905,8 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 
 		int axeFxScene = 0;
 		int overrideCc = -1;
-		if (device == "Axe-Fx" && 
+		IAxeFxPtr mgrTmp = GetAxeMgr(pElem);
+		if (mgrTmp && 
 			(patchType.empty() || patchType == "AxeToggle" || patchType == "AxeMomentary") && 
 			cmds.empty() && cmds2.empty() &&
 			patchDefaultCh != -1)
@@ -879,6 +915,8 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			pElem->QueryIntAttribute("cc", &axeCc);
 			if (axeCc)
 				overrideCc = axeCc; // no default (like Feedback Return) or overridden from default
+			else if (mgrTmp->GetModel() == Axe3)
+				; // #axe3FinishThis init cc
 			else
 				axeCc = ::GetDefaultAxeCc(patchName, mTraceDisplay); // fallback to default
 
@@ -951,10 +989,11 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			newPatch = std::make_shared<PersistentPedalOverridePatch>(patchNumber, patchName, midiOut, cmds, cmds2);
 		else if (patchType == "AxeToggle")
 		{
-			auto axePatch = std::make_shared<AxeTogglePatch>(patchNumber, patchName, midiOut, cmds, cmds2, mAxeFxManager);
-			if (mAxeFxManager)
+			IAxeFxPtr mgr = GetAxeMgr(childElem);
+			auto axePatch = std::make_shared<AxeTogglePatch>(patchNumber, patchName, midiOut, cmds, cmds2, mgr);
+			if (mgr)
 			{
-				if (!mAxeFxManager->SetSyncPatch(axePatch, overrideCc))
+				if (!mgr->SetSyncPatch(axePatch, overrideCc))
 					axePatch->ClearAxeMgr();
 			}
 			else if (mTraceDisplay)
@@ -970,9 +1009,10 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			newPatch = std::make_shared<MomentaryPatch>(patchNumber, patchName, midiOut, cmds, cmds2);
 		else if (patchType == "AxeMomentary")
 		{
+			IAxeFxPtr mgr = GetAxeMgr(childElem);
 			newPatch = std::make_shared<MomentaryPatch>(patchNumber, patchName, midiOut, cmds, cmds2);
-			if (mAxeFxManager)
-				mAxeFxManager->SetSyncPatch(newPatch, overrideCc);
+			if (mgr)
+				mgr->SetSyncPatch(newPatch, overrideCc);
 			else if (mTraceDisplay)
 			{
 				std::strstream traceMsg;
@@ -999,9 +1039,10 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				}
 			}
 
+			IAxeFxPtr mgr = GetAxeMgr(childElem);
 			newPatch = std::make_shared<MomentaryPatch>(patchNumber, patchName, midiOut, cmds, cmds2);
-			if (mAxeFxManager)
-				mAxeFxManager->SetTempoPatch(newPatch);
+			if (mgr)
+				mgr->SetTempoPatch(newPatch);
 			else if (mTraceDisplay)
 			{
 				std::strstream traceMsg;
@@ -1022,13 +1063,14 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		if (!newPatch)
 			continue;
 
+		IAxeFxPtr mgr = GetAxeMgr(childElem);
 		mEngine->AddPatch(newPatch);
-		if (mAxeFxManager)
+		if (mgr)
 		{
 			if (axeFxScene)
-				mAxeFxManager->SetScenePatch(axeFxScene, newPatch);
+				mgr->SetScenePatch(axeFxScene, newPatch);
 			else
-				mAxeFxManager->SetLooperPatch(newPatch);
+				mgr->SetLooperPatch(newPatch);
 		}
 
 		ExpressionPedals & pedals = newPatch->GetPedals();
@@ -1060,6 +1102,24 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			}
 		}
 	}
+}
+
+IAxeFxPtr
+EngineLoader::GetAxeMgr(TiXmlElement * pElem)
+{
+	if (pElem)
+	{
+		std::string devStr;
+		pElem->QueryValueAttribute("device", &devStr);
+		if (!devStr.empty())
+		{
+			if (devStr == mAxe3DeviceName)
+				return mAxeFx3Manager;
+			if (devStr == mAxeDeviceName)
+				return mAxeFxManager;
+		}
+	}
+	return nullptr;
 }
 
 void
@@ -1171,7 +1231,14 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						if (!isAutoGendPatchNumber)
 						{
 							gendPatchName = "Sync Axe-FX";
-							mEngine->AddPatch(std::make_shared<MetaPatch_SyncAxeFx>(mAxeFxManager, patchNumber, gendPatchName));
+							auto metPatch = std::make_shared<MetaPatch_SyncAxeFx>(patchNumber, gendPatchName);
+							std::vector<IAxeFxPtr> mgrs;
+							if (mAxeFx3Manager)
+								mgrs.push_back(mAxeFx3Manager);
+							if (mAxeFxManager)
+								mgrs.push_back(mAxeFxManager);
+							metPatch->AddAxeManagers(mgrs);
+							mEngine->AddPatch(metPatch);
 						}
 						else
 							patchNumber = ReservedPatchNumbers::kSyncAxeFx;
@@ -1554,7 +1621,29 @@ EngineLoader::LoadDeviceChannelMap(TiXmlElement * pElem)
 		pElem->QueryIntAttribute("port", &port);
 		mDevicePorts[dev] = port;
 
-		if (dev == "AxeFx" || 
+		if (dev == "AxeFx3" ||
+			dev == "Axe-Fx3" ||
+			dev == "Axe-Fx 3" ||
+			dev == "AxeFx III" ||
+			dev == "Axe-Fx III"
+			)
+		{
+			if (!mAxeFx3Manager)
+			{
+				AxeFxModel axeModel(Axe3);
+				const int axeCh = ::atoi(ch.c_str()) - 1;
+				mAxeFx3Manager = std::make_shared<AxeFx3Manager>(mMainDisplay, mSwitchDisplay, mTraceDisplay, mApp->ApplicationDirectory(), axeCh, axeModel);
+				mAxe3SyncPort = -1 == port ? 1 : port;
+				mAxe3DeviceName = dev;
+			}
+			else if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: multiple axe-fx 3 devices" << std::endl << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
+		}
+		else if (dev == "AxeFx" ||
 			dev == "Axe-Fx" || 
 			dev == "AxeFx Ultra" ||
 			dev == "Axe-Fx Ultra" ||
@@ -1576,6 +1665,8 @@ EngineLoader::LoadDeviceChannelMap(TiXmlElement * pElem)
 			pElem->QueryIntAttribute("model", &tmp);
 			if (2 == tmp)
 				axeModel = Axe2;
+			else if (3 == tmp)
+				axeModel = Axe3;
 			else if (6 == tmp)
 				axeModel = Axe2XL;
 			else if (7 == tmp)
@@ -1610,11 +1701,18 @@ EngineLoader::LoadDeviceChannelMap(TiXmlElement * pElem)
 				}
 			}
 
-			if (!mAxeFxManager)
+			const int axeCh = ::atoi(ch.c_str()) - 1;
+			if (axeModel == Axe3 && !mAxeFx3Manager)
 			{
-				const int axeCh = ::atoi(ch.c_str()) - 1;
+				mAxeFx3Manager = std::make_shared<AxeFx3Manager>(mMainDisplay, mSwitchDisplay, mTraceDisplay, mApp->ApplicationDirectory(), axeCh, axeModel);
+				mAxe3SyncPort = -1 == port ? 1 : port;
+				mAxe3DeviceName = dev;
+			}
+			else if (axeModel != Axe3 && !mAxeFxManager)
+			{
 				mAxeFxManager = std::make_shared<AxeFxManager>(mMainDisplay, mSwitchDisplay, mTraceDisplay, mApp->ApplicationDirectory(), axeCh, axeModel);
 				mAxeSyncPort = -1 == port ? 1 : port;
+				mAxeDeviceName = dev;
 			}
 			else if (mTraceDisplay)
 			{

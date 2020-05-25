@@ -96,6 +96,12 @@
     <ClCompile Include="..\midi\WinMidiOut.cpp">
       <Filter>midi</Filter>
     </ClCompile>
+    <ClCompile Include="Release\moc_AxeFx3Manager.cpp">
+      <Filter>Moc Generated Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug\moc_AxeFx3Manager.cpp">
+      <Filter>Moc Generated Source</Filter>
+    </ClCompile>
     <ClCompile Include="Release\moc_AxeFxManager.cpp">
       <Filter>Moc Generated Source</Filter>
     </ClCompile>
@@ -119,6 +125,9 @@
     </ClCompile>
     <ClCompile Include="..\Engine\TwoStatePatch.cpp">
       <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\AxeFx3Manager.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -272,6 +281,12 @@
     <ClInclude Include="..\Engine\PersistentPedalOverridePatch.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="..\Engine\AxeFxModel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\IAxeFx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="win\mTrollQt.rc">
@@ -319,6 +334,9 @@
     </CustomBuild>
     <CustomBuild Include="..\Engine\AxeFxManager.h">
       <Filter>Engine</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Engine\AxeFx3Manager.h">
+      <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>

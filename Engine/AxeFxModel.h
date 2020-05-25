@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2012,2018,2020 Sean Echevarria
+ * Copyright (C) 2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -22,38 +22,17 @@
  * Contact Sean: "fester" at the domain of the original project site
  */
 
-#ifndef AxeFxProgramChange_h__
-#define AxeFxProgramChange_h__
+#ifndef AxeFxModel_h__
+#define AxeFxModel_h__
 
-#include "MidiCommandString.h"
-#include "IAxeFx.h"
-
-
-class AxeFxProgramChange : public MidiCommandString
+enum AxeFxModel
 {
-public:
-	AxeFxProgramChange(IMidiOutPtr midiOut, 
-					  Bytes & midiString,
-					  IAxeFxPtr mgr) :
-		MidiCommandString(midiOut, midiString),
-		mAxeMgr(mgr)
-	{
-	}
-
-	~AxeFxProgramChange() = default;
-
-	void Exec() override
-	{
-		__super::Exec();
-		if (mAxeMgr)
-			mAxeMgr->DelayedNameSyncFromAxe();
-	}
-
-private:
-	AxeFxProgramChange();
-
-private:
-	IAxeFxPtr		mAxeMgr = nullptr;
+	AxeStd = 0,
+	AxeUltra = 1,
+	Axe2 = 3,
+	Axe2XL = 6,
+	Axe2XLPlus = 7,
+	Axe3 = 0x10
 };
 
-#endif // AxeFxProgramChange_h__
+#endif // AxeFxModel_h__

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2012,2018,2020 Sean Echevarria
+ * Copyright (C) 2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -22,38 +22,34 @@
  * Contact Sean: "fester" at the domain of the original project site
  */
 
-#ifndef AxeFxProgramChange_h__
-#define AxeFxProgramChange_h__
+#ifndef IAxeFx_h__
+#define IAxeFx_h__
 
-#include "MidiCommandString.h"
-#include "IAxeFx.h"
+#include <memory>
+#include "AxeFxModel.h"
 
+class Patch;
+using PatchPtr = std::shared_ptr<Patch>;
 
-class AxeFxProgramChange : public MidiCommandString
+__interface IAxeFx
 {
-public:
-	AxeFxProgramChange(IMidiOutPtr midiOut, 
-					  Bytes & midiString,
-					  IAxeFxPtr mgr) :
-		MidiCommandString(midiOut, midiString),
-		mAxeMgr(mgr)
-	{
-	}
+	// info
+	virtual AxeFxModel GetModel() const;
+	virtual int GetChannel() const;
 
-	~AxeFxProgramChange() = default;
+	// engine load init
+	virtual void SetScenePatch(int scene, PatchPtr patch);
+	virtual void SetTempoPatch(PatchPtr patch);
+	virtual void SetLooperPatch(PatchPtr patch);
+	virtual bool SetSyncPatch(PatchPtr patch, int bypassCc = -1);
 
-	void Exec() override
-	{
-		__super::Exec();
-		if (mAxeMgr)
-			mAxeMgr->DelayedNameSyncFromAxe();
-	}
-
-private:
-	AxeFxProgramChange();
-
-private:
-	IAxeFxPtr		mAxeMgr = nullptr;
+	// runtime
+	virtual void SyncNameAndEffectsFromAxe();
+	virtual void DelayedNameSyncFromAxe(bool force = false);
+	virtual void DelayedEffectsSyncFromAxe();
+	virtual void Shutdown();
 };
 
-#endif // AxeFxProgramChange_h__
+using IAxeFxPtr = std::shared_ptr<IAxeFx>;
+
+#endif // IAxeFx_h__

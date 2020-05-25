@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2013,2015,2018 Sean Echevarria
+ * Copyright (C) 2007-2013,2015,2018,2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -33,6 +33,7 @@
 #include "Patch.h"
 #include "ExpressionPedals.h"
 #include "../Monome40h/IMonome40hInputSubscriber.h"
+#include "IAxeFx.h"
 
 
 class ITrollApplication;
@@ -42,10 +43,8 @@ class ITraceDisplay;
 class IMidiOut;
 class Patch;
 class PatchBank;
-class AxeFxManager;
 
 using PatchBankPtr = std::shared_ptr<PatchBank>;
-using AxeFxManagerPtr = std::shared_ptr<AxeFxManager>;
 using IMidiOutPtr = std::shared_ptr<IMidiOut>;
 
 
@@ -57,7 +56,8 @@ public:
 					  ISwitchDisplay * switchDisplay,
 					  ITraceDisplay * traceDisplay,
 					  IMidiOutPtr midiOut,
-					  AxeFxManagerPtr axMgr,
+					  IAxeFxPtr axMgr,
+					  IAxeFxPtr ax3Mgr,
 					  int incrementSwitchNumber,
 					  int decrementSwitchNumber,
 					  int modeSwitchNumber);
@@ -158,7 +158,7 @@ private:
 	ITraceDisplay *			mTrace;
 	ISwitchDisplay *		mSwitchDisplay;
 	IMidiOutPtr				mMidiOut; // only used for emProgramChangeDirect/emControlChangeDirect
-	AxeFxManagerPtr			mAxeMgr;
+	std::vector<IAxeFxPtr>	mAxeMgrs;
 
 	PatchBankPtr			mActiveBank;
 	int						mActiveBankIndex;

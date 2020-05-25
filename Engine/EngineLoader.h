@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2018 Sean Echevarria
+ * Copyright (C) 2007-2010,2018,2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -29,6 +29,7 @@
 #include <map>
 #include <memory>
 #include "ExpressionPedals.h"
+#include "IAxeFx.h"
 
 class MidiControlEngine;
 class ITrollApplication;
@@ -40,9 +41,11 @@ class IMidiInGenerator;
 class TiXmlElement;
 class IMonome40h;
 class AxeFxManager;
+class AxeFx3Manager;
 
 using MidiControlEnginePtr = std::shared_ptr<MidiControlEngine>;
 using AxeFxManagerPtr = std::shared_ptr<AxeFxManager>;
+using AxeFx3ManagerPtr = std::shared_ptr<AxeFx3Manager>;
 
 
 class EngineLoader
@@ -61,6 +64,7 @@ private:
 	void					LoadDeviceChannelMap(TiXmlElement * pElem);
 	void					LoadExpressionPedalSettings(TiXmlElement * pElem, ExpressionPedals &pedals, int defaultChannel);
 	void					LoadPatches(TiXmlElement * pElem);
+	IAxeFxPtr				GetAxeMgr(TiXmlElement * pElem);
 	void					LoadBanks(TiXmlElement * pElem);
 
 	using MidiPortToDeviceIdxMap = std::map<int, unsigned int>;
@@ -78,9 +82,13 @@ private:
 	ISwitchDisplay *		mSwitchDisplay;
 	ITraceDisplay *			mTraceDisplay;
 	AxeFxManagerPtr			mAxeFxManager;
+	AxeFx3ManagerPtr		mAxeFx3Manager;
 	std::map<std::string, std::string> mDeviceChannels; // outboard device channels
 	std::map<std::string, int> mDevicePorts; // computer midi ports used to address outboard devices
+	std::string				mAxeDeviceName;
+	std::string				mAxe3DeviceName;
 	int						mAxeSyncPort;
+	int						mAxe3SyncPort;
 };
 
 #endif // EngineLoader_h__

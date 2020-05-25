@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2012,2014,2017-2018 Sean Echevarria
+ * Copyright (C) 2010-2012,2014,2017-2018,2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -26,7 +26,7 @@
 #define AxeTogglePatch_h__
 
 #include "TogglePatch.h"
-#include "AxeFxManager.h"
+#include "IAxeFx.h"
 
 
 // AxeTogglePatch
@@ -36,7 +36,7 @@
 //
 class AxeTogglePatch : public TogglePatch
 {
-	AxeFxManagerPtr	mAx;
+	IAxeFxPtr		mAx = nullptr;
 	bool			mHasDisplayText;
 	std::string		mActiveText;
 	std::string		mInactiveText;
@@ -47,7 +47,7 @@ public:
 				IMidiOutPtr midiOut, 
 				PatchCommands & cmdsA, 
 				PatchCommands & cmdsB,
-				AxeFxManagerPtr axeMgr) :
+				IAxeFxPtr axeMgr) :
 		TogglePatch(number, name, midiOut, cmdsA, cmdsB),
 		mAx(axeMgr)
 	{

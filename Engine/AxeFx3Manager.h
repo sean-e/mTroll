@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2014,2018,2020 Sean Echevarria
+ * Copyright (C) 2010-2014,2018 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -22,8 +22,8 @@
  * Contact Sean: "fester" at the domain of the original project site
  */
 
-#ifndef AxeFxManager_h__
-#define AxeFxManager_h__
+#ifndef AxeFx3Manager_h__
+#define AxeFx3Manager_h__
 
 #include <QObject>
 #include <qmutex.h>
@@ -40,26 +40,27 @@ class ISwitchDisplay;
 class Patch;
 class IMidiOut;
 class QTimer;
-class AxeFxManager;
+class AxeFx3Manager;
 
 using PatchPtr = std::shared_ptr<Patch>;
-using AxeFxManagerPtr = std::shared_ptr<AxeFxManager>;
+using AxeFx3ManagerPtr = std::shared_ptr<AxeFx3Manager>;
 using IMidiOutPtr = std::shared_ptr<IMidiOut>;
 
-// AxeFxManager
+
+// AxeFx3Manager
 // ----------------------------------------------------------------------------
-// Manages extended Axe-Fx support
+// Manages extended Axe-Fx III  support
 //
-class AxeFxManager : 
-	public QObject, 
+class AxeFx3Manager :
+	public QObject,
 	public IMidiInSubscriber,
 	public IAxeFx
 {
 	Q_OBJECT;
 	friend class StartQueryTimer;
 public:
-	AxeFxManager(IMainDisplay * mainDisp, ISwitchDisplay * switchDisp, ITraceDisplay * pTrace, const std::string & appPath, int ch, AxeFxModel m);
-	virtual ~AxeFxManager();
+	AxeFx3Manager(IMainDisplay * mainDisp, ISwitchDisplay * switchDisp, ITraceDisplay * pTrace, const std::string & appPath, int ch, AxeFxModel m);
+	virtual ~AxeFx3Manager();
 
 	// IMidiInSubscriber
 	virtual void ReceivedData(byte b1, byte b2, byte b3) override;
@@ -75,7 +76,6 @@ public:
 	void SetLooperPatch(PatchPtr patch) override;
 	bool SetSyncPatch(PatchPtr patch, int bypassCc = -1) override;
 	int GetChannel() const override { return mAxeChannel; }
-	void SyncPatchFromAxe(PatchPtr patch);
 	AxeFxModel GetModel() const override { return mModel; }
 	void Shutdown() override;
 
@@ -90,13 +90,12 @@ public slots:
 
 private:
 	// basically an overload of IMidiInSubscriber::shared_from_this() but returning 
-	// AxeFxManagerPtr instead of IMidiInSubscriberPtr
-	AxeFxManagerPtr GetSharedThis()
+	// AxeFx3ManagerPtr instead of IMidiInSubscriberPtr
+	AxeFx3ManagerPtr GetSharedThis()
 	{
-		return std::dynamic_pointer_cast<AxeFxManager>(IMidiInSubscriber::shared_from_this());
+		return std::dynamic_pointer_cast<AxeFx3Manager>(IMidiInSubscriber::shared_from_this());
 	}
 
-	AxeEffectBlockInfo * IdentifyBlockInfoUsingBypassId(const byte * bytes);
 	AxeEffectBlockInfo * IdentifyBlockInfoUsingCc(const byte * bytes);
 	AxeEffectBlockInfo * IdentifyBlockInfoUsingEffectId(const byte * bytes);
 	AxeEffectBlocks::iterator GetBlockInfo(PatchPtr patch);
@@ -117,12 +116,7 @@ private:
 	void ReceivePresetEffectsV2(const byte * bytes, int len);
 	void TurnOffLedsForNaEffects();
 
-	void RequestNextParamValue();
-	void ReceiveParamValue(const byte * bytes, int len);
 	void KillResponseTimer();
-
-private slots:
-	void QueryTimedOut();
 
 private:
 	int				mRefCnt;
@@ -151,9 +145,10 @@ private:
 	int				mCurrentScene;
 	int				mCurrentAxePreset;
 	std::string		mCurrentAxePresetName;
+	std::string		mCurrentAxeSceneName;
 };
 
 int GetDefaultAxeCc(const std::string &effectName, ITraceDisplay * trc);
 void NormalizeAxeEffectName(std::string & effectName);
 
-#endif // AxeFxManager_h__
+#endif // AxeFx3Manager_h__

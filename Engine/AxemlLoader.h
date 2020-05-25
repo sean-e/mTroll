@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2011,2015,2018 Sean Echevarria
+ * Copyright (C) 2010-2011,2015,2018,2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -28,21 +28,13 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include "AxeFxModel.h"
 
 class TiXmlElement;
 class ITraceDisplay;
 class Patch;
 
 using PatchPtr = std::shared_ptr<Patch>;
-
-enum AxeFxModel
-{
-	AxeStd = 0,
-	AxeUltra = 1,
-	Axe2 = 3,
-	Axe2XL = 6,
-	Axe2XLPlus = 7
-};
 
 struct AxeEffectBlockInfo
 {
