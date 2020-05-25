@@ -1026,20 +1026,30 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			newPatch = std::make_shared<PatchListSequencePatch>(patchNumber, patchName, intList);
 		else if (patchType == "AxeFxTapTempo")
 		{
-			if (cmds.empty() && cmds2.empty() && -1 != patchDefaultCh)
+			IAxeFxPtr mgr = GetAxeMgr(childElem);
+			if (cmds.empty() && cmds2.empty())
 			{
-				const int cc = ::GetDefaultAxeCc("Tap Tempo", mTraceDisplay);
-				if (cc)
+				if (mgr && mgr->GetModel() == Axe3)
 				{
-					Bytes bytes;
-					bytes.push_back(0xb0 | patchDefaultCh);
-					bytes.push_back(cc);
-					bytes.push_back(127);
+					// #axe3SysexCommand: Axe-Fx 3 Tempo Tap command 10H
+					Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, 0x10, 0x10 };
+					::AppendChecksumAndTerminate(bytes);
 					cmds.push_back(std::make_shared<MidiCommandString>(midiOut, bytes));
+				}
+				else if (-1 != patchDefaultCh)
+				{
+					const int cc = ::GetDefaultAxeCc("Tap Tempo", mTraceDisplay);
+					if (cc)
+					{
+						Bytes bytes;
+						bytes.push_back(0xb0 | patchDefaultCh);
+						bytes.push_back(cc);
+						bytes.push_back(127);
+						cmds.push_back(std::make_shared<MidiCommandString>(midiOut, bytes));
+					}
 				}
 			}
 
-			IAxeFxPtr mgr = GetAxeMgr(childElem);
 			newPatch = std::make_shared<MomentaryPatch>(patchNumber, patchName, midiOut, cmds, cmds2);
 			if (mgr)
 				mgr->SetTempoPatch(newPatch);
