@@ -54,37 +54,39 @@ static const int kDefaultEffectsSyncTimerInterval = 20;
 std::atomic<int> gAxeFx3MgrCnt = 0;
 #endif
 
-static void NormalizeAxe3EffectName(std::string &effectName);
+static std::string NormalizeAxe3EffectName(const std::string &effectName);
 static void Axe3SynonymNormalization(std::string & name);
 
 struct Axe3EffectBlockInfo
 {
-	std::string		mName;						// Amp 1
-	std::string		mNormalizedName;			// amp 1
-	int				mSysexEffectId;				// unique per name
-	int				mSysexEffectIdMs;			//	derived 
-	int				mSysexEffectIdLs;			//	derived
-	bool			mEffectIsPresentInAxePatch;	// unique per name
-	PatchPtr		mPatch;						// the patch assigned to this effectId
-	std::vector<PatchPtr> mDependentPatches;	// optional dependent patches for this effectId, like channel select
+	// state that is basically const
+	std::string			mName;						// Amp 1
+	std::string			mNormalizedName;			// amp 1
+	int					mSysexEffectId;				// unique per name
+	int					mSysexEffectIdMs;			//	derived 
+	int					mSysexEffectIdLs;			//	derived
+	PatchPtr			mPatch;						// the patch assigned to this effectId
+	std::vector<PatchPtr> mDependentPatches;		// optional dependent patches for this effectId, like channel select
+
+	// state that changes at runtime dependent upon active preset
+	int					mCurrentChannel = 0;
+	int					mMaxChannels = 0;
+	bool				mEffectIsPresentInAxePatch = true;	// unique per name
 
 	Axe3EffectBlockInfo() :
 		mSysexEffectId(-1),
 		mSysexEffectIdLs(-1),
-		mSysexEffectIdMs(-1),
-		mEffectIsPresentInAxePatch(true)
+		mSysexEffectIdMs(-1)
 	{
 	}
 
 	Axe3EffectBlockInfo(int id, const std::string & name) :
 		mName(name),
-		mNormalizedName(name),
+		mNormalizedName(::NormalizeAxe3EffectName(name)),
 		mSysexEffectId(id),
-		mEffectIsPresentInAxePatch(true)
+		mSysexEffectIdLs(id & 0x0000000F),
+		mSysexEffectIdMs((id >> 4) & 0x0000000F)
 	{
-		mSysexEffectIdLs = mSysexEffectId & 0x0000000F;
-		mSysexEffectIdMs = (mSysexEffectId >> 4) & 0x0000000F;
-		::NormalizeAxe3EffectName(mNormalizedName);
 	}
 };
 
@@ -99,7 +101,6 @@ AxeFx3Manager::AxeFx3Manager(IMainDisplay * mainDisp,
 	mMainDisplay(mainDisp),
 	mTrace(pTrace),
 	mLastTimeout(0),
-	// mQueryLock(QMutex::Recursive),
 	mMidiOut(nullptr),
 	mFirmwareMajorVersion(0),
 	mAxeChannel(ch),
@@ -173,8 +174,7 @@ AxeFx3Manager::SetScenePatch(int scene, PatchPtr patch)
 bool
 AxeFx3Manager::SetSyncPatch(PatchPtr patch, int bypassCc /*= -1*/)
 {
-	std::string normalizedEffectName(patch->GetName());
-	::NormalizeAxe3EffectName(normalizedEffectName);
+	std::string normalizedEffectName(::NormalizeAxe3EffectName(patch->GetName()));
 	for (Axe3EffectBlockInfo & cur : mAxeEffectInfo)
 	{
 		if (cur.mNormalizedName == normalizedEffectName)
@@ -295,26 +295,20 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 
 	switch (bytes[5])
 	{
-	case 2:
-		return;
-	case 4:
-		// receive patch dump
-		if (kDbgFlag && mTrace)
-		{
-			const std::string msg("AxeFx: received patch dump\n");
-			mTrace->Trace(msg);
-		}
-		return;
+// 	case 2:
+// 		return;
+// 	case 4:
+// 		return;
 	case 8:
 		if (mFirmwareMajorVersion)
 			return;
 		ReceiveFirmwareVersionResponse(bytes, len);
 		return;
-	case 0xe:
-		ReceivePresetEffectsV2(&bytes[6], len - 6);
-		return;
-	case 0xf:
+	case 0xd:
 		ReceivePresetName(&bytes[6], len - 6);
+		return;
+	case 0xe:
+		ReceiveSceneName(&bytes[6], len - 6);
 		return;
 	case 0x10:
 		// Tempo: f0 00 01 74 10 10 f7
@@ -331,16 +325,19 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 		// ss = string 0-5, 0 = low E
 		// cc = cents offset binary, 63 = 0, 62 = -1, 64 = +1
 		return;
+	case 0x13:
+		ReceiveStatusDump(&bytes[6], len - 6);
+		return;
 	case 0x14:
 		// preset loaded
 		ReceivePresetNumber(&bytes[6], len - 6);
 		DelayedNameSyncFromAxe(true);
 		return;
-	case 0x20:
-		// routing grid layout
-		return;
+// 	case 0x20:
+// 		// routing grid layout
+// 		return;
 	case 0x21:
-		// x/y change or scene selected
+		// channel change or scene selected
 		DelayedEffectsSyncFromAxe();
 		return;
 	case 0x23:
@@ -380,39 +377,11 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 }
 
 Axe3EffectBlockInfo *
-AxeFx3Manager::IdentifyBlockInfoUsingCc(const byte * bytes)
+AxeFx3Manager::GetBlockInfoByEffectId(const byte * bytes)
 {
 	int effectId;
-	int cc;
-
-	const int ccLs = bytes[0] >> 1;
-	const int ccMs = (bytes[1] & 1) << 6;
-	cc = ccMs | ccLs;
-
-	const int effectIdLs = bytes[2] >> 3;
-	const int effectIdMs = (bytes[3] << 4) & 0xff;
-	effectId = effectIdMs | effectIdLs;
-
-	for (auto & cur : mAxeEffectInfo)
-	{
-		if (cur.mSysexEffectId == effectId /*&& cur.mBypassCC == cc*/)
-			return &cur;
-	}
-
-	return nullptr;
-}
-
-// This method is provided for last chance guess.  Only use if all other methods
-// fail.  It can return incorrect information since many effects are available
-// in quantity.  This will return the first effect Id match to the exclusion
-// of instance id.  It is meant for Feedback Return which is a single instance
-// effect that has no default cc for bypass.
-Axe3EffectBlockInfo *
-AxeFx3Manager::IdentifyBlockInfoUsingEffectId(const byte * bytes)
-{
-	int effectId;
-	const int effectIdLs = bytes[2] >> 3;
-	const int effectIdMs = (bytes[3] << 4) & 0xff;
+	const int effectIdLs = bytes[0] >> 3;
+	const int effectIdMs = (bytes[1] << 4) & 0xff;
 	effectId = effectIdMs | effectIdLs;
 
 	for (auto & cur : mAxeEffectInfo)
@@ -424,34 +393,16 @@ AxeFx3Manager::IdentifyBlockInfoUsingEffectId(const byte * bytes)
 	return nullptr;
 }
 
-Axe3EffectBlocks::iterator
-AxeFx3Manager::GetBlockInfo(PatchPtr patch)
+Axe3EffectBlockInfo *
+AxeFx3Manager::GetBlockInfoByName(const std::string& normalizedEffectName)
 {
-	for (Axe3EffectBlocks::iterator it = mAxeEffectInfo.begin(); 
-		it != mAxeEffectInfo.end(); 
-		++it)
+	for (auto & cur : mAxeEffectInfo)
 	{
-		const Axe3EffectBlockInfo & cur = *it;
-		if (cur.mPatch == patch)
-			return it;
-	}
-
-	return mAxeEffectInfo.end();
-}
-
-Axe3EffectBlocks::iterator
-AxeFx3Manager::GetBlockInfo(const std::string& normalizedEffectName)
-{
-	for (Axe3EffectBlocks::iterator it = mAxeEffectInfo.begin();
-		it != mAxeEffectInfo.end();
-		++it)
-	{
-		const Axe3EffectBlockInfo & cur = *it;
 		if (cur.mNormalizedName == normalizedEffectName)
-			return it;
+			return &cur;
 	}
 
-	return mAxeEffectInfo.end();
+	return nullptr;
 }
 
 void
@@ -463,7 +414,7 @@ AxeFx3Manager::SyncNameAndEffectsFromAxe()
 void
 AxeFx3Manager::SyncEffectsFromAxe()
 {
-	RequestPresetEffects();
+	RequestStatusDump();
 }
 
 void
@@ -606,8 +557,7 @@ AxeFx3Manager::GetCommandString(const std::string& commandName, bool enable)
 		return emptyCommand;
 
 	// get normalizedName
-	std::string name(commandName);
-	::NormalizeAxe3EffectName(name);
+	std::string name(::NormalizeAxe3EffectName(commandName));
 
 	if ('t' == name[0])
 	{
@@ -634,8 +584,8 @@ AxeFx3Manager::GetCommandString(const std::string& commandName, bool enable)
 	}
 
 	// lookup name to get effect ID
-	Axe3EffectBlocks::iterator fx = GetBlockInfo(name);
-	if (fx == mAxeEffectInfo.end())
+	Axe3EffectBlockInfo *fx = GetBlockInfoByName(name);
+	if (!fx)
 	{
 		if (-1 != name.find("loop"))
 		{
@@ -752,7 +702,7 @@ AxeFx3Manager::RequestPresetName()
 	if (!mFirmwareMajorVersion)
 		return;
 
-	Bytes bb{ 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x0f };
+	Bytes bb{ 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x0d, 0x7f, 0x7f };
 	AppendChecksumAndTerminate(bb);
 	mMidiOut->MidiOut(bb);
 }
@@ -767,14 +717,44 @@ AxeFx3Manager::ReceivePresetName(const byte * bytes, int len)
 	if (mMainDisplay && !patchName.empty())
 	{
 		mCurrentAxePresetName = patchName;
+		mCurrentAxeSceneName.clear();
 		DisplayPresetStatus();
 	}
 
-	RequestPresetEffects();
+	RequestStatusDump();
 }
 
 void
-AxeFx3Manager::RequestPresetEffects()
+AxeFx3Manager::RequestSceneName()
+{
+	if (!mFirmwareMajorVersion)
+		SendFirmwareVersionQuery();
+
+	QMutexLocker lock(&mQueryLock);
+	if (!mFirmwareMajorVersion)
+		return;
+
+	Bytes bb{ 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x0e, 0x7f };
+	AppendChecksumAndTerminate(bb);
+	mMidiOut->MidiOut(bb);
+}
+
+void
+AxeFx3Manager::ReceiveSceneName(const byte * bytes, int len)
+{
+	if (len < 21)
+		return;
+
+	std::string sceneName((const char *)bytes, 21);
+	if (mMainDisplay && !sceneName.empty())
+	{
+		mCurrentAxeSceneName = sceneName;
+		DisplayPresetStatus();
+	}
+}
+
+void
+AxeFx3Manager::RequestStatusDump()
 {
 	if (!mFirmwareMajorVersion)
 		SendFirmwareVersionQuery();
@@ -786,9 +766,6 @@ AxeFx3Manager::RequestPresetEffects()
 	// default to no fx in patch, but don't update LEDs until later
 	for (auto & cur : mAxeEffectInfo)
 	{
-// 		if (-1 == cur.mSysexBypassParameterId)
-// 			continue;
-
 		if (-1 == cur.mSysexEffectId)
 			continue;
 
@@ -804,106 +781,52 @@ AxeFx3Manager::RequestPresetEffects()
 }
 
 void
-AxeFx3Manager::ReceivePresetEffectsV2(const byte * bytes, int len)
+AxeFx3Manager::ReceiveStatusDump(const byte * bytes, int len)
 {
-	// request: F0 00 01 74 03 0e 08 F7
-	// response with compressor 1 bypassed (cc 43 0x2b):
-	//			02 56 7C 27 06 F7
-	// compressor 1 enabled:
-	//			03 56 7C 27 06 F7 
-	// compressor 1 enabled: (cc 44 0x2c)
-	//			03 58 7C 27 06 F7 
-	// comp 1 (cc 43 0x2b):
-	// 	56 7C 27 06
-	// 	56: 1010110
-	// 	2b: 101011
-	// comp 1 (cc 44 0x2c)
-	// 	58 7C 27 06
-	// 	58: 1011000
-	// 	2c:	101100
-	// comp 1 (none)
-	// 	00 7E 27 06
-	// comp 1 (pedal)
-	// 	02 7E 27 06
-	// comp 1 (cc 1 0x01)
-	// 	02 7C 27 06
-	// 	2: 10
-	// 	1: 1
-	// comp 1 (cc 127 0x7f)
-	// 	7E 7D 27 06
-	// 	7e: 1111110
-	// 	7f: 1111111
-
-	// amp 1 bypassed (cc 37 0x25):
-	//			02 4A 10 53 06 F7 
-	// amp 1 in X:
-	//			03 4A 10 53 06 F7
-	// amp 1 in X  (cc 38 0x26):
-	//			03 4C 10 53 06 F7 
-	// amp 1 in Y:
-	//			01 4A 10 53 06 F7
-
-	// for each effect there are 5 bytes:
-	//	1 (whole?) byte for the state: off(y):0 / on(y):1 / off(x)(no xy):2 / on(x)(no xy):3
-	//	1 byte: 7 bits for ccLs / 1 bit ?
-	//	1 byte: 6 bits ? / 1 bit for cc pedal or cc none / 1 bit for ccMs
-	//	1 byte: 5 bits for effectIdLs / 3 bits ?
-	//	1 byte: 4 bits ? / 4 bits for effectIdMs
-	//	
-	for (int idx = 0; (idx + 5) < len; idx += 5)
+	// for each effect there is a packet of 3 bytes:
+	// effect ID 2 bytes: LS MS
+	// data 1 byte: 
+	//	bit 0 bypass state: 0 = engaged, 1 = bypassed
+	//	bit 1-3 channel (0-7)
+	//	bit 6-4: max number of channels supported (0-7)
+	constexpr int kEffectPacketLen = 3;
+	for (int idx = 0; (idx + kEffectPacketLen) < len; idx += kEffectPacketLen)
 	{
 		if (false && kDbgFlag && mTrace)
 		{
-			const std::string byteDump(::GetAsciiHexStr(&bytes[idx], 5, true) + "\n");
+			const std::string byteDump(::GetAsciiHexStr(&bytes[idx], kEffectPacketLen, true) + "\n");
 			mTrace->Trace(byteDump);
 		}
 
-		Axe3EffectBlockInfo * inf = nullptr;
-		inf = IdentifyBlockInfoUsingCc(bytes + idx + 1);
-		if (!inf)
+		Axe3EffectBlockInfo * inf = GetBlockInfoByEffectId(bytes + idx);
+		if (inf && mTrace /*&& inf->mNormalizedName != "feedback return"*/)
 		{
-			inf = IdentifyBlockInfoUsingEffectId(bytes + idx + 1);
-			if (inf && mTrace && inf->mNormalizedName != "feedback return")
-			{
-				std::strstream traceMsg;
-				traceMsg << "Axe sync warning: potentially unexpected sync for  " << inf->mName << " " << std::endl << std::ends;
-				mTrace->Trace(std::string(traceMsg.str()));
-			}
+			std::strstream traceMsg;
+			traceMsg << "Axe sync warning: potentially unexpected sync for  " << inf->mName << " " << std::endl << std::ends;
+			mTrace->Trace(std::string(traceMsg.str()));
 		}
 
 		if (inf && inf->mPatch)
 		{
+			const byte dd = bytes[idx + 2];
 			inf->mEffectIsPresentInAxePatch = true;
-			const byte kParamVal = bytes[idx];
-			const bool isActive = (3 == kParamVal); // enabled X or no xy
-			const bool isActiveY = (1 == kParamVal);
-			const bool isBypassed = (2 == kParamVal); // disabled X or no xy
-			const bool isBypassedY = (0 == kParamVal);
+			inf->mCurrentChannel = (dd >> 1) & 0x7;
+			inf->mMaxChannels = (dd >> 4) & 0x7;
+			inf->mPatch->UpdateState(mSwitchDisplay, !(dd & 0x1));
 
-			if (isBypassed || isBypassedY || isActive || isActiveY)
-			{
-				inf->mPatch->UpdateState(mSwitchDisplay, !(isBypassed || isBypassedY));
-
-// 				if (inf->mXyPatch)
-// 				{
-// 					// X is the active state, Y is inactive
-// 					const bool isX = isActive || isBypassed;
-// 					const bool isY = isActiveY || isBypassedY;
-// 					_ASSERTE(isX ^ isY);
-// 					// Axe-FxII considers X active and Y inactive, but I prefer
-// 					// LED off for X and on for Y.  Original behavior below was to
-// 					// use isX instead of isY.  See AxeTogglePatch::AxeTogglePatch
-// 					// for the other change required for LED inversion of X/Y.
-// 					inf->mXyPatch->UpdateState(mSwitchDisplay, isY);
-// 				}
-			}
-			else if (mTrace)
-			{
-				const std::string byteDump(::GetAsciiHexStr(bytes + idx, 5, true));
-				std::strstream traceMsg;
-				traceMsg << "Unrecognized bypass param value for " << inf->mName << " " << byteDump.c_str() << std::endl << std::ends;
-				mTrace->Trace(std::string(traceMsg.str()));
-			}
+			// #axe3EffectChannelSupport
+// 			if (inf->mXyPatch)
+// 			{
+// 				// X is the active state, Y is inactive
+// 				const bool isX = isActive || isBypassed;
+// 				const bool isY = isActiveY || isBypassedY;
+// 				_ASSERTE(isX ^ isY);
+// 				// Axe-FxII considers X active and Y inactive, but I prefer
+// 				// LED off for X and on for Y.  Original behavior below was to
+// 				// use isX instead of isY.  See AxeTogglePatch::AxeTogglePatch
+// 				// for the other change required for LED inversion of X/Y.
+// 				inf->mXyPatch->UpdateState(mSwitchDisplay, isY);
+// 			}
 		}
 		else
 		{
@@ -911,7 +834,7 @@ AxeFx3Manager::ReceivePresetEffectsV2(const byte * bytes, int len)
 			{
 				const std::string msg("Axe sync error: No inf for ");
 				mTrace->Trace(msg);
-				const std::string byteDump(::GetAsciiHexStr(&bytes[idx], 5, true) + "\n");
+				const std::string byteDump(::GetAsciiHexStr(&bytes[idx], kEffectPacketLen, true) + "\n");
 				mTrace->Trace(byteDump);
 			}
 		}
@@ -926,9 +849,6 @@ AxeFx3Manager::TurnOffLedsForNaEffects()
 	// turn off LEDs for all effects not in cur preset
 	for (auto & cur : mAxeEffectInfo)
 	{
-// 		if (-1 == cur.mSysexBypassParameterId)
-// 			continue;
-
 		if (-1 == cur.mSysexEffectId)
 			continue;
 
@@ -1094,8 +1014,7 @@ AxeFx3Manager::ReceiveLooperStatus(const byte * bytes, int len)
 void
 AxeFx3Manager::SetLooperPatch(PatchPtr patch)
 {
-	std::string name(patch->GetName());
-	::NormalizeAxe3EffectName(name);
+	std::string name(::NormalizeAxe3EffectName(patch->GetName()));
 	LoopPatchIdx idx = loopPatchCnt;
 	if (-1 != name.find("looper record"))
 		idx = loopPatchRecord;
@@ -1378,9 +1297,10 @@ AxeFx3Manager::LoadEffectPool()
 	};
 }
 
-void
-NormalizeAxe3EffectName(std::string &effectName)
+std::string
+NormalizeAxe3EffectName(const std::string &effectNameIn)
 {
+	std::string effectName(effectNameIn);
 	std::transform(effectName.begin(), effectName.end(), effectName.begin(), ::tolower);
 
 	int pos = effectName.find("axe");
@@ -1406,6 +1326,7 @@ NormalizeAxe3EffectName(std::string &effectName)
 	}
 
 	Axe3SynonymNormalization(effectName);
+	return effectName;
 }
 
 void

@@ -101,10 +101,8 @@ private:
 	}
 
 	void LoadEffectPool();
-	Axe3EffectBlockInfo * IdentifyBlockInfoUsingCc(const byte * bytes);
-	Axe3EffectBlockInfo * IdentifyBlockInfoUsingEffectId(const byte * bytes);
-	Axe3EffectBlocks::iterator GetBlockInfo(PatchPtr patch);
-	Axe3EffectBlocks::iterator GetBlockInfo(const std::string& normalizedEffectName);
+	Axe3EffectBlockInfo* GetBlockInfoByEffectId(const byte * bytes);
+	Axe3EffectBlockInfo* GetBlockInfoByName(const std::string& normalizedEffectName);
 	void SendFirmwareVersionQuery();
 	void ReceiveFirmwareVersionResponse(const byte * bytes, int len);
 
@@ -115,10 +113,12 @@ private:
 
 	void RequestPresetName();
 	void ReceivePresetName(const byte * bytes, int len);
+	void RequestSceneName();
+	void ReceiveSceneName(const byte * bytes, int len);
 	void DisplayPresetStatus();
 
-	void RequestPresetEffects();
-	void ReceivePresetEffectsV2(const byte * bytes, int len);
+	void RequestStatusDump();
+	void ReceiveStatusDump(const byte * bytes, int len);
 	void TurnOffLedsForNaEffects();
 
 	static void AppendChecksumAndTerminate(Bytes &data);
