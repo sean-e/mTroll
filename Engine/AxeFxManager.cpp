@@ -963,6 +963,12 @@ AxeFxManager::DelayedEffectsSyncFromAxe()
 	QCoreApplication::postEvent(this, new StartDelayedSyncTimer(GetSharedThis()));
 }
 
+int
+AxeFxManager::GetDefaultAxeCc(const std::string &effectName)
+{
+	return ::GetDefaultAxeCc(effectName, mTrace);
+}
+
 // this SyncFromAxe helper is not currently being used
 void
 AxeFxManager::RequestNextParamValue()

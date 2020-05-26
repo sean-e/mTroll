@@ -910,18 +910,35 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			cmds.empty() && cmds2.empty() &&
 			patchDefaultCh != -1)
 		{
+			bool updatePatchType = false;
 			int axeCc = 0;
 			pElem->QueryIntAttribute("cc", &axeCc);
 			if (axeCc)
 				overrideCc = axeCc; // no default (like Feedback Return) or overridden from default
 			else if (mgr->GetModel() == Axe3)
-				; // #axe3FinishThis init cc
-			else
-				axeCc = ::GetDefaultAxeCc(patchName, mTraceDisplay); // fallback to default
-
-			if (axeCc)
 			{
-				Bytes bytes;
+				_ASSERTE(mAxeFx3Manager);
+				if (mAxeFx3Manager)
+				{
+					Bytes b1 = mAxeFx3Manager->GetCommandString(patchName, true);
+					if (!b1.empty())
+						cmds.push_back(std::make_shared<MidiCommandString>(midiOut, b1));
+
+					Bytes b2 = mAxeFx3Manager->GetCommandString(patchName, false);
+					if (!b2.empty())
+						cmds2.push_back(std::make_shared<MidiCommandString>(midiOut, b2));
+					updatePatchType = true;
+				}
+			}
+			else
+			{
+				_ASSERTE(mAxeFxManager);
+				if (mAxeFxManager)
+					axeCc = mAxeFxManager->GetDefaultAxeCc(patchName); // fallback to default
+			}
+
+			if (axeCc || updatePatchType)
+			{
 				if (patchType.empty())
 					patchType = "AxeToggle";
 
@@ -948,6 +965,11 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 						}
 					}
 				}
+			}
+
+			if (axeCc)
+			{
+				Bytes bytes;
 
 				// default to A (127)
 				bytes.push_back(0xb0 | patchDefaultCh);
@@ -965,7 +987,10 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 					cmds2.push_back(std::make_shared<MidiCommandString>(midiOut, bytes));
 					bytes.clear();
 				}
+			}
 
+			if (!cmds.empty() || !cmds2.empty())
+			{
 				int invert = 0;
 				pElem->QueryIntAttribute("invert", &invert);
 				if (1 == invert)
@@ -1027,14 +1052,12 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			{
 				if (mgr && mgr->GetModel() == Axe3)
 				{
-					// #axe3SysexCommand: Axe-Fx 3 Tempo Tap command 10H
-					Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, 0x10, 0x10 };
-					::AppendChecksumAndTerminate(bytes);
-					cmds.push_back(std::make_shared<MidiCommandString>(midiOut, bytes));
+					if (mAxeFx3Manager)
+						cmds.push_back(std::make_shared<MidiCommandString>(midiOut, mAxeFx3Manager->GetCommandString("taptempo", true)));
 				}
-				else if (-1 != patchDefaultCh)
+				else if (-1 != patchDefaultCh && mAxeFxManager)
 				{
-					const int cc = ::GetDefaultAxeCc("Tap Tempo", mTraceDisplay);
+					const int cc = mAxeFxManager->GetDefaultAxeCc("Tap Tempo");
 					if (cc)
 					{
 						Bytes bytes;

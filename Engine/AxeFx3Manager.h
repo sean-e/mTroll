@@ -42,11 +42,12 @@ class Patch;
 class IMidiOut;
 class QTimer;
 class AxeFx3Manager;
+struct Axe3EffectBlockInfo;
 
 using PatchPtr = std::shared_ptr<Patch>;
 using AxeFx3ManagerPtr = std::shared_ptr<AxeFx3Manager>;
 using IMidiOutPtr = std::shared_ptr<IMidiOut>;
-
+using Axe3EffectBlocks = std::vector<Axe3EffectBlockInfo>;
 
 // AxeFx3Manager
 // ----------------------------------------------------------------------------
@@ -84,7 +85,7 @@ public:
 	void DelayedNameSyncFromAxe(bool force = false) override;
 	void DelayedEffectsSyncFromAxe() override;
 
-	Bytes GetTapTempoCommandString();
+	Bytes GetCommandString(const std::string& commandName, bool enable);
 
 public slots:
 	// immediate requests for sync (called by the delayed requests)
@@ -99,9 +100,11 @@ private:
 		return std::dynamic_pointer_cast<AxeFx3Manager>(IMidiInSubscriber::shared_from_this());
 	}
 
-	AxeEffectBlockInfo * IdentifyBlockInfoUsingCc(const byte * bytes);
-	AxeEffectBlockInfo * IdentifyBlockInfoUsingEffectId(const byte * bytes);
-	AxeEffectBlocks::iterator GetBlockInfo(PatchPtr patch);
+	void LoadEffectPool();
+	Axe3EffectBlockInfo * IdentifyBlockInfoUsingCc(const byte * bytes);
+	Axe3EffectBlockInfo * IdentifyBlockInfoUsingEffectId(const byte * bytes);
+	Axe3EffectBlocks::iterator GetBlockInfo(PatchPtr patch);
+	Axe3EffectBlocks::iterator GetBlockInfo(const std::string& normalizedEffectName);
 	void SendFirmwareVersionQuery();
 	void ReceiveFirmwareVersionResponse(const byte * bytes, int len);
 
@@ -118,7 +121,7 @@ private:
 	void ReceivePresetEffectsV2(const byte * bytes, int len);
 	void TurnOffLedsForNaEffects();
 
-	void KillResponseTimer();
+	static void AppendChecksumAndTerminate(Bytes &data);
 
 private:
 	int				mAxeChannel;
@@ -131,24 +134,18 @@ private:
 	PatchPtr		mScenes[AxeScenes];
 	enum LoopPatchIdx { loopPatchRecord, loopPatchPlay, loopPatchPlayOnce, loopPatchUndo, loopPatchOverdub, loopPatchReverse, loopPatchHalf, loopPatchCnt };
 	PatchPtr		mLooperPatches[loopPatchCnt];
-	AxeEffectBlocks	mAxeEffectInfo;
+	Axe3EffectBlocks mAxeEffectInfo;
 	QMutex			mQueryLock;
-	std::list<AxeEffectBlockInfo *> mQueries;
-	QTimer			* mQueryTimer;
 	QTimer			* mDelayedNameSyncTimer;
 	QTimer			* mDelayedEffectsSyncTimer;
-	int				mTimeoutCnt;
 	clock_t			mLastTimeout;
 	int				mFirmwareMajorVersion;
 	AxeFxModel		mModel;
-	std::set<int>	mEditBufferEffectBlocks; // at last update
 	int				mLooperState;
 	int				mCurrentScene;
 	int				mCurrentAxePreset;
 	std::string		mCurrentAxePresetName;
 	std::string		mCurrentAxeSceneName;
 };
-
-void AppendChecksumAndTerminate(Bytes &data);
 
 #endif // AxeFx3Manager_h__

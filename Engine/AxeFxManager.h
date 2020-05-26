@@ -83,6 +83,8 @@ public:
 	void DelayedNameSyncFromAxe(bool force = false) override;
 	void DelayedEffectsSyncFromAxe() override;
 
+	int GetDefaultAxeCc(const std::string &effectName);
+
 public slots:
 	// immediate requests for sync (called by the delayed requests)
 	void SyncNameAndEffectsFromAxe() override;
