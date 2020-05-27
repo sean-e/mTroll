@@ -305,10 +305,22 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 		ReceiveFirmwareVersionResponse(bytes, len);
 		return;
 	case 0xd:
-		ReceivePresetName(&bytes[6], len - 6);
+		if (len > 8)
+		{
+			ReceivePresetNumber(&bytes[6], len - 6);
+			ReceivePresetName(&bytes[8], len - 8);
+		}
 		return;
 	case 0xe:
-		ReceiveSceneName(&bytes[6], len - 6);
+		if (len > 7)
+		{
+			ReceiveSceneName(&bytes[7], len - 7);
+			ReceiveSceneStatus(&bytes[6], len - 6);
+		}
+		return;
+	case 0x0f:
+		// looper status
+		ReceiveLooperState(&bytes[6], len - 6);
 		return;
 	case 0x10:
 		// Tempo: f0 00 01 74 10 10 f7
@@ -319,6 +331,7 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 		}
 		return;
 	case 0x11:
+		// #axe3TunerSupport
 		// tuner info
 		// nn ss cc
 		// nn = note 0-11
@@ -329,37 +342,38 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 		ReceiveStatusDump(&bytes[6], len - 6);
 		return;
 	case 0x14:
-		// preset loaded
-		ReceivePresetNumber(&bytes[6], len - 6);
-		DelayedNameSyncFromAxe(true);
+		// set/get tempo
+		// F0 00 01 74 10 14 dd dd cs F7
+		//	where dd dd is the desired tempo as two 7 - bit MIDI bytes, LS first.
+		//	To query the tempo let dd dd = 7F 7F.
 		return;
+// 		// preset loaded
+// 		ReceivePresetNumber(&bytes[6], len - 6);
+// 		DelayedNameSyncFromAxe(true);
+// 		return;
 // 	case 0x20:
 // 		// routing grid layout
 // 		return;
-	case 0x21:
-		// channel change or scene selected
-		DelayedEffectsSyncFromAxe();
-		return;
-	case 0x23:
-		// looper status
-		ReceiveLooperStatus(&bytes[6], len - 6);
-		return;
-	case 0x29:
-		// scene status/update
-		ReceiveSceneStatus(&bytes[6], len - 6);
-		return;
+// 	case 0x21:
+// 		// channel change or scene selected
+// 		DelayedEffectsSyncFromAxe();
+// 		return;
+// 	case 0x29:
+// 		// scene status/update
+// 		ReceiveSceneStatus(&bytes[6], len - 6);
+// 		return;
 	case 0x64:
 		// indicates an error or unsupported message
 		if (kDbgFlag && mTrace)
 		{
-			if ((len - 5) > 2 && bytes[6] == 0x23)
-			{
-				// ignore looper status monitor ack.
-				// the message to enable the monitor is required, the status messages are not 
-				// otherwise sent; but no idea why 0x64 is sent as ack.
-				break;
-			}
-			else
+// 			if ((len - 5) > 2 && bytes[6] == 0x23)
+// 			{
+// 				// ignore looper status monitor ack.
+// 				// the message to enable the monitor is required, the status messages are not 
+// 				// otherwise sent; but no idea why 0x64 is sent as ack.
+// 				break;
+// 			}
+// 			else
 			{
 				const std::string msg("AxeFx: error or unsupported message\n");
 				mTrace->Trace(msg);
@@ -587,10 +601,41 @@ AxeFx3Manager::GetCommandString(const std::string& commandName, bool enable)
 	Axe3EffectBlockInfo *fx = GetBlockInfoByName(name);
 	if (!fx)
 	{
-		if (-1 != name.find("loop"))
+		if (-1 != name.find("looper"))
 		{
-			// #axe3implementLoopCommandString add support for looper state command 0x0f
-			return emptyCommand;
+			Bytes bb{ 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x0f };
+			enum class AxeFx3LooperButton
+			{
+				Record = 0,
+				Play,
+				Undo,
+				Once,
+				Reverse,
+				HalfSpeed,
+				None
+			};
+
+			// send same button for both enable and disable?
+			// it's a virtual button press, so press again to release?
+			AxeFx3LooperButton b = AxeFx3LooperButton::None;
+			if (-1 != name.find("rec"))
+				b = AxeFx3LooperButton::Record;
+			else if (-1 != name.find("play"))
+				b = AxeFx3LooperButton::Play;
+			else if (-1 != name.find("undo"))
+				b = AxeFx3LooperButton::Undo;
+			else if (-1 != name.find("once"))
+				b = AxeFx3LooperButton::Once;
+			else if (-1 != name.find("rev"))
+				b = AxeFx3LooperButton::Reverse;
+			else if (-1 != name.find("half"))
+				b = AxeFx3LooperButton::HalfSpeed;
+			else
+				return emptyCommand;
+
+			bb.push_back((int)b);
+			AppendChecksumAndTerminate(bb);
+			return bb;
 		}
 
 		int pos = name.find("scene");
@@ -688,7 +733,7 @@ AxeFx3Manager::ReceiveFirmwareVersionResponse(const byte * bytes, int len)
 	}
 
 	mFirmwareMajorVersion = (int) bytes[6];
-	EnableLooperStatusMonitor(true);
+	RequestLooperState();
 	SyncNameAndEffectsFromAxe();
 }
 
@@ -710,10 +755,10 @@ AxeFx3Manager::RequestPresetName()
 void
 AxeFx3Manager::ReceivePresetName(const byte * bytes, int len)
 {
-	if (len < 21)
+	if (len < 32)
 		return;
 
-	std::string patchName((const char *)bytes, 21);
+	std::string patchName((const char *)bytes, 32);
 	if (mMainDisplay && !patchName.empty())
 	{
 		mCurrentAxePresetName = patchName;
@@ -742,15 +787,11 @@ AxeFx3Manager::RequestSceneName()
 void
 AxeFx3Manager::ReceiveSceneName(const byte * bytes, int len)
 {
-	if (len < 21)
+	if (len < 32)
 		return;
 
-	std::string sceneName((const char *)bytes, 21);
-	if (mMainDisplay && !sceneName.empty())
-	{
-		mCurrentAxeSceneName = sceneName;
-		DisplayPresetStatus();
-	}
+	std::string sceneName((const char *)bytes, 32);
+	mCurrentAxeSceneName = sceneName;
 }
 
 void
@@ -880,125 +921,113 @@ AxeFx3Manager::ReceivePresetNumber(const byte * bytes, int len)
 }
 
 void
-AxeFx3Manager::EnableLooperStatusMonitor(bool enable)
+AxeFx3Manager::RequestLooperState()
 {
-	// http://forum.fractalaudio.com/other-midi-controllers/39161-using-sysex-recall-present-effect-bypass-status-info-available.html#post737573
-	// enable status monitor
-	//		F0 00 01 74 03 23 01 24 F7
-	// disable status
-	//		F0 00 01 74 03 23 00 25 F7
 	QMutexLocker lock(&mQueryLock);
-	const byte rawBytes[] = 
-	{ 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x23, byte(enable ? 1 : 0), byte(enable ? 0x24 : 0x25), 0xF7 };
-	const Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
+	Bytes bb{ 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x0f, 0x7f };
+	AppendChecksumAndTerminate(bb);
 	mMidiOut->MidiOut(bb);
 }
 
-enum AxeFxLooperState
+enum class AxeFx3LooperState
 { 
 	// independent states
-	loopStateStopped	= 0, 
-	loopStateRecord		= 1, 
-	loopStatePlay		= 2,
+	loopStateRecord		= 1 << 0, 
+	loopStatePlay		= 1 << 1,
 
 	// state modifiers
-	loopStatePlayOnce	= 1 << 2, 
-	loopStateOverdub	= 1 << 3, 
+	loopStateOverdub	= 1 << 2, 
+	loopStatePlayOnce	= 1 << 3, 
 	loopStateReverse	= 1 << 4, 
-	loopStateHalfSpeed	= 1 << 5, 
-	loopStateUndo		= 1 << 6 
+	loopStateHalfSpeed	= 1 << 5
 };
 
 static std::string
 GetLooperStateDesc(int loopState)
 {
 	std::string stateStr;
-	if (loopState & loopStateRecord)
+	if (loopState & int(AxeFx3LooperState::loopStateRecord))
 		stateStr.append("recording");
-	else if (loopState & loopStatePlay)
+	else if (loopState & int(AxeFx3LooperState::loopStatePlay))
 		stateStr.append("playing");
 	else
 		stateStr.append("stopped");
 
-	if (loopState & loopStatePlayOnce)
+	if (loopState & int(AxeFx3LooperState::loopStatePlayOnce))
 		stateStr.append(", once");
-	if (loopState & loopStateOverdub)
+	if (loopState & int(AxeFx3LooperState::loopStateOverdub))
 		stateStr.append(", overdub");
-	if (loopState & loopStateUndo)
-		stateStr.append(", undo");
-	if (loopState & loopStateReverse)
+	if (loopState & int(AxeFx3LooperState::loopStateReverse))
 		stateStr.append(", reverse");
-	if (loopState & loopStateHalfSpeed)
+	if (loopState & int(AxeFx3LooperState::loopStateHalfSpeed))
 		stateStr.append(", 1/2 speed");
 
 	return stateStr;
 }
 
 void
-AxeFx3Manager::ReceiveLooperStatus(const byte * bytes, int len)
+AxeFx3Manager::ReceiveLooperState(const byte * bytes, int len)
 {
-	// http://forum.fractalaudio.com/other-midi-controllers/39161-using-sysex-recall-present-effect-bypass-status-info-available.html#post737573
-	if (len < 4)
+	if (len < 2)
 		return;
 
 	const int newLoopState = bytes[0];
 	if (mLooperState == newLoopState)
 		return;
 
-	if (((mLooperState & loopStateRecord) != (newLoopState & loopStateRecord)) && mLooperPatches[loopPatchRecord])
+	if ((mLooperState & int(AxeFx3LooperState::loopStateRecord)) != (newLoopState & int(AxeFx3LooperState::loopStateRecord)))
 	{
-		if ((mLooperState & loopStateRecord) && !(newLoopState & loopStateRecord))
-			mLooperPatches[loopPatchRecord]->UpdateState(mSwitchDisplay, false);
-		else
-			mLooperPatches[loopPatchRecord]->UpdateState(mSwitchDisplay, true);
+		if (mLooperPatches[loopPatchRecord])
+		{
+			if ((mLooperState & int(AxeFx3LooperState::loopStateRecord)) && !(newLoopState & int(AxeFx3LooperState::loopStateRecord)))
+				mLooperPatches[loopPatchRecord]->UpdateState(mSwitchDisplay, false);
+			else
+				mLooperPatches[loopPatchRecord]->UpdateState(mSwitchDisplay, true);
+		}
 	}
 
-	if (((mLooperState & loopStatePlay) != (newLoopState & loopStatePlay)) && mLooperPatches[loopPatchPlay])
+	if ((mLooperState & int(AxeFx3LooperState::loopStatePlay)) != (newLoopState & int(AxeFx3LooperState::loopStatePlay)))
 	{
-		if ((mLooperState & loopStatePlay) && !(newLoopState & loopStatePlay))
-			mLooperPatches[loopPatchPlay]->UpdateState(mSwitchDisplay, false);
-		else
-			mLooperPatches[loopPatchPlay]->UpdateState(mSwitchDisplay, true);
+		if (mLooperPatches[loopPatchPlay])
+		{
+			if ((mLooperState & int(AxeFx3LooperState::loopStatePlay)) && !(newLoopState & int(AxeFx3LooperState::loopStatePlay)))
+				mLooperPatches[loopPatchPlay]->UpdateState(mSwitchDisplay, false);
+			else
+				mLooperPatches[loopPatchPlay]->UpdateState(mSwitchDisplay, true);
+		}
 	}
 
-	if (((mLooperState & loopStatePlayOnce) != (newLoopState & loopStatePlayOnce)) && mLooperPatches[loopPatchPlayOnce])
+	if ((mLooperState & int(AxeFx3LooperState::loopStatePlayOnce)) != (newLoopState & int(AxeFx3LooperState::loopStatePlayOnce)))
 	{
-		if ((mLooperState & loopStatePlayOnce) && !(newLoopState & loopStatePlayOnce))
-			mLooperPatches[loopPatchPlayOnce]->UpdateState(mSwitchDisplay, false);
-		else
-			mLooperPatches[loopPatchPlayOnce]->UpdateState(mSwitchDisplay, true);
+		if (mLooperPatches[loopPatchPlayOnce])
+		{
+			if ((mLooperState & int(AxeFx3LooperState::loopStatePlayOnce)) && !(newLoopState & int(AxeFx3LooperState::loopStatePlayOnce)))
+				mLooperPatches[loopPatchPlayOnce]->UpdateState(mSwitchDisplay, false);
+			else
+				mLooperPatches[loopPatchPlayOnce]->UpdateState(mSwitchDisplay, true);
+		}
 	}
 
-	if (((mLooperState & loopStateUndo) != (newLoopState & loopStateUndo)) && mLooperPatches[loopPatchUndo])
+	if ((mLooperState & int(AxeFx3LooperState::loopStateReverse)) != (newLoopState & int(AxeFx3LooperState::loopStateReverse)))
 	{
-		if ((mLooperState & loopStateUndo) && !(newLoopState & loopStateUndo))
-			mLooperPatches[loopPatchUndo]->UpdateState(mSwitchDisplay, false);
-		else
-			mLooperPatches[loopPatchUndo]->UpdateState(mSwitchDisplay, true);
+		if (mLooperPatches[loopPatchReverse])
+		{
+			if ((mLooperState & int(AxeFx3LooperState::loopStateReverse)) && !(newLoopState & int(AxeFx3LooperState::loopStateReverse)))
+				mLooperPatches[loopPatchReverse]->UpdateState(mSwitchDisplay, false);
+			else
+				mLooperPatches[loopPatchReverse]->UpdateState(mSwitchDisplay, true);
+		}
 	}
 
-	if (((mLooperState & loopStateOverdub) != (newLoopState & loopStateOverdub)) && mLooperPatches[loopPatchOverdub])
+	if ((mLooperState & int(AxeFx3LooperState::loopStateHalfSpeed)) != (newLoopState & int(AxeFx3LooperState::loopStateHalfSpeed)))
 	{
-		if ((mLooperState & loopStateOverdub) && !(newLoopState & loopStateOverdub))
-			mLooperPatches[loopPatchOverdub]->UpdateState(mSwitchDisplay, false);
-		else
-			mLooperPatches[loopPatchOverdub]->UpdateState(mSwitchDisplay, true);
-	}
-
-	if (((mLooperState & loopStateReverse) != (newLoopState & loopStateReverse)) && mLooperPatches[loopPatchReverse])
-	{
-		if ((mLooperState & loopStateReverse) && !(newLoopState & loopStateReverse))
-			mLooperPatches[loopPatchReverse]->UpdateState(mSwitchDisplay, false);
-		else
-			mLooperPatches[loopPatchReverse]->UpdateState(mSwitchDisplay, true);
-	}
-
-	if (((mLooperState & loopStateHalfSpeed) != (newLoopState & loopStateHalfSpeed)) && mLooperPatches[loopPatchHalf])
-	{
-		if ((mLooperState & loopStateHalfSpeed) && !(newLoopState & loopStateHalfSpeed))
-			mLooperPatches[loopPatchHalf]->UpdateState(mSwitchDisplay, false);
-		else
-			mLooperPatches[loopPatchHalf]->UpdateState(mSwitchDisplay, true);
+		if (mLooperPatches[loopPatchHalf])
+		{
+			if ((mLooperState & int(AxeFx3LooperState::loopStateHalfSpeed)) && !(newLoopState & int(AxeFx3LooperState::loopStateHalfSpeed)))
+				mLooperPatches[loopPatchHalf]->UpdateState(mSwitchDisplay, false);
+			else
+				mLooperPatches[loopPatchHalf]->UpdateState(mSwitchDisplay, true);
+		}
 	}
 
 	mLooperState = newLoopState;
@@ -1024,14 +1053,19 @@ AxeFx3Manager::SetLooperPatch(PatchPtr patch)
 		idx = loopPatchPlayOnce;
 	else if (-1 != name.find("looper undo"))
 		idx = loopPatchUndo;
-	else if (-1 != name.find("looper overdub"))
-		idx = loopPatchOverdub;
 	else if (-1 != name.find("looper reverse"))
 		idx = loopPatchReverse;
 	else if (-1 != name.find("looper half"))
 		idx = loopPatchHalf;
 	else
+	{
+		if (mTrace)
+		{
+			std::string msg("Warning: unknown looper patch\n");
+			mTrace->Trace(msg);
+		}
 		return;
+	}
 
 	if (mLooperPatches[idx] && mTrace)
 	{
@@ -1259,7 +1293,7 @@ AxeFx3Manager::LoadEffectPool()
 		{ FractalAudio::AxeFx3::ID_RESONATOR2, "Resonator 2" },
 		{ FractalAudio::AxeFx3::ID_RESONATOR3, "Resonator 3" },
 		{ FractalAudio::AxeFx3::ID_RESONATOR4, "Resonator 4" },
-		{ FractalAudio::AxeFx3::ID_LOOPER1, "Looper 1" },
+		{ FractalAudio::AxeFx3::ID_LOOPER1, "Looper" },
 		{ FractalAudio::AxeFx3::ID_LOOPER2, "Looper 2" },
 		{ FractalAudio::AxeFx3::ID_LOOPER3, "Looper 3" },
 		{ FractalAudio::AxeFx3::ID_LOOPER4, "Looper 4" },
@@ -1479,13 +1513,20 @@ Axe3SynonymNormalization(std::string & name)
 		MapName("input vol", "input volume");
 		break;
 	case 'l':
-		MapName("loop 1 rec", "looper 1 record");
-		MapName("loop 1 record", "looper 1 record");
-		MapName("loop 1 play", "looper 1 play");
-		MapName("loop 1 once", "looper 1 once");
-		MapName("loop 1 overdub", "looper 1 overdub");
-		MapName("loop 1 rev", "looper 1 reverse");
-		MapName("loop 1 reverse", "looper 1 reverse");
+		MapName("loop 1 rec", "looper record");
+		MapName("loop 1 record", "looper record");
+		MapName("loop 1 play", "looper play");
+		MapName("loop 1 once", "looper once");
+		MapName("loop 1 overdub", "looper overdub");
+		MapName("loop 1 rev", "looper reverse");
+		MapName("loop 1 reverse", "looper reverse");
+		MapName("looper 1 rec", "looper record");
+		MapName("looper 1 record", "looper record");
+		MapName("looper 1 play", "looper play");
+		MapName("looper 1 once", "looper once");
+		MapName("looper 1 overdub", "looper overdub");
+		MapName("looper 1 rev", "looper reverse");
+		MapName("looper 1 reverse", "looper reverse");
 		MapName("loop half-speed", "looper half");
 		MapName("loop half speed", "looper half");
 		MapName("loop metronome", "looper metronome");
@@ -1498,9 +1539,10 @@ Axe3SynonymNormalization(std::string & name)
 		MapName("loop rev", "looper reverse");
 		MapName("loop reverse", "looper reverse");
 		MapName("loop undo", "looper undo");
-		MapName("looper", "looper 1");
 		MapName("looper half-speed", "looper half");
 		MapName("looper half speed", "looper half");
+		MapName("looper 1 half-speed", "looper half");
+		MapName("looper 1 half speed", "looper half");
 		break;
 	case 'm':
 		MapName("mdly 1", "multidelay 1");

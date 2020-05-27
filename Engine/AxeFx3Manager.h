@@ -106,8 +106,8 @@ private:
 	void SendFirmwareVersionQuery();
 	void ReceiveFirmwareVersionResponse(const byte * bytes, int len);
 
-	void EnableLooperStatusMonitor(bool enable);
-	void ReceiveLooperStatus(const byte * bytes, int len);
+	void RequestLooperState();
+	void ReceiveLooperState(const byte * bytes, int len);
 	void ReceivePresetNumber(const byte * bytes, int len);
 	void ReceiveSceneStatus(const byte * bytes, int len);
 
@@ -132,7 +132,7 @@ private:
 	PatchPtr		mTempoPatch;
 	enum { AxeScenes = 8 };
 	PatchPtr		mScenes[AxeScenes];
-	enum LoopPatchIdx { loopPatchRecord, loopPatchPlay, loopPatchPlayOnce, loopPatchUndo, loopPatchOverdub, loopPatchReverse, loopPatchHalf, loopPatchCnt };
+	enum LoopPatchIdx { loopPatchRecord, loopPatchPlay, loopPatchPlayOnce, loopPatchUndo, loopPatchReverse, loopPatchHalf, loopPatchCnt };
 	PatchPtr		mLooperPatches[loopPatchCnt];
 	Axe3EffectBlocks mAxeEffectInfo;
 	QMutex			mQueryLock;
