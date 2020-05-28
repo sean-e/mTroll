@@ -59,6 +59,7 @@ static void Axe3SynonymNormalization(std::string & name);
 
 struct Axe3EffectBlockInfo
 {
+	constexpr static int kMaxChannels = 7;
 	// state that is basically const
 	std::string			mName;						// Amp 1
 	std::string			mNormalizedName;			// amp 1
@@ -66,12 +67,14 @@ struct Axe3EffectBlockInfo
 	int					mSysexEffectIdMs;			//	derived 
 	int					mSysexEffectIdLs;			//	derived
 	PatchPtr			mPatch;						// the patch assigned to this effectId
-	std::vector<PatchPtr> mDependentPatches;		// optional dependent patches for this effectId, like channel select
+	PatchPtr			mChannelSelectPatches[kMaxChannels]; // optional channel select patches for this effectId
+
+	// basically const, but requires runtime init from the device
+	int					mMaxChannels = 0;
 
 	// state that changes at runtime dependent upon active preset
 	int					mCurrentChannel = 0;
-	int					mMaxChannels = 0;
-	bool				mEffectIsPresentInAxePatch = true;	// unique per name
+	bool				mEffectIsPresentInAxePatch = true;
 
 	Axe3EffectBlockInfo() :
 		mSysexEffectId(-1),
@@ -87,6 +90,41 @@ struct Axe3EffectBlockInfo
 		mSysexEffectIdLs(id & 0x0000000F),
 		mSysexEffectIdMs((id >> 4) & 0x0000000F)
 	{
+	}
+
+	void UpdateChannelStatus(ISwitchDisplay * switchDisplay, int maxChannels, int currentChannel)
+	{
+		mEffectIsPresentInAxePatch = true;
+
+		_ASSERTE(maxChannels <= kMaxChannels);
+		if (maxChannels <= kMaxChannels)
+			mMaxChannels = maxChannels;
+		else
+			maxChannels = kMaxChannels;
+
+		_ASSERTE(currentChannel <= maxChannels);
+		if (currentChannel <= maxChannels)
+			mCurrentChannel = currentChannel;
+		else
+			mCurrentChannel = 0;
+
+		for (int idx = 0; idx < mMaxChannels; ++idx)
+		{
+			PatchPtr &cur = mChannelSelectPatches[idx];
+			if (!cur)
+				continue;
+
+			if (idx == currentChannel)
+			{
+				// enable the current channel
+				cur->UpdateState(switchDisplay, true);
+			}
+			else
+			{
+				// disable the inactive channels
+				cur->UpdateState(switchDisplay, false);
+			}
+		}
 	}
 };
 
@@ -112,9 +150,6 @@ AxeFx3Manager::AxeFx3Manager(IMainDisplay * mainDisp,
 #ifdef ITEM_COUNTING
 	++gAxeFx3MgrCnt;
 #endif
-
-	::memset(mScenes, 0, sizeof(mScenes));
-	::memset(mLooperPatches, 0, sizeof(mLooperPatches));
 
 	mDelayedNameSyncTimer = new QTimer(this);
 	connect(mDelayedNameSyncTimer, SIGNAL(timeout()), this, SLOT(SyncNameAndEffectsFromAxe()));
@@ -162,13 +197,13 @@ AxeFx3Manager::SetScenePatch(int scene, PatchPtr patch)
 		return;
 	}
 
-	if (mScenes[scene - 1] && mTrace)
+	if (mScenePatches[scene - 1] && mTrace)
 	{
 		std::string msg("Warning: multiple Axe-Fx patches for same scene\n");
 		mTrace->Trace(msg);
 	}
 
-	mScenes[scene - 1] = patch;
+	mScenePatches[scene - 1] = patch;
 }
 
 bool
@@ -456,7 +491,7 @@ AxeFx3Manager::Shutdown()
 	for (auto & cur : mLooperPatches)
 		cur = nullptr;
 
-	for (auto & cur : mScenes)
+	for (auto & cur : mScenePatches)
 		cur = nullptr;
 }
 
@@ -850,24 +885,8 @@ AxeFx3Manager::ReceiveStatusDump(const byte * bytes, int len)
 		if (inf && inf->mPatch)
 		{
 			const byte dd = bytes[idx + 2];
-			inf->mEffectIsPresentInAxePatch = true;
-			inf->mCurrentChannel = (dd >> 1) & 0x7;
-			inf->mMaxChannels = (dd >> 4) & 0x7;
+			inf->UpdateChannelStatus(mSwitchDisplay, (dd >> 4) & 0x7, (dd >> 1) & 0x7);
 			inf->mPatch->UpdateState(mSwitchDisplay, !(dd & 0x1));
-
-			// #axe3EffectChannelSupport
-// 			if (inf->mXyPatch)
-// 			{
-// 				// X is the active state, Y is inactive
-// 				const bool isX = isActive || isBypassed;
-// 				const bool isY = isActiveY || isBypassedY;
-// 				_ASSERTE(isX ^ isY);
-// 				// Axe-FxII considers X active and Y inactive, but I prefer
-// 				// LED off for X and on for Y.  Original behavior below was to
-// 				// use isX instead of isY.  See AxeTogglePatch::AxeTogglePatch
-// 				// for the other change required for LED inversion of X/Y.
-// 				inf->mXyPatch->UpdateState(mSwitchDisplay, isY);
-// 			}
 		}
 		else
 		{
@@ -899,8 +918,9 @@ AxeFx3Manager::TurnOffLedsForNaEffects()
 		if (!cur.mEffectIsPresentInAxePatch)
 		{
 			cur.mPatch->Disable(mSwitchDisplay);
-			for (const auto &p : cur.mDependentPatches)
-				p->Disable(mSwitchDisplay);
+			for (const auto &p : cur.mChannelSelectPatches)
+				if (p)
+					p->Disable(mSwitchDisplay);
 		}
 	}
 }
@@ -1059,11 +1079,11 @@ AxeFx3Manager::SetLooperPatch(PatchPtr patch)
 		idx = loopPatchHalf;
 	else
 	{
-		if (mTrace)
-		{
-			std::string msg("Warning: unknown looper patch\n");
-			mTrace->Trace(msg);
-		}
+// 		if (mTrace)
+// 		{
+// 			std::string msg("Warning: unknown looper patch\n");
+// 			mTrace->Trace(msg);
+// 		}
 		return;
 	}
 
@@ -1097,13 +1117,13 @@ AxeFx3Manager::ReceiveSceneStatus(const byte * bytes, int len)
 		return;
 	}
 
-	if (mCurrentScene > -1 && mScenes[mCurrentScene])
-		mScenes[mCurrentScene]->UpdateState(mSwitchDisplay, false);
+	if (mCurrentScene > -1 && mScenePatches[mCurrentScene])
+		mScenePatches[mCurrentScene]->UpdateState(mSwitchDisplay, false);
 
 	mCurrentScene = newScene;
 
-	if (mScenes[mCurrentScene])
-		mScenes[mCurrentScene]->UpdateState(mSwitchDisplay, true);
+	if (mScenePatches[mCurrentScene])
+		mScenePatches[mCurrentScene]->UpdateState(mSwitchDisplay, true);
 
 	if (mCurrentAxePresetName.empty())
 		RequestPresetName();

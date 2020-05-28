@@ -131,7 +131,7 @@ private:
 	IMidiOutPtr		mMidiOut;
 	PatchPtr		mTempoPatch;
 	enum { AxeScenes = 8 };
-	PatchPtr		mScenes[AxeScenes];
+	PatchPtr		mScenePatches[AxeScenes];
 	enum LoopPatchIdx { loopPatchRecord, loopPatchPlay, loopPatchPlayOnce, loopPatchUndo, loopPatchReverse, loopPatchHalf, loopPatchCnt };
 	PatchPtr		mLooperPatches[loopPatchCnt];
 	Axe3EffectBlocks mAxeEffectInfo;
