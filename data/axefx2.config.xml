@@ -645,16 +645,16 @@
 		<patch name="Axe Ext 11 (toggle)" number="841" device="Axe-Fx" />
 		<patch name="Axe Ext 12 (toggle)" number="842" device="Axe-Fx" />
 
-		<patch name="Scene 1" number="851" device="Axe-Fx" />
-		<patch name="Scene 2" number="852" device="Axe-Fx" />
-		<patch name="Scene 3" number="853" device="Axe-Fx" />
-		<patch name="Scene 4" number="854" device="Axe-Fx" />
-		<patch name="Scene 5" number="855" device="Axe-Fx" />
-		<patch name="Scene 6" number="856" device="Axe-Fx" />
-		<patch name="Scene 7" number="857" device="Axe-Fx" />
-		<patch name="Scene 8" number="858" device="Axe-Fx" />
+    <patch name="Scene 1" number="851" scene="1" device="Axe-Fx" />
+    <patch name="Scene 2" number="852" scene="2" device="Axe-Fx" />
+    <patch name="Scene 3" number="853" scene="3" device="Axe-Fx" />
+    <patch name="Scene 4" number="854" scene="4" device="Axe-Fx" />
+    <patch name="Scene 5" number="855" scene="5" device="Axe-Fx" />
+    <patch name="Scene 6" number="856" scene="6" device="Axe-Fx" />
+    <patch name="Scene 7" number="857" scene="7" device="Axe-Fx" />
+    <patch name="Scene 8" number="858" scene="8" device="Axe-Fx" />
 
-		<patch type="patchListSequence" name="Scene List 1-5" number="859">
+    <patch type="patchListSequence" name="Scene List 1-5" number="859">
 			<patchListItem>851</patchListItem>
 			<patchListItem>852</patchListItem>
 			<patchListItem>853</patchListItem>

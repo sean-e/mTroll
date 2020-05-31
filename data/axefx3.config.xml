@@ -1,0 +1,1346 @@
+<?xml version="1.0" ?>
+<?xml-stylesheet type="text/xsl" href="mtrollConfig.xsl"?>
+<MidiControlSettings>
+	<SystemConfig>
+		<powerup bank="10" />
+		<switches>
+			<!-- 'menu', 'decrement' and 'increment' switch nodes are required.
+				switch id attributes are 0-based and map to the switchMappings block in the .ui.xml file.
+				Menu switch is like a '2nd' or alternate function switch.
+				Increment and decrement switches are reserved by the engine after pressing Menu.
+				Increment and decrement switches are available for patches in the default startup mode.  -->
+			<switch command="menu" id="20" />
+			<switch command="decrement" id="21" />
+			<switch command="increment" id="22" />
+
+			<!-- Optional assignments that define what functions are available and on what switch
+				when you press the Menu switch. 
+				If this section is not used, then default assignments will be made. -->
+			<switch command="recall" id="0" />
+			<switch command="back" id="1" />
+			<switch command="forward" id="2" />
+			<switch command="time" id="3" />
+			<switch command="programChangeDirect" id="4" />
+			<switch command="controlChangeDirect" id="5" />
+			<switch command="adcOverride" id="6" />
+			<switch command="toggleTraceWindow" id="7" />
+			<switch command="bankDirect" id="15" />
+			<switch command="adcDisplay" id="16" />
+			<switch command="testLeds" id="17" />
+			<switch command="bankDescription" id="18" />
+			<switch command="toggleLedInversion" id="19" />
+
+			<!-- Optional bank load assignments. Make sure these don't conflict with defaults if 
+				defaults aren't specified.
+				These can be used to jump directly to any particular bank after pressing the Menu switch. -->
+			<switch command="LoadBank" id="9" bankNumber="122" />
+			<switch command="LoadBank" id="10" bankNumber="1" />
+			<switch command="LoadBank" id="11" bankNumber="100" />
+			<switch command="LoadBank" id="12" bankNumber="103" />
+			<switch command="LoadBank" id="13" bankNumber="120" />
+			<switch command="LoadBank" id="14" bankNumber="121" />
+		</switches>
+
+		<midiDevices>
+			<midiDevice port="1" activityIndicatorId="23" out="Axe-Fx III" in="Axe-Fx III" />
+
+			<!-- default device if the named devices fail -->
+			<midiDevice port="1" activityIndicatorId="23" outIdx="0" />
+		</midiDevices>
+
+		<!-- port attr on expression block is required -->
+		<expression port="1">
+			<adc inputNumber="1" enable="1" minimumAdcVal="50" maximumAdcVal="990" />
+			<adc inputNumber="2" enable="1" minimumAdcVal="3"  maximumAdcVal="315" />
+			<adc inputNumber="3" enable="1" minimumAdcVal="75" maximumAdcVal="1015" />
+			<adc inputNumber="4" enable="0" minimumAdcVal="1"  maximumAdcVal="1020" bottomToggleZoneSize="1" bottomToggleDeadzoneSize="150" topToggleZoneSize="1" topToggleDeadzoneSize="100" />
+			<globalExpr inputNumber="1" assignmentNumber="1" device="Axe-Fx" comment="ext 1 (Fremen gain/fx)" 	 controller="16" min="0" max="127" invert="0" enable="1" />
+			<globalExpr inputNumber="2" assignmentNumber="1" device="Axe-Fx" comment="ext 2 (Fremen wah/whammy)" controller="17" min="0" max="127" invert="0" enable="1" />
+			<globalExpr inputNumber="3" assignmentNumber="1" device="Axe-Fx" comment="ext 3 (Fremen vol)"	     controller="18" min="0" max="127" invert="0" enable="1" />
+			<globalExpr inputNumber="4" assignmentNumber="1" device="Axe-Fx" comment="out 1 vol" 				 controller="11" min="0" max="127" invert="0" enable="1" />
+		</expression>
+	</SystemConfig>
+
+	<DeviceChannelMap>
+		<!-- map a textString (name of a device) to a channel and MIDI port (that was 
+			defined in MidiDevices above). 
+			Completely optional if you would rather specify a numeric channel in each 
+			patch.-->
+		<Device channel="1" port="1"></Device>
+		<Device channel="2" port="1"></Device>
+		<Device channel="3" port="1"></Device>
+		<Device channel="4" port="1"></Device>
+		<Device channel="5" port="1"></Device>
+		<Device channel="6" port="1"></Device>
+		<Device channel="7" port="1"></Device>
+		<!-- this is key to Axe-Fx synchronization; make sure Axe-Fx is on the right line (based on channel). -->
+		<Device channel="8" port="1" model="3">Axe-Fx</Device>
+		<Device channel="9" port="1"></Device>
+		<Device channel="10" port="1"></Device>
+		<Device channel="11" port="1"></Device>
+		<Device channel="12" port="1"></Device>
+		<Device channel="13" port="1"></Device>
+		<Device channel="14" port="1"></Device>
+		<Device channel="15" port="1"></Device>
+		<Device channel="16" port="1"></Device>
+	</DeviceChannelMap>
+
+	<patches>
+		<!-- Axe-Fx patches.
+			 This config uses a 1:1 mapping between patch and Axe preset for the first 383 patches.
+			AxeProgramChange does not require channel if device is set to Axe-Fx or AxeFx. 
+			mTroll will use the channel associated with the AxeFx as set in the DeviceChannelMap. -->
+		<patch name="Axe 001" number="1" type="normal" device="Axe-Fx"><AxeProgramChange program="0"/></patch>
+		<patch name="Axe 002" number="2" type="normal" device="Axe-Fx"><AxeProgramChange program="1"/></patch>
+		<patch name="Axe 003" number="3" type="normal" device="Axe-Fx"><AxeProgramChange program="2"/></patch>
+		<patch name="Axe 004" number="4" type="normal" device="Axe-Fx"><AxeProgramChange program="3"/></patch>
+		<patch name="Axe 005" number="5" type="normal" device="Axe-Fx"><AxeProgramChange program="4"/></patch>
+		<patch name="Axe 006" number="6" type="normal" device="Axe-Fx"><AxeProgramChange program="5"/></patch>
+		<patch name="Axe 007" number="7" type="normal" device="Axe-Fx"><AxeProgramChange program="6"/></patch>
+		<patch name="Axe 008" number="8" type="normal" device="Axe-Fx"><AxeProgramChange program="7"/></patch>
+		<patch name="Axe 009" number="9" type="normal" device="Axe-Fx"><AxeProgramChange program="8"/></patch>
+		<patch name="Axe 010" number="10" type="normal" device="Axe-Fx"><AxeProgramChange program="9"/></patch>
+		<patch name="Axe 011" number="11" type="normal" device="Axe-Fx"><AxeProgramChange program="10"/></patch>
+		<patch name="Axe 012" number="12" type="normal" device="Axe-Fx"><AxeProgramChange program="11"/></patch>
+		<patch name="Axe 013" number="13" type="normal" device="Axe-Fx"><AxeProgramChange program="12"/></patch>
+		<patch name="Axe 014" number="14" type="normal" device="Axe-Fx"><AxeProgramChange program="13"/></patch>
+		<patch name="Axe 015" number="15" type="normal" device="Axe-Fx"><AxeProgramChange program="14"/></patch>
+		<patch name="Axe 016" number="16" type="normal" device="Axe-Fx"><AxeProgramChange program="15"/></patch>
+		<patch name="Axe 017" number="17" type="normal" device="Axe-Fx"><AxeProgramChange program="16"/></patch>
+		<patch name="Axe 018" number="18" type="normal" device="Axe-Fx"><AxeProgramChange program="17"/></patch>
+		<patch name="Axe 019" number="19" type="normal" device="Axe-Fx"><AxeProgramChange program="18"/></patch>
+		<patch name="Axe 020" number="20" type="normal" device="Axe-Fx"><AxeProgramChange program="19"/></patch>
+		<patch name="Axe 021" number="21" type="normal" device="Axe-Fx"><AxeProgramChange program="20"/></patch>
+		<patch name="Axe 022" number="22" type="normal" device="Axe-Fx"><AxeProgramChange program="21"/></patch>
+		<patch name="Axe 023" number="23" type="normal" device="Axe-Fx"><AxeProgramChange program="22"/></patch>
+		<patch name="Axe 024" number="24" type="normal" device="Axe-Fx"><AxeProgramChange program="23"/></patch>
+		<patch name="Axe 025" number="25" type="normal" device="Axe-Fx"><AxeProgramChange program="24"/></patch>
+		<patch name="Axe 026" number="26" type="normal" device="Axe-Fx"><AxeProgramChange program="25"/></patch>
+		<patch name="Axe 027" number="27" type="normal" device="Axe-Fx"><AxeProgramChange program="26"/></patch>
+		<patch name="Axe 028" number="28" type="normal" device="Axe-Fx"><AxeProgramChange program="27"/></patch>
+		<patch name="Axe 029" number="29" type="normal" device="Axe-Fx"><AxeProgramChange program="28"/></patch>
+		<patch name="Axe 030" number="30" type="normal" device="Axe-Fx"><AxeProgramChange program="29"/></patch>
+		<patch name="Axe 031" number="31" type="normal" device="Axe-Fx"><AxeProgramChange program="30"/></patch>
+		<patch name="Axe 032" number="32" type="normal" device="Axe-Fx"><AxeProgramChange program="31"/></patch>
+		<patch name="Axe 033" number="33" type="normal" device="Axe-Fx"><AxeProgramChange program="32"/></patch>
+		<patch name="Axe 034" number="34" type="normal" device="Axe-Fx"><AxeProgramChange program="33"/></patch>
+		<patch name="Axe 035" number="35" type="normal" device="Axe-Fx"><AxeProgramChange program="34"/></patch>
+		<patch name="Axe 036" number="36" type="normal" device="Axe-Fx"><AxeProgramChange program="35"/></patch>
+		<patch name="Axe 037" number="37" type="normal" device="Axe-Fx"><AxeProgramChange program="36"/></patch>
+		<patch name="Axe 038" number="38" type="normal" device="Axe-Fx"><AxeProgramChange program="37"/></patch>
+		<patch name="Axe 039" number="39" type="normal" device="Axe-Fx"><AxeProgramChange program="38"/></patch>
+		<patch name="Axe 040" number="40" type="normal" device="Axe-Fx"><AxeProgramChange program="39"/></patch>
+		<patch name="Axe 041" number="41" type="normal" device="Axe-Fx"><AxeProgramChange program="40"/></patch>
+		<patch name="Axe 042" number="42" type="normal" device="Axe-Fx"><AxeProgramChange program="41"/></patch>
+		<patch name="Axe 043" number="43" type="normal" device="Axe-Fx"><AxeProgramChange program="42"/></patch>
+		<patch name="Axe 044" number="44" type="normal" device="Axe-Fx"><AxeProgramChange program="43"/></patch>
+		<patch name="Axe 045" number="45" type="normal" device="Axe-Fx"><AxeProgramChange program="44"/></patch>
+		<patch name="Axe 046" number="46" type="normal" device="Axe-Fx"><AxeProgramChange program="45"/></patch>
+		<patch name="Axe 047" number="47" type="normal" device="Axe-Fx"><AxeProgramChange program="46"/></patch>
+		<patch name="Axe 048" number="48" type="normal" device="Axe-Fx"><AxeProgramChange program="47"/></patch>
+		<patch name="Axe 049" number="49" type="normal" device="Axe-Fx"><AxeProgramChange program="48"/></patch>
+		<patch name="Axe 050" number="50" type="normal" device="Axe-Fx"><AxeProgramChange program="49"/></patch>
+		<patch name="Axe 051" number="51" type="normal" device="Axe-Fx"><AxeProgramChange program="50"/></patch>
+		<patch name="Axe 052" number="52" type="normal" device="Axe-Fx"><AxeProgramChange program="51"/></patch>
+		<patch name="Axe 053" number="53" type="normal" device="Axe-Fx"><AxeProgramChange program="52"/></patch>
+		<patch name="Axe 054" number="54" type="normal" device="Axe-Fx"><AxeProgramChange program="53"/></patch>
+		<patch name="Axe 055" number="55" type="normal" device="Axe-Fx"><AxeProgramChange program="54"/></patch>
+		<patch name="Axe 056" number="56" type="normal" device="Axe-Fx"><AxeProgramChange program="55"/></patch>
+		<patch name="Axe 057" number="57" type="normal" device="Axe-Fx"><AxeProgramChange program="56"/></patch>
+		<patch name="Axe 058" number="58" type="normal" device="Axe-Fx"><AxeProgramChange program="57"/></patch>
+		<patch name="Axe 059" number="59" type="normal" device="Axe-Fx"><AxeProgramChange program="58"/></patch>
+		<patch name="Axe 060" number="60" type="normal" device="Axe-Fx"><AxeProgramChange program="59"/></patch>
+		<patch name="Axe 061" number="61" type="normal" device="Axe-Fx"><AxeProgramChange program="60"/></patch>
+		<patch name="Axe 062" number="62" type="normal" device="Axe-Fx"><AxeProgramChange program="61"/></patch>
+		<patch name="Axe 063" number="63" type="normal" device="Axe-Fx"><AxeProgramChange program="62"/></patch>
+		<patch name="Axe 064" number="64" type="normal" device="Axe-Fx"><AxeProgramChange program="63"/></patch>
+		<patch name="Axe 065" number="65" type="normal" device="Axe-Fx"><AxeProgramChange program="64"/></patch>
+		<patch name="Axe 066" number="66" type="normal" device="Axe-Fx"><AxeProgramChange program="65"/></patch>
+		<patch name="Axe 067" number="67" type="normal" device="Axe-Fx"><AxeProgramChange program="66"/></patch>
+		<patch name="Axe 068" number="68" type="normal" device="Axe-Fx"><AxeProgramChange program="67"/></patch>
+		<patch name="Axe 069" number="69" type="normal" device="Axe-Fx"><AxeProgramChange program="68"/></patch>
+		<patch name="Axe 070" number="70" type="normal" device="Axe-Fx"><AxeProgramChange program="69"/></patch>
+		<patch name="Axe 071" number="71" type="normal" device="Axe-Fx"><AxeProgramChange program="70"/></patch>
+		<patch name="Axe 072" number="72" type="normal" device="Axe-Fx"><AxeProgramChange program="71"/></patch>
+		<patch name="Axe 073" number="73" type="normal" device="Axe-Fx"><AxeProgramChange program="72"/></patch>
+		<patch name="Axe 074" number="74" type="normal" device="Axe-Fx"><AxeProgramChange program="73"/></patch>
+		<patch name="Axe 075" number="75" type="normal" device="Axe-Fx"><AxeProgramChange program="74"/></patch>
+		<patch name="Axe 076" number="76" type="normal" device="Axe-Fx"><AxeProgramChange program="75"/></patch>
+		<patch name="Axe 077" number="77" type="normal" device="Axe-Fx"><AxeProgramChange program="76"/></patch>
+		<patch name="Axe 078" number="78" type="normal" device="Axe-Fx"><AxeProgramChange program="77"/></patch>
+		<patch name="Axe 079" number="79" type="normal" device="Axe-Fx"><AxeProgramChange program="78"/></patch>
+		<patch name="Axe 080" number="80" type="normal" device="Axe-Fx"><AxeProgramChange program="79"/></patch>
+		<patch name="Axe 081" number="81" type="normal" device="Axe-Fx"><AxeProgramChange program="80"/></patch>
+		<patch name="Axe 082" number="82" type="normal" device="Axe-Fx"><AxeProgramChange program="81"/></patch>
+		<patch name="Axe 083" number="83" type="normal" device="Axe-Fx"><AxeProgramChange program="82"/></patch>
+		<patch name="Axe 084" number="84" type="normal" device="Axe-Fx"><AxeProgramChange program="83"/></patch>
+		<patch name="Axe 085" number="85" type="normal" device="Axe-Fx"><AxeProgramChange program="84"/></patch>
+		<patch name="Axe 086" number="86" type="normal" device="Axe-Fx"><AxeProgramChange program="85"/></patch>
+		<patch name="Axe 087" number="87" type="normal" device="Axe-Fx"><AxeProgramChange program="86"/></patch>
+		<patch name="Axe 088" number="88" type="normal" device="Axe-Fx"><AxeProgramChange program="87"/></patch>
+		<patch name="Axe 089" number="89" type="normal" device="Axe-Fx"><AxeProgramChange program="88"/></patch>
+		<patch name="Axe 090" number="90" type="normal" device="Axe-Fx"><AxeProgramChange program="89"/></patch>
+		<patch name="Axe 091" number="91" type="normal" device="Axe-Fx"><AxeProgramChange program="90"/></patch>
+		<patch name="Axe 092" number="92" type="normal" device="Axe-Fx"><AxeProgramChange program="91"/></patch>
+		<patch name="Axe 093" number="93" type="normal" device="Axe-Fx"><AxeProgramChange program="92"/></patch>
+		<patch name="Axe 094" number="94" type="normal" device="Axe-Fx"><AxeProgramChange program="93"/></patch>
+		<patch name="Axe 095" number="95" type="normal" device="Axe-Fx"><AxeProgramChange program="94"/></patch>
+		<patch name="Axe 096" number="96" type="normal" device="Axe-Fx"><AxeProgramChange program="95"/></patch>
+		<patch name="Axe 097" number="97" type="normal" device="Axe-Fx"><AxeProgramChange program="96"/></patch>
+		<patch name="Axe 098" number="98" type="normal" device="Axe-Fx"><AxeProgramChange program="97"/></patch>
+		<patch name="Axe 099" number="99" type="normal" device="Axe-Fx"><AxeProgramChange program="98"/></patch>
+		<patch name="Axe 100" number="100" type="normal" device="Axe-Fx"><AxeProgramChange program="99"/></patch>
+		<patch name="Axe 101" number="101" type="normal" device="Axe-Fx"><AxeProgramChange program="100"/></patch>
+		<patch name="Axe 102" number="102" type="normal" device="Axe-Fx"><AxeProgramChange program="101"/></patch>
+		<patch name="Axe 103" number="103" type="normal" device="Axe-Fx"><AxeProgramChange program="102"/></patch>
+		<patch name="Axe 104" number="104" type="normal" device="Axe-Fx"><AxeProgramChange program="103"/></patch>
+		<patch name="Axe 105" number="105" type="normal" device="Axe-Fx"><AxeProgramChange program="104"/></patch>
+		<patch name="Axe 106" number="106" type="normal" device="Axe-Fx"><AxeProgramChange program="105"/></patch>
+		<patch name="Axe 107" number="107" type="normal" device="Axe-Fx"><AxeProgramChange program="106"/></patch>
+		<patch name="Axe 108" number="108" type="normal" device="Axe-Fx"><AxeProgramChange program="107"/></patch>
+		<patch name="Axe 109" number="109" type="normal" device="Axe-Fx"><AxeProgramChange program="108"/></patch>
+		<patch name="Axe 110" number="110" type="normal" device="Axe-Fx"><AxeProgramChange program="109"/></patch>
+		<patch name="Axe 111" number="111" type="normal" device="Axe-Fx"><AxeProgramChange program="110"/></patch>
+		<patch name="Axe 112" number="112" type="normal" device="Axe-Fx"><AxeProgramChange program="111"/></patch>
+		<patch name="Axe 113" number="113" type="normal" device="Axe-Fx"><AxeProgramChange program="112"/></patch>
+		<patch name="Axe 114" number="114" type="normal" device="Axe-Fx"><AxeProgramChange program="113"/></patch>
+		<patch name="Axe 115" number="115" type="normal" device="Axe-Fx"><AxeProgramChange program="114"/></patch>
+		<patch name="Axe 116" number="116" type="normal" device="Axe-Fx"><AxeProgramChange program="115"/></patch>
+		<patch name="Axe 117" number="117" type="normal" device="Axe-Fx"><AxeProgramChange program="116"/></patch>
+		<patch name="Axe 118" number="118" type="normal" device="Axe-Fx"><AxeProgramChange program="117"/></patch>
+		<patch name="Axe 119" number="119" type="normal" device="Axe-Fx"><AxeProgramChange program="118"/></patch>
+		<patch name="Axe 120" number="120" type="normal" device="Axe-Fx"><AxeProgramChange program="119"/></patch>
+		<patch name="Axe 121" number="121" type="normal" device="Axe-Fx"><AxeProgramChange program="120"/></patch>
+		<patch name="Axe 122" number="122" type="normal" device="Axe-Fx"><AxeProgramChange program="121"/></patch>
+		<patch name="Axe 123" number="123" type="normal" device="Axe-Fx"><AxeProgramChange program="122"/></patch>
+		<patch name="Axe 124" number="124" type="normal" device="Axe-Fx"><AxeProgramChange program="123"/></patch>
+		<patch name="Axe 125" number="125" type="normal" device="Axe-Fx"><AxeProgramChange program="124"/></patch>
+		<patch name="Axe 126" number="126" type="normal" device="Axe-Fx"><AxeProgramChange program="125"/></patch>
+		<patch name="Axe 127" number="127" type="normal" device="Axe-Fx"><AxeProgramChange program="126"/></patch>
+		<patch name="Axe 128" number="128" type="normal" device="Axe-Fx"><AxeProgramChange program="127"/></patch>
+		<patch name="Axe 129" number="129" type="normal" device="Axe-Fx"><AxeProgramChange program="128"/></patch>
+		<patch name="Axe 130" number="130" type="normal" device="Axe-Fx"><AxeProgramChange program="129"/></patch>
+		<patch name="Axe 131" number="131" type="normal" device="Axe-Fx"><AxeProgramChange program="130"/></patch>
+		<patch name="Axe 132" number="132" type="normal" device="Axe-Fx"><AxeProgramChange program="131"/></patch>
+		<patch name="Axe 133" number="133" type="normal" device="Axe-Fx"><AxeProgramChange program="132"/></patch>
+		<patch name="Axe 134" number="134" type="normal" device="Axe-Fx"><AxeProgramChange program="133"/></patch>
+		<patch name="Axe 135" number="135" type="normal" device="Axe-Fx"><AxeProgramChange program="134"/></patch>
+		<patch name="Axe 136" number="136" type="normal" device="Axe-Fx"><AxeProgramChange program="135"/></patch>
+		<patch name="Axe 137" number="137" type="normal" device="Axe-Fx"><AxeProgramChange program="136"/></patch>
+		<patch name="Axe 138" number="138" type="normal" device="Axe-Fx"><AxeProgramChange program="137"/></patch>
+		<patch name="Axe 139" number="139" type="normal" device="Axe-Fx"><AxeProgramChange program="138"/></patch>
+		<patch name="Axe 140" number="140" type="normal" device="Axe-Fx"><AxeProgramChange program="139"/></patch>
+		<patch name="Axe 141" number="141" type="normal" device="Axe-Fx"><AxeProgramChange program="140"/></patch>
+		<patch name="Axe 142" number="142" type="normal" device="Axe-Fx"><AxeProgramChange program="141"/></patch>
+		<patch name="Axe 143" number="143" type="normal" device="Axe-Fx"><AxeProgramChange program="142"/></patch>
+		<patch name="Axe 144" number="144" type="normal" device="Axe-Fx"><AxeProgramChange program="143"/></patch>
+		<patch name="Axe 145" number="145" type="normal" device="Axe-Fx"><AxeProgramChange program="144"/></patch>
+		<patch name="Axe 146" number="146" type="normal" device="Axe-Fx"><AxeProgramChange program="145"/></patch>
+		<patch name="Axe 147" number="147" type="normal" device="Axe-Fx"><AxeProgramChange program="146"/></patch>
+		<patch name="Axe 148" number="148" type="normal" device="Axe-Fx"><AxeProgramChange program="147"/></patch>
+		<patch name="Axe 149" number="149" type="normal" device="Axe-Fx"><AxeProgramChange program="148"/></patch>
+		<patch name="Axe 150" number="150" type="normal" device="Axe-Fx"><AxeProgramChange program="149"/></patch>
+		<patch name="Axe 151" number="151" type="normal" device="Axe-Fx"><AxeProgramChange program="150"/></patch>
+		<patch name="Axe 152" number="152" type="normal" device="Axe-Fx"><AxeProgramChange program="151"/></patch>
+		<patch name="Axe 153" number="153" type="normal" device="Axe-Fx"><AxeProgramChange program="152"/></patch>
+		<patch name="Axe 154" number="154" type="normal" device="Axe-Fx"><AxeProgramChange program="153"/></patch>
+		<patch name="Axe 155" number="155" type="normal" device="Axe-Fx"><AxeProgramChange program="154"/></patch>
+		<patch name="Axe 156" number="156" type="normal" device="Axe-Fx"><AxeProgramChange program="155"/></patch>
+		<patch name="Axe 157" number="157" type="normal" device="Axe-Fx"><AxeProgramChange program="156"/></patch>
+		<patch name="Axe 158" number="158" type="normal" device="Axe-Fx"><AxeProgramChange program="157"/></patch>
+		<patch name="Axe 159" number="159" type="normal" device="Axe-Fx"><AxeProgramChange program="158"/></patch>
+		<patch name="Axe 160" number="160" type="normal" device="Axe-Fx"><AxeProgramChange program="159"/></patch>
+		<patch name="Axe 161" number="161" type="normal" device="Axe-Fx"><AxeProgramChange program="160"/></patch>
+		<patch name="Axe 162" number="162" type="normal" device="Axe-Fx"><AxeProgramChange program="161"/></patch>
+		<patch name="Axe 163" number="163" type="normal" device="Axe-Fx"><AxeProgramChange program="162"/></patch>
+		<patch name="Axe 164" number="164" type="normal" device="Axe-Fx"><AxeProgramChange program="163"/></patch>
+		<patch name="Axe 165" number="165" type="normal" device="Axe-Fx"><AxeProgramChange program="164"/></patch>
+		<patch name="Axe 166" number="166" type="normal" device="Axe-Fx"><AxeProgramChange program="165"/></patch>
+		<patch name="Axe 167" number="167" type="normal" device="Axe-Fx"><AxeProgramChange program="166"/></patch>
+		<patch name="Axe 168" number="168" type="normal" device="Axe-Fx"><AxeProgramChange program="167"/></patch>
+		<patch name="Axe 169" number="169" type="normal" device="Axe-Fx"><AxeProgramChange program="168"/></patch>
+		<patch name="Axe 170" number="170" type="normal" device="Axe-Fx"><AxeProgramChange program="169"/></patch>
+		<patch name="Axe 171" number="171" type="normal" device="Axe-Fx"><AxeProgramChange program="170"/></patch>
+		<patch name="Axe 172" number="172" type="normal" device="Axe-Fx"><AxeProgramChange program="171"/></patch>
+		<patch name="Axe 173" number="173" type="normal" device="Axe-Fx"><AxeProgramChange program="172"/></patch>
+		<patch name="Axe 174" number="174" type="normal" device="Axe-Fx"><AxeProgramChange program="173"/></patch>
+		<patch name="Axe 175" number="175" type="normal" device="Axe-Fx"><AxeProgramChange program="174"/></patch>
+		<patch name="Axe 176" number="176" type="normal" device="Axe-Fx"><AxeProgramChange program="175"/></patch>
+		<patch name="Axe 177" number="177" type="normal" device="Axe-Fx"><AxeProgramChange program="176"/></patch>
+		<patch name="Axe 178" number="178" type="normal" device="Axe-Fx"><AxeProgramChange program="177"/></patch>
+		<patch name="Axe 179" number="179" type="normal" device="Axe-Fx"><AxeProgramChange program="178"/></patch>
+		<patch name="Axe 180" number="180" type="normal" device="Axe-Fx"><AxeProgramChange program="179"/></patch>
+		<patch name="Axe 181" number="181" type="normal" device="Axe-Fx"><AxeProgramChange program="180"/></patch>
+		<patch name="Axe 182" number="182" type="normal" device="Axe-Fx"><AxeProgramChange program="181"/></patch>
+		<patch name="Axe 183" number="183" type="normal" device="Axe-Fx"><AxeProgramChange program="182"/></patch>
+		<patch name="Axe 184" number="184" type="normal" device="Axe-Fx"><AxeProgramChange program="183"/></patch>
+		<patch name="Axe 185" number="185" type="normal" device="Axe-Fx"><AxeProgramChange program="184"/></patch>
+		<patch name="Axe 186" number="186" type="normal" device="Axe-Fx"><AxeProgramChange program="185"/></patch>
+		<patch name="Axe 187" number="187" type="normal" device="Axe-Fx"><AxeProgramChange program="186"/></patch>
+		<patch name="Axe 188" number="188" type="normal" device="Axe-Fx"><AxeProgramChange program="187"/></patch>
+		<patch name="Axe 189" number="189" type="normal" device="Axe-Fx"><AxeProgramChange program="188"/></patch>
+		<patch name="Axe 190" number="190" type="normal" device="Axe-Fx"><AxeProgramChange program="189"/></patch>
+		<patch name="Axe 191" number="191" type="normal" device="Axe-Fx"><AxeProgramChange program="190"/></patch>
+		<patch name="Axe 192" number="192" type="normal" device="Axe-Fx"><AxeProgramChange program="191"/></patch>
+		<patch name="Axe 193" number="193" type="normal" device="Axe-Fx"><AxeProgramChange program="192"/></patch>
+		<patch name="Axe 194" number="194" type="normal" device="Axe-Fx"><AxeProgramChange program="193"/></patch>
+		<patch name="Axe 195" number="195" type="normal" device="Axe-Fx"><AxeProgramChange program="194"/></patch>
+		<patch name="Axe 196" number="196" type="normal" device="Axe-Fx"><AxeProgramChange program="195"/></patch>
+		<patch name="Axe 197" number="197" type="normal" device="Axe-Fx"><AxeProgramChange program="196"/></patch>
+		<patch name="Axe 198" number="198" type="normal" device="Axe-Fx"><AxeProgramChange program="197"/></patch>
+		<patch name="Axe 199" number="199" type="normal" device="Axe-Fx"><AxeProgramChange program="198"/></patch>
+		<patch name="Axe 200" number="200" type="normal" device="Axe-Fx"><AxeProgramChange program="199"/></patch>
+		<patch name="Axe 201" number="201" type="normal" device="Axe-Fx"><AxeProgramChange program="200"/></patch>
+		<patch name="Axe 202" number="202" type="normal" device="Axe-Fx"><AxeProgramChange program="201"/></patch>
+		<patch name="Axe 203" number="203" type="normal" device="Axe-Fx"><AxeProgramChange program="202"/></patch>
+		<patch name="Axe 204" number="204" type="normal" device="Axe-Fx"><AxeProgramChange program="203"/></patch>
+		<patch name="Axe 205" number="205" type="normal" device="Axe-Fx"><AxeProgramChange program="204"/></patch>
+		<patch name="Axe 206" number="206" type="normal" device="Axe-Fx"><AxeProgramChange program="205"/></patch>
+		<patch name="Axe 207" number="207" type="normal" device="Axe-Fx"><AxeProgramChange program="206"/></patch>
+		<patch name="Axe 208" number="208" type="normal" device="Axe-Fx"><AxeProgramChange program="207"/></patch>
+		<patch name="Axe 209" number="209" type="normal" device="Axe-Fx"><AxeProgramChange program="208"/></patch>
+		<patch name="Axe 210" number="210" type="normal" device="Axe-Fx"><AxeProgramChange program="209"/></patch>
+		<patch name="Axe 211" number="211" type="normal" device="Axe-Fx"><AxeProgramChange program="210"/></patch>
+		<patch name="Axe 212" number="212" type="normal" device="Axe-Fx"><AxeProgramChange program="211"/></patch>
+		<patch name="Axe 213" number="213" type="normal" device="Axe-Fx"><AxeProgramChange program="212"/></patch>
+		<patch name="Axe 214" number="214" type="normal" device="Axe-Fx"><AxeProgramChange program="213"/></patch>
+		<patch name="Axe 215" number="215" type="normal" device="Axe-Fx"><AxeProgramChange program="214"/></patch>
+		<patch name="Axe 216" number="216" type="normal" device="Axe-Fx"><AxeProgramChange program="215"/></patch>
+		<patch name="Axe 217" number="217" type="normal" device="Axe-Fx"><AxeProgramChange program="216"/></patch>
+		<patch name="Axe 218" number="218" type="normal" device="Axe-Fx"><AxeProgramChange program="217"/></patch>
+		<patch name="Axe 219" number="219" type="normal" device="Axe-Fx"><AxeProgramChange program="218"/></patch>
+		<patch name="Axe 220" number="220" type="normal" device="Axe-Fx"><AxeProgramChange program="219"/></patch>
+		<patch name="Axe 221" number="221" type="normal" device="Axe-Fx"><AxeProgramChange program="220"/></patch>
+		<patch name="Axe 222" number="222" type="normal" device="Axe-Fx"><AxeProgramChange program="221"/></patch>
+		<patch name="Axe 223" number="223" type="normal" device="Axe-Fx"><AxeProgramChange program="222"/></patch>
+		<patch name="Axe 224" number="224" type="normal" device="Axe-Fx"><AxeProgramChange program="223"/></patch>
+		<patch name="Axe 225" number="225" type="normal" device="Axe-Fx"><AxeProgramChange program="224"/></patch>
+		<patch name="Axe 226" number="226" type="normal" device="Axe-Fx"><AxeProgramChange program="225"/></patch>
+		<patch name="Axe 227" number="227" type="normal" device="Axe-Fx"><AxeProgramChange program="226"/></patch>
+		<patch name="Axe 228" number="228" type="normal" device="Axe-Fx"><AxeProgramChange program="227"/></patch>
+		<patch name="Axe 229" number="229" type="normal" device="Axe-Fx"><AxeProgramChange program="228"/></patch>
+		<patch name="Axe 230" number="230" type="normal" device="Axe-Fx"><AxeProgramChange program="229"/></patch>
+		<patch name="Axe 231" number="231" type="normal" device="Axe-Fx"><AxeProgramChange program="230"/></patch>
+		<patch name="Axe 232" number="232" type="normal" device="Axe-Fx"><AxeProgramChange program="231"/></patch>
+		<patch name="Axe 233" number="233" type="normal" device="Axe-Fx"><AxeProgramChange program="232"/></patch>
+		<patch name="Axe 234" number="234" type="normal" device="Axe-Fx"><AxeProgramChange program="233"/></patch>
+		<patch name="Axe 235" number="235" type="normal" device="Axe-Fx"><AxeProgramChange program="234"/></patch>
+		<patch name="Axe 236" number="236" type="normal" device="Axe-Fx"><AxeProgramChange program="235"/></patch>
+		<patch name="Axe 237" number="237" type="normal" device="Axe-Fx"><AxeProgramChange program="236"/></patch>
+		<patch name="Axe 238" number="238" type="normal" device="Axe-Fx"><AxeProgramChange program="237"/></patch>
+		<patch name="Axe 239" number="239" type="normal" device="Axe-Fx"><AxeProgramChange program="238"/></patch>
+		<patch name="Axe 240" number="240" type="normal" device="Axe-Fx"><AxeProgramChange program="239"/></patch>
+		<patch name="Axe 241" number="241" type="normal" device="Axe-Fx"><AxeProgramChange program="240"/></patch>
+		<patch name="Axe 242" number="242" type="normal" device="Axe-Fx"><AxeProgramChange program="241"/></patch>
+		<patch name="Axe 243" number="243" type="normal" device="Axe-Fx"><AxeProgramChange program="242"/></patch>
+		<patch name="Axe 244" number="244" type="normal" device="Axe-Fx"><AxeProgramChange program="243"/></patch>
+		<patch name="Axe 245" number="245" type="normal" device="Axe-Fx"><AxeProgramChange program="244"/></patch>
+		<patch name="Axe 246" number="246" type="normal" device="Axe-Fx"><AxeProgramChange program="245"/></patch>
+		<patch name="Axe 247" number="247" type="normal" device="Axe-Fx"><AxeProgramChange program="246"/></patch>
+		<patch name="Axe 248" number="248" type="normal" device="Axe-Fx"><AxeProgramChange program="247"/></patch>
+		<patch name="Axe 249" number="249" type="normal" device="Axe-Fx"><AxeProgramChange program="248"/></patch>
+		<patch name="Axe 250" number="250" type="normal" device="Axe-Fx"><AxeProgramChange program="249"/></patch>
+		<patch name="Axe 251" number="251" type="normal" device="Axe-Fx"><AxeProgramChange program="250"/></patch>
+		<patch name="Axe 252" number="252" type="normal" device="Axe-Fx"><AxeProgramChange program="251"/></patch>
+		<patch name="Axe 253" number="253" type="normal" device="Axe-Fx"><AxeProgramChange program="252"/></patch>
+		<patch name="Axe 254" number="254" type="normal" device="Axe-Fx"><AxeProgramChange program="253"/></patch>
+		<patch name="Axe 255" number="255" type="normal" device="Axe-Fx"><AxeProgramChange program="254"/></patch>
+		<patch name="Axe 256" number="256" type="normal" device="Axe-Fx"><AxeProgramChange program="255"/></patch>
+		<patch name="Axe 257" number="257" type="normal" device="Axe-Fx"><AxeProgramChange program="256"/></patch>
+		<patch name="Axe 258" number="258" type="normal" device="Axe-Fx"><AxeProgramChange program="257"/></patch>
+		<patch name="Axe 259" number="259" type="normal" device="Axe-Fx"><AxeProgramChange program="258"/></patch>
+		<patch name="Axe 260" number="260" type="normal" device="Axe-Fx"><AxeProgramChange program="259"/></patch>
+		<patch name="Axe 261" number="261" type="normal" device="Axe-Fx"><AxeProgramChange program="260"/></patch>
+		<patch name="Axe 262" number="262" type="normal" device="Axe-Fx"><AxeProgramChange program="261"/></patch>
+		<patch name="Axe 263" number="263" type="normal" device="Axe-Fx"><AxeProgramChange program="262"/></patch>
+		<patch name="Axe 264" number="264" type="normal" device="Axe-Fx"><AxeProgramChange program="263"/></patch>
+		<patch name="Axe 265" number="265" type="normal" device="Axe-Fx"><AxeProgramChange program="264"/></patch>
+		<patch name="Axe 266" number="266" type="normal" device="Axe-Fx"><AxeProgramChange program="265"/></patch>
+		<patch name="Axe 267" number="267" type="normal" device="Axe-Fx"><AxeProgramChange program="266"/></patch>
+		<patch name="Axe 268" number="268" type="normal" device="Axe-Fx"><AxeProgramChange program="267"/></patch>
+		<patch name="Axe 269" number="269" type="normal" device="Axe-Fx"><AxeProgramChange program="268"/></patch>
+		<patch name="Axe 270" number="270" type="normal" device="Axe-Fx"><AxeProgramChange program="269"/></patch>
+		<patch name="Axe 271" number="271" type="normal" device="Axe-Fx"><AxeProgramChange program="270"/></patch>
+		<patch name="Axe 272" number="272" type="normal" device="Axe-Fx"><AxeProgramChange program="271"/></patch>
+		<patch name="Axe 273" number="273" type="normal" device="Axe-Fx"><AxeProgramChange program="272"/></patch>
+		<patch name="Axe 274" number="274" type="normal" device="Axe-Fx"><AxeProgramChange program="273"/></patch>
+		<patch name="Axe 275" number="275" type="normal" device="Axe-Fx"><AxeProgramChange program="274"/></patch>
+		<patch name="Axe 276" number="276" type="normal" device="Axe-Fx"><AxeProgramChange program="275"/></patch>
+		<patch name="Axe 277" number="277" type="normal" device="Axe-Fx"><AxeProgramChange program="276"/></patch>
+		<patch name="Axe 278" number="278" type="normal" device="Axe-Fx"><AxeProgramChange program="277"/></patch>
+		<patch name="Axe 279" number="279" type="normal" device="Axe-Fx"><AxeProgramChange program="278"/></patch>
+		<patch name="Axe 280" number="280" type="normal" device="Axe-Fx"><AxeProgramChange program="279"/></patch>
+		<patch name="Axe 281" number="281" type="normal" device="Axe-Fx"><AxeProgramChange program="280"/></patch>
+		<patch name="Axe 282" number="282" type="normal" device="Axe-Fx"><AxeProgramChange program="281"/></patch>
+		<patch name="Axe 283" number="283" type="normal" device="Axe-Fx"><AxeProgramChange program="282"/></patch>
+		<patch name="Axe 284" number="284" type="normal" device="Axe-Fx"><AxeProgramChange program="283"/></patch>
+		<patch name="Axe 285" number="285" type="normal" device="Axe-Fx"><AxeProgramChange program="284"/></patch>
+		<patch name="Axe 286" number="286" type="normal" device="Axe-Fx"><AxeProgramChange program="285"/></patch>
+		<patch name="Axe 287" number="287" type="normal" device="Axe-Fx"><AxeProgramChange program="286"/></patch>
+		<patch name="Axe 288" number="288" type="normal" device="Axe-Fx"><AxeProgramChange program="287"/></patch>
+		<patch name="Axe 289" number="289" type="normal" device="Axe-Fx"><AxeProgramChange program="288"/></patch>
+		<patch name="Axe 290" number="290" type="normal" device="Axe-Fx"><AxeProgramChange program="289"/></patch>
+		<patch name="Axe 291" number="291" type="normal" device="Axe-Fx"><AxeProgramChange program="290"/></patch>
+		<patch name="Axe 292" number="292" type="normal" device="Axe-Fx"><AxeProgramChange program="291"/></patch>
+		<patch name="Axe 293" number="293" type="normal" device="Axe-Fx"><AxeProgramChange program="292"/></patch>
+		<patch name="Axe 294" number="294" type="normal" device="Axe-Fx"><AxeProgramChange program="293"/></patch>
+		<patch name="Axe 295" number="295" type="normal" device="Axe-Fx"><AxeProgramChange program="294"/></patch>
+		<patch name="Axe 296" number="296" type="normal" device="Axe-Fx"><AxeProgramChange program="295"/></patch>
+		<patch name="Axe 297" number="297" type="normal" device="Axe-Fx"><AxeProgramChange program="296"/></patch>
+		<patch name="Axe 298" number="298" type="normal" device="Axe-Fx"><AxeProgramChange program="297"/></patch>
+		<patch name="Axe 299" number="299" type="normal" device="Axe-Fx"><AxeProgramChange program="298"/></patch>
+		<patch name="Axe 300" number="300" type="normal" device="Axe-Fx"><AxeProgramChange program="299"/></patch>
+		<patch name="Axe 301" number="301" type="normal" device="Axe-Fx"><AxeProgramChange program="300"/></patch>
+		<patch name="Axe 302" number="302" type="normal" device="Axe-Fx"><AxeProgramChange program="301"/></patch>
+		<patch name="Axe 303" number="303" type="normal" device="Axe-Fx"><AxeProgramChange program="302"/></patch>
+		<patch name="Axe 304" number="304" type="normal" device="Axe-Fx"><AxeProgramChange program="303"/></patch>
+		<patch name="Axe 305" number="305" type="normal" device="Axe-Fx"><AxeProgramChange program="304"/></patch>
+		<patch name="Axe 306" number="306" type="normal" device="Axe-Fx"><AxeProgramChange program="305"/></patch>
+		<patch name="Axe 307" number="307" type="normal" device="Axe-Fx"><AxeProgramChange program="306"/></patch>
+		<patch name="Axe 308" number="308" type="normal" device="Axe-Fx"><AxeProgramChange program="307"/></patch>
+		<patch name="Axe 309" number="309" type="normal" device="Axe-Fx"><AxeProgramChange program="308"/></patch>
+		<patch name="Axe 310" number="310" type="normal" device="Axe-Fx"><AxeProgramChange program="309"/></patch>
+		<patch name="Axe 311" number="311" type="normal" device="Axe-Fx"><AxeProgramChange program="310"/></patch>
+		<patch name="Axe 312" number="312" type="normal" device="Axe-Fx"><AxeProgramChange program="311"/></patch>
+		<patch name="Axe 313" number="313" type="normal" device="Axe-Fx"><AxeProgramChange program="312"/></patch>
+		<patch name="Axe 314" number="314" type="normal" device="Axe-Fx"><AxeProgramChange program="313"/></patch>
+		<patch name="Axe 315" number="315" type="normal" device="Axe-Fx"><AxeProgramChange program="314"/></patch>
+		<patch name="Axe 316" number="316" type="normal" device="Axe-Fx"><AxeProgramChange program="315"/></patch>
+		<patch name="Axe 317" number="317" type="normal" device="Axe-Fx"><AxeProgramChange program="316"/></patch>
+		<patch name="Axe 318" number="318" type="normal" device="Axe-Fx"><AxeProgramChange program="317"/></patch>
+		<patch name="Axe 319" number="319" type="normal" device="Axe-Fx"><AxeProgramChange program="318"/></patch>
+		<patch name="Axe 320" number="320" type="normal" device="Axe-Fx"><AxeProgramChange program="319"/></patch>
+		<patch name="Axe 321" number="321" type="normal" device="Axe-Fx"><AxeProgramChange program="320"/></patch>
+		<patch name="Axe 322" number="322" type="normal" device="Axe-Fx"><AxeProgramChange program="321"/></patch>
+		<patch name="Axe 323" number="323" type="normal" device="Axe-Fx"><AxeProgramChange program="322"/></patch>
+		<patch name="Axe 324" number="324" type="normal" device="Axe-Fx"><AxeProgramChange program="323"/></patch>
+		<patch name="Axe 325" number="325" type="normal" device="Axe-Fx"><AxeProgramChange program="324"/></patch>
+		<patch name="Axe 326" number="326" type="normal" device="Axe-Fx"><AxeProgramChange program="325"/></patch>
+		<patch name="Axe 327" number="327" type="normal" device="Axe-Fx"><AxeProgramChange program="326"/></patch>
+		<patch name="Axe 328" number="328" type="normal" device="Axe-Fx"><AxeProgramChange program="327"/></patch>
+		<patch name="Axe 329" number="329" type="normal" device="Axe-Fx"><AxeProgramChange program="328"/></patch>
+		<patch name="Axe 330" number="330" type="normal" device="Axe-Fx"><AxeProgramChange program="329"/></patch>
+		<patch name="Axe 331" number="331" type="normal" device="Axe-Fx"><AxeProgramChange program="330"/></patch>
+		<patch name="Axe 332" number="332" type="normal" device="Axe-Fx"><AxeProgramChange program="331"/></patch>
+		<patch name="Axe 333" number="333" type="normal" device="Axe-Fx"><AxeProgramChange program="332"/></patch>
+		<patch name="Axe 334" number="334" type="normal" device="Axe-Fx"><AxeProgramChange program="333"/></patch>
+		<patch name="Axe 335" number="335" type="normal" device="Axe-Fx"><AxeProgramChange program="334"/></patch>
+		<patch name="Axe 336" number="336" type="normal" device="Axe-Fx"><AxeProgramChange program="335"/></patch>
+		<patch name="Axe 337" number="337" type="normal" device="Axe-Fx"><AxeProgramChange program="336"/></patch>
+		<patch name="Axe 338" number="338" type="normal" device="Axe-Fx"><AxeProgramChange program="337"/></patch>
+		<patch name="Axe 339" number="339" type="normal" device="Axe-Fx"><AxeProgramChange program="338"/></patch>
+		<patch name="Axe 340" number="340" type="normal" device="Axe-Fx"><AxeProgramChange program="339"/></patch>
+		<patch name="Axe 341" number="341" type="normal" device="Axe-Fx"><AxeProgramChange program="340"/></patch>
+		<patch name="Axe 342" number="342" type="normal" device="Axe-Fx"><AxeProgramChange program="341"/></patch>
+		<patch name="Axe 343" number="343" type="normal" device="Axe-Fx"><AxeProgramChange program="342"/></patch>
+		<patch name="Axe 344" number="344" type="normal" device="Axe-Fx"><AxeProgramChange program="343"/></patch>
+		<patch name="Axe 345" number="345" type="normal" device="Axe-Fx"><AxeProgramChange program="344"/></patch>
+		<patch name="Axe 346" number="346" type="normal" device="Axe-Fx"><AxeProgramChange program="345"/></patch>
+		<patch name="Axe 347" number="347" type="normal" device="Axe-Fx"><AxeProgramChange program="346"/></patch>
+		<patch name="Axe 348" number="348" type="normal" device="Axe-Fx"><AxeProgramChange program="347"/></patch>
+		<patch name="Axe 349" number="349" type="normal" device="Axe-Fx"><AxeProgramChange program="348"/></patch>
+		<patch name="Axe 350" number="350" type="normal" device="Axe-Fx"><AxeProgramChange program="349"/></patch>
+		<patch name="Axe 351" number="351" type="normal" device="Axe-Fx"><AxeProgramChange program="350"/></patch>
+		<patch name="Axe 352" number="352" type="normal" device="Axe-Fx"><AxeProgramChange program="351"/></patch>
+		<patch name="Axe 353" number="353" type="normal" device="Axe-Fx"><AxeProgramChange program="352"/></patch>
+		<patch name="Axe 354" number="354" type="normal" device="Axe-Fx"><AxeProgramChange program="353"/></patch>
+		<patch name="Axe 355" number="355" type="normal" device="Axe-Fx"><AxeProgramChange program="354"/></patch>
+		<patch name="Axe 356" number="356" type="normal" device="Axe-Fx"><AxeProgramChange program="355"/></patch>
+		<patch name="Axe 357" number="357" type="normal" device="Axe-Fx"><AxeProgramChange program="356"/></patch>
+		<patch name="Axe 358" number="358" type="normal" device="Axe-Fx"><AxeProgramChange program="357"/></patch>
+		<patch name="Axe 359" number="359" type="normal" device="Axe-Fx"><AxeProgramChange program="358"/></patch>
+		<patch name="Axe 360" number="360" type="normal" device="Axe-Fx"><AxeProgramChange program="359"/></patch>
+		<patch name="Axe 361" number="361" type="normal" device="Axe-Fx"><AxeProgramChange program="360"/></patch>
+		<patch name="Axe 362" number="362" type="normal" device="Axe-Fx"><AxeProgramChange program="361"/></patch>
+		<patch name="Axe 363" number="363" type="normal" device="Axe-Fx"><AxeProgramChange program="362"/></patch>
+		<patch name="Axe 364" number="364" type="normal" device="Axe-Fx"><AxeProgramChange program="363"/></patch>
+		<patch name="Axe 365" number="365" type="normal" device="Axe-Fx"><AxeProgramChange program="364"/></patch>
+		<patch name="Axe 366" number="366" type="normal" device="Axe-Fx"><AxeProgramChange program="365"/></patch>
+		<patch name="Axe 367" number="367" type="normal" device="Axe-Fx"><AxeProgramChange program="366"/></patch>
+		<patch name="Axe 368" number="368" type="normal" device="Axe-Fx"><AxeProgramChange program="367"/></patch>
+		<patch name="Axe 369" number="369" type="normal" device="Axe-Fx"><AxeProgramChange program="368"/></patch>
+		<patch name="Axe 370" number="370" type="normal" device="Axe-Fx"><AxeProgramChange program="369"/></patch>
+		<patch name="Axe 371" number="371" type="normal" device="Axe-Fx"><AxeProgramChange program="370"/></patch>
+		<patch name="Axe 372" number="372" type="normal" device="Axe-Fx"><AxeProgramChange program="371"/></patch>
+		<patch name="Axe 373" number="373" type="normal" device="Axe-Fx"><AxeProgramChange program="372"/></patch>
+		<patch name="Axe 374" number="374" type="normal" device="Axe-Fx"><AxeProgramChange program="373"/></patch>
+		<patch name="Axe 375" number="375" type="normal" device="Axe-Fx"><AxeProgramChange program="374"/></patch>
+		<patch name="Axe 376" number="376" type="normal" device="Axe-Fx"><AxeProgramChange program="375"/></patch>
+		<patch name="Axe 377" number="377" type="normal" device="Axe-Fx"><AxeProgramChange program="376"/></patch>
+		<patch name="Axe 378" number="378" type="normal" device="Axe-Fx"><AxeProgramChange program="377"/></patch>
+		<patch name="Axe 379" number="379" type="normal" device="Axe-Fx"><AxeProgramChange program="378"/></patch>
+		<patch name="Axe 380" number="380" type="normal" device="Axe-Fx"><AxeProgramChange program="379"/></patch>
+		<patch name="Axe 381" number="381" type="normal" device="Axe-Fx"><AxeProgramChange program="380"/></patch>
+		<patch name="Axe 382" number="382" type="normal" device="Axe-Fx"><AxeProgramChange program="381"/></patch>
+		<patch name="Axe 383" number="383" type="normal" device="Axe-Fx"><AxeProgramChange program="382"/></patch>
+		<patch name="Axe 384" number="384" type="normal" device="Axe-Fx"><AxeProgramChange program="383"/></patch>
+
+		<patch name="Disable pedal 1" number="515" type="normal"><globalExpr inputNumber="1" enable="0" /></patch>
+		<patch name="Disable pedal 2" number="516" type="normal"><globalExpr inputNumber="2" enable="0" /></patch>
+		<patch name="Disable pedal 3" number="517" type="normal"><globalExpr inputNumber="3" enable="0" /></patch>
+		<patch name="Disable pedal 4" number="518" type="normal"><globalExpr inputNumber="4" enable="0" /></patch>
+
+		<!-- Axe-Fx default controllers -->
+		<patch name="Axe Input Volume" comment="Input Volume 10" number="700" type="normal" device="Axe-Fx">
+			<globalExpr inputNumber="1" enable="0" />
+			<localExpr inputNumber="1" assignmentNumber="1" controller="10" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="Axe Out 1 Volume (pedal 1)" comment="Out 1 Volume 11" number="701" type="normal" device="Axe-Fx">
+			<globalExpr inputNumber="1" enable="0" />
+			<localExpr inputNumber="1" assignmentNumber="1" controller="11" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="Axe Out 2 Volume" comment="Out 2 Volume 12" number="702" type="normal" device="Axe-Fx">
+			<globalExpr inputNumber="1" enable="0" />
+			<localExpr inputNumber="1" assignmentNumber="1" controller="12" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="Axe Tap Tempo" number="704" type="AxeFxTapTempo" device="Axe-Fx" />
+		<patch name="Axe Tuner" number="705" device="Axe-Fx" />
+
+		<patch name="Axe Ext 1" comment="External 1 16" number="706" type="normal" device="Axe-Fx">
+			<globalExpr inputNumber="4" enable="0" />
+			<localExpr inputNumber="4" assignmentNumber="1" controller="16" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="Axe Ext 2" comment="External 2 17" number="707" type="normal" device="Axe-Fx">
+			<globalExpr inputNumber="4" enable="0" />
+			<localExpr inputNumber="4" assignmentNumber="1" controller="17" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="Axe Ext 3" comment="External 3 18" number="708" type="normal" device="Axe-Fx">
+			<globalExpr inputNumber="4" enable="0" />
+			<localExpr inputNumber="4" assignmentNumber="1" controller="18" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="Axe Ext 4" comment="External 4 19" number="709" type="normal" device="Axe-Fx">
+			<globalExpr inputNumber="4" enable="0" />
+			<localExpr inputNumber="4" assignmentNumber="1" controller="19" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="Axe Ext 5" comment="External 5 20" number="710" type="normal" device="Axe-Fx">
+			<globalExpr inputNumber="4" enable="0" />
+			<localExpr inputNumber="4" assignmentNumber="1" controller="20" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="Axe Ext 6" comment="External 6 21" number="711" device="Axe-Fx" />
+		<patch name="Axe Ext 7" comment="External 7 22" number="712" device="Axe-Fx" />
+		<patch name="Axe Ext 8" comment="External 8 23" number="713" device="Axe-Fx" />
+
+		<!-- Axe-Fx default controllers; note no controllers specifed, mTroll will look up 
+			default based on patch name.
+			Axe, AxeFx, Axe-Fx are removed prior to lookup (not necessary in name).
+			Lookup is not case-sensitive.
+			Some aliases have been setup (for example, Wah == Wah-Wah == Wahwah).
+			Aliases are defined in function SynonymNormalization in AxeFxManager.cpp.
+			The lookup is initiated if no controller specified and if device="Axe-Fx".
+			Note also, no patch type.  AxeToggle is assumed if device="Axe-Fx" but can
+			be overridden. -->
+		<patch name="Axe Loop Record" number="714" device="Axe-Fx" />
+		<patch name="Axe Loop Play" number="715" device="Axe-Fx" />
+		<patch name="Axe Loop Once" number="716" device="Axe-Fx" />
+		<patch name="Axe Loop Reverse" number="718" device="Axe-Fx" />
+		<patch name="Axe Loop Half Speed" number="719" device="Axe-Fx" />
+		<patch name="Axe Loop Undo" number="720" device="Axe-Fx" />
+		<patch name="Axe Looper" number="722" device="Axe-Fx" />
+
+		<patch name="Axe Volume Decrement" number="725" type="AxeMomentary" device="Axe-Fx" singleState="1" />
+		<patch name="Axe Volume Increment" number="726" type="AxeMomentary" device="Axe-Fx" singleState="1" />
+		
+		<patch name="Axe Amp 1" number="727" device="Axe-Fx" />
+		<patch name="Axe Amp 2" number="728" device="Axe-Fx" />
+		<patch name="Axe Cabinet 1" number="729" device="Axe-Fx" />
+		<patch name="Axe Cabinet 2" number="730" device="Axe-Fx" />
+		<patch name="Axe Chorus 1" number="731" device="Axe-Fx" />
+		<patch name="Axe Chorus 2" number="732" device="Axe-Fx" />
+		<patch name="Axe Compressor 1" number="733" device="Axe-Fx" />
+		<patch name="Axe Compressor 2" number="734" device="Axe-Fx" />
+		<patch name="Axe Crossover 1" number="735" device="Axe-Fx" />
+		<patch name="Axe Crossover 2" number="736" device="Axe-Fx" />
+		<patch name="Axe Delay 1" number="737" device="Axe-Fx" />
+		<patch name="Axe Delay 2" number="738" device="Axe-Fx" />
+		<patch name="Axe Drive 1" number="739" device="Axe-Fx" />
+		<patch name="Axe Drive 2" number="740" device="Axe-Fx" />
+		<patch name="Axe Enhancer" number="741" device="Axe-Fx" />
+		<patch name="Axe Filter 1" number="742" device="Axe-Fx" />
+		<patch name="Axe Filter 2" number="743" device="Axe-Fx" />
+		<patch name="Axe Filter 3" number="744" device="Axe-Fx" />
+		<patch name="Axe Filter 4" number="745" device="Axe-Fx" />
+		<patch name="Axe Flanger 1" number="746" device="Axe-Fx" />
+		<patch name="Axe Flanger 2" number="747" device="Axe-Fx" />
+		<patch name="Axe Formant" number="748" device="Axe-Fx" />
+		<patch name="Axe Gate 1" number="750" device="Axe-Fx" />
+		<patch name="Axe Gate 2" number="751" device="Axe-Fx" />
+		<patch name="Axe Graphic EQ 1" number="752" device="Axe-Fx" />
+		<patch name="Axe Graphic EQ 2" number="753" device="Axe-Fx" />
+		<patch name="Axe Graphic EQ 3" number="754" device="Axe-Fx" />
+		<patch name="Axe Graphic EQ 4" number="755" device="Axe-Fx" />
+		<patch name="Axe MegaTap" number="756" device="Axe-Fx" />
+		<patch name="Axe Multi Comp 1" number="757" device="Axe-Fx" />
+		<patch name="Axe Multi Comp 2" number="758" device="Axe-Fx" />
+		<patch name="Axe Multi Delay 1" number="759" device="Axe-Fx" />
+		<patch name="Axe Multi Delay 2" number="760" device="Axe-Fx" />
+		<patch name="Axe Para EQ 1" number="761" device="Axe-Fx" />
+		<patch name="Axe Para EQ 2" number="762" device="Axe-Fx" />
+		<patch name="Axe Para EQ 3" number="763" device="Axe-Fx" />
+		<patch name="Axe Para EQ 4" number="764" device="Axe-Fx" />
+		<patch name="Axe Phaser 1" number="765" device="Axe-Fx" />
+		<patch name="Axe Phaser 2" number="766" device="Axe-Fx" />
+		<patch name="Axe Pitch 1" number="767" device="Axe-Fx" />
+		<patch name="Axe Pitch 2" number="768" device="Axe-Fx" />
+		<patch name="Axe Resonator 1" number="771" device="Axe-Fx" />
+		<patch name="Axe Resonator 2" number="772" device="Axe-Fx" />
+		<patch name="Axe Reverb 1" number="773" device="Axe-Fx" />
+		<patch name="Axe Reverb 2" number="774" device="Axe-Fx" />
+		<patch name="Axe Ring Mod" number="775" device="Axe-Fx" />
+		<patch name="Axe Rotary 1" number="776" device="Axe-Fx" />
+		<patch name="Axe Rotary 2" number="777" device="Axe-Fx" />
+		<patch name="Axe Synth 1" number="778" device="Axe-Fx" />
+		<patch name="Axe Synth 2" number="779" device="Axe-Fx" />
+		<patch name="Axe Tremolo 1" number="780" device="Axe-Fx" />
+		<patch name="Axe Tremolo 2" number="781" device="Axe-Fx" />
+		<patch name="Axe Vocoder" number="782" device="Axe-Fx" />
+		<patch name="Axe Volume 1" number="783" device="Axe-Fx" />
+		<patch name="Axe Volume 2" number="784" device="Axe-Fx" />
+		<patch name="Axe Volume 3" number="785" device="Axe-Fx" />
+		<patch name="Axe Volume 4" number="786" device="Axe-Fx" />
+		<patch name="Axe Wah-wah 1" number="787" device="Axe-Fx" />
+		<patch name="Axe Wah-wah 2" number="788" device="Axe-Fx" />
+		<patch name="Axe Fdbk Return" number="789" type="AxeToggle" device="Axe-Fx" cc="24" comment="24 is ext 9 cc" >
+			<!-- The type attribute needs to be explicit since there is no default cc for feedback return. -->
+			<!-- For this to work as expected, external 8 needs to be assigned to 
+					modify feedback return bypass in every preset where it is used. -->
+		</patch>
+
+		<patch name="Axe Amp 1 x/y" number="801" device="Axe-Fx" />
+		<patch name="Axe Amp 2 x/y" number="802" device="Axe-Fx" />
+		<patch name="Axe Cabinet 1 x/y" number="803" device="Axe-Fx" />
+		<patch name="Axe Cabinet 2 x/y" number="804" device="Axe-Fx" />
+		<patch name="Axe Chorus 1 x/y" number="805" device="Axe-Fx" />
+		<patch name="Axe Chorus 2 x/y" number="806" device="Axe-Fx" />
+		<patch name="Axe Delay 1 x/y" number="807" device="Axe-Fx" />
+		<patch name="Axe Delay 2 x/y" number="808" device="Axe-Fx" />
+		<patch name="Axe Drive 1 x/y" number="809" device="Axe-Fx" />
+		<patch name="Axe Drive 2 x/y" number="810" device="Axe-Fx" />
+		<patch name="Axe Flanger 1 x/y" number="811" device="Axe-Fx" />
+		<patch name="Axe Flanger 2 x/y" number="812" device="Axe-Fx" />
+		<patch name="Axe Phaser 1 x/y" number="813" device="Axe-Fx" />
+		<patch name="Axe Phaser 2 x/y" number="814" device="Axe-Fx" />
+		<patch name="Axe Pitch Shift 1 x/y" number="815" device="Axe-Fx" />
+		<patch name="Axe Pitch Shift 2 x/y" number="816" device="Axe-Fx" />
+		<patch name="Axe Reverb 1 x/y" number="817" device="Axe-Fx" />
+		<patch name="Axe Reverb 2 x/y" number="818" device="Axe-Fx" />
+		<patch name="Axe Wah-wah 1 x/y" number="819" device="Axe-Fx" />
+		<patch name="Axe Wah-wah 2 x/y" number="820" device="Axe-Fx" />
+
+		<patch name="Axe Ext 1 (toggle)"  number="830" device="Axe-Fx" />
+		<patch name="Axe Ext 2 (toggle)"  number="831" device="Axe-Fx" />
+		<patch name="Axe Ext 3 (toggle)"  number="832" device="Axe-Fx" />
+		<patch name="Axe Ext 4 (toggle)"  number="834" device="Axe-Fx" />
+		<patch name="Axe Ext 5 (toggle)"  number="835" device="Axe-Fx" />
+		<patch name="Axe Ext 6 (toggle)"  number="836" device="Axe-Fx" />
+		<patch name="Axe Ext 7 (toggle)"  number="837" device="Axe-Fx" />
+		<patch name="Axe Ext 8 (toggle)"  number="838" device="Axe-Fx" />
+		<patch name="Axe Ext 9 (toggle)"  number="839" device="Axe-Fx" />
+		<patch name="Axe Ext 10 (toggle)" number="840" device="Axe-Fx" />
+		<patch name="Axe Ext 11 (toggle)" number="841" device="Axe-Fx" />
+		<patch name="Axe Ext 12 (toggle)" number="842" device="Axe-Fx" />
+
+		<patch name="Scene 1" number="851" scene="1" device="Axe-Fx" />
+		<patch name="Scene 2" number="852" scene="2" device="Axe-Fx" />
+		<patch name="Scene 3" number="853" scene="3" device="Axe-Fx" />
+		<patch name="Scene 4" number="854" scene="4" device="Axe-Fx" />
+		<patch name="Scene 5" number="855" scene="5" device="Axe-Fx" />
+		<patch name="Scene 6" number="856" scene="6" device="Axe-Fx" />
+		<patch name="Scene 7" number="857" scene="7" device="Axe-Fx" />
+		<patch name="Scene 8" number="858" scene="8" device="Axe-Fx" />
+
+		<patch type="patchListSequence" name="Scene List 1-5" number="859">
+			<patchListItem>851</patchListItem>
+			<patchListItem>852</patchListItem>
+			<patchListItem>853</patchListItem>
+			<patchListItem>854</patchListItem>
+			<patchListItem>855</patchListItem>
+		</patch>
+
+		<patch name="Axe Ext 10 Mute Toggle" number="860" type="toggle" device="Axe-Fx">
+			<ControlChange group="A" controller="25" value="0" />
+			<RefirePedal group="B" pedal="1" />
+		</patch>
+		<patch name="Axe Ext 10 Mute Momentary" number="861" type="momentary" device="Axe-Fx">
+			<ControlChange group="A" controller="25" value="0" />
+			<RefirePedal group="B" pedal="1" />
+		</patch>
+		<patch name="Axe Input Mute Toggle" number="862" type="toggle" device="Axe-Fx">
+			<ControlChange group="A" controller="10" value="0" />
+			<ControlChange group="B" controller="10" value="127" />
+		</patch>
+		<patch name="Axe Input Mute Momentary" number="863" type="momentary" device="Axe-Fx">
+			<ControlChange group="A" controller="10" value="0" />
+			<ControlChange group="B" controller="10" value="127" />
+		</patch>
+		<patch name="Decrement Scene" number="864" type="AxeMomentary" device="Axe-Fx" singleState="1" />
+		<patch name="Increment Scene" number="865" type="AxeMomentary" device="Axe-Fx" singleState="1" />
+
+		<patch type="patchListSequence" name="Scene List 2-3" number="866" gaplessRestart="1">
+			<patchListItem>852</patchListItem>
+			<patchListItem>853</patchListItem>
+		</patch>
+	</patches>
+
+
+	<banks>
+		<!-- PatchMap switch attributes are 1-based -->
+
+		<!-- bank 0 is a special bank; assigns defaults for switches in all banks that don't otherwise make a switch assignment -->
+		<bank name="Defaults" number="0">
+			<ExclusiveSwitchGroup>11 12 13 14 15</ExclusiveSwitchGroup>
+			<!-- override toggle behavior so that press doesn't clear LED (not normal so that presets are) -->
+			<PatchMap switch="11" patch="851" override="A" />
+			<PatchMap switch="12" patch="852" override="A" />
+			<PatchMap switch="13" patch="853" override="A" />
+			<PatchMap switch="14" patch="854" override="A" />
+			<PatchMap switch="15" patch="855" override="A" />
+
+			<!-- Previous and Next Bank switches are not required. -->
+			<PatchMap switch="22" command="LoadPreviousBank" />
+			<!-- long press of Prev loads reveal 1 -->
+			<PatchMap switch="22" command="LoadBank" bankNumber="100" secondFunction="immediateToggle" />
+			<PatchMap switch="23" command="LoadNextBank" />
+			<!-- long press of Next loads tuner -->
+			<PatchMap switch="23" patch="705" secondFunction="auto" />
+		</bank>
+
+		<bank name="Directory" number="1">
+			<PatchMap switch="1" label="Goto Axe 51"  command="LoadBank" bankNumber="15" />
+			<PatchMap switch="2" label="Goto Axe 101" command="LoadBank" bankNumber="20" />
+			<PatchMap switch="3" label="Goto Axe 151" command="LoadBank" bankNumber="25" />
+			<PatchMap switch="4" label="Goto Axe 201" command="LoadBank" bankNumber="30" />
+			<PatchMap switch="5" label="Goto Axe 251" command="LoadBank" bankNumber="35" />
+			<PatchMap switch="6" label="Goto Axe 301" command="LoadBank" bankNumber="40" />
+			<PatchMap switch="7" label="Goto Axe 351" command="LoadBank" bankNumber="45" />
+			<!-- empty patch number in PatchMap will override the default, if any exists -->
+			<PatchMap switch="8"  patch="" />
+			<PatchMap switch="9"  label="Externals" command="LoadBank" bankNumber="121" />
+			<PatchMap switch="10" label="Loopers"   command="LoadBank" bankNumber="120" />
+			<PatchMap switch="11" label="Reveal 1"  command="LoadBank" bankNumber="100" />
+			<PatchMap switch="12" label="Reveal 2"  command="LoadBank" bankNumber="101" />
+			<PatchMap switch="13" label="Reveal 3"  command="LoadBank" bankNumber="102" />
+			<PatchMap switch="14" label="Reveal 4"  command="LoadBank" bankNumber="103" />
+			<PatchMap switch="15" label="Scenes"    command="LoadBank" bankNumber="122" />
+		</bank>
+
+		<bank name="Axe-Fx 1" number="10">
+			<PatchMap switch="1"  patch="1" />
+			<PatchMap switch="2"  patch="2" />
+			<PatchMap switch="3"  patch="3" />
+			<PatchMap switch="4"  patch="4" />
+			<PatchMap switch="5"  patch="5" />
+			<PatchMap switch="6"  patch="866" />
+			<PatchMap switch="6"  command="ResetPatch" patchToReset="866" secondFunction="immediateToggle" />
+			<PatchMap switch="7"  patch="7" />
+			<PatchMap switch="8"  patch="8" />
+			<PatchMap switch="9"  patch="9" />
+			<PatchMap switch="10" patch="10" />
+		</bank>
+		<bank name="Axe-Fx 11" number="11">
+			<PatchMap switch="1"  patch="11" />
+			<PatchMap switch="2"  patch="12" />
+			<PatchMap switch="3"  patch="13" />
+			<PatchMap switch="4"  patch="14" />
+			<PatchMap switch="5"  patch="15" />
+			<PatchMap switch="6"  patch="16" />
+			<PatchMap switch="7"  patch="17" />
+			<PatchMap switch="8"  patch="18" />
+			<PatchMap switch="9"  patch="19" />
+			<PatchMap switch="10" patch="20" />
+		</bank>
+		<bank name="Axe-Fx 21" number="12">
+			<PatchMap switch="1"  patch="21" />
+			<PatchMap switch="2"  patch="22" />
+			<PatchMap switch="3"  patch="23" />
+			<PatchMap switch="4"  patch="24" />
+			<PatchMap switch="5"  patch="25" />
+			<PatchMap switch="6"  patch="26" />
+			<PatchMap switch="7"  patch="27" />
+			<PatchMap switch="8"  patch="28" />
+			<PatchMap switch="9"  patch="29" />
+			<PatchMap switch="10" patch="30" />
+		</bank>
+		<bank name="Axe-Fx 31" number="13">
+			<PatchMap switch="1"  patch="31" />
+			<PatchMap switch="2"  patch="32" />
+			<PatchMap switch="3"  patch="33" />
+			<PatchMap switch="4"  patch="34" />
+			<PatchMap switch="5"  patch="35" />
+			<PatchMap switch="6"  patch="36" />
+			<PatchMap switch="7"  patch="37" />
+			<PatchMap switch="8"  patch="38" />
+			<PatchMap switch="9"  patch="39" />
+			<PatchMap switch="10" patch="40" />
+		</bank>
+		<bank name="Axe-Fx 41" number="14">
+			<PatchMap switch="1"  patch="41" />
+			<PatchMap switch="2"  patch="42" />
+			<PatchMap switch="3"  patch="43" />
+			<PatchMap switch="4"  patch="44" />
+			<PatchMap switch="5"  patch="45" />
+			<PatchMap switch="6"  patch="46" />
+			<PatchMap switch="7"  patch="47" />
+			<PatchMap switch="8"  patch="48" />
+			<PatchMap switch="9"  patch="49" />
+			<PatchMap switch="10" patch="50" />
+		</bank>
+		<bank name="Axe-Fx 51" number="15">
+			<PatchMap switch="1"  patch="51" />
+			<PatchMap switch="2"  patch="52" />
+			<PatchMap switch="3"  patch="53" />
+			<PatchMap switch="4"  patch="54" />
+			<PatchMap switch="5"  patch="55" />
+			<PatchMap switch="6"  patch="56" />
+			<PatchMap switch="7"  patch="57" />
+			<PatchMap switch="8"  patch="58" />
+			<PatchMap switch="9"  patch="59" />
+			<PatchMap switch="10" patch="60" />
+		</bank>
+		<bank name="Axe-Fx 61" number="16">
+			<PatchMap switch="1"  patch="61" />
+			<PatchMap switch="2"  patch="62" />
+			<PatchMap switch="3"  patch="63" />
+			<PatchMap switch="4"  patch="64" />
+			<PatchMap switch="5"  patch="65" />
+			<PatchMap switch="6"  patch="66" />
+			<PatchMap switch="7"  patch="67" />
+			<PatchMap switch="8"  patch="68" />
+			<PatchMap switch="9"  patch="69" />
+			<PatchMap switch="10" patch="70" />
+		</bank>
+		<bank name="Axe-Fx 71" number="17">
+			<PatchMap switch="1"  patch="71" />
+			<PatchMap switch="2"  patch="72" />
+			<PatchMap switch="3"  patch="73" />
+			<PatchMap switch="4"  patch="74" />
+			<PatchMap switch="5"  patch="75" />
+			<PatchMap switch="6"  patch="76" />
+			<PatchMap switch="7"  patch="77" />
+			<PatchMap switch="8"  patch="78" />
+			<PatchMap switch="9"  patch="79" />
+			<PatchMap switch="10" patch="80" />
+		</bank>
+		<bank name="Axe-Fx 81" number="18">
+			<PatchMap switch="1"  patch="81" />
+			<PatchMap switch="2"  patch="82" />
+			<PatchMap switch="3"  patch="83" />
+			<PatchMap switch="4"  patch="84" />
+			<PatchMap switch="5"  patch="85" />
+			<PatchMap switch="6"  patch="86" />
+			<PatchMap switch="7"  patch="87" />
+			<PatchMap switch="8"  patch="88" />
+			<PatchMap switch="9"  patch="89" />
+			<PatchMap switch="10" patch="90" />
+		</bank>
+		<bank name="Axe-Fx 91" number="19">
+			<PatchMap switch="1"  patch="91" />
+			<PatchMap switch="2"  patch="92" />
+			<PatchMap switch="3"  patch="93" />
+			<PatchMap switch="4"  patch="94" />
+			<PatchMap switch="5"  patch="95" />
+			<PatchMap switch="6"  patch="96" />
+			<PatchMap switch="7"  patch="97" />
+			<PatchMap switch="8"  patch="98" />
+			<PatchMap switch="9"  patch="99" />
+			<PatchMap switch="10" patch="100" />
+		</bank>
+		<bank name="Axe-Fx 101" number="20">
+			<PatchMap switch="1"  patch="101" />
+			<PatchMap switch="2"  patch="102" />
+			<PatchMap switch="3"  patch="103" />
+			<PatchMap switch="4"  patch="104" />
+			<PatchMap switch="5"  patch="105" />
+			<PatchMap switch="6"  patch="106" />
+			<PatchMap switch="7"  patch="107" />
+			<PatchMap switch="8"  patch="108" />
+			<PatchMap switch="9"  patch="109" />
+			<PatchMap switch="10" patch="110" />
+		</bank>
+		<bank name="Axe-Fx 111" number="21">
+			<PatchMap switch="1"  patch="111" />
+			<PatchMap switch="2"  patch="112" />
+			<PatchMap switch="3"  patch="113" />
+			<PatchMap switch="4"  patch="114" />
+			<PatchMap switch="5"  patch="115" />
+			<PatchMap switch="6"  patch="116" />
+			<PatchMap switch="7"  patch="117" />
+			<PatchMap switch="8"  patch="118" />
+			<PatchMap switch="9"  patch="119" />
+			<PatchMap switch="10" patch="120" />
+		</bank>
+		<bank name="Axe-Fx 121" number="22">
+			<PatchMap switch="1"  patch="121" />
+			<PatchMap switch="2"  patch="122" />
+			<PatchMap switch="3"  patch="123" />
+			<PatchMap switch="4"  patch="124" />
+			<PatchMap switch="5"  patch="125" />
+			<PatchMap switch="6"  patch="126" />
+			<PatchMap switch="7"  patch="127" />
+			<PatchMap switch="8"  patch="128" />
+			<PatchMap switch="9"  patch="129" />
+			<PatchMap switch="10" patch="130" />
+		</bank>
+		<bank name="Axe-Fx 131" number="23">
+			<PatchMap switch="1"  patch="131" />
+			<PatchMap switch="2"  patch="132" />
+			<PatchMap switch="3"  patch="133" />
+			<PatchMap switch="4"  patch="134" />
+			<PatchMap switch="5"  patch="135" />
+			<PatchMap switch="6"  patch="136" />
+			<PatchMap switch="7"  patch="137" />
+			<PatchMap switch="8"  patch="138" />
+			<PatchMap switch="9"  patch="139" />
+			<PatchMap switch="10" patch="140" />
+		</bank>
+		<bank name="Axe-Fx 141" number="24">
+			<PatchMap switch="1"  patch="141" />
+			<PatchMap switch="2"  patch="142" />
+			<PatchMap switch="3"  patch="143" />
+			<PatchMap switch="4"  patch="144" />
+			<PatchMap switch="5"  patch="145" />
+			<PatchMap switch="6"  patch="146" />
+			<PatchMap switch="7"  patch="147" />
+			<PatchMap switch="8"  patch="148" />
+			<PatchMap switch="9"  patch="149" />
+			<PatchMap switch="10" patch="150" />
+		</bank>
+		<bank name="Axe-Fx 151" number="25">
+			<PatchMap switch="1"  patch="151" />
+			<PatchMap switch="2"  patch="152" />
+			<PatchMap switch="3"  patch="153" />
+			<PatchMap switch="4"  patch="154" />
+			<PatchMap switch="5"  patch="155" />
+			<PatchMap switch="6"  patch="156" />
+			<PatchMap switch="7"  patch="157" />
+			<PatchMap switch="8"  patch="158" />
+			<PatchMap switch="9"  patch="159" />
+			<PatchMap switch="10" patch="160" />
+		</bank>
+		<bank name="Axe-Fx 161" number="26">
+			<PatchMap switch="1"  patch="161" />
+			<PatchMap switch="2"  patch="162" />
+			<PatchMap switch="3"  patch="163" />
+			<PatchMap switch="4"  patch="164" />
+			<PatchMap switch="5"  patch="165" />
+			<PatchMap switch="6"  patch="166" />
+			<PatchMap switch="7"  patch="167" />
+			<PatchMap switch="8"  patch="168" />
+			<PatchMap switch="9"  patch="169" />
+			<PatchMap switch="10" patch="170" />
+		</bank>
+		<bank name="Axe-Fx 171" number="27">
+			<PatchMap switch="1"  patch="171" />
+			<PatchMap switch="2"  patch="172" />
+			<PatchMap switch="3"  patch="173" />
+			<PatchMap switch="4"  patch="174" />
+			<PatchMap switch="5"  patch="175" />
+			<PatchMap switch="6"  patch="176" />
+			<PatchMap switch="7"  patch="177" />
+			<PatchMap switch="8"  patch="178" />
+			<PatchMap switch="9"  patch="179" />
+			<PatchMap switch="10" patch="180" />
+		</bank>
+		<bank name="Axe-Fx 181" number="28">
+			<PatchMap switch="1"  patch="181" />
+			<PatchMap switch="2"  patch="182" />
+			<PatchMap switch="3"  patch="183" />
+			<PatchMap switch="4"  patch="184" />
+			<PatchMap switch="5"  patch="185" />
+			<PatchMap switch="6"  patch="186" />
+			<PatchMap switch="7"  patch="187" />
+			<PatchMap switch="8"  patch="188" />
+			<PatchMap switch="9"  patch="189" />
+			<PatchMap switch="10" patch="190" />
+		</bank>
+		<bank name="Axe-Fx 191" number="29">
+			<PatchMap switch="1"  patch="191" />
+			<PatchMap switch="2"  patch="192" />
+			<PatchMap switch="3"  patch="193" />
+			<PatchMap switch="4"  patch="194" />
+			<PatchMap switch="5"  patch="195" />
+			<PatchMap switch="6"  patch="196" />
+			<PatchMap switch="7"  patch="197" />
+			<PatchMap switch="8"  patch="198" />
+			<PatchMap switch="9"  patch="199" />
+			<PatchMap switch="10" patch="200" />
+		</bank>
+		<bank name="Axe-Fx 201" number="30">
+			<PatchMap switch="1"  patch="201" />
+			<PatchMap switch="2"  patch="202" />
+			<PatchMap switch="3"  patch="203" />
+			<PatchMap switch="4"  patch="204" />
+			<PatchMap switch="5"  patch="205" />
+			<PatchMap switch="6"  patch="206" />
+			<PatchMap switch="7"  patch="207" />
+			<PatchMap switch="8"  patch="208" />
+			<PatchMap switch="9"  patch="209" />
+			<PatchMap switch="10" patch="210" />
+		</bank>
+		<bank name="Axe-Fx 211" number="31">
+			<PatchMap switch="1"  patch="211" />
+			<PatchMap switch="2"  patch="212" />
+			<PatchMap switch="3"  patch="213" />
+			<PatchMap switch="4"  patch="214" />
+			<PatchMap switch="5"  patch="215" />
+			<PatchMap switch="6"  patch="216" />
+			<PatchMap switch="7"  patch="217" />
+			<PatchMap switch="8"  patch="218" />
+			<PatchMap switch="9"  patch="219" />
+			<PatchMap switch="10" patch="220" />
+		</bank>
+		<bank name="Axe-Fx 221" number="32">
+			<PatchMap switch="1"  patch="221" />
+			<PatchMap switch="2"  patch="222" />
+			<PatchMap switch="3"  patch="223" />
+			<PatchMap switch="4"  patch="224" />
+			<PatchMap switch="5"  patch="225" />
+			<PatchMap switch="6"  patch="226" />
+			<PatchMap switch="7"  patch="227" />
+			<PatchMap switch="8"  patch="228" />
+			<PatchMap switch="9"  patch="229" />
+			<PatchMap switch="10" patch="230" />
+		</bank>
+		<bank name="Axe-Fx 231" number="33">
+			<PatchMap switch="1"  patch="231" />
+			<PatchMap switch="2"  patch="232" />
+			<PatchMap switch="3"  patch="233" />
+			<PatchMap switch="4"  patch="234" />
+			<PatchMap switch="5"  patch="235" />
+			<PatchMap switch="6"  patch="236" />
+			<PatchMap switch="7"  patch="237" />
+			<PatchMap switch="8"  patch="238" />
+			<PatchMap switch="9"  patch="239" />
+			<PatchMap switch="10" patch="240" />
+		</bank>
+		<bank name="Axe-Fx 241" number="34">
+			<PatchMap switch="1"  patch="241" />
+			<PatchMap switch="2"  patch="242" />
+			<PatchMap switch="3"  patch="243" />
+			<PatchMap switch="4"  patch="244" />
+			<PatchMap switch="5"  patch="245" />
+			<PatchMap switch="6"  patch="246" />
+			<PatchMap switch="7"  patch="247" />
+			<PatchMap switch="8"  patch="248" />
+			<PatchMap switch="9"  patch="249" />
+			<PatchMap switch="10" patch="250" />
+		</bank>
+		<bank name="Axe-Fx 251" number="35">
+			<PatchMap switch="1"  patch="251" />
+			<PatchMap switch="2"  patch="252" />
+			<PatchMap switch="3"  patch="253" />
+			<PatchMap switch="4"  patch="254" />
+			<PatchMap switch="5"  patch="255" />
+			<PatchMap switch="6"  patch="256" />
+			<PatchMap switch="7"  patch="257" />
+			<PatchMap switch="8"  patch="258" />
+			<PatchMap switch="9"  patch="259" />
+			<PatchMap switch="10" patch="260" />
+		</bank>
+		<bank name="Axe-Fx 261" number="36">
+			<PatchMap switch="1"  patch="261" />
+			<PatchMap switch="2"  patch="262" />
+			<PatchMap switch="3"  patch="263" />
+			<PatchMap switch="4"  patch="264" />
+			<PatchMap switch="5"  patch="265" />
+			<PatchMap switch="6"  patch="266" />
+			<PatchMap switch="7"  patch="267" />
+			<PatchMap switch="8"  patch="268" />
+			<PatchMap switch="9"  patch="269" />
+			<PatchMap switch="10" patch="270" />
+		</bank>
+		<bank name="Axe-Fx 271" number="37">
+			<PatchMap switch="1"  patch="271" />
+			<PatchMap switch="2"  patch="272" />
+			<PatchMap switch="3"  patch="273" />
+			<PatchMap switch="4"  patch="274" />
+			<PatchMap switch="5"  patch="275" />
+			<PatchMap switch="6"  patch="276" />
+			<PatchMap switch="7"  patch="277" />
+			<PatchMap switch="8"  patch="278" />
+			<PatchMap switch="9"  patch="279" />
+			<PatchMap switch="10" patch="280" />
+		</bank>
+		<bank name="Axe-Fx 281" number="38">
+			<PatchMap switch="1"  patch="281" />
+			<PatchMap switch="2"  patch="282" />
+			<PatchMap switch="3"  patch="283" />
+			<PatchMap switch="4"  patch="284" />
+			<PatchMap switch="5"  patch="285" />
+			<PatchMap switch="6"  patch="286" />
+			<PatchMap switch="7"  patch="287" />
+			<PatchMap switch="8"  patch="288" />
+			<PatchMap switch="9"  patch="289" />
+			<PatchMap switch="10" patch="290" />
+		</bank>
+		<bank name="Axe-Fx 291" number="39">
+			<PatchMap switch="1"  patch="291" />
+			<PatchMap switch="2"  patch="292" />
+			<PatchMap switch="3"  patch="293" />
+			<PatchMap switch="4"  patch="294" />
+			<PatchMap switch="5"  patch="295" />
+			<PatchMap switch="6"  patch="296" />
+			<PatchMap switch="7"  patch="297" />
+			<PatchMap switch="8"  patch="298" />
+			<PatchMap switch="9"  patch="299" />
+			<PatchMap switch="10" patch="300" />
+		</bank>
+		<bank name="Axe-Fx 301" number="40">
+			<PatchMap switch="1"  patch="301" />
+			<PatchMap switch="2"  patch="302" />
+			<PatchMap switch="3"  patch="303" />
+			<PatchMap switch="4"  patch="304" />
+			<PatchMap switch="5"  patch="305" />
+			<PatchMap switch="6"  patch="306" />
+			<PatchMap switch="7"  patch="307" />
+			<PatchMap switch="8"  patch="308" />
+			<PatchMap switch="9"  patch="309" />
+			<PatchMap switch="10" patch="310" />
+		</bank>
+		<bank name="Axe-Fx 311" number="41">
+			<PatchMap switch="1"  patch="311" />
+			<PatchMap switch="2"  patch="312" />
+			<PatchMap switch="3"  patch="313" />
+			<PatchMap switch="4"  patch="314" />
+			<PatchMap switch="5"  patch="315" />
+			<PatchMap switch="6"  patch="316" />
+			<PatchMap switch="7"  patch="317" />
+			<PatchMap switch="8"  patch="318" />
+			<PatchMap switch="9"  patch="319" />
+			<PatchMap switch="10" patch="320" />
+		</bank>
+		<bank name="Axe-Fx 321" number="42">
+			<PatchMap switch="1"  patch="321" />
+			<PatchMap switch="2"  patch="322" />
+			<PatchMap switch="3"  patch="323" />
+			<PatchMap switch="4"  patch="324" />
+			<PatchMap switch="5"  patch="325" />
+			<PatchMap switch="6"  patch="326" />
+			<PatchMap switch="7"  patch="327" />
+			<PatchMap switch="8"  patch="328" />
+			<PatchMap switch="9"  patch="329" />
+			<PatchMap switch="10" patch="330" />
+		</bank>
+		<bank name="Axe-Fx 331" number="43">
+			<PatchMap switch="1"  patch="331" />
+			<PatchMap switch="2"  patch="332" />
+			<PatchMap switch="3"  patch="333" />
+			<PatchMap switch="4"  patch="334" />
+			<PatchMap switch="5"  patch="335" />
+			<PatchMap switch="6"  patch="336" />
+			<PatchMap switch="7"  patch="337" />
+			<PatchMap switch="8"  patch="338" />
+			<PatchMap switch="9"  patch="339" />
+			<PatchMap switch="10" patch="340" />
+		</bank>
+		<bank name="Axe-Fx 341" number="44">
+			<PatchMap switch="1"  patch="341" />
+			<PatchMap switch="2"  patch="342" />
+			<PatchMap switch="3"  patch="343" />
+			<PatchMap switch="4"  patch="344" />
+			<PatchMap switch="5"  patch="345" />
+			<PatchMap switch="6"  patch="346" />
+			<PatchMap switch="7"  patch="347" />
+			<PatchMap switch="8"  patch="348" />
+			<PatchMap switch="9"  patch="349" />
+			<PatchMap switch="10" patch="350" />
+		</bank>
+		<bank name="Axe-Fx 351" number="45">
+			<PatchMap switch="1"  patch="351" />
+			<PatchMap switch="2"  patch="352" />
+			<PatchMap switch="3"  patch="353" />
+			<PatchMap switch="4"  patch="354" />
+			<PatchMap switch="5"  patch="355" />
+			<PatchMap switch="6"  patch="356" />
+			<PatchMap switch="7"  patch="357" />
+			<PatchMap switch="8"  patch="358" />
+			<PatchMap switch="9"  patch="359" />
+			<PatchMap switch="10" patch="360" />
+		</bank>
+		<bank name="Axe-Fx 361" number="46">
+			<PatchMap switch="1"  patch="361" />
+			<PatchMap switch="2"  patch="362" />
+			<PatchMap switch="3"  patch="363" />
+			<PatchMap switch="4"  patch="364" />
+			<PatchMap switch="5"  patch="365" />
+			<PatchMap switch="6"  patch="366" />
+			<PatchMap switch="7"  patch="367" />
+			<PatchMap switch="8"  patch="368" />
+			<PatchMap switch="9"  patch="369" />
+			<PatchMap switch="10" patch="370" />
+		</bank>
+		<bank name="Axe-Fx 371" number="47">
+			<PatchMap switch="1"  patch="371" />
+			<PatchMap switch="2"  patch="372" />
+			<PatchMap switch="3"  patch="373" />
+			<PatchMap switch="4"  patch="374" />
+			<PatchMap switch="5"  patch="375" />
+			<PatchMap switch="6"  patch="376" />
+			<PatchMap switch="7"  patch="377" />
+			<PatchMap switch="8"  patch="378" />
+			<PatchMap switch="9"  patch="379" />
+			<PatchMap switch="10" patch="380" />
+		</bank>
+		<bank name="Axe-Fx 381" number="48">
+			<PatchMap switch="1"  patch="381" />
+			<PatchMap switch="2"  patch="382" />
+			<PatchMap switch="3"  patch="383" />
+			<PatchMap switch="4"  patch="384" />
+		</bank>
+
+		<bank name="Reveal 1" number="100">
+			<PatchMap switch="1" patch="780" />
+			<PatchMap switch="2" patch="731" />
+			<PatchMap switch="3" patch="737" />
+			<PatchMap switch="4" patch="773" />
+			<PatchMap switch="5" patch="727" />
+			<PatchMap switch="6" patch="767" />
+			<PatchMap switch="7" patch="739" />
+			<PatchMap switch="8" patch="742" />
+			<PatchMap switch="9" patch="746" />
+			<PatchMap switch="11" patch="752" />
+			<PatchMap switch="12" patch="750" />
+			<PatchMap switch="13" patch="757" />
+			<PatchMap switch="14" patch="759" />
+			<PatchMap switch="15" patch="761" />
+			<PatchMap switch="18" patch="" />
+			<PatchMap switch="19" patch="" />
+			<PatchMap switch="20" patch="" />
+			<PatchMap switch="22" command="BankHistoryBackward" />
+			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+		</bank>
+		<bank name="Reveal 2" number="101">
+			<PatchMap switch="1" patch="781" />
+			<PatchMap switch="2" patch="732" />
+			<PatchMap switch="3" patch="738" />
+			<PatchMap switch="4" patch="774" />
+			<PatchMap switch="5" patch="728" />
+			<PatchMap switch="6" patch="768" />
+			<PatchMap switch="7" patch="740" />
+			<PatchMap switch="8" patch="743" />
+			<PatchMap switch="9" patch="747" />
+			<PatchMap switch="10" patch="756" />
+			<PatchMap switch="11" patch="753" />
+			<PatchMap switch="12" patch="751" />
+			<PatchMap switch="13" patch="758" />
+			<PatchMap switch="14" patch="760" />
+			<PatchMap switch="15" patch="762" />
+			<PatchMap switch="16" patch="" />
+			<PatchMap switch="17" patch="" />
+			<PatchMap switch="18" patch="" />
+			<PatchMap switch="19" patch="" />
+			<PatchMap switch="20" patch="" />
+			<PatchMap switch="22" command="BankHistoryBackward" />
+			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+		</bank>
+		<bank name="Reveal 3" number="102">
+			<PatchMap switch="2" patch="778" />
+			<PatchMap switch="3" patch="787" />
+			<PatchMap switch="4" patch="771" />
+			<PatchMap switch="5" patch="776" />
+			<PatchMap switch="7" patch="779" />
+			<PatchMap switch="8" patch="788" />
+			<PatchMap switch="9" patch="772" />
+			<PatchMap switch="10" patch="777" />
+			<PatchMap switch="11" patch="775" />
+			<PatchMap switch="12" patch="748" />
+			<PatchMap switch="13" patch="782" />
+			<PatchMap switch="14" patch="704" />
+			<PatchMap switch="15" command="SyncAxeFx" />
+			<PatchMap switch="22" command="BankHistoryBackward" />
+			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+		</bank>
+		<bank name="Reveal 4 X/Y 1" number="103">
+			<PatchMap switch="1" patch="801" />
+			<PatchMap switch="2" patch="803" />
+			<PatchMap switch="3" patch="805" />
+			<PatchMap switch="4" patch="807" />
+			<PatchMap switch="5" patch="809" />
+			<PatchMap switch="6" patch="811" />
+			<PatchMap switch="7" patch="813" />
+			<PatchMap switch="8" patch="815" />
+			<PatchMap switch="9" patch="817" />
+			<PatchMap switch="10" patch="819" />
+			<PatchMap switch="22" command="BankHistoryBackward" />
+			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+		</bank>
+		<bank name="Reveal 5 X/Y 2" number="104">
+			<PatchMap switch="1" patch="802" />
+			<PatchMap switch="2" patch="804" />
+			<PatchMap switch="3" patch="806" />
+			<PatchMap switch="4" patch="808" />
+			<PatchMap switch="5" patch="810" />
+			<PatchMap switch="6" patch="812" />
+			<PatchMap switch="7" patch="814" />
+			<PatchMap switch="8" patch="816" />
+			<PatchMap switch="9" patch="818" />
+			<PatchMap switch="10" patch="820" />
+			<PatchMap switch="22" command="BankHistoryBackward" />
+			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+		</bank>
+
+		<bank name="Loopers" number="120">
+			<PatchMap switch="1" patch="714" />
+			<PatchMap switch="2" patch="715" />
+			<PatchMap switch="4" patch="716" />
+			<PatchMap switch="5" patch="722" />
+			<PatchMap switch="6" patch="720" />
+			<PatchMap switch="7" patch="718" />
+			<PatchMap switch="8" patch="719" />
+			<PatchMap switch="9" patch="704" />
+			<PatchMap switch="22" command="BankHistoryBackward" />
+		</bank>
+		<bank name="Externals" number="121">
+			<PatchMap switch="1" patch="830" />
+			<PatchMap switch="1" patch="836" secondFunction="manual"/>
+			<PatchMap switch="2" patch="831" />
+			<PatchMap switch="2" patch="837" secondFunction="manual"/>
+			<PatchMap switch="3" patch="832" />
+			<PatchMap switch="3" patch="838" secondFunction="manual"/>
+			<PatchMap switch="4" patch="834" />
+			<PatchMap switch="4" patch="839" secondFunction="manual"/>
+			<PatchMap switch="5" patch="835" />
+			<PatchMap switch="5" patch="840" secondFunction="manual"/>
+			<PatchMap switch="6" patch="710" />
+			<PatchMap switch="6" patch="515" secondFunction="immediateToggle"/>
+			<PatchMap switch="7" patch="711" />
+			<PatchMap switch="7" patch="515" secondFunction="immediateToggle"/>
+			<PatchMap switch="8" patch="712" />
+			<PatchMap switch="8" patch="515" secondFunction="immediateToggle"/>
+			<PatchMap switch="9" patch="713" />
+			<PatchMap switch="9" patch="515" secondFunction="immediateToggle"/>
+			<PatchMap switch="10" patch="701" />
+			<PatchMap switch="10" patch="515" secondFunction="immediateToggle"/>
+			<PatchMap switch="11" patch="706" />
+			<PatchMap switch="11" patch="518" secondFunction="immediateToggle"/>
+			<PatchMap switch="12" patch="707" />
+			<PatchMap switch="12" patch="518" secondFunction="immediateToggle"/>
+			<PatchMap switch="13" patch="708" />
+			<PatchMap switch="13" patch="518" secondFunction="immediateToggle"/>
+			<PatchMap switch="14" patch="709" />
+			<PatchMap switch="14" patch="518" secondFunction="immediateToggle"/>
+			<PatchMap switch="15" patch="" />
+			<PatchMap switch="22" command="BankHistoryBackward" />
+		</bank>
+		<bank name="Scenes" number="122">
+			<ExclusiveSwitchGroup>1 2 3 4 5 6 7 8</ExclusiveSwitchGroup>
+			<PatchMap switch="1" patch="851" />
+			<PatchMap switch="2" patch="852" />
+			<PatchMap switch="3" patch="853" />
+			<PatchMap switch="4" patch="854" />
+			<PatchMap switch="5" patch="855" />
+			<PatchMap switch="6" patch="856" />
+			<PatchMap switch="7" patch="857" />
+			<PatchMap switch="8" patch="858" />
+
+			<PatchMap switch="9"  patch="" />
+			<PatchMap switch="10" patch="" />
+			<PatchMap switch="11" patch="864" />
+			<PatchMap switch="12" patch="865" />
+			<PatchMap switch="13" patch="" />
+			<PatchMap switch="14" patch="725" />
+			<PatchMap switch="15" patch="726" />
+			<PatchMap switch="22" command="BankHistoryBackward" />
+		</bank>
+
+	</banks>
+</MidiControlSettings>

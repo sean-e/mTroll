@@ -943,28 +943,15 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				if (patchType.empty())
 					patchType = "AxeToggle";
 
-				size_t pos = patchName.find("Scene");
-				if (std::string::npos == pos)
-					pos = patchName.find("scene");
-				if (std::string::npos != pos)
+				// check for scene attribute
+				pElem->QueryIntAttribute("scene", &axeFxScene);
+				if (axeFxScene)
 				{
-					const std::string sceneStr(&patchName.c_str()[pos + 5]);
-					if (!sceneStr.empty())
-					{
-						if (sceneStr.length() > 1 && sceneStr[0] == ' ')
-							axeFxScene = ::atoi(&sceneStr.c_str()[1]);
-						else
-							axeFxScene = ::atoi(sceneStr.c_str());
-
-						if (axeFxScene)
-						{
-							// there is no axe-fx sync for scenes, so change to unsync'd patch type
-							if (patchType == "AxeToggle")
-								patchType = "toggle";
-							else if (patchType == "AxeMomentary")
-								patchType = "momentary";
-						}
-					}
+					// there is no axe-fx sync for scenes, so change to unsync'd patch type
+					if (patchType == "AxeToggle")
+						patchType = "toggle";
+					else if (patchType == "AxeMomentary")
+						patchType = "momentary";
 				}
 			}
 
