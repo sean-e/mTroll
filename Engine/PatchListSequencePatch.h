@@ -110,7 +110,7 @@ public:
 		{
 			if (mImmediateWraparound)
 			{
-				if (!mCurIndex && !mCurrentSubPatch)
+				if (!mCurIndex && (!mCurrentSubPatch || !mPatchIsActive))
 				{
 					// in gapless restart, at start, if the first step
 					// is already active, then proceed directly to the next
