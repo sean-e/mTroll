@@ -99,11 +99,38 @@ public:
 			gActivePatchPedals = nullptr;
 
 		if (mImmediateWraparound && mCurIndex == mPatches.size())
+		{
+			// gapless restart resets to index 0 in non-active state,
+			// though the subPatch is active
 			mCurIndex = 0;
+			mPatchIsActive = false;
+		}
 
 		if (mCurIndex < mPatches.size())
 		{
-			mPatchIsActive = true;
+			if (mImmediateWraparound)
+			{
+				if (!mCurIndex && !mCurrentSubPatch)
+				{
+					// in gapless restart, at start, if the first step
+					// is already active, then proceed directly to the next
+					auto p = mPatches[mCurIndex];
+					if (p && p->IsActive())
+						++mCurIndex;
+				}
+
+				if (mCurIndex)
+				{
+					// gaplessRestart is not active at index 0, though
+					// the subPatch is active
+					mPatchIsActive = true;
+				}
+			}
+			else
+			{
+				mPatchIsActive = true;
+			}
+
 			mCurrentSubPatch = mPatches[mCurIndex++];
 			if (mCurrentSubPatch)
 				mCurrentSubPatch->SwitchPressed(mainDisplay, switchDisplay);
