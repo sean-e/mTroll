@@ -69,10 +69,10 @@ struct Axe3EffectBlockInfo
 	PatchPtr			mPatch;						// the patch assigned to this effectId
 	PatchPtr			mChannelSelectPatches[kMaxChannels]; // optional channel select patches for this effectId
 
-	// basically const, but requires runtime init from the device
+	// basically const, but requires deferred runtime init from the device
 	int					mMaxChannels = 0;
 
-	// state that changes at runtime dependent upon active preset
+	// state that changes at runtime dependent upon active preset and scene
 	int					mCurrentChannel = 0;
 	bool				mEffectIsPresentInAxePatch = true;
 
