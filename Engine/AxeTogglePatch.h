@@ -49,34 +49,37 @@ public:
 				PatchCommands & cmdsB,
 				IAxeFxPtr axeMgr) :
 		TogglePatch(number, name, midiOut, cmdsA, cmdsB),
-		mAx(axeMgr)
+		mAx(axeMgr),
+		mHasDisplayText(false)
 	{
 		if (mAx && mAx->GetModel() >= Axe2)
 			mPatchSupportsDisabledState = true;
 
-		std::string baseEffectName(name);
-		std::string xy(" x/y");
-		int xyPos = baseEffectName.find(xy);
-		if (-1 == xyPos)
+		if (mAx && mAx->GetModel() != Axe3)
 		{
-			xy = " X/Y";
+			std::string baseEffectName(name);
+			std::string xy(" x/y");
+			int xyPos = -1;
 			xyPos = baseEffectName.find(xy);
-		}
+			if (-1 == xyPos)
+			{
+				xy = " X/Y";
+				xyPos = baseEffectName.find(xy);
+			}
 
-		if (-1 == xyPos)
-			mHasDisplayText = false;
-		else
-		{
-			mHasDisplayText = true;
-			baseEffectName.replace(xyPos, xy.length(), "");
-			// originally, I had X as active and Y as inactive but I prefer
-			// LED off for X and on for Y
-			mActiveText = baseEffectName + " Y";
-			mInactiveText = baseEffectName + " X";
-			// swap commands to support inverted LED behavior for X and Y.
-			// see also UpdateState call in AxeFxManager::ReceivePresetEffectsV2
-			// for the other change required to support LED inversion for X/Y.
-			mCmdsA.swap(mCmdsB);
+			if (-1 != xyPos)
+			{
+				mHasDisplayText = true;
+				baseEffectName.replace(xyPos, xy.length(), "");
+				// originally, I had X as active and Y as inactive but I prefer
+				// LED off for X and on for Y
+				mActiveText = baseEffectName + " Y";
+				mInactiveText = baseEffectName + " X";
+				// swap commands to support inverted LED behavior for X and Y.
+				// see also UpdateState call in AxeFxManager::ReceivePresetEffectsV2
+				// for the other change required to support LED inversion for X/Y.
+				mCmdsA.swap(mCmdsB);
+			}
 		}
 	}
 
