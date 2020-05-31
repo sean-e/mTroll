@@ -54,6 +54,7 @@
 #include "MetaPatch_ResetExclusiveGroup.h"
 #include "MetaPatch_BankNav.h"
 #include "PersistentPedalOverridePatch.h"
+#include "MetaPatch_ResetPatch.h"
 
 
 #ifdef _MSC_VER
@@ -1045,7 +1046,11 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		else if (patchType == "sequence")
 			newPatch = std::make_shared<SequencePatch>(patchNumber, patchName, midiOut, cmds);
 		else if (patchType == "patchListSequence")
-			newPatch = std::make_shared<PatchListSequencePatch>(patchNumber, patchName, intList);
+		{
+			int immediateWrap = 0;
+			pElem->QueryIntAttribute("gaplessRestart", &immediateWrap);
+			newPatch = std::make_shared<PatchListSequencePatch>(patchNumber, patchName, intList, immediateWrap);
+		}
 		else if (patchType == "AxeFxTapTempo")
 		{
 			if (cmds.empty() && cmds2.empty())
@@ -1360,6 +1365,28 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 							{
 								std::strstream traceMsg;
 								traceMsg << "Error loading config file: switch " << nameOverride << " missing LoadBank target" << std::endl << std::ends;
+								mTraceDisplay->Trace(std::string(traceMsg.str()));
+							}
+							continue;
+						}
+					}
+					else if (tmp == "ResetPatch")
+					{
+						int patchNumToReset = -1;
+						childElem->QueryIntAttribute("patchToReset", &patchNumToReset);
+						if (-1 != patchNumToReset)
+						{
+							if (nameOverride.empty())
+								nameOverride = "Reset Patch";
+							mEngine->AddPatch(std::make_shared<MetaPatch_ResetPatch>(mEngine.get(), patchNumber, nameOverride, patchNumToReset));
+							nameOverride.clear();
+						}
+						else 
+						{
+							if (mTraceDisplay)
+							{
+								std::strstream traceMsg;
+								traceMsg << "Error loading config file: switch " << nameOverride << " missing DeactivatePatch switch target" << std::endl << std::ends;
 								mTraceDisplay->Trace(std::string(traceMsg.str()));
 							}
 							continue;

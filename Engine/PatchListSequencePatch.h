@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2012-2013,2015,2017-2018 Sean Echevarria
+ * Copyright (C) 2012-2013,2015,2017-2018,2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -43,10 +43,11 @@ using PatchPtr = std::shared_ptr<Patch>;
 class PatchListSequencePatch : public Patch
 {
 public:
-	PatchListSequencePatch(int number, const std::string & name, std::vector<int> & patchList) :
+	PatchListSequencePatch(int number, const std::string & name, std::vector<int> & patchList, bool immediateWraparound) :
 		Patch(number, name),
 		mCurIndex(0),
-		mCurrentSubPatch(nullptr)
+		mCurrentSubPatch(nullptr),
+		mImmediateWraparound(immediateWraparound)
 	{
 		mPatchNumbers.swap(patchList);
 	}
@@ -96,6 +97,9 @@ public:
 
 		if (!PersistentPedalOverridePatch::PedalOverridePatchIsActive())
 			gActivePatchPedals = nullptr;
+
+		if (mImmediateWraparound && mCurIndex == mPatches.size())
+			mCurIndex = 0;
 
 		if (mCurIndex < mPatches.size())
 		{
@@ -181,11 +185,28 @@ public:
 		}
 	}
 
+	virtual void UpdateState(ISwitchDisplay * switchDisplay, bool active) override
+	{
+		_ASSERTE(!active); // only support going to disabled state
+		if (mPatchIsActive)
+		{
+			if (!PersistentPedalOverridePatch::PedalOverridePatchIsActive())
+				gActivePatchPedals = nullptr;
+
+			mCurIndex = 0;
+			DeactivateVolatilePatch();
+			mCurrentSubPatch = nullptr;
+		}
+
+		Patch::UpdateState(switchDisplay, active);
+	}
+
 private:
 	size_t					mCurIndex;
 	std::vector<int>		mPatchNumbers;
 	std::vector<PatchPtr>	mPatches;
 	PatchPtr				mCurrentSubPatch;
+	bool					mImmediateWraparound;
 };
 
 #endif // PatchListSequencePatch_h__
