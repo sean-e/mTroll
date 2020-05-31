@@ -921,13 +921,29 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				_ASSERTE(mAxeFx3Manager);
 				if (mAxeFx3Manager)
 				{
-					Bytes b1 = mAxeFx3Manager->GetCommandString(patchName, true);
-					if (!b1.empty())
-						cmds.push_back(std::make_shared<MidiCommandString>(midiOut, b1));
+					std::string effectBlockId;
+					std::string effectBlockChannel;
 
-					Bytes b2 = mAxeFx3Manager->GetCommandString(patchName, false);
-					if (!b2.empty())
-						cmds2.push_back(std::make_shared<MidiCommandString>(midiOut, b2));
+					pElem->QueryValueAttribute("axeBlockId", &effectBlockId);
+					pElem->QueryValueAttribute("axeBlockChannel", &effectBlockChannel);
+
+					if (effectBlockId.empty() && effectBlockChannel.empty())
+					{
+						Bytes b1 = mAxeFx3Manager->GetCommandString(patchName, true);
+						if (!b1.empty())
+							cmds.push_back(std::make_shared<MidiCommandString>(midiOut, b1));
+
+						Bytes b2 = mAxeFx3Manager->GetCommandString(patchName, false);
+						if (!b2.empty())
+							cmds2.push_back(std::make_shared<MidiCommandString>(midiOut, b2));
+					}
+					else
+					{
+						Bytes b1 = mAxeFx3Manager->GetBlockChannelSelectCommandString(effectBlockId, effectBlockChannel);
+						if (!b1.empty())
+							cmds.push_back(std::make_shared<MidiCommandString>(midiOut, b1));
+					}
+
 					updatePatchType = true;
 				}
 			}

@@ -86,6 +86,7 @@ public:
 	void DelayedEffectsSyncFromAxe() override;
 
 	Bytes GetCommandString(const std::string& commandName, bool enable);
+	Bytes GetBlockChannelSelectCommandString(const std::string& effectBlock, const std::string& channel);
 
 public slots:
 	// immediate requests for sync (called by the delayed requests)

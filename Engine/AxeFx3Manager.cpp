@@ -710,13 +710,37 @@ AxeFx3Manager::GetCommandString(const std::string& commandName, bool enable)
 	if (!fx->mSysexEffectId)
 		return emptyCommand;
 
-	// #axe3implementChannelCommandString add support for set channel command 0x0b
-
 	// else, is an effect bypass command (command 0x0A)
 	Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, 0x10, 0x0A };
 	bytes.push_back(fx->mSysexEffectIdLs);
 	bytes.push_back(fx->mSysexEffectIdMs);
 	bytes.push_back(enable ? 0 : 1);
+	AppendChecksumAndTerminate(bytes);
+	return bytes;
+}
+
+Bytes
+AxeFx3Manager::GetBlockChannelSelectCommandString(const std::string& effectBlock, const std::string& channel)
+{
+	const Bytes emptyCommand;
+	if (effectBlock.empty())
+		return emptyCommand;
+
+	// get normalizedName
+	std::string name(::NormalizeAxe3EffectName(effectBlock));
+
+	// lookup name to get effect ID
+	Axe3EffectBlockInfo *fx = GetBlockInfoByName(name);
+	if (!fx)
+		return emptyCommand;
+
+	if (!fx->mSysexEffectId)
+		return emptyCommand;
+
+	Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, 0x10, 0x0B };
+	bytes.push_back(fx->mSysexEffectIdLs);
+	bytes.push_back(fx->mSysexEffectIdMs);
+	bytes.push_back(channel[0] - 'A');
 	AppendChecksumAndTerminate(bytes);
 	return bytes;
 }
