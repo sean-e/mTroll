@@ -207,7 +207,7 @@ AxeFx3Manager::SetScenePatch(int scene, PatchPtr patch)
 }
 
 bool
-AxeFx3Manager::SetSyncPatch(PatchPtr patch, int bypassCc /*= -1*/)
+AxeFx3Manager::SetSyncPatch(PatchPtr patch, int effectId, int channel)
 {
 	std::string normalizedEffectName(::NormalizeAxe3EffectName(patch->GetName()));
 	for (Axe3EffectBlockInfo & cur : mAxeEffectInfo)
@@ -220,39 +220,32 @@ AxeFx3Manager::SetSyncPatch(PatchPtr patch, int bypassCc /*= -1*/)
 				mTrace->Trace(msg);
 			}
 
-			// #axe3FinishThis
-// 			if (-1 != bypassCc)
-// 				cur.mBypassCC = bypassCc;
-
 			cur.mPatch = patch;
 			return true;
 		}
 	}
 
-	const std::string xy(" x/y");
-	const int xyPos = normalizedEffectName.find(xy);
-	if (-1 != xyPos)
+	if (effectId)
 	{
-		normalizedEffectName.replace(xyPos, xy.length(), "");
+		_ASSERTE(channel < Axe3EffectBlockInfo::kMaxChannels);
 		for (Axe3EffectBlockInfo & cur : mAxeEffectInfo)
 		{
-			if (cur.mNormalizedName == normalizedEffectName)
+			if (cur.mSysexEffectId == effectId)
 			{
-				// #axe3FinishThis
-// 				if (cur.mXyPatch && mTrace)
-// 				{
-// 					std::string msg("Warning: multiple Axe-Fx patches for XY control '" + patch->GetName() + "'\n");
-// 					mTrace->Trace(msg);
-// 				}
-// 
-// 				cur.mXyPatch = patch;
+				if (cur.mChannelSelectPatches[channel] && mTrace)
+				{
+					std::string msg("Warning: multiple Axe-Fx patches for block channel select '" + patch->GetName() + "'\n");
+					mTrace->Trace(msg);
+				}
+
+				cur.mChannelSelectPatches[channel] = patch;
 				return true;
 			}
 		}
 
 		if (mTrace)
 		{
-			std::string msg("Warning: no Axe-Fx effect found to sync for x/y control '" + patch->GetName() + "'\n");
+			std::string msg("Warning: no Axe-Fx effect found to sync for block channel select '" + patch->GetName() + "'\n");
 			mTrace->Trace(msg);
 		}
 		return false;
@@ -272,6 +265,13 @@ AxeFx3Manager::SetSyncPatch(PatchPtr patch, int bypassCc /*= -1*/)
 		mTrace->Trace(msg);
 	}
 
+	return false;
+}
+
+bool
+AxeFx3Manager::SetSyncPatch(PatchPtr patch, int bypassCc)
+{
+	_ASSERTE(!"this shouldn't be called");
 	return false;
 }
 
@@ -679,31 +679,6 @@ AxeFx3Manager::GetCommandString(const std::string& commandName, bool enable)
 			return bb;
 		}
 
-		int pos = name.find("scene");
-		if (-1 != pos)
-		{
-			// scene select command
-			if (enable)
-			{
-				const std::string sceneStr(&name.c_str()[pos + 5]);
-				if (!sceneStr.empty())
-				{
-					int axeFxScene;
-					if (sceneStr.length() > 1 && sceneStr[0] == ' ')
-						axeFxScene = ::atoi(&sceneStr.c_str()[1]);
-					else
-						axeFxScene = ::atoi(sceneStr.c_str());
-
-					Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, 0x10, 0x0c };
-					bytes.push_back(axeFxScene - 1);
-					AppendChecksumAndTerminate(bytes);
-					return bytes;
-				}
-			}
-
-			return emptyCommand;
-		}
-
 		return emptyCommand;
 	}
 
@@ -720,14 +695,32 @@ AxeFx3Manager::GetCommandString(const std::string& commandName, bool enable)
 }
 
 Bytes
-AxeFx3Manager::GetBlockChannelSelectCommandString(const std::string& effectBlock, const std::string& channel)
+AxeFx3Manager::GetSceneSelectCommandString(int scene)
 {
 	const Bytes emptyCommand;
-	if (effectBlock.empty())
+	if (!scene || scene > AxeScenes)
+		return emptyCommand;
+
+	Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, 0x10, 0x0c };
+	bytes.push_back(scene - 1);
+	AppendChecksumAndTerminate(bytes);
+	return bytes;
+}
+
+Bytes
+AxeFx3Manager::GetBlockChannelSelectCommandString(
+	const std::string& effectBlockStr, 
+	const std::string& channelStr, 
+	int &effectId, 
+	int &channel)
+{
+	const Bytes emptyCommand;
+	effectId = channel = 0;
+	if (effectBlockStr.empty())
 		return emptyCommand;
 
 	// get normalizedName
-	std::string name(::NormalizeAxe3EffectName(effectBlock));
+	std::string name(::NormalizeAxe3EffectName(effectBlockStr));
 
 	// lookup name to get effect ID
 	Axe3EffectBlockInfo *fx = GetBlockInfoByName(name);
@@ -737,10 +730,13 @@ AxeFx3Manager::GetBlockChannelSelectCommandString(const std::string& effectBlock
 	if (!fx->mSysexEffectId)
 		return emptyCommand;
 
+	effectId = fx->mSysexEffectId;
+	channel = channelStr[0] - 'A';
+
 	Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, 0x10, 0x0B };
 	bytes.push_back(fx->mSysexEffectIdLs);
 	bytes.push_back(fx->mSysexEffectIdMs);
-	bytes.push_back(channel[0] - 'A');
+	bytes.push_back(channel);
 	AppendChecksumAndTerminate(bytes);
 	return bytes;
 }
@@ -1131,6 +1127,12 @@ AxeFx3Manager::ReceiveSceneStatus(const byte * bytes, int len)
 		return;
 
 	int newScene = bytes[0];
+	UpdateSceneStatus(newScene, false);
+}
+
+void
+AxeFx3Manager::UpdateSceneStatus(int newScene, bool internalUpdate)
+{
 	if (mCurrentScene == newScene)
 		return;
 
@@ -1152,6 +1154,9 @@ AxeFx3Manager::ReceiveSceneStatus(const byte * bytes, int len)
 
 	if (mScenePatches[mCurrentScene])
 		mScenePatches[mCurrentScene]->UpdateState(mSwitchDisplay, true);
+
+	if (internalUpdate)
+		RequestSceneName();
 
 // 	if (mCurrentAxePresetName.empty())
 // 		RequestPresetName();
@@ -1423,11 +1428,6 @@ Axe3SynonymNormalization(std::string & name)
 		while (name.at(name.length() - 1) == ' ')
 			name = name.substr(0, name.length() - 1);
 	}
-
-	// #axe3FinishThis
-// 	pos = name.find(" xy");
-// 	if (std::string::npos != pos)
-// 		name.replace(pos, 3, " x/y");
 
 	switch (name[0])
 	{

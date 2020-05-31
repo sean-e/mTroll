@@ -41,9 +41,11 @@ __interface IAxeFx
 	virtual void SetScenePatch(int scene, PatchPtr patch);
 	virtual void SetTempoPatch(PatchPtr patch);
 	virtual void SetLooperPatch(PatchPtr patch);
-	virtual bool SetSyncPatch(PatchPtr patch, int bypassCc = -1);
+	virtual bool SetSyncPatch(PatchPtr patch, int effectId, int channel);
+	virtual bool SetSyncPatch(PatchPtr patch, int bypassCc);
 
 	// runtime
+	virtual void UpdateSceneStatus(int newScene, bool internalUpdate);
 	virtual void SyncNameAndEffectsFromAxe();
 	virtual void DelayedNameSyncFromAxe(bool force = false);
 	virtual void DelayedEffectsSyncFromAxe();

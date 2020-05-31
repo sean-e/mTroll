@@ -905,6 +905,8 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		}
 
 		int axeFxScene = 0;
+		int axeFxBlockId = 0;
+		int axeFxBlockChannel = 0;
 		int overrideCc = -1;
 		if (mgr && 
 			(patchType.empty() || patchType == "AxeToggle" || patchType == "AxeMomentary") && 
@@ -912,6 +914,12 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			patchDefaultCh != -1)
 		{
 			bool updatePatchType = false;
+			if (patchType.empty())
+				patchType = "AxeToggle";
+
+			// check for scene attribute
+			pElem->QueryIntAttribute("scene", &axeFxScene);
+
 			int axeCc = 0;
 			pElem->QueryIntAttribute("cc", &axeCc);
 			if (axeCc)
@@ -921,13 +929,19 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				_ASSERTE(mAxeFx3Manager);
 				if (mAxeFx3Manager)
 				{
-					std::string effectBlockId;
-					std::string effectBlockChannel;
+					std::string effectBlockStr;
+					std::string effectBlockChannelStr;
 
-					pElem->QueryValueAttribute("axeBlockId", &effectBlockId);
-					pElem->QueryValueAttribute("axeBlockChannel", &effectBlockChannel);
+					pElem->QueryValueAttribute("axeBlockId", &effectBlockStr);
+					pElem->QueryValueAttribute("axeBlockChannel", &effectBlockChannelStr);
 
-					if (effectBlockId.empty() && effectBlockChannel.empty())
+					if (axeFxScene)
+					{
+						Bytes b1 = mAxeFx3Manager->GetSceneSelectCommandString(axeFxScene);
+						if (!b1.empty())
+							cmds.push_back(std::make_shared<MidiCommandString>(midiOut, b1));
+					}
+					else if (effectBlockStr.empty() && effectBlockChannelStr.empty())
 					{
 						Bytes b1 = mAxeFx3Manager->GetCommandString(patchName, true);
 						if (!b1.empty())
@@ -939,7 +953,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 					}
 					else
 					{
-						Bytes b1 = mAxeFx3Manager->GetBlockChannelSelectCommandString(effectBlockId, effectBlockChannel);
+						Bytes b1 = mAxeFx3Manager->GetBlockChannelSelectCommandString(effectBlockStr, effectBlockChannelStr, axeFxBlockId, axeFxBlockChannel);
 						if (!b1.empty())
 							cmds.push_back(std::make_shared<MidiCommandString>(midiOut, b1));
 					}
@@ -956,17 +970,11 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 
 			if (axeCc || updatePatchType)
 			{
-				if (patchType.empty())
-					patchType = "AxeToggle";
-
-				// check for scene attribute
-				pElem->QueryIntAttribute("scene", &axeFxScene);
 				if (axeFxScene)
 				{
+					// #axe3FinishThis
 					// there is no axe-fx sync for scenes, so change to unsync'd patch type
-					if (patchType == "AxeToggle")
-						patchType = "toggle";
-					else if (patchType == "AxeMomentary")
+					if (patchType == "AxeMomentary")
 						patchType = "momentary";
 				}
 			}
@@ -1017,11 +1025,20 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			newPatch = std::make_shared<PersistentPedalOverridePatch>(patchNumber, patchName, midiOut, cmds, cmds2);
 		else if (patchType == "AxeToggle")
 		{
-			auto axePatch = std::make_shared<AxeTogglePatch>(patchNumber, patchName, midiOut, cmds, cmds2, mgr);
+			auto axePatch = std::make_shared<AxeTogglePatch>(patchNumber, patchName, midiOut, cmds, cmds2, mgr, axeFxScene);
 			if (mgr)
 			{
-				if (!mgr->SetSyncPatch(axePatch, overrideCc))
-					axePatch->ClearAxeMgr();
+				if (!axeFxScene)
+				{
+					bool res;
+					if (mgr->GetModel() == Axe3)
+						res = mgr->SetSyncPatch(axePatch, axeFxBlockId, axeFxBlockChannel);
+					else
+						res = mgr->SetSyncPatch(axePatch, overrideCc);
+
+					if (!res)
+						axePatch->ClearAxeMgr();
+				}
 			}
 			else if (mTraceDisplay)
 			{
@@ -1038,7 +1055,20 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		{
 			newPatch = std::make_shared<MomentaryPatch>(patchNumber, patchName, midiOut, cmds, cmds2);
 			if (mgr)
-				mgr->SetSyncPatch(newPatch, overrideCc);
+			{
+				if (!axeFxScene)
+				{
+					bool res;
+					if (mgr->GetModel() == Axe3)
+						res = mgr->SetSyncPatch(newPatch, axeFxBlockId, axeFxBlockChannel);
+					else
+						res = mgr->SetSyncPatch(newPatch, overrideCc);
+
+					// #axe3FinishThis
+// 					if (!res)
+// 						axePatch->ClearAxeMgr();
+				}
+			}
 			else if (mTraceDisplay)
 			{
 				std::strstream traceMsg;

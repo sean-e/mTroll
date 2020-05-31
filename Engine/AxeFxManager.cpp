@@ -222,6 +222,13 @@ AxeFxManager::SetSyncPatch(PatchPtr patch, int bypassCc /*= -1*/)
 	return false;
 }
 
+bool
+AxeFxManager::SetSyncPatch(PatchPtr patch, int effectId, int channel)
+{
+	_ASSERTE(!"this shouldn't be called");
+	return false;
+}
+
 void
 AxeFxManager::CompleteInit(IMidiOutPtr midiOut)
 {
@@ -1589,6 +1596,12 @@ AxeFxManager::ReceiveSceneStatus(const byte * bytes, int len)
 		return;
 
 	int newScene = bytes[0];
+	UpdateSceneStatus(newScene, false);
+}
+
+void
+AxeFxManager::UpdateSceneStatus(int newScene, bool /*internalUpdate*/)
+{
 	if (mCurrentScene == newScene)
 		return;
 

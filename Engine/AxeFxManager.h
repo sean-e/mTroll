@@ -74,10 +74,12 @@ public:
 	void SetScenePatch(int scene, PatchPtr patch) override;
 	void SetLooperPatch(PatchPtr patch) override;
 	bool SetSyncPatch(PatchPtr patch, int bypassCc = -1) override;
+	bool SetSyncPatch(PatchPtr patch, int effectId, int channel) override;
 	int GetChannel() const override { return mAxeChannel; }
 	void SyncPatchFromAxe(PatchPtr patch);
 	AxeFxModel GetModel() const override { return mModel; }
 	void Shutdown() override;
+	void UpdateSceneStatus(int newScene, bool internalUpdate) override;
 
 	// delayed requests for sync
 	void DelayedNameSyncFromAxe(bool force = false) override;

@@ -76,17 +76,20 @@ public:
 	void SetTempoPatch(PatchPtr patch) override;
 	void SetScenePatch(int scene, PatchPtr patch) override;
 	void SetLooperPatch(PatchPtr patch) override;
-	bool SetSyncPatch(PatchPtr patch, int bypassCc = -1) override;
+	bool SetSyncPatch(PatchPtr patch, int bypassCc) override;
+	bool SetSyncPatch(PatchPtr patch, int effectId, int channel) override;
 	int GetChannel() const override { return mAxeChannel; }
 	AxeFxModel GetModel() const override { return mModel; }
 	void Shutdown() override;
+	void UpdateSceneStatus(int newScene, bool internalUpdate) override;
 
 	// delayed requests for sync
 	void DelayedNameSyncFromAxe(bool force = false) override;
 	void DelayedEffectsSyncFromAxe() override;
 
 	Bytes GetCommandString(const std::string& commandName, bool enable);
-	Bytes GetBlockChannelSelectCommandString(const std::string& effectBlock, const std::string& channel);
+	Bytes GetSceneSelectCommandString(int scene);
+	Bytes GetBlockChannelSelectCommandString(const std::string& effectBlockStr, const std::string& channelStr, int &effectId, int &channel);
 
 public slots:
 	// immediate requests for sync (called by the delayed requests)

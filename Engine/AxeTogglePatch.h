@@ -38,6 +38,7 @@ class AxeTogglePatch : public TogglePatch
 {
 	IAxeFxPtr		mAx = nullptr;
 	bool			mHasDisplayText;
+	int				mIsScene;
 	std::string		mActiveText;
 	std::string		mInactiveText;
 
@@ -47,11 +48,16 @@ public:
 				IMidiOutPtr midiOut, 
 				PatchCommands & cmdsA, 
 				PatchCommands & cmdsB,
-				IAxeFxPtr axeMgr) :
+				IAxeFxPtr axeMgr,
+				int isScenePatch) :
 		TogglePatch(number, name, midiOut, cmdsA, cmdsB),
 		mAx(axeMgr),
-		mHasDisplayText(false)
+		mHasDisplayText(false),
+		mIsScene(isScenePatch)
 	{
+		if (isScenePatch)
+			return;
+
 		if (mAx && mAx->GetModel() >= Axe2)
 			mPatchSupportsDisabledState = true;
 
@@ -102,22 +108,43 @@ public:
 	
 	virtual std::string GetPatchTypeStr() const override { return "axeToggle"; }
 
-	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) override
+	virtual void ExecCommandsA() override
 	{
-		TogglePatch::SwitchPressed(mainDisplay, switchDisplay);
-		if (mAx)
-		{
-			// Due to getting a response from the Axe-Fx II before state of
-			// externals was accurate (Feedback Return mute mapped to Extern
-			// 8 came back inaccurate when SyncEffectsFromAxe called immediately).
-			mAx->DelayedEffectsSyncFromAxe();
-		}
+		__super::ExecCommandsA();
+
+		if (!mCmdsA.empty())
+			UpdateAxeMgr();
+	}
+
+	virtual void ExecCommandsB() override
+	{
+		__super::ExecCommandsB();
+
+		if (!mCmdsB.empty())
+			UpdateAxeMgr();
 	}
 
 	void ClearAxeMgr() 
 	{
 		if (mAx)
 			mAx = nullptr;
+	}
+
+private:
+	void UpdateAxeMgr()
+	{
+		if (!mAx)
+			return;
+
+		if (mIsScene)
+			mAx->UpdateSceneStatus(mIsScene - 1, true);
+		else
+		{
+			// Due to getting a response from the Axe-Fx II before state of
+			// externals was accurate (Feedback Return mute mapped to Extern
+			// 8 came back inaccurate when SyncEffectsFromAxe called immediately).
+			mAx->DelayedEffectsSyncFromAxe();
+		}
 	}
 };
 
