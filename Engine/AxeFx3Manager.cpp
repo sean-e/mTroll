@@ -220,6 +220,7 @@ AxeFx3Manager::SetSyncPatch(PatchPtr patch, int bypassCc /*= -1*/)
 				mTrace->Trace(msg);
 			}
 
+			// #axe3FinishThis
 // 			if (-1 != bypassCc)
 // 				cur.mBypassCC = bypassCc;
 
@@ -237,6 +238,7 @@ AxeFx3Manager::SetSyncPatch(PatchPtr patch, int bypassCc /*= -1*/)
 		{
 			if (cur.mNormalizedName == normalizedEffectName)
 			{
+				// #axe3FinishThis
 // 				if (cur.mXyPatch && mTrace)
 // 				{
 // 					std::string msg("Warning: multiple Axe-Fx patches for XY control '" + patch->GetName() + "'\n");
@@ -344,6 +346,7 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 		{
 			ReceivePresetNumber(&bytes[6], len - 6);
 			ReceivePresetName(&bytes[8], len - 8);
+			RequestSceneName();
 		}
 		return;
 	case 0xe:
@@ -351,6 +354,8 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 		{
 			ReceiveSceneName(&bytes[7], len - 7);
 			ReceiveSceneStatus(&bytes[6], len - 6);
+			DisplayPresetStatus();
+			RequestStatusDump();
 		}
 		return;
 	case 0x0f:
@@ -503,6 +508,7 @@ AxeFx3Manager::DelayedNameSyncFromAxe(bool force /*= false*/)
 
 	if (!force)
 	{
+		// #axe3FinishThis -- probably incorrect for 3
 		// Axe-Fx II sends preset loaded message, so we can ignore our 
 		// unforced calls to DelalyedNameSyncFromAxe.
 		return;
@@ -798,10 +804,8 @@ AxeFx3Manager::ReceivePresetName(const byte * bytes, int len)
 	{
 		mCurrentAxePresetName = patchName;
 		mCurrentAxeSceneName.clear();
-		DisplayPresetStatus();
+// 		DisplayPresetStatus();
 	}
-
-	RequestStatusDump();
 }
 
 void
@@ -1125,10 +1129,10 @@ AxeFx3Manager::ReceiveSceneStatus(const byte * bytes, int len)
 	if (mScenePatches[mCurrentScene])
 		mScenePatches[mCurrentScene]->UpdateState(mSwitchDisplay, true);
 
-	if (mCurrentAxePresetName.empty())
-		RequestPresetName();
-	else
-		DisplayPresetStatus();
+// 	if (mCurrentAxePresetName.empty())
+// 		RequestPresetName();
+// 	else
+// 		DisplayPresetStatus();
 }
 
 void
@@ -1396,6 +1400,7 @@ Axe3SynonymNormalization(std::string & name)
 			name = name.substr(0, name.length() - 1);
 	}
 
+	// #axe3FinishThis
 // 	pos = name.find(" xy");
 // 	if (std::string::npos != pos)
 // 		name.replace(pos, 3, " x/y");
