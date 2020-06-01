@@ -1622,6 +1622,10 @@ Axe3SynonymNormalization(std::string & name)
 		MapName("multi delay 2", "multidelay 2");
 		MapName("multi delay 3", "multidelay 3");
 		MapName("multi delay 4", "multidelay 4");
+		MapName("multi-delay 1", "multidelay 1");
+		MapName("multi-delay 2", "multidelay 2");
+		MapName("multi-delay 3", "multidelay 3");
+		MapName("multi-delay 4", "multidelay 4");
 		break;
 	case 'n':
 		MapName("next scene", "scene increment");
