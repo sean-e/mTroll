@@ -55,6 +55,7 @@
 #include "MetaPatch_BankNav.h"
 #include "PersistentPedalOverridePatch.h"
 #include "MetaPatch_ResetPatch.h"
+#include "AxeMomentaryPatch.h"
 
 
 #ifdef _MSC_VER
@@ -913,7 +914,6 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			cmds.empty() && cmds2.empty() &&
 			patchDefaultCh != -1)
 		{
-			bool updatePatchType = false;
 			if (patchType.empty())
 				patchType = "AxeToggle";
 
@@ -932,8 +932,10 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 					std::string effectBlockStr;
 					std::string effectBlockChannelStr;
 
-					pElem->QueryValueAttribute("axeBlockId", &effectBlockStr);
-					pElem->QueryValueAttribute("axeBlockChannel", &effectBlockChannelStr);
+					if (pElem->Attribute("axeBlockId"))
+						effectBlockStr = pElem->Attribute("axeBlockId");
+					if (pElem->Attribute("axeBlockChannel"))
+						effectBlockChannelStr = pElem->Attribute("axeBlockChannel");
 
 					if (axeFxScene)
 					{
@@ -957,8 +959,6 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 						if (!b1.empty())
 							cmds.push_back(std::make_shared<MidiCommandString>(midiOut, b1));
 					}
-
-					updatePatchType = true;
 				}
 			}
 			else
@@ -966,17 +966,6 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				_ASSERTE(mAxeFxManager);
 				if (mAxeFxManager)
 					axeCc = mAxeFxManager->GetDefaultAxeCc(patchName); // fallback to default
-			}
-
-			if (axeCc || updatePatchType)
-			{
-				if (axeFxScene)
-				{
-					// #axe3FinishThis
-					// there is no axe-fx sync for scenes, so change to unsync'd patch type
-					if (patchType == "AxeMomentary")
-						patchType = "momentary";
-				}
 			}
 
 			if (axeCc)
@@ -1053,20 +1042,19 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			newPatch = std::make_shared<MomentaryPatch>(patchNumber, patchName, midiOut, cmds, cmds2);
 		else if (patchType == "AxeMomentary")
 		{
-			newPatch = std::make_shared<MomentaryPatch>(patchNumber, patchName, midiOut, cmds, cmds2);
+			auto axePatch = std::make_shared<AxeMomentaryPatch>(patchNumber, patchName, midiOut, cmds, cmds2, mgr, axeFxScene);
 			if (mgr)
 			{
 				if (!axeFxScene)
 				{
 					bool res;
 					if (mgr->GetModel() == Axe3)
-						res = mgr->SetSyncPatch(newPatch, axeFxBlockId, axeFxBlockChannel);
+						res = mgr->SetSyncPatch(axePatch, axeFxBlockId, axeFxBlockChannel);
 					else
-						res = mgr->SetSyncPatch(newPatch, overrideCc);
+						res = mgr->SetSyncPatch(axePatch, overrideCc);
 
-					// #axe3FinishThis
-// 					if (!res)
-// 						axePatch->ClearAxeMgr();
+					if (!res)
+						axePatch->ClearAxeMgr();
 				}
 			}
 			else if (mTraceDisplay)
@@ -1075,6 +1063,8 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				traceMsg << "Error loading config file: Axe-Fx device specified but no Axe-Fx input was created" << std::endl << std::ends;
 				mTraceDisplay->Trace(std::string(traceMsg.str()));
 			}
+
+			newPatch = axePatch;
 		}
 		else if (patchType == "sequence")
 			newPatch = std::make_shared<SequencePatch>(patchNumber, patchName, midiOut, cmds);

@@ -127,7 +127,7 @@
       <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="..\Engine\AxeFx3Manager.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -281,17 +281,20 @@
     <ClInclude Include="..\Engine\PersistentPedalOverridePatch.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="..\Engine\AxeFx3EffectIds.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
     <ClInclude Include="..\Engine\AxeFxModel.h">
-      <Filter>Header Files</Filter>
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\AxeMomentaryPatch.h">
+      <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="..\Engine\IAxeFx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Engine\AxeFx3EffectIds.h">
-      <Filter>Header Files</Filter>
+      <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="..\Engine\MetaPatch_ResetPatch.h">
-      <Filter>Header Files</Filter>
+      <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -342,7 +345,7 @@
       <Filter>Engine</Filter>
     </CustomBuild>
     <CustomBuild Include="..\Engine\AxeFx3Manager.h">
-      <Filter>Header Files</Filter>
+      <Filter>Engine</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>
