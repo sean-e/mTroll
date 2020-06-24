@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2018 Sean Echevarria
+ * Copyright (C) 2007-2018,2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -40,8 +40,8 @@ AboutDlg::AboutDlg()
 		"<html><body>mTroll MIDI Controller<br><br>"
 		"<a href=\"http://www.creepingfog.com/mTroll/\">http://www.creepingfog.com/mTroll/</a><br><br>"
 		"<a href=\"https://github.com/sean-e/mtroll/\">https://github.com/sean-e/mtroll/</a><br><br>"
-		"<a href=\"http://sourceforge.net/projects/mtroll/\">http://sourceforge.net/projects/mtroll/</a><br><br>"
-		"&copy; copyright 2007-2018 Sean Echevarria<br><br>";
+		// "<a href=\"http://sourceforge.net/projects/mtroll/\">http://sourceforge.net/projects/mtroll/</a><br><br>"
+		"&copy; copyright 2007-2020 Sean Echevarria<br><br>";
 	labelTxt += "Built " + ::GetBuildDate();
 	labelTxt += "</body></html>";
 
