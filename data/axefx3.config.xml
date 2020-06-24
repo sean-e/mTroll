@@ -73,7 +73,7 @@
 		<Device channel="5" port="1"></Device>
 		<Device channel="6" port="1"></Device>
 		<Device channel="7" port="1"></Device>
-		<!-- this is key to Axe-Fx synchronization; make sure Axe-Fx is on the right line (based on channel). -->
+		<!-- this is key to Axe-Fx synchronization; make sure Axe-Fx is on the right line (based on MIDI channel). -->
 		<Device channel="8" port="1" model="3">Axe-Fx</Device>
 		<Device channel="9" port="1"></Device>
 		<Device channel="10" port="1"></Device>
@@ -605,26 +605,620 @@
 					modify feedback return bypass in every preset where it is used. -->
 		</patch>
 
-		<patch name="Axe Amp 1 x/y" number="801" device="Axe-Fx" />
-		<patch name="Axe Amp 2 x/y" number="802" device="Axe-Fx" />
-		<patch name="Axe Cabinet 1 x/y" number="803" device="Axe-Fx" />
-		<patch name="Axe Cabinet 2 x/y" number="804" device="Axe-Fx" />
-		<patch name="Axe Chorus 1 x/y" number="805" device="Axe-Fx" />
-		<patch name="Axe Chorus 2 x/y" number="806" device="Axe-Fx" />
-		<patch name="Axe Delay 1 x/y" number="807" device="Axe-Fx" />
-		<patch name="Axe Delay 2 x/y" number="808" device="Axe-Fx" />
-		<patch name="Axe Drive 1 x/y" number="809" device="Axe-Fx" />
-		<patch name="Axe Drive 2 x/y" number="810" device="Axe-Fx" />
-		<patch name="Axe Flanger 1 x/y" number="811" device="Axe-Fx" />
-		<patch name="Axe Flanger 2 x/y" number="812" device="Axe-Fx" />
-		<patch name="Axe Phaser 1 x/y" number="813" device="Axe-Fx" />
-		<patch name="Axe Phaser 2 x/y" number="814" device="Axe-Fx" />
-		<patch name="Axe Pitch Shift 1 x/y" number="815" device="Axe-Fx" />
-		<patch name="Axe Pitch Shift 2 x/y" number="816" device="Axe-Fx" />
-		<patch name="Axe Reverb 1 x/y" number="817" device="Axe-Fx" />
-		<patch name="Axe Reverb 2 x/y" number="818" device="Axe-Fx" />
-		<patch name="Axe Wah-wah 1 x/y" number="819" device="Axe-Fx" />
-		<patch name="Axe Wah-wah 2 x/y" number="820" device="Axe-Fx" />
+		<patch name="Axe Amp 1 Ch A" number="2000" axeBlockId="Amp 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Amp 1 Ch B" number="2001" axeBlockId="Amp 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Amp 1 Ch C" number="2002" axeBlockId="Amp 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Amp 1 Ch D" number="2003" axeBlockId="Amp 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Amp 2 Ch A" number="2004" axeBlockId="Amp 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Amp 2 Ch B" number="2005" axeBlockId="Amp 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Amp 2 Ch C" number="2006" axeBlockId="Amp 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Amp 2 Ch D" number="2007" axeBlockId="Amp 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Cabinet 1 Ch A" number="2008" axeBlockId="Cab 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Cabinet 1 Ch B" number="2009" axeBlockId="Cab 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Cabinet 1 Ch C" number="2010" axeBlockId="Cab 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Cabinet 1 Ch D" number="2011" axeBlockId="Cab 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Cabinet 2 Ch A" number="2012" axeBlockId="Cab 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Cabinet 2 Ch B" number="2013" axeBlockId="Cab 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Cabinet 2 Ch C" number="2014" axeBlockId="Cab 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Cabinet 2 Ch D" number="2015" axeBlockId="Cab 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Chorus 1 Ch A" number="2016" axeBlockId="Chorus 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Chorus 1 Ch B" number="2017" axeBlockId="Chorus 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Chorus 1 Ch C" number="2018" axeBlockId="Chorus 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Chorus 1 Ch D" number="2019" axeBlockId="Chorus 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Chorus 2 Ch A" number="2020" axeBlockId="Chorus 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Chorus 2 Ch B" number="2021" axeBlockId="Chorus 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Chorus 2 Ch C" number="2022" axeBlockId="Chorus 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Chorus 2 Ch D" number="2023" axeBlockId="Chorus 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Comp 1 Ch A" number="2024" axeBlockId="Compressor 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Comp 1 Ch B" number="2025" axeBlockId="Compressor 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Comp 1 Ch C" number="2026" axeBlockId="Compressor 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Comp 1 Ch D" number="2027" axeBlockId="Compressor 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Comp 2 Ch A" number="2028" axeBlockId="Compressor 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Comp 2 Ch B" number="2029" axeBlockId="Compressor 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Comp 2 Ch C" number="2030" axeBlockId="Compressor 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Comp 2 Ch D" number="2031" axeBlockId="Compressor 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe X-over 1 Ch A" number="2032" axeBlockId="Crossover 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe X-over 1 Ch B" number="2033" axeBlockId="Crossover 1" axeBlockChannel="B" device="Axe-Fx" />
+
+		<patch name="Axe X-over 2 Ch A" number="2034" axeBlockId="Crossover 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe X-over 2 Ch B" number="2035" axeBlockId="Crossover 2" axeBlockChannel="B" device="Axe-Fx" />
+
+		<patch name="Axe Delay 1 Ch A" number="2036" axeBlockId="Delay 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Delay 1 Ch B" number="2037" axeBlockId="Delay 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Delay 1 Ch C" number="2038" axeBlockId="Delay 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Delay 1 Ch D" number="2039" axeBlockId="Delay 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Delay 2 Ch A" number="2040" axeBlockId="Delay 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Delay 2 Ch B" number="2041" axeBlockId="Delay 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Delay 2 Ch C" number="2042" axeBlockId="Delay 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Delay 2 Ch D" number="2043" axeBlockId="Delay 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Delay 3 Ch A" number="2044" axeBlockId="Delay 3" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Delay 3 Ch B" number="2045" axeBlockId="Delay 3" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Delay 3 Ch C" number="2046" axeBlockId="Delay 3" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Delay 3 Ch D" number="2047" axeBlockId="Delay 3" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Delay 4 Ch A" number="2048" axeBlockId="Delay 4" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Delay 4 Ch B" number="2049" axeBlockId="Delay 4" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Delay 4 Ch C" number="2050" axeBlockId="Delay 4" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Delay 4 Ch D" number="2051" axeBlockId="Delay 4" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Drive 1 Ch A" number="2052" axeBlockId="Drive 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Drive 1 Ch B" number="2053" axeBlockId="Drive 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Drive 1 Ch C" number="2054" axeBlockId="Drive 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Drive 1 Ch D" number="2055" axeBlockId="Drive 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Drive 2 Ch A" number="2056" axeBlockId="Drive 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Drive 2 Ch B" number="2057" axeBlockId="Drive 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Drive 2 Ch C" number="2058" axeBlockId="Drive 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Drive 2 Ch D" number="2059" axeBlockId="Drive 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Drive 3 Ch A" number="2060" axeBlockId="Drive 3" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Drive 3 Ch B" number="2061" axeBlockId="Drive 3" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Drive 3 Ch C" number="2062" axeBlockId="Drive 3" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Drive 3 Ch D" number="2063" axeBlockId="Drive 3" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Drive 4 Ch A" number="2064" axeBlockId="Drive 4" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Drive 4 Ch B" number="2065" axeBlockId="Drive 4" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Drive 4 Ch C" number="2066" axeBlockId="Drive 4" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Drive 4 Ch D" number="2067" axeBlockId="Drive 4" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Enhancer 1 Ch A" number="2068" axeBlockId="Enhancer 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Enhancer 1 Ch B" number="2069" axeBlockId="Enhancer 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Enhancer 1 Ch C" number="2070" axeBlockId="Enhancer 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Enhancer 1 Ch D" number="2071" axeBlockId="Enhancer 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Enhancer 2 Ch A" number="2072" axeBlockId="Enhancer 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Enhancer 2 Ch B" number="2073" axeBlockId="Enhancer 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Enhancer 2 Ch B" number="2074" axeBlockId="Enhancer 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Enhancer 2 Ch B" number="2075" axeBlockId="Enhancer 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Filter 1 Ch A" number="2076" axeBlockId="Filter 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Filter 1 Ch B" number="2077" axeBlockId="Filter 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Filter 1 Ch C" number="2078" axeBlockId="Filter 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Filter 1 Ch D" number="2079" axeBlockId="Filter 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Filter 2 Ch A" number="2080" axeBlockId="Filter 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Filter 2 Ch B" number="2081" axeBlockId="Filter 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Filter 2 Ch C" number="2082" axeBlockId="Filter 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Filter 2 Ch D" number="2083" axeBlockId="Filter 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Filter 3 Ch A" number="2084" axeBlockId="Filter 3" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Filter 3 Ch B" number="2085" axeBlockId="Filter 3" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Filter 3 Ch C" number="2086" axeBlockId="Filter 3" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Filter 3 Ch D" number="2087" axeBlockId="Filter 3" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Filter 4 Ch A" number="2088" axeBlockId="Filter 4" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Filter 4 Ch B" number="2089" axeBlockId="Filter 4" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Filter 4 Ch C" number="2090" axeBlockId="Filter 4" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Filter 4 Ch D" number="2091" axeBlockId="Filter 4" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Flanger 1 Ch A" number="2092" axeBlockId="Flanger 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Flanger 1 Ch B" number="2093" axeBlockId="Flanger 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Flanger 1 Ch C" number="2094" axeBlockId="Flanger 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Flanger 1 Ch D" number="2095" axeBlockId="Flanger 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Flanger 2 Ch A" number="2096" axeBlockId="Flanger 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Flanger 2 Ch B" number="2097" axeBlockId="Flanger 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Flanger 2 Ch C" number="2098" axeBlockId="Flanger 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Flanger 2 Ch D" number="2099" axeBlockId="Flanger 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Formant 1 Ch A" number="2100" axeBlockId="Formant 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Formant 1 Ch B" number="2101" axeBlockId="Formant 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Formant 1 Ch C" number="2102" axeBlockId="Formant 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Formant 1 Ch D" number="2103" axeBlockId="Formant 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Formant 2 Ch A" number="2104" axeBlockId="Formant 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Formant 2 Ch B" number="2105" axeBlockId="Formant 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Formant 2 Ch C" number="2106" axeBlockId="Formant 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Formant 2 Ch D" number="2107" axeBlockId="Formant 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Gate 1 Ch A" number="2108" axeBlockId="Gate 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Gate 1 Ch B" number="2109" axeBlockId="Gate 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Gate 1 Ch C" number="2110" axeBlockId="Gate 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Gate 1 Ch D" number="2111" axeBlockId="Gate 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Gate 2 Ch A" number="2112" axeBlockId="Gate 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Gate 2 Ch B" number="2113" axeBlockId="Gate 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Gate 2 Ch C" number="2114" axeBlockId="Gate 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Gate 2 Ch D" number="2115" axeBlockId="Gate 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Gate 3 Ch A" number="2116" axeBlockId="Gate 3" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Gate 3 Ch B" number="2117" axeBlockId="Gate 3" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Gate 3 Ch C" number="2118" axeBlockId="Gate 3" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Gate 3 Ch D" number="2119" axeBlockId="Gate 3" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Gate 4 Ch A" number="2120" axeBlockId="Gate 4" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Gate 4 Ch B" number="2121" axeBlockId="Gate 4" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Gate 4 Ch C" number="2122" axeBlockId="Gate 4" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Gate 4 Ch D" number="2123" axeBlockId="Gate 4" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Graphic EQ 1 Ch A" number="2124" axeBlockId="Graphic EQ 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Graphic EQ 1 Ch B" number="2125" axeBlockId="Graphic EQ 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Graphic EQ 1 Ch C" number="2126" axeBlockId="Graphic EQ 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Graphic EQ 1 Ch D" number="2127" axeBlockId="Graphic EQ 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Graphic EQ 2 Ch A" number="2128" axeBlockId="Graphic EQ 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Graphic EQ 2 Ch B" number="2129" axeBlockId="Graphic EQ 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Graphic EQ 2 Ch C" number="2130" axeBlockId="Graphic EQ 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Graphic EQ 2 Ch D" number="2131" axeBlockId="Graphic EQ 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Graphic EQ 3 Ch A" number="2132" axeBlockId="Graphic EQ 3" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Graphic EQ 3 Ch B" number="2133" axeBlockId="Graphic EQ 3" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Graphic EQ 3 Ch C" number="2134" axeBlockId="Graphic EQ 3" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Graphic EQ 3 Ch D" number="2135" axeBlockId="Graphic EQ 3" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Graphic EQ 4 Ch A" number="2136" axeBlockId="Graphic EQ 4" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Graphic EQ 4 Ch B" number="2137" axeBlockId="Graphic EQ 4" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Graphic EQ 4 Ch C" number="2138" axeBlockId="Graphic EQ 4" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Graphic EQ 4 Ch D" number="2139" axeBlockId="Graphic EQ 4" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Input 1 Ch A" number="2140" axeBlockId="Input 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Input 1 Ch B" number="2141" axeBlockId="Input 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Input 1 Ch C" number="2142" axeBlockId="Input 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Input 1 Ch D" number="2143" axeBlockId="Input 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Input 2 Ch A" number="2144" axeBlockId="Input 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Input 2 Ch B" number="2145" axeBlockId="Input 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Input 2 Ch C" number="2146" axeBlockId="Input 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Input 2 Ch D" number="2147" axeBlockId="Input 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Input 3 Ch A" number="2148" axeBlockId="Input 3" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Input 3 Ch B" number="2149" axeBlockId="Input 3" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Input 3 Ch C" number="2150" axeBlockId="Input 3" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Input 3 Ch D" number="2151" axeBlockId="Input 3" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Input 4 Ch A" number="2152" axeBlockId="Input 4" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Input 4 Ch B" number="2153" axeBlockId="Input 4" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Input 4 Ch C" number="2154" axeBlockId="Input 4" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Input 4 Ch D" number="2155" axeBlockId="Input 4" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Input 5 Ch A" number="2156" axeBlockId="Input 5" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Input 5 Ch B" number="2157" axeBlockId="Input 5" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Input 5 Ch C" number="2158" axeBlockId="Input 5" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Input 5 Ch D" number="2159" axeBlockId="Input 5" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe IR Player 1 Ch A" number="2160" axeBlockId="IR Player 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe IR Player 1 Ch B" number="2161" axeBlockId="IR Player 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe IR Player 1 Ch C" number="2162" axeBlockId="IR Player 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe IR Player 1 Ch D" number="2163" axeBlockId="IR Player 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe IR Player 2 Ch A" number="2164" axeBlockId="IR Player 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe IR Player 2 Ch B" number="2165" axeBlockId="IR Player 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe IR Player 2 Ch C" number="2166" axeBlockId="IR Player 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe IR Player 2 Ch D" number="2167" axeBlockId="IR Player 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Megatap 1 Ch A" number="2168" axeBlockId="Megatap 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Megatap 1 Ch B" number="2169" axeBlockId="Megatap 1" axeBlockChannel="B" device="Axe-Fx" />
+
+		<patch name="Axe Megatap 2 Ch A" number="2170" axeBlockId="Megatap 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Megatap 2 Ch B" number="2171" axeBlockId="Megatap 2" axeBlockChannel="B" device="Axe-Fx" />
+
+		<patch name="Axe Mixer 1 Ch A" number="2172" axeBlockId="Mixer 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Mixer 1 Ch B" number="2173" axeBlockId="Mixer 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Mixer 1 Ch C" number="2174" axeBlockId="Mixer 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Mixer 1 Ch D" number="2175" axeBlockId="Mixer 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Mixer 2 Ch A" number="2176" axeBlockId="Mixer 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Mixer 2 Ch B" number="2177" axeBlockId="Mixer 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Mixer 2 Ch C" number="2178" axeBlockId="Mixer 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Mixer 2 Ch D" number="2179" axeBlockId="Mixer 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Mixer 3 Ch A" number="2180" axeBlockId="Mixer 3" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Mixer 3 Ch B" number="2181" axeBlockId="Mixer 3" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Mixer 3 Ch C" number="2182" axeBlockId="Mixer 3" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Mixer 3 Ch D" number="2183" axeBlockId="Mixer 3" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Mixer 4 Ch A" number="2184" axeBlockId="Mixer 4" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Mixer 4 Ch B" number="2185" axeBlockId="Mixer 4" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Mixer 4 Ch C" number="2186" axeBlockId="Mixer 4" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Mixer 4 Ch D" number="2187" axeBlockId="Mixer 4" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Multi-delay 1 Ch A" number="2188" axeBlockId="Multi-delay 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Multi-delay 1 Ch B" number="2189" axeBlockId="Multi-delay 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Multi-delay 1 Ch C" number="2190" axeBlockId="Multi-delay 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Multi-delay 1 Ch D" number="2191" axeBlockId="Multi-delay 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Multi-delay 2 Ch A" number="2192" axeBlockId="Multi-delay 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Multi-delay 2 Ch B" number="2193" axeBlockId="Multi-delay 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Multi-delay 2 Ch C" number="2194" axeBlockId="Multi-delay 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Multi-delay 2 Ch D" number="2195" axeBlockId="Multi-delay 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Multiband Compressor 1 Ch A" number="2196" axeBlockId="Multiband comp 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Multiband Compressor 1 Ch B" number="2197" axeBlockId="Multiband comp 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Multiband Compressor 1 Ch C" number="2198" axeBlockId="Multiband comp 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Multiband Compressor 1 Ch D" number="2199" axeBlockId="Multiband comp 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Multiband Compressor 2 Ch A" number="2201" axeBlockId="Multiband comp 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Multiband Compressor 2 Ch B" number="2202" axeBlockId="Multiband comp 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Multiband Compressor 2 Ch C" number="2203" axeBlockId="Multiband comp 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Multiband Compressor 2 Ch D" number="2204" axeBlockId="Multiband comp 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Multiplexer 1 Ch A" number="2205" axeBlockId="Multiplexer 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Multiplexer 1 Ch B" number="2206" axeBlockId="Multiplexer 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Multiplexer 1 Ch C" number="2207" axeBlockId="Multiplexer 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Multiplexer 1 Ch D" number="2208" axeBlockId="Multiplexer 1" axeBlockChannel="D" device="Axe-Fx" />
+		<patch name="Axe Multiplexer 1 Ch E" number="2209" axeBlockId="Multiplexer 1" axeBlockChannel="E" device="Axe-Fx" />
+		<patch name="Axe Multiplexer 1 Ch F" number="2210" axeBlockId="Multiplexer 1" axeBlockChannel="F" device="Axe-Fx" />
+
+		<patch name="Axe Multiplexer 2 Ch A" number="2211" axeBlockId="Multiplexer 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Multiplexer 2 Ch B" number="2212" axeBlockId="Multiplexer 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Multiplexer 2 Ch C" number="2213" axeBlockId="Multiplexer 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Multiplexer 2 Ch D" number="2214" axeBlockId="Multiplexer 2" axeBlockChannel="D" device="Axe-Fx" />
+		<patch name="Axe Multiplexer 2 Ch E" number="2215" axeBlockId="Multiplexer 2" axeBlockChannel="E" device="Axe-Fx" />
+		<patch name="Axe Multiplexer 2 Ch F" number="2216" axeBlockId="Multiplexer 2" axeBlockChannel="F" device="Axe-Fx" />
+
+		<patch name="Axe Output 1 Ch A" number="2217" axeBlockId="Output 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Output 1 Ch B" number="2218" axeBlockId="Output 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Output 1 Ch C" number="2219" axeBlockId="Output 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Output 1 Ch D" number="2220" axeBlockId="Output 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Output 2 Ch A" number="2221" axeBlockId="Output 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Output 2 Ch B" number="2222" axeBlockId="Output 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Output 2 Ch C" number="2223" axeBlockId="Output 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Output 2 Ch D" number="2224" axeBlockId="Output 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Output 3 Ch A" number="2225" axeBlockId="Output 3" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Output 3 Ch B" number="2226" axeBlockId="Output 3" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Output 3 Ch C" number="2227" axeBlockId="Output 3" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Output 3 Ch D" number="2228" axeBlockId="Output 3" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Output 4 Ch A" number="2229" axeBlockId="Output 4" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Output 4 Ch B" number="2230" axeBlockId="Output 4" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Output 4 Ch C" number="2231" axeBlockId="Output 4" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Output 4 Ch D" number="2232" axeBlockId="Output 4" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Parametric EQ 1 Ch A" number="2233" axeBlockId="Parametric EQ 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Parametric EQ 1 Ch B" number="2234" axeBlockId="Parametric EQ 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Parametric EQ 1 Ch C" number="2235" axeBlockId="Parametric EQ 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Parametric EQ 1 Ch D" number="2237" axeBlockId="Parametric EQ 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Parametric EQ 2 Ch A" number="2238" axeBlockId="Parametric EQ 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Parametric EQ 2 Ch B" number="2239" axeBlockId="Parametric EQ 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Parametric EQ 2 Ch C" number="2240" axeBlockId="Parametric EQ 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Parametric EQ 2 Ch D" number="2241" axeBlockId="Parametric EQ 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Parametric EQ 3 Ch A" number="2242" axeBlockId="Parametric EQ 3" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Parametric EQ 3 Ch B" number="2243" axeBlockId="Parametric EQ 3" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Parametric EQ 3 Ch C" number="2244" axeBlockId="Parametric EQ 3" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Parametric EQ 3 Ch D" number="2245" axeBlockId="Parametric EQ 3" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Parametric EQ 4 Ch A" number="2246" axeBlockId="Parametric EQ 4" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Parametric EQ 4 Ch B" number="2247" axeBlockId="Parametric EQ 4" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Parametric EQ 4 Ch C" number="2248" axeBlockId="Parametric EQ 4" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Parametric EQ 4 Ch D" number="2249" axeBlockId="Parametric EQ 4" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Phaser 1 Ch A" number="2250" axeBlockId="Phaser 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Phaser 1 Ch B" number="2251" axeBlockId="Phaser 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Phaser 1 Ch C" number="2252" axeBlockId="Phaser 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Phaser 1 Ch D" number="2253" axeBlockId="Phaser 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Phaser 2 Ch A" number="2254" axeBlockId="Phaser 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Phaser 2 Ch B" number="2255" axeBlockId="Phaser 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Phaser 2 Ch C" number="2256" axeBlockId="Phaser 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Phaser 2 Ch D" number="2257" axeBlockId="Phaser 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Pitch Shift 1 Ch A" number="2258" axeBlockId="Pitch 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Pitch Shift 1 Ch B" number="2259" axeBlockId="Pitch 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Pitch Shift 1 Ch C" number="2260" axeBlockId="Pitch 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Pitch Shift 1 Ch D" number="2261" axeBlockId="Pitch 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Pitch Shift 2 Ch A" number="2262" axeBlockId="Pitch 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Pitch Shift 2 Ch B" number="2263" axeBlockId="Pitch 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Pitch Shift 2 Ch C" number="2264" axeBlockId="Pitch 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Pitch Shift 2 Ch D" number="2265" axeBlockId="Pitch 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Plex Delay 1 Ch A" number="2266" axeBlockId="Plex Delay 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Plex Delay 1 Ch B" number="2267" axeBlockId="Plex Delay 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Plex Delay 1 Ch C" number="2268" axeBlockId="Plex Delay 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Plex Delay 1 Ch D" number="2269" axeBlockId="Plex Delay 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Plex Delay 2 Ch A" number="2270" axeBlockId="Plex Delay 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Plex Delay 2 Ch B" number="2271" axeBlockId="Plex Delay 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Plex Delay 2 Ch C" number="2272" axeBlockId="Plex Delay 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Plex Delay 2 Ch D" number="2273" axeBlockId="Plex Delay 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Resonator 1 Ch A" number="2274" axeBlockId="Resonator 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Resonator 1 Ch B" number="2275" axeBlockId="Resonator 1" axeBlockChannel="B" device="Axe-Fx" />
+
+		<patch name="Axe Resonator 2 Ch A" number="2276" axeBlockId="Resonator 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Resonator 2 Ch B" number="2277" axeBlockId="Resonator 2" axeBlockChannel="B" device="Axe-Fx" />
+
+		<patch name="Axe Reverb 1 Ch A" number="2278" axeBlockId="Reverb 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Reverb 1 Ch B" number="2279" axeBlockId="Reverb 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Reverb 1 Ch C" number="2280" axeBlockId="Reverb 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Reverb 1 Ch D" number="2281" axeBlockId="Reverb 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Reverb 2 Ch A" number="2282" axeBlockId="Reverb 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Reverb 2 Ch B" number="2283" axeBlockId="Reverb 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Reverb 2 Ch C" number="2284" axeBlockId="Reverb 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Reverb 2 Ch D" number="2285" axeBlockId="Reverb 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Ring Mod 1 Ch A" number="2286" axeBlockId="Ring Mod 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Ring Mod 1 Ch B" number="2287" axeBlockId="Ring Mod 1" axeBlockChannel="B" device="Axe-Fx" />
+
+		<patch name="Axe Rotary 1 Ch A" number="2288" axeBlockId="Rotary 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Rotary 1 Ch B" number="2289" axeBlockId="Rotary 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Rotary 1 Ch C" number="2290" axeBlockId="Rotary 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Rotary 1 Ch D" number="2291" axeBlockId="Rotary 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Rotary 2 Ch A" number="2292" axeBlockId="Rotary 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Rotary 2 Ch B" number="2293" axeBlockId="Rotary 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Rotary 2 Ch C" number="2294" axeBlockId="Rotary 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Rotary 2 Ch D" number="2295" axeBlockId="Rotary 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Synth 1 Ch A" number="2296" axeBlockId="Synth 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Synth 1 Ch B" number="2297" axeBlockId="Synth 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Synth 1 Ch C" number="2298" axeBlockId="Synth 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Synth 1 Ch D" number="2299" axeBlockId="Synth 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Synth 2 Ch A" number="2300" axeBlockId="Synth 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Synth 2 Ch B" number="2301" axeBlockId="Synth 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Synth 2 Ch C" number="2302" axeBlockId="Synth 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Synth 2 Ch D" number="2303" axeBlockId="Synth 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Ten-tap Delay 1 Ch A" number="2304" axeBlockId="Ten-tap Delay 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Ten-tap Delay 1 Ch B" number="2305" axeBlockId="Ten-tap Delay 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Ten-tap Delay 1 Ch C" number="2306" axeBlockId="Ten-tap Delay 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Ten-tap Delay 1 Ch D" number="2307" axeBlockId="Ten-tap Delay 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Ten-tap Delay 2 Ch A" number="2308" axeBlockId="Ten-tap Delay 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Ten-tap Delay 2 Ch B" number="2309" axeBlockId="Ten-tap Delay 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Ten-tap Delay 2 Ch C" number="2310" axeBlockId="Ten-tap Delay 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Ten-tap Delay 2 Ch D" number="2311" axeBlockId="Ten-tap Delay 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Tremolo 1 Ch A" number="2312" axeBlockId="Tremolo 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Tremolo 1 Ch B" number="2313" axeBlockId="Tremolo 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Tremolo 1 Ch C" number="2314" axeBlockId="Tremolo 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Tremolo 1 Ch D" number="2315" axeBlockId="Tremolo 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Tremolo 2 Ch A" number="2316" axeBlockId="Tremolo 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Tremolo 2 Ch B" number="2317" axeBlockId="Tremolo 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Tremolo 2 Ch C" number="2318" axeBlockId="Tremolo 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Tremolo 2 Ch D" number="2319" axeBlockId="Tremolo 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Volume/Pan 1 Ch A" number="2320" axeBlockId="Volume 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Volume/Pan 1 Ch B" number="2321" axeBlockId="Volume 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Volume/Pan 1 Ch C" number="2322" axeBlockId="Volume 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Volume/Pan 1 Ch D" number="2323" axeBlockId="Volume 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Volume/Pan 2 Ch A" number="2324" axeBlockId="Volume 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Volume/Pan 2 Ch B" number="2325" axeBlockId="Volume 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Volume/Pan 2 Ch C" number="2326" axeBlockId="Volume 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Volume/Pan 2 Ch D" number="2327" axeBlockId="Volume 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Volume/Pan 3 Ch A" number="2328" axeBlockId="Volume 3" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Volume/Pan 3 Ch B" number="2329" axeBlockId="Volume 3" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Volume/Pan 3 Ch C" number="2330" axeBlockId="Volume 3" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Volume/Pan 3 Ch D" number="2331" axeBlockId="Volume 3" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Volume/Pan 4 Ch A" number="2332" axeBlockId="Volume 4" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Volume/Pan 4 Ch B" number="2333" axeBlockId="Volume 4" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Volume/Pan 4 Ch C" number="2334" axeBlockId="Volume 4" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Volume/Pan 4 Ch D" number="2335" axeBlockId="Volume 4" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Wah-wah 1 Ch A" number="2336" axeBlockId="Wah 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Wah-wah 1 Ch B" number="2337" axeBlockId="Wah 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Wah-wah 1 Ch C" number="2338" axeBlockId="Wah 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Wah-wah 1 Ch D" number="2339" axeBlockId="Wah 1" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch name="Axe Wah-wah 2 Ch A" number="2340" axeBlockId="Wah 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Wah-wah 2 Ch B" number="2341" axeBlockId="Wah 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Wah-wah 2 Ch C" number="2342" axeBlockId="Wah 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Wah-wah 2 Ch D" number="2343" axeBlockId="Wah 2" axeBlockChannel="D" device="Axe-Fx" />
+
+		<patch type="patchListSequence" name="Wah-wah 1 A/B" number="2350" gaplessRestart="1">
+			<patchListItem>2336</patchListItem>
+			<patchListItem>2337</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Wah-wah 2 A/B" number="2351" gaplessRestart="1">
+			<patchListItem>2340</patchListItem>
+			<patchListItem>2341</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Tremolo 1 A/B" number="2352" gaplessRestart="1">
+			<patchListItem>2312</patchListItem>
+			<patchListItem>2313</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Amp 1 A/B" number="2353" gaplessRestart="1">
+			<patchListItem>2000</patchListItem>
+			<patchListItem>2001</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Amp 2 A/B" number="2354" gaplessRestart="1">
+			<patchListItem>2004</patchListItem>
+			<patchListItem>2005</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Chorus 1 A/B" number="2355" gaplessRestart="1">
+			<patchListItem>2016</patchListItem>
+			<patchListItem>2017</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Chorus 2 A/B" number="2356" gaplessRestart="1">
+			<patchListItem>2020</patchListItem>
+			<patchListItem>2021</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Compressor 1 A/B" number="2357" gaplessRestart="1">
+			<patchListItem>2024</patchListItem>
+			<patchListItem>2025</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Compressor 2 A/B" number="2358" gaplessRestart="1">
+			<patchListItem>2028</patchListItem>
+			<patchListItem>2029</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Delay 1 A/B" number="2359" gaplessRestart="1">
+			<patchListItem>2036</patchListItem>
+			<patchListItem>2037</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Delay 2 A/B" number="2360" gaplessRestart="1">
+			<patchListItem>2040</patchListItem>
+			<patchListItem>2041</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Delay 3 A/B" number="2361" gaplessRestart="1">
+			<patchListItem>2044</patchListItem>
+			<patchListItem>2045</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Delay 4 A/B" number="2362" gaplessRestart="1">
+			<patchListItem>2048</patchListItem>
+			<patchListItem>2049</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Drive 1 A/B" number="2363" gaplessRestart="1">
+			<patchListItem>2052</patchListItem>
+			<patchListItem>2053</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Drive 2 A/B" number="2364" gaplessRestart="1">
+			<patchListItem>2056</patchListItem>
+			<patchListItem>2057</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Drive 3 A/B" number="2365" gaplessRestart="1">
+			<patchListItem>2060</patchListItem>
+			<patchListItem>2061</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Drive 4 A/B" number="2366" gaplessRestart="1">
+			<patchListItem>2064</patchListItem>
+			<patchListItem>2065</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Enhancer 1 A/B" number="2367" gaplessRestart="1">
+			<patchListItem>2068</patchListItem>
+			<patchListItem>2069</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Filter 1 A/B" number="2368" gaplessRestart="1">
+			<patchListItem>2076</patchListItem>
+			<patchListItem>2077</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Flanger 1 A/B" number="2369" gaplessRestart="1">
+			<patchListItem>2092</patchListItem>
+			<patchListItem>2093</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Flanger 2 A/B" number="2370" gaplessRestart="1">
+			<patchListItem>2096</patchListItem>
+			<patchListItem>2097</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Megatap 1 A/B" number="2371" gaplessRestart="1">
+			<patchListItem>2168</patchListItem>
+			<patchListItem>2169</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Megatap 2 A/B" number="2372" gaplessRestart="1">
+			<patchListItem>2170</patchListItem>
+			<patchListItem>2171</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Multidelay 1 A/B" number="2373" gaplessRestart="1">
+			<patchListItem>2188</patchListItem>
+			<patchListItem>2189</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Multidelay 2 A/B" number="2374" gaplessRestart="1">
+			<patchListItem>2192</patchListItem>
+			<patchListItem>2193</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Phaser 1 A/B" number="2375" gaplessRestart="1">
+			<patchListItem>2250</patchListItem>
+			<patchListItem>2251</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Phaser 2 A/B" number="2376" gaplessRestart="1">
+			<patchListItem>2254</patchListItem>
+			<patchListItem>2255</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Pitch Shift 1 A/B" number="2377" gaplessRestart="1">
+			<patchListItem>2258</patchListItem>
+			<patchListItem>2259</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Pitch Shift 2 A/B" number="2378" gaplessRestart="1">
+			<patchListItem>2262</patchListItem>
+			<patchListItem>2263</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Plex Delay 1 A/B" number="2379" gaplessRestart="1">
+			<patchListItem>2266</patchListItem>
+			<patchListItem>2267</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Plex Delay 2 A/B" number="2380" gaplessRestart="1">
+			<patchListItem>2270</patchListItem>
+			<patchListItem>2271</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Reverb 1 A/B" number="2381" gaplessRestart="1">
+			<patchListItem>2278</patchListItem>
+			<patchListItem>2279</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Reverb 2 A/B" number="2382" gaplessRestart="1">
+			<patchListItem>2282</patchListItem>
+			<patchListItem>2283</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Rotary 1 A/B" number="2383" gaplessRestart="1">
+			<patchListItem>2288</patchListItem>
+			<patchListItem>2289</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Rotary 2 A/B" number="2384" gaplessRestart="1">
+			<patchListItem>2292</patchListItem>
+			<patchListItem>2293</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Synth 1 A/B" number="2385" gaplessRestart="1">
+			<patchListItem>2296</patchListItem>
+			<patchListItem>2297</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Synth 2 A/B" number="2386" gaplessRestart="1">
+			<patchListItem>2300</patchListItem>
+			<patchListItem>2301</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Ten-tap Delay 1 A/B" number="2387" gaplessRestart="1">
+			<patchListItem>2304</patchListItem>
+			<patchListItem>2305</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Ten-tap Delay 2 A/B" number="2388" gaplessRestart="1">
+			<patchListItem>2308</patchListItem>
+			<patchListItem>2309</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Tremolo 1 A/B" number="2389" gaplessRestart="1">
+			<patchListItem>2312</patchListItem>
+			<patchListItem>2313</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Tremolo 2 A/B" number="2390" gaplessRestart="1">
+			<patchListItem>2316</patchListItem>
+			<patchListItem>2317</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Volume/Pan 1 A/B" number="2391" gaplessRestart="1">
+			<patchListItem>2320</patchListItem>
+			<patchListItem>2321</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Volume/Pan 2 A/B" number="2392" gaplessRestart="1">
+			<patchListItem>2324</patchListItem>
+			<patchListItem>2325</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Wah-wah 1 A/B" number="2393" gaplessRestart="1">
+			<patchListItem>2336</patchListItem>
+			<patchListItem>2337</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Wah-wah 2 A/B" number="2394" gaplessRestart="1">
+			<patchListItem>2340</patchListItem>
+			<patchListItem>2341</patchListItem>
+		</patch>
+		<patch type="patchListSequence" name="Ring Mod A/B" number="2395" gaplessRestart="1">
+			<patchListItem>2286</patchListItem>
+			<patchListItem>2287</patchListItem>
+		</patch>
 
 		<patch name="Axe Ext 1 (toggle)"  number="830" device="Axe-Fx" />
 		<patch name="Axe Ext 2 (toggle)"  number="831" device="Axe-Fx" />
@@ -675,9 +1269,10 @@
 		<patch name="Decrement Scene" number="864" type="AxeMomentary" device="Axe-Fx" singleState="1" />
 		<patch name="Increment Scene" number="865" type="AxeMomentary" device="Axe-Fx" singleState="1" />
 
-		<patch type="patchListSequence" name="Scene List 2-3" number="866" gaplessRestart="1">
+		<patch type="patchListSequence" name="Scene List testing" number="866" gaplessRestart="1"> <!-- gaplessRestart="1" -->
 			<patchListItem>852</patchListItem>
 			<patchListItem>853</patchListItem>
+			<patchListItem>855</patchListItem>
 		</patch>
 	</patches>
 
@@ -705,13 +1300,6 @@
 		</bank>
 
 		<bank name="Directory" number="1">
-			<PatchMap switch="1" label="Goto Axe 51"  command="LoadBank" bankNumber="15" />
-			<PatchMap switch="2" label="Goto Axe 101" command="LoadBank" bankNumber="20" />
-			<PatchMap switch="3" label="Goto Axe 151" command="LoadBank" bankNumber="25" />
-			<PatchMap switch="4" label="Goto Axe 201" command="LoadBank" bankNumber="30" />
-			<PatchMap switch="5" label="Goto Axe 251" command="LoadBank" bankNumber="35" />
-			<PatchMap switch="6" label="Goto Axe 301" command="LoadBank" bankNumber="40" />
-			<PatchMap switch="7" label="Goto Axe 351" command="LoadBank" bankNumber="45" />
 			<!-- empty patch number in PatchMap will override the default, if any exists -->
 			<PatchMap switch="8"  patch="" />
 			<PatchMap switch="9"  label="Externals" command="LoadBank" bankNumber="121" />
@@ -771,420 +1359,6 @@
 			<PatchMap switch="8"  patch="38" />
 			<PatchMap switch="9"  patch="39" />
 			<PatchMap switch="10" patch="40" />
-		</bank>
-		<bank name="Axe-Fx 41" number="14">
-			<PatchMap switch="1"  patch="41" />
-			<PatchMap switch="2"  patch="42" />
-			<PatchMap switch="3"  patch="43" />
-			<PatchMap switch="4"  patch="44" />
-			<PatchMap switch="5"  patch="45" />
-			<PatchMap switch="6"  patch="46" />
-			<PatchMap switch="7"  patch="47" />
-			<PatchMap switch="8"  patch="48" />
-			<PatchMap switch="9"  patch="49" />
-			<PatchMap switch="10" patch="50" />
-		</bank>
-		<bank name="Axe-Fx 51" number="15">
-			<PatchMap switch="1"  patch="51" />
-			<PatchMap switch="2"  patch="52" />
-			<PatchMap switch="3"  patch="53" />
-			<PatchMap switch="4"  patch="54" />
-			<PatchMap switch="5"  patch="55" />
-			<PatchMap switch="6"  patch="56" />
-			<PatchMap switch="7"  patch="57" />
-			<PatchMap switch="8"  patch="58" />
-			<PatchMap switch="9"  patch="59" />
-			<PatchMap switch="10" patch="60" />
-		</bank>
-		<bank name="Axe-Fx 61" number="16">
-			<PatchMap switch="1"  patch="61" />
-			<PatchMap switch="2"  patch="62" />
-			<PatchMap switch="3"  patch="63" />
-			<PatchMap switch="4"  patch="64" />
-			<PatchMap switch="5"  patch="65" />
-			<PatchMap switch="6"  patch="66" />
-			<PatchMap switch="7"  patch="67" />
-			<PatchMap switch="8"  patch="68" />
-			<PatchMap switch="9"  patch="69" />
-			<PatchMap switch="10" patch="70" />
-		</bank>
-		<bank name="Axe-Fx 71" number="17">
-			<PatchMap switch="1"  patch="71" />
-			<PatchMap switch="2"  patch="72" />
-			<PatchMap switch="3"  patch="73" />
-			<PatchMap switch="4"  patch="74" />
-			<PatchMap switch="5"  patch="75" />
-			<PatchMap switch="6"  patch="76" />
-			<PatchMap switch="7"  patch="77" />
-			<PatchMap switch="8"  patch="78" />
-			<PatchMap switch="9"  patch="79" />
-			<PatchMap switch="10" patch="80" />
-		</bank>
-		<bank name="Axe-Fx 81" number="18">
-			<PatchMap switch="1"  patch="81" />
-			<PatchMap switch="2"  patch="82" />
-			<PatchMap switch="3"  patch="83" />
-			<PatchMap switch="4"  patch="84" />
-			<PatchMap switch="5"  patch="85" />
-			<PatchMap switch="6"  patch="86" />
-			<PatchMap switch="7"  patch="87" />
-			<PatchMap switch="8"  patch="88" />
-			<PatchMap switch="9"  patch="89" />
-			<PatchMap switch="10" patch="90" />
-		</bank>
-		<bank name="Axe-Fx 91" number="19">
-			<PatchMap switch="1"  patch="91" />
-			<PatchMap switch="2"  patch="92" />
-			<PatchMap switch="3"  patch="93" />
-			<PatchMap switch="4"  patch="94" />
-			<PatchMap switch="5"  patch="95" />
-			<PatchMap switch="6"  patch="96" />
-			<PatchMap switch="7"  patch="97" />
-			<PatchMap switch="8"  patch="98" />
-			<PatchMap switch="9"  patch="99" />
-			<PatchMap switch="10" patch="100" />
-		</bank>
-		<bank name="Axe-Fx 101" number="20">
-			<PatchMap switch="1"  patch="101" />
-			<PatchMap switch="2"  patch="102" />
-			<PatchMap switch="3"  patch="103" />
-			<PatchMap switch="4"  patch="104" />
-			<PatchMap switch="5"  patch="105" />
-			<PatchMap switch="6"  patch="106" />
-			<PatchMap switch="7"  patch="107" />
-			<PatchMap switch="8"  patch="108" />
-			<PatchMap switch="9"  patch="109" />
-			<PatchMap switch="10" patch="110" />
-		</bank>
-		<bank name="Axe-Fx 111" number="21">
-			<PatchMap switch="1"  patch="111" />
-			<PatchMap switch="2"  patch="112" />
-			<PatchMap switch="3"  patch="113" />
-			<PatchMap switch="4"  patch="114" />
-			<PatchMap switch="5"  patch="115" />
-			<PatchMap switch="6"  patch="116" />
-			<PatchMap switch="7"  patch="117" />
-			<PatchMap switch="8"  patch="118" />
-			<PatchMap switch="9"  patch="119" />
-			<PatchMap switch="10" patch="120" />
-		</bank>
-		<bank name="Axe-Fx 121" number="22">
-			<PatchMap switch="1"  patch="121" />
-			<PatchMap switch="2"  patch="122" />
-			<PatchMap switch="3"  patch="123" />
-			<PatchMap switch="4"  patch="124" />
-			<PatchMap switch="5"  patch="125" />
-			<PatchMap switch="6"  patch="126" />
-			<PatchMap switch="7"  patch="127" />
-			<PatchMap switch="8"  patch="128" />
-			<PatchMap switch="9"  patch="129" />
-			<PatchMap switch="10" patch="130" />
-		</bank>
-		<bank name="Axe-Fx 131" number="23">
-			<PatchMap switch="1"  patch="131" />
-			<PatchMap switch="2"  patch="132" />
-			<PatchMap switch="3"  patch="133" />
-			<PatchMap switch="4"  patch="134" />
-			<PatchMap switch="5"  patch="135" />
-			<PatchMap switch="6"  patch="136" />
-			<PatchMap switch="7"  patch="137" />
-			<PatchMap switch="8"  patch="138" />
-			<PatchMap switch="9"  patch="139" />
-			<PatchMap switch="10" patch="140" />
-		</bank>
-		<bank name="Axe-Fx 141" number="24">
-			<PatchMap switch="1"  patch="141" />
-			<PatchMap switch="2"  patch="142" />
-			<PatchMap switch="3"  patch="143" />
-			<PatchMap switch="4"  patch="144" />
-			<PatchMap switch="5"  patch="145" />
-			<PatchMap switch="6"  patch="146" />
-			<PatchMap switch="7"  patch="147" />
-			<PatchMap switch="8"  patch="148" />
-			<PatchMap switch="9"  patch="149" />
-			<PatchMap switch="10" patch="150" />
-		</bank>
-		<bank name="Axe-Fx 151" number="25">
-			<PatchMap switch="1"  patch="151" />
-			<PatchMap switch="2"  patch="152" />
-			<PatchMap switch="3"  patch="153" />
-			<PatchMap switch="4"  patch="154" />
-			<PatchMap switch="5"  patch="155" />
-			<PatchMap switch="6"  patch="156" />
-			<PatchMap switch="7"  patch="157" />
-			<PatchMap switch="8"  patch="158" />
-			<PatchMap switch="9"  patch="159" />
-			<PatchMap switch="10" patch="160" />
-		</bank>
-		<bank name="Axe-Fx 161" number="26">
-			<PatchMap switch="1"  patch="161" />
-			<PatchMap switch="2"  patch="162" />
-			<PatchMap switch="3"  patch="163" />
-			<PatchMap switch="4"  patch="164" />
-			<PatchMap switch="5"  patch="165" />
-			<PatchMap switch="6"  patch="166" />
-			<PatchMap switch="7"  patch="167" />
-			<PatchMap switch="8"  patch="168" />
-			<PatchMap switch="9"  patch="169" />
-			<PatchMap switch="10" patch="170" />
-		</bank>
-		<bank name="Axe-Fx 171" number="27">
-			<PatchMap switch="1"  patch="171" />
-			<PatchMap switch="2"  patch="172" />
-			<PatchMap switch="3"  patch="173" />
-			<PatchMap switch="4"  patch="174" />
-			<PatchMap switch="5"  patch="175" />
-			<PatchMap switch="6"  patch="176" />
-			<PatchMap switch="7"  patch="177" />
-			<PatchMap switch="8"  patch="178" />
-			<PatchMap switch="9"  patch="179" />
-			<PatchMap switch="10" patch="180" />
-		</bank>
-		<bank name="Axe-Fx 181" number="28">
-			<PatchMap switch="1"  patch="181" />
-			<PatchMap switch="2"  patch="182" />
-			<PatchMap switch="3"  patch="183" />
-			<PatchMap switch="4"  patch="184" />
-			<PatchMap switch="5"  patch="185" />
-			<PatchMap switch="6"  patch="186" />
-			<PatchMap switch="7"  patch="187" />
-			<PatchMap switch="8"  patch="188" />
-			<PatchMap switch="9"  patch="189" />
-			<PatchMap switch="10" patch="190" />
-		</bank>
-		<bank name="Axe-Fx 191" number="29">
-			<PatchMap switch="1"  patch="191" />
-			<PatchMap switch="2"  patch="192" />
-			<PatchMap switch="3"  patch="193" />
-			<PatchMap switch="4"  patch="194" />
-			<PatchMap switch="5"  patch="195" />
-			<PatchMap switch="6"  patch="196" />
-			<PatchMap switch="7"  patch="197" />
-			<PatchMap switch="8"  patch="198" />
-			<PatchMap switch="9"  patch="199" />
-			<PatchMap switch="10" patch="200" />
-		</bank>
-		<bank name="Axe-Fx 201" number="30">
-			<PatchMap switch="1"  patch="201" />
-			<PatchMap switch="2"  patch="202" />
-			<PatchMap switch="3"  patch="203" />
-			<PatchMap switch="4"  patch="204" />
-			<PatchMap switch="5"  patch="205" />
-			<PatchMap switch="6"  patch="206" />
-			<PatchMap switch="7"  patch="207" />
-			<PatchMap switch="8"  patch="208" />
-			<PatchMap switch="9"  patch="209" />
-			<PatchMap switch="10" patch="210" />
-		</bank>
-		<bank name="Axe-Fx 211" number="31">
-			<PatchMap switch="1"  patch="211" />
-			<PatchMap switch="2"  patch="212" />
-			<PatchMap switch="3"  patch="213" />
-			<PatchMap switch="4"  patch="214" />
-			<PatchMap switch="5"  patch="215" />
-			<PatchMap switch="6"  patch="216" />
-			<PatchMap switch="7"  patch="217" />
-			<PatchMap switch="8"  patch="218" />
-			<PatchMap switch="9"  patch="219" />
-			<PatchMap switch="10" patch="220" />
-		</bank>
-		<bank name="Axe-Fx 221" number="32">
-			<PatchMap switch="1"  patch="221" />
-			<PatchMap switch="2"  patch="222" />
-			<PatchMap switch="3"  patch="223" />
-			<PatchMap switch="4"  patch="224" />
-			<PatchMap switch="5"  patch="225" />
-			<PatchMap switch="6"  patch="226" />
-			<PatchMap switch="7"  patch="227" />
-			<PatchMap switch="8"  patch="228" />
-			<PatchMap switch="9"  patch="229" />
-			<PatchMap switch="10" patch="230" />
-		</bank>
-		<bank name="Axe-Fx 231" number="33">
-			<PatchMap switch="1"  patch="231" />
-			<PatchMap switch="2"  patch="232" />
-			<PatchMap switch="3"  patch="233" />
-			<PatchMap switch="4"  patch="234" />
-			<PatchMap switch="5"  patch="235" />
-			<PatchMap switch="6"  patch="236" />
-			<PatchMap switch="7"  patch="237" />
-			<PatchMap switch="8"  patch="238" />
-			<PatchMap switch="9"  patch="239" />
-			<PatchMap switch="10" patch="240" />
-		</bank>
-		<bank name="Axe-Fx 241" number="34">
-			<PatchMap switch="1"  patch="241" />
-			<PatchMap switch="2"  patch="242" />
-			<PatchMap switch="3"  patch="243" />
-			<PatchMap switch="4"  patch="244" />
-			<PatchMap switch="5"  patch="245" />
-			<PatchMap switch="6"  patch="246" />
-			<PatchMap switch="7"  patch="247" />
-			<PatchMap switch="8"  patch="248" />
-			<PatchMap switch="9"  patch="249" />
-			<PatchMap switch="10" patch="250" />
-		</bank>
-		<bank name="Axe-Fx 251" number="35">
-			<PatchMap switch="1"  patch="251" />
-			<PatchMap switch="2"  patch="252" />
-			<PatchMap switch="3"  patch="253" />
-			<PatchMap switch="4"  patch="254" />
-			<PatchMap switch="5"  patch="255" />
-			<PatchMap switch="6"  patch="256" />
-			<PatchMap switch="7"  patch="257" />
-			<PatchMap switch="8"  patch="258" />
-			<PatchMap switch="9"  patch="259" />
-			<PatchMap switch="10" patch="260" />
-		</bank>
-		<bank name="Axe-Fx 261" number="36">
-			<PatchMap switch="1"  patch="261" />
-			<PatchMap switch="2"  patch="262" />
-			<PatchMap switch="3"  patch="263" />
-			<PatchMap switch="4"  patch="264" />
-			<PatchMap switch="5"  patch="265" />
-			<PatchMap switch="6"  patch="266" />
-			<PatchMap switch="7"  patch="267" />
-			<PatchMap switch="8"  patch="268" />
-			<PatchMap switch="9"  patch="269" />
-			<PatchMap switch="10" patch="270" />
-		</bank>
-		<bank name="Axe-Fx 271" number="37">
-			<PatchMap switch="1"  patch="271" />
-			<PatchMap switch="2"  patch="272" />
-			<PatchMap switch="3"  patch="273" />
-			<PatchMap switch="4"  patch="274" />
-			<PatchMap switch="5"  patch="275" />
-			<PatchMap switch="6"  patch="276" />
-			<PatchMap switch="7"  patch="277" />
-			<PatchMap switch="8"  patch="278" />
-			<PatchMap switch="9"  patch="279" />
-			<PatchMap switch="10" patch="280" />
-		</bank>
-		<bank name="Axe-Fx 281" number="38">
-			<PatchMap switch="1"  patch="281" />
-			<PatchMap switch="2"  patch="282" />
-			<PatchMap switch="3"  patch="283" />
-			<PatchMap switch="4"  patch="284" />
-			<PatchMap switch="5"  patch="285" />
-			<PatchMap switch="6"  patch="286" />
-			<PatchMap switch="7"  patch="287" />
-			<PatchMap switch="8"  patch="288" />
-			<PatchMap switch="9"  patch="289" />
-			<PatchMap switch="10" patch="290" />
-		</bank>
-		<bank name="Axe-Fx 291" number="39">
-			<PatchMap switch="1"  patch="291" />
-			<PatchMap switch="2"  patch="292" />
-			<PatchMap switch="3"  patch="293" />
-			<PatchMap switch="4"  patch="294" />
-			<PatchMap switch="5"  patch="295" />
-			<PatchMap switch="6"  patch="296" />
-			<PatchMap switch="7"  patch="297" />
-			<PatchMap switch="8"  patch="298" />
-			<PatchMap switch="9"  patch="299" />
-			<PatchMap switch="10" patch="300" />
-		</bank>
-		<bank name="Axe-Fx 301" number="40">
-			<PatchMap switch="1"  patch="301" />
-			<PatchMap switch="2"  patch="302" />
-			<PatchMap switch="3"  patch="303" />
-			<PatchMap switch="4"  patch="304" />
-			<PatchMap switch="5"  patch="305" />
-			<PatchMap switch="6"  patch="306" />
-			<PatchMap switch="7"  patch="307" />
-			<PatchMap switch="8"  patch="308" />
-			<PatchMap switch="9"  patch="309" />
-			<PatchMap switch="10" patch="310" />
-		</bank>
-		<bank name="Axe-Fx 311" number="41">
-			<PatchMap switch="1"  patch="311" />
-			<PatchMap switch="2"  patch="312" />
-			<PatchMap switch="3"  patch="313" />
-			<PatchMap switch="4"  patch="314" />
-			<PatchMap switch="5"  patch="315" />
-			<PatchMap switch="6"  patch="316" />
-			<PatchMap switch="7"  patch="317" />
-			<PatchMap switch="8"  patch="318" />
-			<PatchMap switch="9"  patch="319" />
-			<PatchMap switch="10" patch="320" />
-		</bank>
-		<bank name="Axe-Fx 321" number="42">
-			<PatchMap switch="1"  patch="321" />
-			<PatchMap switch="2"  patch="322" />
-			<PatchMap switch="3"  patch="323" />
-			<PatchMap switch="4"  patch="324" />
-			<PatchMap switch="5"  patch="325" />
-			<PatchMap switch="6"  patch="326" />
-			<PatchMap switch="7"  patch="327" />
-			<PatchMap switch="8"  patch="328" />
-			<PatchMap switch="9"  patch="329" />
-			<PatchMap switch="10" patch="330" />
-		</bank>
-		<bank name="Axe-Fx 331" number="43">
-			<PatchMap switch="1"  patch="331" />
-			<PatchMap switch="2"  patch="332" />
-			<PatchMap switch="3"  patch="333" />
-			<PatchMap switch="4"  patch="334" />
-			<PatchMap switch="5"  patch="335" />
-			<PatchMap switch="6"  patch="336" />
-			<PatchMap switch="7"  patch="337" />
-			<PatchMap switch="8"  patch="338" />
-			<PatchMap switch="9"  patch="339" />
-			<PatchMap switch="10" patch="340" />
-		</bank>
-		<bank name="Axe-Fx 341" number="44">
-			<PatchMap switch="1"  patch="341" />
-			<PatchMap switch="2"  patch="342" />
-			<PatchMap switch="3"  patch="343" />
-			<PatchMap switch="4"  patch="344" />
-			<PatchMap switch="5"  patch="345" />
-			<PatchMap switch="6"  patch="346" />
-			<PatchMap switch="7"  patch="347" />
-			<PatchMap switch="8"  patch="348" />
-			<PatchMap switch="9"  patch="349" />
-			<PatchMap switch="10" patch="350" />
-		</bank>
-		<bank name="Axe-Fx 351" number="45">
-			<PatchMap switch="1"  patch="351" />
-			<PatchMap switch="2"  patch="352" />
-			<PatchMap switch="3"  patch="353" />
-			<PatchMap switch="4"  patch="354" />
-			<PatchMap switch="5"  patch="355" />
-			<PatchMap switch="6"  patch="356" />
-			<PatchMap switch="7"  patch="357" />
-			<PatchMap switch="8"  patch="358" />
-			<PatchMap switch="9"  patch="359" />
-			<PatchMap switch="10" patch="360" />
-		</bank>
-		<bank name="Axe-Fx 361" number="46">
-			<PatchMap switch="1"  patch="361" />
-			<PatchMap switch="2"  patch="362" />
-			<PatchMap switch="3"  patch="363" />
-			<PatchMap switch="4"  patch="364" />
-			<PatchMap switch="5"  patch="365" />
-			<PatchMap switch="6"  patch="366" />
-			<PatchMap switch="7"  patch="367" />
-			<PatchMap switch="8"  patch="368" />
-			<PatchMap switch="9"  patch="369" />
-			<PatchMap switch="10" patch="370" />
-		</bank>
-		<bank name="Axe-Fx 371" number="47">
-			<PatchMap switch="1"  patch="371" />
-			<PatchMap switch="2"  patch="372" />
-			<PatchMap switch="3"  patch="373" />
-			<PatchMap switch="4"  patch="374" />
-			<PatchMap switch="5"  patch="375" />
-			<PatchMap switch="6"  patch="376" />
-			<PatchMap switch="7"  patch="377" />
-			<PatchMap switch="8"  patch="378" />
-			<PatchMap switch="9"  patch="379" />
-			<PatchMap switch="10" patch="380" />
-		</bank>
-		<bank name="Axe-Fx 381" number="48">
-			<PatchMap switch="1"  patch="381" />
-			<PatchMap switch="2"  patch="382" />
-			<PatchMap switch="3"  patch="383" />
-			<PatchMap switch="4"  patch="384" />
 		</bank>
 
 		<bank name="Reveal 1" number="100">
@@ -1249,31 +1423,300 @@
 			<PatchMap switch="22" command="BankHistoryBackward" />
 			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
 		</bank>
-		<bank name="Reveal 4 X/Y 1" number="103">
-			<PatchMap switch="1" patch="801" />
-			<PatchMap switch="2" patch="803" />
-			<PatchMap switch="3" patch="805" />
-			<PatchMap switch="4" patch="807" />
-			<PatchMap switch="5" patch="809" />
-			<PatchMap switch="6" patch="811" />
-			<PatchMap switch="7" patch="813" />
-			<PatchMap switch="8" patch="815" />
-			<PatchMap switch="9" patch="817" />
-			<PatchMap switch="10" patch="819" />
+		<bank name="Reveal Channels 1" number="103">
+			<ExclusiveSwitchGroup>1 6 11</ExclusiveSwitchGroup>
+			<PatchMap switch="1" patch="2000" />
+			<ExclusiveSwitchGroup>2 7 12</ExclusiveSwitchGroup>
+			<PatchMap switch="2" patch="2004" />
+			<ExclusiveSwitchGroup>3 8 13</ExclusiveSwitchGroup>
+			<PatchMap switch="3" patch="2016" />
+			<ExclusiveSwitchGroup>4 9 14</ExclusiveSwitchGroup>
+			<PatchMap switch="4" patch="2020" />
+			<ExclusiveSwitchGroup>5 10 15</ExclusiveSwitchGroup>
+			<PatchMap switch="5" patch="2024" />
+			<PatchMap switch="6" patch="2001" />
+			<PatchMap switch="7" patch="2005" />
+			<PatchMap switch="8" patch="2017" />
+			<PatchMap switch="9" patch="2021" />
+			<PatchMap switch="10" patch="2025" />
+			<PatchMap switch="11" patch="2002" />
+			<PatchMap switch="12" patch="2006" />
+			<PatchMap switch="13" patch="2018" />
+			<PatchMap switch="14" patch="2022" />
+			<PatchMap switch="15" patch="2026" />
 			<PatchMap switch="22" command="BankHistoryBackward" />
 			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
 		</bank>
-		<bank name="Reveal 5 X/Y 2" number="104">
-			<PatchMap switch="1" patch="802" />
-			<PatchMap switch="2" patch="804" />
-			<PatchMap switch="3" patch="806" />
-			<PatchMap switch="4" patch="808" />
-			<PatchMap switch="5" patch="810" />
-			<PatchMap switch="6" patch="812" />
-			<PatchMap switch="7" patch="814" />
-			<PatchMap switch="8" patch="816" />
-			<PatchMap switch="9" patch="818" />
-			<PatchMap switch="10" patch="820" />
+		<bank name="Reveal Channels 2" number="104">
+			<ExclusiveSwitchGroup>1 6 11</ExclusiveSwitchGroup>
+			<PatchMap switch="1" patch="2036" />
+			<ExclusiveSwitchGroup>2 7 12</ExclusiveSwitchGroup>
+			<PatchMap switch="2" patch="2040" />
+			<ExclusiveSwitchGroup>3 8 13</ExclusiveSwitchGroup>
+			<PatchMap switch="3" patch="2044" />
+			<ExclusiveSwitchGroup>4 9 14</ExclusiveSwitchGroup>
+			<PatchMap switch="4" patch="2048" />
+			<ExclusiveSwitchGroup>5 10 15</ExclusiveSwitchGroup>
+			<PatchMap switch="5" patch="2100" />
+			<PatchMap switch="6" patch="2037" />
+			<PatchMap switch="7" patch="2041" />
+			<PatchMap switch="8" patch="2045" />
+			<PatchMap switch="9" patch="2049" />
+			<PatchMap switch="10" patch="2101" />
+			<PatchMap switch="11" patch="2038" />
+			<PatchMap switch="12" patch="2042" />
+			<PatchMap switch="13" patch="2046" />
+			<PatchMap switch="14" patch="2050" />
+			<PatchMap switch="15" patch="2102" />
+			<PatchMap switch="22" command="BankHistoryBackward" />
+			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+		</bank>
+		<bank name="Reveal Channels 3" number="105">
+			<ExclusiveSwitchGroup>1 6 11</ExclusiveSwitchGroup>
+			<PatchMap switch="1" patch="2052" />
+			<ExclusiveSwitchGroup>2 7 12</ExclusiveSwitchGroup>
+			<PatchMap switch="2" patch="2056" />
+			<ExclusiveSwitchGroup>3 8 13</ExclusiveSwitchGroup>
+			<PatchMap switch="3" patch="2060" />
+			<ExclusiveSwitchGroup>4 9 14</ExclusiveSwitchGroup>
+			<PatchMap switch="4" patch="2064" />
+			<ExclusiveSwitchGroup>5 10 15</ExclusiveSwitchGroup>
+			<PatchMap switch="5" patch="2296" />
+			<PatchMap switch="6" patch="2053" />
+			<PatchMap switch="7" patch="2057" />
+			<PatchMap switch="8" patch="2061" />
+			<PatchMap switch="9" patch="2065" />
+			<PatchMap switch="10" patch="2297" />
+			<PatchMap switch="11" patch="2054" />
+			<PatchMap switch="12" patch="2058" />
+			<PatchMap switch="13" patch="2062" />
+			<PatchMap switch="14" patch="2066" />
+			<PatchMap switch="15" patch="2298" />
+			<PatchMap switch="22" command="BankHistoryBackward" />
+			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+		</bank>
+		<bank name="Reveal Channels 4" number="106">
+			<ExclusiveSwitchGroup>1 6 11</ExclusiveSwitchGroup>
+			<PatchMap switch="1" patch="2092" />
+			<ExclusiveSwitchGroup>2 7 12</ExclusiveSwitchGroup>
+			<PatchMap switch="2" patch="2096" />
+			<ExclusiveSwitchGroup>3 8 13</ExclusiveSwitchGroup>
+			<PatchMap switch="3" patch="2124" />
+			<ExclusiveSwitchGroup>4 9 14</ExclusiveSwitchGroup>
+			<PatchMap switch="4" patch="2233" />
+			<ExclusiveSwitchGroup>5 10 15</ExclusiveSwitchGroup>
+			<PatchMap switch="5" patch="2237" />
+			<PatchMap switch="6" patch="2093" />
+			<PatchMap switch="7" patch="2097" />
+			<PatchMap switch="8" patch="2125" />
+			<PatchMap switch="9" patch="2234" />
+			<PatchMap switch="10" patch="2238" />
+			<PatchMap switch="11" patch="2094" />
+			<PatchMap switch="12" patch="2098" />
+			<PatchMap switch="13" patch="2126" />
+			<PatchMap switch="14" patch="2235" />
+			<PatchMap switch="15" patch="2239" />
+			<PatchMap switch="22" command="BankHistoryBackward" />
+			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+		</bank>
+		<bank name="Reveal Channels 5" number="107">
+			<ExclusiveSwitchGroup>1 6 11</ExclusiveSwitchGroup>
+			<PatchMap switch="1" patch="2172" />
+			<ExclusiveSwitchGroup>2 7 12</ExclusiveSwitchGroup>
+			<PatchMap switch="2" patch="2176" />
+			<ExclusiveSwitchGroup>3 8 13</ExclusiveSwitchGroup>
+			<PatchMap switch="3" patch="2168" />
+			<ExclusiveSwitchGroup>4 9 14</ExclusiveSwitchGroup>
+			<PatchMap switch="4" patch="2169" />
+			<ExclusiveSwitchGroup>5 10 15</ExclusiveSwitchGroup>
+			<PatchMap switch="5" patch="2196" />
+			<PatchMap switch="6" patch="2173" />
+			<PatchMap switch="7" patch="2177" />
+			<PatchMap switch="8" patch="2170" />
+			<PatchMap switch="9" patch="2171" />
+			<PatchMap switch="10" patch="2197" />
+			<PatchMap switch="11" patch="2174" />
+			<PatchMap switch="12" patch="2178" />
+			<PatchMap switch="13" patch="2286" />
+			<PatchMap switch="14" patch="2287" />
+			<PatchMap switch="15" patch="2198" />
+			<PatchMap switch="22" command="BankHistoryBackward" />
+			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+		</bank>
+		<bank name="Reveal Channels 6" number="108">
+			<ExclusiveSwitchGroup>1 6 11</ExclusiveSwitchGroup>
+			<PatchMap switch="1" patch="2188" />
+			<ExclusiveSwitchGroup>2 7 12</ExclusiveSwitchGroup>
+			<PatchMap switch="2" patch="2192" />
+			<ExclusiveSwitchGroup>3 8 13</ExclusiveSwitchGroup>
+			<PatchMap switch="3" patch="2250" />
+			<ExclusiveSwitchGroup>4 9 14</ExclusiveSwitchGroup>
+			<PatchMap switch="4" patch="2254" />
+			<ExclusiveSwitchGroup>5 10 15</ExclusiveSwitchGroup>
+			<PatchMap switch="5" patch="2258" />
+			<PatchMap switch="6" patch="2189" />
+			<PatchMap switch="7" patch="2193" />
+			<PatchMap switch="8" patch="2251" />
+			<PatchMap switch="9" patch="2255" />
+			<PatchMap switch="10" patch="2259" />
+			<PatchMap switch="11" patch="2190" />
+			<PatchMap switch="12" patch="2194" />
+			<PatchMap switch="13" patch="2252" />
+			<PatchMap switch="14" patch="2256" />
+			<PatchMap switch="15" patch="2260" />
+			<PatchMap switch="22" command="BankHistoryBackward" />
+			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+		</bank>
+		<bank name="Reveal Channels 7" number="109">
+			<ExclusiveSwitchGroup>1 6 11</ExclusiveSwitchGroup>
+			<PatchMap switch="1" patch="2262" />
+			<ExclusiveSwitchGroup>2 7 12</ExclusiveSwitchGroup>
+			<PatchMap switch="2" patch="2266" />
+			<ExclusiveSwitchGroup>3 8 13</ExclusiveSwitchGroup>
+			<PatchMap switch="3" patch="2270" />
+			<ExclusiveSwitchGroup>4 9 14</ExclusiveSwitchGroup>
+			<PatchMap switch="4" patch="2278" />
+			<ExclusiveSwitchGroup>5 10 15</ExclusiveSwitchGroup>
+			<PatchMap switch="5" patch="2282" />
+			<PatchMap switch="6" patch="2263" />
+			<PatchMap switch="7" patch="2267" />
+			<PatchMap switch="8" patch="2271" />
+			<PatchMap switch="9" patch="2279" />
+			<PatchMap switch="10" patch="2283" />
+			<PatchMap switch="11" patch="2264" />
+			<PatchMap switch="12" patch="2268" />
+			<PatchMap switch="13" patch="2272" />
+			<PatchMap switch="14" patch="2280" />
+			<PatchMap switch="15" patch="2284" />
+			<PatchMap switch="22" command="BankHistoryBackward" />
+			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+		</bank>
+		<bank name="Reveal Channels 8" number="110">
+			<ExclusiveSwitchGroup>1 6 11</ExclusiveSwitchGroup>
+			<PatchMap switch="1" patch="2288" />
+			<ExclusiveSwitchGroup>2 7 12</ExclusiveSwitchGroup>
+			<PatchMap switch="2" patch="2292" />
+			<ExclusiveSwitchGroup>3 8 13</ExclusiveSwitchGroup>
+			<PatchMap switch="3" patch="2300" />
+			<ExclusiveSwitchGroup>4 9 14</ExclusiveSwitchGroup>
+			<PatchMap switch="4" patch="2304" />
+			<ExclusiveSwitchGroup>5 10 15</ExclusiveSwitchGroup>
+			<PatchMap switch="5" patch="2308" />
+			<PatchMap switch="6" patch="2289" />
+			<PatchMap switch="7" patch="2293" />
+			<PatchMap switch="8" patch="2301" />
+			<PatchMap switch="9" patch="2305" />
+			<PatchMap switch="10" patch="2309" />
+			<PatchMap switch="11" patch="2290" />
+			<PatchMap switch="12" patch="2294" />
+			<PatchMap switch="13" patch="2302" />
+			<PatchMap switch="14" patch="2306" />
+			<PatchMap switch="15" patch="2310" />
+			<PatchMap switch="22" command="BankHistoryBackward" />
+			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+		</bank>
+		<bank name="Reveal Channels 9" number="111">
+			<ExclusiveSwitchGroup>1 6 11</ExclusiveSwitchGroup>
+			<PatchMap switch="1" patch="2312" />
+			<ExclusiveSwitchGroup>2 7 12</ExclusiveSwitchGroup>
+			<PatchMap switch="2" patch="2316" />
+			<ExclusiveSwitchGroup>3 8 13</ExclusiveSwitchGroup>
+			<PatchMap switch="3" patch="2336" />
+			<ExclusiveSwitchGroup>4 9 14</ExclusiveSwitchGroup>
+			<PatchMap switch="4" patch="2340" />
+			<ExclusiveSwitchGroup>5 10 15</ExclusiveSwitchGroup>
+			<PatchMap switch="5" patch="2350" />
+			<PatchMap switch="6" patch="2313" />
+			<PatchMap switch="7" patch="2317" />
+			<PatchMap switch="8" patch="2337" />
+			<PatchMap switch="9" patch="2341" />
+			<PatchMap switch="10" patch="2351" />
+			<PatchMap switch="11" patch="2314" />
+			<PatchMap switch="12" patch="2318" />
+			<PatchMap switch="13" patch="2338" />
+			<PatchMap switch="14" patch="2342" />
+			<PatchMap switch="15" patch="2352" />
+			<PatchMap switch="22" command="BankHistoryBackward" />
+			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+		</bank>
+		<bank name="Reveal Channels 10" number="112">
+			<ExclusiveSwitchGroup>1 6 11</ExclusiveSwitchGroup>
+			<PatchMap switch="1" patch="2320" />
+			<ExclusiveSwitchGroup>2 7 12</ExclusiveSwitchGroup>
+			<PatchMap switch="2" patch="2324" />
+			<ExclusiveSwitchGroup>3 8 13</ExclusiveSwitchGroup>
+			<PatchMap switch="3" patch="2328" />
+			<ExclusiveSwitchGroup>4 9 14</ExclusiveSwitchGroup>
+			<PatchMap switch="4" patch="2332" />
+			<ExclusiveSwitchGroup>5 10 15</ExclusiveSwitchGroup>
+			<PatchMap switch="5" patch="" />
+			<PatchMap switch="6" patch="2321" />
+			<PatchMap switch="7" patch="2325" />
+			<PatchMap switch="8" patch="2329" />
+			<PatchMap switch="9" patch="2333" />
+			<PatchMap switch="10" patch="" />
+			<PatchMap switch="11" patch="2322" />
+			<PatchMap switch="12" patch="2326" />
+			<PatchMap switch="13" patch="2330" />
+			<PatchMap switch="14" patch="2334" />
+			<PatchMap switch="15" patch="" />
+			<PatchMap switch="22" command="BankHistoryBackward" />
+			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+		</bank>
+		<bank name="Reveal A/B Channels 1" number="113">
+			<PatchMap switch="1" patch="2353" />
+			<PatchMap switch="2" patch="2354" />
+			<PatchMap switch="3" patch="2355" />
+			<PatchMap switch="4" patch="2356" />
+			<PatchMap switch="5" patch="2357" />
+			<PatchMap switch="6" patch="2358" />
+			<PatchMap switch="7" patch="2359" />
+			<PatchMap switch="8" patch="2360" />
+			<PatchMap switch="9" patch="2361" />
+			<PatchMap switch="10" patch="2362" />
+			<PatchMap switch="11" patch="2363" />
+			<PatchMap switch="12" patch="2364" />
+			<PatchMap switch="13" patch="2365" />
+			<PatchMap switch="14" patch="2366" />
+			<PatchMap switch="15" patch="2367" />
+			<PatchMap switch="22" command="BankHistoryBackward" />
+			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+		</bank>
+		<bank name="Reveal A/B Channels 2" number="114">
+			<PatchMap switch="1" patch="2368" />
+			<PatchMap switch="2" patch="2369" />
+			<PatchMap switch="3" patch="2370" />
+			<PatchMap switch="4" patch="2371" />
+			<PatchMap switch="5" patch="2372" />
+			<PatchMap switch="6" patch="2373" />
+			<PatchMap switch="7" patch="2374" />
+			<PatchMap switch="8" patch="2375" />
+			<PatchMap switch="9" patch="2376" />
+			<PatchMap switch="10" patch="2377" />
+			<PatchMap switch="11" patch="2378" />
+			<PatchMap switch="12" patch="2379" />
+			<PatchMap switch="13" patch="2380" />
+			<PatchMap switch="14" patch="2381" />
+			<PatchMap switch="15" patch="2382" />
+			<PatchMap switch="22" command="BankHistoryBackward" />
+			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+		</bank>
+		<bank name="Reveal A/B Channels 3" number="115">
+			<PatchMap switch="1" patch="2383" />
+			<PatchMap switch="2" patch="2384" />
+			<PatchMap switch="3" patch="2385" />
+			<PatchMap switch="4" patch="2386" />
+			<PatchMap switch="5" patch="2387" />
+			<PatchMap switch="6" patch="2388" />
+			<PatchMap switch="7" patch="2389" />
+			<PatchMap switch="8" patch="2390" />
+			<PatchMap switch="9" patch="2391" />
+			<PatchMap switch="10" patch="2392" />
+			<PatchMap switch="11" patch="2393" />
+			<PatchMap switch="12" patch="2394" />
+			<PatchMap switch="13" patch="2395" />
+			<PatchMap switch="14" patch="" />
+			<PatchMap switch="15" patch="" />
 			<PatchMap switch="22" command="BankHistoryBackward" />
 			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
 		</bank>
