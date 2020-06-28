@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2018 Sean Echevarria
+ * Copyright (C) 2007-2008,2018,2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -33,6 +33,12 @@
 
 int main(int argc, char **argv)
 {
+#if 0
+	extern void TestPedals();
+	TestPedals();
+	return 0;
+#endif
+
 #if defined(_WINDOWS)
 	::_set_se_translator(::trans_func);
 #endif // _WINDOWS
