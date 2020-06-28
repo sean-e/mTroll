@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2015,2018 Sean Echevarria
+ * Copyright (C) 2007-2015,2018,2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -33,6 +33,7 @@
 #include <QtEvents>
 #include <QTimer>
 #include <QDateTime>
+#include <QScrollBar>
 
 #include "ControlUi.h"
 #include "../Engine/ITrollApplication.h"
@@ -974,6 +975,77 @@ ControlUi::CreateSwitchTextDisplay(int id,
 	mSwitchTextDisplays[id] = curSwitchDisplay;
 }
 
+// https://doc.qt.io/qtforpython/overviews/stylesheet-examples.html#customizing-qscrollbar
+QString sHorizontalScrollStyle = "\
+	QScrollBar:horizontal { \
+		border: 1px #1a1a1a; \
+		background: #202020; \
+		height: 10px; \
+		margin: 0px 10px 0 10px; \
+	} \
+	QScrollBar::handle:horizontal { \
+		background: #505050; \
+		min-width: 10px; \
+	} \
+	QScrollBar::add-line:horizontal { \
+		border: 1px #1a1a1a; \
+		background: #3a3a3a; \
+		width: 10px; \
+		subcontrol-position: right; \
+		subcontrol-origin: margin; \
+	} \
+	QScrollBar::sub-line:horizontal { \
+		border: 1px #1a1a1a; \
+		background: #3a3a3a; \
+		width: 10px; \
+		subcontrol-position: left; \
+		subcontrol-origin: margin; \
+	} \
+	QScrollBar:left-arrow:horizontal, QScrollBar::right-arrow:horizontal { \
+		border: 1px #1a1a1a; \
+		width: 3px; \
+		height: 3px; \
+		background: #808080; \
+	} \
+	QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal { \
+		background: none; \
+	}";
+
+QString sVerticalScrollStyle = "\
+	QScrollBar:vertical { \
+		border: 1px #1a1a1a; \
+		background: #202020; \
+		width: 10px; \
+		margin: 10px 0 10px 0; \
+	} \
+	QScrollBar::handle:vertical { \
+		background: #505050; \
+		min-height: 10px; \
+	} \
+	QScrollBar::add-line:vertical { \
+		border: 1px #1a1a1a; \
+		background: #3a3a3a; \
+		height: 10px; \
+		subcontrol-position: bottom; \
+		subcontrol-origin: margin; \
+	} \
+	QScrollBar::sub-line:vertical { \
+		border: 1px #1a1a1a; \
+		background: #3a3a3a; \
+		height: 10px; \
+		subcontrol-position: top; \
+		subcontrol-origin: margin; \
+	} \
+	QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical { \
+		border: 1px #1a1a1a; \
+		width: 3px; \
+		height: 3px; \
+		background: #808080; \
+	} \
+	QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { \
+		background: none; \
+	}";
+
 void
 ControlUi::CreateMainDisplay(int top, 
 							 int left, 
@@ -1017,6 +1089,9 @@ ControlUi::CreateMainDisplay(int top,
 	pal.setColor(QPalette::Light, mFrameHighlightColor);
 	pal.setColor(QPalette::Dark, mFrameHighlightColor);
 	mMainDisplay->setPalette(pal);
+
+	mMainDisplay->horizontalScrollBar()->setStyleSheet(sHorizontalScrollStyle);
+	mMainDisplay->verticalScrollBar()->setStyleSheet(sVerticalScrollStyle);
 }
 
 void
@@ -1049,7 +1124,12 @@ ControlUi::CreateTraceDisplay(int top,
 	QPalette pal;
 	pal.setColor(QPalette::Light, mFrameHighlightColor);
 	pal.setColor(QPalette::Dark, mFrameHighlightColor);
+	pal.setColor(QPalette::Text, 0x00ff00);
+	pal.setColor(QPalette::Base, 0x1a1a1a);
 	mTraceDisplay->setPalette(pal);
+
+	mTraceDisplay->horizontalScrollBar()->setStyleSheet(sHorizontalScrollStyle);
+	mTraceDisplay->verticalScrollBar()->setStyleSheet(sVerticalScrollStyle);
 }
 
 void
