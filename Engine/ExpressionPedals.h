@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2014-2015,2018 Sean Echevarria
+ * Copyright (C) 2007-2010,2014-2015,2018,2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -160,6 +160,7 @@ public:
 	};
 
 	ExpressionControl() : 
+		mPedalNumber(1),
 		mEnabled(false), 
 		mSweepCurve(scLinear),
 		mMinAdcVal(0), 
@@ -170,7 +171,7 @@ public:
 		mMidiOut(nullptr)
 	{ }
 
-	void Init(const InitParams & params);
+	void Init(int pedal, const InitParams & params);
 	void InitMidiOut(IMidiOutPtr midiOut) { mMidiOut = midiOut; }
 
 	void Calibrate(const PedalCalibration & calibrationSetting, MidiControlEngine * eng, ITraceDisplay * traceDisp);
@@ -179,6 +180,7 @@ public:
 
 private:
 	IMidiOutPtr			mMidiOut;
+	int					mPedalNumber;
 	bool				mEnabled;
 	bool				mInverted;
 	bool				mIsDoubleByte;
@@ -210,12 +212,13 @@ class ExpressionPedal
 public:
 	ExpressionPedal() { }
 
-	void Init(int idx, 
+	void Init(int pedal,
+			  int idx, 
 			  const ExpressionControl::InitParams & params)
 	{
 		_ASSERTE(idx < ccsPerPedals);
 		if (idx < ccsPerPedals)
-			mPedalControlData[idx].Init(params);
+			mPedalControlData[idx].Init(pedal, params);
 	}
 
 	void InitMidiOut(int idx, IMidiOutPtr midiOut) 
@@ -298,7 +301,7 @@ public:
 		_ASSERTE(pedal < PedalCount);
 		if (pedal < PedalCount)
 		{
-			mPedals[pedal].Init(idx, params);
+			mPedals[pedal].Init(pedal + 1, idx, params);
 			mPedalEnables[pedal] = true;
 			mHasAnyNondefault = true;
 		}

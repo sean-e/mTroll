@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2011,2014-2015,2018 Sean Echevarria
+ * Copyright (C) 2007-2011,2014-2015,2018,2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -35,7 +35,6 @@
 
 //#define PEDAL_TEST
 
-
 bool
 PedalToggle::Activate()
 {
@@ -61,9 +60,10 @@ PedalToggle::Deactivate()
 }
 
 void
-ExpressionControl::Init(const InitParams & params)
+ExpressionControl::Init(int pedal, const InitParams & params)
 {
 	mEnabled = true;
+	mPedalNumber = pedal;
 	mInverted = params.mInvert;
 	mChannel = params.mChannel;
 	mControlNumber = params.mControlNumber;
@@ -189,6 +189,8 @@ ExpressionControl::Calibrate(const PedalCalibration & calibrationSetting,
 	_ASSERTE(mAdcValRange == mActiveAdcRangeEnd - mActiveAdcRangeStart);
 }
 
+bool gEnableStatusDetails = false;
+
 void
 ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay, 
 								  int newVal)
@@ -196,7 +198,6 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 	if (!mEnabled)
 		return;
 
-	_ASSERTE(mMidiOut);
 	int newCcVal;
 	bool showStatus = false;
 	bool doCcSend = true;
@@ -489,59 +490,154 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 	if (mainDisplay)
 	{
 		static bool sHadStatus = false;
-#ifdef PEDAL_TEST
+#ifdef PEDAL_TESTxx
 		showStatus = true;
 #endif
-		if (showStatus || sHadStatus)
+		if (showStatus || sHadStatus || doCcSend)
 		{
 			std::strstream displayMsg;
-			if (bottomDeactivated)
-				displayMsg << "bottom toggle deactivated" << std::endl;
-			else if (bottomActivated)
-				displayMsg << "bottom toggle activated" << std::endl;
-
-			if (topDeactivated)
-				displayMsg << "top toggle deactivated" << std::endl;
-			else if (topActivated)
-				displayMsg << "top toggle activated" << std::endl;
-
-			if (doCcSend)
+			if (gEnableStatusDetails)
 			{
-				if (newCcVal == mMinCcVal)
-					displayMsg << "........";
-				else if (newCcVal == mMaxCcVal)
-					displayMsg << "||||||||";
+				if (bottomDeactivated)
+					displayMsg << "bottom toggle deactivated" << std::endl;
+				else if (bottomActivated)
+					displayMsg << "bottom toggle activated" << std::endl;
+
+				if (topDeactivated)
+					displayMsg << "top toggle deactivated" << std::endl;
+				else if (topActivated)
+					displayMsg << "top toggle activated" << std::endl;
+
+				if (doCcSend)
+				{
+					if (newCcVal == mMinCcVal)
+						displayMsg << "........  ";
+					else if (newCcVal == mMaxCcVal)
+						displayMsg << "||||||||  ";
+					else
+						displayMsg << "          ";
+				}
+
+				if (bottomDeadzone)
+					displayMsg << "pedal bottom deadzone" << std::endl;
+				else if (topDeadzone)
+					displayMsg << "pedal top deadzone" << std::endl;
 			}
-			if (bottomDeadzone || topDeadzone)
-				displayMsg << "pedal deadzone" << std::endl;
+			else
+			{
+				if (doCcSend)
+				{
+					displayMsg << "Expr " << mPedalNumber << ": ";
+					if (newCcVal != 0 && newCcVal == mMinCcVal)
+						displayMsg << "n";
+					else if (newCcVal != 127 && newCcVal == mMaxCcVal)
+						displayMsg << "|||||||||||||||||||X  (" << (int)mMidiData[2] << ")";
+					else if (newCcVal >= 0)
+					{
+						if (newCcVal == 0)
+							displayMsg << "0";
+						else if (newCcVal == 1)
+							displayMsg << "1";
+						else if (newCcVal == 2)
+							displayMsg << "2";
+						else if (newCcVal == 3)
+							displayMsg << "3";
+						else if (newCcVal == 4)
+							displayMsg << "4";
+						else if (newCcVal == 5)
+							displayMsg << "5";
+						else if (newCcVal <= 9)
+							displayMsg << "|";
+						else if (newCcVal <= 16)
+							displayMsg << "||";
+						else if (newCcVal <= 24)
+							displayMsg << "|||";
+						else if (newCcVal < 32)
+							displayMsg << "||||";
+						else if (newCcVal == 32)
+							displayMsg << "||||:";
+						else if (newCcVal <= 40)
+							displayMsg << "||||:|";
+						else if (newCcVal <= 48)
+							displayMsg << "||||:||";
+						else if (newCcVal <= 56)
+							displayMsg << "||||:|||";
+						else if (newCcVal < 64)
+							displayMsg << "||||:||||";
+						else if (newCcVal == 64)
+							displayMsg << "||||:||||:";
+						else if (newCcVal <= 72)
+							displayMsg << "||||:||||:|";
+						else if (newCcVal <= 80)
+							displayMsg << "||||:||||:||";
+						else if (newCcVal <= 88)
+							displayMsg << "||||:||||:|||";
+						else if (newCcVal < 96)
+							displayMsg << "||||:||||:||||";
+						else if (newCcVal == 96)
+							displayMsg << "||||:||||:||||:";
+						else if (newCcVal <= 104)
+							displayMsg << "||||:||||:||||:|";
+						else if (newCcVal <= 112)
+							displayMsg << "||||:||||:||||:||";
+						else if (newCcVal <= 120)
+							displayMsg << "||||:||||:||||:|||";
+						else if (newCcVal < 127)
+							displayMsg << "||||:||||:||||:||||";
+						else if (newCcVal == 127)
+							displayMsg << "|||||||||||||||||||X";
+						else
+							displayMsg << "XXXXXXXXXXXXXXXXXXXX";
+					}
+				}
+				else if (bottomDeadzone)
+				{
+					std::string tmp;
+					tmp.append(newVal > 50 ? 50 : newVal, '-');
+					displayMsg << "Expr " << mPedalNumber << ": " << tmp.c_str();
+				}
+				else if (topDeadzone)
+					displayMsg << "Expr " << mPedalNumber << ": ++++++";
+			}
 
 			sHadStatus = showStatus;
-			if (showStatus && doCcSend)
+			if (doCcSend || (gEnableStatusDetails && showStatus))
 			{
-				if (mIsDoubleByte)
+				if (gEnableStatusDetails)
 				{
-					displayMsg << "  [ch " << (int) mChannel << ", ctrl " << (int) mControlNumber << "] " << newVal << " -> " << (int) mMidiData[2] << std::endl;
-					displayMsg << "  [ch " << (int) mChannel << ", ctrl " << ((int) mControlNumber) + 31 << "] " << newVal << " -> " << (int) mMidiData[3] << std::endl << std::ends;
-				}
-				else
-				{
-#ifdef PEDAL_TEST
-					// to ease insert into spreadsheet
-					displayMsg << newVal << ", " << (int) mMidiData[2] << std::endl << std::ends;
+					if (mIsDoubleByte)
+					{
+						displayMsg << "[ch " << (int)mChannel << ", ctrl " << (int)mControlNumber << "] " << newVal << " -> " << (int)mMidiData[2];
+						displayMsg << "[ch " << (int)mChannel << ", ctrl " << ((int)mControlNumber) + 31 << "] " << newVal << " -> " << (int)mMidiData[3];
+					}
+					else
+					{
+#ifdef PEDAL_TESTxx
+						// to ease insert into spreadsheet
+						displayMsg << newVal << ", " << (int)mMidiData[2];
 #else
-					displayMsg << "  [ch " << (int) mChannel << ", ctrl " << (int) mControlNumber << "] " << newVal << " -> " << (int) mMidiData[2] << std::endl << std::ends;
+						displayMsg << "[ch " << (int)mChannel << ", ctrl " << (int)mControlNumber << "] " << newVal << " -> " << (int)mMidiData[2];
 #endif
+					}
 				}
 	
+				displayMsg << std::endl << std::ends;
 				mainDisplay->TransientTextOut(displayMsg.str());
 			}
 			else if (bottomDeadzone || topDeadzone)
 			{
-				displayMsg << std::ends;
+				displayMsg << std::endl << std::ends;
 				mainDisplay->TransientTextOut(displayMsg.str());
 			}
-			else
+			else if (gEnableStatusDetails || !displayMsg.pcount())
+			{
 				mainDisplay->ClearTransientText();
+			}
+			else
+			{ 
+				displayMsg << std::endl << std::ends;
+				mainDisplay->TransientTextOut(displayMsg.str());
+			}
 		}
 	}
 }
@@ -552,15 +648,16 @@ ExpressionControl::Refire(IMainDisplay * mainDisplay)
 	if (!mEnabled)
 		return;
 
-	_ASSERTE(mMidiOut);
-
 	// the refire command may not work as intended if a toggle is present
 	if (mIsDoubleByte)
 	{
 		if (0xff != mMidiData[2] && 0xff != mMidiData[3])
 		{
-			mMidiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], true);
-			mMidiOut->MidiOut(mMidiData[0], mMidiData[1] + 32, mMidiData[3], true);
+			if (mMidiOut)
+			{
+				mMidiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], true);
+				mMidiOut->MidiOut(mMidiData[0], mMidiData[1] + 32, mMidiData[3], true);
+			}
 		}
 	}
 	else
@@ -585,26 +682,32 @@ class TestDisplay : public IMainDisplay, public ITraceDisplay
 {
 public:
 	TestDisplay() { }
-	virtual void TextOut(const std::string & txt) { OutputDebugStringA(txt.c_str()); }
-	virtual void ClearDisplay() { }
-	virtual void Trace(const std::string & txt) { TextOut(txt); }
+	void TextOut(const std::string & txt) override { OutputDebugStringA(txt.c_str()); }
+	void ClearDisplay() override { }
+	void Trace(const std::string & txt) override { TextOut(txt); }
+	void AppendText(const std::string & text) override { TextOut(text); }
+	void TransientTextOut(const std::string & txt) override { TextOut(txt); }
+	void ClearTransientText() override { }
+	std::string GetCurrentText() override { return std::string{}; }
 };
 
 class TestMidiOut : public IMidiOut
 {
 public:
 	TestMidiOut() { }
-	virtual unsigned int GetMidiOutDeviceCount() const {return 0;}
-	virtual std::string GetMidiOutDeviceName(unsigned int deviceIdx) const {return std::string();}
-	virtual void SetActivityIndicator(ISwitchDisplay * activityIndicator, int activityIndicatorIdx) {}
-	virtual void EnableActivityIndicator(bool enable) {}
-	virtual bool OpenMidiOut(unsigned int deviceIdx) {return false;}
-	virtual bool IsMidiOutOpen() const {return false;}
-	virtual bool MidiOut(const Bytes & bytes) {return false;}
-	virtual void MidiOut(byte singleByte, bool useIndicator = true) {}
-	virtual void MidiOut(byte byte1, byte byte2, bool useIndicator = true) {}
-	virtual void MidiOut(byte byte1, byte byte2, byte byte3, bool useIndicator = true) {}
-	virtual void CloseMidiOut() {}
+	unsigned int GetMidiOutDeviceCount() const override {return 0;}
+	std::string GetMidiOutDeviceName(unsigned int deviceIdx) const override {return std::string();}
+	void SetActivityIndicator(ISwitchDisplay * activityIndicator, int activityIndicatorIdx) override {}
+	void EnableActivityIndicator(bool enable) override {}
+	bool OpenMidiOut(unsigned int deviceIdx) override {return false;}
+	bool IsMidiOutOpen() const override {return false;}
+	bool MidiOut(const Bytes & bytes) override {return false;}
+	void MidiOut(byte singleByte, bool useIndicator = true) override {}
+	void MidiOut(byte byte1, byte byte2, bool useIndicator = true) override {}
+	void MidiOut(byte byte1, byte byte2, byte byte3, bool useIndicator = true) override {}
+	void CloseMidiOut() override {}
+	bool SuspendMidiOut() override { return false; }
+	bool ResumeMidiOut() override { return false; }
 };
 
 void TestPedals()
@@ -613,22 +716,25 @@ void TestPedals()
 	TestMidiOut midi;
 
 	PedalCalibration calib;
-// 	calib.mMaxAdcVal = 900;
-// 	calib.mMinAdcVal = 200;
+	calib.mMaxAdcVal = 900;
+	calib.mMinAdcVal = 200;
+	calib.mBottomToggleZoneSize = 50;
+	calib.mTopToggleZoneSize = 50;
+	calib.mBottomToggleDeadzoneSize = 50;
+	calib.mTopToggleDeadzoneSize = 50;
 	ExpressionControl ctl;
 	ExpressionControl::InitParams params;
 	params.mCurve = ExpressionControl::scReversePseudoAudioLog;
 // 	params.mMinVal = 20;
 // 	params.mMaxVal = 100;
-	ctl.Init(params);
+	ctl.Init(1, params);
 	ctl.Calibrate(calib, NULL, &disp);
 
 	int idx;
 	for (idx = 0; idx <= PedalCalibration::MaxAdcVal; ++idx)
 		ctl.AdcValueChange(&disp, idx);
-
-// 	for (idx = PedalCalibration::MaxAdcVal + 1; idx > 0; )
-// 		ctl.AdcValueChange(&disp, --idx);
+	for (idx = PedalCalibration::MaxAdcVal + 1; idx > 0; )
+		ctl.AdcValueChange(&disp, --idx);
 }
 
 #endif
