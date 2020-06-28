@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2012-2013,2015,2018 Sean Echevarria
+ * Copyright (C) 2007-2010,2012-2013,2015,2018,2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -47,12 +47,8 @@
 
 
 MainTrollWindow::MainTrollWindow() : 
-	QMainWindow(),
-	mUi(nullptr),
-	mMidiSuspendAction(nullptr),
 	mStartTime(QDateTime::currentDateTime()),
-	mPauseTime(mStartTime),
-	mShutdownOnExit(soeExit)
+	mPauseTime(mStartTime)
 {
 	QCoreApplication::setOrganizationName(kOrganizationKey);
 	QCoreApplication::setOrganizationDomain(kOrganizationDomain);
@@ -65,8 +61,8 @@ MainTrollWindow::MainTrollWindow() :
 	// http://qt-project.org/doc/qt-5.0/qtwidgets/stylesheet-examples.html#customizing-qmenubar
 	QString menuBarStyle(" \
 		QMenuBar { \
-			background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, \
-											   stop:0 lightgray, stop:1 darkgray); \
+			background-color: #1a1a1a; \
+			color: white; \
 		} \
  \
 		QMenuBar::item { \
@@ -76,11 +72,11 @@ MainTrollWindow::MainTrollWindow() :
 		} \
  \
 		QMenuBar::item:selected { /* when selected using mouse or keyboard */ \
-			background: #a8a8a8; \
+			background: #505050; \
 		} \
  \
 		QMenuBar::item:pressed { \
-			background: #888888; \
+			background: #505050; \
 		} \
 	");
 
@@ -90,17 +86,20 @@ MainTrollWindow::MainTrollWindow() :
 #endif
 
 	QString touchMenuStyle(" \
+		QMenu { \
+			background: #1a1a1a; \
+		} \
+\
 		QMenu::item { \
-		    padding: 15px; \
-			background: white; \
-			foreground: black; \
-			font: bold 14px; \
+		    padding: 11px; \
+			background: #1a1a1a; \
+			color: white; \
+			font: bold 10px; \
 			min-width: 13em; \
 		} \
 \
 		QMenu::item:selected { \
 			background: #505050; \
-			border: 1px solid black; \
 			color: white; \
 		} \
 \
@@ -126,18 +125,33 @@ MainTrollWindow::MainTrollWindow() :
 	fileMenu->addAction(tr("&Open..."), this, SLOT(OpenFile()), QKeySequence(tr("Ctrl+O")));
 	fileMenu->addAction(tr("&Refresh"), this, SLOT(Refresh()), QKeySequence(tr("F5")));
 	fileMenu->addAction(tr("Re&connect to monome device"), this, SLOT(Reconnect()), QKeySequence(tr("Ctrl+R")));
-	fileMenu->addAction(tr("&Toggle trace window visibility"), this, SLOT(ToggleTraceWindow()), QKeySequence(tr("Ctrl+T")));
-
-	mMidiSuspendAction = new QAction(tr("Suspend &MIDI connections"), this);
-	mMidiSuspendAction->setCheckable(true);
-	mMidiSuspendAction->setChecked(false);
-	connect(mMidiSuspendAction, SIGNAL(toggled(bool)), this, "1SuspendMidiToggle(bool)");
-	fileMenu->addAction(mMidiSuspendAction);
 
 	if (!hasTouchInput)
 		fileMenu->addSeparator();
 	fileMenu->addAction(tr("E&xit"), this, SLOT(close()));
 	// http://doc.qt.nokia.com/4.4/stylesheet-examples.html#customizing-qmenu
+
+	QMenu * settingsMenu = menuBar()->addMenu(tr("&Settings"));
+#if defined(Q_OS_WIN)
+	::UnregisterTouchWindow((HWND)settingsMenu->winId());
+#endif
+	if (hasTouchInput)
+		settingsMenu->setStyleSheet(touchMenuStyle);
+	settingsMenu->addAction(tr("&Toggle trace window visibility"), this, SLOT(ToggleTraceWindow()), QKeySequence(tr("Ctrl+T")));
+
+	mToggleExpressionPedalDetailStatus = new QAction(tr("&Expression pedal detailed status"), this);
+	mToggleExpressionPedalDetailStatus->setCheckable(true);
+	mToggleExpressionPedalDetailStatus->setChecked(false);
+	mToggleExpressionPedalDetailStatus->setShortcut(QKeySequence(tr("Ctrl+P")));
+	connect(mToggleExpressionPedalDetailStatus, SIGNAL(toggled(bool)), this, "1ToggleExpressionPedalDetails(bool)");
+	settingsMenu->addAction(mToggleExpressionPedalDetailStatus);
+
+	mMidiSuspendAction = new QAction(tr("Suspend &MIDI connections"), this);
+	mMidiSuspendAction->setCheckable(true);
+	mMidiSuspendAction->setChecked(false);
+	mMidiSuspendAction->setShortcut(QKeySequence(tr("Ctrl+M")));
+	connect(mMidiSuspendAction, SIGNAL(toggled(bool)), this, "1SuspendMidiToggle(bool)");
+	settingsMenu->addAction(mMidiSuspendAction);
 
 	QString slotName;
 	QMenu * adcMenu = menuBar()->addMenu(tr("&Pedal Overrides"));
@@ -452,4 +466,11 @@ MainTrollWindow::SuspendMidiToggle(bool checked)
 		if (mUi)
 			mUi->ResumeMidi();
 	}
+}
+
+void
+MainTrollWindow::ToggleExpressionPedalDetails(bool checked)
+{
+	extern bool gEnableStatusDetails;
+	gEnableStatusDetails = checked;
 }
