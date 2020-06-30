@@ -5,6 +5,8 @@ mTroll is the software portion of a hybrid hardware/software MIDI foot controlle
 [Original Project Homepage](http://www.creepingfog.com/mTroll/index.php)
 
 ## Software Feature Overview
+[![screenshot](docs/images/mtroll_small.png)](docs/images/mtroll.png)  
+[(click to enlarge)](docs/images/mtroll.png)  
 
 Patches
 - Unlimited patch count  
