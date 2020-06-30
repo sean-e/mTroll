@@ -58,7 +58,9 @@ Other
 
 ### application software
 [mTroll](http://www.creepingfog.com/mTroll/downloads/mTrollSetup.2018.05.06.exe) (build [2018.05.06](docs/changelog.md)) Win32 application installer.
+
 [Usage notes here](docs/docs.html).
+
 To use with a monome board, you must install the [FTDI D2XXX drivers](http://www.ftdichip.com/Drivers/D2XX.htm) (not necessary for operation without a controller).
 
 ### source code

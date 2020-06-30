@@ -5,7 +5,7 @@
 - Added application manifest for Windows 10.  
 - Renamed configuration `bank\patchmap` to `bank\switch` (old name still supported for backwards compatibility).  
 - Updated to Qt 5.10.1 resulting in ~50% reduction in size of installer.  
-Modernized some of the code.  
+- Modernized some of the code.  
 
 #### 2017.04.02  
 - Fix for inadvertent toggle patch state changes when processing exclusive group switches (if a patch is assigned to multiple switches in the group, or if a switch is pressed multiple times).  
