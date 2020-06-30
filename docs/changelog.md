@@ -1,5 +1,13 @@
 ### mTroll MIDI controller changelog / process milestones
 
+#### 2020.06.27
+- Add new meta patch to reset patch that changes state of patch without exec of deactivation (for reset of a `patchListSequence`).
+- Added new optional `gaplessRestart` attribute to `patchListSequence` for restart without deactivated state (use the new meta patch to reset the sequence).
+- Added Settings menu to main menubar.
+- Updated expression pedal status message display (added option to use old detailed status in Settings menu).
+- Updated styling of menus, menubar, and scrollbars.
+- Preliminary support for Axe-Fx III (completely untested, no hardware yet)
+
 #### 2018.05.06  
 - Changed expression pedal status message display.  
 - Added application manifest for Windows 10.  

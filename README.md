@@ -42,8 +42,8 @@ Expression Pedals
 - Support for [multiple sweep response curves](docs/docs.html#curves)  
 
 Configuration
-- Patch and bank settings are stored in plain text XML file ([example](docs/testdata.config.xml))  
-- UI is configured via an independent plain text XML file ([example](docs/testdata.ui.xml))  
+- Patch and bank settings are stored in plain text XML file ([example](data/testdata.config.xml))  
+- UI is configured via an independent plain text XML file ([example](data/testdata.ui.xml))  
 - Same data file can be used with different UI files for display on different resolutions or form factors  
 
 Other
@@ -57,7 +57,7 @@ Other
 ## Download
 
 ### application software
-[mTroll](http://www.creepingfog.com/mTroll/downloads/mTrollSetup.2018.05.06.exe) (build [2018.05.06](docs/changelog.md)) Win32 application installer.
+[mTroll](http://www.creepingfog.com/mTroll/downloads/mTrollSetup.2020.06.27.exe) (build [2020.06.27](docs/changelog.md)) Win32 application installer.
 
 [Usage notes here](docs/docs.html).
 
