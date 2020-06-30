@@ -89,7 +89,7 @@
 - Created installer which includes all dependencies and sample files.  
 - Moved samples files to .\config sub-directory.  
 - Created config file for Axe-Fx II.  
-- Added support for a new meta-patch: [ResetExclusiveGroup](docs.html#metaPatches).  
+- Added support for a new meta-patch: [ResetExclusiveGroup](docs.md#metaPatches).  
 - Buttons support long-press and momentary press when invoked via touch (previously touch caused immediate press and release events).  
 - Menus displayed in alternate style more suitable for fingers if touch input is detected.  
 - Moved to Qt 5.0.2 (unfortunately causing significant increase in size of dependencies).  
@@ -108,9 +108,9 @@
 
 #### 2012.07.21  
 - Added Axe-Fx II support.  
-- Created `[patchListSequence](docs.html#patches)` patch type that steps through a list of patches.  
-- Added [secondary function](docs.html#secondFunction) switch support accessed via long-press of switches (defined in a `PatchMap` of a `Bank`).  
-- Mode switch invokes `[Backward](docs.html#metaPatches)` metapatch on long-press.  
+- Created `[patchListSequence](docs.md#patches)` patch type that steps through a list of patches.  
+- Added [secondary function](docs.md#secondFunction) switch support accessed via long-press of switches (defined in a `PatchMap` of a `Bank`).  
+- Mode switch invokes `[Backward](docs.md#metaPatches)` metapatch on long-press.  
 - Updated LED illumination of mode, next and back switches.  
 
 #### 2011.10.15  
@@ -134,8 +134,8 @@
 - Status updates to main display by expression pedals are prepended to existing text rather than overwriting it.  
 - Expression pedals are bound only to the first patch if there are multiple patches assigned to the same switch.  
 - Patches can optionally define a default channel for all commands (that can be overridden on individual commands).  
-- Added a `[Sleep](docs.html#patchCommands)` patch command.  
-- [PatchMap](docs.html#patchmaps) accepts empty patch number in order to defeat a default mapping without actually overriding it.  
+- Added a `[Sleep](docs.md#patchCommands)` patch command.  
+- [PatchMap](docs.md#patchmaps) accepts empty patch number in order to defeat a default mapping without actually overriding it.  
 - Mappings in PatchMaps have new optional `override` and `sync` attributes.  
 - Added time display engine mode.  
 - Added interactive program change engine mode.  
@@ -143,18 +143,18 @@
 - Added support for direct access to any mTroll bank during mode select (reducing need for the `LoadBank` metapatch).  
 - Made the `recall`, `backward` and `forward` metapatches available during mode select.  
 - Reorganized default switches used in mode select.  
-- Created new `[LoadNextBank](docs.html#metaPatches)` and `[LoadPreviousBank](docs.html#metaPatches)` metapatches that load the next/previous bank (without confirmation, in contrast to the `Next` and `Prev` commands of Bank Navigation mode).  
+- Created new `[LoadNextBank](docs.md#metaPatches)` and `[LoadPreviousBank](docs.md#metaPatches)` metapatches that load the next/previous bank (without confirmation, in contrast to the `Next` and `Prev` commands of Bank Navigation mode).  
 - Added support for spaces in button labels.  
 - Made UI background and element frame colors customizable.  
 - Updated default colors.  
 - Fixed problem opening MIDI device during reload.  
 
 #### 2010.09.15  
-- Added support for expression pedal [response curves](docs.html#curves).  
+- Added support for expression pedal [response curves](docs.md#curves).  
 
 #### 2010.08.29  
-- Added support for expression pedal [virtual toggle footswitches](docs.html#virtualToggles) at toe and/or heel positions.  
-- Added interactive engine commands that are accessible from the hardware via [engine mode](docs.html#engineModes) select:  
+- Added support for expression pedal [virtual toggle footswitches](docs.md#virtualToggles) at toe and/or heel positions.  
+- Added interactive engine commands that are accessible from the hardware via [engine mode](docs.md#engineModes) select:  
 	- toggle display of trace window (previously only available in the GUI)  
 	- set ADC overrides (previously only available in the GUI)  
 	- invert LEDs (previously only available via the config data file)  
@@ -165,8 +165,8 @@
 #### 2010.01.03  
 - Many changes to XML data files:  
 	- Added support for multiple commands per patch group (instead of a single, long hex string per patch).  
-	- Added support for simpler non-binary commands for `[ProgramChange](docs.html#patchCommands)`, `[ControlChange](docs.html#patchCommands)`, `[NoteOn](docs.html#patchCommands)`, `[NoteOff](docs.html#patchCommands)` (which can be used instead of `[midiByteString](docs.html#patchCommands)`s).  
-	- Added support for new patch command: `[RefirePedal](docs.html#patchCommands)`.  
+	- Added support for simpler non-binary commands for `[ProgramChange](docs.md#patchCommands)`, `[ControlChange](docs.md#patchCommands)`, `[NoteOn](docs.md#patchCommands)`, `[NoteOff](docs.md#patchCommands)` (which can be used instead of `[midiByteString](docs.md#patchCommands)`s).  
+	- Added support for new patch command: `[RefirePedal](docs.md#patchCommands)`.  
 	- Added config data file validation messages.  
 	- Fixed crash loading malformed data files.  
 - Improved expression pedal jitter control.  
@@ -205,18 +205,18 @@
 - Started port from Windows-only WTL to cross-platform [Qt 4.4](http://trolltech.com/downloads/opensource/appdev/windows-cpp)
 
 #### 2008.05.08  
-- Added support for new meta-patches: [Backward](docs.html#metaPatches), [Forward](docs.html#metaPatches) and [Recall](docs.html#metaPatches)  
+- Added support for new meta-patches: [Backward](docs.md#metaPatches), [Forward](docs.md#metaPatches) and [Recall](docs.md#metaPatches)  
 
 #### 2008.02.11  
 - Automatically disable screensaver and system sleep/shutdown timers while application is running if monome is found at startup (previous settings restored at exit)
 
 #### 2007.12.23  
-- Added support for [exclusive switch groups](docs.html#exclusiveGroup) (for radio button functionality)  
-- Added support for a new meta-patch: [Load Bank](docs.html#metaPatches)  
+- Added support for [exclusive switch groups](docs.md#exclusiveGroup) (for radio button functionality)  
+- Added support for a new meta-patch: [Load Bank](docs.md#metaPatches)  
 - Added support for inverse LED display (specified in the `hardware` node of the .ui.xml file)
 
 #### 2007.11.17  
-- Added support for [instant access switches](docs.html#instantAccess)
+- Added support for [instant access switches](docs.md#instantAccess)
 
 #### 2007.11.03  
 - After biting the bullet and ordering a firmware programmer, it arrived this week; tweaked the adc filtering/smoothing. Happy now.
@@ -229,7 +229,7 @@
 - Added Raw ADC Value engine mode  
 
 #### 2007.09.16  
-- Added first meta-patch: [Reset patches in active bank](docs.html#metaPatches)
+- Added first meta-patch: [Reset patches in active bank](docs.md#metaPatches)
 
 #### 2007.09.08  
 - Started on this page
