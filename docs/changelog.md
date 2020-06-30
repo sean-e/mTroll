@@ -155,20 +155,20 @@
 #### 2010.08.29  
 - Added support for expression pedal [virtual toggle footswitches](docs.html#virtualToggles) at toe and/or heel positions.  
 - Added interactive engine commands that are accessible from the hardware via [engine mode](docs.html#engineModes) select:  
--- toggle display of trace window (previously only available in the GUI)  
--- set ADC overrides (previously only available in the GUI)  
--- invert LEDs (previously only available via the config data file)  
--- test LEDs (previously only occurred during hardware handshake)  
+	- toggle display of trace window (previously only available in the GUI)  
+	- set ADC overrides (previously only available in the GUI)  
+	- invert LEDs (previously only available via the config data file)  
+	- test LEDs (previously only occurred during hardware handshake)  
 - Fixed failure to load some elements that followed comments in XML files  
 - Minor update to expression pedal jitter control.  
 
 #### 2010.01.03  
 - Many changes to XML data files:  
--- Added support for multiple commands per patch group (instead of a single, long hex string per patch).  
--- Added support for simpler non-binary commands for `[ProgramChange](docs.html#patchCommands)`, `[ControlChange](docs.html#patchCommands)`, `[NoteOn](docs.html#patchCommands)`, `[NoteOff](docs.html#patchCommands)` (which can be used instead of `[midiByteString](docs.html#patchCommands)`s).  
--- Added support for new patch command: `[RefirePedal](docs.html#patchCommands)`.  
--- Added config data file validation messages.  
--- Fixed crash loading malformed data files.  
+	- Added support for multiple commands per patch group (instead of a single, long hex string per patch).  
+	- Added support for simpler non-binary commands for `[ProgramChange](docs.html#patchCommands)`, `[ControlChange](docs.html#patchCommands)`, `[NoteOn](docs.html#patchCommands)`, `[NoteOff](docs.html#patchCommands)` (which can be used instead of `[midiByteString](docs.html#patchCommands)`s).  
+	- Added support for new patch command: `[RefirePedal](docs.html#patchCommands)`.  
+	- Added config data file validation messages.  
+	- Fixed crash loading malformed data files.  
 - Improved expression pedal jitter control.  
 
 #### 2009.05.17  
@@ -251,12 +251,12 @@
 
 #### 2007.07.12  
 - Met Josh Fiden at [Voodoo Lab](http://www.voodoolab.com/) in Santa Rosa and scored a Ground Control Pro chassis - this was huge! Not being too handy with metal, without this the alternatives would have been:
---   plywood box
---   find and gut a used board
---   one of those plastic project enclosures
---   shoebox
---   give up
---   who knows...
+	-   plywood box
+	-   find and gut a used board
+	-   one of those plastic project enclosures
+	-   shoebox
+	-   give up
+	-   who knows...
 - Many thanks to Josh and Harmony at [Voodoo Lab](http://www.voodoolab.com/)!
 
 #### 2007.07.08  
