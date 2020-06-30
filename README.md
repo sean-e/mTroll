@@ -16,8 +16,8 @@ Patches
 - Sequence mode increments through a list of messages to send when a switch is pressed repeatedly (a toggle with more than 2 sets/states) ([Dr. Z](http://tech.groups.yahoo.com/group/eventidehelps/message/167) )  
 - patchListSequence mode increments through a list of other patches when a switch is pressed repeatedly  
 - Patch state is retained across bank loads  
-- [Meta-patch](docs/docs.html#metaPatches) for resetting all patches loaded in a bank  
-- [Meta-patch](docs/docs.html#metaPatches) for loading another bank  
+- [Meta-patch](docs/docs.md#metaPatches) for resetting all patches loaded in a bank  
+- [Meta-patch](docs/docs.md#metaPatches) for loading another bank  
 - [Native support](docs/axe.html) for [Axe-Fx processors](http://www.fractalaudio.com/products-fa-axefx.html) (when used with MIDI In)  
 
 Banks (Pages)
@@ -28,8 +28,8 @@ Banks (Pages)
 - A single patch can be used in multiple banks or on multiple switches in the same bank  
 - Multiple patches can be assigned to a single switch in any given bank (the first patch assigned to a switch in a bank owns the expression pedals, switch label and indicator)  
 - Banks can be configured with load and unload patch states (optionally activate or deactivate particular patches at bank load or unload)  
-- Support for default mappings (for [instant access switch](docs/docs.html#instantAccess) creation)  
-- Support for defining [exclusive switch groups](docs/docs.html#exclusiveGroup) per bank (for radio button functionality)  
+- Support for default mappings (for [instant access switch](docs/docs.md#instantAccess) creation)  
+- Support for defining [exclusive switch groups](docs/docs.md#exclusiveGroup) per bank (for radio button functionality)  
 
 Expression Pedals
 - Support for four expression pedals  
@@ -37,9 +37,9 @@ Expression Pedals
 - Supports minimum and maximum transmission values, value inversion and manual pedal calibration  
 - Each pedal can be configured for one or two controllers (per pedal, up to 2 globals and 2 per patch locals)  
 - Only one patch at a time has control of the pedals (in addition to the global control which can be disabled per patch)  
-- Support for [manual calibration](docs/docs.html#exprPedalCal)  
-- Support for [virtual toggle footswitches](docs/docs.html#virtualToggles) at toe and/or heel positions  
-- Support for [multiple sweep response curves](docs/docs.html#curves)  
+- Support for [manual calibration](docs/docs.md#exprPedalCal)  
+- Support for [virtual toggle footswitches](docs/docs.md#virtualToggles) at toe and/or heel positions  
+- Support for [multiple sweep response curves](docs/docs.md#curves)  
 
 Configuration
 - Patch and bank settings are stored in plain text XML file ([example](data/testdata.config.xml))  
@@ -59,12 +59,12 @@ Other
 ### application software
 [mTroll](http://www.creepingfog.com/mTroll/downloads/mTrollSetup.2020.06.27.exe) (build [2020.06.27](docs/changelog.md)) Win32 application installer.
 
-[Usage notes here](docs/docs.html).
+[Usage notes here](docs/docs.md).
 
 To use with a monome board, you must install the [FTDI D2XXX drivers](http://www.ftdichip.com/Drivers/D2XX.htm) (not necessary for operation without a controller).
 
 ### source code
-The hosted repository includes an altered version of the monome firmware. It is also [available as a standalone zip](http://www.creepingfog.com/mTroll/downloads/monome40hFirmware.zip) (updated 2007.11.04) (modified ADC port handling, see [Expression Pedal Calibration](docs/docs.html#exprPedalCal)). The [original work](https://github.com/monome/40h) is licensed under [GPL](http://www.opensource.org/licenses/gpl-license.php).
+The hosted repository includes an altered version of the monome firmware. It is also [available as a standalone zip](http://www.creepingfog.com/mTroll/downloads/monome40hFirmware.zip) (updated 2007.11.04) (modified ADC port handling, see [Expression Pedal Calibration](docs/docs.md#exprPedalCal)). The [original work](https://github.com/monome/40h) is licensed under [GPL](http://www.opensource.org/licenses/gpl-license.php).
 
 
 ## Developer Notes
