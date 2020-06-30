@@ -94,7 +94,7 @@ Source directory hierarchy:
 <dt>./Monome40h/qt</dt>
 <dd>monome interface implementation in Qt</dd>
 <dt>./setup</dt>
-<dd>project for building Win32 installer using [Inno Setup](https://jrsoftware.org/isinfo.php)</dd>
+<dd>project for building Win32 installer using Inno Setup (https://jrsoftware.org/isinfo.php)</dd>
 <dt>./tinyxml</dt>
-<dd>[TinyXML](http://tinyxml.sourceforge.net/) source</dd>
+<dd>TinyXML source (http://tinyxml.sourceforge.net/)</dd>
 </dl>
