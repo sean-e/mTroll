@@ -29,6 +29,8 @@
 #include <QApplication>
 #include <qcoreapplication.h>
 #include <QFileDialog>
+#include <QScrollArea>
+#include <QScrollBar>
 #include "AboutDlg.h"
 #include "ControlUi.h"
 #include "..\Engine\ScopeSet.h"
@@ -245,11 +247,32 @@ MainTrollWindow::Refresh()
 	if (mUi)
 		mUi->Unload();
 	mUi = new ControlUi(this, this);
-	setCentralWidget(mUi);	// Qt deletes the previous central widget
 
 	const std::string uiFile(mUiFilename.toUtf8());
 	const std::string cfgFile(mConfigFilename.toUtf8());
 	mUi->Load(uiFile, cfgFile, mAdcForceDisable);
+
+	if (mUi->HasAutoGrid())
+	{
+		// create a scroll area so that if defined controls exceed space of main 
+		// window, they remain accessible via scrollbars (though it doesn't work 
+		// without QGridLayout (?) )
+		QScrollArea *scrollArea = new QScrollArea;
+		extern QString sHorizontalScrollStyle;
+		extern QString sVerticalScrollStyle;
+		scrollArea->horizontalScrollBar()->setStyleSheet(sHorizontalScrollStyle);
+		scrollArea->verticalScrollBar()->setStyleSheet(sVerticalScrollStyle);
+		scrollArea->setFrameShape(QFrame::NoFrame);
+		scrollArea->setWidgetResizable(true);
+		scrollArea->setWidget(mUi);
+
+		QPalette pal;
+		pal.setColor(QPalette::Base, mUi->GetBackGroundColor());
+		scrollArea->setPalette(pal);
+		setCentralWidget(scrollArea);	// Qt deletes the previous central widget
+	}
+	else
+		setCentralWidget(mUi);	// Qt deletes the previous central widget
 
 	int width, height;
 	mUi->GetPreferredSize(width, height);

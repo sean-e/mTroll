@@ -88,6 +88,8 @@ public:
 			bool ResumeMidi();
 
 			void GetPreferredSize(int & width, int & height) const { width = mPreferredWidth; height = mPreferredHeight; }
+			DWORD GetBackGroundColor() const { return mBackgroundColor; }
+			bool HasAutoGrid() const { return !!mGrid; }
 
 public: // IMidiOutGenerator
 	virtual IMidiOutPtr	CreateMidiOut(unsigned int deviceIdx, int activityIndicatorIdx) override;
