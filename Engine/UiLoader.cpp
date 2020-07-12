@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010,2015,2018 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2015,2018,2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -45,6 +45,14 @@ UiLoader::UiLoader(IMidiControlUi * theUi,
 
 	if (pElem->ValueStr() != "MidiControlUiSettings")
 		return;
+
+	int autogrid = 0;
+	pElem->QueryIntAttribute("autogrid", &autogrid);
+	if (autogrid)
+	{
+		mUseAutoGrid = autogrid;
+		mUi->EnableAutoGrid();
+	}
 
 	TiXmlHandle hRoot(nullptr);
 	hRoot = TiXmlHandle(pElem);
@@ -111,7 +119,7 @@ UiLoader::LoadAssembyConfig(TiXmlElement * pElem)
 	pElem->QueryIntAttribute("vOffset", &vOffset);
 	pElem->QueryIntAttribute("hOffset", &hOffset);
 	boldFont = (fontWeight == "bold");
-	mUi->SetSwitchConfig(width, height, vOffset, hOffset, fontname, fontHeight, boldFont, (unsigned int) fgColor);
+	mUi->SetSwitchConfig(width, height, vOffset, hOffset, fontname, fontHeight, boldFont, (unsigned int)fgColor);
 
 	pElem = hRoot.FirstChild("switchTextDisplay").Element();
 	if (!pElem)
@@ -227,7 +235,7 @@ UiLoader::LoadSwitchAssembly(TiXmlElement * pElem)
 	TiXmlHandle hRoot(nullptr);
 	hRoot = TiXmlHandle(pElem);
 
-	int vOffset, hOffset;
+	int vOffset = 0, hOffset = 0;
 	int tmp = -1;
 	int idNumber = -1;
 	int top = -1;
@@ -235,14 +243,51 @@ UiLoader::LoadSwitchAssembly(TiXmlElement * pElem)
 	int width = 0;
 	int height = 0;
 
-	vOffset = hOffset = 0;
 	pElem->QueryIntAttribute("number", &idNumber);
+	if (-1 == idNumber)
+		return;
+
+	if (mUseAutoGrid)
+	{
+		int gridRow = 0;
+		int gridCol = 0;
+		int gridColSpan = 1;
+
+		pElem->QueryIntAttribute("row", &gridRow);
+		pElem->QueryIntAttribute("column", &gridCol);
+		pElem->QueryIntAttribute("columnSpan", &gridColSpan);
+		if (0 == gridRow-- || 0 == gridCol--)
+			return;
+
+		bool createGridTextDisplay = false;
+		bool createGridSwitch = false;
+		bool createGridLed = false;
+
+		pElem = hRoot.FirstChild("switchTextDisplay").Element();
+		if (pElem)
+			createGridTextDisplay = true;
+
+		pElem = hRoot.FirstChild("switchLed").Element();
+		if (pElem)
+			createGridLed = true;
+
+		std::string label;
+		pElem = hRoot.FirstChild("switch").Element();
+		if (pElem)
+		{
+			createGridSwitch = true;
+			if (pElem->Attribute("label"))
+				label = pElem->Attribute("label");
+		}
+
+		mUi->CreateAssemblyInGrid(idNumber, gridRow, gridCol, gridColSpan, label, createGridTextDisplay, createGridSwitch, createGridLed);
+		return;
+	}
+
 	pElem->QueryIntAttribute("top", &top);
 	pElem->QueryIntAttribute("left", &left);
 	pElem->QueryIntAttribute("incrementalVpos", &vOffset);
 	pElem->QueryIntAttribute("incrementalHpos", &hOffset);
-	if (-1 == idNumber)
-		return;
 	if (-1 == top && (-1 == vOffset || 0 == mPreviousAssemblyVpos))
 		return;
 	if (-1 == left && (-1 == hOffset || 0 == mPreviousAssemblyHpos))
@@ -343,22 +388,39 @@ UiLoader::LoadOtherStuffAndFinalize(TiXmlElement * pElem)
 		pElem->QueryAttribute<int>("foregroundColor", &fgColor, "%x");
 		pElem->QueryAttribute<int>("backgroundColor", &bgColor, "%x");
 
-		int top = -1;
-		int left = -1;
-		int width = -1;
-		int height = -1;
-
-		pElem->QueryIntAttribute("top", &top);
-		pElem->QueryIntAttribute("left", &left);
-		pElem->QueryIntAttribute("width", &width);
-		pElem->QueryIntAttribute("height", &height);
-
-		if (!(-1 == top ||
-			-1 == left ||
-			-1 == width ||
-			-1 == height))
+		if (mUseAutoGrid)
 		{
-			mUi->CreateMainDisplay(top, left, width, height, fontname, fontHeight, boldFont, bgColor, fgColor);
+			int gridRow = 0;
+			int gridCol = 0;
+			int gridColSpan = 1;
+			int minHeight = 0;
+
+			pElem->QueryIntAttribute("row", &gridRow);
+			pElem->QueryIntAttribute("column", &gridCol);
+			pElem->QueryIntAttribute("columnSpan", &gridColSpan);
+			pElem->QueryIntAttribute("minimumHeight", &minHeight);
+			if (gridRow-- && gridCol--)
+				mUi->CreateMainDisplayInGrid(gridRow, gridCol, gridColSpan, fontname, fontHeight, boldFont, bgColor, fgColor, minHeight);
+		}
+		else
+		{
+			int top = -1;
+			int left = -1;
+			int width = -1;
+			int height = -1;
+
+			pElem->QueryIntAttribute("top", &top);
+			pElem->QueryIntAttribute("left", &left);
+			pElem->QueryIntAttribute("width", &width);
+			pElem->QueryIntAttribute("height", &height);
+
+			if (!(-1 == top ||
+				-1 == left ||
+				-1 == width ||
+				-1 == height))
+			{
+				mUi->CreateMainDisplay(top, left, width, height, fontname, fontHeight, boldFont, bgColor, fgColor);
+			}
 		}
 	}
 
@@ -379,22 +441,37 @@ UiLoader::LoadOtherStuffAndFinalize(TiXmlElement * pElem)
 		int fontHeight = 10;
 		pElem->QueryIntAttribute("font-height", &fontHeight);
 
-		int top = -1;
-		int left = -1;
-		int width = -1;
-		int height = -1;
-
-		pElem->QueryIntAttribute("top", &top);
-		pElem->QueryIntAttribute("left", &left);
-		pElem->QueryIntAttribute("width", &width);
-		pElem->QueryIntAttribute("height", &height);
-
-		if (!(-1 == top ||
-			-1 == left ||
-			-1 == width ||
-			-1 == height))
+		if (mUseAutoGrid)
 		{
-			mUi->CreateTraceDisplay(top, left, width, height, fontname, fontHeight, boldFont);
+			int gridRow = 0;
+			int gridCol = 0;
+			int gridColSpan = 1;
+
+			pElem->QueryIntAttribute("row", &gridRow);
+			pElem->QueryIntAttribute("column", &gridCol);
+			pElem->QueryIntAttribute("columnSpan", &gridColSpan);
+			if (gridRow-- && gridCol--)
+				mUi->CreateTraceDisplayInGrid(gridRow, gridCol, gridColSpan, fontname, fontHeight, boldFont);
+		}
+		else
+		{
+			int top = -1;
+			int left = -1;
+			int width = -1;
+			int height = -1;
+
+			pElem->QueryIntAttribute("top", &top);
+			pElem->QueryIntAttribute("left", &left);
+			pElem->QueryIntAttribute("width", &width);
+			pElem->QueryIntAttribute("height", &height);
+
+			if (!(-1 == top ||
+				-1 == left ||
+				-1 == width ||
+				-1 == height))
+			{
+				mUi->CreateTraceDisplay(top, left, width, height, fontname, fontHeight, boldFont);
+			}
 		}
 	}
 

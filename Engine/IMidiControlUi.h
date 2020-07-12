@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010,2015 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2015,2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -51,6 +51,11 @@ public:
 	virtual void	CreateMainDisplay(int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor) = 0;
 	virtual void	CreateTraceDisplay(int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold) = 0;
 	virtual void	CreateStaticLabel(const std::string & label, int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor) = 0;
+
+	virtual void	EnableAutoGrid() = 0;
+	virtual void	CreateAssemblyInGrid(int id, int row, int col, int colSpan, const std::string & label, bool createTextDisplay, bool createSwitch, bool createLed) = 0;
+	virtual void	CreateMainDisplayInGrid(int row, int col, int colSpan, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor, int minHeight) = 0;
+	virtual void	CreateTraceDisplayInGrid(int row, int col, int colSpan, const std::string & fontName, int fontHeight, bool bold) = 0;
 
 	virtual void	SetMainSize(int width, int height) = 0;
 	virtual void	SetHardwareLedIntensity(short brightness) = 0;

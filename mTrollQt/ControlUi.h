@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2015,2018 Sean Echevarria
+ * Copyright (C) 2007-2015,2018,2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -52,13 +52,14 @@ class QPushButton;
 class QPlainTextEdit;
 class QFrame;
 class QTimer;
+class QGridLayout;
 class IMonome40h;
 class ITrollApplication;
 
 
-class ControlUi : public QWidget, 
-						 IMainDisplay, 
-						 ISwitchDisplay, 
+class ControlUi : public QWidget,
+						 IMainDisplay,
+						 ISwitchDisplay,
 						 public ITraceDisplay,
 						 IMidiControlUi,
 						 IMidiOutGenerator,
@@ -86,7 +87,7 @@ public:
 			bool SuspendMidi();
 			bool ResumeMidi();
 
-			void GetPreferredSize(int & width, int & height) const {width = mPreferredWidth; height = mPreferredHeight;}
+			void GetPreferredSize(int & width, int & height) const { width = mPreferredWidth; height = mPreferredHeight; }
 
 public: // IMidiOutGenerator
 	virtual IMidiOutPtr	CreateMidiOut(unsigned int deviceIdx, int activityIndicatorIdx) override;
@@ -143,6 +144,10 @@ private: // IMidiControlUi
 	virtual void		CreateMainDisplay(int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor) override;
 	virtual void		CreateTraceDisplay(int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold) override;
 	virtual void		CreateStaticLabel(const std::string & label, int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor) override;
+	virtual void		EnableAutoGrid();
+	virtual void		CreateAssemblyInGrid(int id, int row, int col, int colSpan, const std::string & label, bool createTextDisplay, bool createSwitch, bool createLed);
+	virtual void		CreateMainDisplayInGrid(int row, int col, int colSpan, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor, int minHeight);
+	virtual void		CreateTraceDisplayInGrid(int row, int col, int colSpan, const std::string & fontName, int fontHeight, bool bold);
 	virtual void		SetMainSize(int width, int height) override;
 	virtual void		SetHardwareLedIntensity(short brightness) override { mLedIntensity = brightness; }
 	virtual void		SetLedDisplayState(bool invert) override { mInvertLeds = invert; }
@@ -296,6 +301,12 @@ private:
 	void CreateTimeDisplayTimer();
 	void ToggleTraceWindowCallback();
 
+	void CreateMainDisplay(const std::string &fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor);
+	void CreateTraceDisplay(const std::string &fontName, int fontHeight, bool bold);
+	void CreateSwitch(int id, const std::string & label);
+	void CreateSwitchLed(int id);
+	void CreateSwitchTextDisplay(int id);
+
 	void ButtonReleased(const int idx);
 	void ButtonPressed(const int idx);
 
@@ -349,6 +360,8 @@ private:
 	DWORD						mFrameHighlightColor;
 	QString						mMainText;
 	bool						mSwitchLedUpdateEnabled;
+	QGridLayout					* mGrid = nullptr;
+	int							mDisplaysGridInfo[6] = { 0 };
 
 	// workaround for double fire of pressed signal when using touch
 	int							mLastUiButtonPressed;

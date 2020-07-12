@@ -34,6 +34,8 @@
 #include <QTimer>
 #include <QDateTime>
 #include <QScrollBar>
+#include <QGridLayout>
+#include <QScrollArea>
 
 #include "ControlUi.h"
 #include "../Engine/ITrollApplication.h"
@@ -245,6 +247,9 @@ void
 ControlUi::LoadUi(const std::string & uiSettingsFile)
 {
 	UiLoader ldr(this, uiSettingsFile);
+
+	if (mGrid)
+		setLayout(mGrid);
 
 	Trace("Midi Output Devices:\n");
 	IMidiOutPtr midiOut = CreateMidiOut(0, -1);
@@ -776,6 +781,17 @@ ControlUi::CreateSwitchLed(int id,
 						   int top, 
 						   int left)
 {
+	if (mGrid)
+		return;
+
+	CreateSwitchLed(id);
+
+	mLeds[id]->move(left + mLedConfig.mHoffset, top + mLedConfig.mVoffset);
+}
+
+void
+ControlUi::CreateSwitchLed(int id)
+{
 	SwitchLed * curSwitchLed = new SwitchLed(this);
 //	curSwitchLed->SetShape(ID_SHAPE_SQUARE);
 //	curSwitchLed->SetColor(mLedConfig.mOnColor, mLedConfig.mOffColor);
@@ -783,7 +799,8 @@ ControlUi::CreateSwitchLed(int id,
 	curSwitchLed->setFrameShape(QFrame::Panel);
 	curSwitchLed->setFrameShadow(QFrame::Sunken);
 	curSwitchLed->setAutoFillBackground(true);
-	curSwitchLed->move(left + mLedConfig.mHoffset, top + mLedConfig.mVoffset);
+	curSwitchLed->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	curSwitchLed->setMinimumSize(mLedConfig.mWidth, mLedConfig.mHeight);
 	curSwitchLed->resize(mLedConfig.mWidth, mLedConfig.mHeight);
 
 	QPalette pal;
@@ -807,8 +824,8 @@ ControlUi::SetSwitchConfig(int width,
 						   bool bold, 
 						   unsigned int fgColor)
 {
-	mSwitchConfig.mWidth = width;
-	mSwitchConfig.mHeight = height;
+	mSwitchConfig.mWidth = width ? width : 75;
+	mSwitchConfig.mHeight = height ? height : 25;
 	mSwitchConfig.mVoffset = vOffset;
 	mSwitchConfig.mHoffset = hOffset;
 	mSwitchConfig.mFontname = fontName.c_str();
@@ -827,10 +844,20 @@ ControlUi::CreateSwitch(int id,
 						int top, 
 						int left)
 {
+	if (mGrid)
+		return;
+
+	CreateSwitch(id, label);
+
+	mSwitches[id]->move(left + mSwitchConfig.mHoffset, top + mSwitchConfig.mVoffset);
+}
+
+void
+ControlUi::CreateSwitch(int id, 
+						const std::string & label)
+{
 	Switch * curSwitch = new Switch(label.c_str(), this);
 	curSwitch->setFont(mSwitchButtonFont);
-	curSwitch->move(left + mSwitchConfig.mHoffset, top + mSwitchConfig.mVoffset);
-	curSwitch->resize(mSwitchConfig.mWidth, mSwitchConfig.mHeight);
 
 #if defined(Q_OS_WIN)
 	GESTURECONFIG config;
@@ -849,6 +876,9 @@ ControlUi::CreateSwitch(int id,
 		pal.setColor(QPalette::ButtonText, mSwitchConfig.mFgColor);
 	curSwitch->setPalette(pal);
 	curSwitch->setAutoFillBackground(true);
+	curSwitch->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	curSwitch->setMinimumSize(mSwitchConfig.mWidth, mSwitchConfig.mHeight);
+	curSwitch->resize(mSwitchConfig.mWidth, mSwitchConfig.mHeight);
 
 	const DWORD pressedColor(mFrameHighlightColor + 0x0a0a0a); // yeah, this could overflow...
 	std::string pressedColorStr;
@@ -931,6 +961,9 @@ ControlUi::CreateSwitchTextDisplay(int id,
 								   int top, 
 								   int left)
 {
+	if (mGrid)
+		return;
+
 	CreateSwitchTextDisplay(id, top, left, mSwitchTextDisplayConfig.mWidth, mSwitchTextDisplayConfig.mHeight);
 }
 
@@ -940,8 +973,12 @@ ControlUi::CreateSwitchTextDisplay(int id,
 								   int left,
 								   int width)
 {
+	if (mGrid)
+		return;
+
 	CreateSwitchTextDisplay(id, top, left, width, mSwitchTextDisplayConfig.mHeight);
 }
+
 
 void
 ControlUi::CreateSwitchTextDisplay(int id, 
@@ -950,14 +987,24 @@ ControlUi::CreateSwitchTextDisplay(int id,
 								   int width,
 								   int height)
 {
+	if (mGrid)
+		return;
+
+	CreateSwitchTextDisplay(id);
+
+	mSwitchTextDisplays[id]->move(left + mSwitchTextDisplayConfig.mHoffset, top + mSwitchTextDisplayConfig.mVoffset);
+	mSwitchTextDisplays[id]->resize(width, height);
+}
+
+void
+ControlUi::CreateSwitchTextDisplay(int id)
+{
 	SwitchTextDisplay * curSwitchDisplay = new SwitchTextDisplay(this);
 	curSwitchDisplay->setIndent(2);
 	curSwitchDisplay->setMargin(0);
 	curSwitchDisplay->setFrameShape(QFrame::Panel);
 	curSwitchDisplay->setFrameShadow(QFrame::Sunken);
 	curSwitchDisplay->setAutoFillBackground(true);
-	curSwitchDisplay->move(left + mSwitchTextDisplayConfig.mHoffset, top + mSwitchTextDisplayConfig.mVoffset);
-	curSwitchDisplay->resize(width, height);
 	curSwitchDisplay->setAlignment(Qt::AlignTop | Qt::AlignLeft);
 
 	QFont font(mSwitchTextDisplayConfig.mFontname, mSwitchTextDisplayConfig.mFontHeight, mSwitchTextDisplayConfig.mBold ? QFont::Bold : QFont::Normal);
@@ -1057,6 +1104,25 @@ ControlUi::CreateMainDisplay(int top,
 							 unsigned int bgColor, 
 							 unsigned int fgColor)
 {
+	if (mGrid)
+		return;
+
+	CreateMainDisplay(fontName, fontHeight, bold, bgColor, fgColor);
+
+	mMainDisplayRc.setTopLeft(QPoint(left, top));
+	mMainDisplayRc.setBottomRight(QPoint(left + width, top + height));
+
+	mMainDisplay->move(left, top);
+	mMainDisplay->resize(width, height);
+}
+
+void
+ControlUi::CreateMainDisplay(const std::string &fontName, 
+							 int fontHeight, 
+							 bool bold, 
+							 unsigned int bgColor, 
+							 unsigned int fgColor)
+{
 	_ASSERTE(!mMainDisplay);
 	mMainDisplay = new QPlainTextEdit(this);
 	mMainDisplay->setFrameShape(QFrame::Panel);
@@ -1065,8 +1131,6 @@ ControlUi::CreateMainDisplay(int top,
 	mMainDisplay->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 	mMainDisplay->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 	mMainDisplay->setLineWrapMode(QPlainTextEdit::NoWrap);
-	mMainDisplayRc.setTopLeft(QPoint(left, top));
-	mMainDisplayRc.setBottomRight(QPoint(left+width, top+height));
 
 	// trying to get touch to perform scroll instead of selection
 	mMainDisplay->setTextInteractionFlags(Qt::NoTextInteraction);
@@ -1074,12 +1138,9 @@ ControlUi::CreateMainDisplay(int top,
 	if (mMainDisplay->viewport())
 		mMainDisplay->viewport()->setAttribute(Qt::WA_AcceptTouchEvents, false);
 
-	mMainDisplay->move(left, top);
-	mMainDisplay->resize(width, height);
-
 	QFont font(fontName.c_str(), fontHeight, bold ? QFont::Bold : QFont::Normal);
 	font.setLetterSpacing(QFont::PercentageSpacing, 90);
-    mMainDisplay->setFont(font);
+	mMainDisplay->setFont(font);
 
 	QPalette pal;
 	pal.setColor(QPalette::Window, bgColor);
@@ -1103,6 +1164,22 @@ ControlUi::CreateTraceDisplay(int top,
 							  int fontHeight, 
 							  bool bold)
 {
+	if (mGrid)
+		return;
+
+	CreateTraceDisplay(fontName, fontHeight, bold);
+
+	mTraceDiplayRc.setTopLeft(QPoint(left, top));
+	mTraceDiplayRc.setBottomRight(QPoint(left + width, top + height));
+	mTraceDisplay->move(left, top);
+	mTraceDisplay->resize(width, height);
+}
+
+void
+ControlUi::CreateTraceDisplay(const std::string &fontName, 
+							  int fontHeight, 
+							  bool bold)
+{
 	_ASSERTE(!mTraceDisplay);
 	mTraceDisplay = new QPlainTextEdit(this);
 	mTraceDisplay->setFrameShape(QFrame::Panel);
@@ -1111,10 +1188,6 @@ ControlUi::CreateTraceDisplay(int top,
 	mTraceDisplay->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 	mTraceDisplay->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 	mTraceDisplay->setLineWrapMode(QPlainTextEdit::NoWrap);
-	mTraceDiplayRc.setTopLeft(QPoint(left, top));
-	mTraceDiplayRc.setBottomRight(QPoint(left+width, top+height));
-	mTraceDisplay->move(left, top);
-	mTraceDisplay->resize(width, height);
 
 	mTraceFont.setFamily(fontName.c_str());
 	mTraceFont.setPointSize(fontHeight);
@@ -1145,6 +1218,111 @@ ControlUi::CreateStaticLabel(const std::string & label,
 							 unsigned int fgColor)
 {
 	_ASSERTE(!"not implemented yet");
+}
+
+void
+ControlUi::EnableAutoGrid()
+{
+	mGrid = new QGridLayout();
+	mGrid->setHorizontalSpacing(4);
+	mGrid->setVerticalSpacing(4);
+	mGrid->setContentsMargins(2, 2, 2, 2);
+}
+
+void
+ControlUi::CreateAssemblyInGrid(int id, 
+								int row, 
+								int col, 
+								int colSpan, 
+								const std::string & label,
+								bool createTextDisplay, 
+								bool createSwitch, 
+								bool createLed)
+{
+	if (!mGrid)
+		return;
+
+	if (createSwitch || createTextDisplay)
+	{
+		QHBoxLayout *horizLayout = new QHBoxLayout();
+		if (createSwitch)
+		{
+			CreateSwitch(id, label);
+			horizLayout->addWidget(mSwitches[id], 0, Qt::AlignLeft | Qt::AlignBottom);
+		}
+
+		if (createLed)
+		{
+			CreateSwitchLed(id);
+			horizLayout->addSpacerItem(new QSpacerItem(20, 0, QSizePolicy::Expanding));
+			horizLayout->addWidget(mLeds[id], 0, Qt::AlignLeft | Qt::AlignVCenter);
+			horizLayout->addSpacerItem(new QSpacerItem(20, 0, QSizePolicy::Expanding));
+		}
+
+		QVBoxLayout *vertLayout = new QVBoxLayout();
+		if (createTextDisplay)
+		{
+			CreateSwitchTextDisplay(id);
+			// Fixed height; width ignores content size so that columns are fixed 
+			// size regardless of content (but allow resize when resizing the parent window)
+			mSwitchTextDisplays[id]->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
+			vertLayout->addWidget(mSwitchTextDisplays[id]);
+		}
+
+		vertLayout->addLayout(horizLayout);
+		mGrid->addLayout(vertLayout, row, col, 1, colSpan);
+	}
+	else if (createLed)
+	{
+		CreateSwitchLed(id);
+		mGrid->addWidget(mLeds[id], row, col, 1, colSpan, Qt::AlignVCenter | Qt::AlignHCenter);
+	}
+}
+
+void
+ControlUi::CreateMainDisplayInGrid(int row, 
+								   int col, 
+								   int colSpan, 
+								   const std::string & fontName, 
+								   int fontHeight, 
+								   bool bold, 
+								   unsigned int bgColor, 
+								   unsigned int fgColor,
+								   int minHeight)
+{
+	if (!mGrid)
+		return;
+
+	CreateMainDisplay(fontName, fontHeight, bold, bgColor, fgColor);
+
+	mMainDisplay->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+	mMainDisplay->setMinimumHeight(minHeight ? minHeight : 100);
+
+	mDisplaysGridInfo[0] = row;
+	mDisplaysGridInfo[1] = col;
+	mDisplaysGridInfo[2] = colSpan;
+	mGrid->addWidget(mMainDisplay, row, col, 1, colSpan);
+}
+
+void
+ControlUi::CreateTraceDisplayInGrid(int row, 
+									int col, 
+									int colSpan, 
+									const std::string & fontName, 
+									int fontHeight, 
+									bool bold)
+{
+	if (!mGrid)
+		return;
+
+	CreateTraceDisplay(fontName, fontHeight, bold);
+
+	mTraceDisplay->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+	mDisplaysGridInfo[3] = row;
+	mDisplaysGridInfo[4] = col;
+	mDisplaysGridInfo[5] = colSpan;
+	mGrid->addWidget(mTraceDisplay, row, col, 1, colSpan);
 }
 
 void
@@ -1337,39 +1515,61 @@ ControlUi::ToggleTraceWindow()
 void
 ControlUi::ToggleTraceWindowCallback()
 {
-	if (mTraceDisplay->isVisible())
+	if (mGrid)
 	{
-		mTraceDisplay->hide();
-		QRect mainRc(mMainDisplayRc);
-
-		if (mTraceDiplayRc.top() >= mMainDisplayRc.top() &&
-			mTraceDiplayRc.bottom() <= mMainDisplayRc.bottom())
+		// with auto grid layout, toggle of trace is dependent upon trace and main being in same row
+		if (mDisplaysGridInfo[0] == mDisplaysGridInfo[3])
 		{
-			// change width of main display to use space vacated by trace display
-			if (mMainDisplayRc.left() > mTraceDiplayRc.left())
-				mainRc.setLeft(mTraceDiplayRc.left());
-			else if (mMainDisplayRc.right() < mTraceDiplayRc.right())
-				mainRc.setRight(mTraceDiplayRc.left() + mTraceDiplayRc.width());
+			if (mTraceDisplay->isVisible())
+			{
+				mGrid->removeWidget(mMainDisplay);
+				mTraceDisplay->hide();
+				mGrid->addWidget(mMainDisplay, mDisplaysGridInfo[0], mDisplaysGridInfo[1], 1, mDisplaysGridInfo[2] + mDisplaysGridInfo[5]);
+			}
+			else
+			{
+				mGrid->removeWidget(mMainDisplay);
+				mGrid->addWidget(mMainDisplay, mDisplaysGridInfo[0], mDisplaysGridInfo[1], 1, mDisplaysGridInfo[2]);
+				mTraceDisplay->show();
+			}
 		}
-
-		if (mTraceDiplayRc.left() >= mMainDisplayRc.left() &&
-			mTraceDiplayRc.right() <= mMainDisplayRc.right())
-		{
-			// change height of main display to use space vacated by trace display
-			if (mMainDisplayRc.top() > mTraceDiplayRc.top())
-				mainRc.setTop(mTraceDiplayRc.top());
-			else if (mMainDisplayRc.bottom() < mTraceDiplayRc.bottom())
-				mainRc.setBottom(mTraceDiplayRc.top() + mTraceDiplayRc.height());
-		}
-
-		mMainDisplay->move(mainRc.left(), mainRc.top());
-		mMainDisplay->resize(mainRc.width(), mainRc.height());
 	}
 	else
 	{
-		mMainDisplay->move(mMainDisplayRc.left(), mMainDisplayRc.top());
-		mMainDisplay->resize(mMainDisplayRc.width(), mMainDisplayRc.height());
-		mTraceDisplay->show();
+		if (mTraceDisplay->isVisible())
+		{
+			mTraceDisplay->hide();
+			QRect mainRc(mMainDisplayRc);
+
+			if (mTraceDiplayRc.top() >= mMainDisplayRc.top() &&
+				mTraceDiplayRc.bottom() <= mMainDisplayRc.bottom())
+			{
+				// change width of main display to use space vacated by trace display
+				if (mMainDisplayRc.left() > mTraceDiplayRc.left())
+					mainRc.setLeft(mTraceDiplayRc.left());
+				else if (mMainDisplayRc.right() < mTraceDiplayRc.right())
+					mainRc.setRight(mTraceDiplayRc.left() + mTraceDiplayRc.width());
+			}
+
+			if (mTraceDiplayRc.left() >= mMainDisplayRc.left() &&
+				mTraceDiplayRc.right() <= mMainDisplayRc.right())
+			{
+				// change height of main display to use space vacated by trace display
+				if (mMainDisplayRc.top() > mTraceDiplayRc.top())
+					mainRc.setTop(mTraceDiplayRc.top());
+				else if (mMainDisplayRc.bottom() < mTraceDiplayRc.bottom())
+					mainRc.setBottom(mTraceDiplayRc.top() + mTraceDiplayRc.height());
+			}
+
+			mMainDisplay->move(mainRc.left(), mainRc.top());
+			mMainDisplay->resize(mainRc.width(), mainRc.height());
+		}
+		else
+		{
+			mMainDisplay->move(mMainDisplayRc.left(), mMainDisplayRc.top());
+			mMainDisplay->resize(mMainDisplayRc.width(), mMainDisplayRc.height());
+			mTraceDisplay->show();
+		}
 	}
 }
 

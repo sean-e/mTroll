@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -46,6 +46,7 @@ private:
 	IMidiControlUi			* mUi;
 	int						mPreviousAssemblyHpos;
 	int						mPreviousAssemblyVpos;
+	bool					mUseAutoGrid = false;
 };
 
 #endif // UiLoader_h__
