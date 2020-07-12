@@ -1333,6 +1333,35 @@ ControlUi::SetMainSize(int width,
 	mPreferredWidth = width;
 }
 
+void
+ControlUi::IncreaseMainDisplayHeight()
+{
+	if (!mMainDisplay)
+		return;
+
+	// when increasing, start from current actual height,
+	// since user doesn't want to increment from min ht to 
+	// actual ht before seeing a change.
+	// starting from current height guarantees a visible change.
+	auto curHt = mMainDisplay->height();
+	mMainDisplay->setMinimumHeight(curHt + 10);
+}
+
+void
+ControlUi::DecreaseMainDisplayHeight()
+{
+	if (!mMainDisplay)
+		return;
+
+	// when decreasing, start from minimum height even
+	// though actual height may be larger since grid 
+	// may not cause a visible change anyway.
+	// a decrease of height is not guaranteed to make a visible change 
+	// due to layout work.
+	auto curHt = mMainDisplay->minimumHeight();
+	mMainDisplay->setMinimumHeight(curHt - 10);
+}
+
 IMidiOutPtr
 ControlUi::CreateMidiOut(unsigned int deviceIdx,
 						 int activityIndicatorIdx)

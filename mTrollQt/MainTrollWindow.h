@@ -54,6 +54,8 @@ private slots:
 	void ToggleAdc1Override(bool checked) { ToggleAdcOverride(1, checked); }
 	void ToggleAdc2Override(bool checked) { ToggleAdcOverride(2, checked); }
 	void ToggleAdc3Override(bool checked) { ToggleAdcOverride(3, checked); }
+	void IncreaseMainDisplayHeight();
+	void DecreaseMainDisplayHeight();
 
 private:
 	virtual bool IsAdcOverridden(int adc) override { if (adc >=0 && adc < 4) return mAdcForceDisable[adc]; return false;}
@@ -72,6 +74,8 @@ private:
 	QAction		* mAdcOverrideActions[ExpressionPedals::PedalCount] = {};
 	QAction		* mMidiSuspendAction = nullptr;
 	QAction		* mToggleExpressionPedalDetailStatus = nullptr;
+	QAction		* mIncreaseMainDisplayHeight = nullptr;
+	QAction		* mDecreaseMainDisplayHeight = nullptr;
 	QDateTime	mStartTime;
 	QDateTime	mPauseTime;
 	ExitAction	mShutdownOnExit = soeExit;

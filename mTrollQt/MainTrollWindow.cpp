@@ -133,13 +133,32 @@ MainTrollWindow::MainTrollWindow() :
 	fileMenu->addAction(tr("E&xit"), this, SLOT(close()));
 	// http://doc.qt.nokia.com/4.4/stylesheet-examples.html#customizing-qmenu
 
+	QMenu * viewMenu = menuBar()->addMenu(tr("&View"));
+#if defined(Q_OS_WIN)
+	::UnregisterTouchWindow((HWND)viewMenu->winId());
+#endif
+	if (hasTouchInput)
+		viewMenu->setStyleSheet(touchMenuStyle);
+	viewMenu->addAction(tr("&Toggle trace window visibility"), this, SLOT(ToggleTraceWindow()), QKeySequence(tr("Ctrl+T")));
+	if (!hasTouchInput)
+		fileMenu->addSeparator();
+
+	mIncreaseMainDisplayHeight = new QAction(tr("&Increase main display height"), this);
+	mIncreaseMainDisplayHeight->setShortcut(QKeySequence(tr("Ctrl+=")));
+	connect(mIncreaseMainDisplayHeight, SIGNAL(triggered()), this, SLOT(IncreaseMainDisplayHeight()));
+	viewMenu->addAction(mIncreaseMainDisplayHeight);
+
+	mDecreaseMainDisplayHeight = new QAction(tr("&Decrease main display height"), this);
+	mDecreaseMainDisplayHeight->setShortcut(QKeySequence(tr("Ctrl+-")));
+	connect(mDecreaseMainDisplayHeight, SIGNAL(triggered()), this, SLOT(DecreaseMainDisplayHeight()));
+	viewMenu->addAction(mDecreaseMainDisplayHeight);
+
 	QMenu * settingsMenu = menuBar()->addMenu(tr("&Settings"));
 #if defined(Q_OS_WIN)
 	::UnregisterTouchWindow((HWND)settingsMenu->winId());
 #endif
 	if (hasTouchInput)
 		settingsMenu->setStyleSheet(touchMenuStyle);
-	settingsMenu->addAction(tr("&Toggle trace window visibility"), this, SLOT(ToggleTraceWindow()), QKeySequence(tr("Ctrl+T")));
 
 	mToggleExpressionPedalDetailStatus = new QAction(tr("&Expression pedal detailed status"), this);
 	mToggleExpressionPedalDetailStatus->setCheckable(true);
@@ -270,9 +289,17 @@ MainTrollWindow::Refresh()
 		pal.setColor(QPalette::Base, mUi->GetBackGroundColor());
 		scrollArea->setPalette(pal);
 		setCentralWidget(scrollArea);	// Qt deletes the previous central widget
+
+		mIncreaseMainDisplayHeight->setEnabled(true);
+		mDecreaseMainDisplayHeight->setEnabled(true);
 	}
 	else
+	{
 		setCentralWidget(mUi);	// Qt deletes the previous central widget
+
+		mIncreaseMainDisplayHeight->setEnabled(false);
+		mDecreaseMainDisplayHeight->setEnabled(false);
+	}
 
 	int width, height;
 	mUi->GetPreferredSize(width, height);
@@ -474,6 +501,20 @@ MainTrollWindow::ApplicationDirectory()
 	const QString path(QApplication::applicationDirPath());
 	const std::string pathStd(path.toLatin1());
 	return pathStd;
+}
+
+void
+MainTrollWindow::IncreaseMainDisplayHeight()
+{
+	if (mUi && mUi->HasAutoGrid())
+		mUi->IncreaseMainDisplayHeight();
+}
+
+void
+MainTrollWindow::DecreaseMainDisplayHeight()
+{
+	if (mUi && mUi->HasAutoGrid())
+		mUi->DecreaseMainDisplayHeight();
 }
 
 void
