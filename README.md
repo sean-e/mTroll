@@ -59,7 +59,7 @@ Other
 ## Download
 
 ### application software
-[mTroll](http://www.creepingfog.com/mTroll/downloads/mTrollSetup.2020.06.27.exe) (build [2020.06.27](docs/changelog.md)) Win32 application installer.
+[mTroll](http://www.creepingfog.com/mTroll/downloads/mTrollSetup.2020.07.12.exe) (build [2020.07.12](docs/changelog.md)) Win32 application installer.
 
 [Usage notes here](docs/docs.md).
 

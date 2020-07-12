@@ -1,10 +1,11 @@
 ### mTroll MIDI controller changelog / process milestones
 
-#### in progress
+#### 2020.07.12
 - Added support for automatic grid layout
+- Added View menu
 
 #### 2020.06.27
-- Add new meta patch to reset patch that changes state of patch without exec of deactivation (for reset of a `patchListSequence`).
+- Added new meta patch to reset patch that changes state of patch without exec of deactivation (for reset of a `patchListSequence`).
 - Added new optional `gaplessRestart` attribute to `patchListSequence` for restart without deactivated state (use the new meta patch to reset the sequence).
 - Added Settings menu to main menubar.
 - Updated expression pedal status message display (added option to use old detailed status in Settings menu).
