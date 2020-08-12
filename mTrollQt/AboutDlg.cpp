@@ -42,7 +42,8 @@ AboutDlg::AboutDlg()
 		"<a href=\"https://github.com/sean-e/mtroll/\">https://github.com/sean-e/mtroll/</a><br><br>"
 		// "<a href=\"http://sourceforge.net/projects/mtroll/\">http://sourceforge.net/projects/mtroll/</a><br><br>"
 		"&copy; copyright 2007-2020 Sean Echevarria<br><br>";
-	labelTxt += "Built " + ::GetBuildDate();
+	labelTxt += "Built " + ::GetBuildDate() + "<br><br>";
+	labelTxt += "Uses the open source <a href=\"https://www.qt.io/download-open-source\">Qt</a> framework licensed under GPL v3";
 	labelTxt += "</body></html>";
 
 	mExitButton = new QPushButton("&Close", this);
