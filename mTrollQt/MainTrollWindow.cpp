@@ -417,11 +417,11 @@ MainTrollWindow::GetElapsedTimeStr()
 
 	QString tmp;
 	if (days)
-		tmp.sprintf("\nelapsed: %d days, %d:%02d:%02d", days, hours, minutes, secs);
+		tmp = QString::asprintf("\nelapsed: %d days, %d:%02d:%02d", days, hours, minutes, secs);
 	else if (hours)
-		tmp.sprintf("\nelapsed: %d hours, %02d:%02d", hours, minutes, secs);
+		tmp = QString::asprintf("\nelapsed: %d hours, %02d:%02d", hours, minutes, secs);
 	else
-		tmp.sprintf("\nelapsed: %02d:%02d", minutes, secs);
+		tmp = QString::asprintf("\nelapsed: %02d:%02d", minutes, secs);
 	ts += tmp;
 
 	const std::string msg(ts.toUtf8());
