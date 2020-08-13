@@ -12,4 +12,6 @@ Populate the ..\ReleaseDependencies\ directory with the following Qt dlls:
 Populate the ..\ReleaseDependencies\ directory with the following VC runtime dlls:
 ..\ReleaseDependencies\concrt140.dll
 ..\ReleaseDependencies\msvcp140.dll
+..\ReleaseDependencies\msvcp140_1.dll
+..\ReleaseDependencies\msvcp140_2.dll
 ..\ReleaseDependencies\vcruntime140.dll
