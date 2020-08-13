@@ -1,5 +1,8 @@
 ### mTroll MIDI controller changelog / process milestones
 
+#### 2020.08.12
+- Updated to Qt 5.15.0
+
 #### 2020.07.12
 - Added support for automatic grid layout
 - Added View menu
