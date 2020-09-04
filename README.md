@@ -91,8 +91,6 @@ Source directory hierarchy:
 <dd>Qt application and interface implementations</dd>
 <dt>./Monome40h</dt>
 <dd>FTDI and monome interfaces, and monome serial protocol helpers  
-<dt>./Monome40h/40hFirmware</dt>
-<dd>Modified version of the original monome firmware</dd>  
 <dt>./Monome40h/qt</dt>
 <dd>monome interface implementation in Qt</dd>
 <dt>./setup</dt>
