@@ -65,13 +65,10 @@ Other
 
 To use with a monome board, you must install the [FTDI D2XXX drivers](http://www.ftdichip.com/Drivers/D2XX.htm) (not necessary for operation without a controller).
 
-### source code
-The hosted repository includes an altered version of the monome firmware. It is also [available as a standalone zip](http://www.creepingfog.com/mTroll/downloads/monome40hFirmware.zip) (updated 2007.11.04) (modified ADC port handling, see [Expression Pedal Calibration](docs/docs.md#exprPedalCal)). The [original work](https://github.com/monome/40h) is licensed under [GPL](http://www.opensource.org/licenses/gpl-license.php).
-
 
 ## Developer Notes
 
-The core of the app is written in cross-platform C++. The GUI and hardware device support (MIDI out and monome) were originally implemented for Win32 (using WTL for the GUI). It has since been ported to [Qt 5.0](http://qt-project.org/downloads#qt-lib). The MIDI In/Out device support is only implemented for Win32 at this time.  
+The core of the app is written in cross-platform C++. The GUI and hardware device support (MIDI out and monome) were originally implemented for Win32 (using WTL for the GUI). It has since been ported to [Qt 5.15](http://qt-project.org/downloads#qt-lib). The MIDI In/Out device support is only implemented for Win32 at this time.  
 
 The GUI and hardware are accessed from the core through core-defined interfaces, so a Mac or Linux developer will be able to "fill in the blanks" using whatever native OS APIs are available without having to modify the core.  
 
