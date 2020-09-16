@@ -174,7 +174,6 @@ MainTrollWindow::MainTrollWindow() :
 	connect(mMidiSuspendAction, &QAction::toggled, this, &MainTrollWindow::SuspendMidiToggle);
 	settingsMenu->addAction(mMidiSuspendAction);
 
-	QString slotName;
 	QMenu * adcMenu = menuBar()->addMenu(tr("&Pedal Overrides"));
 #if defined(Q_OS_WIN)
 	::UnregisterTouchWindow((HWND)adcMenu->winId());
