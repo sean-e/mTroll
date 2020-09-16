@@ -124,13 +124,13 @@ MainTrollWindow::MainTrollWindow() :
 #endif
 	if (hasTouchInput)
 		fileMenu->setStyleSheet(touchMenuStyle);
-	fileMenu->addAction(tr("&Open..."), this, SLOT(OpenFile()), QKeySequence(tr("Ctrl+O")));
-	fileMenu->addAction(tr("&Refresh"), this, SLOT(Refresh()), QKeySequence(tr("F5")));
-	fileMenu->addAction(tr("Re&connect to monome device"), this, SLOT(Reconnect()), QKeySequence(tr("Ctrl+R")));
+	fileMenu->addAction(tr("&Open..."), this, &MainTrollWindow::OpenFile, QKeySequence(tr("Ctrl+O")));
+	fileMenu->addAction(tr("&Refresh"), this, &MainTrollWindow::Refresh, QKeySequence(tr("F5")));
+	fileMenu->addAction(tr("Re&connect to monome device"), this, &MainTrollWindow::Reconnect, QKeySequence(tr("Ctrl+R")));
 
 	if (!hasTouchInput)
 		fileMenu->addSeparator();
-	fileMenu->addAction(tr("E&xit"), this, SLOT(close()));
+	fileMenu->addAction(tr("E&xit"), this, &MainTrollWindow::close);
 	// http://doc.qt.nokia.com/4.4/stylesheet-examples.html#customizing-qmenu
 
 	QMenu * viewMenu = menuBar()->addMenu(tr("&View"));
@@ -139,18 +139,18 @@ MainTrollWindow::MainTrollWindow() :
 #endif
 	if (hasTouchInput)
 		viewMenu->setStyleSheet(touchMenuStyle);
-	viewMenu->addAction(tr("&Toggle trace window visibility"), this, SLOT(ToggleTraceWindow()), QKeySequence(tr("Ctrl+T")));
+	viewMenu->addAction(tr("&Toggle trace window visibility"), this, &MainTrollWindow::ToggleTraceWindow, QKeySequence(tr("Ctrl+T")));
 	if (!hasTouchInput)
 		fileMenu->addSeparator();
 
 	mIncreaseMainDisplayHeight = new QAction(tr("&Increase main display height"), this);
 	mIncreaseMainDisplayHeight->setShortcut(QKeySequence(tr("Ctrl+=")));
-	connect(mIncreaseMainDisplayHeight, SIGNAL(triggered()), this, SLOT(IncreaseMainDisplayHeight()));
+	connect(mIncreaseMainDisplayHeight, &QAction::triggered, this, &MainTrollWindow::IncreaseMainDisplayHeight);
 	viewMenu->addAction(mIncreaseMainDisplayHeight);
 
 	mDecreaseMainDisplayHeight = new QAction(tr("&Decrease main display height"), this);
 	mDecreaseMainDisplayHeight->setShortcut(QKeySequence(tr("Ctrl+-")));
-	connect(mDecreaseMainDisplayHeight, SIGNAL(triggered()), this, SLOT(DecreaseMainDisplayHeight()));
+	connect(mDecreaseMainDisplayHeight, &QAction::triggered, this, &MainTrollWindow::DecreaseMainDisplayHeight);
 	viewMenu->addAction(mDecreaseMainDisplayHeight);
 
 	QMenu * settingsMenu = menuBar()->addMenu(tr("&Settings"));
@@ -164,14 +164,14 @@ MainTrollWindow::MainTrollWindow() :
 	mToggleExpressionPedalDetailStatus->setCheckable(true);
 	mToggleExpressionPedalDetailStatus->setChecked(false);
 	mToggleExpressionPedalDetailStatus->setShortcut(QKeySequence(tr("Ctrl+P")));
-	connect(mToggleExpressionPedalDetailStatus, SIGNAL(toggled(bool)), this, "1ToggleExpressionPedalDetails(bool)");
+	connect(mToggleExpressionPedalDetailStatus, &QAction::toggled, this, &MainTrollWindow::ToggleExpressionPedalDetails);
 	settingsMenu->addAction(mToggleExpressionPedalDetailStatus);
 
 	mMidiSuspendAction = new QAction(tr("Suspend &MIDI connections"), this);
 	mMidiSuspendAction->setCheckable(true);
 	mMidiSuspendAction->setChecked(false);
 	mMidiSuspendAction->setShortcut(QKeySequence(tr("Ctrl+M")));
-	connect(mMidiSuspendAction, SIGNAL(toggled(bool)), this, "1SuspendMidiToggle(bool)");
+	connect(mMidiSuspendAction, &QAction::toggled, this, &MainTrollWindow::SuspendMidiToggle);
 	settingsMenu->addAction(mMidiSuspendAction);
 
 	QString slotName;
@@ -181,14 +181,22 @@ MainTrollWindow::MainTrollWindow() :
 #endif
 	if (hasTouchInput)
 		adcMenu->setStyleSheet(touchMenuStyle);
+
+	decltype(&MainTrollWindow::ToggleAdc0Override) memberSlots[ExpressionPedals::PedalCount]
+	{
+		&MainTrollWindow::ToggleAdc0Override,
+		&MainTrollWindow::ToggleAdc1Override,
+		&MainTrollWindow::ToggleAdc2Override,
+		&MainTrollWindow::ToggleAdc3Override
+	};
+
 	for (int idx = 0; idx < ExpressionPedals::PedalCount; ++idx)
 	{
 		mAdcForceDisable[idx] = settings.value(kAdcOverride.arg(idx), false).toBool();
 		mAdcOverrideActions[idx] = new QAction(tr("Disable ADC &%1").arg(idx), this);
 		mAdcOverrideActions[idx]->setCheckable(true);
 		mAdcOverrideActions[idx]->setChecked(mAdcForceDisable[idx]);
-		slotName = QString("1ToggleAdc%1Override(bool)").arg(idx);
-		connect(mAdcOverrideActions[idx], SIGNAL(toggled(bool)), this, slotName.toUtf8().constData());
+		connect(mAdcOverrideActions[idx], &QAction::toggled, this, memberSlots[idx]);
 		adcMenu->addAction(mAdcOverrideActions[idx]);
 	}
 
@@ -198,7 +206,7 @@ MainTrollWindow::MainTrollWindow() :
 #endif
 	if (hasTouchInput)
 		helpMenu->setStyleSheet(touchMenuStyle);
-	helpMenu->addAction(tr("&About mTroll..."), this, SLOT(About()));
+	helpMenu->addAction(tr("&About mTroll..."), this, &MainTrollWindow::About);
 
 	mUiFilename = settings.value(kActiveUiFile, "config/testdata.ui.xml").value<QString>();
 	mConfigFilename = settings.value(kActiveConfigFile, "config/testdata.config.xml").value<QString>();

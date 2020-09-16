@@ -85,17 +85,17 @@ AxeFxManager::AxeFxManager(IMainDisplay * mainDisp,
 	::memset(mLooperPatches, 0, sizeof(mLooperPatches));
 
 	mQueryTimer = new QTimer(this);
-	connect(mQueryTimer, SIGNAL(timeout()), this, SLOT(QueryTimedOut()));
+	connect(mQueryTimer, &QTimer::timeout, this, &AxeFxManager::QueryTimedOut);
 	mQueryTimer->setSingleShot(true);
 	mQueryTimer->setInterval(2000);
 
 	mDelayedNameSyncTimer = new QTimer(this);
-	connect(mDelayedNameSyncTimer, SIGNAL(timeout()), this, SLOT(SyncNameAndEffectsFromAxe()));
+	connect(mDelayedNameSyncTimer, &QTimer::timeout, this, &AxeFxManager::SyncNameAndEffectsFromAxe);
 	mDelayedNameSyncTimer->setSingleShot(true);
 	mDelayedNameSyncTimer->setInterval(kDefaultNameSyncTimerInterval);
 
 	mDelayedEffectsSyncTimer = new QTimer(this);
-	connect(mDelayedEffectsSyncTimer, SIGNAL(timeout()), this, SLOT(SyncEffectsFromAxe()));
+	connect(mDelayedEffectsSyncTimer, &QTimer::timeout, this, &AxeFxManager::SyncEffectsFromAxe);
 	mDelayedEffectsSyncTimer->setSingleShot(true);
 	mDelayedEffectsSyncTimer->setInterval(kDefaultEffectsSyncTimerInterval);
 

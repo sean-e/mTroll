@@ -65,7 +65,7 @@ AboutDlg::AboutDlg()
 	mLayout->addWidget(mLabelGroupBox, 0, Qt::AlignCenter);
 	mLayout->addWidget(mExitButton, 0, Qt::AlignBottom);
 
-	connect(mExitButton, SIGNAL(clicked()), SLOT(reject()));
+	connect(mExitButton, &QPushButton::clicked, this, &QDialog::reject);
 }
 
 AboutDlg::~AboutDlg()

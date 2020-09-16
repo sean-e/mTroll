@@ -726,7 +726,7 @@ ControlUi::SetIndicatorThreadSafe(bool isOn, PatchPtr patch, int time)
 			{
 				// use timer
 				SetIndicatorTimerCallback * clr = new SetIndicatorTimerCallback(mOn, mSwitchDisplay, mPatch);
-				QTimer::singleShot(mTime, clr, SLOT(TimerFired()));
+				QTimer::singleShot(mTime, clr, &SetIndicatorTimerCallback::TimerFired);
 			}
 			else
 			{
@@ -910,13 +910,8 @@ ControlUi::CreateSwitch(int id,
 	");
 	curSwitch->setStyleSheet(buttonStyleSheet);
 
-	QString qSlot;
-
-	qSlot = QString("1UiButtonPressed_%1()").arg(id);
-	connect(curSwitch, SIGNAL(pressed()), qSlot.toUtf8().constData());
-
-	qSlot = QString("1UiButtonReleased_%1()").arg(id);
-	connect(curSwitch, SIGNAL(released()), qSlot.toUtf8().constData());
+	connect(curSwitch, &Switch::pressed, this, GetUiButtonPressedMember(id));
+	connect(curSwitch, &Switch::released, this, GetUiButtonReleasedMember(id));
 
 	std::string::size_type pos = label.find("&");
 	if (std::string::npos != pos && pos+1 < label.length())
@@ -1478,6 +1473,168 @@ ControlUi::MonomeStartupSequence()
 	mHardwareUi->TestLed(false);
 }
 
+decltype(&ControlUi::UiButtonPressed_0)
+ControlUi::GetUiButtonPressedMember(int id)
+{
+	if (id > 64)
+	{
+		_ASSERTE(!"out of range switch id");
+		return nullptr;
+	}
+
+	decltype(&ControlUi::UiButtonPressed_0) members[65]
+	{
+		&ControlUi::UiButtonPressed_0,
+		&ControlUi::UiButtonPressed_1,
+		&ControlUi::UiButtonPressed_2,
+		&ControlUi::UiButtonPressed_3,
+		&ControlUi::UiButtonPressed_4,
+		&ControlUi::UiButtonPressed_5,
+		&ControlUi::UiButtonPressed_6,
+		&ControlUi::UiButtonPressed_7,
+		&ControlUi::UiButtonPressed_8,
+		&ControlUi::UiButtonPressed_9,
+		&ControlUi::UiButtonPressed_10,
+		&ControlUi::UiButtonPressed_11,
+		&ControlUi::UiButtonPressed_12,
+		&ControlUi::UiButtonPressed_13,
+		&ControlUi::UiButtonPressed_14,
+		&ControlUi::UiButtonPressed_15,
+		&ControlUi::UiButtonPressed_16,
+		&ControlUi::UiButtonPressed_17,
+		&ControlUi::UiButtonPressed_18,
+		&ControlUi::UiButtonPressed_19,
+		&ControlUi::UiButtonPressed_20,
+		&ControlUi::UiButtonPressed_21,
+		&ControlUi::UiButtonPressed_22,
+		&ControlUi::UiButtonPressed_23,
+		&ControlUi::UiButtonPressed_24,
+		&ControlUi::UiButtonPressed_25,
+		&ControlUi::UiButtonPressed_26,
+		&ControlUi::UiButtonPressed_27,
+		&ControlUi::UiButtonPressed_28,
+		&ControlUi::UiButtonPressed_29,
+		&ControlUi::UiButtonPressed_30,
+		&ControlUi::UiButtonPressed_31,
+		&ControlUi::UiButtonPressed_32,
+		&ControlUi::UiButtonPressed_33,
+		&ControlUi::UiButtonPressed_34,
+		&ControlUi::UiButtonPressed_35,
+		&ControlUi::UiButtonPressed_36,
+		&ControlUi::UiButtonPressed_37,
+		&ControlUi::UiButtonPressed_38,
+		&ControlUi::UiButtonPressed_39,
+		&ControlUi::UiButtonPressed_40,
+		&ControlUi::UiButtonPressed_41,
+		&ControlUi::UiButtonPressed_42,
+		&ControlUi::UiButtonPressed_43,
+		&ControlUi::UiButtonPressed_44,
+		&ControlUi::UiButtonPressed_45,
+		&ControlUi::UiButtonPressed_46,
+		&ControlUi::UiButtonPressed_47,
+		&ControlUi::UiButtonPressed_48,
+		&ControlUi::UiButtonPressed_49,
+		&ControlUi::UiButtonPressed_50,
+		&ControlUi::UiButtonPressed_51,
+		&ControlUi::UiButtonPressed_52,
+		&ControlUi::UiButtonPressed_53,
+		&ControlUi::UiButtonPressed_54,
+		&ControlUi::UiButtonPressed_55,
+		&ControlUi::UiButtonPressed_56,
+		&ControlUi::UiButtonPressed_57,
+		&ControlUi::UiButtonPressed_58,
+		&ControlUi::UiButtonPressed_59,
+		&ControlUi::UiButtonPressed_60,
+		&ControlUi::UiButtonPressed_61,
+		&ControlUi::UiButtonPressed_62,
+		&ControlUi::UiButtonPressed_63,
+		&ControlUi::UiButtonPressed_64
+	};
+
+	return members[id];
+}
+
+decltype(&ControlUi::UiButtonReleased_0)
+ControlUi::GetUiButtonReleasedMember(int id)
+{
+	if (id > 64)
+	{
+		_ASSERTE(!"out of range switch id");
+		return nullptr;
+	}
+
+	decltype(&ControlUi::UiButtonReleased_0) members[65]
+	{
+		&ControlUi::UiButtonReleased_0,
+		&ControlUi::UiButtonReleased_1,
+		&ControlUi::UiButtonReleased_2,
+		&ControlUi::UiButtonReleased_3,
+		&ControlUi::UiButtonReleased_4,
+		&ControlUi::UiButtonReleased_5,
+		&ControlUi::UiButtonReleased_6,
+		&ControlUi::UiButtonReleased_7,
+		&ControlUi::UiButtonReleased_8,
+		&ControlUi::UiButtonReleased_9,
+		&ControlUi::UiButtonReleased_10,
+		&ControlUi::UiButtonReleased_11,
+		&ControlUi::UiButtonReleased_12,
+		&ControlUi::UiButtonReleased_13,
+		&ControlUi::UiButtonReleased_14,
+		&ControlUi::UiButtonReleased_15,
+		&ControlUi::UiButtonReleased_16,
+		&ControlUi::UiButtonReleased_17,
+		&ControlUi::UiButtonReleased_18,
+		&ControlUi::UiButtonReleased_19,
+		&ControlUi::UiButtonReleased_20,
+		&ControlUi::UiButtonReleased_21,
+		&ControlUi::UiButtonReleased_22,
+		&ControlUi::UiButtonReleased_23,
+		&ControlUi::UiButtonReleased_24,
+		&ControlUi::UiButtonReleased_25,
+		&ControlUi::UiButtonReleased_26,
+		&ControlUi::UiButtonReleased_27,
+		&ControlUi::UiButtonReleased_28,
+		&ControlUi::UiButtonReleased_29,
+		&ControlUi::UiButtonReleased_30,
+		&ControlUi::UiButtonReleased_31,
+		&ControlUi::UiButtonReleased_32,
+		&ControlUi::UiButtonReleased_33,
+		&ControlUi::UiButtonReleased_34,
+		&ControlUi::UiButtonReleased_35,
+		&ControlUi::UiButtonReleased_36,
+		&ControlUi::UiButtonReleased_37,
+		&ControlUi::UiButtonReleased_38,
+		&ControlUi::UiButtonReleased_39,
+		&ControlUi::UiButtonReleased_40,
+		&ControlUi::UiButtonReleased_41,
+		&ControlUi::UiButtonReleased_42,
+		&ControlUi::UiButtonReleased_43,
+		&ControlUi::UiButtonReleased_44,
+		&ControlUi::UiButtonReleased_45,
+		&ControlUi::UiButtonReleased_46,
+		&ControlUi::UiButtonReleased_47,
+		&ControlUi::UiButtonReleased_48,
+		&ControlUi::UiButtonReleased_49,
+		&ControlUi::UiButtonReleased_50,
+		&ControlUi::UiButtonReleased_51,
+		&ControlUi::UiButtonReleased_52,
+		&ControlUi::UiButtonReleased_53,
+		&ControlUi::UiButtonReleased_54,
+		&ControlUi::UiButtonReleased_55,
+		&ControlUi::UiButtonReleased_56,
+		&ControlUi::UiButtonReleased_57,
+		&ControlUi::UiButtonReleased_58,
+		&ControlUi::UiButtonReleased_59,
+		&ControlUi::UiButtonReleased_60,
+		&ControlUi::UiButtonReleased_61,
+		&ControlUi::UiButtonReleased_62,
+		&ControlUi::UiButtonReleased_63,
+		&ControlUi::UiButtonReleased_64
+	};
+
+	return members[id];
+}
+
 void
 ControlUi::Reconnect()
 {
@@ -1768,7 +1925,7 @@ ControlUi::CreateTimeDisplayTimer()
 	DisplayTime();
 	if (!mTimeDisplayTimer)
 		mTimeDisplayTimer = new QTimer(this);
-	connect(mTimeDisplayTimer, SIGNAL(timeout()), this, SLOT(DisplayTime()));
+	connect(mTimeDisplayTimer, &QTimer::timeout, this, &ControlUi::DisplayTime);
 	mTimeDisplayTimer->start(100);
 }
 
@@ -1786,7 +1943,7 @@ ControlUi::DisplayTime()
 	else
 	{
 		mTimeDisplayTimer->stop();
-		disconnect(mTimeDisplayTimer, SIGNAL(timeout()), this, SLOT(DisplayTime()));
+		disconnect(mTimeDisplayTimer, &QTimer::timeout, this, &ControlUi::DisplayTime);
 	}
 }
 

@@ -152,12 +152,12 @@ AxeFx3Manager::AxeFx3Manager(IMainDisplay * mainDisp,
 #endif
 
 	mDelayedNameSyncTimer = new QTimer(this);
-	connect(mDelayedNameSyncTimer, SIGNAL(timeout()), this, SLOT(SyncNameAndEffectsFromAxe()));
+	connect(mDelayedNameSyncTimer, &QTimer::timeout, this, &AxeFx3Manager::SyncNameAndEffectsFromAxe);
 	mDelayedNameSyncTimer->setSingleShot(true);
 	mDelayedNameSyncTimer->setInterval(kDefaultNameSyncTimerInterval);
 
 	mDelayedEffectsSyncTimer = new QTimer(this);
-	connect(mDelayedEffectsSyncTimer, SIGNAL(timeout()), this, SLOT(SyncEffectsFromAxe()));
+	connect(mDelayedEffectsSyncTimer, &QTimer::timeout, this, &AxeFx3Manager::SyncEffectsFromAxe);
 	mDelayedEffectsSyncTimer->setSingleShot(true);
 	mDelayedEffectsSyncTimer->setInterval(kDefaultEffectsSyncTimerInterval);
 

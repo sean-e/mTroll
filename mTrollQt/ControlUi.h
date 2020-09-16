@@ -330,6 +330,9 @@ private:
 		return mRowColToSwitchNumber[(row << 16) | col];
 	}
 
+	decltype(&UiButtonPressed_0) GetUiButtonPressedMember(int id);
+	decltype(&UiButtonReleased_0) GetUiButtonReleasedMember(int id);
+
 private:
 	QWidget						* mParent;
 	ITrollApplication			* mApp;
@@ -432,7 +435,7 @@ public:
 	{
 	}
 
-private slots:
+public slots:
 	void TimerFired();
 };
 
