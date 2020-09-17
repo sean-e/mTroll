@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2009,2014,2018 Sean Echevarria
+ * Copyright (C) 2007-2009,2014,2018,2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -44,9 +44,6 @@ public:
 
 public: // IMonome40h
 	virtual void EnableLed(byte row, byte col, bool on) override;
-#ifdef PER_LED_INTENSITY
-	virtual void EnableLed(byte row, byte col, byte intensity);
-#endif // PER_LED_INTENSITY
 	virtual void SetLedIntensity(byte brightness) override;
 	virtual void TestLed(bool on) override;
 	virtual void EnableAdc(byte port, bool on) override;
