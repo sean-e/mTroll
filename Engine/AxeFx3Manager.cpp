@@ -1084,7 +1084,7 @@ AxeFx3Manager::ReceiveLooperState(const byte * bytes, int len)
 	}
 }
 
-void
+bool
 AxeFx3Manager::SetLooperPatch(PatchPtr patch)
 {
 	std::string name(::NormalizeAxe3EffectName(patch->GetName()));
@@ -1108,7 +1108,7 @@ AxeFx3Manager::SetLooperPatch(PatchPtr patch)
 // 			std::string msg("Warning: unknown looper patch\n");
 // 			mTrace->Trace(msg);
 // 		}
-		return;
+		return false;
 	}
 
 	if (mLooperPatches[idx] && mTrace)
@@ -1118,6 +1118,7 @@ AxeFx3Manager::SetLooperPatch(PatchPtr patch)
 	}
 
 	mLooperPatches[idx] = patch;
+	return true;
 }
 
 void

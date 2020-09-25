@@ -75,7 +75,7 @@ public:
 	// IAxeFx
 	void SetTempoPatch(PatchPtr patch) override;
 	void SetScenePatch(int scene, PatchPtr patch) override;
-	void SetLooperPatch(PatchPtr patch) override;
+	bool SetLooperPatch(PatchPtr patch) override;
 	bool SetSyncPatch(PatchPtr patch, int bypassCc) override;
 	bool SetSyncPatch(PatchPtr patch, int effectId, int channel) override;
 	int GetChannel() const override { return mAxeChannel; }

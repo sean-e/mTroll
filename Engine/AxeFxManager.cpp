@@ -1554,11 +1554,11 @@ AxeFxManager::ReceiveLooperStatus(const byte * bytes, int len)
 	}
 }
 
-void
+bool
 AxeFxManager::SetLooperPatch(PatchPtr patch)
 {
 	if (mModel < Axe2)
-		return;
+		return false;
 
 	std::string name(patch->GetName());
 	::NormalizeAxeEffectName(name);
@@ -1578,7 +1578,7 @@ AxeFxManager::SetLooperPatch(PatchPtr patch)
 	else if (-1 != name.find("looper half"))
 		idx = loopPatchHalf;
 	else
-		return;
+		return false;
 
 	if (mLooperPatches[idx] && mTrace)
 	{
@@ -1587,6 +1587,7 @@ AxeFxManager::SetLooperPatch(PatchPtr patch)
 	}
 
 	mLooperPatches[idx] = patch;
+	return true;
 }
 
 void
