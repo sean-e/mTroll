@@ -697,7 +697,7 @@ public:
 	TestMidiOut() { }
 	unsigned int GetMidiOutDeviceCount() const override {return 0;}
 	std::string GetMidiOutDeviceName(unsigned int deviceIdx) const override {return std::string();}
-	void SetActivityIndicator(ISwitchDisplay * activityIndicator, int activityIndicatorIdx) override {}
+	void SetActivityIndicator(ISwitchDisplay * activityIndicator, int activityIndicatorIdx, unsigned int ledColor) override {}
 	void EnableActivityIndicator(bool enable) override {}
 	bool OpenMidiOut(unsigned int deviceIdx) override {return false;}
 	bool IsMidiOutOpen() const override {return false;}
