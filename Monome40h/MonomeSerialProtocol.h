@@ -1,5 +1,5 @@
 /*
-Original code copyright (c) 2007,2014-2015 Sean Echevarria ( http://www.creepingfog.com/sean/ )
+Original code copyright (c) 2007,2014-2015,2020 Sean Echevarria ( http://www.creepingfog.com/sean/ )
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any
@@ -38,20 +38,28 @@ public:
 		enableAdc				= 5,
 		shutdown				= 6,
 		setLedRow				= 7,
-		setledColumn			= 8
+		setledColumn			= 8,
+		setLedRgbOn,			// enable LED using specified RGB value (5 byte message)
+		updatePresetGroup1,		// set preset color slot to specified RGB value (for slots 0 - 15) (4 byte message)
+		setLedOnPresetGroup1,	// enable LED using preset color slot 0-15 (2 byte message)
+		updatePresetGroup2,		// set preset color slot to specified RGB value (slots 16 - 31 specified as 0 - 15) (4 byte message)
+		setLedOnPresetGroup2	// enable LED using preset color slot 16-31 (specified as 0 - 15) (2 byte message)
 	};
 
 protected:
-	byte mData[2];
+	byte mData[5];
+	const int mLen = 2;
 
 	MonomeSerialProtocolData(ProtocolCommand command)
 	{
 		mData[0] = (command & 0x0f) << 4;
+		mData[1] = 0;
 	}
 
 	MonomeSerialProtocolData(ProtocolCommand command, byte data1)
 	{
 		mData[0] = ((command & 0x0f) << 4) | (data1 & 0x0f);
+		mData[1] = 0;
 	}
 
 	MonomeSerialProtocolData(ProtocolCommand command, byte data1, byte data2)
@@ -66,23 +74,59 @@ protected:
 		mData[1] = ((data2 & 0x0f) << 4) | (data3 & 0x0f);
 	}
 
+	// updatePresetGroup1 and updatePresetGroup2
+	explicit MonomeSerialProtocolData(ProtocolCommand command, byte data1, unsigned int data2) : mLen(4)
+	{
+		mData[0] = ((command & 0x0f) << 4) | (data1 & 0x0f); // data1 is the preset slot number
+		mData[2] = (data2 >> 16) & 0xff; // R
+		mData[1] = (data2 >> 8) & 0xff; // G
+		mData[3] = data2 & 0xff; // B
+	}
+
+	// setLedRgbOn
+	explicit MonomeSerialProtocolData(ProtocolCommand command, byte data1, byte data2, unsigned int data3) : mLen(5)
+	{
+		mData[0] = ((command & 0x0f) << 4);
+		mData[1] = ((data1 & 0x0f) << 4) | (data2 & 0x0f);
+		mData[3] = (data3 >> 16) & 0xff; // R
+		mData[2] = (data3 >> 8) & 0xff; // G
+		mData[4] = data3 & 0xff; // B
+	}
+
 public:
 	const byte * Data() const {return mData;}
+	int DataLen() const { return mLen; }
 
 private:
-	MonomeSerialProtocolData();
+	MonomeSerialProtocolData() = delete;
 };
 
 class MonomeSetLed : public MonomeSerialProtocolData
 {
 public:
-#ifdef PER_LED_INTENSITY
-	MonomeSetLed(byte intensity, byte row, byte col) : 
-		MonomeSerialProtocolData(MonomeSerialProtocolData::setLed, intensity, col, row) { }
-#else
 	MonomeSetLed(bool enable, byte row, byte col) : 
 		MonomeSerialProtocolData(MonomeSerialProtocolData::setLed, enable ? 1 : 0, col, row) { }
-#endif // PER_LED_INTENSITY
+};
+
+class MonomeLedOnRgb : public MonomeSerialProtocolData
+{
+public:
+	MonomeLedOnRgb(byte row, byte col, unsigned int color) :
+		MonomeSerialProtocolData(MonomeSerialProtocolData::setLedRgbOn, col, row, color) { }
+};
+
+class MonomeLedOnPresetGroup1 : public MonomeSerialProtocolData
+{
+public:
+	MonomeLedOnPresetGroup1(byte preset, byte row, byte col) :
+		MonomeSerialProtocolData(MonomeSerialProtocolData::setLedOnPresetGroup1, preset, col, row) { }
+};
+
+class MonomeLedOnPresetGroup2 : public MonomeSerialProtocolData
+{
+public:
+	MonomeLedOnPresetGroup2(byte preset, byte row, byte col) :
+		MonomeSerialProtocolData(MonomeSerialProtocolData::setLedOnPresetGroup2, preset, col, row) { }
 };
 
 class MonomeSetLedIntensity : public MonomeSerialProtocolData 
@@ -95,22 +139,22 @@ public:
 class MonomeTestLed : public MonomeSerialProtocolData
 {
 public:
-	MonomeTestLed(bool enable) :
-		MonomeSerialProtocolData(MonomeSerialProtocolData::ledTest, 0, 0, enable ? 1 : 0) { }
+	MonomeTestLed(int pattern) :
+		MonomeSerialProtocolData(MonomeSerialProtocolData::ledTest, 0, 0, (byte)(pattern)) { }
 };
 
 class MonomeEnableAdc : public MonomeSerialProtocolData
 {
 public:
 	MonomeEnableAdc(int port, bool enable) :
-		MonomeSerialProtocolData(MonomeSerialProtocolData::enableAdc, 0, port, enable ? 1 : 0) { }
+		MonomeSerialProtocolData(MonomeSerialProtocolData::enableAdc, 0, port, (byte)(enable ? 1 : 0)) { }
 };
 
 class MonomeShutdown : public MonomeSerialProtocolData
 {
 public:
 	MonomeShutdown(bool state) : 
-		MonomeSerialProtocolData(MonomeSerialProtocolData::shutdown, 0, 0, state ? 1 : 0) { }
+		MonomeSerialProtocolData(MonomeSerialProtocolData::shutdown, 0, 0, (byte)(state ? 1 : 0)) { }
 };
 
 class MonomeSetLedRow : public MonomeSerialProtocolData
@@ -131,6 +175,20 @@ public:
 	{ 
 		mData[1] = rowValues;
 	}
+};
+
+class MonomeUpdatePresetGroup1 : public MonomeSerialProtocolData
+{
+public:
+	MonomeUpdatePresetGroup1(byte preset, unsigned int color) :
+		MonomeSerialProtocolData(MonomeSerialProtocolData::updatePresetGroup1, preset, color) { }
+};
+
+class MonomeUpdatePresetGroup2 : public MonomeSerialProtocolData
+{
+public:
+	MonomeUpdatePresetGroup2(byte preset, unsigned int color) :
+		MonomeSerialProtocolData(MonomeSerialProtocolData::updatePresetGroup2, preset, color) { }
 };
 
 #endif // MonomeSerialProtocol_h__

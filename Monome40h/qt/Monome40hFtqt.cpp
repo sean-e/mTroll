@@ -313,22 +313,20 @@ int
 Monome40hFtqt::Send(const MonomeSerialProtocolData & data)
 {
 	_ASSERTE(mFtDevice && INVALID_HANDLE_VALUE != mFtDevice);
-	DWORD bytesWritten = 0;
-	int retval = ::FT_W32_WriteFile(mFtDevice, (void*)data.Data(), 2, &bytesWritten, nullptr);
-	if (retval && 2 > bytesWritten)
+	int retval = 0;
+	const byte * pDat = data.Data();
+	
+	for (DWORD totalBytesWritten = 0, cnt = 0; 
+		totalBytesWritten != data.DataLen() && cnt < 10; ++cnt)
 	{
-		// timeout
-		if (1 == bytesWritten)
-		{
-			retval = ::FT_W32_WriteFile(mFtDevice, (void*)(data.Data()+1), 1, &bytesWritten, nullptr);
-			_ASSERTE(retval && 1 == bytesWritten);
-		}
-		else
-		{
-			retval = ::FT_W32_WriteFile(mFtDevice, (void*)data.Data(), 2, &bytesWritten, nullptr);
-			_ASSERTE(retval && 2 == bytesWritten);
-		}
+		DWORD bytesWritten = 0;
+		retval = ::FT_W32_WriteFile(mFtDevice, (void*)&pDat[totalBytesWritten], data.DataLen() - totalBytesWritten, &bytesWritten, nullptr);
+		if (!retval)
+			break;
+
+		totalBytesWritten += bytesWritten;
 	}
+
 	_ASSERTE(retval);
 	return retval;
 }
@@ -339,6 +337,37 @@ Monome40hFtqt::EnableLed(byte row,
 						 bool enable)
 {
 	DispatchCommand(new MonomeSetLed(enable, row, col));
+}
+
+void
+Monome40hFtqt::EnableLed(byte row, byte col, unsigned int color)
+{
+	if (color & 0x80000000)
+		EnableLedPreset(row, col, color & 0xff);
+	else if (!color)
+		EnableLed(row, col, false);
+	else
+		DispatchCommand(new MonomeLedOnRgb(row, col, color));
+}
+
+void
+Monome40hFtqt::EnableLedPreset(byte row, byte col, unsigned int preset)
+{
+	_ASSERTE(!(preset & 0x80000000));
+	if ((preset & 0xFF) > 15)
+		DispatchCommand(new MonomeLedOnPresetGroup2(preset - 16, row, col));
+	else
+		DispatchCommand(new MonomeLedOnPresetGroup1(preset, row, col));
+}
+
+void
+Monome40hFtqt::UpdatePreset(unsigned int preset, unsigned int color)
+{
+	_ASSERTE(!(color & 0x80000000));
+	if ((preset & 0xFF) > 15)
+		DispatchCommand(new MonomeUpdatePresetGroup2(preset - 16, color));
+	else
+		DispatchCommand(new MonomeUpdatePresetGroup1(preset, color));
 }
 
 void
@@ -355,9 +384,9 @@ Monome40hFtqt::SetLedIntensity(byte brightness)
 }
 
 void
-Monome40hFtqt::TestLed(bool enable)
+Monome40hFtqt::TestLed(int pattern)
 {
-	DispatchCommand(new MonomeTestLed(enable));
+	DispatchCommand(new MonomeTestLed(pattern));
 }
 
 void

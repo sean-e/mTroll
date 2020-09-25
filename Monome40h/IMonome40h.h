@@ -40,10 +40,13 @@ public:
 
 	// monome 40h controls
 	virtual void EnableLed(byte row, byte col, bool on) = 0;
+	virtual void EnableLed(byte row, byte col, unsigned int color) = 0;
+	virtual void EnableLedPreset(byte row, byte col, unsigned int preset) = 0;
+	virtual void UpdatePreset(unsigned int preset, unsigned int color) = 0;
 	virtual void SetLedIntensity(byte brightness) = 0;
 	virtual void EnableLedRow(byte row, byte columnValues) = 0;
 	virtual void EnableLedColumn(byte column, byte rowValues) = 0;
-	virtual void TestLed(bool on) = 0;
+	virtual void TestLed(int pattern) = 0;
 	virtual void EnableAdc(byte port, bool on) = 0;
 	virtual void Shutdown(bool state) = 0;
 

@@ -44,8 +44,11 @@ public:
 
 public: // IMonome40h
 	virtual void EnableLed(byte row, byte col, bool on) override;
+	virtual void EnableLed(byte row, byte col, unsigned int color) override;
+	virtual void EnableLedPreset(byte row, byte col, unsigned int preset) override;
+	virtual void UpdatePreset(unsigned int preset, unsigned int color) override;
 	virtual void SetLedIntensity(byte brightness) override;
-	virtual void TestLed(bool on) override;
+	virtual void TestLed(int pattern) override;
 	virtual void EnableAdc(byte port, bool on) override;
 	virtual void Shutdown(bool state) override;
 	virtual void EnableLedRow(byte row, byte columnValues) override;
