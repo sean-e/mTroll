@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010,2013,2015,2018 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2013,2015,2018,2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -104,11 +104,13 @@ WinMidiOut::GetMidiOutDeviceName(unsigned int deviceIdx) const
 
 void
 WinMidiOut::SetActivityIndicator(ISwitchDisplay * activityIndicator, 
-								 int activityIndicatorIdx)
+								 int activityIndicatorIdx, 
+								 unsigned int ledColor)
 {
 	mActivityIndicator = activityIndicator;
 	mActivityIndicatorIndex = activityIndicatorIdx;
 	mEnableActivityIndicator = mActivityIndicatorIndex > 0 && mActivityIndicator != nullptr;
+	mLedColor = ledColor;
 }
 
 void
@@ -377,7 +379,7 @@ WinMidiOut::IndicateActivity()
 		}
 	}
 
-	mActivityIndicator->SetSwitchDisplay(mActivityIndicatorIndex, true);
+	mActivityIndicator->SetSwitchDisplay(mActivityIndicatorIndex, mLedColor);
 	// this seems to sometimes cause indicator to remain on
 	// mTimerId = ::SetTimer(nullptr, mTimerId, 150, TimerProc);
 	sOutOnTimer = this;
@@ -387,7 +389,7 @@ void
 WinMidiOut::TurnOffIndicator()
 {
 	if (mActivityIndicator)
-		mActivityIndicator->SetSwitchDisplay(mActivityIndicatorIndex, false);
+		mActivityIndicator->TurnOffSwitchDisplay(mActivityIndicatorIndex);
 }
 
 void CALLBACK

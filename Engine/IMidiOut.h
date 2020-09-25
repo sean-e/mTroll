@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2013,2018 Sean Echevarria
+ * Copyright (C) 2007-2008,2013,2018,2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -45,7 +45,7 @@ public:
 
 	virtual unsigned int GetMidiOutDeviceCount() const = 0;
 	virtual std::string GetMidiOutDeviceName(unsigned int deviceIdx) const = 0;
-	virtual void SetActivityIndicator(ISwitchDisplay * activityIndicator, int activityIndicatorIdx) = 0;
+	virtual void SetActivityIndicator(ISwitchDisplay * activityIndicator, int activityIndicatorIdx, unsigned int ledColor) = 0;
 	virtual void EnableActivityIndicator(bool enable) = 0;
 	virtual bool OpenMidiOut(unsigned int deviceIdx) = 0;
 	virtual bool IsMidiOutOpen() const = 0;
