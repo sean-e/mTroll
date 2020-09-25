@@ -1062,7 +1062,24 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			else if (isAxeLooperPatch)
 				patchType = "axelooper";
 			else if (axeFxBlockId)
+			{
 				patchType = "axeblock";
+				const char * blockChannelStrs[6]
+				{ 
+					"axeblocka",
+					"axeblockb",
+					"axeblockc",
+					"axeblockd",
+					"axeblocke",
+					"axeblockf"
+				};
+				
+				if (-1 == ledActiveColor && axeFxBlockChannel < 6)
+					ledActiveColor = LookUpColor("*", blockChannelStrs[axeFxBlockChannel], 1, -1);
+
+				if (-1 == ledInactiveColor && axeFxBlockChannel < 6)
+					ledInactiveColor = LookUpColor("*", blockChannelStrs[axeFxBlockChannel], 0, -1);
+			}
 
 			if (-1 == ledActiveColor)
 				ledActiveColor = LookUpColor(device, patchType, 1, kFirstColorPreset);
