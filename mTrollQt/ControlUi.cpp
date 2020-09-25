@@ -584,7 +584,7 @@ public:
 	void ScaleLedColorForSwitchDisplay(int offset)
 	{
 		const BYTE r1 = GetRValue(mColor);
-		const int kReducedOffsetCutoffVal = 10;
+		const int kReducedOffsetCutoffVal = 3;
 		const int kReducedOffset = offset / (offset > 100 ? 4 : 2);
 		BYTE r2 = r1;
 		if (r2)
