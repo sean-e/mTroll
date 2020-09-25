@@ -1,5 +1,5 @@
 /*
-Original code copyright (c) 2007-2009,2010,2015 Sean Echevarria ( http://www.creepingfog.com/sean/ )
+Original code copyright (c) 2007-2009,2010,2015,2020 Sean Echevarria ( http://www.creepingfog.com/sean/ )
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any
@@ -81,6 +81,31 @@ byte
 CharsToByte(const char chrs[2])
 {
 	return CharsToByte(chrs[0], chrs[1]);
+}
+
+unsigned int
+StrToRgb(std::string& str)
+{
+	if (str.length() != 6)
+		return 0;
+
+	Bytes bytes;
+	for (int idx = 0; idx < 6; )
+	{
+		unsigned char ch = (unsigned char)str[idx++];
+		if (!isxdigit(ch))
+			return 0;
+
+		ch = str[idx++];
+		if (!isxdigit(ch))
+			return 0;
+
+		bytes.push_back(CharsToByte(str[idx - 2], ch));
+	}
+
+	_ASSERTE(bytes.size() == 3);
+	int rgb = (bytes[0] << 16) | (bytes[1] << 8) | bytes[2];
+	return rgb;
 }
 
 int 
