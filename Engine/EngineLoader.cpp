@@ -1072,13 +1072,13 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				ledInactiveColor = LookUpColor(device, patchType, 0, -1);
 				if (-1 == ledInactiveColor)
 				{
-					ledInactiveColor = 0x80000000;
+					ledInactiveColor = kFirstColorPreset;
 					if (axeFxScene || axeFxBlockId || isAxeLooperPatch || 
 						patchType == "AxeToggle" || patchType == "AxeMomentary")
 					{
-						if (ledActiveColor == 0x80000000)
+						if (ledActiveColor == kFirstColorPreset)
 							ledInactiveColor = 0; // just set dim to off
-						else if (ledActiveColor & 0x80000000)
+						else if (ledActiveColor & kPresetColorMarkerBit)
 							; // first preset slot
 						else
 						{
@@ -1200,7 +1200,7 @@ EngineLoader::LoadElementColorAttributes(TiXmlElement * pElem, unsigned int &led
 		}
 
 		--activeColorPreset;
-		ledActiveColor = 0x80000000 | activeColorPreset;
+		ledActiveColor = kPresetColorMarkerBit | activeColorPreset;
 	}
 
 	if (-1 != inactiveColorPreset)
@@ -1217,7 +1217,7 @@ EngineLoader::LoadElementColorAttributes(TiXmlElement * pElem, unsigned int &led
 		}
 
 		--inactiveColorPreset;
-		ledInactiveColor = 0x80000000 | inactiveColorPreset;
+		ledInactiveColor = kPresetColorMarkerBit | inactiveColorPreset;
 	}
 }
 
@@ -1589,7 +1589,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 }
 
 unsigned int
-EngineLoader::LookUpColor(std::string device, std::string patchType, int activeState, unsigned int defaultColor /*= 0x80000000*/)
+EngineLoader::LookUpColor(std::string device, std::string patchType, int activeState, unsigned int defaultColor /*= kFirstPreset*/)
 {
 	_ASSERTE(!device.empty() || !patchType.empty());
 	_ASSERTE(device != "*" || patchType != "*");
@@ -1977,8 +1977,8 @@ EngineLoader::InitDefaultLedPresetColors()
 
 	mLedPresetColors.swap(defaults);
 
-	// set defaults that automatically differentiate from all else that default to 0x80000000
-	mLedDefaultColors[{"mtroll", "*", 1}] = 0x80000001;
+	// set defaults that automatically differentiate from all else that default to kFirstPreset
+	mLedDefaultColors[{"mtroll", "*", 1}] = kFirstColorPreset + 1;
 }
 
 void
@@ -2124,7 +2124,7 @@ EngineLoader::LoadLedDefaultColors(TiXmlElement * pElem)
 			--presetSlot;
 
 			// preset slots are stored as color with high bit
-			clr = 0x80000000 | presetSlot;
+			clr = kPresetColorMarkerBit | presetSlot;
 		}
 		else
 		{

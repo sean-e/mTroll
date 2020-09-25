@@ -29,6 +29,7 @@
 #include <Windows.h>
 #include <MMSystem.h>
 #include <tchar.h>
+#include "..\Engine\EngineLoader.h"
 
 class ITraceDisplay;
 
@@ -79,7 +80,7 @@ private:
 	UINT_PTR					mTimerId;
 	LONG						mTimerEventCount;
 	unsigned int				mDeviceIdx;
-	unsigned int				mLedColor = 0x80000000;
+	unsigned int				mLedColor = kFirstColorPreset;
 };
 
 #endif // WinMidiOut_h__

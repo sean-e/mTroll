@@ -30,6 +30,7 @@
 #include "../MonomeSerialProtocol.h"
 #include "../../Engine/ITraceDisplay.h"
 #include "../../Engine/ScopeSet.h"
+#include "../../Engine/EngineLoader.h"
 #ifdef _WINDOWS
 #include <windows.h>
 	#define SLEEP	Sleep
@@ -342,7 +343,7 @@ Monome40hFtqt::EnableLed(byte row,
 void
 Monome40hFtqt::EnableLed(byte row, byte col, unsigned int color)
 {
-	if (color & 0x80000000)
+	if (color & kPresetColorMarkerBit)
 		EnableLedPreset(row, col, color & 0xff);
 	else if (!color)
 		EnableLed(row, col, false);
@@ -353,7 +354,7 @@ Monome40hFtqt::EnableLed(byte row, byte col, unsigned int color)
 void
 Monome40hFtqt::EnableLedPreset(byte row, byte col, unsigned int preset)
 {
-	_ASSERTE(!(preset & 0x80000000));
+	_ASSERTE(!(preset & kPresetColorMarkerBit));
 	if ((preset & 0xFF) > 15)
 		DispatchCommand(new MonomeLedOnPresetGroup2(preset - 16, row, col));
 	else
@@ -363,7 +364,7 @@ Monome40hFtqt::EnableLedPreset(byte row, byte col, unsigned int preset)
 void
 Monome40hFtqt::UpdatePreset(unsigned int preset, unsigned int color)
 {
-	_ASSERTE(!(color & 0x80000000));
+	_ASSERTE(!(color & kPresetColorMarkerBit));
 	if ((preset & 0xFF) > 15)
 		DispatchCommand(new MonomeUpdatePresetGroup2(preset - 16, color));
 	else

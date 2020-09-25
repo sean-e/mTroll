@@ -48,6 +48,9 @@ using MidiControlEnginePtr = std::shared_ptr<MidiControlEngine>;
 using AxeFxManagerPtr = std::shared_ptr<AxeFxManager>;
 using AxeFx3ManagerPtr = std::shared_ptr<AxeFx3Manager>;
 
+constexpr unsigned int kFirstColorPreset = 0x80000000;
+constexpr unsigned int kPresetColorMarkerBit = 0x80000000;
+
 
 class EngineLoader
 {
@@ -72,7 +75,7 @@ private:
 
 	IAxeFxPtr				GetAxeMgr(TiXmlElement * pElem);
 	void					LoadBanks(TiXmlElement * pElem);
-	unsigned int			LookUpColor(std::string device, std::string patchType, int activeState, unsigned int defaultColor = 0x80000000);
+	unsigned int			LookUpColor(std::string device, std::string patchType, int activeState, unsigned int defaultColor = kFirstColorPreset);
 
 	using MidiPortToDeviceIdxMap = std::map<int, unsigned int>;
 	MidiPortToDeviceIdxMap	mMidiOutPortToDeviceIdxMap;

@@ -34,6 +34,7 @@
 #include "ExpressionPedals.h"
 #include "../Monome40h/IMonome40hInputSubscriber.h"
 #include "IAxeFx.h"
+#include "EngineLoader.h"
 
 
 class ITrollApplication;
@@ -187,7 +188,7 @@ private:
 	bool					mFilterRedundantProgramChanges;
 	ExpressionPedals		mGlobalPedals;
 	int						mPedalModePort;
-	unsigned int			mEngineLedColor = 0x80000000;
+	unsigned int			mEngineLedColor = kFirstColorPreset;
 
 	// mode switch numbers
 	int						mModeSwitchNumber;

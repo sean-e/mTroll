@@ -637,7 +637,7 @@ ControlUi::ForceSwitchDisplay(int switchNumber,
 							  unsigned int color)
 {
 	_ASSERTE(switchNumber < kMaxButtons);
-	const bool kColorIsPreset = color & 0x80000000;
+	const bool kColorIsPreset = color & kPresetColorMarkerBit;
 
 	if (mHardwareUi)
 	{
@@ -678,7 +678,7 @@ ControlUi::DimSwitchDisplay(int switchNumber,
 
 	_ASSERTE(switchNumber < kMaxButtons);
 	_ASSERTE(ledColor);
-	const bool kColorIsPreset = ledColor & 0x80000000;
+	const bool kColorIsPreset = ledColor & kPresetColorMarkerBit;
 
 	if (mHardwareUi)
 	{
@@ -1881,7 +1881,7 @@ ControlUi::TestLeds(int testPattern)
 		for (row = 0; row < kMaxRows; ++row)
 		{
 			for (col = 0; col < kMaxCols; ++col)
-				SetSwitchDisplay((row * kMaxCols) + col, 0x80000000);
+				SetSwitchDisplay((row * kMaxCols) + col, kFirstColorPreset);
 		}
 
 		QApplication::processEvents();
@@ -1902,7 +1902,7 @@ ControlUi::TestLeds(int testPattern)
 			{
 				switchNumber = mRowColToSwitchNumber[(row << 16) | col];
 				if (switchNumber || (!row && !col)) // assume only row0, col0 can be switchNumber 0
-					SetSwitchDisplay(switchNumber, 0x80000000);
+					SetSwitchDisplay(switchNumber, kFirstColorPreset);
 			}
 			QApplication::processEvents();
 			QApplication::processEvents();
@@ -1922,7 +1922,7 @@ ControlUi::TestLeds(int testPattern)
 			{
 				switchNumber = mRowColToSwitchNumber[(row << 16) | col];
 				if (switchNumber || (!row && !col))
-					SetSwitchDisplay(switchNumber, 0x80000000);
+					SetSwitchDisplay(switchNumber, kFirstColorPreset);
 			}
 			QApplication::processEvents();
 			QApplication::processEvents();
@@ -1939,7 +1939,7 @@ ControlUi::TestLeds(int testPattern)
 		for (row = 0; row < kMaxRows; ++row)
 		{
 			for (col = 0; col < kMaxCols; ++col)
-				SetSwitchDisplay((row * kMaxCols) + col, 0x80000000);
+				SetSwitchDisplay((row * kMaxCols) + col, kFirstColorPreset);
 		}
 
 		QApplication::processEvents();
@@ -1970,7 +1970,7 @@ ControlUi::TestLeds(int testPattern)
 				{
 					if (mLedConfig.mPresetColors[preset++])
 					{
-						SetSwitchDisplay(switchNumber, 0x80000000 | (preset - 1));
+						SetSwitchDisplay(switchNumber, kPresetColorMarkerBit | (preset - 1));
 						++displayed;
 					}
 				}
