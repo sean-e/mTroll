@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010,2014 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2014,2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -27,6 +27,7 @@
 
 #include <string>
 #include <memory>
+#include <array>
 
 class Patch;
 
@@ -40,16 +41,16 @@ using PatchPtr = std::shared_ptr<Patch>;
 class ISwitchDisplay
 {
 public:
-	virtual void SetSwitchDisplay(int switchNumber, bool isOn) = 0;
-	virtual void ForceSwitchDisplay(int switchNumber, bool isOn) = 0;
-	virtual void DimSwitchDisplay(int switchNumber) = 0;
+	virtual void SetSwitchDisplay(int switchNumber, unsigned int color) = 0;
+	virtual void TurnOffSwitchDisplay(int switchNumber) = 0;
+	virtual void ForceSwitchDisplay(int switchNumber, unsigned int color) = 0;
+	virtual void DimSwitchDisplay(int switchNumber, unsigned int ledColor) = 0;
 	virtual void SetSwitchText(int switchNumber, const std::string & txt) = 0;
 	virtual void ClearSwitchText(int switchNumber) = 0;
 	virtual void SetIndicatorThreadSafe(bool isOn, PatchPtr patch, int time) = 0;
-	virtual void InvertLeds(bool invert) = 0;
-	virtual bool IsInverted() const = 0;
-	virtual void TestLeds() = 0;
+	virtual void TestLeds(int testPattern) = 0;
 	virtual void EnableDisplayUpdate(bool enable) = 0;
+	virtual void UpdatePresetColors(std::array<unsigned int, 32> &presetColors) = 0;
 };
 
 #endif // ISwitchDisplay_h__

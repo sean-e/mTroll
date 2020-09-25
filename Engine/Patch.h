@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2012,2014-2015,2017-2018 Sean Echevarria
+ * Copyright (C) 2007-2012,2014-2015,2017-2018,2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -54,6 +54,7 @@ public:
 	virtual void SwitchReleased(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) { }
 
 	void UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) const;
+	void SetLedColors(unsigned int active, unsigned int inactive) { mLedActiveColor = active; mLedInactiveColor = inactive; }
 	const std::string & GetName() const { return mName; }
 	void SetName(const std::string& name) { mName = name; }
 	virtual bool HasDisplayText() const { return false; }
@@ -86,15 +87,17 @@ private:
 
 protected:
 	ExpressionPedals		mPedals;
-	bool					mPatchIsActive;
-	bool					mPatchSupportsDisabledState;
-	bool					mPatchIsDisabled;
-	bool					mOverridePedals;
+	bool					mPatchIsActive = false;
+	bool					mPatchSupportsDisabledState = false;
+	bool					mPatchIsDisabled = false;
+	bool					mOverridePedals = false;
 
 private:
 	const int				mNumber;	// unique across patches
 	std::string				mName;
 	std::set<int>			mSwitchNumbers;
+	unsigned int			mLedActiveColor = 0;
+	unsigned int			mLedInactiveColor = 0;
 };
 
 using PatchPtr = std::shared_ptr<Patch>;

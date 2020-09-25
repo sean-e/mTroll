@@ -82,8 +82,6 @@ ControlUi::ControlUi(QWidget * parent, ITrollApplication * app) :
 	mMaxSwitchId(0),
 	mHardwareUi(nullptr),
 	mLedIntensity(0),
-	mLedIntensityDimmed(0),
-	mInvertLeds(false),
 	mTimeDisplayTimer(nullptr),
 	mDisplayTime(false),
 	mSystemPowerOverride(nullptr),
@@ -93,6 +91,7 @@ ControlUi::ControlUi(QWidget * parent, ITrollApplication * app) :
 	mLastUiButtonPressed(-1),
 	mLastUiButtonEventTime(0)
 {
+	mLedConfig.mPresetColors.fill(0x7f);
 }
 
 ControlUi::~ControlUi()
@@ -157,7 +156,7 @@ ControlUi::Unload()
 	if (mHardwareUi)
 	{
 		for (auto & mStupidSwitchState : mStupidSwitchStates)
-			SetSwitchDisplay(mStupidSwitchState.first, false);
+			TurnOffSwitchDisplay(mStupidSwitchState.first);
 	}
 
 	QCoreApplication::removePostedEvents(this, QEvent::User);
@@ -221,6 +220,7 @@ ControlUi::Load(const std::string & uiSettingsFile,
 
 	if (mHardwareUi)
 	{
+		SendPresetColorsToMonome();
 		mHardwareUi->Subscribe(this);
 		mHardwareUi->Subscribe(mEngine.get());
 
@@ -238,9 +238,6 @@ ControlUi::Load(const std::string & uiSettingsFile,
 		if (anyMidiOutOpen)
 			mSystemPowerOverride = new KeepDisplayOn;
 	}
-
-	for (int idx = 0; mInvertLeds && idx < kMaxButtons; ++idx)
-		SetSwitchDisplay(idx, false);
 }
 
 void
@@ -252,7 +249,7 @@ ControlUi::LoadUi(const std::string & uiSettingsFile)
 		setLayout(mGrid);
 
 	Trace("Midi Output Devices:\n");
-	IMidiOutPtr midiOut = CreateMidiOut(0, -1);
+	IMidiOutPtr midiOut = CreateMidiOut(0, -1, 0);
 	if (midiOut)
 	{
 		const int kMidiOutCnt = midiOut->GetMidiOutDeviceCount();
@@ -307,16 +304,6 @@ ControlUi::LoadMonome(bool displayStartSequence)
 					if (displayStartSequence)
 						MonomeStartupSequence();
 					mHardwareUi->SetLedIntensity(mLedIntensity);
-
-#ifdef PER_LED_INTENSITY
-					// dimmed LED intensity calculated based on normal LED intensity
-// 					mLedIntensityDimmed = mLedIntensity / 4;
-// 					if (mLedIntensityDimmed < 1)
-// 						mLedIntensityDimmed = 1;
-// 
-// 					if (mLedIntensityDimmed == mLedIntensity)
-// 						mLedIntensityDimmed = 0;
-#endif // PER_LED_INTENSITY
 				}
 			}
 		}
@@ -572,12 +559,14 @@ class UpdateSwitchDisplayEvent : public ControlUiEvent
 	DWORD mFrameHighlightColor;
 
 public:
-	UpdateSwitchDisplayEvent(ControlUi::SwitchLed * led, DWORD color, DWORD frameHighlightColor) : 
+	UpdateSwitchDisplayEvent(ControlUi::SwitchLed * led, DWORD color, DWORD frameHighlightColor, int offset) : 
 		ControlUiEvent(User),
 		mLed(led),
 		mColor(color),
 		mFrameHighlightColor(frameHighlightColor)
 	{
+		if (mColor && offset)
+			ScaleLedColorForSwitchDisplay(offset);
 	}
 
 	virtual void exec() override
@@ -588,66 +577,137 @@ public:
 		pal.setColor(QPalette::Dark, mFrameHighlightColor);
 		mLed->setPalette(pal);
 	}
+
+	void ScaleLedColorForSwitchDisplay(int offset)
+	{
+		const BYTE r1 = GetRValue(mColor);
+		const int kReducedOffsetCutoffVal = 10;
+		const int kReducedOffset = offset / (offset > 100 ? 4 : 2);
+		BYTE r2 = r1;
+		if (r2)
+		{
+			r2 = r2 + (r2 < kReducedOffsetCutoffVal ? kReducedOffset : offset);
+			if (r1 > r2)
+				r2 = 0xff;
+		}
+
+		const BYTE g1 = GetGValue(mColor);
+		BYTE g2 = g1;
+		if (g2)
+		{
+			g2 = g2 + (g2 < kReducedOffsetCutoffVal ? kReducedOffset : offset);
+			if (g1 > g2)
+				g2 = 0xff;
+		}
+
+		const BYTE b1 = GetBValue(mColor);
+		BYTE b2 = b1;
+		if (b2)
+		{
+			b2 = b2 + (b2 < kReducedOffsetCutoffVal ? kReducedOffset : offset);
+			if (b1 > b2)
+				b2 = 0xff;
+		}
+
+		mColor = RGB(r2, g2, b2);
+	}
 };
 
 void
 ControlUi::SetSwitchDisplay(int switchNumber, 
-							bool isOn)
+							unsigned int color)
 {
 	if (!mSwitchLedUpdateEnabled)
 		return;
 
-	ForceSwitchDisplay(switchNumber, isOn);
+	ForceSwitchDisplay(switchNumber, color);
+}
+
+void
+ControlUi::TurnOffSwitchDisplay(int switchNumber)
+{
+	if (!mSwitchLedUpdateEnabled)
+		return;
+
+	ForceSwitchDisplay(switchNumber, 0);
 }
 
 void
 ControlUi::ForceSwitchDisplay(int switchNumber, 
-							  bool isOn)
+							  unsigned int color)
 {
 	_ASSERTE(switchNumber < kMaxButtons);
-	if (mInvertLeds)
-		isOn = !isOn;
-
-	if (mHardwareUi)
-	{
-		byte row, col;
-		if (RowColFromSwitchNumber(switchNumber, row, col))
-			mHardwareUi->EnableLed(row, col, isOn);
-	}
-
-	if (!mLeds[switchNumber] || !mLeds[switchNumber]->isEnabled())
-		return;
-
-	QCoreApplication::postEvent(this, 
-		new UpdateSwitchDisplayEvent(mLeds[switchNumber], isOn ? mLedConfig.mOnColor : mLedConfig.mOffColor, mFrameHighlightColor));
-}
-
-void
-ControlUi::DimSwitchDisplay(int switchNumber)
-{
-	if (!mSwitchLedUpdateEnabled)
-		return;
-
-	_ASSERTE(switchNumber < kMaxButtons);
+	const bool kColorIsPreset = color & 0x80000000;
 
 	if (mHardwareUi)
 	{
 		byte row, col;
 		if (RowColFromSwitchNumber(switchNumber, row, col))
 		{
-#ifdef PER_LED_INTENSITY
-			mHardwareUi->EnableLed(row, col, mLedIntensityDimmed);
-#else
-			mHardwareUi->EnableLed(row, col, false);
-#endif // PER_LED_INTENSITY
+			if (kColorIsPreset)
+				mHardwareUi->EnableLedPreset(row, col, color & 0xff);
+			else
+				mHardwareUi->EnableLed(row, col, color);
 		}
 	}
 
 	if (!mLeds[switchNumber] || !mLeds[switchNumber]->isEnabled())
 		return;
 
+	if (kColorIsPreset)
+	{
+		color &= 0xff;
+		if (color > 31)
+			color = 0;
+		color = mLedConfig.mPresetColors[color];
+	}
+
 	QCoreApplication::postEvent(this, 
-		new UpdateSwitchDisplayEvent(mLeds[switchNumber], mLedConfig.mDimColor, mFrameHighlightColor));
+		new UpdateSwitchDisplayEvent(mLeds[switchNumber], 
+			color ? color : mLedConfig.mOffColor,
+			mFrameHighlightColor, 
+			color ? mLedConfig.mLedColorOffset : 0));
+}
+
+void
+ControlUi::DimSwitchDisplay(int switchNumber, 
+							unsigned int ledColor)
+{
+	if (!mSwitchLedUpdateEnabled)
+		return;
+
+	_ASSERTE(switchNumber < kMaxButtons);
+	_ASSERTE(ledColor);
+	const bool kColorIsPreset = ledColor & 0x80000000;
+
+	if (mHardwareUi)
+	{
+		byte row, col;
+		if (RowColFromSwitchNumber(switchNumber, row, col))
+		{
+			if (kColorIsPreset)
+				mHardwareUi->EnableLedPreset(row, col, ledColor & 0xff);
+			else
+				mHardwareUi->EnableLed(row, col, ledColor);
+		}
+	}
+
+	if (!mLeds[switchNumber] || !mLeds[switchNumber]->isEnabled())
+		return;
+
+	if (kColorIsPreset)
+	{
+		ledColor &= 0xff;
+		if (ledColor > 31)
+			ledColor = 0;
+		ledColor = mLedConfig.mPresetColors[ledColor];
+	}
+
+	QCoreApplication::postEvent(this, 
+		new UpdateSwitchDisplayEvent(mLeds[switchNumber], 
+			ledColor, 
+			mFrameHighlightColor, 
+			ledColor ? mLedConfig.mLedColorOffset : 0));
 }
 
 class LabelTextOutEvent : public ControlUiEvent
@@ -739,6 +799,23 @@ ControlUi::SetIndicatorThreadSafe(bool isOn, PatchPtr patch, int time)
 	QCoreApplication::postEvent(this, new ClearIndicatorTimer(isOn, this, patch, time));
 }
 
+void
+ControlUi::UpdatePresetColors(std::array<unsigned int, 32> &presetColors)
+{
+	mLedConfig.mPresetColors.swap(presetColors);
+}
+
+void
+ControlUi::SendPresetColorsToMonome()
+{
+	if (!mHardwareUi)
+		return;
+
+	int idx = 0;
+	for (const auto& it : mLedConfig.mPresetColors)
+		mHardwareUi->UpdatePreset(idx++, it);
+}
+
 
 // IMidiControlUi
 void
@@ -758,22 +835,23 @@ ControlUi::SetSwitchLedConfig(int width,
 							  int height, 
 							  int vOffset, 
 							  int hOffset,
-							  unsigned int onColor, 
-							  unsigned int offColor)
+							  unsigned int offColor,
+							  int uiColorOffset)
 {
 	mLedConfig.mWidth = width;
 	mLedConfig.mHeight = height;
-	mLedConfig.mOnColor = onColor;
 	mLedConfig.mOffColor = offColor;
 	mLedConfig.mVoffset = vOffset;
 	mLedConfig.mHoffset = hOffset;
+	mLedConfig.mLedColorOffset = uiColorOffset;
 
-	float onOpacity = 0.25f;
-	float offOpacity = 1.0f - onOpacity;
-	BYTE R = (BYTE)((float)GetRValue(offColor) * offOpacity + (float)GetRValue(onColor) * onOpacity);
-	BYTE G = (BYTE)((float)GetGValue(offColor) * offOpacity + (float)GetGValue(onColor) * onOpacity);
-	BYTE B = (BYTE)((float)GetBValue(offColor) * offOpacity + (float)GetBValue(onColor) * onOpacity);
-	mLedConfig.mDimColor = RGB(R, G, B);
+	// old auto-dim logic
+// 	float onOpacity = 0.25f;
+// 	float offOpacity = 1.0f - onOpacity;
+// 	BYTE R = (BYTE)((float)GetRValue(offColor) * offOpacity + (float)GetRValue(onColor) * onOpacity);
+// 	BYTE G = (BYTE)((float)GetGValue(offColor) * offOpacity + (float)GetGValue(onColor) * onOpacity);
+// 	BYTE B = (BYTE)((float)GetBValue(offColor) * offOpacity + (float)GetBValue(onColor) * onOpacity);
+// 	mLedConfig.mDimColor = RGB(R, G, B);
 }
 
 void
@@ -1359,13 +1437,14 @@ ControlUi::DecreaseMainDisplayHeight()
 
 IMidiOutPtr
 ControlUi::CreateMidiOut(unsigned int deviceIdx,
-						 int activityIndicatorIdx)
+						 int activityIndicatorIdx, 
+						 unsigned int ledColor)
 {
 	if (!mMidiOuts[deviceIdx])
 		mMidiOuts[deviceIdx] = std::make_shared<XMidiOut>(this);
 
 	if (activityIndicatorIdx > 0)
-		mMidiOuts[deviceIdx]->SetActivityIndicator(this, activityIndicatorIdx);
+		mMidiOuts[deviceIdx]->SetActivityIndicator(this, activityIndicatorIdx, ledColor);
 
 	return mMidiOuts[deviceIdx];
 }
@@ -1467,10 +1546,6 @@ ControlUi::MonomeStartupSequence()
 		SLEEP(100);
 		mHardwareUi->EnableLedColumn(idx, 0);
 	}
-
-	mHardwareUi->TestLed(true);
-	SLEEP(250);
-	mHardwareUi->TestLed(false);
 }
 
 decltype(&ControlUi::UiButtonPressed_0)
@@ -1658,6 +1733,7 @@ ControlUi::Reconnect()
 
 	if (mHardwareUi)
 	{
+		SendPresetColorsToMonome();
 		for (int idx = 0; idx < kPorts; ++idx)
 			mHardwareUi->EnableAdc(idx, adcEnables[idx]);
 
@@ -1794,94 +1870,133 @@ ControlUi::UpdateAdcs(const bool adcOverrides[ExpressionPedals::PedalCount])
 }
 
 void
-ControlUi::InvertLeds(bool invert)
+ControlUi::TestLeds(int testPattern)
 {
-	mInvertLeds = invert;
-}
-
-void
-ControlUi::TestLeds()
-{
-	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-	int row, col, switchNumber;
-
-	// turn all on
-	for (row = 0; row < kMaxRows; ++row)
+	if (0 == testPattern)
 	{
-		for (col = 0; col < kMaxCols; ++col)
-			SetSwitchDisplay((row * kMaxCols) + col, true);
-	}
+		QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+		int row, col, switchNumber;
 
-	QApplication::processEvents();
-	QApplication::processEvents();
-	SLEEP(750);
-
-	// turn all off
-	for (row = 0; row < kMaxRows; ++row)
-	{
-		for (col = 0; col < kMaxCols; ++col)
-			SetSwitchDisplay((row * kMaxCols) + col, false);
-	}
-
-	// walk rows
-	for (row = 0; row < kMaxRows; ++row)
-	{
-		for (col = 0; col < kMaxCols; ++col)
-		{
-			switchNumber = mRowColToSwitchNumber[(row << 16) | col];
-			if (switchNumber || (!row && !col)) // assume only row0, col0 can be switchNumber 0
-				SetSwitchDisplay(switchNumber, true);
-		}
-		QApplication::processEvents();
-		QApplication::processEvents();
-		SLEEP(200);
-		for (col = 0; col < kMaxCols; ++col)
-		{
-			switchNumber = mRowColToSwitchNumber[(row << 16) | col];
-			if (switchNumber || (!row && !col))
-				SetSwitchDisplay(switchNumber, false);
-		}
-	}
-
-	// walk columns
-	for (col = 0; col < kMaxCols; ++col)
-	{
+		// turn all on
 		for (row = 0; row < kMaxRows; ++row)
 		{
-			switchNumber = mRowColToSwitchNumber[(row << 16) | col];
-			if (switchNumber || (!row && !col))
-				SetSwitchDisplay(switchNumber, true);
+			for (col = 0; col < kMaxCols; ++col)
+				SetSwitchDisplay((row * kMaxCols) + col, 0x80000000);
 		}
+
 		QApplication::processEvents();
 		QApplication::processEvents();
-		SLEEP(200);
+		SLEEP(750);
+
+		// turn all off
 		for (row = 0; row < kMaxRows; ++row)
 		{
-			switchNumber = mRowColToSwitchNumber[(row << 16) | col];
-			if (switchNumber || (!row && !col))
-				SetSwitchDisplay(switchNumber, false);
+			for (col = 0; col < kMaxCols; ++col)
+				TurnOffSwitchDisplay((row * kMaxCols) + col);
 		}
-	}
 
-	// turn all on
-	for (row = 0; row < kMaxRows; ++row)
-	{
+		// walk rows
+		for (row = 0; row < kMaxRows; ++row)
+		{
+			for (col = 0; col < kMaxCols; ++col)
+			{
+				switchNumber = mRowColToSwitchNumber[(row << 16) | col];
+				if (switchNumber || (!row && !col)) // assume only row0, col0 can be switchNumber 0
+					SetSwitchDisplay(switchNumber, 0x80000000);
+			}
+			QApplication::processEvents();
+			QApplication::processEvents();
+			SLEEP(200);
+			for (col = 0; col < kMaxCols; ++col)
+			{
+				switchNumber = mRowColToSwitchNumber[(row << 16) | col];
+				if (switchNumber || (!row && !col))
+					TurnOffSwitchDisplay(switchNumber);
+			}
+		}
+
+		// walk columns
 		for (col = 0; col < kMaxCols; ++col)
-			SetSwitchDisplay((row * kMaxCols) + col, true);
+		{
+			for (row = 0; row < kMaxRows; ++row)
+			{
+				switchNumber = mRowColToSwitchNumber[(row << 16) | col];
+				if (switchNumber || (!row && !col))
+					SetSwitchDisplay(switchNumber, 0x80000000);
+			}
+			QApplication::processEvents();
+			QApplication::processEvents();
+			SLEEP(200);
+			for (row = 0; row < kMaxRows; ++row)
+			{
+				switchNumber = mRowColToSwitchNumber[(row << 16) | col];
+				if (switchNumber || (!row && !col))
+					TurnOffSwitchDisplay(switchNumber);
+			}
+		}
+
+		// turn all on
+		for (row = 0; row < kMaxRows; ++row)
+		{
+			for (col = 0; col < kMaxCols; ++col)
+				SetSwitchDisplay((row * kMaxCols) + col, 0x80000000);
+		}
+
+		QApplication::processEvents();
+		QApplication::processEvents();
+		SLEEP(750);
+
+		// turn all off
+		for (row = 0; row < kMaxRows; ++row)
+		{
+			for (col = 0; col < kMaxCols; ++col)
+				TurnOffSwitchDisplay((row * kMaxCols) + col);
+		}
+
+		QApplication::restoreOverrideCursor();
 	}
-
-	QApplication::processEvents();
-	QApplication::processEvents();
-	SLEEP(750);
-
-	// turn all off
-	for (row = 0; row < kMaxRows; ++row)
+	else if (1 == testPattern)
 	{
-		for (col = 0; col < kMaxCols; ++col)
-			SetSwitchDisplay((row * kMaxCols) + col, false);
-	}
+		// show color presets, 15 at a time
+		QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+		const int kPresets = mLedConfig.mPresetColors.size();
+		for (int preset = 0; preset < kPresets; )
+		{
+			int displayed = 0;
+			for (int switchNumber = 0; switchNumber < 15 && preset < kPresets; ++switchNumber)
+			{
+				byte row, col;
+				if (RowColFromSwitchNumber(switchNumber, row, col))
+				{
+					if (mLedConfig.mPresetColors[preset++])
+					{
+						SetSwitchDisplay(switchNumber, 0x80000000 | (preset - 1));
+						++displayed;
+					}
+				}
+			}
 
-	QApplication::restoreOverrideCursor();
+			QApplication::processEvents();
+			QApplication::processEvents();
+			if (displayed)
+				SLEEP(displayed < 5 ? 2000 : 5000);
+
+			// can't use row commands on IMonome since we need to update GUI also
+			for (int row = 0; row < kMaxRows; ++row)
+			{
+				for (int col = 0; col < kMaxCols; ++col)
+					TurnOffSwitchDisplay((row * kMaxCols) + col);
+			}
+
+			QApplication::processEvents();
+			QApplication::processEvents();
+			SLEEP(100);
+		}
+
+		QApplication::restoreOverrideCursor();
+	}
+	else if (mHardwareUi)
+		mHardwareUi->TestLed(testPattern);
 }
 
 bool

@@ -173,8 +173,10 @@ MidiControlEngine::GetBankNameByNum(int bankNumberNotIndex)
 }
 
 void
-MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSettings)
+MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSettings, unsigned int ledColor)
 {
+	mEngineLedColor = ledColor;
+
 	if (mOtherModeSwitchNumbers.empty())
 	{
 		// set defaults
@@ -190,7 +192,6 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 		mOtherModeSwitchNumbers[kModeAdcOverride] = kModeAdcOverride;
 		mOtherModeSwitchNumbers[kModeTestLeds] = kModeTestLeds;
 		mOtherModeSwitchNumbers[kModeToggleTraceWindow] = kModeToggleTraceWindow;
-		mOtherModeSwitchNumbers[kModeToggleLedInversion] = kModeToggleLedInversion;
 	}
 
 	std::sort(mBanks.begin(), mBanks.end(), SortByBankNumber);
@@ -362,7 +363,7 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 		if (mSwitchDisplay && doUpdate)
 		{
 			mSwitchDisplay->EnableDisplayUpdate(false);
-			mSwitchDisplay->ForceSwitchDisplay(switchNumber, true);
+			mSwitchDisplay->ForceSwitchDisplay(switchNumber, mEngineLedColor);
 		}
 
 		if (emProgramChangeDirect == mMode)
@@ -455,6 +456,10 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 	case emTimeDisplay:
 		SwitchReleased_TimeDisplay(switchNumber);
 		return;
+
+	case emLedTests:
+		SwitchReleased_LedTests(switchNumber);
+		return;
 	}
 }
 
@@ -479,6 +484,7 @@ MidiControlEngine::AdcValueChanged(int port,
 	case emControlChangeDirect:
 	case emModeSelect:
 	case emTimeDisplay:
+	case emLedTests:
 		// forward directly to active patch
 		if (!gActivePatchPedals || 
 			gActivePatchPedals->AdcValueChange(mMainDisplay, port, newValue))
@@ -540,7 +546,7 @@ MidiControlEngine::NavigateBankRelative(int relativeBankIndex)
 			if (idx != mModeSwitchNumber)
 			{
 				mSwitchDisplay->ClearSwitchText(idx);
-				mSwitchDisplay->ForceSwitchDisplay(idx, false);
+				mSwitchDisplay->ForceSwitchDisplay(idx, 0);
 			}
 		}
 	}
@@ -776,7 +782,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		for (int idx = 0; idx < 64; idx++)
 		{
 			mSwitchDisplay->ClearSwitchText(idx);
-			mSwitchDisplay->ForceSwitchDisplay(idx, false);
+			mSwitchDisplay->ForceSwitchDisplay(idx, 0);
 		}
 	}
 
@@ -839,7 +845,6 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			SetupModeSelectSwitch(kModeToggleTraceWindow);
 			SetupModeSelectSwitch(kModeAdcOverride);
 			SetupModeSelectSwitch(kModeTime);
-			SetupModeSelectSwitch(kModeToggleLedInversion);
 
 			mSwitchDisplay->EnableDisplayUpdate(false);
 			for (std::map<int, int>::const_iterator it = mBankLoadSwitchNumbers.begin();
@@ -850,7 +855,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 				{
 					std::string txt("[" + bnk->GetBankName() + "]");
 					mSwitchDisplay->SetSwitchText(it->first, txt);
-					mSwitchDisplay->ForceSwitchDisplay(it->first, true);
+					mSwitchDisplay->ForceSwitchDisplay(it->first, mEngineLedColor);
 				}
 			}
 		}
@@ -865,20 +870,45 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 				mSwitchDisplay->EnableDisplayUpdate(false);
 
 				mSwitchDisplay->SetSwitchText(switchNumber, "Exit Time Display");
-				mSwitchDisplay->ForceSwitchDisplay(switchNumber, true);
+				mSwitchDisplay->ForceSwitchDisplay(switchNumber, mEngineLedColor);
 				mSwitchDisplay->SetSwitchText(switchNumber + 1, "Pause/Resume time");
-				mSwitchDisplay->ForceSwitchDisplay(switchNumber + 1, true);
+				mSwitchDisplay->ForceSwitchDisplay(switchNumber + 1, mEngineLedColor);
 				mSwitchDisplay->SetSwitchText(switchNumber + 2, "Reset elapsed time");
-				mSwitchDisplay->ForceSwitchDisplay(switchNumber + 2, true);
+				mSwitchDisplay->ForceSwitchDisplay(switchNumber + 2, mEngineLedColor);
 				mSwitchDisplay->SetSwitchText(switchNumber + 3, "Exit mTroll");
-				mSwitchDisplay->ForceSwitchDisplay(switchNumber + 3, true);
+				mSwitchDisplay->ForceSwitchDisplay(switchNumber + 3, mEngineLedColor);
 				mSwitchDisplay->SetSwitchText(switchNumber + 4, "Exit + sleep");
-				mSwitchDisplay->ForceSwitchDisplay(switchNumber + 4, true);
+				mSwitchDisplay->ForceSwitchDisplay(switchNumber + 4, mEngineLedColor);
 				mSwitchDisplay->SetSwitchText(switchNumber + 5, "Exit + hibernate");
-				mSwitchDisplay->ForceSwitchDisplay(switchNumber + 5, true);
+				mSwitchDisplay->ForceSwitchDisplay(switchNumber + 5, mEngineLedColor);
 			}
 			if (!mApplication || !mApplication->EnableTimeDisplay(true))
 				EscapeToDefaultMode();
+		}
+		break;
+	case emLedTests:
+		{
+			msg = "LED Tests";
+			mSwitchDisplay->EnableDisplayUpdate(false);
+
+			int switchNumber = GetSwitchNumber(kModeTestLeds);
+			if (kUnassignedSwitchNumber != switchNumber)
+			{
+				mSwitchDisplay->SetSwitchText(switchNumber, "Exit LED Tests");
+				mSwitchDisplay->ForceSwitchDisplay(switchNumber, mEngineLedColor);
+			}
+
+			switchNumber = 0;
+			mSwitchDisplay->SetSwitchText(switchNumber, "Exit LED Tests");
+			mSwitchDisplay->ForceSwitchDisplay(switchNumber, mEngineLedColor);
+			mSwitchDisplay->SetSwitchText(switchNumber + 1, "mTroll Quick Blue test");
+			mSwitchDisplay->ForceSwitchDisplay(switchNumber + 1, mEngineLedColor);
+			mSwitchDisplay->SetSwitchText(switchNumber + 2, "Color presets");
+			mSwitchDisplay->ForceSwitchDisplay(switchNumber + 2, mEngineLedColor);
+			mSwitchDisplay->SetSwitchText(switchNumber + 3, "monome RGB rows");
+			mSwitchDisplay->ForceSwitchDisplay(switchNumber + 3, mEngineLedColor);
+			mSwitchDisplay->SetSwitchText(switchNumber + 4, "monome RGB rows and columns");
+			mSwitchDisplay->ForceSwitchDisplay(switchNumber + 4, mEngineLedColor);
 		}
 		break;
 	case emExprPedalDisplay:
@@ -888,7 +918,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		{
 			mSwitchDisplay->SetSwitchText(0, "Pedal 1");
 			mSwitchDisplay->EnableDisplayUpdate(false);
-			mSwitchDisplay->ForceSwitchDisplay(0, true);
+			mSwitchDisplay->ForceSwitchDisplay(0, mEngineLedColor);
 			mSwitchDisplay->SetSwitchText(1, "Pedal 2");
 			mSwitchDisplay->SetSwitchText(2, "Pedal 3");
 			mSwitchDisplay->SetSwitchText(3, "Pedal 4");
@@ -908,13 +938,13 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 				{
 					msg2 << " forced off" << std::ends;
 					mSwitchDisplay->SetSwitchText(idx, msg2.str());
-					mSwitchDisplay->ForceSwitchDisplay(idx, true);
+					mSwitchDisplay->ForceSwitchDisplay(idx, mEngineLedColor);
 				}
 				else
 				{
 					msg2 << " normal" << std::ends;
 					mSwitchDisplay->SetSwitchText(idx, msg2.str());
-					mSwitchDisplay->ForceSwitchDisplay(idx, false);
+					mSwitchDisplay->ForceSwitchDisplay(idx, 0);
 				}
 			}
 		}
@@ -995,18 +1025,18 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		{
 		case emBank:
 			mSwitchDisplay->EnableDisplayUpdate(true);
-			mSwitchDisplay->SetSwitchDisplay(mModeSwitchNumber, false);
+			mSwitchDisplay->TurnOffSwitchDisplay(mModeSwitchNumber);
 			break;
 		case emModeSelect:
 		case emBankNav:
 			mSwitchDisplay->EnableDisplayUpdate(false);
-			mSwitchDisplay->ForceSwitchDisplay(mModeSwitchNumber, true);
-			mSwitchDisplay->ForceSwitchDisplay(mDecrementSwitchNumber, true);
-			mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, true);
+			mSwitchDisplay->ForceSwitchDisplay(mModeSwitchNumber, mEngineLedColor);
+			mSwitchDisplay->ForceSwitchDisplay(mDecrementSwitchNumber, mEngineLedColor);
+			mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, mEngineLedColor);
 			break;
 		default:
 			mSwitchDisplay->EnableDisplayUpdate(false);
-			mSwitchDisplay->ForceSwitchDisplay(mModeSwitchNumber, true);
+			mSwitchDisplay->ForceSwitchDisplay(mModeSwitchNumber, mEngineLedColor);
 		}
 	}
 }
@@ -1101,7 +1131,7 @@ MidiControlEngine::SetupModeSelectSwitch(EngineModeSwitch m)
 		txt = "Raw ADC values...";
 		break;
 	case kModeTestLeds:
-		txt = "Test LEDs";
+		txt = "Test LEDs...";
 		break;
 	case kModeToggleTraceWindow:
 		txt = "Toggle Trace Window";
@@ -1112,9 +1142,6 @@ MidiControlEngine::SetupModeSelectSwitch(EngineModeSwitch m)
 	case kModeTime:
 		txt = "Time + utils...";
 		break;
-	case kModeToggleLedInversion:
-		txt = "Toggle LED Inversion";
-		break;
 	default:
 		_ASSERTE(!"unhandled EngineModeSwitch");
 		return;
@@ -1122,7 +1149,7 @@ MidiControlEngine::SetupModeSelectSwitch(EngineModeSwitch m)
 
 	mSwitchDisplay->SetSwitchText(switchNumber, txt);
 	mSwitchDisplay->EnableDisplayUpdate(false);
-	mSwitchDisplay->ForceSwitchDisplay(switchNumber, true);
+	mSwitchDisplay->ForceSwitchDisplay(switchNumber, mEngineLedColor);
 }
 
 void
@@ -1136,10 +1163,10 @@ MidiControlEngine::SwitchReleased_PedalDisplayMode(int switchNumber)
 	{
 		mSwitchDisplay->EnableDisplayUpdate(false);
 		if (mSwitchDisplay)
-			mSwitchDisplay->ForceSwitchDisplay(mPedalModePort, false);
+			mSwitchDisplay->ForceSwitchDisplay(mPedalModePort, 0);
 		mPedalModePort = switchNumber;
 		if (mSwitchDisplay)
-			mSwitchDisplay->ForceSwitchDisplay(mPedalModePort, true);
+			mSwitchDisplay->ForceSwitchDisplay(mPedalModePort, mEngineLedColor);
 
 		if (mMainDisplay)
 		{
@@ -1191,21 +1218,54 @@ MidiControlEngine::SwitchReleased_TimeDisplay(int switchNumber)
 }
 
 void
+MidiControlEngine::SwitchReleased_LedTests(int switchNumber)
+{
+	const int ledTestsModeSwitchNumber = GetSwitchNumber(kModeTestLeds);
+	const int cmdSwitchNumberBase = 0;
+	if (!mSwitchDisplay)
+	{
+		EscapeToDefaultMode();
+		return;
+	}
+
+	mSwitchDisplay->EnableDisplayUpdate(true);
+
+	if (ledTestsModeSwitchNumber == switchNumber || mModeSwitchNumber == switchNumber || cmdSwitchNumberBase == switchNumber)
+		EscapeToDefaultMode();
+	else if (switchNumber == cmdSwitchNumberBase + 1)
+	{
+		mSwitchDisplay->TestLeds(0);
+		// ok to restore mode since pattern 0 is software-defined, the other patterns are firmware-defined
+		ChangeMode(emLedTests);
+	}
+	else if (switchNumber == cmdSwitchNumberBase + 2)
+	{
+		mSwitchDisplay->TestLeds(1);
+		// ok to restore mode since pattern 1 is software-defined, the other patterns are firmware-defined
+		ChangeMode(emLedTests);
+	}
+	else if (switchNumber == cmdSwitchNumberBase + 3)
+		mSwitchDisplay->TestLeds(10); // don't reset mode since the call happens on the hardware without blocking
+	else if (switchNumber == cmdSwitchNumberBase + 4)
+		mSwitchDisplay->TestLeds(11); // don't reset mode since the call happens on the hardware without blocking
+}
+
+void
 MidiControlEngine::SwitchReleased_NavAndDescMode(int switchNumber)
 {
 	if (switchNumber == mIncrementSwitchNumber)
 	{
 		// bank inc/dec does not commit bank
 		NavigateBankRelative(1);
-		mSwitchDisplay->ForceSwitchDisplay(mDecrementSwitchNumber, true);
-		mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, true);
+		mSwitchDisplay->ForceSwitchDisplay(mDecrementSwitchNumber, mEngineLedColor);
+		mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, mEngineLedColor);
 	}
 	else if (switchNumber == mDecrementSwitchNumber)
 	{
 		// bank inc/dec does not commit bank
 		NavigateBankRelative(-1);
-		mSwitchDisplay->ForceSwitchDisplay(mDecrementSwitchNumber, true);
-		mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, true);
+		mSwitchDisplay->ForceSwitchDisplay(mDecrementSwitchNumber, mEngineLedColor);
+		mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, mEngineLedColor);
 	}
 	else if (switchNumber == mModeSwitchNumber)
 	{
@@ -1239,16 +1299,16 @@ MidiControlEngine::SwitchReleased_ModeSelect(int switchNumber)
 		ChangeMode(emBankNav);
 		mBankNavigationIndex = mActiveBankIndex;
 		NavigateBankRelative(-1);
-		mSwitchDisplay->ForceSwitchDisplay(mDecrementSwitchNumber, true);
-		mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, true);
+		mSwitchDisplay->ForceSwitchDisplay(mDecrementSwitchNumber, mEngineLedColor);
+		mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, mEngineLedColor);
 	}
 	else if (switchNumber == mIncrementSwitchNumber)
 	{
 		ChangeMode(emBankNav);
 		mBankNavigationIndex = mActiveBankIndex;
 		NavigateBankRelative(1);
-		mSwitchDisplay->ForceSwitchDisplay(mDecrementSwitchNumber, true);
-		mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, true);
+		mSwitchDisplay->ForceSwitchDisplay(mDecrementSwitchNumber, mEngineLedColor);
+		mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, mEngineLedColor);
 	}
 	else if (switchNumber == GetSwitchNumber(kModeRecall))
 	{
@@ -1270,8 +1330,8 @@ MidiControlEngine::SwitchReleased_ModeSelect(int switchNumber)
 		ChangeMode(emBankDesc);
 		mBankNavigationIndex = mActiveBankIndex;
 		NavigateBankRelative(0);
-		mSwitchDisplay->ForceSwitchDisplay(mDecrementSwitchNumber, true);
-		mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, true);
+		mSwitchDisplay->ForceSwitchDisplay(mDecrementSwitchNumber, mEngineLedColor);
+		mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, mEngineLedColor);
 	}
 	else if (switchNumber == GetSwitchNumber(kModeBankDirect))
 		ChangeMode(emBankDirect);
@@ -1281,23 +1341,8 @@ MidiControlEngine::SwitchReleased_ModeSelect(int switchNumber)
 		ChangeMode(emControlChangeDirect);
 	else if (switchNumber == GetSwitchNumber(kModeExprPedalDisplay))
 		ChangeMode(emExprPedalDisplay);
-	else if (switchNumber == GetSwitchNumber(kModeToggleLedInversion))
-	{
-		if (mSwitchDisplay)
-			mSwitchDisplay->InvertLeds(!mSwitchDisplay->IsInverted());
-		EscapeToDefaultMode();
-	}
 	else if (switchNumber == GetSwitchNumber(kModeTestLeds))
-	{
-		if (mMainDisplay)
-			mMainDisplay->TextOut("Testing LEDs...");
-		if (mSwitchDisplay)
-		{
-			mSwitchDisplay->EnableDisplayUpdate(true);
-			mSwitchDisplay->TestLeds();
-		}
-		EscapeToDefaultMode();
-	}
+		ChangeMode(emLedTests);
 	else if (switchNumber == GetSwitchNumber(kModeToggleTraceWindow))
 	{
 		if (mApplication)
@@ -1365,7 +1410,7 @@ MidiControlEngine::SwitchReleased_BankDirect(int switchNumber)
 	if (mSwitchDisplay)
 	{
 		mSwitchDisplay->EnableDisplayUpdate(false);
-		mSwitchDisplay->ForceSwitchDisplay(switchNumber, false);
+		mSwitchDisplay->ForceSwitchDisplay(switchNumber, 0);
 	}
 
 	if (mMainDisplay && updateMainDisplay)
@@ -1554,7 +1599,7 @@ MidiControlEngine::SwitchReleased_ProgramChangeDirect(int switchNumber)
 	else if (mSwitchDisplay)
 	{
 		mSwitchDisplay->EnableDisplayUpdate(false);
-		mSwitchDisplay->ForceSwitchDisplay(switchNumber, false);
+		mSwitchDisplay->ForceSwitchDisplay(switchNumber, 0);
 	}
 }
 
@@ -1704,6 +1749,6 @@ MidiControlEngine::SwitchReleased_ControlChangeDirect(int switchNumber)
 	else if (mSwitchDisplay)
 	{
 		mSwitchDisplay->EnableDisplayUpdate(false);
-		mSwitchDisplay->ForceSwitchDisplay(switchNumber, false);
+		mSwitchDisplay->ForceSwitchDisplay(switchNumber, 0);
 	}
 }

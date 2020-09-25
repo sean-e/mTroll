@@ -94,7 +94,7 @@ public:
 			void DecreaseMainDisplayHeight();
 
 public: // IMidiOutGenerator
-	virtual IMidiOutPtr	CreateMidiOut(unsigned int deviceIdx, int activityIndicatorIdx) override;
+	virtual IMidiOutPtr	CreateMidiOut(unsigned int deviceIdx, int activityIndicatorIdx, unsigned int ledColor) override;
 	virtual IMidiOutPtr	GetMidiOut(unsigned int deviceIdx) override;
 	virtual unsigned int GetMidiOutDeviceIndex(const std::string &deviceName) override;
 	virtual void		OpenMidiOuts() override;
@@ -119,17 +119,17 @@ public: // ITraceDisplay
 	virtual void		Trace(const std::string & txt) override;
 
 public: // ISwitchDisplay
-	virtual void		SetSwitchDisplay(int switchNumber, bool isOn) override;
-	virtual void		ForceSwitchDisplay(int switchNumber, bool isOn) override;
-	virtual void		DimSwitchDisplay(int switchNumber) override;
+	virtual void		SetSwitchDisplay(int switchNumber, unsigned int color) override;
+	virtual void		TurnOffSwitchDisplay(int switchNumber) override;
+	virtual void		ForceSwitchDisplay(int switchNumber, unsigned int color) override;
+	virtual void		DimSwitchDisplay(int switchNumber, unsigned int ledColor) override;
 	virtual void		SetSwitchText(int switchNumber, const std::string & txt) override;
 	virtual void		ClearSwitchText(int switchNumber) override;
-	virtual void		InvertLeds(bool invert) override;
-	virtual bool		IsInverted() const override { return mInvertLeds; }
 	virtual	void		Reconnect();
-	virtual void		TestLeds() override;
+	virtual void		TestLeds(int testPattern) override;
 	virtual void		SetIndicatorThreadSafe(bool isOn, PatchPtr patch, int time) override;
 	virtual void		EnableDisplayUpdate(bool enable) override { mSwitchLedUpdateEnabled = enable; }
+	virtual void		UpdatePresetColors(std::array<unsigned int, 32> &presetColors) override;
 
 public: // IMonome40hSwitchSubscriber
 	virtual void		SwitchPressed(byte row, byte column) override;
@@ -137,7 +137,7 @@ public: // IMonome40hSwitchSubscriber
 
 private: // IMidiControlUi
 	virtual void		AddSwitchMapping(int switchNumber, int row, int col) override;
-	virtual void		SetSwitchLedConfig(int width, int height, int vOffset, int hOffset, unsigned int onColor, unsigned int offColor) override;
+	virtual void		SetSwitchLedConfig(int width, int height, int vOffset, int hOffset, unsigned int offColor, int uiColorOffset) override;
 	virtual void		CreateSwitchLed(int id, int top, int left) override;
 	virtual void		SetSwitchConfig(int width, int height, int vOffset, int hOffset, const std::string & fontName, int fontHeight, bool bold, unsigned int fgColor) override;
 	virtual void		CreateSwitch(int id, const std::string & label, int top, int left) override;
@@ -154,7 +154,6 @@ private: // IMidiControlUi
 	virtual void		CreateTraceDisplayInGrid(int row, int col, int colSpan, const std::string & fontName, int fontHeight, bool bold);
 	virtual void		SetMainSize(int width, int height) override;
 	virtual void		SetHardwareLedIntensity(short brightness) override { mLedIntensity = brightness; }
-	virtual void		SetLedDisplayState(bool invert) override { mInvertLeds = invert; }
 	virtual void		SetColors(unsigned int backgroundColor, unsigned int frameHighlightColor) override { mFrameHighlightColor = frameHighlightColor; mBackgroundColor = backgroundColor; }
 
 public slots:
@@ -315,6 +314,7 @@ private:
 	void ButtonPressed(const int idx);
 
 	void MonomeStartupSequence();
+	void SendPresetColorsToMonome();
 	inline bool RowColFromSwitchNumber(int ord, byte & row, byte & col)
 	{
 		std::map<int, int>::const_iterator it = mSwitchNumberToRowCol.find(ord);
@@ -355,8 +355,6 @@ private:
 	using MidiIns = std::map<unsigned int, IMidiInPtr>;
 	MidiIns						mMidiIns;
 	int							mLedIntensity;
-	byte						mLedIntensityDimmed;
-	bool						mInvertLeds;
 	KeepDisplayOn				* mSystemPowerOverride;
 	QRect						mMainDisplayRc;
 	QRect						mTraceDiplayRc;
@@ -407,9 +405,9 @@ private:
 		int						mWidth;
 		int						mVoffset;
 		int						mHoffset;
-		DWORD					mOnColor;
 		DWORD					mOffColor;
-		DWORD					mDimColor;
+		int						mLedColorOffset;
+		std::array<unsigned int, 32> mPresetColors;
 	};
 	LedConfig					mLedConfig;
 };

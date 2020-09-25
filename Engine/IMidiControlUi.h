@@ -37,7 +37,7 @@ class IMidiControlUi
 public:
 	virtual void	AddSwitchMapping(int switchNumber, int row, int col) = 0;
 
-	virtual void	SetSwitchLedConfig(int width, int height, int vOffset, int hOffset, unsigned int onColor, unsigned int offColor) = 0;
+	virtual void	SetSwitchLedConfig(int width, int height, int vOffset, int hOffset, unsigned int offColor, int uiColorOffset) = 0;
 	virtual void	CreateSwitchLed(int id, int top, int left) = 0;
 
 	virtual void	SetSwitchConfig(int width, int height, int vOffset, int hOffset, const std::string & fontName, int fontHeight, bool bold, unsigned int fgColor) = 0;
@@ -59,7 +59,6 @@ public:
 
 	virtual void	SetMainSize(int width, int height) = 0;
 	virtual void	SetHardwareLedIntensity(short brightness) = 0;
-	virtual void	SetLedDisplayState(bool invert) = 0;
 	virtual void	SetColors(unsigned int backgroundColor, unsigned int frameHighlightColor) = 0;
 };
 

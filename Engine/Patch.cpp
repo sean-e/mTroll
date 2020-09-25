@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2012,2014-2015,2017-2018 Sean Echevarria
+ * Copyright (C) 2007-2012,2014-2015,2017-2018,2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -41,11 +41,7 @@ Patch::Patch(int number,
 			 IMidiOutPtr midiOut /*= NULL*/) :
 	mNumber(number),
 	mName(name),
-	mPatchIsActive(false),
-	mPedals(midiOut),
-	mOverridePedals(false),
-	mPatchSupportsDisabledState(false),
-	mPatchIsDisabled(false)
+	mPedals(midiOut)
 {
 #ifdef ITEM_COUNTING
 	++gPatchCnt;
@@ -77,7 +73,7 @@ Patch::RemoveSwitch(int switchNumber, ISwitchDisplay * switchDisplay)
 
 	if (switchDisplay)
 	{
-		switchDisplay->SetSwitchDisplay(switchNumber, false);
+		switchDisplay->TurnOffSwitchDisplay(switchNumber);
 		switchDisplay->ClearSwitchText(switchNumber);
 	}
 
@@ -94,7 +90,7 @@ Patch::ClearSwitch(ISwitchDisplay * switchDisplay)
 	{
 		for (const int switchNumber : mSwitchNumbers)
 		{
-			switchDisplay->SetSwitchDisplay(switchNumber, false);
+			switchDisplay->TurnOffSwitchDisplay(switchNumber);
 			switchDisplay->ClearSwitchText(switchNumber);
 		}
 	}
@@ -112,10 +108,12 @@ Patch::UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay
 	{
 		for (const int switchNumber : mSwitchNumbers)
 		{
-			if (mPatchSupportsDisabledState && !mPatchIsDisabled && !mPatchIsActive)
-				switchDisplay->DimSwitchDisplay(switchNumber);
+			if (mPatchSupportsDisabledState && !mPatchIsDisabled && !mPatchIsActive && mLedInactiveColor)
+				switchDisplay->DimSwitchDisplay(switchNumber, mLedInactiveColor);
+			else if (mPatchIsActive)
+				switchDisplay->SetSwitchDisplay(switchNumber, mLedActiveColor);
 			else
-				switchDisplay->SetSwitchDisplay(switchNumber, mPatchIsActive);
+				switchDisplay->TurnOffSwitchDisplay(switchNumber);
 
 			if (HasDisplayText())
 				switchDisplay->SetSwitchText(switchNumber, GetDisplayText());
@@ -152,7 +150,12 @@ Patch::ActivateSwitchDisplay(ISwitchDisplay * switchDisplay,
 	if (switchDisplay)
 	{
 		for (const int switchNumber : mSwitchNumbers)
-			switchDisplay->SetSwitchDisplay(switchNumber, activate);
+		{
+			if (activate)
+				switchDisplay->SetSwitchDisplay(switchNumber, mLedActiveColor);
+			else
+				switchDisplay->TurnOffSwitchDisplay(switchNumber);
+		}
 	}
 }
 

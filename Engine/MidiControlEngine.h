@@ -79,8 +79,7 @@ public:
 		kModeAdcOverride,
 		kModeTestLeds,
 		kModeToggleTraceWindow,
-		kModeBankDesc,
-		kModeToggleLedInversion
+		kModeBankDesc
 	};
 
 	// initialization
@@ -92,7 +91,7 @@ public:
 	void					AssignCustomBankLoad(int switchNumber, int bankNumber);
 	void					AssignModeSwitchNumber(EngineModeSwitch mode, int switchNumber);
 	const std::string		GetBankNameByNum(int bankNumberNotIndex);
-	void					CompleteInit(const PedalCalibration * pedalCalibrationSettings);
+	void					CompleteInit(const PedalCalibration * pedalCalibrationSettings, unsigned int ledColor);
 	void					Shutdown();
 
 	ExpressionPedals &		GetPedals() {return mGlobalPedals;}
@@ -136,6 +135,7 @@ private:
 		emTimeDisplay,		// displays time
 		emProgramChangeDirect, // manual send of program changes
 		emControlChangeDirect, // manual send of control changes
+		emLedTests,			// LED display tests
 		emNotValid 
 	};
 	void					ChangeMode(EngineMode newMode);
@@ -150,6 +150,7 @@ private:
 	void					SwitchPressed_ControlChangeDirect(int switchNumber);
 	void					SwitchReleased_ControlChangeDirect(int switchNumber);
 	void					SwitchReleased_TimeDisplay(int switchNumber);
+	void					SwitchReleased_LedTests(int switchNumber);
 
 private:
 	// non-retained runtime state
@@ -186,6 +187,7 @@ private:
 	bool					mFilterRedundantProgramChanges;
 	ExpressionPedals		mGlobalPedals;
 	int						mPedalModePort;
+	unsigned int			mEngineLedColor = 0x80000000;
 
 	// mode switch numbers
 	int						mModeSwitchNumber;
