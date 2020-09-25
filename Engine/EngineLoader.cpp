@@ -2061,7 +2061,6 @@ EngineLoader::LoadLedDefaultColors(TiXmlElement * pElem)
 		preset notated as 1-based, decrement internally
 		preset recorded as color with high-bit set
 	 */
-	std::string device, patchType, colorStr, stateStr;
 	int presetSlot, st;
 	unsigned int clr;
 	for (; pElem; pElem = pElem->NextSiblingElement())
@@ -2078,7 +2077,7 @@ EngineLoader::LoadLedDefaultColors(TiXmlElement * pElem)
 		}
 
 		// optional
-		device.clear();
+		std::string device;
 		if (pElem->Attribute("device"))
 			device = pElem->Attribute("device");
 		if (device.empty())
@@ -2094,7 +2093,7 @@ EngineLoader::LoadLedDefaultColors(TiXmlElement * pElem)
 		}
 
 		// optional
-		patchType.clear();
+		std::string patchType;
 		pElem->QueryValueAttribute("type", &patchType);
 		if (patchType.empty())
 			patchType = "*";
@@ -2145,7 +2144,7 @@ EngineLoader::LoadLedDefaultColors(TiXmlElement * pElem)
 				continue;
 			}
 
-			colorStr = pElem->GetText();
+			std::string colorStr{ pElem->GetText() };
 			if (colorStr.length() != 6)
 			{
 				if (mTraceDisplay)
@@ -2170,7 +2169,7 @@ EngineLoader::LoadLedDefaultColors(TiXmlElement * pElem)
 			}
 		}
 
-		stateStr.clear();
+		std::string stateStr;
 		pElem->QueryValueAttribute("state", &stateStr);
 		if (stateStr.empty())
 			st = 1;
