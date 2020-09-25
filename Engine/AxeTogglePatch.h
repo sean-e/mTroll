@@ -56,7 +56,10 @@ public:
 		mIsScene(isScenePatch)
 	{
 		if (isScenePatch)
+		{
+			mPatchSupportsDisabledState = true;
 			return;
+		}
 
 		if (mAx && mAx->GetModel() >= Axe2)
 			mPatchSupportsDisabledState = true;
