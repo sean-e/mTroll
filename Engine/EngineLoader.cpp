@@ -1065,7 +1065,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				patchType = "axeblock";
 
 			if (-1 == ledActiveColor)
-				ledActiveColor = LookUpColor(device, patchType, 1);
+				ledActiveColor = LookUpColor(device, patchType, 1, kFirstColorPreset);
 
 			if (-1 == ledInactiveColor)
 			{
@@ -1589,7 +1589,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 }
 
 unsigned int
-EngineLoader::LookUpColor(std::string device, std::string patchType, int activeState, unsigned int defaultColor /*= kFirstPreset*/)
+EngineLoader::LookUpColor(std::string device, std::string patchType, int activeState, unsigned int defaultColor /*= kFirstColorPreset*/)
 {
 	_ASSERTE(!device.empty() || !patchType.empty());
 	_ASSERTE(device != "*" || patchType != "*");
