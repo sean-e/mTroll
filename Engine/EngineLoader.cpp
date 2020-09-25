@@ -1937,47 +1937,47 @@ EngineLoader::InitDefaultLedPresetColors()
 	std::array<unsigned int, 32> defaults
 	{
 		// normal
-		0x00000b, // blue
-		0x000b00, // green
-		0x0b0000, // red
-		0x000b0b, // cyan
-		0x0b0b00, // yellow
-		0x0b000b, // violet
-		0x0b0b0b, // white
+		0x00000b, //  1 blue
+		0x000b00, //  2 green
+		0x0b0000, //  3 red
+		0x000b0b, //  4 cyan
+		0x0b0b00, //  5 yellow
+		0x0b000b, //  6 violet
+		0x0b0b0b, //  7 white
 
-		0x000000, // blank
+		0x000000, //  8 blank
 
 		// most dim
-		0x000001, // dimmest blue
-		0x000100, // dimmest green
-		0x010000, // dimmest red
-		0x000101, // dimmest cyan
-		0x010100, // dimmest yellow
-		0x010001, // dimmest violet
-		0x010101, // dimmest white
+		0x000001, //  9 dimmest blue
+		0x000100, // 10 dimmest green
+		0x010000, // 11 dimmest red
+		0x000101, // 12 dimmest cyan
+		0x010100, // 13 dimmest yellow
+		0x010001, // 14 dimmest violet
+		0x010101, // 15 dimmest white
 
 		// bright
-		0x00001f, // blue
-		0x001f00, // green
-		0x1f0000, // red
-		0x001f1f, // cyan
-		0x1f1f00, // yellow
-		0x1f001f, // violet
-		0x1f1f1f, // white
+		0x00001f, // 16 blue
+		0x001f00, // 17 green
+		0x1f0000, // 18 red
+		0x001f1f, // 19 cyan
+		0x1f1f00, // 20 yellow
+		0x1f001f, // 21 violet
+		0x1f1f1f, // 22 white
 
-		0x000000, // blank
+		0x000000, // 23 blank
 
 		// dim
-		0x000004, // dim blue
-		0x000400, // dim green
-		0x040000, // dim red
-		0x000404, // dim cyan
-		0x040400, // dim yellow
-		0x040004, // dim violet
-		0x040404, // dim white
+		0x000004, // 24 dim blue
+		0x000400, // 25 dim green
+		0x040000, // 26 dim red
+		0x000404, // 27 dim cyan
+		0x040400, // 28 dim yellow
+		0x040004, // 29 dim violet
+		0x040404, // 30 dim white
 
-		0x000000, // blank
-		0x000000  // blank
+		0x000000, // 31 blank
+		0x000000  // 32 blank
 	};
 
 	mLedPresetColors.swap(defaults);
