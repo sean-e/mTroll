@@ -2110,7 +2110,7 @@ EngineLoader::LoadLedDefaultColors(TiXmlElement * pElem)
 		}
 
 		presetSlot = 0;
-		pElem->QueryIntAttribute("colorPreset", &presetSlot);
+		pElem->QueryIntAttribute("preset", &presetSlot);
 		if (presetSlot)
 		{
 			if (presetSlot < 1 || presetSlot > 32)
