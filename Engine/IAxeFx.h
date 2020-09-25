@@ -40,7 +40,7 @@ __interface IAxeFx
 	// engine load init
 	virtual void SetScenePatch(int scene, PatchPtr patch);
 	virtual void SetTempoPatch(PatchPtr patch);
-	virtual void SetLooperPatch(PatchPtr patch);
+	virtual bool SetLooperPatch(PatchPtr patch);
 	virtual bool SetSyncPatch(PatchPtr patch, int effectId, int channel);
 	virtual bool SetSyncPatch(PatchPtr patch, int bypassCc);
 
