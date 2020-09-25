@@ -28,6 +28,7 @@
 #include <string>
 #include <map>
 #include <memory>
+#include <array>
 #include "ExpressionPedals.h"
 #include "IAxeFx.h"
 
@@ -62,10 +63,16 @@ public:
 private:
 	bool					LoadSystemConfig(TiXmlElement * pElem);
 	void					LoadDeviceChannelMap(TiXmlElement * pElem);
+	void					InitDefaultLedPresetColors();
+	void					LoadLedPresetColors(TiXmlElement * pElem);
+	void					LoadLedDefaultColors(TiXmlElement * pElem);
 	void					LoadExpressionPedalSettings(TiXmlElement * pElem, ExpressionPedals &pedals, int defaultChannel);
 	void					LoadPatches(TiXmlElement * pElem);
+	void					LoadElementColorAttributes(TiXmlElement * pElem, unsigned int &ledActiveColor, unsigned int &ledInactiveColor);
+
 	IAxeFxPtr				GetAxeMgr(TiXmlElement * pElem);
 	void					LoadBanks(TiXmlElement * pElem);
+	unsigned int			LookUpColor(std::string device, std::string patchType, int activeState, unsigned int defaultColor = 0x80000000);
 
 	using MidiPortToDeviceIdxMap = std::map<int, unsigned int>;
 	MidiPortToDeviceIdxMap	mMidiOutPortToDeviceIdxMap;
@@ -89,6 +96,9 @@ private:
 	std::string				mAxe3DeviceName;
 	int						mAxeSyncPort;
 	int						mAxe3SyncPort;
+	std::array<unsigned int, 32> mLedPresetColors;
+	// device/patchType/state --> rgb color (or preset slot 0-31 if hi-bit set)
+	std::map<std::tuple<std::string, std::string, int>, unsigned int> mLedDefaultColors;
 };
 
 #endif // EngineLoader_h__

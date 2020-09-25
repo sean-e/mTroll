@@ -29,6 +29,7 @@
 #include "Patch.h"
 #include "../tinyxml/tinyxml.h"
 #include "HexStringUtils.h"
+#include "ISwitchDisplay.h"
 #include "IMidiOutGenerator.h"
 #include "IMidiInGenerator.h"
 #include "ITraceDisplay.h"
@@ -138,6 +139,16 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 	if (pElem)
 		LoadDeviceChannelMap(pElem);
 
+	// init colors before system config since midi indicator can be defaulted
+	InitDefaultLedPresetColors();
+	pElem = hRoot.FirstChild("LedPresetColors").FirstChildElement().Element();
+	if (pElem)
+		LoadLedPresetColors(pElem);
+
+	pElem = hRoot.FirstChild("LedDefaultColors").FirstChildElement().Element();
+	if (pElem)
+		LoadLedDefaultColors(pElem);
+
 	pElem = hRoot.FirstChild("SystemConfig").Element();
 	if (!LoadSystemConfig(pElem))
 	{
@@ -155,6 +166,8 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 
 	pElem = hRoot.FirstChild("banks").FirstChildElement().Element();
 	LoadBanks(pElem);
+
+	mSwitchDisplay->UpdatePresetColors(mLedPresetColors);
 
 	mMidiOutGenerator->OpenMidiOuts();
 	if (mMidiInGenerator)
@@ -196,7 +209,7 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 		mAxeFxManager->CompleteInit(midiOut);
 	}
 
-	mEngine->CompleteInit(mAdcCalibration);
+	mEngine->CompleteInit(mAdcCalibration, LookUpColor("mtroll", "*", 1));
 
 	MidiControlEnginePtr createdEngine = mEngine;
 	mEngine = nullptr;
@@ -272,6 +285,13 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 		pChildElem->QueryIntAttribute("outIdx", &deviceIdx);
 		pChildElem->QueryIntAttribute("activityIndicatorId", &activityIndicatorId);
 
+		unsigned int ledActiveColor = -1;
+		unsigned int ledInactiveColor = -1; // ignored
+		LoadElementColorAttributes(pChildElem, ledActiveColor, ledInactiveColor);
+
+		if (-1 == ledActiveColor)
+			ledActiveColor = LookUpColor("midi", "*", 1);
+
 		if (!outDevice.empty())
 		{
 			unsigned int idx = mMidiOutGenerator->GetMidiOutDeviceIndex(outDevice);
@@ -321,7 +341,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 			// first successful port binding is last one attempted for that port
 			if (mMidiOutPortToDeviceIdxMap.find(port) == mMidiOutPortToDeviceIdxMap.end())
 			{
-				if (mMidiOutGenerator->CreateMidiOut(deviceIdx, activityIndicatorId))
+				if (mMidiOutGenerator->CreateMidiOut(deviceIdx, activityIndicatorId, ledActiveColor))
 					mMidiOutPortToDeviceIdxMap[port] = deviceIdx;
 			}
 		}
@@ -474,7 +494,6 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 		else if (name == "adcOverride") m = MidiControlEngine::kModeAdcOverride;
 		else if (name == "testLeds") m = MidiControlEngine::kModeTestLeds;
 		else if (name == "toggleTraceWindow") m = MidiControlEngine::kModeToggleTraceWindow;
-		else if (name == "toggleLedInversion") m = MidiControlEngine::kModeToggleLedInversion;
 
 		if (MidiControlEngine::kUnassignedSwitchNumber != m)
 			mEngine->AssignModeSwitchNumber(m, switchNumber);
@@ -489,103 +508,6 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 	for ( ; pElem; pElem = pElem->NextSiblingElement())
 	{
 		std::string patchName;
-		if (pElem->ValueStr() == "engineMetaPatch")
-		{
-			// engineMetaPatch is superceded by switch commands
-			if (pElem->Attribute("name"))
-				patchName = pElem->Attribute("name");
-			int patchNumber = -1;
-			pElem->QueryIntAttribute("number", &patchNumber);
-			if (-1 == patchNumber || patchName.empty())
-			{
-				if (mTraceDisplay)
-				{
-					std::strstream traceMsg;
-					traceMsg << "Error loading config file: engineMetaPatch missing number or name" << std::endl << std::ends;
-					mTraceDisplay->Trace(std::string(traceMsg.str()));
-				}
-				continue;
-			}
-
-			std::string tmp;
-			pElem->QueryValueAttribute("command", &tmp);
-			if (tmp.empty())
-				pElem->QueryValueAttribute("action", &tmp);
-			if (tmp.empty())
-			{
-				if (mTraceDisplay)
-				{
-					std::strstream traceMsg;
-					traceMsg << "Error loading config file: engineMetaPatch " << patchName << " missing command/action" << std::endl << std::ends;
-					mTraceDisplay->Trace(std::string(traceMsg.str()));
-				}
-				continue;
-			}
-
-			if (tmp == "ResetBankPatches")
-				 mEngine->AddPatch(std::make_shared<MetaPatch_ResetBankPatches>(mEngine.get(), patchNumber, patchName));
-			else if (tmp == "SyncAxeFx")
-			{
-				auto metPatch = std::make_shared<MetaPatch_SyncAxeFx>(patchNumber, patchName);
-				std::vector<IAxeFxPtr> mgrs;
-				if (mAxeFx3Manager)
-					mgrs.push_back(mAxeFx3Manager);
-				if (mAxeFxManager)
-					mgrs.push_back(mAxeFxManager);
-				metPatch->AddAxeManagers(mgrs);
-				mEngine->AddPatch(metPatch);
-			}
-			else if (tmp == "LoadNextBank")
-				mEngine->AddPatch(std::make_shared<MetaPatch_LoadNextBank>(mEngine.get(), patchNumber, patchName));
-			else if (tmp == "LoadPreviousBank")
-				mEngine->AddPatch(std::make_shared<MetaPatch_LoadPreviousBank>(mEngine.get(), patchNumber, patchName));
-			else if (tmp == "LoadBank")
-			{
-				int bankNumber = -1;
-				pElem->QueryIntAttribute("bankNumber", &bankNumber);
-				if (-1 != bankNumber)
-				{
-					mEngine->AddPatch(std::make_shared<MetaPatch_LoadBank>(mEngine.get(), patchNumber, patchName, bankNumber));
-				}
-				else if (mTraceDisplay)
-				{
-					std::strstream traceMsg;
-					traceMsg << "Error loading config file: engineMetaPatch " << patchName << " missing LoadBank target" << std::endl << std::ends;
-					mTraceDisplay->Trace(std::string(traceMsg.str()));
-				}
-			}
-			else if (tmp == "ResetExclusiveGroup")
-			{
-				int activeSwitch = -1;
-				pElem->QueryIntAttribute("activeSwitch", &activeSwitch);
-				if (-1 != activeSwitch)
-				{
-					mEngine->AddPatch(std::make_shared<MetaPatch_ResetExclusiveGroup>(mEngine.get(), patchNumber, patchName, activeSwitch));
-				}
-				else if (mTraceDisplay)
-				{
-					std::strstream traceMsg;
-					traceMsg << "Error loading config file: engineMetaPatch " << patchName << " missing ResetExclusiveGroup switch target" << std::endl << std::ends;
-					mTraceDisplay->Trace(std::string(traceMsg.str()));
-				}
-			}
-			else if (tmp == "BankHistoryBackward")
-				 mEngine->AddPatch(std::make_shared<MetaPatch_BankHistoryBackward>(mEngine.get(), patchNumber, patchName));
-			else if (tmp == "BankHistoryForward")
-				 mEngine->AddPatch(std::make_shared<MetaPatch_BankHistoryForward>(mEngine.get(), patchNumber, patchName));
-			else if (tmp == "BankHistoryRecall")
-				 mEngine->AddPatch(std::make_shared<MetaPatch_BankHistoryRecall>(mEngine.get(), patchNumber, patchName));
-			else
-			{
-				if (mTraceDisplay)
-				{
-					std::strstream traceMsg;
-					traceMsg << "Error loading config file: engineMetaPatch " << patchName << " unknown action " << tmp << std::endl << std::ends;
-					mTraceDisplay->Trace(std::string(traceMsg.str()));
-				}
-			}
-			continue;
-		}
 
 		if (pElem->ValueStr() != "patch")
 		{
@@ -1120,14 +1042,61 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		if (!newPatch)
 			continue;
 
-		mEngine->AddPatch(newPatch);
+		bool isAxeLooperPatch = false;
 		if (mgr)
 		{
 			if (axeFxScene)
 				mgr->SetScenePatch(axeFxScene, newPatch);
 			else
-				mgr->SetLooperPatch(newPatch);
+				isAxeLooperPatch = mgr->SetLooperPatch(newPatch);
 		}
+
+		// setup patch led color
+		{
+			unsigned int ledActiveColor = -1;
+			unsigned int ledInactiveColor = -1;
+			LoadElementColorAttributes(pElem, ledActiveColor, ledInactiveColor);
+
+			if (axeFxScene)
+				patchType = "axescene";
+			else if (isAxeLooperPatch)
+				patchType = "axelooper";
+			else if (axeFxBlockId)
+				patchType = "axeblock";
+
+			if (-1 == ledActiveColor)
+				ledActiveColor = LookUpColor(device, patchType, 1);
+
+			if (-1 == ledInactiveColor)
+			{
+				ledInactiveColor = LookUpColor(device, patchType, 0, -1);
+				if (-1 == ledInactiveColor)
+				{
+					ledInactiveColor = 0x80000000;
+					if (axeFxScene || axeFxBlockId || isAxeLooperPatch || 
+						patchType == "AxeToggle" || patchType == "AxeMomentary")
+					{
+						if (ledActiveColor == 0x80000000)
+							ledInactiveColor = 0; // just set dim to off
+						else if (ledActiveColor & 0x80000000)
+							; // first preset slot
+						else
+						{
+							// calculate inactive color based on active color
+							constexpr float onOpacity = 0.25f;
+							BYTE R = (BYTE)((float)GetRValue(ledInactiveColor) * onOpacity);
+							BYTE G = (BYTE)((float)GetGValue(ledInactiveColor) * onOpacity);
+							BYTE B = (BYTE)((float)GetBValue(ledInactiveColor) * onOpacity);
+							ledInactiveColor = RGB(R, G, B);
+						}
+					}
+				}
+			}
+
+			newPatch->SetLedColors(ledActiveColor, ledInactiveColor);
+		}
+
+		mEngine->AddPatch(newPatch);
 
 		ExpressionPedals & pedals = newPatch->GetPedals();
 		for (childElem = hRoot.FirstChildElement().Element(); 
@@ -1157,6 +1126,98 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				}
 			}
 		}
+	}
+}
+
+void
+EngineLoader::LoadElementColorAttributes(TiXmlElement * pElem, unsigned int &ledActiveColor, unsigned int &ledInactiveColor)
+{
+	int activeColorPreset = -1;
+	int inactiveColorPreset = -1;
+	std::string activeColorStr, inactiveColorStr;
+
+	if (pElem->Attribute("ledColor"))
+		activeColorStr = pElem->Attribute("ledColor");
+	if (pElem->Attribute("ledInactiveColor"))
+		inactiveColorStr = pElem->Attribute("ledInactiveColor");
+
+	pElem->QueryIntAttribute("ledColorPreset", &activeColorPreset);
+	pElem->QueryIntAttribute("ledInactiveColorPreset", &inactiveColorPreset);
+
+	if ((!activeColorStr.empty() && -1 != activeColorPreset) ||
+		(!inactiveColorStr.empty() && -1 != inactiveColorPreset))
+	{
+		if (mTraceDisplay)
+		{
+			std::strstream traceMsg;
+			traceMsg << "Error loading config file: ledColor attribute incompatible with ledColorPreset attribute" << std::endl << std::ends;
+			mTraceDisplay->Trace(std::string(traceMsg.str()));
+		}
+		return;
+	}
+
+	if (!activeColorStr.empty())
+	{
+		if (activeColorStr.length() != 6)
+		{
+			if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: color attribute should be specified as 6 hex chars" << std::endl << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
+			return;
+		}
+		ledActiveColor = ::StrToRgb(activeColorStr);
+	}
+
+	if (!inactiveColorStr.empty())
+	{
+		if (inactiveColorStr.length() != 6)
+		{
+			if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: color attribute should be specified as 6 hex chars" << std::endl << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
+			return;
+		}
+		ledInactiveColor = ::StrToRgb(inactiveColorStr);
+	}
+
+	if (-1 != activeColorPreset)
+	{
+		if (activeColorPreset < 1 || activeColorPreset > 32)
+		{
+			if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: invalid ledColorPreset on patch -- valid range of values 1-32" << std::endl << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
+			return;
+		}
+
+		--activeColorPreset;
+		ledActiveColor = 0x80000000 | activeColorPreset;
+	}
+
+	if (-1 != inactiveColorPreset)
+	{
+		if (inactiveColorPreset < 1 || inactiveColorPreset > 32)
+		{
+			if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: invalid ledInactiveColorPreset on patch -- valid range of values 1-32" << std::endl << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
+			return;
+		}
+
+		--inactiveColorPreset;
+		ledInactiveColor = 0x80000000 | inactiveColorPreset;
 	}
 }
 
@@ -1254,8 +1315,9 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 				if (childElem->Attribute("command"))
 				{
 					// handle engineMetaPatch functionality without an explicit engineMetaPatch ("command" instead of "action")
-					childElem->QueryValueAttribute("command", &tmp);
-					if (tmp.empty())
+					std::string cmdName;
+					childElem->QueryValueAttribute("command", &cmdName);
+					if (cmdName.empty())
 					{
 						if (mTraceDisplay)
 						{
@@ -1274,17 +1336,19 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						isAutoGendPatchNumber = true;
 					}
 
-					if (tmp == "ResetBankPatches")
+					PatchPtr cmdPatch = nullptr;
+
+					if (cmdName == "ResetBankPatches")
 					{
 						if (!isAutoGendPatchNumber)
 						{
 							gendPatchName = "Reset bank patches";
-							mEngine->AddPatch(std::make_shared<MetaPatch_ResetBankPatches>(mEngine.get(), patchNumber, gendPatchName));
+							cmdPatch = std::make_shared<MetaPatch_ResetBankPatches>(mEngine.get(), patchNumber, gendPatchName);
 						}
 						else
 							patchNumber = ReservedPatchNumbers::kResetBankPatches;
 					}
-					else if (tmp == "SyncAxeFx")
+					else if (cmdName == "SyncAxeFx")
 					{
 						if (!isAutoGendPatchNumber)
 						{
@@ -1296,82 +1360,82 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 							if (mAxeFxManager)
 								mgrs.push_back(mAxeFxManager);
 							metPatch->AddAxeManagers(mgrs);
-							mEngine->AddPatch(metPatch);
+							cmdPatch = metPatch;
 						}
 						else
 							patchNumber = ReservedPatchNumbers::kSyncAxeFx;
 					}
-					else if (tmp == "LoadNextBank")
+					else if (cmdName == "LoadNextBank")
 					{
 						if (!isAutoGendPatchNumber)
 						{
 							gendPatchName = "[next]";
-							mEngine->AddPatch(std::make_shared<MetaPatch_LoadNextBank>(mEngine.get(), patchNumber, gendPatchName));
+							cmdPatch = std::make_shared<MetaPatch_LoadNextBank>(mEngine.get(), patchNumber, gendPatchName);
 						}
 						else
 							patchNumber = ReservedPatchNumbers::kLoadNextBank;
 					}
-					else if (tmp == "LoadPreviousBank")
+					else if (cmdName == "LoadPreviousBank")
 					{
 						if (!isAutoGendPatchNumber)
 						{
 							gendPatchName = "[previous]";
-							mEngine->AddPatch(std::make_shared<MetaPatch_LoadPreviousBank>(mEngine.get(), patchNumber, gendPatchName));
+							cmdPatch = std::make_shared<MetaPatch_LoadPreviousBank>(mEngine.get(), patchNumber, gendPatchName);
 						}
 						else
 							patchNumber = ReservedPatchNumbers::kLoadPrevBank;
 					}
-					else if (tmp == "NavNextBank")
+					else if (cmdName == "NavNextBank")
 					{
 						if (!isAutoGendPatchNumber)
 						{
 							gendPatchName = "Nav next";
-							mEngine->AddPatch(std::make_shared<MetaPatch_BankNavNext>(mEngine.get(), patchNumber, gendPatchName));
+							cmdPatch = std::make_shared<MetaPatch_BankNavNext>(mEngine.get(), patchNumber, gendPatchName);
 						}
 						else
 							patchNumber = ReservedPatchNumbers::kBankNavNext;
 					}
-					else if (tmp == "NavPreviousBank")
+					else if (cmdName == "NavPreviousBank")
 					{
 						if (!isAutoGendPatchNumber)
 						{
 							gendPatchName = "Nav previous";
-							mEngine->AddPatch(std::make_shared<MetaPatch_BankNavPrevious>(mEngine.get(), patchNumber, gendPatchName));
+							cmdPatch = std::make_shared<MetaPatch_BankNavPrevious>(mEngine.get(), patchNumber, gendPatchName);
 						}
 						else
 							patchNumber = ReservedPatchNumbers::kBankNavPrev;
 					}
-					else if (tmp == "BankHistoryBackward")
+					else if (cmdName == "BankHistoryBackward")
 					{
 						if (!isAutoGendPatchNumber)
 						{
 							gendPatchName = "[back]";
-							mEngine->AddPatch(std::make_shared<MetaPatch_BankHistoryBackward>(mEngine.get(), patchNumber, gendPatchName));
+							cmdPatch = std::make_shared<MetaPatch_BankHistoryBackward>(mEngine.get(), patchNumber, gendPatchName);
 						}
 						else
 							patchNumber = ReservedPatchNumbers::kBankHistoryBackward;
 					}
-					else if (tmp == "BankHistoryForward")
+					else if (cmdName == "BankHistoryForward")
 					{
 						if (!isAutoGendPatchNumber)
 						{
 							gendPatchName = "[forward]";
-							mEngine->AddPatch(std::make_shared<MetaPatch_BankHistoryForward>(mEngine.get(), patchNumber, gendPatchName));
+							cmdPatch = std::make_shared<MetaPatch_BankHistoryForward>(mEngine.get(), patchNumber, gendPatchName);
 						}
 						else
 							patchNumber = ReservedPatchNumbers::kBankHistoryForward;
 					}
-					else if (tmp == "BankHistoryRecall")
+					else if (cmdName == "BankHistoryRecall")
 					{
 						if (!isAutoGendPatchNumber)
 						{
 							gendPatchName = "[recall]";
-							mEngine->AddPatch(std::make_shared<MetaPatch_BankHistoryRecall>(mEngine.get(), patchNumber, gendPatchName));
+							cmdPatch = std::make_shared<MetaPatch_BankHistoryRecall>(mEngine.get(), patchNumber, gendPatchName);
 						}
 						else
 							patchNumber = ReservedPatchNumbers::kBankHistoryRecall;
 					}
-					else if (tmp == "LoadBank")
+					else if (cmdName == "LoadBank")
 					{
 						int bankNum = -1;
 						childElem->QueryIntAttribute("bankNumber", &bankNum);
@@ -1379,7 +1443,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						{
 							if (nameOverride.empty())
 								nameOverride = "meta load bank";
-							mEngine->AddPatch(std::make_shared<MetaPatch_LoadBank>(mEngine.get(), patchNumber, nameOverride, bankNum));
+							cmdPatch = std::make_shared<MetaPatch_LoadBank>(mEngine.get(), patchNumber, nameOverride, bankNum);
 							nameOverride.clear();
 						}
 						else
@@ -1393,7 +1457,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 							continue;
 						}
 					}
-					else if (tmp == "ResetPatch")
+					else if (cmdName == "ResetPatch")
 					{
 						int patchNumToReset = -1;
 						childElem->QueryIntAttribute("patchToReset", &patchNumToReset);
@@ -1401,7 +1465,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						{
 							if (nameOverride.empty())
 								nameOverride = "Reset Patch";
-							mEngine->AddPatch(std::make_shared<MetaPatch_ResetPatch>(mEngine.get(), patchNumber, nameOverride, patchNumToReset));
+							cmdPatch = std::make_shared<MetaPatch_ResetPatch>(mEngine.get(), patchNumber, nameOverride, patchNumToReset);
 							nameOverride.clear();
 						}
 						else 
@@ -1415,7 +1479,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 							continue;
 						}
 					}
-					else if (tmp == "ResetExclusiveGroup")
+					else if (cmdName == "ResetExclusiveGroup")
 					{
 						int activeSwitch = -1;
 						childElem->QueryIntAttribute("activeSwitch", &activeSwitch);
@@ -1423,7 +1487,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						{
 							if (nameOverride.empty())
 								nameOverride = "Reset exclusive group";
-							mEngine->AddPatch(std::make_shared<MetaPatch_ResetExclusiveGroup>(mEngine.get(), patchNumber, nameOverride, activeSwitch));
+							cmdPatch = std::make_shared<MetaPatch_ResetExclusiveGroup>(mEngine.get(), patchNumber, nameOverride, activeSwitch);
 							nameOverride.clear();
 						}
 						else 
@@ -1442,10 +1506,23 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						if (mTraceDisplay)
 						{
 							std::strstream traceMsg;
-							traceMsg << "Error loading config file: switch " << nameOverride << " unknown command " << tmp << std::endl << std::ends;
+							traceMsg << "Error loading config file: switch " << nameOverride << " unknown command " << cmdName << std::endl << std::ends;
 							mTraceDisplay->Trace(std::string(traceMsg.str()));
 						}
 						continue;
+					}
+
+					if (cmdPatch)
+					{
+						unsigned int ledActiveColor = -1;
+						unsigned int ledInactiveColor = -1;
+						LoadElementColorAttributes(childElem, ledActiveColor, ledInactiveColor);
+						ledInactiveColor = 0;
+						if (-1 == ledActiveColor)
+							ledActiveColor = LookUpColor("mtroll", cmdName, 1);
+
+						cmdPatch->SetLedColors(ledActiveColor, ledInactiveColor);
+						mEngine->AddPatch(cmdPatch);
 					}
 				}
 
@@ -1509,6 +1586,56 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 			}
 		}
 	}
+}
+
+unsigned int
+EngineLoader::LookUpColor(std::string device, std::string patchType, int activeState, unsigned int defaultColor /*= 0x80000000*/)
+{
+	_ASSERTE(!device.empty() || !patchType.empty());
+	_ASSERTE(device != "*" || patchType != "*");
+
+	std::transform(device.begin(), device.end(), device.begin(),
+		[](unsigned char c) { return std::tolower(c); }
+	);
+
+	std::transform(patchType.begin(), patchType.end(), patchType.begin(),
+		[](unsigned char c) { return std::tolower(c); }
+	);
+
+	// lookup device + type
+	if (device != "*" && patchType != "*")
+	{
+		auto it = mLedDefaultColors.find({ device, patchType, activeState });
+		if (it != mLedDefaultColors.end())
+			return it->second;
+	}
+
+	// if type starts with Axe, lookup device=* + type
+	if (0 == patchType.find("axe"))
+	{
+		auto it = mLedDefaultColors.find({ "*", patchType, activeState });
+		if (it != mLedDefaultColors.end())
+			return it->second;
+	}
+
+	// lookup device + type=*
+	if (device != "*")
+	{
+		auto it = mLedDefaultColors.find({ device, "*", activeState });
+		if (it != mLedDefaultColors.end())
+			return it->second;
+	}
+
+	// lookup device=* + type
+	if (patchType != "*")
+	{
+		auto it = mLedDefaultColors.find({ "*", patchType, activeState });
+		if (it != mLedDefaultColors.end())
+			return it->second;
+	}
+
+	// default to first preset slot
+	return defaultColor;
 }
 
 void
@@ -1801,6 +1928,274 @@ EngineLoader::LoadDeviceChannelMap(TiXmlElement * pElem)
 				mTraceDisplay->Trace(std::string(traceMsg.str()));
 			}
 		}
+	}
+}
+
+void
+EngineLoader::InitDefaultLedPresetColors()
+{
+	std::array<unsigned int, 32> defaults
+	{
+		0x00007f,
+		0x007f00,
+		0x7f0000,
+		0x007f7f,
+		0x7f7f00,
+		0x7f007f,
+
+		0x00003f,
+		0x003f00,
+		0x3f0000,
+		0x003f3f,
+		0x3f3f00,
+		0x3f003f,
+
+		0x000002,
+		0x000200,
+		0x020000,
+		0x020002,
+
+		0x00001f,
+		0x001f00,
+		0x1f0000,
+		0x001f1f,
+		0x1f1f00,
+		0x1f001f,
+
+		0x00000f,
+		0x000f00,
+		0x0f0000,
+		0x000f0f,
+		0x0f0f00,
+		0x0f000f,
+
+		0x000004,
+		0x000400,
+		0x040000,
+		0x040004
+	};
+
+	mLedPresetColors.swap(defaults);
+
+	// set defaults that automatically differentiate from all else that default to 0x80000000
+	mLedDefaultColors[{"mtroll", "*", 1}] = 0x80000001;
+}
+
+void
+EngineLoader::LoadLedPresetColors(TiXmlElement * pElem)
+{
+	/*
+	 * optional, preset numbers valid over range 1-32, none required
+		<LedPresetColors>
+			<color preset="1">00007f</color> <!-- preset attribute required -->
+			<color preset="3">007f00</color>
+			<color preset="5">7f0000</color>
+		</LedPresetColors>
+	 */
+	std::string colorStr;
+	for (; pElem; pElem = pElem->NextSiblingElement())
+	{
+		if (pElem->ValueStr() != "color" && pElem->ValueStr() != "Color")
+		{
+			if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: unrecognized element in LedPresetColors" << std::endl << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
+			continue;
+		}
+
+		if (!pElem->GetText())
+			continue;
+		colorStr = pElem->GetText();
+
+		std::string presetSlotStr;
+		pElem->QueryValueAttribute("preset", &presetSlotStr);
+		if (presetSlotStr.empty())
+		{
+			if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: missing preset number in LedPresetColors" << std::endl << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
+			continue;
+		}
+
+		int presetSlot = ::atoi(presetSlotStr.c_str()) - 1;
+		if (presetSlot < 0 || presetSlot > 31)
+		{
+			if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: invalid preset number in LedPresetColors -- valid presets are 1-32" << std::endl << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
+			continue;
+		}
+
+		mLedPresetColors[presetSlot] = ::StrToRgb(colorStr);
+	}
+}
+
+void
+EngineLoader::LoadLedDefaultColors(TiXmlElement * pElem)
+{
+	/*
+	 * optional, preset numbers valid over range 1-32, none required
+		<LedDefaultColors>
+			<color type="normal" >00003f</color>
+			<color type="toggle" device="*" >00003f</color>
+			<color type="AxeScene" state="inactive" >00003f</color>
+			<color type="AxeBlockE" colorPreset="1" />
+		</LedDefaultColors>
+
+		if device or type is not explicit, record as "*"
+		state defaults to active, does not need to be explicit (active/inactive)
+		preset notated as 1-based, decrement internally
+		preset recorded as color with high-bit set
+	 */
+	std::string device, patchType, colorStr, stateStr;
+	int presetSlot, st;
+	unsigned int clr;
+	for (; pElem; pElem = pElem->NextSiblingElement())
+	{
+		if (pElem->ValueStr() != "color")
+		{
+			if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: unrecognized element in LedDefaultColors -- expecting only color elements" << std::endl << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
+			continue;
+		}
+
+		// optional
+		device.clear();
+		if (pElem->Attribute("device"))
+			device = pElem->Attribute("device");
+		if (device.empty())
+			device = "*";
+		else if (device != "*" && device != "mtroll" && device != "midi" && mDeviceChannels.find(device) == mDeviceChannels.end())
+		{
+			if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: device specified in LedDefaultColors is not defined in DeviceChannelMap" << std::endl << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
+		}
+
+		// optional
+		patchType.clear();
+		pElem->QueryValueAttribute("type", &patchType);
+		if (patchType.empty())
+			patchType = "*";
+
+		if (device == "*" && patchType == "*")
+		{
+			if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: invalid condition in LedDefaultColors -- neither device nor type are specified" << std::endl << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
+			continue;
+		}
+
+		presetSlot = 0;
+		pElem->QueryIntAttribute("colorPreset", &presetSlot);
+		if (presetSlot)
+		{
+			if (presetSlot < 1 || presetSlot > 32)
+			{
+				if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: invalid preset number in LedDefaultColors -- valid preset slots are 1-32" << std::endl << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
+				continue;
+			}
+
+			// convert to 0-based
+			--presetSlot;
+
+			// preset slots are stored as color with high bit
+			clr = 0x80000000 | presetSlot;
+		}
+		else
+		{
+			// no preset, so check for RGB text
+			if (!pElem->GetText())
+			{
+				if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: missing color in LedDefaultColors -- no color or colorPreset specified" << std::endl << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
+				continue;
+			}
+
+			colorStr = pElem->GetText();
+			if (colorStr.length() != 6)
+			{
+				if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: invalid color in LedDefaultColors -- specify RGB color as 6 digit hex" << std::endl << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
+				continue;
+			}
+
+			clr = ::StrToRgb(colorStr);
+			if (clr & 0xFF000000)
+			{
+				if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: invalid color in LedDefaultColors -- specify RGB color as 6 digit hex (hi-bits present)" << std::endl << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
+				continue;
+			}
+		}
+
+		stateStr.clear();
+		pElem->QueryValueAttribute("state", &stateStr);
+		if (stateStr.empty())
+			st = 1;
+		else
+		{
+			if (stateStr == "active")
+				st = 1;
+			else if (stateStr == "inactive")
+				st = 0;
+			else
+			{
+				if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: invalid state in LedDefaultColors -- should be either active or inactive" << std::endl << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
+				continue;
+			}
+		}
+
+		std::transform(device.begin(), device.end(), device.begin(),
+			[](unsigned char c) { return std::tolower(c); }
+		);
+
+		std::transform(patchType.begin(), patchType.end(), patchType.begin(),
+			[](unsigned char c) { return std::tolower(c); }
+		);
+
+		mLedDefaultColors[{device, patchType, st}] = clr;
 	}
 }
 

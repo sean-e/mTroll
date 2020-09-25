@@ -153,17 +153,17 @@ UiLoader::LoadAssembyConfig(TiXmlElement * pElem)
 		return false;
 
 	bgColor = 0;
-	fgColor = 0xffffff;
 	width = height = 0;
 	vOffset = hOffset = 0;
 
-	pElem->QueryHexAttribute("onColor", &fgColor);
 	pElem->QueryHexAttribute("offColor", &bgColor);
 	pElem->QueryIntAttribute("height", &height);
 	pElem->QueryIntAttribute("width", &width);
 	pElem->QueryIntAttribute("vOffset", &vOffset);
 	pElem->QueryIntAttribute("hOffset", &hOffset);
-	mUi->SetSwitchLedConfig(width, height, vOffset, hOffset, (unsigned int) fgColor, (unsigned int) bgColor);
+	int colorOffset = 127;
+	pElem->QueryIntAttribute("ledColorGuiOffset", &colorOffset);
+	mUi->SetSwitchLedConfig(width, height, vOffset, hOffset, (unsigned int) bgColor, colorOffset);
 
 	return true;
 }
@@ -475,7 +475,7 @@ UiLoader::LoadOtherStuffAndFinalize(TiXmlElement * pElem)
 		}
 	}
 
-	// <hardware ledBrightness="0" invertLeds="0" />
+	// <hardware ledBrightness="0" />
 	pElem = hRoot.FirstChild("hardware").Element();
 	if (pElem)
 	{
@@ -484,10 +484,6 @@ UiLoader::LoadOtherStuffAndFinalize(TiXmlElement * pElem)
 
 		if (-1 != ledBrightness)
 			mUi->SetHardwareLedIntensity(ledBrightness);
-
-		int invertLeds = 0;
-		pElem->QueryIntAttribute("invertLeds", &invertLeds);
-		mUi->SetLedDisplayState(!!invertLeds);
 	}
 }
 
