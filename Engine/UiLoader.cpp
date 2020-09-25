@@ -161,7 +161,7 @@ UiLoader::LoadAssembyConfig(TiXmlElement * pElem)
 	pElem->QueryIntAttribute("width", &width);
 	pElem->QueryIntAttribute("vOffset", &vOffset);
 	pElem->QueryIntAttribute("hOffset", &hOffset);
-	int colorOffset = 127;
+	int colorOffset = 220;
 	pElem->QueryIntAttribute("ledColorGuiOffset", &colorOffset);
 	mUi->SetSwitchLedConfig(width, height, vOffset, hOffset, (unsigned int) bgColor, colorOffset);
 
