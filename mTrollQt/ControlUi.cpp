@@ -578,6 +578,9 @@ public:
 		mLed->setPalette(pal);
 	}
 
+	// the hardware LED values are super bright on the hardware but too dim in 
+	// the software, so the values are pumped up for the GUI (as opposed to setting
+	// different color values for hardware vs software)
 	void ScaleLedColorForSwitchDisplay(int offset)
 	{
 		const BYTE r1 = GetRValue(mColor);
