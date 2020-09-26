@@ -46,7 +46,7 @@
 	<LedDefaultColors>
 		<color type="normal" >00001f</color>
 		<color type="toggle" device="*" >001f00</color>
-		<color type="momentary" >00001f</color>
+		<color type="momentary" >1f001f</color>
 		<color type="persistentPedalOverride" >00001f</color>
 
 		<color device="Efx Unit" >001f00</color>
@@ -63,11 +63,11 @@
 			<midiByteString name="A">ca 00 ba 6f 29</midiByteString>
 			<midiByteString name="B">ca 02 ba 6f 7f</midiByteString>
 		</patch>
-		<patch name="Toggle 2" number="2" type="toggle" port="1">
+		<patch name="Toggle 2" number="2" type="toggle" port="1" ledColorPreset="3">
 			<midiByteString name="A">ca 00</midiByteString>
 			<midiByteString name="B">ca 02</midiByteString>
 		</patch>
-		<patch name="Toggle 3" number="3" type="toggle" port="1">
+		<patch name="Toggle 3" number="3" type="toggle" port="1" ledColorPreset="4">
 			<midiByteString name="A">ba 09 00</midiByteString>
 			<midiByteString name="B">ba 09 7f</midiByteString>
 		</patch>
@@ -87,7 +87,7 @@
 			<midiByteString name="A">b2 07 7f b2 07 00</midiByteString>
 			<midiByteString name="B">b2 07 7f b2 07 00</midiByteString>
 		</patch>
-		<patch name="Normal 2" number="21" type="normal" port="1">
+		<patch name="Normal 2" number="21" type="normal" port="1" ledColor="1f0000">
 			<midiByteString name="A">b2 08 7f b2 08 00</midiByteString>
 			<midiByteString name="B">b2 08 7f b2 08 00</midiByteString>
 		</patch>

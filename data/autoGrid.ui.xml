@@ -10,7 +10,7 @@
 		<switch font-name="Tahoma" font-weight="bold" font-height="13" foregroundColor="bbbbbb" />
 		<switchTextDisplay font-name="Tahoma" font-height="24" foregroundColor="00ff00" backgroundColor="0" />
 		<!-- do switchLed and switch need width and height?? -->
-		<switchLed width="30" height="15" onColor="ffff00" offColor="3a3a3a" />
+		<switchLed width="30" height="15" offColor="101010" ledColorGuiOffset="223" />
 	</switchAssemblyConfig>
 
 	<!-- this is for mapping ordinal switch numbers to monome grid coords (all are zero based) -->
