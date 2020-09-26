@@ -188,6 +188,19 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 			}
 		}
 
+		if (!midiOut && mAxe3SyncPort != -1 && !mAxe3DeviceName.empty())
+		{
+			// user's device name was not in axeNames, so use the port they specified
+			for (const auto & cur : mDevicePorts)
+			{
+				if (cur.second == mAxe3SyncPort && cur.first == mAxe3DeviceName)
+				{
+					midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[mAxe3SyncPort]);
+					break;
+				}
+			}
+		}
+
 		mAxeFx3Manager->CompleteInit(midiOut);
 	}
 
