@@ -85,6 +85,48 @@
 		<Device channel="16" port="1"></Device>
 	</DeviceChannelMap>
 
+	<LedPresetColors> 
+		<!-- max 32, none required, defaults already exist -->
+		<!--
+		<color preset="1" comment="blue"   >00000b</color>
+		<color preset="2" comment="green"  >000b00</color>
+		<color preset="3" comment="red"    >0b0000</color>
+		<color preset="4" comment="cyan"   >000b0b</color>
+		<color preset="5" comment="yellow" >0b0b00</color>
+		<color preset="6" comment="violet" >0b000b</color>
+		<color preset="7" comment="white"  >0b0b0b</color>
+		-->
+	</LedPresetColors>
+
+	<LedDefaultColors> <!-- category defaults; lookup occurs in this order: device+type, axe types, devices, types -->
+		<color type="normal" preset="1"/>
+		<color type="toggle" preset="1"/>
+		<color type="momentary" preset="1"/>
+		<color type="persistentPedalOverride" preset="1"/>
+
+		<color device="mtroll" preset="14"/>
+		<color device="midi" preset="13"/>
+		<color device="Axe-Fx" preset="1"/>
+
+		<color type="AxeScene" preset="2"/>
+		<color type="AxeScene" state="inactive" preset="11"/>
+
+		<color type="AxeToggle" preset="2"/>
+		<color type="AxeToggle" state="inactive" preset="10"/>
+
+		<color type="AxeBlock" preset="1"/>
+		<color type="AxeBlock" state="inactive" preset="13"/>
+		<color type="AxeBlockA" preset="24"/>
+		<color type="AxeBlockB" preset="25"/>
+		<color type="AxeBlockC" preset="26"/>
+		<color type="AxeBlockD" preset="27"/>
+		<color type="AxeBlockE" preset="28"/>
+		<color type="AxeBlockF" preset="29"/>
+
+		<color type="AxeLooper" preset="2"/>
+		<color type="AxeLooper" state="inactive" preset="9"/>
+	</LedDefaultColors>
+
 	<patches>
 		<!-- Axe-Fx patches.
 			 This config uses a 1:1 mapping between patch and Axe preset for the first 383 patches.

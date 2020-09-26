@@ -92,15 +92,6 @@
 		</patch>
 		<patch name="Default Toggle 2" number="31" type="toggle" port="1">
 		</patch>
-		<engineMetaPatch name="Reset Bank (meta)" number="50" action="ResetBankPatches" />
-		<engineMetaPatch name="Load Bank 1 (meta)" number="51" action="LoadBank" bankNumber="1" />
-		<engineMetaPatch name="Load Bank 2 (meta)" number="52" action="LoadBank" bankNumber="2" />
-		<engineMetaPatch name="Load Bank 3 (meta)" number="53" action="LoadBank" bankNumber="3" />
-		<engineMetaPatch number="54" action="LoadBank" bankNumber="3" />
-		<engineMetaPatch name="No Patch Number" action="LoadBank" bankNumber="3" />
-		<engineMetaPatch name="Invalid Action" number="56" action="Foo" />
-		<engineMetaPatch name="LoadBank Missing BankNumber" number="57" action="LoadBank" />
-		<engineMetaPatch name="Missing Action" number="58" />
 		<foo />
 		<patch number="60" />
 		<patch name="No Number" />
@@ -166,7 +157,7 @@
 		<bank name="Third Bank" number="3">
 			<ExclusiveSwitchGroup></ExclusiveSwitchGroup>
 			<ExclusiveSwitchGroup />
-			<switch number="1" patch="50" loadState="" unloadState="" />
+			<switch number="1" label="Reset Bank (meta)" command="ResetBankPatches"  />
 			<switch number="6" patch="20" loadState="" unloadState="" />
 			<switch number="7" patch="21" loadState="" unloadState="" />
 			<switch number="8" patch="22" loadState="" unloadState="" />
@@ -184,9 +175,15 @@
 			<switch number="2" patch="1" loadState="" unloadState="" />
 			<switch patch="2" loadState="" unloadState="" />
 			<switch number="12" loadState="" unloadState="" />
-			<switch number="5" patch="52" loadState="" unloadState="" />
+			<switch number="5" command="LoadBank" bankNumber="2" />
 			<switch number="6" patch="68" loadState="" unloadState="" />
 			<AnotherThing />
+		</bank>
+		<bank name="Fifth Bank" number="5">
+			<switch number="1" label="Load Bank (meta)" command="LoadBank" bankNumber="3" />
+			<switch number="2" label="Invalid command (meta)" command="Foo" />
+			<switch number="3" label="Incomplete Load Bank command -- missing bankNumber (meta)" command="LoadBank" />
+			<switch number="4" label="Missing command (meta)" />
 		</bank>
 		<bank name="No Number" >
 		</bank>

@@ -22,6 +22,29 @@
 			<globalExpr inputNumber="4" assignmentNumber="1" channel="11" controller="111" min="0" max="127" invert="0" enable="1" />
 		</expression>
 	</SystemConfig>
+
+	<LedPresetColors> 
+		<!-- max 32, none required, defaults already exist -->
+		<!--
+		<color preset="1" comment="blue"   >00000b</color>
+		<color preset="2" comment="green"  >000b00</color>
+		<color preset="3" comment="red"    >0b0000</color>
+		<color preset="4" comment="cyan"   >000b0b</color>
+		<color preset="5" comment="yellow" >0b0b00</color>
+		<color preset="6" comment="violet" >0b000b</color>
+		<color preset="7" comment="white"  >0b0b0b</color>
+		-->
+	</LedPresetColors>
+
+	<LedDefaultColors>
+		<color type="normal" >00001f</color>
+		<color type="toggle" device="*" >001f00</color>
+		<color type="momentary" >00001f</color>
+		<color type="persistentPedalOverride" >00001f</color>
+
+		<color device="mtroll" preset="26" />
+	</LedDefaultColors>
+
 	<patches>
 		<patch name="Toggle 1" number="1" type="toggle" port="1">
 			<midiByteString name="A">ca 00 ba 6f 29</midiByteString>
