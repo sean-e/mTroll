@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010,2013,2015,2018 Sean Echevarria
+ * Copyright (C) 2010,2013,2015,2018,2020 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -283,7 +283,17 @@ WinMidiIn::CloseMidiIn()
 {
 	ReleaseMidiIn();
 	for (auto & curItem : mInputSubscribers)
-		curItem->Closed(shared_from_this());
+	{
+		try
+		{
+			auto _this = shared_from_this();
+			if (_this)
+				curItem->Closed(_this);
+		}
+		catch (const std::exception &)
+		{
+		}
+	}
 	mInputSubscribers.clear();
 }
 
