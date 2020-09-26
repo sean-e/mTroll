@@ -1207,6 +1207,7 @@ ControlUi::CreateMainDisplay(const std::string &fontName,
 	mMainDisplay->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 	mMainDisplay->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 	mMainDisplay->setLineWrapMode(QPlainTextEdit::NoWrap);
+	mMainDisplay->setUndoRedoEnabled(false);
 
 	// trying to get touch to perform scroll instead of selection
 	mMainDisplay->setTextInteractionFlags(Qt::NoTextInteraction);
@@ -1264,6 +1265,7 @@ ControlUi::CreateTraceDisplay(const std::string &fontName,
 	mTraceDisplay->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 	mTraceDisplay->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 	mTraceDisplay->setLineWrapMode(QPlainTextEdit::NoWrap);
+	mTraceDisplay->setUndoRedoEnabled(false);
 
 	mTraceFont.setFamily(fontName.c_str());
 	mTraceFont.setPointSize(fontHeight);
