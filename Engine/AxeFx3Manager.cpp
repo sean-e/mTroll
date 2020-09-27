@@ -377,6 +377,7 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 		return;
 	case 0x11:
 		// #axe3TunerSupport
+		// tuner is not sent on midi-over-usb
 		// tuner info
 		// nn ss cc
 		// nn = note 0-11
@@ -388,6 +389,7 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 		return;
 	case 0x14:
 		// set/get tempo
+		// tempo is not sent on midi-over-usb
 		// F0 00 01 74 10 14 dd dd cs F7
 		//	where dd dd is the desired tempo as two 7 - bit MIDI bytes, LS first.
 		//	To query the tempo let dd dd = 7F 7F.
