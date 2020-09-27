@@ -1171,7 +1171,7 @@ AxeFx3Manager::DisplayPresetStatus()
 	if (!mMainDisplay)
 		return;
 
-	const std::string kPrefix("Axe-Fx preset: ");
+	const std::string kPrefix("AxeFx pre: ");
 	std::string curText;//(mMainDisplay->GetCurrentText());
 // 	int pos = curText.rfind(kPrefix);
 // 	if (std::string::npos != pos)
@@ -1193,7 +1193,7 @@ AxeFx3Manager::DisplayPresetStatus()
 	{
 		char sceneBuf[4];
 		::_itoa_s(mCurrentScene + 1, sceneBuf, 10);
-		curText += std::string("\nAxe-Fx scene: ") + sceneBuf;
+		curText += std::string("\nAxeFx scn: ") + sceneBuf;
 		if (!mCurrentAxeSceneName.empty())
 			curText += std::string(" ") + mCurrentAxeSceneName;
 	}
