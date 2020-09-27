@@ -338,6 +338,14 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 			return;
 		ReceiveFirmwareVersionResponse(bytes, len);
 		return;
+	case 0xa:
+		// when we send set bypass, it responds with new state -- we could 
+		// update here rather than requesting a status dump
+		return;
+	case 0xb:
+		// when we send set channel, it responds with new state -- we could 
+		// update here rather than requesting a status dump
+		return;
 	case 0xc:
 // 		if (len > 8)
 // 			ReceiveSceneStatus(&bytes[6], len - 8); // -6 + checksum and EOX
