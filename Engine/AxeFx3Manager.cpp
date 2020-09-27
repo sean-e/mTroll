@@ -64,9 +64,9 @@ struct Axe3EffectBlockInfo
 	// state that is basically const
 	std::string			mName;						// Amp 1
 	std::string			mNormalizedName;			// amp 1
-	int					mSysexEffectId;				// unique per name
-	int					mSysexEffectIdMs;			//	derived 
-	int					mSysexEffectIdLs;			//	derived
+	int					mSysexEffectId = -1;		// unique per name
+	int					mSysexEffectIdMs = -1;		//	derived 
+	int					mSysexEffectIdLs = -1;		//	derived
 	PatchPtr			mPatch;						// the patch assigned to this effectId
 	PatchPtr			mChannelSelectPatches[kMaxChannels]; // optional channel select patches for this effectId
 
@@ -77,12 +77,7 @@ struct Axe3EffectBlockInfo
 	int					mCurrentChannel = 0;
 	bool				mEffectIsPresentInAxePatch = true;
 
-	Axe3EffectBlockInfo() :
-		mSysexEffectId(-1),
-		mSysexEffectIdLs(-1),
-		mSysexEffectIdMs(-1)
-	{
-	}
+	Axe3EffectBlockInfo() = default;
 
 	Axe3EffectBlockInfo(int id, const std::string & name) :
 		mName(name),
@@ -911,6 +906,12 @@ AxeFx3Manager::RequestStatusDump()
 	{
 		if (-1 == cur.mSysexEffectId)
 			continue;
+
+		if (FractalAudio::AxeFx3::ID_TUNER == cur.mSysexEffectId)
+		{
+			// tuner is always available
+			continue;
+		}
 
 		if (!cur.mPatch)
 			continue;
