@@ -501,18 +501,10 @@ AxeFx3Manager::Shutdown()
 }
 
 void
-AxeFx3Manager::DelayedNameSyncFromAxe(bool force /*= false*/)
+AxeFx3Manager::DelayedNameSyncFromAxe(bool /*force = false*/)
 {
 	if (!mDelayedNameSyncTimer)
 		return;
-
-	if (!force)
-	{
-		// #axe3FinishThis -- probably incorrect for 3
-		// Axe-Fx II sends preset loaded message, so we can ignore our 
-		// unforced calls to DelalyedNameSyncFromAxe.
-		return;
-	}
 
 	if (mDelayedNameSyncTimer->isActive())
 	{
