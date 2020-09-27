@@ -48,7 +48,7 @@ constexpr int kDbgFlag = 1;
 constexpr int kDbgFlag = 0;
 #endif
 
-constexpr int kDefaultNameSyncTimerInterval = 100;
+constexpr int kDefaultNameSyncTimerInterval = 50;
 constexpr int kDefaultEffectsSyncTimerInterval = 20;
 constexpr int kMaxNameLen = 32;
 #ifdef ITEM_COUNTING
