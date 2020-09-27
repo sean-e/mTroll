@@ -88,8 +88,8 @@ struct Axe3EffectBlockInfo
 		mName(name),
 		mNormalizedName(::NormalizeAxe3EffectName(name)),
 		mSysexEffectId(id),
-		mSysexEffectIdLs(id & 0x0000000F),
-		mSysexEffectIdMs((id >> 4) & 0x0000000F)
+		mSysexEffectIdLs(id & 0x0000007F),
+		mSysexEffectIdMs((id >> 7) & 0x0000007F)
 	{
 	}
 
