@@ -82,6 +82,7 @@ public:
 	AxeFxModel GetModel() const override { return mModel; }
 	void Shutdown() override;
 	void UpdateSceneStatus(int newScene, bool internalUpdate) override;
+	void ForceRefreshAxeState() override;
 
 	// delayed requests for sync
 	void DelayedNameSyncFromAxe(bool force = false) override;
@@ -93,7 +94,7 @@ public:
 
 public slots:
 	// immediate requests for sync (called by the delayed requests)
-	void SyncNameAndEffectsFromAxe() override;
+	void SyncNameAndEffectsFromAxe();
 	void SyncEffectsFromAxe();
 
 private:

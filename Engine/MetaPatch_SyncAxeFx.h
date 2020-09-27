@@ -49,7 +49,7 @@ public:
 	virtual void SwitchPressed(IMainDisplay *, ISwitchDisplay *) override
 	{
 		for (const auto &axe : mAxes)
-			axe->SyncNameAndEffectsFromAxe();
+			axe->ForceRefreshAxeState();
 	}
 
 	virtual void BankTransitionActivation() override {SwitchPressed(nullptr, nullptr);}

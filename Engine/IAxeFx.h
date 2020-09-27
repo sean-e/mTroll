@@ -46,7 +46,7 @@ __interface IAxeFx
 
 	// runtime
 	virtual void UpdateSceneStatus(int newScene, bool internalUpdate);
-	virtual void SyncNameAndEffectsFromAxe();
+	virtual void ForceRefreshAxeState();
 	virtual void DelayedNameSyncFromAxe(bool force = false);
 	virtual void DelayedEffectsSyncFromAxe();
 	virtual void Shutdown();

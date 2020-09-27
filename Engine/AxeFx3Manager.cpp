@@ -484,6 +484,13 @@ AxeFx3Manager::GetBlockInfoByName(const std::string& normalizedEffectName)
 }
 
 void
+AxeFx3Manager::ForceRefreshAxeState()
+{
+	RequestLooperState();
+	RequestPresetName();
+}
+
+void
 AxeFx3Manager::SyncNameAndEffectsFromAxe()
 {
 	RequestPresetName();

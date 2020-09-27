@@ -661,6 +661,12 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 	QCoreApplication::postEvent(this, new CreateSendNextQueryTimer(GetSharedThis()));
 }
 
+void 
+AxeFxManager::ForceRefreshAxeState()
+{
+	RequestPresetName();
+}
+
 void
 AxeFxManager::SyncNameAndEffectsFromAxe()
 {
