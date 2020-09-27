@@ -369,7 +369,7 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 		return;
 	case 0x0f:
 		// looper status
-		ReceiveLooperState(&bytes[6], len - 6);
+		ReceiveLooperState(bytes[6]);
 		return;
 	case 0x10:
 		// Tempo: f0 00 01 74 10 10 f7
@@ -414,22 +414,39 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 // 		ReceiveSceneStatus(&bytes[6], len - 6);
 // 		return;
 	case 0x64:
-		// indicates an error or unsupported message
-		if (kDbgFlag && mTrace)
+		if (len > 7)
 		{
-// 			if ((len - 5) > 2 && bytes[6] == 0x23)
-// 			{
-// 				// ignore looper status monitor ack.
-// 				// the message to enable the monitor is required, the status messages are not 
-// 				// otherwise sent; but no idea why 0x64 is sent as ack.
-// 				break;
-// 			}
-// 			else
+			switch (bytes[6])
 			{
-				const std::string msg("AxeFx: error or unsupported message\n");
-				mTrace->Trace(msg);
+			case 0x10:
+				// tap tempo ack
+				return;
+
+			case 0x11:
+				// tuner ack
+				return;
+
+			case 0x0f:
+				// looper status
+				if (0x08 == bytes[7])
+				{
+					// looper isn't present in preset
+					ResetLooperState();
+					return;
+				}
+				break;
 			}
 		}
+
+		// indicates an error, unsupported message, or unhandled ack
+		if (kDbgFlag && mTrace)
+		{
+			const std::string msg("AxeFx: error, unsupported message, or unhandled ack\n");
+			mTrace->Trace(msg);
+		}
+
+		[[fallthrough]];
+
 	default:
 		if (kDbgFlag && mTrace)
 		{
@@ -1027,12 +1044,8 @@ GetLooperStateDesc(int loopState)
 }
 
 void
-AxeFx3Manager::ReceiveLooperState(const byte * bytes, int len)
+AxeFx3Manager::ReceiveLooperState(byte newLoopState)
 {
-	if (len < 2)
-		return;
-
-	const int newLoopState = bytes[0];
 	if (mLooperState == newLoopState)
 		return;
 
@@ -1096,9 +1109,30 @@ AxeFx3Manager::ReceiveLooperState(const byte * bytes, int len)
 	if (mMainDisplay)
 	{
 		std::strstream traceMsg;
-		traceMsg << "Axe-Fx looper: " << GetLooperStateDesc(mLooperState) << std::endl << std::ends;
+		traceMsg << "AxeFx lpr: " << GetLooperStateDesc(mLooperState) << std::endl << std::ends;
 		mMainDisplay->TransientTextOut(std::string(traceMsg.str()));
 	}
+}
+
+void
+AxeFx3Manager::ResetLooperState()
+{
+	if (mLooperPatches[loopPatchRecord])
+		mLooperPatches[loopPatchRecord]->UpdateState(mSwitchDisplay, false);
+
+	if (mLooperPatches[loopPatchPlay])
+		mLooperPatches[loopPatchPlay]->UpdateState(mSwitchDisplay, false);
+
+	if (mLooperPatches[loopPatchPlayOnce])
+		mLooperPatches[loopPatchPlayOnce]->UpdateState(mSwitchDisplay, false);
+
+	if (mLooperPatches[loopPatchReverse])
+		mLooperPatches[loopPatchReverse]->UpdateState(mSwitchDisplay, false);
+
+	if (mLooperPatches[loopPatchHalf])
+		mLooperPatches[loopPatchHalf]->UpdateState(mSwitchDisplay, false);
+
+	mLooperState = 0;
 }
 
 bool

@@ -111,7 +111,8 @@ private:
 	void ReceiveFirmwareVersionResponse(const byte * bytes, int len);
 
 	void RequestLooperState();
-	void ReceiveLooperState(const byte * bytes, int len);
+	void ReceiveLooperState(byte loopState);
+	void ResetLooperState();
 	void ReceivePresetNumber(const byte * bytes, int len);
 	void ReceiveSceneStatus(const byte * bytes, int len);
 
