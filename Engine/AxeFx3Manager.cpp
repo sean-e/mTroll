@@ -318,7 +318,7 @@ IsAxeFx3Sysex(const byte * bytes, const int len)
 	if (len < 7)
 		return false;
 
-	const byte kAxeFx3[] = { 0xf0, 0x00, 0x01, 0x74, 0x10 };
+	const byte kAxeFx3[] = { 0xf0, 0x00, 0x01, 0x74, Axe3 };
 	if (::memcmp(bytes, kAxeFx3, 5))
 		return false;
 
@@ -333,10 +333,6 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 
 	switch (bytes[5])
 	{
-// 	case 2:
-// 		return;
-// 	case 4:
-// 		return;
 	case 8:
 		if (mFirmwareMajorVersion)
 			return;
@@ -619,7 +615,7 @@ AxeFx3Manager::GetCommandString(const std::string& commandName, bool enable)
 			if (enable)
 			{
 				// Tempo Tap (command 10H)
-				Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, 0x10, 0x10 };
+				Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, Axe3, 0x10 };
 				AppendChecksumAndTerminate(bytes);
 				return bytes;
 			}
@@ -629,7 +625,7 @@ AxeFx3Manager::GetCommandString(const std::string& commandName, bool enable)
 
 		if ("tuner" == name)
 		{
-			Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, 0x10, 0x11 };
+			Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, Axe3, 0x11 };
 			bytes.push_back(enable ? 1 : 0);
 			AppendChecksumAndTerminate(bytes);
 			return bytes;
@@ -642,7 +638,7 @@ AxeFx3Manager::GetCommandString(const std::string& commandName, bool enable)
 	{
 		if (-1 != name.find("looper"))
 		{
-			Bytes bb{ 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x0f };
+			Bytes bb{ 0xF0, 0x00, 0x01, 0x74, Axe3, 0x0f };
 			enum class AxeFx3LooperButton
 			{
 				Record = 0,
@@ -684,7 +680,7 @@ AxeFx3Manager::GetCommandString(const std::string& commandName, bool enable)
 		return emptyCommand;
 
 	// else, is an effect bypass command (command 0x0A)
-	Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, 0x10, 0x0A };
+	Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, Axe3, 0x0A };
 	bytes.push_back(fx->mSysexEffectIdLs);
 	bytes.push_back(fx->mSysexEffectIdMs);
 	bytes.push_back(enable ? 0 : 1);
@@ -699,7 +695,7 @@ AxeFx3Manager::GetSceneSelectCommandString(int scene)
 	if (!scene || scene > AxeScenes)
 		return emptyCommand;
 
-	Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, 0x10, 0x0c };
+	Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, Axe3, 0x0c };
 	bytes.push_back(scene - 1);
 	AppendChecksumAndTerminate(bytes);
 	return bytes;
@@ -731,7 +727,7 @@ AxeFx3Manager::GetBlockChannelSelectCommandString(
 	effectId = fx->mSysexEffectId;
 	channel = channelStr[0] - 'A';
 
-	Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, 0x10, 0x0B };
+	Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, Axe3, 0x0B };
 	bytes.push_back(fx->mSysexEffectIdLs);
 	bytes.push_back(fx->mSysexEffectIdMs);
 	bytes.push_back(channel);
@@ -752,7 +748,7 @@ AxeFx3Manager::SendFirmwareVersionQuery()
 	// respond:		F0 00 01 74 03 08 02 00 0C F7	(for 2.0)
 	// respond:		F0 00 01 74 03 08 03 02 0f F7	(for 3.2)
 
-	Bytes bb{ 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x08, 0x0a };
+	Bytes bb{ 0xF0, 0x00, 0x01, 0x74, Axe3, 0x08, 0x0a };
 	AppendChecksumAndTerminate(bb);
 	QMutexLocker lock(&mQueryLock);
 	mMidiOut->MidiOut(bb);
@@ -806,7 +802,7 @@ AxeFx3Manager::RequestPresetName()
 	if (!mFirmwareMajorVersion)
 		return;
 
-	Bytes bb{ 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x0d, 0x7f, 0x7f };
+	Bytes bb{ 0xF0, 0x00, 0x01, 0x74, Axe3, 0x0d, 0x7f, 0x7f };
 	AppendChecksumAndTerminate(bb);
 	mMidiOut->MidiOut(bb);
 }
@@ -856,7 +852,7 @@ AxeFx3Manager::RequestSceneName()
 	if (!mFirmwareMajorVersion)
 		return;
 
-	Bytes bb{ 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x0e, 0x7f };
+	Bytes bb{ 0xF0, 0x00, 0x01, 0x74, Axe3, 0x0e, 0x7f };
 	AppendChecksumAndTerminate(bb);
 	mMidiOut->MidiOut(bb);
 }
@@ -895,7 +891,7 @@ AxeFx3Manager::RequestStatusDump()
 		cur.mEffectIsPresentInAxePatch = false;
 	}
 
-	Bytes bb{ 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x13 };
+	Bytes bb{ 0xF0, 0x00, 0x01, 0x74, Axe3, 0x13 };
 	AppendChecksumAndTerminate(bb);
 	mMidiOut->MidiOut(bb);
 }
@@ -981,7 +977,7 @@ void
 AxeFx3Manager::RequestLooperState()
 {
 	QMutexLocker lock(&mQueryLock);
-	Bytes bb{ 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x0f, 0x7f };
+	Bytes bb{ 0xF0, 0x00, 0x01, 0x74, Axe3, 0x0f, 0x7f };
 	AppendChecksumAndTerminate(bb);
 	mMidiOut->MidiOut(bb);
 }
