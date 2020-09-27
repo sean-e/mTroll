@@ -440,10 +440,9 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 Axe3EffectBlockInfo *
 AxeFx3Manager::GetBlockInfoByEffectId(const byte * bytes)
 {
-	int effectId;
-	const int effectIdLs = bytes[0] >> 3;
-	const int effectIdMs = (bytes[1] << 4) & 0xff;
-	effectId = effectIdMs | effectIdLs;
+	const int effectIdLs = bytes[0];
+	const int effectIdMs = bytes[1] << 7;
+	const int effectId = effectIdMs | effectIdLs;
 
 	for (auto & cur : mAxeEffectInfo)
 	{
@@ -920,13 +919,6 @@ AxeFx3Manager::ReceiveStatusDump(const byte * bytes, int len)
 		}
 
 		Axe3EffectBlockInfo * inf = GetBlockInfoByEffectId(bytes + idx);
-		if (inf && mTrace /*&& inf->mNormalizedName != "feedback return"*/)
-		{
-			std::strstream traceMsg;
-			traceMsg << "Axe sync warning: potentially unexpected sync for  " << inf->mName << " " << std::endl << std::ends;
-			mTrace->Trace(std::string(traceMsg.str()));
-		}
-
 		if (inf && inf->mPatch)
 		{
 			const byte dd = bytes[idx + 2];
