@@ -875,7 +875,7 @@ AxeFx3Manager::RequestStatusDump()
 		cur.mEffectIsPresentInAxePatch = false;
 	}
 
-	Bytes bb{ 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x0e };
+	Bytes bb{ 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x13 };
 	AppendChecksumAndTerminate(bb);
 	mMidiOut->MidiOut(bb);
 }
