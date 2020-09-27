@@ -43,13 +43,14 @@
 
 
 #ifdef _DEBUG
-static const int kDbgFlag = 1;
+constexpr int kDbgFlag = 1;
 #else
-static const int kDbgFlag = 0;
+constexpr int kDbgFlag = 0;
 #endif
 
-static const int kDefaultNameSyncTimerInterval = 100;
-static const int kDefaultEffectsSyncTimerInterval = 20;
+constexpr int kDefaultNameSyncTimerInterval = 100;
+constexpr int kDefaultEffectsSyncTimerInterval = 20;
+constexpr int kMaxNameLen = 32;
 #ifdef ITEM_COUNTING
 std::atomic<int> gAxeFx3MgrCnt = 0;
 #endif
@@ -341,19 +342,23 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 			return;
 		ReceiveFirmwareVersionResponse(bytes, len);
 		return;
+	case 0xc:
+// 		if (len > 8)
+// 			ReceiveSceneStatus(&bytes[6], len - 8); // -6 + checksum and EOX
+		return;
 	case 0xd:
 		if (len > 8)
 		{
 			ReceivePresetNumber(&bytes[6], len - 6);
-			ReceivePresetName(&bytes[8], len - 8);
+			ReceivePresetName(&bytes[8], len - 10); // -8 + checksum and EOX
 			RequestSceneName();
 		}
 		return;
 	case 0xe:
 		if (len > 7)
 		{
-			ReceiveSceneName(&bytes[7], len - 7);
-			ReceiveSceneStatus(&bytes[6], len - 6);
+			ReceiveSceneName(&bytes[7], len - 9); // -7 + checksum and EOX
+			ReceiveSceneStatus(&bytes[6], len - 8); // -6 + checksum and EOX
 			DisplayPresetStatus();
 			RequestStatusDump();
 		}
@@ -805,16 +810,36 @@ AxeFx3Manager::RequestPresetName()
 	mMidiOut->MidiOut(bb);
 }
 
+static void
+CopyAndTrimName(char *name, const byte * bytes, int len)
+{
+	memcpy(name, bytes, len > kMaxNameLen ? kMaxNameLen : len);
+	name[kMaxNameLen] = '\0';
+	for (int idx = len - 1; idx >= 0; --idx)
+	{
+		if (name[idx] == ' ')
+		{
+			name[idx] = '\0';
+			continue;
+		}
+		if (name[idx] == '\0')
+			continue;
+		break;
+	}
+}
+
 void
 AxeFx3Manager::ReceivePresetName(const byte * bytes, int len)
 {
-	if (len < 32)
+	if (len < kMaxNameLen)
 		return;
 
-	std::string patchName((const char *)bytes, 32);
-	if (mMainDisplay && !patchName.empty())
+	char name[kMaxNameLen + 1];
+	::CopyAndTrimName(name, bytes, len);
+
+	if (mMainDisplay)
 	{
-		mCurrentAxePresetName = patchName;
+		mCurrentAxePresetName = name;
 		mCurrentAxeSceneName.clear();
 // 		DisplayPresetStatus();
 	}
@@ -838,11 +863,13 @@ AxeFx3Manager::RequestSceneName()
 void
 AxeFx3Manager::ReceiveSceneName(const byte * bytes, int len)
 {
-	if (len < 32)
+	if (len < kMaxNameLen)
 		return;
 
-	std::string sceneName((const char *)bytes, 32);
-	mCurrentAxeSceneName = sceneName;
+	char name[kMaxNameLen + 1];
+	::CopyAndTrimName(name, bytes, len);
+
+	mCurrentAxeSceneName = name;
 }
 
 void
