@@ -42,7 +42,7 @@
 		</switches>
 
 		<midiDevices>
-			<midiDevice port="1" activityIndicatorId="23" out="Axe-Fx III" in="Axe-Fx III" />
+			<midiDevice port="2" activityIndicatorId="23" out="Axe-Fx III" in="Axe-Fx III" />
 
 			<!-- default device if the named devices fail -->
 			<midiDevice port="1" activityIndicatorId="23" outIdx="0" />
@@ -74,7 +74,7 @@
 		<Device channel="6" port="1"></Device>
 		<Device channel="7" port="1"></Device>
 		<!-- this is key to Axe-Fx synchronization; make sure Axe-Fx is on the right line (based on MIDI channel). -->
-		<Device channel="8" port="1" model="3">Axe-Fx</Device>
+		<Device channel="8" port="2" model="3">Axe-Fx</Device>
 		<Device channel="9" port="1"></Device>
 		<Device channel="10" port="1"></Device>
 		<Device channel="11" port="1"></Device>
@@ -1320,511 +1320,512 @@
 
 
 	<banks>
-		<!-- PatchMap switch attributes are 1-based -->
+		<!-- switch number attributes are 1-based -->
 
 		<!-- bank 0 is a special bank; assigns defaults for switches in all banks that don't otherwise make a switch assignment -->
 		<bank name="Defaults" number="0">
 			<ExclusiveSwitchGroup>11 12 13 14 15</ExclusiveSwitchGroup>
 			<!-- override toggle behavior so that press doesn't clear LED (not normal so that presets are) -->
-			<PatchMap switch="11" patch="851" override="A" />
-			<PatchMap switch="12" patch="852" override="A" />
-			<PatchMap switch="13" patch="853" override="A" />
-			<PatchMap switch="14" patch="854" override="A" />
-			<PatchMap switch="15" patch="855" override="A" />
+			<switch number="11" patch="851" override="A" />
+			<switch number="12" patch="852" override="A" />
+			<switch number="13" patch="853" override="A" />
+			<switch number="14" patch="854" override="A" />
+			<switch number="15" patch="855" override="A" />
 
 			<!-- Previous and Next Bank switches are not required. -->
-			<PatchMap switch="22" command="LoadPreviousBank" />
+			<switch number="22" command="LoadPreviousBank" />
 			<!-- long press of Prev loads reveal 1 -->
-			<PatchMap switch="22" command="LoadBank" bankNumber="100" secondFunction="immediateToggle" />
-			<PatchMap switch="23" command="LoadNextBank" />
+			<switch number="22" command="LoadBank" bankNumber="100" secondFunction="immediateToggle" />
+			<switch number="23" command="LoadNextBank" />
 			<!-- long press of Next loads tuner -->
-			<PatchMap switch="23" patch="705" secondFunction="auto" />
+			<switch number="23" patch="705" secondFunction="auto" />
+			<switch number="20" command="SyncAxeFx" />
 		</bank>
 
 		<bank name="Directory" number="1">
 			<!-- empty patch number in PatchMap will override the default, if any exists -->
-			<PatchMap switch="8"  patch="" />
-			<PatchMap switch="9"  label="Externals" command="LoadBank" bankNumber="121" />
-			<PatchMap switch="10" label="Loopers"   command="LoadBank" bankNumber="120" />
-			<PatchMap switch="11" label="Reveal 1"  command="LoadBank" bankNumber="100" />
-			<PatchMap switch="12" label="Reveal 2"  command="LoadBank" bankNumber="101" />
-			<PatchMap switch="13" label="Reveal 3"  command="LoadBank" bankNumber="102" />
-			<PatchMap switch="14" label="Reveal 4"  command="LoadBank" bankNumber="103" />
-			<PatchMap switch="15" label="Scenes"    command="LoadBank" bankNumber="122" />
+			<switch number="8"  patch="" />
+			<switch number="9"  label="Externals" command="LoadBank" bankNumber="121" />
+			<switch number="10" label="Loopers"   command="LoadBank" bankNumber="120" />
+			<switch number="11" label="Reveal 1"  command="LoadBank" bankNumber="100" />
+			<switch number="12" label="Reveal 2"  command="LoadBank" bankNumber="101" />
+			<switch number="13" label="Reveal 3"  command="LoadBank" bankNumber="102" />
+			<switch number="14" label="Reveal 4"  command="LoadBank" bankNumber="103" />
+			<switch number="15" label="Scenes"    command="LoadBank" bankNumber="122" />
 		</bank>
 
 		<bank name="Axe-Fx 1" number="10">
-			<PatchMap switch="1"  patch="1" />
-			<PatchMap switch="2"  patch="2" />
-			<PatchMap switch="3"  patch="3" />
-			<PatchMap switch="4"  patch="4" />
-			<PatchMap switch="5"  patch="5" />
-			<PatchMap switch="6"  patch="866" />
-			<PatchMap switch="6"  command="ResetPatch" patchToReset="866" secondFunction="immediateToggle" />
-			<PatchMap switch="7"  patch="7" />
-			<PatchMap switch="8"  patch="8" />
-			<PatchMap switch="9"  patch="9" />
-			<PatchMap switch="10" patch="10" />
+			<switch number="1"  patch="1" />
+			<switch number="2"  patch="2" />
+			<switch number="3"  patch="3" />
+			<switch number="4"  patch="4" />
+			<switch number="5"  patch="5" />
+			<switch number="6"  patch="866" />
+			<switch number="6"  command="ResetPatch" patchToReset="866" secondFunction="immediateToggle" />
+			<switch number="7"  patch="7" />
+			<switch number="8"  patch="8" />
+			<switch number="9"  patch="9" />
+			<switch number="10" patch="10" />
 		</bank>
 		<bank name="Axe-Fx 11" number="11">
-			<PatchMap switch="1"  patch="11" />
-			<PatchMap switch="2"  patch="12" />
-			<PatchMap switch="3"  patch="13" />
-			<PatchMap switch="4"  patch="14" />
-			<PatchMap switch="5"  patch="15" />
-			<PatchMap switch="6"  patch="16" />
-			<PatchMap switch="7"  patch="17" />
-			<PatchMap switch="8"  patch="18" />
-			<PatchMap switch="9"  patch="19" />
-			<PatchMap switch="10" patch="20" />
+			<switch number="1"  patch="11" />
+			<switch number="2"  patch="12" />
+			<switch number="3"  patch="13" />
+			<switch number="4"  patch="14" />
+			<switch number="5"  patch="15" />
+			<switch number="6"  patch="16" />
+			<switch number="7"  patch="17" />
+			<switch number="8"  patch="18" />
+			<switch number="9"  patch="19" />
+			<switch number="10" patch="20" />
 		</bank>
 		<bank name="Axe-Fx 21" number="12">
-			<PatchMap switch="1"  patch="21" />
-			<PatchMap switch="2"  patch="22" />
-			<PatchMap switch="3"  patch="23" />
-			<PatchMap switch="4"  patch="24" />
-			<PatchMap switch="5"  patch="25" />
-			<PatchMap switch="6"  patch="26" />
-			<PatchMap switch="7"  patch="27" />
-			<PatchMap switch="8"  patch="28" />
-			<PatchMap switch="9"  patch="29" />
-			<PatchMap switch="10" patch="30" />
+			<switch number="1"  patch="21" />
+			<switch number="2"  patch="22" />
+			<switch number="3"  patch="23" />
+			<switch number="4"  patch="24" />
+			<switch number="5"  patch="25" />
+			<switch number="6"  patch="26" />
+			<switch number="7"  patch="27" />
+			<switch number="8"  patch="28" />
+			<switch number="9"  patch="29" />
+			<switch number="10" patch="30" />
 		</bank>
 		<bank name="Axe-Fx 31" number="13">
-			<PatchMap switch="1"  patch="31" />
-			<PatchMap switch="2"  patch="32" />
-			<PatchMap switch="3"  patch="33" />
-			<PatchMap switch="4"  patch="34" />
-			<PatchMap switch="5"  patch="35" />
-			<PatchMap switch="6"  patch="36" />
-			<PatchMap switch="7"  patch="37" />
-			<PatchMap switch="8"  patch="38" />
-			<PatchMap switch="9"  patch="39" />
-			<PatchMap switch="10" patch="40" />
+			<switch number="1"  patch="31" />
+			<switch number="2"  patch="32" />
+			<switch number="3"  patch="33" />
+			<switch number="4"  patch="34" />
+			<switch number="5"  patch="35" />
+			<switch number="6"  patch="36" />
+			<switch number="7"  patch="37" />
+			<switch number="8"  patch="38" />
+			<switch number="9"  patch="39" />
+			<switch number="10" patch="40" />
 		</bank>
 
 		<bank name="Reveal 1" number="100">
-			<PatchMap switch="1" patch="780" />
-			<PatchMap switch="2" patch="731" />
-			<PatchMap switch="3" patch="737" />
-			<PatchMap switch="4" patch="773" />
-			<PatchMap switch="5" patch="727" />
-			<PatchMap switch="6" patch="767" />
-			<PatchMap switch="7" patch="739" />
-			<PatchMap switch="8" patch="742" />
-			<PatchMap switch="9" patch="746" />
-			<PatchMap switch="11" patch="752" />
-			<PatchMap switch="12" patch="750" />
-			<PatchMap switch="13" patch="757" />
-			<PatchMap switch="14" patch="759" />
-			<PatchMap switch="15" patch="761" />
-			<PatchMap switch="18" patch="" />
-			<PatchMap switch="19" patch="" />
-			<PatchMap switch="20" patch="" />
-			<PatchMap switch="22" command="BankHistoryBackward" />
-			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+			<switch number="1" patch="780" />
+			<switch number="2" patch="731" />
+			<switch number="3" patch="737" />
+			<switch number="4" patch="773" />
+			<switch number="5" patch="727" />
+			<switch number="6" patch="767" />
+			<switch number="7" patch="739" />
+			<switch number="8" patch="742" />
+			<switch number="9" patch="746" />
+			<switch number="11" patch="752" />
+			<switch number="12" patch="750" />
+			<switch number="13" patch="757" />
+			<switch number="14" patch="759" />
+			<switch number="15" patch="761" />
+			<switch number="18" patch="" />
+			<switch number="19" patch="" />
+			<switch number="20" patch="" />
+			<switch number="22" command="BankHistoryBackward" />
+			<switch number="22" patch="" secondFunction="immediateToggle" />
 		</bank>
 		<bank name="Reveal 2" number="101">
-			<PatchMap switch="1" patch="781" />
-			<PatchMap switch="2" patch="732" />
-			<PatchMap switch="3" patch="738" />
-			<PatchMap switch="4" patch="774" />
-			<PatchMap switch="5" patch="728" />
-			<PatchMap switch="6" patch="768" />
-			<PatchMap switch="7" patch="740" />
-			<PatchMap switch="8" patch="743" />
-			<PatchMap switch="9" patch="747" />
-			<PatchMap switch="10" patch="756" />
-			<PatchMap switch="11" patch="753" />
-			<PatchMap switch="12" patch="751" />
-			<PatchMap switch="13" patch="758" />
-			<PatchMap switch="14" patch="760" />
-			<PatchMap switch="15" patch="762" />
-			<PatchMap switch="16" patch="" />
-			<PatchMap switch="17" patch="" />
-			<PatchMap switch="18" patch="" />
-			<PatchMap switch="19" patch="" />
-			<PatchMap switch="20" patch="" />
-			<PatchMap switch="22" command="BankHistoryBackward" />
-			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+			<switch number="1" patch="781" />
+			<switch number="2" patch="732" />
+			<switch number="3" patch="738" />
+			<switch number="4" patch="774" />
+			<switch number="5" patch="728" />
+			<switch number="6" patch="768" />
+			<switch number="7" patch="740" />
+			<switch number="8" patch="743" />
+			<switch number="9" patch="747" />
+			<switch number="10" patch="756" />
+			<switch number="11" patch="753" />
+			<switch number="12" patch="751" />
+			<switch number="13" patch="758" />
+			<switch number="14" patch="760" />
+			<switch number="15" patch="762" />
+			<switch number="16" patch="" />
+			<switch number="17" patch="" />
+			<switch number="18" patch="" />
+			<switch number="19" patch="" />
+			<switch number="20" patch="" />
+			<switch number="22" command="BankHistoryBackward" />
+			<switch number="22" patch="" secondFunction="immediateToggle" />
 		</bank>
 		<bank name="Reveal 3" number="102">
-			<PatchMap switch="2" patch="778" />
-			<PatchMap switch="3" patch="787" />
-			<PatchMap switch="4" patch="771" />
-			<PatchMap switch="5" patch="776" />
-			<PatchMap switch="7" patch="779" />
-			<PatchMap switch="8" patch="788" />
-			<PatchMap switch="9" patch="772" />
-			<PatchMap switch="10" patch="777" />
-			<PatchMap switch="11" patch="775" />
-			<PatchMap switch="12" patch="748" />
-			<PatchMap switch="13" patch="782" />
-			<PatchMap switch="14" patch="704" />
-			<PatchMap switch="15" command="SyncAxeFx" />
-			<PatchMap switch="22" command="BankHistoryBackward" />
-			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+			<switch number="2" patch="778" />
+			<switch number="3" patch="787" />
+			<switch number="4" patch="771" />
+			<switch number="5" patch="776" />
+			<switch number="7" patch="779" />
+			<switch number="8" patch="788" />
+			<switch number="9" patch="772" />
+			<switch number="10" patch="777" />
+			<switch number="11" patch="775" />
+			<switch number="12" patch="748" />
+			<switch number="13" patch="782" />
+			<switch number="14" patch="704" />
+			<switch number="15" command="SyncAxeFx" />
+			<switch number="22" command="BankHistoryBackward" />
+			<switch number="22" patch="" secondFunction="immediateToggle" />
 		</bank>
 		<bank name="Reveal Channels 1" number="103">
 			<ExclusiveSwitchGroup>1 6 11</ExclusiveSwitchGroup>
-			<PatchMap switch="1" patch="2000" />
+			<switch number="1" patch="2000" />
 			<ExclusiveSwitchGroup>2 7 12</ExclusiveSwitchGroup>
-			<PatchMap switch="2" patch="2004" />
+			<switch number="2" patch="2004" />
 			<ExclusiveSwitchGroup>3 8 13</ExclusiveSwitchGroup>
-			<PatchMap switch="3" patch="2016" />
+			<switch number="3" patch="2016" />
 			<ExclusiveSwitchGroup>4 9 14</ExclusiveSwitchGroup>
-			<PatchMap switch="4" patch="2020" />
+			<switch number="4" patch="2020" />
 			<ExclusiveSwitchGroup>5 10 15</ExclusiveSwitchGroup>
-			<PatchMap switch="5" patch="2024" />
-			<PatchMap switch="6" patch="2001" />
-			<PatchMap switch="7" patch="2005" />
-			<PatchMap switch="8" patch="2017" />
-			<PatchMap switch="9" patch="2021" />
-			<PatchMap switch="10" patch="2025" />
-			<PatchMap switch="11" patch="2002" />
-			<PatchMap switch="12" patch="2006" />
-			<PatchMap switch="13" patch="2018" />
-			<PatchMap switch="14" patch="2022" />
-			<PatchMap switch="15" patch="2026" />
-			<PatchMap switch="22" command="BankHistoryBackward" />
-			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+			<switch number="5" patch="2024" />
+			<switch number="6" patch="2001" />
+			<switch number="7" patch="2005" />
+			<switch number="8" patch="2017" />
+			<switch number="9" patch="2021" />
+			<switch number="10" patch="2025" />
+			<switch number="11" patch="2002" />
+			<switch number="12" patch="2006" />
+			<switch number="13" patch="2018" />
+			<switch number="14" patch="2022" />
+			<switch number="15" patch="2026" />
+			<switch number="22" command="BankHistoryBackward" />
+			<switch number="22" patch="" secondFunction="immediateToggle" />
 		</bank>
 		<bank name="Reveal Channels 2" number="104">
 			<ExclusiveSwitchGroup>1 6 11</ExclusiveSwitchGroup>
-			<PatchMap switch="1" patch="2036" />
+			<switch number="1" patch="2036" />
 			<ExclusiveSwitchGroup>2 7 12</ExclusiveSwitchGroup>
-			<PatchMap switch="2" patch="2040" />
+			<switch number="2" patch="2040" />
 			<ExclusiveSwitchGroup>3 8 13</ExclusiveSwitchGroup>
-			<PatchMap switch="3" patch="2044" />
+			<switch number="3" patch="2044" />
 			<ExclusiveSwitchGroup>4 9 14</ExclusiveSwitchGroup>
-			<PatchMap switch="4" patch="2048" />
+			<switch number="4" patch="2048" />
 			<ExclusiveSwitchGroup>5 10 15</ExclusiveSwitchGroup>
-			<PatchMap switch="5" patch="2100" />
-			<PatchMap switch="6" patch="2037" />
-			<PatchMap switch="7" patch="2041" />
-			<PatchMap switch="8" patch="2045" />
-			<PatchMap switch="9" patch="2049" />
-			<PatchMap switch="10" patch="2101" />
-			<PatchMap switch="11" patch="2038" />
-			<PatchMap switch="12" patch="2042" />
-			<PatchMap switch="13" patch="2046" />
-			<PatchMap switch="14" patch="2050" />
-			<PatchMap switch="15" patch="2102" />
-			<PatchMap switch="22" command="BankHistoryBackward" />
-			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+			<switch number="5" patch="2100" />
+			<switch number="6" patch="2037" />
+			<switch number="7" patch="2041" />
+			<switch number="8" patch="2045" />
+			<switch number="9" patch="2049" />
+			<switch number="10" patch="2101" />
+			<switch number="11" patch="2038" />
+			<switch number="12" patch="2042" />
+			<switch number="13" patch="2046" />
+			<switch number="14" patch="2050" />
+			<switch number="15" patch="2102" />
+			<switch number="22" command="BankHistoryBackward" />
+			<switch number="22" patch="" secondFunction="immediateToggle" />
 		</bank>
 		<bank name="Reveal Channels 3" number="105">
 			<ExclusiveSwitchGroup>1 6 11</ExclusiveSwitchGroup>
-			<PatchMap switch="1" patch="2052" />
+			<switch number="1" patch="2052" />
 			<ExclusiveSwitchGroup>2 7 12</ExclusiveSwitchGroup>
-			<PatchMap switch="2" patch="2056" />
+			<switch number="2" patch="2056" />
 			<ExclusiveSwitchGroup>3 8 13</ExclusiveSwitchGroup>
-			<PatchMap switch="3" patch="2060" />
+			<switch number="3" patch="2060" />
 			<ExclusiveSwitchGroup>4 9 14</ExclusiveSwitchGroup>
-			<PatchMap switch="4" patch="2064" />
+			<switch number="4" patch="2064" />
 			<ExclusiveSwitchGroup>5 10 15</ExclusiveSwitchGroup>
-			<PatchMap switch="5" patch="2296" />
-			<PatchMap switch="6" patch="2053" />
-			<PatchMap switch="7" patch="2057" />
-			<PatchMap switch="8" patch="2061" />
-			<PatchMap switch="9" patch="2065" />
-			<PatchMap switch="10" patch="2297" />
-			<PatchMap switch="11" patch="2054" />
-			<PatchMap switch="12" patch="2058" />
-			<PatchMap switch="13" patch="2062" />
-			<PatchMap switch="14" patch="2066" />
-			<PatchMap switch="15" patch="2298" />
-			<PatchMap switch="22" command="BankHistoryBackward" />
-			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+			<switch number="5" patch="2296" />
+			<switch number="6" patch="2053" />
+			<switch number="7" patch="2057" />
+			<switch number="8" patch="2061" />
+			<switch number="9" patch="2065" />
+			<switch number="10" patch="2297" />
+			<switch number="11" patch="2054" />
+			<switch number="12" patch="2058" />
+			<switch number="13" patch="2062" />
+			<switch number="14" patch="2066" />
+			<switch number="15" patch="2298" />
+			<switch number="22" command="BankHistoryBackward" />
+			<switch number="22" patch="" secondFunction="immediateToggle" />
 		</bank>
 		<bank name="Reveal Channels 4" number="106">
 			<ExclusiveSwitchGroup>1 6 11</ExclusiveSwitchGroup>
-			<PatchMap switch="1" patch="2092" />
+			<switch number="1" patch="2092" />
 			<ExclusiveSwitchGroup>2 7 12</ExclusiveSwitchGroup>
-			<PatchMap switch="2" patch="2096" />
+			<switch number="2" patch="2096" />
 			<ExclusiveSwitchGroup>3 8 13</ExclusiveSwitchGroup>
-			<PatchMap switch="3" patch="2124" />
+			<switch number="3" patch="2124" />
 			<ExclusiveSwitchGroup>4 9 14</ExclusiveSwitchGroup>
-			<PatchMap switch="4" patch="2233" />
+			<switch number="4" patch="2233" />
 			<ExclusiveSwitchGroup>5 10 15</ExclusiveSwitchGroup>
-			<PatchMap switch="5" patch="2237" />
-			<PatchMap switch="6" patch="2093" />
-			<PatchMap switch="7" patch="2097" />
-			<PatchMap switch="8" patch="2125" />
-			<PatchMap switch="9" patch="2234" />
-			<PatchMap switch="10" patch="2238" />
-			<PatchMap switch="11" patch="2094" />
-			<PatchMap switch="12" patch="2098" />
-			<PatchMap switch="13" patch="2126" />
-			<PatchMap switch="14" patch="2235" />
-			<PatchMap switch="15" patch="2239" />
-			<PatchMap switch="22" command="BankHistoryBackward" />
-			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+			<switch number="5" patch="2237" />
+			<switch number="6" patch="2093" />
+			<switch number="7" patch="2097" />
+			<switch number="8" patch="2125" />
+			<switch number="9" patch="2234" />
+			<switch number="10" patch="2238" />
+			<switch number="11" patch="2094" />
+			<switch number="12" patch="2098" />
+			<switch number="13" patch="2126" />
+			<switch number="14" patch="2235" />
+			<switch number="15" patch="2239" />
+			<switch number="22" command="BankHistoryBackward" />
+			<switch number="22" patch="" secondFunction="immediateToggle" />
 		</bank>
 		<bank name="Reveal Channels 5" number="107">
 			<ExclusiveSwitchGroup>1 6 11</ExclusiveSwitchGroup>
-			<PatchMap switch="1" patch="2172" />
+			<switch number="1" patch="2172" />
 			<ExclusiveSwitchGroup>2 7 12</ExclusiveSwitchGroup>
-			<PatchMap switch="2" patch="2176" />
+			<switch number="2" patch="2176" />
 			<ExclusiveSwitchGroup>3 8 13</ExclusiveSwitchGroup>
-			<PatchMap switch="3" patch="2168" />
+			<switch number="3" patch="2168" />
 			<ExclusiveSwitchGroup>4 9 14</ExclusiveSwitchGroup>
-			<PatchMap switch="4" patch="2169" />
+			<switch number="4" patch="2169" />
 			<ExclusiveSwitchGroup>5 10 15</ExclusiveSwitchGroup>
-			<PatchMap switch="5" patch="2196" />
-			<PatchMap switch="6" patch="2173" />
-			<PatchMap switch="7" patch="2177" />
-			<PatchMap switch="8" patch="2170" />
-			<PatchMap switch="9" patch="2171" />
-			<PatchMap switch="10" patch="2197" />
-			<PatchMap switch="11" patch="2174" />
-			<PatchMap switch="12" patch="2178" />
-			<PatchMap switch="13" patch="2286" />
-			<PatchMap switch="14" patch="2287" />
-			<PatchMap switch="15" patch="2198" />
-			<PatchMap switch="22" command="BankHistoryBackward" />
-			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+			<switch number="5" patch="2196" />
+			<switch number="6" patch="2173" />
+			<switch number="7" patch="2177" />
+			<switch number="8" patch="2170" />
+			<switch number="9" patch="2171" />
+			<switch number="10" patch="2197" />
+			<switch number="11" patch="2174" />
+			<switch number="12" patch="2178" />
+			<switch number="13" patch="2286" />
+			<switch number="14" patch="2287" />
+			<switch number="15" patch="2198" />
+			<switch number="22" command="BankHistoryBackward" />
+			<switch number="22" patch="" secondFunction="immediateToggle" />
 		</bank>
 		<bank name="Reveal Channels 6" number="108">
 			<ExclusiveSwitchGroup>1 6 11</ExclusiveSwitchGroup>
-			<PatchMap switch="1" patch="2188" />
+			<switch number="1" patch="2188" />
 			<ExclusiveSwitchGroup>2 7 12</ExclusiveSwitchGroup>
-			<PatchMap switch="2" patch="2192" />
+			<switch number="2" patch="2192" />
 			<ExclusiveSwitchGroup>3 8 13</ExclusiveSwitchGroup>
-			<PatchMap switch="3" patch="2250" />
+			<switch number="3" patch="2250" />
 			<ExclusiveSwitchGroup>4 9 14</ExclusiveSwitchGroup>
-			<PatchMap switch="4" patch="2254" />
+			<switch number="4" patch="2254" />
 			<ExclusiveSwitchGroup>5 10 15</ExclusiveSwitchGroup>
-			<PatchMap switch="5" patch="2258" />
-			<PatchMap switch="6" patch="2189" />
-			<PatchMap switch="7" patch="2193" />
-			<PatchMap switch="8" patch="2251" />
-			<PatchMap switch="9" patch="2255" />
-			<PatchMap switch="10" patch="2259" />
-			<PatchMap switch="11" patch="2190" />
-			<PatchMap switch="12" patch="2194" />
-			<PatchMap switch="13" patch="2252" />
-			<PatchMap switch="14" patch="2256" />
-			<PatchMap switch="15" patch="2260" />
-			<PatchMap switch="22" command="BankHistoryBackward" />
-			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+			<switch number="5" patch="2258" />
+			<switch number="6" patch="2189" />
+			<switch number="7" patch="2193" />
+			<switch number="8" patch="2251" />
+			<switch number="9" patch="2255" />
+			<switch number="10" patch="2259" />
+			<switch number="11" patch="2190" />
+			<switch number="12" patch="2194" />
+			<switch number="13" patch="2252" />
+			<switch number="14" patch="2256" />
+			<switch number="15" patch="2260" />
+			<switch number="22" command="BankHistoryBackward" />
+			<switch number="22" patch="" secondFunction="immediateToggle" />
 		</bank>
 		<bank name="Reveal Channels 7" number="109">
 			<ExclusiveSwitchGroup>1 6 11</ExclusiveSwitchGroup>
-			<PatchMap switch="1" patch="2262" />
+			<switch number="1" patch="2262" />
 			<ExclusiveSwitchGroup>2 7 12</ExclusiveSwitchGroup>
-			<PatchMap switch="2" patch="2266" />
+			<switch number="2" patch="2266" />
 			<ExclusiveSwitchGroup>3 8 13</ExclusiveSwitchGroup>
-			<PatchMap switch="3" patch="2270" />
+			<switch number="3" patch="2270" />
 			<ExclusiveSwitchGroup>4 9 14</ExclusiveSwitchGroup>
-			<PatchMap switch="4" patch="2278" />
+			<switch number="4" patch="2278" />
 			<ExclusiveSwitchGroup>5 10 15</ExclusiveSwitchGroup>
-			<PatchMap switch="5" patch="2282" />
-			<PatchMap switch="6" patch="2263" />
-			<PatchMap switch="7" patch="2267" />
-			<PatchMap switch="8" patch="2271" />
-			<PatchMap switch="9" patch="2279" />
-			<PatchMap switch="10" patch="2283" />
-			<PatchMap switch="11" patch="2264" />
-			<PatchMap switch="12" patch="2268" />
-			<PatchMap switch="13" patch="2272" />
-			<PatchMap switch="14" patch="2280" />
-			<PatchMap switch="15" patch="2284" />
-			<PatchMap switch="22" command="BankHistoryBackward" />
-			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+			<switch number="5" patch="2282" />
+			<switch number="6" patch="2263" />
+			<switch number="7" patch="2267" />
+			<switch number="8" patch="2271" />
+			<switch number="9" patch="2279" />
+			<switch number="10" patch="2283" />
+			<switch number="11" patch="2264" />
+			<switch number="12" patch="2268" />
+			<switch number="13" patch="2272" />
+			<switch number="14" patch="2280" />
+			<switch number="15" patch="2284" />
+			<switch number="22" command="BankHistoryBackward" />
+			<switch number="22" patch="" secondFunction="immediateToggle" />
 		</bank>
 		<bank name="Reveal Channels 8" number="110">
 			<ExclusiveSwitchGroup>1 6 11</ExclusiveSwitchGroup>
-			<PatchMap switch="1" patch="2288" />
+			<switch number="1" patch="2288" />
 			<ExclusiveSwitchGroup>2 7 12</ExclusiveSwitchGroup>
-			<PatchMap switch="2" patch="2292" />
+			<switch number="2" patch="2292" />
 			<ExclusiveSwitchGroup>3 8 13</ExclusiveSwitchGroup>
-			<PatchMap switch="3" patch="2300" />
+			<switch number="3" patch="2300" />
 			<ExclusiveSwitchGroup>4 9 14</ExclusiveSwitchGroup>
-			<PatchMap switch="4" patch="2304" />
+			<switch number="4" patch="2304" />
 			<ExclusiveSwitchGroup>5 10 15</ExclusiveSwitchGroup>
-			<PatchMap switch="5" patch="2308" />
-			<PatchMap switch="6" patch="2289" />
-			<PatchMap switch="7" patch="2293" />
-			<PatchMap switch="8" patch="2301" />
-			<PatchMap switch="9" patch="2305" />
-			<PatchMap switch="10" patch="2309" />
-			<PatchMap switch="11" patch="2290" />
-			<PatchMap switch="12" patch="2294" />
-			<PatchMap switch="13" patch="2302" />
-			<PatchMap switch="14" patch="2306" />
-			<PatchMap switch="15" patch="2310" />
-			<PatchMap switch="22" command="BankHistoryBackward" />
-			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+			<switch number="5" patch="2308" />
+			<switch number="6" patch="2289" />
+			<switch number="7" patch="2293" />
+			<switch number="8" patch="2301" />
+			<switch number="9" patch="2305" />
+			<switch number="10" patch="2309" />
+			<switch number="11" patch="2290" />
+			<switch number="12" patch="2294" />
+			<switch number="13" patch="2302" />
+			<switch number="14" patch="2306" />
+			<switch number="15" patch="2310" />
+			<switch number="22" command="BankHistoryBackward" />
+			<switch number="22" patch="" secondFunction="immediateToggle" />
 		</bank>
 		<bank name="Reveal Channels 9" number="111">
 			<ExclusiveSwitchGroup>1 6 11</ExclusiveSwitchGroup>
-			<PatchMap switch="1" patch="2312" />
+			<switch number="1" patch="2312" />
 			<ExclusiveSwitchGroup>2 7 12</ExclusiveSwitchGroup>
-			<PatchMap switch="2" patch="2316" />
+			<switch number="2" patch="2316" />
 			<ExclusiveSwitchGroup>3 8 13</ExclusiveSwitchGroup>
-			<PatchMap switch="3" patch="2336" />
+			<switch number="3" patch="2336" />
 			<ExclusiveSwitchGroup>4 9 14</ExclusiveSwitchGroup>
-			<PatchMap switch="4" patch="2340" />
+			<switch number="4" patch="2340" />
 			<ExclusiveSwitchGroup>5 10 15</ExclusiveSwitchGroup>
-			<PatchMap switch="5" patch="2350" />
-			<PatchMap switch="6" patch="2313" />
-			<PatchMap switch="7" patch="2317" />
-			<PatchMap switch="8" patch="2337" />
-			<PatchMap switch="9" patch="2341" />
-			<PatchMap switch="10" patch="2351" />
-			<PatchMap switch="11" patch="2314" />
-			<PatchMap switch="12" patch="2318" />
-			<PatchMap switch="13" patch="2338" />
-			<PatchMap switch="14" patch="2342" />
-			<PatchMap switch="15" patch="2352" />
-			<PatchMap switch="22" command="BankHistoryBackward" />
-			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+			<switch number="5" patch="2350" />
+			<switch number="6" patch="2313" />
+			<switch number="7" patch="2317" />
+			<switch number="8" patch="2337" />
+			<switch number="9" patch="2341" />
+			<switch number="10" patch="2351" />
+			<switch number="11" patch="2314" />
+			<switch number="12" patch="2318" />
+			<switch number="13" patch="2338" />
+			<switch number="14" patch="2342" />
+			<switch number="15" patch="2352" />
+			<switch number="22" command="BankHistoryBackward" />
+			<switch number="22" patch="" secondFunction="immediateToggle" />
 		</bank>
 		<bank name="Reveal Channels 10" number="112">
 			<ExclusiveSwitchGroup>1 6 11</ExclusiveSwitchGroup>
-			<PatchMap switch="1" patch="2320" />
+			<switch number="1" patch="2320" />
 			<ExclusiveSwitchGroup>2 7 12</ExclusiveSwitchGroup>
-			<PatchMap switch="2" patch="2324" />
+			<switch number="2" patch="2324" />
 			<ExclusiveSwitchGroup>3 8 13</ExclusiveSwitchGroup>
-			<PatchMap switch="3" patch="2328" />
+			<switch number="3" patch="2328" />
 			<ExclusiveSwitchGroup>4 9 14</ExclusiveSwitchGroup>
-			<PatchMap switch="4" patch="2332" />
+			<switch number="4" patch="2332" />
 			<ExclusiveSwitchGroup>5 10 15</ExclusiveSwitchGroup>
-			<PatchMap switch="5" patch="" />
-			<PatchMap switch="6" patch="2321" />
-			<PatchMap switch="7" patch="2325" />
-			<PatchMap switch="8" patch="2329" />
-			<PatchMap switch="9" patch="2333" />
-			<PatchMap switch="10" patch="" />
-			<PatchMap switch="11" patch="2322" />
-			<PatchMap switch="12" patch="2326" />
-			<PatchMap switch="13" patch="2330" />
-			<PatchMap switch="14" patch="2334" />
-			<PatchMap switch="15" patch="" />
-			<PatchMap switch="22" command="BankHistoryBackward" />
-			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+			<switch number="5" patch="" />
+			<switch number="6" patch="2321" />
+			<switch number="7" patch="2325" />
+			<switch number="8" patch="2329" />
+			<switch number="9" patch="2333" />
+			<switch number="10" patch="" />
+			<switch number="11" patch="2322" />
+			<switch number="12" patch="2326" />
+			<switch number="13" patch="2330" />
+			<switch number="14" patch="2334" />
+			<switch number="15" patch="" />
+			<switch number="22" command="BankHistoryBackward" />
+			<switch number="22" patch="" secondFunction="immediateToggle" />
 		</bank>
 		<bank name="Reveal A/B Channels 1" number="113">
-			<PatchMap switch="1" patch="2353" />
-			<PatchMap switch="2" patch="2354" />
-			<PatchMap switch="3" patch="2355" />
-			<PatchMap switch="4" patch="2356" />
-			<PatchMap switch="5" patch="2357" />
-			<PatchMap switch="6" patch="2358" />
-			<PatchMap switch="7" patch="2359" />
-			<PatchMap switch="8" patch="2360" />
-			<PatchMap switch="9" patch="2361" />
-			<PatchMap switch="10" patch="2362" />
-			<PatchMap switch="11" patch="2363" />
-			<PatchMap switch="12" patch="2364" />
-			<PatchMap switch="13" patch="2365" />
-			<PatchMap switch="14" patch="2366" />
-			<PatchMap switch="15" patch="2367" />
-			<PatchMap switch="22" command="BankHistoryBackward" />
-			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+			<switch number="1" patch="2353" />
+			<switch number="2" patch="2354" />
+			<switch number="3" patch="2355" />
+			<switch number="4" patch="2356" />
+			<switch number="5" patch="2357" />
+			<switch number="6" patch="2358" />
+			<switch number="7" patch="2359" />
+			<switch number="8" patch="2360" />
+			<switch number="9" patch="2361" />
+			<switch number="10" patch="2362" />
+			<switch number="11" patch="2363" />
+			<switch number="12" patch="2364" />
+			<switch number="13" patch="2365" />
+			<switch number="14" patch="2366" />
+			<switch number="15" patch="2367" />
+			<switch number="22" command="BankHistoryBackward" />
+			<switch number="22" patch="" secondFunction="immediateToggle" />
 		</bank>
 		<bank name="Reveal A/B Channels 2" number="114">
-			<PatchMap switch="1" patch="2368" />
-			<PatchMap switch="2" patch="2369" />
-			<PatchMap switch="3" patch="2370" />
-			<PatchMap switch="4" patch="2371" />
-			<PatchMap switch="5" patch="2372" />
-			<PatchMap switch="6" patch="2373" />
-			<PatchMap switch="7" patch="2374" />
-			<PatchMap switch="8" patch="2375" />
-			<PatchMap switch="9" patch="2376" />
-			<PatchMap switch="10" patch="2377" />
-			<PatchMap switch="11" patch="2378" />
-			<PatchMap switch="12" patch="2379" />
-			<PatchMap switch="13" patch="2380" />
-			<PatchMap switch="14" patch="2381" />
-			<PatchMap switch="15" patch="2382" />
-			<PatchMap switch="22" command="BankHistoryBackward" />
-			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+			<switch number="1" patch="2368" />
+			<switch number="2" patch="2369" />
+			<switch number="3" patch="2370" />
+			<switch number="4" patch="2371" />
+			<switch number="5" patch="2372" />
+			<switch number="6" patch="2373" />
+			<switch number="7" patch="2374" />
+			<switch number="8" patch="2375" />
+			<switch number="9" patch="2376" />
+			<switch number="10" patch="2377" />
+			<switch number="11" patch="2378" />
+			<switch number="12" patch="2379" />
+			<switch number="13" patch="2380" />
+			<switch number="14" patch="2381" />
+			<switch number="15" patch="2382" />
+			<switch number="22" command="BankHistoryBackward" />
+			<switch number="22" patch="" secondFunction="immediateToggle" />
 		</bank>
 		<bank name="Reveal A/B Channels 3" number="115">
-			<PatchMap switch="1" patch="2383" />
-			<PatchMap switch="2" patch="2384" />
-			<PatchMap switch="3" patch="2385" />
-			<PatchMap switch="4" patch="2386" />
-			<PatchMap switch="5" patch="2387" />
-			<PatchMap switch="6" patch="2388" />
-			<PatchMap switch="7" patch="2389" />
-			<PatchMap switch="8" patch="2390" />
-			<PatchMap switch="9" patch="2391" />
-			<PatchMap switch="10" patch="2392" />
-			<PatchMap switch="11" patch="2393" />
-			<PatchMap switch="12" patch="2394" />
-			<PatchMap switch="13" patch="2395" />
-			<PatchMap switch="14" patch="" />
-			<PatchMap switch="15" patch="" />
-			<PatchMap switch="22" command="BankHistoryBackward" />
-			<PatchMap switch="22" patch="" secondFunction="immediateToggle" />
+			<switch number="1" patch="2383" />
+			<switch number="2" patch="2384" />
+			<switch number="3" patch="2385" />
+			<switch number="4" patch="2386" />
+			<switch number="5" patch="2387" />
+			<switch number="6" patch="2388" />
+			<switch number="7" patch="2389" />
+			<switch number="8" patch="2390" />
+			<switch number="9" patch="2391" />
+			<switch number="10" patch="2392" />
+			<switch number="11" patch="2393" />
+			<switch number="12" patch="2394" />
+			<switch number="13" patch="2395" />
+			<switch number="14" patch="" />
+			<switch number="15" patch="" />
+			<switch number="22" command="BankHistoryBackward" />
+			<switch number="22" patch="" secondFunction="immediateToggle" />
 		</bank>
 
 		<bank name="Loopers" number="120">
-			<PatchMap switch="1" patch="714" />
-			<PatchMap switch="2" patch="715" />
-			<PatchMap switch="4" patch="716" />
-			<PatchMap switch="5" patch="722" />
-			<PatchMap switch="6" patch="720" />
-			<PatchMap switch="7" patch="718" />
-			<PatchMap switch="8" patch="719" />
-			<PatchMap switch="9" patch="704" />
-			<PatchMap switch="22" command="BankHistoryBackward" />
+			<switch number="1" patch="714" />
+			<switch number="2" patch="715" />
+			<switch number="4" patch="716" />
+			<switch number="5" patch="722" />
+			<switch number="6" patch="720" />
+			<switch number="7" patch="718" />
+			<switch number="8" patch="719" />
+			<switch number="9" patch="704" />
+			<switch number="22" command="BankHistoryBackward" />
 		</bank>
 		<bank name="Externals" number="121">
-			<PatchMap switch="1" patch="830" />
-			<PatchMap switch="1" patch="836" secondFunction="manual"/>
-			<PatchMap switch="2" patch="831" />
-			<PatchMap switch="2" patch="837" secondFunction="manual"/>
-			<PatchMap switch="3" patch="832" />
-			<PatchMap switch="3" patch="838" secondFunction="manual"/>
-			<PatchMap switch="4" patch="834" />
-			<PatchMap switch="4" patch="839" secondFunction="manual"/>
-			<PatchMap switch="5" patch="835" />
-			<PatchMap switch="5" patch="840" secondFunction="manual"/>
-			<PatchMap switch="6" patch="710" />
-			<PatchMap switch="6" patch="515" secondFunction="immediateToggle"/>
-			<PatchMap switch="7" patch="711" />
-			<PatchMap switch="7" patch="515" secondFunction="immediateToggle"/>
-			<PatchMap switch="8" patch="712" />
-			<PatchMap switch="8" patch="515" secondFunction="immediateToggle"/>
-			<PatchMap switch="9" patch="713" />
-			<PatchMap switch="9" patch="515" secondFunction="immediateToggle"/>
-			<PatchMap switch="10" patch="701" />
-			<PatchMap switch="10" patch="515" secondFunction="immediateToggle"/>
-			<PatchMap switch="11" patch="706" />
-			<PatchMap switch="11" patch="518" secondFunction="immediateToggle"/>
-			<PatchMap switch="12" patch="707" />
-			<PatchMap switch="12" patch="518" secondFunction="immediateToggle"/>
-			<PatchMap switch="13" patch="708" />
-			<PatchMap switch="13" patch="518" secondFunction="immediateToggle"/>
-			<PatchMap switch="14" patch="709" />
-			<PatchMap switch="14" patch="518" secondFunction="immediateToggle"/>
-			<PatchMap switch="15" patch="" />
-			<PatchMap switch="22" command="BankHistoryBackward" />
+			<switch number="1" patch="830" />
+			<switch number="1" patch="836" secondFunction="manual"/>
+			<switch number="2" patch="831" />
+			<switch number="2" patch="837" secondFunction="manual"/>
+			<switch number="3" patch="832" />
+			<switch number="3" patch="838" secondFunction="manual"/>
+			<switch number="4" patch="834" />
+			<switch number="4" patch="839" secondFunction="manual"/>
+			<switch number="5" patch="835" />
+			<switch number="5" patch="840" secondFunction="manual"/>
+			<switch number="6" patch="710" />
+			<switch number="6" patch="515" secondFunction="immediateToggle"/>
+			<switch number="7" patch="711" />
+			<switch number="7" patch="515" secondFunction="immediateToggle"/>
+			<switch number="8" patch="712" />
+			<switch number="8" patch="515" secondFunction="immediateToggle"/>
+			<switch number="9" patch="713" />
+			<switch number="9" patch="515" secondFunction="immediateToggle"/>
+			<switch number="10" patch="701" />
+			<switch number="10" patch="515" secondFunction="immediateToggle"/>
+			<switch number="11" patch="706" />
+			<switch number="11" patch="518" secondFunction="immediateToggle"/>
+			<switch number="12" patch="707" />
+			<switch number="12" patch="518" secondFunction="immediateToggle"/>
+			<switch number="13" patch="708" />
+			<switch number="13" patch="518" secondFunction="immediateToggle"/>
+			<switch number="14" patch="709" />
+			<switch number="14" patch="518" secondFunction="immediateToggle"/>
+			<switch number="15" patch="" />
+			<switch number="22" command="BankHistoryBackward" />
 		</bank>
 		<bank name="Scenes" number="122">
 			<ExclusiveSwitchGroup>1 2 3 4 5 6 7 8</ExclusiveSwitchGroup>
-			<PatchMap switch="1" patch="851" />
-			<PatchMap switch="2" patch="852" />
-			<PatchMap switch="3" patch="853" />
-			<PatchMap switch="4" patch="854" />
-			<PatchMap switch="5" patch="855" />
-			<PatchMap switch="6" patch="856" />
-			<PatchMap switch="7" patch="857" />
-			<PatchMap switch="8" patch="858" />
+			<switch number="1" patch="851" />
+			<switch number="2" patch="852" />
+			<switch number="3" patch="853" />
+			<switch number="4" patch="854" />
+			<switch number="5" patch="855" />
+			<switch number="6" patch="856" />
+			<switch number="7" patch="857" />
+			<switch number="8" patch="858" />
 
-			<PatchMap switch="9"  patch="" />
-			<PatchMap switch="10" patch="" />
-			<PatchMap switch="11" patch="864" />
-			<PatchMap switch="12" patch="865" />
-			<PatchMap switch="13" patch="" />
-			<PatchMap switch="14" patch="725" />
-			<PatchMap switch="15" patch="726" />
-			<PatchMap switch="22" command="BankHistoryBackward" />
+			<switch number="9"  patch="" />
+			<switch number="10" patch="" />
+			<switch number="11" patch="864" />
+			<switch number="12" patch="865" />
+			<switch number="13" patch="" />
+			<switch number="14" patch="725" />
+			<switch number="15" patch="726" />
+			<switch number="22" command="BankHistoryBackward" />
 		</bank>
 
 	</banks>
