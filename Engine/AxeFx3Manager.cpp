@@ -325,6 +325,23 @@ IsAxeFx3Sysex(const byte * bytes, const int len)
 	return true;
 }
 
+enum class AxeFx3MessageIds
+{
+	FirmwareVersion	= 0x08,
+	EffectBypass	= 0x0a,
+	EffectChannel	= 0x0b,
+	Scene			= 0x0c,
+	PresetName		= 0x0d,
+	SceneName		= 0x0e,
+	LooperState		= 0x0f,
+	TapTempo		= 0x10,
+	Tuner			= 0x11,
+	StatusDump		= 0x13,
+	Tempo			= 0x14,
+
+	Ack				= 0x64
+};
+
 void
 AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 {
@@ -333,24 +350,24 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 
 	switch (bytes[5])
 	{
-	case 8:
+	case AxeFx3MessageIds::FirmwareVersion:
 		if (mFirmwareMajorVersion)
 			return;
 		ReceiveFirmwareVersionResponse(bytes, len);
 		return;
-	case 0xa:
+	case AxeFx3MessageIds::EffectBypass:
 		// when we send set bypass, it responds with new state -- we could 
 		// update here rather than requesting a status dump
 		return;
-	case 0xb:
+	case AxeFx3MessageIds::EffectChannel:
 		// when we send set channel, it responds with new state -- we could 
 		// update here rather than requesting a status dump
 		return;
-	case 0xc:
+	case AxeFx3MessageIds::Scene:
 // 		if (len > 8)
 // 			ReceiveSceneStatus(&bytes[6], len - 8); // -6 + checksum and EOX
 		return;
-	case 0xd:
+	case AxeFx3MessageIds::PresetName:
 		if (len > 8)
 		{
 			ReceivePresetNumber(&bytes[6], len - 6);
@@ -358,7 +375,7 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 			RequestSceneName();
 		}
 		return;
-	case 0xe:
+	case AxeFx3MessageIds::SceneName:
 		if (len > 7)
 		{
 			ReceiveSceneName(&bytes[7], len - 9); // -7 + checksum and EOX
@@ -367,11 +384,11 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 			RequestStatusDump();
 		}
 		return;
-	case 0x0f:
+	case AxeFx3MessageIds::LooperState:
 		// looper status
 		ReceiveLooperState(bytes[6]);
 		return;
-	case 0x10:
+	case AxeFx3MessageIds::TapTempo:
 		// Tempo: f0 00 01 74 10 10 f7
 		if (mTempoPatch)
 		{
@@ -379,7 +396,7 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 			mSwitchDisplay->SetIndicatorThreadSafe(false, mTempoPatch, 75);
 		}
 		return;
-	case 0x11:
+	case AxeFx3MessageIds::Tuner:
 		// #axe3TunerSupport
 		// tuner is not sent on midi-over-usb
 		// tuner info
@@ -388,45 +405,30 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 		// ss = string 0-5, 0 = low E
 		// cc = cents offset binary, 63 = 0, 62 = -1, 64 = +1
 		return;
-	case 0x13:
+	case AxeFx3MessageIds::StatusDump:
 		ReceiveStatusDump(&bytes[6], len - 6);
 		return;
-	case 0x14:
+	case AxeFx3MessageIds::Tempo:
 		// set/get tempo
 		// tempo is not sent on midi-over-usb
 		// F0 00 01 74 10 14 dd dd cs F7
 		//	where dd dd is the desired tempo as two 7 - bit MIDI bytes, LS first.
 		//	To query the tempo let dd dd = 7F 7F.
 		return;
-// 		// preset loaded
-// 		ReceivePresetNumber(&bytes[6], len - 6);
-// 		DelayedNameSyncFromAxe(true);
-// 		return;
-// 	case 0x20:
-// 		// routing grid layout
-// 		return;
-// 	case 0x21:
-// 		// channel change or scene selected
-// 		DelayedEffectsSyncFromAxe();
-// 		return;
-// 	case 0x29:
-// 		// scene status/update
-// 		ReceiveSceneStatus(&bytes[6], len - 6);
-// 		return;
-	case 0x64:
+	case AxeFx3MessageIds::Ack:
 		if (len > 7)
 		{
 			switch (bytes[6])
 			{
-			case 0x10:
+			case AxeFx3MessageIds::TapTempo:
 				// tap tempo ack
 				return;
 
-			case 0x11:
+			case AxeFx3MessageIds::Tuner:
 				// tuner ack
 				return;
 
-			case 0x0f:
+			case AxeFx3MessageIds::LooperState:
 				// looper status
 				if (0x08 == bytes[7])
 				{
@@ -640,7 +642,7 @@ AxeFx3Manager::GetCommandString(const std::string& commandName, bool enable)
 			if (enable)
 			{
 				// Tempo Tap (command 10H)
-				Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, Axe3, 0x10 };
+				Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, Axe3, (byte)AxeFx3MessageIds::TapTempo };
 				AppendChecksumAndTerminate(bytes);
 				return bytes;
 			}
@@ -650,7 +652,7 @@ AxeFx3Manager::GetCommandString(const std::string& commandName, bool enable)
 
 		if ("tuner" == name)
 		{
-			Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, Axe3, 0x11 };
+			Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, Axe3, (byte)AxeFx3MessageIds::Tuner };
 			bytes.push_back(enable ? 1 : 0);
 			AppendChecksumAndTerminate(bytes);
 			return bytes;
@@ -663,7 +665,7 @@ AxeFx3Manager::GetCommandString(const std::string& commandName, bool enable)
 	{
 		if (-1 != name.find("looper"))
 		{
-			Bytes bb{ 0xF0, 0x00, 0x01, 0x74, Axe3, 0x0f };
+			Bytes bb{ 0xF0, 0x00, 0x01, 0x74, Axe3, (byte)AxeFx3MessageIds::LooperState };
 			enum class AxeFx3LooperButton
 			{
 				Record = 0,
@@ -705,7 +707,7 @@ AxeFx3Manager::GetCommandString(const std::string& commandName, bool enable)
 		return emptyCommand;
 
 	// else, is an effect bypass command (command 0x0A)
-	Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, Axe3, 0x0A };
+	Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, Axe3, (byte)AxeFx3MessageIds::EffectBypass };
 	bytes.push_back(fx->mSysexEffectIdLs);
 	bytes.push_back(fx->mSysexEffectIdMs);
 	bytes.push_back(enable ? 0 : 1);
@@ -720,7 +722,7 @@ AxeFx3Manager::GetSceneSelectCommandString(int scene)
 	if (!scene || scene > AxeScenes)
 		return emptyCommand;
 
-	Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, Axe3, 0x0c };
+	Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, Axe3, (byte)AxeFx3MessageIds::Scene };
 	bytes.push_back(scene - 1);
 	AppendChecksumAndTerminate(bytes);
 	return bytes;
@@ -752,7 +754,7 @@ AxeFx3Manager::GetBlockChannelSelectCommandString(
 	effectId = fx->mSysexEffectId;
 	channel = channelStr[0] - 'A';
 
-	Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, Axe3, 0x0B };
+	Bytes bytes{ 0xf0, 0x00, 0x01, 0x74, Axe3, (byte)AxeFx3MessageIds::EffectChannel };
 	bytes.push_back(fx->mSysexEffectIdLs);
 	bytes.push_back(fx->mSysexEffectIdMs);
 	bytes.push_back(channel);
@@ -773,7 +775,7 @@ AxeFx3Manager::SendFirmwareVersionQuery()
 	// respond:		F0 00 01 74 03 08 02 00 0C F7	(for 2.0)
 	// respond:		F0 00 01 74 03 08 03 02 0f F7	(for 3.2)
 
-	Bytes bb{ 0xF0, 0x00, 0x01, 0x74, Axe3, 0x08, 0x0a };
+	Bytes bb{ 0xF0, 0x00, 0x01, 0x74, Axe3, (byte)AxeFx3MessageIds::FirmwareVersion, 0x0a };
 	AppendChecksumAndTerminate(bb);
 	QMutexLocker lock(&mQueryLock);
 	mMidiOut->MidiOut(bb);
@@ -827,7 +829,7 @@ AxeFx3Manager::RequestPresetName()
 	if (!mFirmwareMajorVersion)
 		return;
 
-	Bytes bb{ 0xF0, 0x00, 0x01, 0x74, Axe3, 0x0d, 0x7f, 0x7f };
+	Bytes bb{ 0xF0, 0x00, 0x01, 0x74, Axe3, (byte)AxeFx3MessageIds::PresetName, 0x7f, 0x7f };
 	AppendChecksumAndTerminate(bb);
 	mMidiOut->MidiOut(bb);
 }
@@ -877,7 +879,7 @@ AxeFx3Manager::RequestSceneName()
 	if (!mFirmwareMajorVersion)
 		return;
 
-	Bytes bb{ 0xF0, 0x00, 0x01, 0x74, Axe3, 0x0e, 0x7f };
+	Bytes bb{ 0xF0, 0x00, 0x01, 0x74, Axe3, (byte)AxeFx3MessageIds::SceneName, 0x7f };
 	AppendChecksumAndTerminate(bb);
 	mMidiOut->MidiOut(bb);
 }
@@ -916,7 +918,7 @@ AxeFx3Manager::RequestStatusDump()
 		cur.mEffectIsPresentInAxePatch = false;
 	}
 
-	Bytes bb{ 0xF0, 0x00, 0x01, 0x74, Axe3, 0x13 };
+	Bytes bb{ 0xF0, 0x00, 0x01, 0x74, Axe3, (byte)AxeFx3MessageIds::StatusDump };
 	AppendChecksumAndTerminate(bb);
 	mMidiOut->MidiOut(bb);
 }
@@ -1002,7 +1004,7 @@ void
 AxeFx3Manager::RequestLooperState()
 {
 	QMutexLocker lock(&mQueryLock);
-	Bytes bb{ 0xF0, 0x00, 0x01, 0x74, Axe3, 0x0f, 0x7f };
+	Bytes bb{ 0xF0, 0x00, 0x01, 0x74, Axe3, (byte)AxeFx3MessageIds::LooperState, 0x7f };
 	AppendChecksumAndTerminate(bb);
 	mMidiOut->MidiOut(bb);
 }
