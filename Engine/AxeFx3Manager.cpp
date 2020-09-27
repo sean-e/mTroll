@@ -1394,7 +1394,8 @@ AxeFx3Manager::LoadEffectPool()
 		{ FractalAudio::AxeFx3::ID_IRPLAYER3, "IR Player 3" },
 		{ FractalAudio::AxeFx3::ID_IRPLAYER4, "IR Player 4" },
 		{ FractalAudio::AxeFx3::ID_FOOTCONTROLLER, "" },
-		{ FractalAudio::AxeFx3::ID_PRESET_FC, "" }
+		{ FractalAudio::AxeFx3::ID_PRESET_FC, "" },
+		{ FractalAudio::AxeFx3::ID_UNKNOWN_THING, "" }
 	};
 }
 
