@@ -959,8 +959,8 @@ AxeFx3Manager::ReceivePresetNumber(const byte * bytes, int len)
 	mCurrentAxeSceneName.clear();
 	// 0xdd Preset Number bits 6-0
 	// 0xdd Preset Number bits 13-7
-	const int presetMs = bytes[0] << 7;
-	const int presetLs = bytes[1];
+	const int presetLs = bytes[0];
+	const int presetMs = bytes[1] << 7;
 	mCurrentAxePreset = presetMs | presetLs;
 }
 
