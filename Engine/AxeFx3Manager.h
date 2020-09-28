@@ -87,6 +87,8 @@ public:
 	// delayed requests for sync
 	void DelayedNameSyncFromAxe(bool force = false) override;
 	void DelayedEffectsSyncFromAxe() override;
+	void DelayedLooperSyncFromAxe();
+	void ManageActiveLooperTimer(bool start);
 
 	Bytes GetCommandString(const std::string& commandName, bool enable);
 	Bytes GetSceneSelectCommandString(int scene);
@@ -96,6 +98,7 @@ public slots:
 	// immediate requests for sync (called by the delayed requests)
 	void SyncNameAndEffectsFromAxe();
 	void SyncEffectsFromAxe();
+	void SyncLooperFromAxe();
 
 private:
 	// basically an overload of IMidiInSubscriber::shared_from_this() but returning 
@@ -144,6 +147,8 @@ private:
 	QMutex			mQueryLock;
 	QTimer			* mDelayedNameSyncTimer;
 	QTimer			* mDelayedEffectsSyncTimer;
+	QTimer			* mDelayedLooperSyncTimer;
+	QTimer			* mActiveLooperSyncTimer;
 	clock_t			mLastTimeout;
 	int				mFirmwareMajorVersion;
 	AxeFxModel		mModel;
@@ -152,6 +157,7 @@ private:
 	int				mCurrentAxePreset;
 	std::string		mCurrentAxePresetName;
 	std::string		mCurrentAxeSceneName;
+	bool			mLooperStatusRequested = false;
 };
 
 #endif // AxeFx3Manager_h__

@@ -157,6 +157,16 @@ AxeFx3Manager::AxeFx3Manager(IMainDisplay * mainDisp,
 	mDelayedEffectsSyncTimer->setSingleShot(true);
 	mDelayedEffectsSyncTimer->setInterval(kDefaultEffectsSyncTimerInterval);
 
+	mDelayedLooperSyncTimer = new QTimer(this);
+	connect(mDelayedLooperSyncTimer, &QTimer::timeout, this, &AxeFx3Manager::SyncLooperFromAxe);
+	mDelayedLooperSyncTimer->setSingleShot(true);
+	mDelayedLooperSyncTimer->setInterval(kDefaultEffectsSyncTimerInterval);
+
+	mActiveLooperSyncTimer = new QTimer(this);
+	connect(mActiveLooperSyncTimer, &QTimer::timeout, this, &AxeFx3Manager::SyncLooperFromAxe);
+	mActiveLooperSyncTimer->setSingleShot(false);
+	mActiveLooperSyncTimer->setInterval(2000);
+
 	LoadEffectPool();
 }
 
@@ -380,8 +390,10 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 		}
 		return;
 	case AxeFx3MessageIds::LooperState:
-		// looper status
-		ReceiveLooperState(bytes[6]);
+		if (mLooperStatusRequested)
+			ReceiveLooperState(bytes[6]);
+		else
+			DelayedLooperSyncFromAxe();
 		return;
 	case AxeFx3MessageIds::TapTempo:
 		// Tempo: f0 00 01 74 10 10 f7
@@ -503,6 +515,12 @@ AxeFx3Manager::SyncEffectsFromAxe()
 }
 
 void
+AxeFx3Manager::SyncLooperFromAxe()
+{
+	RequestLooperState();
+}
+
+void
 AxeFx3Manager::Shutdown()
 {
 	if (mDelayedNameSyncTimer)
@@ -519,6 +537,22 @@ AxeFx3Manager::Shutdown()
 			mDelayedEffectsSyncTimer->stop();
 		delete mDelayedEffectsSyncTimer;
 		mDelayedEffectsSyncTimer = nullptr;
+	}
+
+	if (mDelayedLooperSyncTimer)
+	{
+		if (mDelayedLooperSyncTimer->isActive())
+			mDelayedLooperSyncTimer->stop();
+		delete mDelayedLooperSyncTimer;
+		mDelayedLooperSyncTimer = nullptr;
+	}
+
+	if (mActiveLooperSyncTimer)
+	{
+		if (mActiveLooperSyncTimer->isActive())
+			mActiveLooperSyncTimer->stop();
+		delete mActiveLooperSyncTimer;
+		mActiveLooperSyncTimer = nullptr;
 	}
 
 	mAxeEffectInfo.clear();
@@ -545,10 +579,9 @@ AxeFx3Manager::DelayedNameSyncFromAxe(bool /*force = false*/)
 
 		public:
 			StopDelayedSyncTimer(AxeFx3ManagerPtr mgr) :
-			  QEvent(User), 
-				  mMgr(mgr)
-			{
-			}
+				QEvent(User), 
+				mMgr(mgr)
+			{ }
 
 			~StopDelayedSyncTimer()
 			{
@@ -565,10 +598,9 @@ AxeFx3Manager::DelayedNameSyncFromAxe(bool /*force = false*/)
 
 	public:
 		StartDelayedSyncTimer(AxeFx3ManagerPtr mgr) :
-		  QEvent(User), 
-		  mMgr(mgr)
-		{
-		}
+			QEvent(User), 
+			mMgr(mgr)
+		{ }
 
 		~StartDelayedSyncTimer()
 		{
@@ -593,10 +625,9 @@ AxeFx3Manager::DelayedEffectsSyncFromAxe()
 
 		public:
 			StopDelayedSyncTimer(AxeFx3ManagerPtr mgr) :
-			  QEvent(User), 
-				  mMgr(mgr)
-			{
-			}
+				QEvent(User), 
+				mMgr(mgr)
+			{ }
 
 			~StopDelayedSyncTimer()
 			{
@@ -613,10 +644,9 @@ AxeFx3Manager::DelayedEffectsSyncFromAxe()
 
 	public:
 		StartDelayedSyncTimer(AxeFx3ManagerPtr mgr) :
-		  QEvent(User), 
-		  mMgr(mgr)
-		{
-		}
+			QEvent(User), 
+			mMgr(mgr)
+		{ }
 
 		~StartDelayedSyncTimer()
 		{
@@ -625,6 +655,105 @@ AxeFx3Manager::DelayedEffectsSyncFromAxe()
 	};
 
 	QCoreApplication::postEvent(this, new StartDelayedSyncTimer(GetSharedThis()));
+}
+
+void
+AxeFx3Manager::DelayedLooperSyncFromAxe()
+{
+	if (!mDelayedLooperSyncTimer)
+		return;
+
+	if (mDelayedLooperSyncTimer->isActive())
+	{
+		class StopLooperSyncTimer : public QEvent
+		{
+			AxeFx3ManagerPtr mMgr;
+
+		public:
+			StopLooperSyncTimer(AxeFx3ManagerPtr mgr) :
+				QEvent(User),
+				mMgr(mgr)
+			{ }
+
+			~StopLooperSyncTimer()
+			{
+				mMgr->mDelayedLooperSyncTimer->stop();
+			}
+		};
+
+		QCoreApplication::postEvent(this, new StopLooperSyncTimer(GetSharedThis()));
+	}
+
+	class StartLooperSyncTimer : public QEvent
+	{
+		AxeFx3ManagerPtr mMgr;
+
+	public:
+		StartLooperSyncTimer(AxeFx3ManagerPtr mgr) :
+			QEvent(User),
+			mMgr(mgr)
+		{ }
+
+		~StartLooperSyncTimer()
+		{
+			mMgr->mDelayedLooperSyncTimer->start();
+		}
+	};
+
+	QCoreApplication::postEvent(this, new StartLooperSyncTimer(GetSharedThis()));
+}
+
+void
+AxeFx3Manager::ManageActiveLooperTimer(bool start)
+{
+	if (!mActiveLooperSyncTimer)
+		return;
+
+	if (mActiveLooperSyncTimer->isActive())
+	{
+		if (start)
+			return;
+
+		class StopActiveLooperTimer : public QEvent
+		{
+			AxeFx3ManagerPtr mMgr;
+
+		public:
+			StopActiveLooperTimer(AxeFx3ManagerPtr mgr) :
+				QEvent(User),
+				mMgr(mgr)
+			{ }
+
+			~StopActiveLooperTimer()
+			{
+				mMgr->mActiveLooperSyncTimer->stop();
+			}
+		};
+
+		QCoreApplication::postEvent(this, new StopActiveLooperTimer(GetSharedThis()));
+		return;
+	}
+
+	if (start)
+	{
+		class StartActiveLooperTimer : public QEvent
+		{
+			AxeFx3ManagerPtr mMgr;
+
+		public:
+			StartActiveLooperTimer(AxeFx3ManagerPtr mgr) :
+				QEvent(User),
+				mMgr(mgr)
+			{ }
+
+			~StartActiveLooperTimer()
+			{
+				mMgr->mActiveLooperSyncTimer->start();
+			}
+		};
+
+		QCoreApplication::postEvent(this, new StartActiveLooperTimer(GetSharedThis()));
+	}
 }
 
 Bytes
@@ -1014,6 +1143,7 @@ AxeFx3Manager::RequestLooperState()
 	QMutexLocker lock(&mQueryLock);
 	Bytes bb{ 0xF0, 0x00, 0x01, 0x74, Axe3, (byte)AxeFx3MessageIds::LooperState, 0x7f };
 	AppendChecksumAndTerminate(bb);
+	mLooperStatusRequested = true;
 	mMidiOut->MidiOut(bb);
 }
 
@@ -1034,7 +1164,12 @@ static std::string
 GetLooperStateDesc(int loopState)
 {
 	std::string stateStr;
-	if (loopState & int(AxeFx3LooperState::loopStateRecord))
+	if (loopState & int(AxeFx3LooperState::loopStateRecord) && loopState & int(AxeFx3LooperState::loopStatePlay))
+	{
+		_ASSERTE(loopState & int(AxeFx3LooperState::loopStateOverdub));
+		stateStr.append("overdubbing");
+	}
+	else if (loopState & int(AxeFx3LooperState::loopStateRecord))
 		stateStr.append("recording");
 	else if (loopState & int(AxeFx3LooperState::loopStatePlay))
 		stateStr.append("playing");
@@ -1043,8 +1178,8 @@ GetLooperStateDesc(int loopState)
 
 	if (loopState & int(AxeFx3LooperState::loopStatePlayOnce))
 		stateStr.append(", once");
-	if (loopState & int(AxeFx3LooperState::loopStateOverdub))
-		stateStr.append(", overdub");
+// 	if (loopState & int(AxeFx3LooperState::loopStateOverdub))
+// 		stateStr.append(", overdub");
 	if (loopState & int(AxeFx3LooperState::loopStateReverse))
 		stateStr.append(", reverse");
 	if (loopState & int(AxeFx3LooperState::loopStateHalfSpeed))
@@ -1056,61 +1191,80 @@ GetLooperStateDesc(int loopState)
 void
 AxeFx3Manager::ReceiveLooperState(byte newLoopState)
 {
-	if (mLooperState == newLoopState)
-		return;
+	mLooperStatusRequested = false;
 
-	if ((mLooperState & int(AxeFx3LooperState::loopStateRecord)) != (newLoopState & int(AxeFx3LooperState::loopStateRecord)))
+	auto curLooperPatch = mLooperPatches[loopPatchRecord];
+	if (curLooperPatch)
 	{
-		if (mLooperPatches[loopPatchRecord])
+		if (!(newLoopState & int(AxeFx3LooperState::loopStateRecord)))
 		{
-			if ((mLooperState & int(AxeFx3LooperState::loopStateRecord)) && !(newLoopState & int(AxeFx3LooperState::loopStateRecord)))
-				mLooperPatches[loopPatchRecord]->UpdateState(mSwitchDisplay, false);
-			else
-				mLooperPatches[loopPatchRecord]->UpdateState(mSwitchDisplay, true);
+			if (curLooperPatch->IsActive())
+				curLooperPatch->UpdateState(mSwitchDisplay, false);
+		}
+		else
+		{
+			if (!curLooperPatch->IsActive())
+				curLooperPatch->UpdateState(mSwitchDisplay, true);
 		}
 	}
 
-	if ((mLooperState & int(AxeFx3LooperState::loopStatePlay)) != (newLoopState & int(AxeFx3LooperState::loopStatePlay)))
+	curLooperPatch = mLooperPatches[loopPatchPlay];
+	if (curLooperPatch)
 	{
-		if (mLooperPatches[loopPatchPlay])
+		if (!(newLoopState & int(AxeFx3LooperState::loopStatePlay)))
 		{
-			if ((mLooperState & int(AxeFx3LooperState::loopStatePlay)) && !(newLoopState & int(AxeFx3LooperState::loopStatePlay)))
-				mLooperPatches[loopPatchPlay]->UpdateState(mSwitchDisplay, false);
-			else
-				mLooperPatches[loopPatchPlay]->UpdateState(mSwitchDisplay, true);
+			if (curLooperPatch->IsActive())
+				curLooperPatch->UpdateState(mSwitchDisplay, false);
+		}
+		else
+		{
+			if (!curLooperPatch->IsActive())
+				curLooperPatch->UpdateState(mSwitchDisplay, true);
 		}
 	}
 
-	if ((mLooperState & int(AxeFx3LooperState::loopStatePlayOnce)) != (newLoopState & int(AxeFx3LooperState::loopStatePlayOnce)))
+	curLooperPatch = mLooperPatches[loopPatchPlayOnce];
+	if (curLooperPatch)
 	{
-		if (mLooperPatches[loopPatchPlayOnce])
+		if (!(newLoopState & int(AxeFx3LooperState::loopStatePlayOnce)))
 		{
-			if ((mLooperState & int(AxeFx3LooperState::loopStatePlayOnce)) && !(newLoopState & int(AxeFx3LooperState::loopStatePlayOnce)))
-				mLooperPatches[loopPatchPlayOnce]->UpdateState(mSwitchDisplay, false);
-			else
-				mLooperPatches[loopPatchPlayOnce]->UpdateState(mSwitchDisplay, true);
+			if (curLooperPatch->IsActive())
+				curLooperPatch->UpdateState(mSwitchDisplay, false);
+
+			if (mActiveLooperSyncTimer->isActive())
+				ManageActiveLooperTimer(false);
+		}
+		else
+		{
+			if (!curLooperPatch->IsActive())
+				curLooperPatch->UpdateState(mSwitchDisplay, true);
+
+			if (!mActiveLooperSyncTimer->isActive())
+				ManageActiveLooperTimer(true);
 		}
 	}
 
 	if ((mLooperState & int(AxeFx3LooperState::loopStateReverse)) != (newLoopState & int(AxeFx3LooperState::loopStateReverse)))
 	{
-		if (mLooperPatches[loopPatchReverse])
+		curLooperPatch = mLooperPatches[loopPatchReverse];
+		if (curLooperPatch)
 		{
 			if ((mLooperState & int(AxeFx3LooperState::loopStateReverse)) && !(newLoopState & int(AxeFx3LooperState::loopStateReverse)))
-				mLooperPatches[loopPatchReverse]->UpdateState(mSwitchDisplay, false);
+				curLooperPatch->UpdateState(mSwitchDisplay, false);
 			else
-				mLooperPatches[loopPatchReverse]->UpdateState(mSwitchDisplay, true);
+				curLooperPatch->UpdateState(mSwitchDisplay, true);
 		}
 	}
 
 	if ((mLooperState & int(AxeFx3LooperState::loopStateHalfSpeed)) != (newLoopState & int(AxeFx3LooperState::loopStateHalfSpeed)))
 	{
-		if (mLooperPatches[loopPatchHalf])
+		curLooperPatch = mLooperPatches[loopPatchHalf];
+		if (curLooperPatch)
 		{
 			if ((mLooperState & int(AxeFx3LooperState::loopStateHalfSpeed)) && !(newLoopState & int(AxeFx3LooperState::loopStateHalfSpeed)))
-				mLooperPatches[loopPatchHalf]->UpdateState(mSwitchDisplay, false);
+				curLooperPatch->UpdateState(mSwitchDisplay, false);
 			else
-				mLooperPatches[loopPatchHalf]->UpdateState(mSwitchDisplay, true);
+				curLooperPatch->UpdateState(mSwitchDisplay, true);
 		}
 	}
 
@@ -1625,32 +1779,64 @@ Axe3SynonymNormalization(std::string & name)
 		MapName("input vol", "input volume");
 		break;
 	case 'l':
-		MapName("loop 1 rec", "looper record");
-		MapName("loop 1 record", "looper record");
-		MapName("loop 1 play", "looper play");
-		MapName("loop 1 once", "looper once");
-		MapName("loop 1 overdub", "looper overdub");
-		MapName("loop 1 rev", "looper reverse");
-		MapName("loop 1 reverse", "looper reverse");
-		MapName("looper 1 rec", "looper record");
-		MapName("looper 1 record", "looper record");
-		MapName("looper 1 play", "looper play");
-		MapName("looper 1 once", "looper once");
-		MapName("looper 1 overdub", "looper overdub");
-		MapName("looper 1 rev", "looper reverse");
-		MapName("looper 1 reverse", "looper reverse");
 		MapName("loop half-speed", "looper half");
 		MapName("loop half speed", "looper half");
 		MapName("loop metronome", "looper metronome");
 		MapName("loop rec", "looper record");
 		MapName("loop record", "looper record");
+		MapName("loop record/overdub", "looper record");
 		MapName("loop play", "looper play");
+		MapName("loop play/stop", "looper play");
 		MapName("loop play once", "looper once");
+		MapName("loop stop", "looper play");
 		MapName("loop once", "looper once");
-		MapName("loop overdub", "looper overdub");
+		MapName("loop once/restart", "looper once");
+		MapName("loop once/retrigger", "looper once");
+		MapName("loop restart", "looper once");
+		MapName("loop retrigger", "looper once");
+		MapName("loop overdub", "looper record");
 		MapName("loop rev", "looper reverse");
 		MapName("loop reverse", "looper reverse");
 		MapName("loop undo", "looper undo");
+
+		MapName("loop 1 rec", "looper record");
+		MapName("loop 1 record", "looper record");
+		MapName("loop 1 record/overdub", "looper record");
+		MapName("loop 1 play", "looper play");
+		MapName("loop 1 play/stop", "looper play");
+		MapName("loop 1 stop", "looper play");
+		MapName("loop 1 once", "looper once");
+		MapName("loop 1 once/restart", "looper once");
+		MapName("loop 1 once/retrigger", "looper once");
+		MapName("loop 1 restart", "looper once");
+		MapName("loop 1 retrigger", "looper once");
+		MapName("loop 1 overdub", "looper record");
+		MapName("loop 1 rev", "looper reverse");
+		MapName("loop 1 reverse", "looper reverse");
+
+		MapName("looper play/stop", "looper play");
+		MapName("looper stop", "looper play");
+		MapName("looper record/overdub", "looper record");
+		MapName("looper overdub", "looper record");
+		MapName("looper once/restart", "looper once");
+		MapName("looper once/retrigger", "looper once");
+		MapName("looper restart", "looper once");
+		MapName("looper retrigger", "looper once");
+
+		MapName("looper 1 rec", "looper record");
+		MapName("looper 1 record", "looper record");
+		MapName("looper 1 record/overdub", "looper record");
+		MapName("looper 1 play", "looper play");
+		MapName("looper 1 play/stop", "looper play");
+		MapName("looper 1 stop", "looper play");
+		MapName("looper 1 once", "looper once");
+		MapName("looper 1 once/restart", "looper once");
+		MapName("looper 1 once/retrigger", "looper once");
+		MapName("looper 1 restart", "looper once");
+		MapName("looper 1 retrigger", "looper once");
+		MapName("looper 1 overdub", "looper record");
+		MapName("looper 1 rev", "looper reverse");
+		MapName("looper 1 reverse", "looper reverse");
 		MapName("looper half-speed", "looper half");
 		MapName("looper half speed", "looper half");
 		MapName("looper 1 half-speed", "looper half");
