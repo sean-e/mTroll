@@ -53,7 +53,7 @@ public:
 	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) = 0;
 	virtual void SwitchReleased(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) { }
 
-	void UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) const;
+	virtual void UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) const;
 	void SetLedColors(unsigned int active, unsigned int inactive) { mLedActiveColor = active; mLedInactiveColor = inactive; }
 	const std::string & GetName() const { return mName; }
 	void SetName(const std::string& name) { mName = name; }

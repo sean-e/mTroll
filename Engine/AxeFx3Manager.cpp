@@ -1350,7 +1350,11 @@ void
 AxeFx3Manager::UpdateSceneStatus(int newScene, bool internalUpdate)
 {
 	if (mCurrentScene == newScene)
+	{
+		if (internalUpdate)
+			RequestSceneName();
 		return;
+	}
 
 	if (newScene >= AxeScenes)
 	{

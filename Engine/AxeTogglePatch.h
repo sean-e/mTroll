@@ -94,6 +94,25 @@ public:
 
 	virtual ~AxeTogglePatch() = default;
 
+	virtual void UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) const override
+	{
+		__super::UpdateDisplays(mainDisplay, switchDisplay);
+
+		if (!mIsScene)
+			return;
+
+		if (IsActive())
+		{
+			if (!mCmdsA.empty())
+				UpdateAxeMgr();
+		}
+		else
+		{
+			if (!mCmdsB.empty())
+				UpdateAxeMgr();
+		}
+	}
+
 	virtual const std::string & GetDisplayText(bool checkState /*= false*/) const override
 	{ 
 		if (mHasDisplayText)
@@ -134,7 +153,7 @@ public:
 	}
 
 private:
-	void UpdateAxeMgr()
+	void UpdateAxeMgr() const
 	{
 		if (!mAx)
 			return;
