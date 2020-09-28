@@ -157,6 +157,7 @@ private:
 	int				mCurrentAxePreset;
 	std::string		mCurrentAxePresetName;
 	std::string		mCurrentAxeSceneName;
+	int				mLooperBlockIsPresent = -1;
 	bool			mLooperStatusRequested = false;
 };
 

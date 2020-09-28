@@ -1063,6 +1063,7 @@ AxeFx3Manager::RequestStatusDump()
 void
 AxeFx3Manager::ReceiveStatusDump(const byte * bytes, int len)
 {
+	bool looperBlockPresent = false;
 	// for each effect there is a packet of 3 bytes:
 	// effect ID 2 bytes: LS MS
 	// data 1 byte: 
@@ -1084,6 +1085,10 @@ AxeFx3Manager::ReceiveStatusDump(const byte * bytes, int len)
 			const byte dd = bytes[idx + 2];
 			inf->UpdateChannelStatus(mSwitchDisplay, (dd >> 4) & 0x7, (dd >> 1) & 0x7);
 			inf->mPatch->UpdateState(mSwitchDisplay, !(dd & 0x1));
+
+			if (inf->mSysexEffectId >= FractalAudio::AxeFx3::ID_LOOPER1 &&
+				inf->mSysexEffectId <= FractalAudio::AxeFx3::ID_LOOPER4)
+				looperBlockPresent = true;
 		}
 		else
 		{
@@ -1098,6 +1103,26 @@ AxeFx3Manager::ReceiveStatusDump(const byte * bytes, int len)
 	}
 
 	TurnOffLedsForNaEffects();
+
+	if ((int)looperBlockPresent != mLooperBlockIsPresent)
+	{
+		// propagate change in existence of looper block to looper control patches
+		mLooperBlockIsPresent = (int)looperBlockPresent;
+		if (looperBlockPresent)
+		{
+			// enable the looper patches (as inactive)
+			for (auto &looperPatch : mLooperPatches)
+				if (looperPatch->SupportsDisabledState())
+					looperPatch->UpdateState(mSwitchDisplay, false);
+		}
+		else
+		{
+			// disable the looper patches
+			for (auto &looperPatch : mLooperPatches)
+				if (looperPatch->SupportsDisabledState())
+					looperPatch->Disable(mSwitchDisplay);
+		}
+	}
 }
 
 void
@@ -1193,6 +1218,12 @@ AxeFx3Manager::ReceiveLooperState(byte newLoopState)
 {
 	mLooperStatusRequested = false;
 
+	if (!mLooperBlockIsPresent)
+	{
+		mLooperState = newLoopState;
+		return;
+	}
+
 	auto curLooperPatch = mLooperPatches[loopPatchRecord];
 	if (curLooperPatch)
 	{
@@ -1281,20 +1312,18 @@ AxeFx3Manager::ReceiveLooperState(byte newLoopState)
 void
 AxeFx3Manager::ResetLooperState()
 {
-	if (mLooperPatches[loopPatchRecord])
-		mLooperPatches[loopPatchRecord]->UpdateState(mSwitchDisplay, false);
-
-	if (mLooperPatches[loopPatchPlay])
-		mLooperPatches[loopPatchPlay]->UpdateState(mSwitchDisplay, false);
-
-	if (mLooperPatches[loopPatchPlayOnce])
-		mLooperPatches[loopPatchPlayOnce]->UpdateState(mSwitchDisplay, false);
-
-	if (mLooperPatches[loopPatchReverse])
-		mLooperPatches[loopPatchReverse]->UpdateState(mSwitchDisplay, false);
-
-	if (mLooperPatches[loopPatchHalf])
-		mLooperPatches[loopPatchHalf]->UpdateState(mSwitchDisplay, false);
+	if (mLooperBlockIsPresent)
+	{
+		for (auto &looperPatch : mLooperPatches)
+			if (looperPatch->SupportsDisabledState())
+				looperPatch->UpdateState(mSwitchDisplay, false);
+	}
+	else
+	{
+		for (auto &looperPatch : mLooperPatches)
+			if (looperPatch->SupportsDisabledState())
+				looperPatch->Disable(mSwitchDisplay);
+	}
 
 	mLooperState = 0;
 }
@@ -1317,14 +1346,7 @@ AxeFx3Manager::SetLooperPatch(PatchPtr patch)
 	else if (-1 != name.find("looper half"))
 		idx = loopPatchHalf;
 	else
-	{
-// 		if (mTrace)
-// 		{
-// 			std::string msg("Warning: unknown looper patch\n");
-// 			mTrace->Trace(msg);
-// 		}
 		return false;
-	}
 
 	if (mLooperPatches[idx] && mTrace)
 	{

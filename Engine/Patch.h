@@ -61,6 +61,7 @@ public:
 	virtual const std::string & GetDisplayText(bool checkState = false) const { return mName; }
 	int GetNumber() const {return mNumber;}
 	bool IsActive() const {return mPatchIsActive;}
+	bool SupportsDisabledState() const {return mPatchSupportsDisabledState;}
 	// used to drive led display without exec
 	void ActivateSwitchDisplay(ISwitchDisplay * switchDisplay, bool activate) const;
 	// used to update state of patch without exec
