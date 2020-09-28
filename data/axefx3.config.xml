@@ -571,12 +571,12 @@
 			The lookup is initiated if no controller specified and if device="Axe-Fx".
 			Note also, no patch type.  AxeToggle is assumed if device="Axe-Fx" but can
 			be overridden. -->
-		<patch name="Axe Loop Record" number="714" device="Axe-Fx" />
-		<patch name="Axe Loop Play" number="715" device="Axe-Fx" />
-		<patch name="Axe Loop Once" number="716" device="Axe-Fx" />
+		<patch name="Axe Loop Record/Overdub" number="714" device="Axe-Fx" />
+		<patch name="Axe Loop Play/Stop" number="715" device="Axe-Fx" />
+		<patch name="Axe Loop Once/Retrigger" number="716" device="Axe-Fx" />
 		<patch name="Axe Loop Reverse" number="718" device="Axe-Fx" />
 		<patch name="Axe Loop Half Speed" number="719" device="Axe-Fx" />
-		<patch name="Axe Loop Undo" number="720" device="Axe-Fx" />
+		<patch name="Axe Loop Undo" number="720" type="AxeMomentary" device="Axe-Fx" />
 		<patch name="Axe Looper" number="722" device="Axe-Fx" />
 
 		<patch name="Axe Volume Decrement" number="725" type="AxeMomentary" device="Axe-Fx" singleState="1" />
@@ -1339,6 +1339,7 @@
 			<switch number="23" command="LoadNextBank" />
 			<!-- long press of Next loads tuner -->
 			<switch number="23" patch="705" secondFunction="auto" />
+
 			<switch number="20" command="SyncAxeFx" />
 		</bank>
 
