@@ -539,7 +539,16 @@ ControlUi::Trace(const std::string & txt)
 		virtual void exec() override
 		{
 			mTextEdit->moveCursor(QTextCursor::End, QTextCursor::MoveAnchor);
-			mTextEdit->insertPlainText(mText);
+			try
+			{
+				mTextEdit->insertPlainText(mText);
+			}
+			catch (const std::bad_alloc& /*e*/)
+			{
+				// too much accumulated text?  retry after clearing buffer
+				mTextEdit->clear();
+				mTextEdit->insertPlainText(mText);
+			}
 		}
 	};
 
