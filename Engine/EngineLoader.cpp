@@ -57,6 +57,7 @@
 #include "PersistentPedalOverridePatch.h"
 #include "MetaPatch_ResetPatch.h"
 #include "AxeMomentaryPatch.h"
+#include "MetaPatch_AxeFxNav.h"
 
 
 #ifdef _MSC_VER
@@ -1538,6 +1539,66 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 							}
 							continue;
 						}
+					}
+					else if (cmdName == "AxeFx3IncrementPreset")
+					{
+						if (!isAutoGendPatchNumber)
+						{
+							gendPatchName = "AxeFx: Next Preset";
+							auto metPatch = std::make_shared<MetaPatch_AxeFxNextPreset>(patchNumber, gendPatchName);
+							std::vector<IAxeFxPtr> mgrs;
+							if (mAxeFx3Manager)
+								mgrs.push_back(mAxeFx3Manager);
+							metPatch->AddAxeManagers(mgrs);
+							cmdPatch = metPatch;
+						}
+						else
+							patchNumber = ReservedPatchNumbers::kAxeFx3NextPreset;
+					}
+					else if (cmdName == "AxeFx3DecrementPreset")
+					{
+						if (!isAutoGendPatchNumber)
+						{
+							gendPatchName = "AxeFx: Prev Preset";
+							auto metPatch = std::make_shared<MetaPatch_AxeFxPrevPreset>(patchNumber, gendPatchName);
+							std::vector<IAxeFxPtr> mgrs;
+							if (mAxeFx3Manager)
+								mgrs.push_back(mAxeFx3Manager);
+							metPatch->AddAxeManagers(mgrs);
+							cmdPatch = metPatch;
+						}
+						else
+							patchNumber = ReservedPatchNumbers::kAxeFx3PrevPreset;
+					}
+					else if (cmdName == "AxeFx3IncrementScene")
+					{
+						if (!isAutoGendPatchNumber)
+						{
+							gendPatchName = "AxeFx: Next Scene";
+							auto metPatch = std::make_shared<MetaPatch_AxeFxNextScene>(patchNumber, gendPatchName);
+							std::vector<IAxeFxPtr> mgrs;
+							if (mAxeFx3Manager)
+								mgrs.push_back(mAxeFx3Manager);
+							metPatch->AddAxeManagers(mgrs);
+							cmdPatch = metPatch;
+						}
+						else
+							patchNumber = ReservedPatchNumbers::kAxeFx3NextScene;
+					}
+					else if (cmdName == "AxeFx3DecrementScene")
+					{
+						if (!isAutoGendPatchNumber)
+						{
+							gendPatchName = "AxeFx: Prev Scene";
+							auto metPatch = std::make_shared<MetaPatch_AxeFxPrevScene>(patchNumber, gendPatchName);
+							std::vector<IAxeFxPtr> mgrs;
+							if (mAxeFx3Manager)
+								mgrs.push_back(mAxeFx3Manager);
+							metPatch->AddAxeManagers(mgrs);
+							cmdPatch = metPatch;
+						}
+						else
+							patchNumber = ReservedPatchNumbers::kAxeFx3PrevScene;
 					}
 					else
 					{

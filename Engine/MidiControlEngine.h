@@ -218,6 +218,10 @@ enum /*class*/ ReservedPatchNumbers
 	kBankHistoryRecall						= -8,
 	kResetBankPatches						= -9,
 	kSyncAxeFx								= -10,
+	kAxeFx3NextPreset						= -11,
+	kAxeFx3PrevPreset						= -12,
+	kAxeFx3NextScene						= -13,
+	kAxeFx3PrevScene						= -14,
 
 	// auto-gen'd patches
 	kAutoGenPatchNumberStart				= -2000

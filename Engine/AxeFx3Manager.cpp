@@ -134,14 +134,8 @@ AxeFx3Manager::AxeFx3Manager(IMainDisplay * mainDisp,
 	mSwitchDisplay(switchDisp),
 	mMainDisplay(mainDisp),
 	mTrace(pTrace),
-	mLastTimeout(0),
-	mMidiOut(nullptr),
-	mFirmwareMajorVersion(0),
 	mAxeChannel(ch),
-	mModel(mod),
-	mLooperState(0),
-	mCurrentAxePreset(-1),
-	mCurrentScene(-1)
+	mModel(mod)
 {
 #ifdef ITEM_COUNTING
 	++gAxeFx3MgrCnt;
@@ -263,9 +257,7 @@ AxeFx3Manager::SetSyncPatch(PatchPtr patch, int effectId, int channel)
 		normalizedEffectName != "tuner" &&
 		normalizedEffectName != "global preset effect toggle" &&
 		normalizedEffectName != "volume increment" &&
-		normalizedEffectName != "volume decrement" &&
-		normalizedEffectName != "scene increment" &&
-		normalizedEffectName != "scene decrement")
+		normalizedEffectName != "volume decrement")
 	{
 		std::string msg("Warning: no Axe-Fx effect found to sync for '" + patch->GetName() + "'\n");
 		mTrace->Trace(msg);
@@ -516,7 +508,7 @@ void
 AxeFx3Manager::ForceRefreshAxeState()
 {
 	RequestLooperState();
-	RequestPresetName();
+	SyncNameAndEffectsFromAxe();
 }
 
 void
@@ -1433,9 +1425,9 @@ AxeFx3Manager::DisplayPresetStatus()
 // 	if (std::string::npos != pos)
 // 		curText = curText.substr(0, pos);
 	
-	if (mCurrentAxePreset > -1 && mCurrentAxePreset < 1000)
+	if (mCurrentAxePreset > -1 && mCurrentAxePreset < 1025)
 	{
-		char presetBuf[4];
+		char presetBuf[5];
 		::_itoa_s(mCurrentAxePreset + 1, presetBuf, 10);
 		if (mCurrentAxePresetName.empty())
 			curText += kPrefix + presetBuf;
@@ -1466,6 +1458,83 @@ AxeFx3Manager::AppendChecksumAndTerminate(Bytes &data)
 		chkSum ^= b;
 	data.push_back(chkSum & 0x7F);
 	data.push_back(0xF7);
+}
+
+void
+AxeFx3Manager::RequestProgramChange(int offset)
+{
+	if (!mMidiOut)
+		return;
+
+	int nextPreset = (-1 == mCurrentAxePreset ? 0 : mCurrentAxePreset) + offset;
+	if (nextPreset < 0)
+		nextPreset = 1023; // reverse wraparound
+	else if (nextPreset >= 1024)
+		nextPreset = 0; // wraparound
+
+	Bytes cmd;
+	int bank = 0;
+	while (nextPreset > 127)
+	{
+		nextPreset -= 128;
+		++bank;
+	}
+
+	// bank select
+	cmd.push_back(0xb0 | GetChannel());
+	cmd.push_back(0);
+	cmd.push_back(bank);
+
+	// program change
+	cmd.push_back(0xc0 | GetChannel());
+	cmd.push_back(nextPreset);
+	mMidiOut->MidiOut(cmd);
+
+	SyncNameAndEffectsFromAxe();
+}
+
+void
+AxeFx3Manager::IncrementPreset()
+{
+	RequestProgramChange(1);
+}
+
+void
+AxeFx3Manager::DecrementPreset()
+{
+	RequestProgramChange(-1);
+}
+
+void
+AxeFx3Manager::RequestSceneChage(int offset)
+{
+	if (!mMidiOut)
+		return;
+
+	int nextScene = (-1 == mCurrentScene ? 0 : mCurrentScene) + offset;
+	if (nextScene < 0)
+		nextScene = AxeScenes - 1; // reverse wraparound
+	else if (nextScene >= AxeScenes)
+		nextScene = 0; // wraparound
+	const Bytes cmd{ GetSceneSelectCommandString(nextScene + 1) };
+	if (!cmd.empty())
+	{
+		mMidiOut->MidiOut(cmd);
+
+		SyncNameAndEffectsFromAxe();
+	}
+}
+
+void
+AxeFx3Manager::IncrementScene()
+{
+	RequestSceneChage(1);
+}
+
+void
+AxeFx3Manager::DecrementScene()
+{
+	RequestSceneChage(-1);
 }
 
 void
@@ -1721,8 +1790,6 @@ Axe3SynonymNormalization(std::string & name)
 		MapName("crystals 4", "pitch shift 4");
 		break;
 	case 'd':
-		MapName("dec scene", "scene decrement");
-		MapName("decrement scene", "scene decrement");
 		MapName("delay 1 (reverse)", "delay 1");
 		MapName("delay 2 (reverse)", "delay 2");
 		MapName("delay 3 (reverse)", "delay 3");
@@ -1814,8 +1881,6 @@ Axe3SynonymNormalization(std::string & name)
 		break;
 	case 'i':
 		MapName("in vol", "input volume");
-		MapName("inc scene", "scene increment");
-		MapName("increment scene", "scene increment");
 		MapName("input", "input volume");
 		MapName("input vol", "input volume");
 		break;
@@ -1918,7 +1983,6 @@ Axe3SynonymNormalization(std::string & name)
 		MapName("multi-delay 4", "multidelay 4");
 		break;
 	case 'n':
-		MapName("next scene", "scene increment");
 // 		MapName("noise gate 1", "gate/expander 1");
 // 		MapName("noise gate 2", "gate/expander 2");
 // 		MapName("noise gate 3", "gate/expander 3");
@@ -1960,7 +2024,6 @@ Axe3SynonymNormalization(std::string & name)
 		MapName("plex dly 2", "plex delay 2");
 		MapName("plex dly 3", "plex delay 3");
 		MapName("plex dly 4", "plex delay 4");
-		MapName("previous scene", "scene decrement");
 		break;
 	case 'r':
 		MapName("return", "return 1");
@@ -1995,8 +2058,6 @@ Axe3SynonymNormalization(std::string & name)
 		break;
 	case 's':
 		MapName("send", "send 1");
-		MapName("scene inc", "scene increment");
-		MapName("scene dec", "scene decrement");
 		MapName("scene midi", "scene midi block");
 		MapName("shift 1", "pitch shift 1");
 		MapName("shift 2", "pitch shift 2");

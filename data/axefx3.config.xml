@@ -1308,8 +1308,6 @@
 			<ControlChange group="A" controller="10" value="0" />
 			<ControlChange group="B" controller="10" value="127" />
 		</patch>
-		<patch name="Decrement Scene" number="864" type="AxeMomentary" device="Axe-Fx" singleState="1" />
-		<patch name="Increment Scene" number="865" type="AxeMomentary" device="Axe-Fx" singleState="1" />
 
 		<patch type="patchListSequence" name="Scene List testing" number="866" gaplessRestart="1"> <!-- gaplessRestart="1" -->
 			<patchListItem>852</patchListItem>
@@ -1819,13 +1817,15 @@
 			<switch number="7" patch="857" />
 			<switch number="8" patch="858" />
 
-			<switch number="9"  patch="" />
-			<switch number="10" patch="" />
-			<switch number="11" patch="864" />
-			<switch number="12" patch="865" />
+			<switch number="9"  patch="725" />
+			<switch number="10" patch="726" />
+
+			<switch number="11" command="AxeFx3DecrementScene" label="Prev Scene" />
+			<switch number="12" command="AxeFx3IncrementScene" label="Next Scene" />
 			<switch number="13" patch="" />
-			<switch number="14" patch="725" />
-			<switch number="15" patch="726" />
+			<switch number="14" command="AxeFx3DecrementPreset" label="Prev Preset" />
+			<switch number="15" command="AxeFx3IncrementPreset" label="Next Preset" />
+
 			<switch number="22" command="BankHistoryBackward" />
 		</bank>
 

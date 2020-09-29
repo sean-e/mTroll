@@ -78,6 +78,10 @@ public:
 	int GetChannel() const override { return mAxeChannel; }
 	void SyncPatchFromAxe(PatchPtr patch);
 	AxeFxModel GetModel() const override { return mModel; }
+	void IncrementPreset() override { }
+	void DecrementPreset() override { }
+	void IncrementScene() override { }
+	void DecrementScene() override { }
 	void Shutdown() override;
 	void UpdateSceneStatus(int newScene, bool internalUpdate) override;
 	void ForceRefreshAxeState() override;

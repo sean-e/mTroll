@@ -80,6 +80,10 @@ public:
 	bool SetSyncPatch(PatchPtr patch, int effectId, int channel) override;
 	int GetChannel() const override { return mAxeChannel; }
 	AxeFxModel GetModel() const override { return mModel; }
+	void IncrementPreset() override;
+	void DecrementPreset() override;
+	void IncrementScene() override;
+	void DecrementScene() override;
 	void Shutdown() override;
 	void UpdateSceneStatus(int newScene, bool internalUpdate) override;
 	void ForceRefreshAxeState() override;
@@ -128,6 +132,8 @@ private:
 
 	void RequestStatusDump();
 	void ReceiveStatusDump(const byte * bytes, int len);
+	void RequestProgramChange(int offset);
+	void RequestSceneChage(int offset);
 	void TurnOffLedsForNaEffects();
 
 	static void AppendChecksumAndTerminate(Bytes &data);
@@ -149,12 +155,12 @@ private:
 	QTimer			* mDelayedEffectsSyncTimer;
 	QTimer			* mDelayedLooperSyncTimer;
 	QTimer			* mActiveLooperSyncTimer;
-	clock_t			mLastTimeout;
-	int				mFirmwareMajorVersion;
+	clock_t			mLastTimeout = 0;
+	int				mFirmwareMajorVersion = 0;
 	AxeFxModel		mModel;
-	int				mLooperState;
-	int				mCurrentScene;
-	int				mCurrentAxePreset;
+	int				mLooperState = 0;
+	int				mCurrentScene = -1;
+	int				mCurrentAxePreset = -1;
 	std::string		mCurrentAxePresetName;
 	std::string		mCurrentAxeSceneName;
 	int				mLooperBlockIsPresent = -1;

@@ -44,6 +44,7 @@
 #include "MetaPatch_BankHistory.h"
 #include "MetaPatch_ResetBankPatches.h"
 #include "MetaPatch_SyncAxeFx.h"
+#include "MetaPatch_AxeFxNav.h"
 
 
 #ifdef _MSC_VER
@@ -206,6 +207,26 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 	AddPatch(std::make_shared<MetaPatch_ResetBankPatches>(this, ReservedPatchNumbers::kResetBankPatches, "Reset bank patches"));
 	{
 		auto metPatch = std::make_shared<MetaPatch_SyncAxeFx>(ReservedPatchNumbers::kSyncAxeFx, "Sync Axe-FX");
+		metPatch->AddAxeManagers(mAxeMgrs);
+		AddPatch(metPatch);
+	}
+	{
+		auto metPatch = std::make_shared<MetaPatch_AxeFxNextPreset>(ReservedPatchNumbers::kAxeFx3NextPreset, "AxeFx Next Preset");
+		metPatch->AddAxeManagers(mAxeMgrs);
+		AddPatch(metPatch);
+	}
+	{
+		auto metPatch = std::make_shared<MetaPatch_AxeFxPrevPreset>(ReservedPatchNumbers::kAxeFx3PrevPreset, "AxeFx Prev Preset");
+		metPatch->AddAxeManagers(mAxeMgrs);
+		AddPatch(metPatch);
+	}
+	{
+		auto metPatch = std::make_shared<MetaPatch_AxeFxNextScene>(ReservedPatchNumbers::kAxeFx3NextScene, "AxeFx Next Scene");
+		metPatch->AddAxeManagers(mAxeMgrs);
+		AddPatch(metPatch);
+	}
+	{
+		auto metPatch = std::make_shared<MetaPatch_AxeFxPrevScene>(ReservedPatchNumbers::kAxeFx3PrevScene, "AxeFx Prev Scene");
 		metPatch->AddAxeManagers(mAxeMgrs);
 		AddPatch(metPatch);
 	}

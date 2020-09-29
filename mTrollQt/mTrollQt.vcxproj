@@ -282,6 +282,7 @@
     <ClInclude Include="..\Engine\ISwitchDisplay.h" />
     <ClInclude Include="..\Engine\ITraceDisplay.h" />
     <ClInclude Include="..\Engine\ITrollApplication.h" />
+    <ClInclude Include="..\Engine\MetaPatch_AxeFxNav.h" />
     <ClInclude Include="..\Engine\MetaPatch_BankHistory.h" />
     <ClInclude Include="..\Engine\MetaPatch_BankNav.h" />
     <ClInclude Include="..\Engine\MetaPatch_LoadBank.h" />

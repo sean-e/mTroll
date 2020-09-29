@@ -49,6 +49,10 @@ __interface IAxeFx
 	virtual void ForceRefreshAxeState();
 	virtual void DelayedNameSyncFromAxe(bool force = false);
 	virtual void DelayedEffectsSyncFromAxe();
+	virtual void IncrementPreset();
+	virtual void DecrementPreset();
+	virtual void IncrementScene();
+	virtual void DecrementScene();
 	virtual void Shutdown();
 };
 
