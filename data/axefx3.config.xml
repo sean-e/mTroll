@@ -42,10 +42,10 @@
 		</switches>
 
 		<midiDevices>
-			<midiDevice port="2" activityIndicatorId="23" out="Axe-Fx III" in="Axe-Fx III" />
+			<midiDevice port="1" activityIndicatorId="23" out="Axe-Fx III" in="Axe-Fx III" />
 
 			<!-- default device if the named devices fail -->
-			<midiDevice port="1" activityIndicatorId="23" outIdx="0" />
+			<midiDevice port="2" activityIndicatorId="23" outIdx="0" />
 		</midiDevices>
 
 		<!-- port attr on expression block is required -->
@@ -66,23 +66,23 @@
 			defined in MidiDevices above). 
 			Completely optional if you would rather specify a numeric channel in each 
 			patch.-->
-		<Device channel="1" port="1"></Device>
-		<Device channel="2" port="1"></Device>
-		<Device channel="3" port="1"></Device>
-		<Device channel="4" port="1"></Device>
-		<Device channel="5" port="1"></Device>
-		<Device channel="6" port="1"></Device>
-		<Device channel="7" port="1"></Device>
+		<Device channel="1" port="2"></Device>
+		<Device channel="2" port="2"></Device>
+		<Device channel="3" port="2"></Device>
+		<Device channel="4" port="2"></Device>
+		<Device channel="5" port="2"></Device>
+		<Device channel="6" port="2"></Device>
+		<Device channel="7" port="2"></Device>
 		<!-- this is key to Axe-Fx synchronization; make sure Axe-Fx is on the right line (based on MIDI channel). -->
-		<Device channel="8" port="2" model="3">Axe-Fx</Device>
-		<Device channel="9" port="1"></Device>
-		<Device channel="10" port="1"></Device>
-		<Device channel="11" port="1"></Device>
-		<Device channel="12" port="1"></Device>
-		<Device channel="13" port="1"></Device>
-		<Device channel="14" port="1"></Device>
-		<Device channel="15" port="1"></Device>
-		<Device channel="16" port="1"></Device>
+		<Device channel="8" port="1" model="3">Axe-Fx</Device>
+		<Device channel="9" port="2"></Device>
+		<Device channel="10" port="2"></Device>
+		<Device channel="11" port="2"></Device>
+		<Device channel="12" port="2"></Device>
+		<Device channel="13" port="2"></Device>
+		<Device channel="14" port="2"></Device>
+		<Device channel="15" port="2"></Device>
+		<Device channel="16" port="2"></Device>
 	</DeviceChannelMap>
 
 	<LedPresetColors> 
