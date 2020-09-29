@@ -127,7 +127,7 @@ MidiControlEngine::AddBank(int number,
 			if (curItem && curItem->GetBankNumber() == number)
 			{
 				std::strstream traceMsg;
-				traceMsg << "Warning: multiple banks with bank number " << number << std::endl << std::ends;
+				traceMsg << "Warning: multiple banks with bank number " << number << '\n' << std::ends;
 				mTrace->Trace(std::string(traceMsg.str()));
 			}
 		}
@@ -146,7 +146,7 @@ MidiControlEngine::AddPatch(PatchPtr patch)
 	if (prev && mTrace)
 	{
 		std::strstream traceMsg;
-		traceMsg << "ERROR: multiple patches with patch number " << patchNum << std::endl << std::ends;
+		traceMsg << "ERROR: multiple patches with patch number " << patchNum << '\n' << std::ends;
 		mTrace->Trace(std::string(traceMsg.str()));
 	}
 	mPatches[patchNum] = patch;
@@ -273,7 +273,7 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 			if (pr.second && pr.second->GetNumber() >= 0)
 				++userDefinedPatchCnt;
 		});
-		traceMsg << "Loaded " << mBanks.size() << " banks, " << userDefinedPatchCnt << " patches" << std::endl << std::ends;
+		traceMsg << "Loaded " << mBanks.size() << " banks, " << userDefinedPatchCnt << " patches" << '\n' << std::ends;
 		mTrace->Trace(std::string(traceMsg.str()));
 	}
 
@@ -331,7 +331,7 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 	if (false && mTrace)
 	{
 		std::strstream msg;
-		msg << "SwitchPressed: " << switchNumber << std::endl << std::ends;
+		msg << "SwitchPressed: " << switchNumber << '\n' << std::ends;
 		mTrace->Trace(std::string(msg.str()));
 	}
 
@@ -383,7 +383,7 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 	if (false && mTrace)
 	{
 		std::strstream msg;
-		msg << "SwitchReleased: " << switchNumber << std::endl << std::ends;
+		msg << "SwitchReleased: " << switchNumber << '\n' << std::ends;
 		mTrace->Trace(msg.str());
 	}
 
@@ -474,7 +474,7 @@ MidiControlEngine::AdcValueChanged(int port,
 		if (mMainDisplay && mPedalModePort == port)
 		{
 			std::strstream displayMsg;
-			displayMsg << "ADC port " << (int) (port+1) << " value: " << newValue << std::endl << std::ends;
+			displayMsg << "ADC port " << (int) (port+1) << " value: " << newValue << '\n' << std::ends;
 			mMainDisplay->TextOut(displayMsg.str());
 		}
 		return;
@@ -586,7 +586,7 @@ MidiControlEngine::LoadBankRelative(int relativeBankIndex)
 		if (mTrace)
 		{
 			std::strstream traceMsg;
-			traceMsg << "Bank navigation error" << std::endl << std::ends;
+			traceMsg << "Bank navigation error\n" << std::ends;
 			mTrace->Trace(std::string(traceMsg.str()));
 		}
 		return;
@@ -604,7 +604,7 @@ MidiControlEngine::LoadBankByNumber(int bankNumber)
 		if (mTrace)
 		{
 			std::strstream traceMsg;
-			traceMsg << "Bank " << bankNumber << " does not exist" << std::endl << std::ends;
+			traceMsg << "Bank " << bankNumber << " does not exist\n" << std::ends;
 			mTrace->Trace(std::string(traceMsg.str()));
 		}
 		return;
@@ -619,7 +619,7 @@ MidiControlEngine::LoadBankByNumber(int bankNumber)
 		if (mTrace)
 		{
 			std::strstream traceMsg;
-			traceMsg << "Bank " << bankNumber << " does not exist" << std::endl << std::ends;
+			traceMsg << "Bank " << bankNumber << " does not exist\n" << std::ends;
 			mTrace->Trace(std::string(traceMsg.str()));
 		}
 		return;
@@ -1171,7 +1171,7 @@ MidiControlEngine::SwitchReleased_PedalDisplayMode(int switchNumber)
 		if (mMainDisplay)
 		{
 			std::strstream displayMsg;
-			displayMsg << "ADC port " << (int) (mPedalModePort + 1) << " monitor" << std::endl << std::ends;
+			displayMsg << "ADC port " << (int) (mPedalModePort + 1) << " monitor\n" << std::ends;
 			mMainDisplay->TextOut(displayMsg.str());
 		}
 	}

@@ -125,7 +125,7 @@ Patch::UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay
 		std::strstream msgstr;
 		if (mNumber > 0)
 			msgstr << mNumber << " ";
-		msgstr << GetDisplayText(true) << std::endl << std::ends;
+		msgstr << GetDisplayText(true) << '\n' << std::ends;
 		mainDisplay->TextOut(msgstr.str());
 	}
 }

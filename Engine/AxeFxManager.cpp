@@ -409,7 +409,7 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 		{
 			const std::string byteDump(::GetAsciiHexStr(&bytes[5], len - 5, true));
 			std::strstream traceMsg;
-			traceMsg << byteDump.c_str() << std::endl << std::ends;
+			traceMsg << byteDump.c_str() << '\n' << std::ends;
 			mTrace->Trace(std::string(traceMsg.str()));
 		}
 	}
@@ -609,7 +609,7 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 						const std::string byteDump(::GetAsciiHexStr(bytes + 4, len - 6, true));
 						const std::string asciiDump(::GetAsciiStr(&bytes[6], len - 8));
 						std::strstream traceMsg;
-						traceMsg << inf->mName << " : " << byteDump.c_str() << " : " << asciiDump.c_str() << std::endl << std::ends;
+						traceMsg << inf->mName << " : " << byteDump.c_str() << " : " << asciiDump.c_str() << '\n' << std::ends;
 						mTrace->Trace(std::string(traceMsg.str()));
 					}
 				}
@@ -617,7 +617,7 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 				{
 					const std::string byteDump(::GetAsciiHexStr(bytes, len - 2, true));
 					std::strstream traceMsg;
-					traceMsg << "Unrecognized bypass param value for " << inf->mName << " " << byteDump.c_str() << std::endl << std::ends;
+					traceMsg << "Unrecognized bypass param value for " << inf->mName << " " << byteDump.c_str() << '\n' << std::ends;
 					mTrace->Trace(std::string(traceMsg.str()));
 				}
 			}
@@ -625,7 +625,7 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 			{
 				const std::string byteDump(::GetAsciiHexStr(bytes, len - 2, true));
 				std::strstream traceMsg;
-				traceMsg << "Unhandled bypass MS param value for " << inf->mName << " " << byteDump.c_str() << std::endl << std::ends;
+				traceMsg << "Unhandled bypass MS param value for " << inf->mName << " " << byteDump.c_str() << '\n' << std::ends;
 				mTrace->Trace(std::string(traceMsg.str()));
 			}
 		}
@@ -1108,7 +1108,7 @@ AxeFxManager::ReceiveFirmwareVersionResponse(const byte * bytes, int len)
 	if (mTrace)
 	{
 		std::strstream traceMsg;
-		traceMsg << "Axe-Fx " << model << "version " << (int) bytes[6] << "." << (int) bytes[7] << std::endl << std::ends;
+		traceMsg << "Axe-Fx " << model << "version " << (int) bytes[6] << "." << (int) bytes[7] << '\n' << std::ends;
 		mTrace->Trace(std::string(traceMsg.str()));
 	}
 
@@ -1230,7 +1230,7 @@ AxeFxManager::ReceivePresetEffects(const byte * bytes, int len)
 			if (inf && mTrace && inf->mNormalizedName != "feedback return")
 			{
 				std::strstream traceMsg;
-				traceMsg << "Axe sync warning: potentially unexpected sync for  " << inf->mName << " " << std::endl << std::ends;
+				traceMsg << "Axe sync warning: potentially unexpected sync for  " << inf->mName << " " << '\n' << std::ends;
 				mTrace->Trace(std::string(traceMsg.str()));
 			}
 		}
@@ -1251,7 +1251,7 @@ AxeFxManager::ReceivePresetEffects(const byte * bytes, int len)
 			{
 				const std::string byteDump(::GetAsciiHexStr(bytes + idx, 5, true));
 				std::strstream traceMsg;
-				traceMsg << "Unrecognized bypass param value for " << inf->mName << " " << byteDump.c_str() << std::endl << std::ends;
+				traceMsg << "Unrecognized bypass param value for " << inf->mName << " " << byteDump.c_str() << '\n' << std::ends;
 				mTrace->Trace(std::string(traceMsg.str()));
 			}
 		}
@@ -1333,7 +1333,7 @@ AxeFxManager::ReceivePresetEffectsV2(const byte * bytes, int len)
 			if (inf && mTrace && inf->mNormalizedName != "feedback return")
 			{
 				std::strstream traceMsg;
-				traceMsg << "Axe sync warning: potentially unexpected sync for  " << inf->mName << " " << std::endl << std::ends;
+				traceMsg << "Axe sync warning: potentially unexpected sync for  " << inf->mName << " " << '\n' << std::ends;
 				mTrace->Trace(std::string(traceMsg.str()));
 			}
 		}
@@ -1368,7 +1368,7 @@ AxeFxManager::ReceivePresetEffectsV2(const byte * bytes, int len)
 			{
 				const std::string byteDump(::GetAsciiHexStr(bytes + idx, 5, true));
 				std::strstream traceMsg;
-				traceMsg << "Unrecognized bypass param value for " << inf->mName << " " << byteDump.c_str() << std::endl << std::ends;
+				traceMsg << "Unrecognized bypass param value for " << inf->mName << " " << byteDump.c_str() << '\n' << std::ends;
 				mTrace->Trace(std::string(traceMsg.str()));
 			}
 		}
@@ -1555,7 +1555,7 @@ AxeFxManager::ReceiveLooperStatus(const byte * bytes, int len)
 	if (mMainDisplay)
 	{
 		std::strstream traceMsg;
-		traceMsg << "Axe-Fx looper: " << GetLooperStateDesc(mLooperState) << std::endl << std::ends;
+		traceMsg << "Axe-Fx looper: " << GetLooperStateDesc(mLooperState) << '\n' << std::ends;
 		mMainDisplay->TransientTextOut(std::string(traceMsg.str()));
 	}
 }

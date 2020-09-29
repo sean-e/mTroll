@@ -98,7 +98,7 @@ Monome40hFtqt::LocateMonomeDeviceIdx()
 		if (mTrace)
 		{
 			std::strstream traceMsg;
-			traceMsg << "ERROR: Failed to get FTDI device list: " << ftStatus << std::endl << std::ends;
+			traceMsg << "ERROR: Failed to get FTDI device list: " << ftStatus << '\n' << std::ends;
 			mTrace->Trace(traceMsg.str());
 		}
 		return -1;
@@ -111,7 +111,7 @@ Monome40hFtqt::LocateMonomeDeviceIdx()
 		if (mTrace)
 		{
 			std::strstream traceMsg;
-			traceMsg << "FTDI device " << idx << " serial: " << serial << std::endl << std::ends;
+			traceMsg << "FTDI device " << idx << " serial: " << serial << '\n' << std::ends;
 			mTrace->Trace(traceMsg.str());
 		}
 
@@ -125,7 +125,7 @@ Monome40hFtqt::LocateMonomeDeviceIdx()
 	if (-1 == monomeDevIdx && mTrace)
 	{
 		std::strstream traceMsg;
-		traceMsg << "ERROR: Failed to locate monome device" << std::endl << std::ends;
+		traceMsg << "ERROR: Failed to locate monome device\n" << std::ends;
 		mTrace->Trace(traceMsg.str());
 	}
 
@@ -142,7 +142,7 @@ Monome40hFtqt::GetDeviceSerialNumber(int devIndex)
 	{
 		if (mTrace)
 		{
-			traceMsg << "ERROR: Failed to get FTDI device list: " << ftStatus << std::endl << std::ends;
+			traceMsg << "ERROR: Failed to get FTDI device list: " << ftStatus << '\n' << std::ends;
 			mTrace->Trace(traceMsg.str());
 		}
 		return "";
@@ -152,7 +152,7 @@ Monome40hFtqt::GetDeviceSerialNumber(int devIndex)
 	{
 		if (mTrace)
 		{
-			traceMsg << "ERROR: Requested FTDI device idx is greater than installed dev count: " << numDevs << std::endl << std::ends;
+			traceMsg << "ERROR: Requested FTDI device idx is greater than installed dev count: " << numDevs << '\n' << std::ends;
 			mTrace->Trace(traceMsg.str());
 		}
 		return "";
@@ -162,7 +162,7 @@ Monome40hFtqt::GetDeviceSerialNumber(int devIndex)
 	ftStatus = ::FT_ListDevices((PVOID)devIndex, serialNo, FT_LIST_BY_INDEX|FT_OPEN_BY_SERIAL_NUMBER);
 	if (FT_OK != ftStatus)
 	{
-		traceMsg << "ERROR: Failed to get FTDI device " << devIndex << " serial, status: " << ftStatus << std::endl << std::ends;
+		traceMsg << "ERROR: Failed to get FTDI device " << devIndex << " serial, status: " << ftStatus << '\n' << std::ends;
 		mTrace->Trace(traceMsg.str());
 		return "";
 	}
@@ -203,7 +203,7 @@ Monome40hFtqt::AcquireDevice()
 		if (mTrace)
 		{
 			std::strstream traceMsg;
-			traceMsg << "ERROR: Failed to open FTDI device " << mDevSerialNumber << std::endl << std::ends;
+			traceMsg << "ERROR: Failed to open FTDI device " << mDevSerialNumber << '\n' << std::ends;
 			mTrace->Trace(traceMsg.str());
 		}
 		return false;
@@ -212,7 +212,7 @@ Monome40hFtqt::AcquireDevice()
 	if (mTrace)
 	{
 		std::strstream traceMsg;
-		traceMsg << "Opened FTDI device " << mDevSerialNumber << std::endl << std::ends;
+		traceMsg << "Opened FTDI device " << mDevSerialNumber << '\n' << std::ends;
 		mTrace->Trace(traceMsg.str());
 	}
 
@@ -227,7 +227,7 @@ Monome40hFtqt::AcquireDevice()
 		if (mTrace)
 		{
 			std::strstream traceMsg;
-			traceMsg << "ERROR: Failed to set FTDI device params " << std::endl << std::ends;
+			traceMsg << "ERROR: Failed to set FTDI device params \n" << std::ends;
 			mTrace->Trace(traceMsg.str());
 		}
 		return false;
@@ -252,7 +252,7 @@ Monome40hFtqt::ReleaseDevice()
 	if (mTrace && !mOutputCommandQueue.empty())
 	{
 		std::strstream traceMsg;
-		traceMsg << "WARNING: unsent monome commands still queued " << mOutputCommandQueue.size() << std::endl << std::ends;
+		traceMsg << "WARNING: unsent monome commands still queued " << mOutputCommandQueue.size() << '\n' << std::ends;
 		mTrace->Trace(traceMsg.str());
 	}
 
@@ -463,7 +463,7 @@ Monome40hFtqt::ReadInput(byte * readData)
 						if (false && mTrace)
 						{
 							std::strstream displayMsg;
-							displayMsg << "adc val repeat: " << adcValue << std::endl << std::ends;
+							displayMsg << "adc val repeat: " << adcValue << '\n' << std::ends;
 							mTrace->Trace(displayMsg.str());
 						}
 						return true;
@@ -487,7 +487,7 @@ Monome40hFtqt::ReadInput(byte * readData)
 			const byte n4 = readData[1] & 0x0f;
 
 			std::strstream traceMsg;
-			traceMsg << "monome IO error: unknown command " << (int) cmd << " " << (short)n2 << " " << (short)n3 << " " << (short)n4 << std::endl << std::ends;
+			traceMsg << "monome IO error: unknown command " << (int) cmd << " " << (short)n2 << " " << (short)n3 << " " << (short)n4 << '\n' << std::ends;
 			mTrace->Trace(traceMsg.str());
 		}
 		return false;
@@ -518,7 +518,7 @@ Monome40hFtqt::DeviceServiceThread()
 				if (mTrace)
 				{
 					std::strstream traceMsg;
-					traceMsg << "monome IO error: disconnected?" << std::endl << std::ends;
+					traceMsg << "monome IO error: disconnected?\n" << std::ends;
 					mTrace->Trace(traceMsg.str());
 				}
 			}
@@ -536,7 +536,7 @@ Monome40hFtqt::DeviceServiceThread()
 							if (1 != bytesRead && mTrace)
 							{
 								std::strstream traceMsg;
-								traceMsg << "monome read interrupted: bytes read on retry " << (int) bytesRead << std::endl << std::ends;
+								traceMsg << "monome read interrupted: bytes read on retry " << (int) bytesRead << '\n' << std::ends;
 								mTrace->Trace(traceMsg.str());
 							}
 							++bytesRead;
@@ -548,7 +548,7 @@ Monome40hFtqt::DeviceServiceThread()
 							const byte n2 = readData[0] & 0x0f;
 
 							std::strstream traceMsg;
-							traceMsg << "monome read interrupted: retry " << cnt << " failed cmd(" << (short)n1 << " " << (short)n2 << ")" << std::endl << std::ends;
+							traceMsg << "monome read interrupted: retry " << cnt << " failed cmd(" << (short)n1 << " " << (short)n2 << ")\n" << std::ends;
 							mTrace->Trace(traceMsg.str());
 						}
 						SLEEP(10);
@@ -564,7 +564,7 @@ Monome40hFtqt::DeviceServiceThread()
 					// if bytes is 0, then we entered the timeout interrupt block 
 					// and reset it to 0 but then failed to read anything on the retry
 					std::strstream traceMsg;
-					traceMsg << "monome read error: bytes read " << (int) bytesRead << " command " << (readData[0] >> 4) << " " << (readData[0] & 0x0f) << std::endl << std::ends;
+					traceMsg << "monome read error: bytes read " << (int) bytesRead << " command " << (readData[0] >> 4) << " " << (readData[0] & 0x0f) << '\n' << std::ends;
 					mTrace->Trace(traceMsg.str());
 				}
 			}
@@ -578,7 +578,7 @@ Monome40hFtqt::DeviceServiceThread()
 			if (mTrace && !consecutiveReadErrors)
 			{
 				std::strstream traceMsg;
-				traceMsg << "monome read error" << std::endl << std::ends;
+				traceMsg << "monome read error\n" << std::ends;
 				mTrace->Trace(traceMsg.str());
 			}
 
@@ -588,7 +588,7 @@ Monome40hFtqt::DeviceServiceThread()
 				if (mTrace)
 				{
 					std::strstream traceMsg;
-					traceMsg << "reconnecting to monome due to read errors" << std::endl << std::ends;
+					traceMsg << "reconnecting to monome due to read errors\n" << std::ends;
 					mTrace->Trace(traceMsg.str());
 				}
 

@@ -478,7 +478,7 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 		{
 			const std::string byteDump(::GetAsciiHexStr(&bytes[5], len - 5, true));
 			std::strstream traceMsg;
-			traceMsg << byteDump.c_str() << std::endl << std::ends;
+			traceMsg << byteDump.c_str() << '\n' << std::ends;
 			mTrace->Trace(std::string(traceMsg.str()));
 		}
 	}
@@ -953,9 +953,9 @@ AxeFx3Manager::ReceiveFirmwareVersionResponse(const byte * bytes, int len)
 	if (mTrace)
 	{
 		std::strstream traceMsg;
-		traceMsg << "Axe-Fx " << model << "firmware version " << (int) bytes[6] << "." << (int) bytes[7] << std::endl;
+		traceMsg << "Axe-Fx " << model << "firmware version " << (int) bytes[6] << "." << (int) bytes[7] << '\n';
 		if (len > 10)
-			traceMsg << "Axe-Fx " << model << "USB firmware version " << (int)bytes[9] << "." << (int)bytes[10] << std::endl;
+			traceMsg << "Axe-Fx " << model << "USB firmware version " << (int)bytes[9] << "." << (int)bytes[10] << '\n';
 		traceMsg << std::ends;
 		mTrace->Trace(std::string(traceMsg.str()));
 	}
@@ -1319,7 +1319,7 @@ AxeFx3Manager::ReceiveLooperState(byte newLoopState)
 	if (mMainDisplay)
 	{
 		std::strstream traceMsg;
-		traceMsg << "AxeFx lpr: " << GetLooperStateDesc(mLooperState) << std::endl << std::ends;
+		traceMsg << "AxeFx lpr: " << GetLooperStateDesc(mLooperState) << '\n' << std::ends;
 		mMainDisplay->TransientTextOut(std::string(traceMsg.str()));
 	}
 }

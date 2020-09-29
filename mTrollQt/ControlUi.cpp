@@ -256,7 +256,7 @@ ControlUi::LoadUi(const std::string & uiSettingsFile)
 		for (int idx = 0; idx < kMidiOutCnt; ++idx)
 		{
 			std::strstream msg;
-			msg << "  " << idx << ": " << midiOut->GetMidiOutDeviceName(idx) << std::endl << std::ends;
+			msg << "  " << idx << ": " << midiOut->GetMidiOutDeviceName(idx) << '\n' << std::ends;
 			Trace(msg.str());
 		}
 		Trace("\n");
@@ -272,7 +272,7 @@ ControlUi::LoadUi(const std::string & uiSettingsFile)
 		for (int idx = 0; idx < kMidiInCnt; ++idx)
 		{
 			std::strstream msg;
-			msg << "  " << idx << ": " << midiIn->GetMidiInDeviceName(idx) << std::endl << std::ends;
+			msg << "  " << idx << ": " << midiIn->GetMidiInDeviceName(idx) << '\n' << std::ends;
 			Trace(msg.str());
 		}
 		Trace("\n");
@@ -1501,9 +1501,9 @@ ControlUi::OpenMidiOuts()
 		const unsigned int kDeviceIdx = mMidiOut.first;
 
 		if (curOut->OpenMidiOut(kDeviceIdx))
-			traceMsg << "Opened MIDI out " << kDeviceIdx << " " << curOut->GetMidiOutDeviceName(kDeviceIdx) << std::endl << std::ends;
+			traceMsg << "Opened MIDI out " << kDeviceIdx << " " << curOut->GetMidiOutDeviceName(kDeviceIdx) << '\n' << std::ends;
 		else
-			traceMsg << "Failed to open MIDI out " << kDeviceIdx << std::endl << std::ends;
+			traceMsg << "Failed to open MIDI out " << kDeviceIdx << '\n' << std::ends;
 
 		Trace(traceMsg.str());
 	}
@@ -1877,7 +1877,7 @@ ControlUi::UpdateAdcs(const bool adcOverrides[ExpressionPedals::PedalCount])
 		if (mTraceDisplay)
 		{
 			std::strstream traceMsg;
-			traceMsg << "  ADC port " << idx << (enable ? " enabled" : " disabled") << std::endl << std::ends;
+			traceMsg << "  ADC port " << idx << (enable ? " enabled" : " disabled") << '\n' << std::ends;
 			Trace(std::string(traceMsg.str()));
 		}
 	}
@@ -2123,9 +2123,9 @@ ControlUi::OpenMidiIns()
 		const unsigned int kDeviceIdx = mMidiIn.first;
 
 		if (curIn->OpenMidiIn(kDeviceIdx))
-			traceMsg << "Opened MIDI in " << kDeviceIdx << " " << curIn->GetMidiInDeviceName(kDeviceIdx) << std::endl << std::ends;
+			traceMsg << "Opened MIDI in " << kDeviceIdx << " " << curIn->GetMidiInDeviceName(kDeviceIdx) << '\n' << std::ends;
 		else
-			traceMsg << "Failed to open MIDI in " << kDeviceIdx << std::endl << std::ends;
+			traceMsg << "Failed to open MIDI in " << kDeviceIdx << '\n' << std::ends;
 
 		Trace(traceMsg.str());
 	}
@@ -2182,7 +2182,7 @@ ControlUi::SuspendMidi()
 	if (anySuspended)
 	{
 		std::strstream msg;
-		msg << "Suspended MIDI connections" << std::endl << std::ends;
+		msg << "Suspended MIDI connections\n" << std::ends;
 		Trace(msg.str());
 	}
 
@@ -2204,7 +2204,7 @@ ControlUi::ResumeMidi()
 	if (allResumed)
 	{
 		std::strstream msg;
-		msg << "Resumed MIDI connections" << std::endl << std::ends;
+		msg << "Resumed MIDI connections\n" << std::ends;
 		Trace(msg.str());
 	}
 

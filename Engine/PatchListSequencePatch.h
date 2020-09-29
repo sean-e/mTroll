@@ -206,7 +206,7 @@ public:
 			if (!curPatch && trc)
 			{
 				std::strstream traceMsg;
-				traceMsg << "Patch " << curNum << " referenced in PatchListSequence " << GetName() << " (" << GetNumber() << ") does not exist!" << std::endl << std::ends;
+				traceMsg << "Patch " << curNum << " referenced in PatchListSequence " << GetName() << " (" << GetNumber() << ") does not exist!\n" << std::ends;
 				trc->Trace(std::string(traceMsg.str()));
 			}
 		}

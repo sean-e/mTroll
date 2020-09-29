@@ -116,7 +116,7 @@ ExpressionControl::Calibrate(const PedalCalibration & calibrationSetting,
 			if (traceDisp)
 			{
 				std::strstream traceMsg;
-				traceMsg << "Error setting up expression pedal bottom toggle - bottomToggleZoneSize and/or bottomToggleDeadzoneSize are not set" << std::endl << std::ends;
+				traceMsg << "Error setting up expression pedal bottom toggle - bottomToggleZoneSize and/or bottomToggleDeadzoneSize are not set\n" << std::ends;
 				traceDisp->Trace(std::string(traceMsg.str()));
 			}
 		}
@@ -145,7 +145,7 @@ ExpressionControl::Calibrate(const PedalCalibration & calibrationSetting,
 			if (traceDisp)
 			{
 				std::strstream traceMsg;
-				traceMsg << "Error setting up expression pedal top toggle - topToggleZoneSize and/or topToggleDeadzoneSize are not set" << std::endl << std::ends;
+				traceMsg << "Error setting up expression pedal top toggle - topToggleZoneSize and/or topToggleDeadzoneSize are not set\n" << std::ends;
 				traceDisp->Trace(std::string(traceMsg.str()));
 			}
 		}
@@ -499,14 +499,14 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 			if (gEnableStatusDetails)
 			{
 				if (bottomDeactivated)
-					displayMsg << "bottom toggle deactivated" << std::endl;
+					displayMsg << "bottom toggle deactivated\n";
 				else if (bottomActivated)
-					displayMsg << "bottom toggle activated" << std::endl;
+					displayMsg << "bottom toggle activated\n";
 
 				if (topDeactivated)
-					displayMsg << "top toggle deactivated" << std::endl;
+					displayMsg << "top toggle deactivated\n";
 				else if (topActivated)
-					displayMsg << "top toggle activated" << std::endl;
+					displayMsg << "top toggle activated\n";
 
 				if (doCcSend)
 				{
@@ -519,9 +519,9 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 				}
 
 				if (bottomDeadzone)
-					displayMsg << "pedal bottom deadzone" << std::endl;
+					displayMsg << "pedal bottom deadzone\n";
 				else if (topDeadzone)
-					displayMsg << "pedal top deadzone" << std::endl;
+					displayMsg << "pedal top deadzone\n";
 			}
 			else
 			{
@@ -621,12 +621,12 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 					}
 				}
 	
-				displayMsg << std::endl << std::ends;
+				displayMsg << '\n' << std::ends;
 				mainDisplay->TransientTextOut(displayMsg.str());
 			}
 			else if (bottomDeadzone || topDeadzone)
 			{
-				displayMsg << std::endl << std::ends;
+				displayMsg << '\n' << std::ends;
 				mainDisplay->TransientTextOut(displayMsg.str());
 			}
 			else if (gEnableStatusDetails || !displayMsg.pcount())
@@ -635,7 +635,7 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 			}
 			else
 			{ 
-				displayMsg << std::endl << std::ends;
+				displayMsg << '\n' << std::ends;
 				mainDisplay->TransientTextOut(displayMsg.str());
 			}
 		}
