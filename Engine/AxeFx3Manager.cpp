@@ -953,7 +953,10 @@ AxeFx3Manager::ReceiveFirmwareVersionResponse(const byte * bytes, int len)
 	if (mTrace)
 	{
 		std::strstream traceMsg;
-		traceMsg << "Axe-Fx " << model << "version " << (int) bytes[6] << "." << (int) bytes[7] << std::endl << std::ends;
+		traceMsg << "Axe-Fx " << model << "firmware version " << (int) bytes[6] << "." << (int) bytes[7] << std::endl;
+		if (len > 10)
+			traceMsg << "Axe-Fx " << model << "USB firmware version " << (int)bytes[9] << "." << (int)bytes[10] << std::endl;
+		traceMsg << std::ends;
 		mTrace->Trace(std::string(traceMsg.str()));
 	}
 
