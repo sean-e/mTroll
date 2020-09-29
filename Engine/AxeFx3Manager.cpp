@@ -332,7 +332,10 @@ IsAxeFx3Sysex(const byte * bytes, const int len)
 
 enum class AxeFx3MessageIds
 {
+	EditorSyncMsg	= 0x01,
+
 	FirmwareVersion	= 0x08,
+
 	EffectBypass	= 0x0a,
 	EffectChannel	= 0x0b,
 	Scene			= 0x0c,
@@ -341,8 +344,11 @@ enum class AxeFx3MessageIds
 	LooperState		= 0x0f,
 	TapTempo		= 0x10,
 	Tuner			= 0x11,
+	EditorTunerMsg	= 0x12,
 	StatusDump		= 0x13,
 	Tempo			= 0x14,
+
+	EditorSyncMsg2	= 0x47,
 
 	Ack				= 0x64
 };
@@ -355,6 +361,10 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 
 	switch (bytes[5])
 	{
+	case AxeFx3MessageIds::EditorSyncMsg:
+	case AxeFx3MessageIds::EditorSyncMsg2:
+	case AxeFx3MessageIds::EditorTunerMsg:
+		return;
 	case AxeFx3MessageIds::FirmwareVersion:
 		if (mFirmwareMajorVersion)
 			return;
@@ -432,6 +442,7 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 				return;
 
 			case AxeFx3MessageIds::Tuner:
+			case AxeFx3MessageIds::EditorTunerMsg:
 				// tuner ack
 				return;
 
@@ -444,13 +455,18 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 					return;
 				}
 				break;
+
+			case 0:
+				if (len > 8 && 0 == bytes[7])
+					return; // frequent ack when editor is open (64 00 00)
+				break;
 			}
 		}
 
 		// indicates an error, unsupported message, or unhandled ack
 		if (kDbgFlag && mTrace)
 		{
-			const std::string msg("AxeFx: error, unsupported message, or unhandled ack\n");
+			const std::string msg("AxeFx3: error, unsupported message, or unhandled ack:\n");
 			mTrace->Trace(msg);
 		}
 
