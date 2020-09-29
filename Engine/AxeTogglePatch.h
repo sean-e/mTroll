@@ -101,6 +101,7 @@ public:
 		if (!mIsScene)
 			return;
 
+		// this causes preset and scene state to appear during for example MidiControlEngine::SwitchReleased_NavAndDescMode
 		if (IsActive())
 		{
 			if (!mCmdsA.empty())

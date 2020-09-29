@@ -1447,7 +1447,7 @@ AxeFx3Manager::DisplayPresetStatus()
 	}
 
 	if (curText.length())
-		mMainDisplay->TextOut(curText);
+		mMainDisplay->TransientTextOut(curText + '\n');
 }
 
 void
