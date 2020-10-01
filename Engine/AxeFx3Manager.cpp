@@ -722,12 +722,6 @@ AxeFx3Manager::DelayedLooperSyncFromAxe()
 void
 AxeFx3Manager::PollingSyncTimerFired()
 {
-	if (!mFirmwareMajorVersion)
-	{
-		// not connected yet
-		return;
-	}
-
 	if (mLooperOnceIsRunning)
 		RequestLooperState();
 

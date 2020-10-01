@@ -991,61 +991,35 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		if (mSwitchDisplay)
 		{
 			mSwitchDisplay->SetSwitchText(0, "1");
-			mSwitchDisplay->ForceSwitchDisplay(0, mEngineLedColor);
 			mSwitchDisplay->SetSwitchText(1, "2");
-			mSwitchDisplay->ForceSwitchDisplay(1, mEngineLedColor);
 			mSwitchDisplay->SetSwitchText(2, "3");
-			mSwitchDisplay->ForceSwitchDisplay(2, mEngineLedColor);
 			mSwitchDisplay->SetSwitchText(3, "4");
-			mSwitchDisplay->ForceSwitchDisplay(3, mEngineLedColor);
 			mSwitchDisplay->SetSwitchText(4, "5");
-			mSwitchDisplay->ForceSwitchDisplay(4, mEngineLedColor);
 			mSwitchDisplay->SetSwitchText(5, "6");
-			mSwitchDisplay->ForceSwitchDisplay(5, mEngineLedColor);
 			mSwitchDisplay->SetSwitchText(6, "7");
-			mSwitchDisplay->ForceSwitchDisplay(6, mEngineLedColor);
 			mSwitchDisplay->SetSwitchText(7, "8");
-			mSwitchDisplay->ForceSwitchDisplay(7, mEngineLedColor);
 			mSwitchDisplay->SetSwitchText(8, "9");
-			mSwitchDisplay->ForceSwitchDisplay(8, mEngineLedColor);
 			mSwitchDisplay->SetSwitchText(9, "0");
-			mSwitchDisplay->ForceSwitchDisplay(9, mEngineLedColor);
 			mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "Backspace");
-			mSwitchDisplay->ForceSwitchDisplay(mDecrementSwitchNumber, mEngineLedColor);
 			if (emBankDirect == mMode)
-			{
 				mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Commit");
-				mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, mEngineLedColor);
-			}
 			else if (emProgramChangeDirect == mMode)
 			{
 				mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Clear");
-				mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, mEngineLedColor);
 				mSwitchDisplay->SetSwitchText(10, "Set channel");
-				mSwitchDisplay->ForceSwitchDisplay(10, mEngineLedColor);
 				mSwitchDisplay->SetSwitchText(11, "Send bank select");
-				mSwitchDisplay->ForceSwitchDisplay(11, mEngineLedColor);
 				mSwitchDisplay->SetSwitchText(12, "Send program change");
-				mSwitchDisplay->ForceSwitchDisplay(12, mEngineLedColor);
 				mSwitchDisplay->SetSwitchText(13, "Decrement program");
-				mSwitchDisplay->ForceSwitchDisplay(13, mEngineLedColor);
 				mSwitchDisplay->SetSwitchText(14, "Increment program");
-				mSwitchDisplay->ForceSwitchDisplay(14, mEngineLedColor);
 			}
 			else if (emControlChangeDirect == mMode)
 			{
 				mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Clear");
-				mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, mEngineLedColor);
 				mSwitchDisplay->SetSwitchText(10, "Set channel");
-				mSwitchDisplay->ForceSwitchDisplay(10, mEngineLedColor);
 				mSwitchDisplay->SetSwitchText(11, "Set controller");
-				mSwitchDisplay->ForceSwitchDisplay(11, mEngineLedColor);
 				mSwitchDisplay->SetSwitchText(12, "Send control change");
-				mSwitchDisplay->ForceSwitchDisplay(12, mEngineLedColor);
 				mSwitchDisplay->SetSwitchText(13, "Decrement value");
-				mSwitchDisplay->ForceSwitchDisplay(13, mEngineLedColor);
 				mSwitchDisplay->SetSwitchText(14, "Increment value");
-				mSwitchDisplay->ForceSwitchDisplay(14, mEngineLedColor);
 			}
 		}
 		break;
