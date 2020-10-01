@@ -156,10 +156,10 @@ AxeFx3Manager::AxeFx3Manager(IMainDisplay * mainDisp,
 	mDelayedLooperSyncTimer->setSingleShot(true);
 	mDelayedLooperSyncTimer->setInterval(kDefaultEffectsSyncTimerInterval);
 
-	mActiveLooperSyncTimer = new QTimer(this);
-	connect(mActiveLooperSyncTimer, &QTimer::timeout, this, &AxeFx3Manager::SyncLooperFromAxe);
-	mActiveLooperSyncTimer->setSingleShot(false);
-	mActiveLooperSyncTimer->setInterval(2000);
+	mPollingSyncTimer = new QTimer(this);
+	connect(mPollingSyncTimer, &QTimer::timeout, this, &AxeFx3Manager::PollingSyncTimerFired);
+	mPollingSyncTimer->setSingleShot(false);
+	mPollingSyncTimer->setInterval(2000);
 
 	LoadEffectPool();
 }
@@ -284,6 +284,7 @@ AxeFx3Manager::CompleteInit(IMidiOutPtr midiOut)
 	}
 
 	SendFirmwareVersionQuery();
+	mPollingSyncTimer->start();
 }
 
 void
@@ -372,15 +373,22 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 		// update here rather than requesting a status dump
 		return;
 	case AxeFx3MessageIds::Scene:
-// 		if (len > 8)
-// 			ReceiveSceneStatus(&bytes[6], len - 8); // -6 + checksum and EOX
+		// we read scene number when we get the scene name, so don't need to
+		// do anything here
 		return;
 	case AxeFx3MessageIds::PresetName:
 		if (len > 8)
 		{
+			const int curPreset = mCurrentAxePreset;
 			ReceivePresetNumber(&bytes[6], len - 6);
-			ReceivePresetName(&bytes[8], len - 10); // -8 + checksum and EOX
-			RequestSceneName();
+			if (mCurrentAxePreset != curPreset || mPendingPresetRequests)
+			{
+				if (mPendingPresetRequests)
+					--mPendingPresetRequests;
+				ReceivePresetName(&bytes[8], len - 10); // -8 + checksum and EOX
+				mCurrentAxeSceneName.clear();
+				RequestSceneName();
+			}
 		}
 		return;
 	case AxeFx3MessageIds::SceneName:
@@ -399,7 +407,6 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 			DelayedLooperSyncFromAxe();
 		return;
 	case AxeFx3MessageIds::TapTempo:
-		// Tempo: f0 00 01 74 10 10 f7
 		if (mTempoPatch)
 		{
 			mTempoPatch->ActivateSwitchDisplay(mSwitchDisplay, true);
@@ -556,12 +563,12 @@ AxeFx3Manager::Shutdown()
 		mDelayedLooperSyncTimer = nullptr;
 	}
 
-	if (mActiveLooperSyncTimer)
+	if (mPollingSyncTimer)
 	{
-		if (mActiveLooperSyncTimer->isActive())
-			mActiveLooperSyncTimer->stop();
-		delete mActiveLooperSyncTimer;
-		mActiveLooperSyncTimer = nullptr;
+		if (mPollingSyncTimer->isActive())
+			mPollingSyncTimer->stop();
+		delete mPollingSyncTimer;
+		mPollingSyncTimer = nullptr;
 	}
 
 	mAxeEffectInfo.clear();
@@ -713,56 +720,19 @@ AxeFx3Manager::DelayedLooperSyncFromAxe()
 }
 
 void
-AxeFx3Manager::ManageActiveLooperTimer(bool start)
+AxeFx3Manager::PollingSyncTimerFired()
 {
-	if (!mActiveLooperSyncTimer)
-		return;
+	if (mLooperOnceIsRunning)
+		RequestLooperState();
 
-	if (mActiveLooperSyncTimer->isActive())
-	{
-		if (start)
-			return;
+	// it would be nice if we could ask for preset number, but there 
+	// is no query for that, so ask for preset name whose response
+	// includes the number.
+	RequestPresetName();
 
-		class StopActiveLooperTimer : public QEvent
-		{
-			AxeFx3ManagerPtr mMgr;
-
-		public:
-			StopActiveLooperTimer(AxeFx3ManagerPtr mgr) :
-				QEvent(User),
-				mMgr(mgr)
-			{ }
-
-			~StopActiveLooperTimer()
-			{
-				mMgr->mActiveLooperSyncTimer->stop();
-			}
-		};
-
-		QCoreApplication::postEvent(this, new StopActiveLooperTimer(GetSharedThis()));
-		return;
-	}
-
-	if (start)
-	{
-		class StartActiveLooperTimer : public QEvent
-		{
-			AxeFx3ManagerPtr mMgr;
-
-		public:
-			StartActiveLooperTimer(AxeFx3ManagerPtr mgr) :
-				QEvent(User),
-				mMgr(mgr)
-			{ }
-
-			~StartActiveLooperTimer()
-			{
-				mMgr->mActiveLooperSyncTimer->start();
-			}
-		};
-
-		QCoreApplication::postEvent(this, new StartActiveLooperTimer(GetSharedThis()));
-	}
+	// RequestPresetName increments mPendingUpdates
+	// we decrement it since we are just polling for changes
+	--mPendingPresetRequests;
 }
 
 Bytes
@@ -960,6 +930,7 @@ AxeFx3Manager::ReceiveFirmwareVersionResponse(const byte * bytes, int len)
 void
 AxeFx3Manager::RequestPresetName()
 {
+	++mPendingPresetRequests;
 	if (!mFirmwareMajorVersion)
 		SendFirmwareVersionQuery();
 
@@ -1000,11 +971,7 @@ AxeFx3Manager::ReceivePresetName(const byte * bytes, int len)
 	::CopyAndTrimName(name, bytes, len);
 
 	if (mMainDisplay)
-	{
 		mCurrentAxePresetName = name;
-		mCurrentAxeSceneName.clear();
-// 		DisplayPresetStatus();
-	}
 }
 
 void
@@ -1160,8 +1127,6 @@ AxeFx3Manager::ReceivePresetNumber(const byte * bytes, int len)
 	if (len < 3)
 		return;
 
-	mCurrentAxePresetName.clear();
-	mCurrentAxeSceneName.clear();
 	// 0xdd Preset Number bits 6-0
 	// 0xdd Preset Number bits 13-7
 	const int presetLs = bytes[0];
@@ -1269,16 +1234,14 @@ AxeFx3Manager::ReceiveLooperState(byte newLoopState)
 			if (curLooperPatch->IsActive())
 				curLooperPatch->UpdateState(mSwitchDisplay, false);
 
-			if (mActiveLooperSyncTimer->isActive())
-				ManageActiveLooperTimer(false);
+			mLooperOnceIsRunning = false;
 		}
 		else
 		{
 			if (!curLooperPatch->IsActive())
 				curLooperPatch->UpdateState(mSwitchDisplay, true);
 
-			if (!mActiveLooperSyncTimer->isActive())
-				ManageActiveLooperTimer(true);
+			mLooperOnceIsRunning = true;
 		}
 	}
 
@@ -1406,11 +1369,6 @@ AxeFx3Manager::UpdateSceneStatus(int newScene, bool internalUpdate)
 
 	if (internalUpdate)
 		RequestSceneName();
-
-// 	if (mCurrentAxePresetName.empty())
-// 		RequestPresetName();
-// 	else
-// 		DisplayPresetStatus();
 }
 
 void
@@ -1488,7 +1446,11 @@ AxeFx3Manager::RequestProgramChange(int offset)
 	// program change
 	cmd.push_back(0xc0 | GetChannel());
 	cmd.push_back(nextPreset);
-	mMidiOut->MidiOut(cmd);
+
+	{
+		QMutexLocker lock(&mQueryLock);
+		mMidiOut->MidiOut(cmd);
+	}
 
 	SyncNameAndEffectsFromAxe();
 }
@@ -1519,7 +1481,10 @@ AxeFx3Manager::RequestSceneChage(int offset)
 	const Bytes cmd{ GetSceneSelectCommandString(nextScene + 1) };
 	if (!cmd.empty())
 	{
-		mMidiOut->MidiOut(cmd);
+		{
+			QMutexLocker lock(&mQueryLock);
+			mMidiOut->MidiOut(cmd);
+		}
 
 		SyncNameAndEffectsFromAxe();
 	}
