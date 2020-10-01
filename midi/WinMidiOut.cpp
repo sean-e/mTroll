@@ -149,7 +149,7 @@ WinMidiOut::OpenMidiOut(unsigned int deviceIdx)
 #define	MIDI_STOP		0xFC
 
 bool
-WinMidiOut::MidiOut(const Bytes & bytes)
+WinMidiOut::MidiOut(const Bytes & bytes, bool useIndicator /*= true*/)
 {
 	if (!mMidiOut)
 	{
@@ -162,7 +162,8 @@ WinMidiOut::MidiOut(const Bytes & bytes)
 	if (!kDataSize)
 		return false;
 
-	IndicateActivity();
+	if (useIndicator)
+		IndicateActivity();
 
 	// number of data bytes for each status
 	static const int kMsgDataBytesLen = 23;

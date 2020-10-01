@@ -124,7 +124,7 @@ private:
 	void ReceivePresetNumber(const byte * bytes, int len);
 	void ReceiveSceneStatus(const byte * bytes, int len);
 
-	void RequestPresetName();
+	void RequestPresetName(bool silentRequest = false);
 	void ReceivePresetName(const byte * bytes, int len);
 	void RequestSceneName();
 	void ReceiveSceneName(const byte * bytes, int len);

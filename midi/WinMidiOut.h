@@ -47,7 +47,7 @@ public:
 	virtual void EnableActivityIndicator(bool enable) override;
 	virtual bool OpenMidiOut(unsigned int deviceIdx) override;
 	virtual bool IsMidiOutOpen() const override {return mMidiOut != nullptr;}
-	virtual bool MidiOut(const Bytes & bytes) override;
+	virtual bool MidiOut(const Bytes & bytes, bool useIndicator = true) override;
 	virtual void MidiOut(byte singleByte, bool useIndicator = true) override;
 	virtual void MidiOut(byte byte1, byte byte2, bool useIndicator = true) override;
 	virtual void MidiOut(byte byte1, byte byte2, byte byte3, bool useIndicator = true) override;

@@ -728,7 +728,7 @@ AxeFx3Manager::PollingSyncTimerFired()
 	// it would be nice if we could ask for preset number, but there 
 	// is no query for that, so ask for preset name whose response
 	// includes the number.
-	RequestPresetName();
+	RequestPresetName(true);
 
 	// RequestPresetName increments mPendingUpdates
 	// we decrement it since we are just polling for changes
@@ -928,7 +928,7 @@ AxeFx3Manager::ReceiveFirmwareVersionResponse(const byte * bytes, int len)
 }
 
 void
-AxeFx3Manager::RequestPresetName()
+AxeFx3Manager::RequestPresetName(bool silentRequest /*= false*/)
 {
 	++mPendingPresetRequests;
 	if (!mFirmwareMajorVersion)
@@ -940,7 +940,7 @@ AxeFx3Manager::RequestPresetName()
 
 	Bytes bb{ FRACTAL_SYSEX_HEADER_BYTES, Axe3, (byte)AxeFx3MessageIds::PresetName, 0x7f, 0x7f };
 	AppendChecksumAndTerminate(bb);
-	mMidiOut->MidiOut(bb);
+	mMidiOut->MidiOut(bb, !silentRequest);
 }
 
 static void
