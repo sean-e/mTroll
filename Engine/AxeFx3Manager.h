@@ -133,7 +133,7 @@ private:
 	void RequestStatusDump();
 	void ReceiveStatusDump(const byte * bytes, int len);
 	void RequestProgramChange(int offset);
-	void RequestSceneChage(int offset);
+	void RequestSceneChange(int offset);
 	void TurnOffLedsForNaEffects();
 
 	static void AppendChecksumAndTerminate(Bytes &data);

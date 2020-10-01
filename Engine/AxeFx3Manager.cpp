@@ -1468,7 +1468,7 @@ AxeFx3Manager::DecrementPreset()
 }
 
 void
-AxeFx3Manager::RequestSceneChage(int offset)
+AxeFx3Manager::RequestSceneChange(int offset)
 {
 	if (!mMidiOut)
 		return;
@@ -1493,13 +1493,13 @@ AxeFx3Manager::RequestSceneChage(int offset)
 void
 AxeFx3Manager::IncrementScene()
 {
-	RequestSceneChage(1);
+	RequestSceneChange(1);
 }
 
 void
 AxeFx3Manager::DecrementScene()
 {
-	RequestSceneChage(-1);
+	RequestSceneChange(-1);
 }
 
 void
