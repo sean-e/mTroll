@@ -381,9 +381,9 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 		{
 			const int curPreset = mCurrentAxePreset;
 			ReceivePresetNumber(&bytes[6], len - 6);
-			if (mCurrentAxePreset != curPreset || mPendingPresetRequests)
+			if (mCurrentAxePreset != curPreset || mPendingPresetRequests > 0)
 			{
-				if (mPendingPresetRequests)
+				if (mPendingPresetRequests > 0)
 					--mPendingPresetRequests;
 				ReceivePresetName(&bytes[8], len - 10); // -8 + checksum and EOX
 				mCurrentAxeSceneName.clear();
