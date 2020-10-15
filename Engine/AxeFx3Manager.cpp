@@ -252,12 +252,7 @@ AxeFx3Manager::SetSyncPatch(PatchPtr patch, int effectId, int channel)
 	}
 
 	if (mTrace && 
-		0 != normalizedEffectName.find("looper ") &&
-		0 != normalizedEffectName.find("external ") &&
-		normalizedEffectName != "tuner" &&
-		normalizedEffectName != "global preset effect toggle" &&
-		normalizedEffectName != "volume increment" &&
-		normalizedEffectName != "volume decrement")
+		0 != normalizedEffectName.find("looper "))
 	{
 		std::string msg("Warning: no Axe-Fx effect found to sync for '" + patch->GetName() + "'\n");
 		mTrace->Trace(msg);
@@ -344,7 +339,14 @@ enum class AxeFx3MessageIds
 
 	EditorSyncMsg2	= 0x47,
 
-	Ack				= 0x64
+	Ack				= 0x64,
+
+	EditorAmpMsg1	= 0x74,			// Editor command: click on amp
+	EditorAmpMsg2	= 0x75,			// Editor command: click on amp
+	EditorAmpMsg3	= 0x76,			// Editor command: click on amp
+	PresetExportRequestAck = 0x77,	// Editor command: Export preset
+	PresetExportResponse = 0x78,	// Editor command: Export preset
+	PresetExportResponse2 = 0x79	// Editor command: Export preset
 };
 
 void
@@ -358,6 +360,12 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 	case AxeFx3MessageIds::EditorSyncMsg:
 	case AxeFx3MessageIds::EditorSyncMsg2:
 	case AxeFx3MessageIds::EditorTunerMsg:
+	case AxeFx3MessageIds::EditorAmpMsg1:
+	case AxeFx3MessageIds::EditorAmpMsg2:
+	case AxeFx3MessageIds::EditorAmpMsg3:
+	case AxeFx3MessageIds::PresetExportRequestAck:
+	case AxeFx3MessageIds::PresetExportResponse:
+	case AxeFx3MessageIds::PresetExportResponse2:
 		return;
 	case AxeFx3MessageIds::FirmwareVersion:
 		if (mFirmwareMajorVersion)
@@ -1802,6 +1810,10 @@ Axe3SynonymNormalization(std::string & name)
 		MapName("ext 10", "external 10");
 		MapName("ext 11", "external 11");
 		MapName("ext 12", "external 12");
+		MapName("ext 13", "external 13");
+		MapName("ext 14", "external 14");
+		MapName("ext 15", "external 15");
+		MapName("ext 16", "external 16");
 		MapName("extern 1", "external 1");
 		MapName("extern 2", "external 2");
 		MapName("extern 3", "external 3");
@@ -1814,6 +1826,10 @@ Axe3SynonymNormalization(std::string & name)
 		MapName("extern 10", "external 10");
 		MapName("extern 11", "external 11");
 		MapName("extern 12", "external 12");
+		MapName("extern 13", "external 13");
+		MapName("extern 14", "external 14");
+		MapName("extern 15", "external 15");
+		MapName("extern 16", "external 16");
 		break;
 	case 'f':
 		MapName("fb ret", "return 1");
