@@ -1102,6 +1102,14 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				if (-1 == ledInactiveColor)
 					ledInactiveColor = LookUpColor("*", "axexy", 0, -1);
 			}
+			else if (-1 != patchName.find("a/b") || -1 != patchName.find("A/B"))
+			{
+				if (-1 == ledActiveColor)
+					ledActiveColor = LookUpColor("*", "axeCh", 1, -1);
+
+				if (-1 == ledInactiveColor)
+					ledInactiveColor = LookUpColor("*", "axeCh", 0, -1);
+			}
 
 			if (-1 == ledActiveColor)
 				ledActiveColor = LookUpColor(device, patchType, 1, kFirstColorPreset);
