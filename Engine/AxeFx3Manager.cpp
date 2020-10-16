@@ -445,6 +445,12 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 		{
 			switch (bytes[6])
 			{
+			case AxeFx3MessageIds::EditorAmpMsg1:
+			case AxeFx3MessageIds::EditorAmpMsg2:
+			case AxeFx3MessageIds::EditorAmpMsg3:
+				// editor ack
+				return;
+
 			case AxeFx3MessageIds::TapTempo:
 				// tap tempo ack
 				return;
