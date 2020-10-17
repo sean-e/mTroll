@@ -1873,6 +1873,10 @@ Axe3SynonymNormalization(std::string & name)
 		MapName("half-speed", "looper half");
 		break;
 	case 'i':
+		MapName("in 1", "input 1");
+		MapName("in 2", "input 2");
+		MapName("in 3", "input 3");
+		MapName("in 4", "input 4");
 		MapName("in vol", "input volume");
 		MapName("input", "input volume");
 		MapName("input vol", "input volume");
@@ -1986,7 +1990,10 @@ Axe3SynonymNormalization(std::string & name)
 		MapName("octave 2", "pitch shift 2");
 		MapName("octave 3", "pitch shift 3");
 		MapName("octave 4", "pitch shift 4");
-// 		MapName("out", "output");
+		MapName("out 1", "output 1");
+		MapName("out 2", "output 2");
+		MapName("out 3", "output 3");
+		MapName("out 4", "output 4");
 		MapName("out 1 vol", "out 1 volume");
 		MapName("out 2 vol", "out 2 volume");
 		MapName("out 3 vol", "out 3 volume");
