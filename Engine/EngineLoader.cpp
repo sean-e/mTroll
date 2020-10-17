@@ -752,9 +752,9 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				{
 					// <AxeProgramChange group="A" device="Axe-Fx" program="0" />
 					// use data2 as bank change
-					// data1 val range 0 - 383
+					// data1 val range 0 - 1023
 					childElem->QueryIntAttribute("program", &data1);
-					if (0 > data1 || data1 > 383)
+					if (0 > data1 || data1 > 1023)
 					{
 						if (mTraceDisplay)
 						{
