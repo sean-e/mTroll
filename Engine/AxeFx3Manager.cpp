@@ -950,6 +950,9 @@ AxeFx3Manager::ReceiveFirmwareVersionResponse(const byte * bytes, int len)
 void
 AxeFx3Manager::RequestPresetName(bool silentRequest /*= false*/)
 {
+	if (!mMidiOut)
+		return;
+
 	++mPendingPresetRequests;
 	if (!mFirmwareMajorVersion)
 		SendFirmwareVersionQuery();
@@ -997,6 +1000,9 @@ AxeFx3Manager::ReceivePresetName(const byte * bytes, int len)
 void
 AxeFx3Manager::RequestSceneName()
 {
+	if (!mMidiOut)
+		return;
+
 	if (!mFirmwareMajorVersion)
 		SendFirmwareVersionQuery();
 
@@ -1024,6 +1030,9 @@ AxeFx3Manager::ReceiveSceneName(const byte * bytes, int len)
 void
 AxeFx3Manager::RequestStatusDump()
 {
+	if (!mMidiOut)
+		return;
+
 	if (!mFirmwareMajorVersion)
 		SendFirmwareVersionQuery();
 
@@ -1157,6 +1166,9 @@ AxeFx3Manager::ReceivePresetNumber(const byte * bytes, int len)
 void
 AxeFx3Manager::RequestLooperState()
 {
+	if (!mMidiOut)
+		return;
+
 	QMutexLocker lock(&mQueryLock);
 	Bytes bb{ FRACTAL_SYSEX_HEADER_BYTES, Axe3, (byte)AxeFx3MessageIds::LooperState, 0x7f };
 	AppendChecksumAndTerminate(bb);
