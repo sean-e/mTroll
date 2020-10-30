@@ -1,6 +1,6 @@
 ## mTroll Hybrid MIDI Controller
 
-mTroll is the software portion of a hybrid hardware/software MIDI foot controller. mTroll is the MIDI control engine that I use with my [monome-based]( http://monome.org/docs/tech:kits:40h_kit ) foot controller. mTroll outputs MIDI in response to input from the monome or the gui. mTroll can be used standalone without hardware as a virtual foot controller. mTroll has native support for Axe-Fx processors with round tripping of effect block bypass and x/y states, scene control and looper block control.
+mTroll is the software portion of a hybrid hardware/software MIDI foot controller. mTroll is the MIDI control engine that I use with my [monome-based]( http://monome.org/docs/tech:kits:40h_kit ) foot controller. mTroll outputs MIDI in response to input from the monome or the gui. mTroll can be used standalone without hardware as a virtual foot controller. mTroll has native support for Axe-Fx processors with round tripping of effect block bypass and channel states, scene control and looper block control.
 
 [Original Project Homepage](http://www.creepingfog.com/mTroll/index.php)
 
@@ -59,7 +59,7 @@ Other
 ## Download
 
 ### application software
-[mTroll](http://www.creepingfog.com/mTroll/downloads/mTrollSetup.2020.07.12.exe) (build [2020.07.12](docs/changelog.md)) Win32 application installer.
+[mTroll](http://www.creepingfog.com/mTroll/downloads/mTrollSetup.2020.10.30.exe) (build [2020.10.30](docs/changelog.md)) Win32 application installer.
 
 [Usage notes here](docs/docs.md).
 

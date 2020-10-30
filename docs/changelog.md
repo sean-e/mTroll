@@ -1,5 +1,9 @@
 ### mTroll MIDI controller changelog / process milestones
 
+#### 2020.10.30
+- Support for RGB LEDs (using [modified monome firmware](https://github.com/sean-e/monome40hFirmware))
+- Support for Axe-Fx III
+
 #### 2020.08.12
 - Updated to Qt 5.15.0
 
