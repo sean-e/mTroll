@@ -53,8 +53,7 @@ Other
 - Support for multiple MIDI out devices (one MIDI out assignment per patch)  
 - Supports independent labels for each switch/button ([Dr. Z](http://tech.groups.yahoo.com/group/eventidehelps/message/167) )  
 - Supports secondary functions per switch via long-press  
-- User-definable LED brightness  
-- LED state can be inverted (lit when off, unlit when on)
+- User-definable LED colors
 
 ## Download
 
