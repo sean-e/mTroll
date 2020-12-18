@@ -641,11 +641,14 @@
 		<patch name="Axe Volume 4" number="786" device="Axe-Fx" />
 		<patch name="Axe Wah-wah 1" number="787" device="Axe-Fx" />
 		<patch name="Axe Wah-wah 2" number="788" device="Axe-Fx" />
-		<patch name="Axe Fdbk Return" number="789" type="AxeToggle" device="Axe-Fx" cc="24" comment="24 is ext 9 cc" >
-			<!-- The type attribute needs to be explicit since there is no default cc for feedback return. -->
-			<!-- For this to work as expected, external 8 needs to be assigned to 
-					modify feedback return bypass in every preset where it is used. -->
-		</patch>
+		<patch name="Axe Input 1" number="789" device="Axe-Fx" />
+		<patch name="Axe Input 2" number="790" device="Axe-Fx" />
+		<patch name="Axe Input 3" number="791" device="Axe-Fx" />
+		<patch name="Axe Input 4" number="792" device="Axe-Fx" />
+		<patch name="Axe Output 1" number="793" device="Axe-Fx" />
+		<patch name="Axe Output 2" number="794" device="Axe-Fx" />
+		<patch name="Axe Output 3" number="795" device="Axe-Fx" />
+		<patch name="Axe Output 4" number="796" device="Axe-Fx" />
 
 		<patch name="Axe Amp 1 Ch A" number="2000" axeBlockId="Amp 1" axeBlockChannel="A" device="Axe-Fx" />
 		<patch name="Axe Amp 1 Ch B" number="2001" axeBlockId="Amp 1" axeBlockChannel="B" device="Axe-Fx" />
