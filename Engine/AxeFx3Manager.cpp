@@ -752,7 +752,8 @@ AxeFx3Manager::PollingSyncTimerFired()
 
 	// RequestPresetName increments mPendingUpdates
 	// we decrement it since we are just polling for changes
-	--mPendingPresetRequests;
+	if (mPendingPresetRequests > 0)
+		--mPendingPresetRequests;
 }
 
 Bytes
