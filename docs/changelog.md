@@ -1,5 +1,8 @@
 ### mTroll MIDI controller changelog / process milestones
 
+#### 2020.12.17
+- Fixed updating of Axe-Fx III scene info (possibly broken by timer changes in a Windows update)
+
 #### 2020.10.30
 - Support for RGB LEDs (using [modified monome firmware](https://github.com/sean-e/monome40hFirmware))
 - Support for Axe-Fx III
