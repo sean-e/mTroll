@@ -1,5 +1,8 @@
 ### mTroll MIDI controller changelog / process milestones
 
+#### 2021.01.14
+- Reduced main display flicker when updating after Axe-Fx query
+
 #### 2020.12.17
 - Fixed updating of Axe-Fx III scene info (possibly broken by timer changes in a Windows update)
 
