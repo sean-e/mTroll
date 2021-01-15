@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2015,2018,2020 Sean Echevarria
+ * Copyright (C) 2007-2015,2018,2020,2021 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -67,8 +67,9 @@
 #endif
 #include "MainTrollWindow.h"
 
-const int kMaxRows = 8, kMaxCols = 8;
-const int kMaxButtons = kMaxRows * kMaxCols;
+constexpr int kMaxRows = 8, kMaxCols = 8;
+constexpr int kMaxButtons = kMaxRows * kMaxCols;
+constexpr int kMainDisplayTextTimerDuration = 80;
 
 ControlUi::ControlUi(QWidget * parent, ITrollApplication * app) :
 	QWidget(parent),
@@ -82,7 +83,6 @@ ControlUi::ControlUi(QWidget * parent, ITrollApplication * app) :
 	mMaxSwitchId(0),
 	mHardwareUi(nullptr),
 	mLedIntensity(0),
-	mTimeDisplayTimer(nullptr),
 	mDisplayTime(false),
 	mSystemPowerOverride(nullptr),
 	mBackgroundColor(0x1a1a1a),
@@ -197,6 +197,9 @@ ControlUi::Unload()
 	delete mTimeDisplayTimer;
 	mTimeDisplayTimer = nullptr;
 
+	delete mMainDisplayTimer;
+	mMainDisplayTimer = nullptr;
+
 	repaint();
 }
 
@@ -282,6 +285,10 @@ ControlUi::LoadUi(const std::string & uiSettingsFile)
 
 	if (mSwitches[0])
 		mSwitches[0]->setFocus();
+
+	mMainDisplayTimer = new QTimer(this);
+	connect(mMainDisplayTimer, &QTimer::timeout, this, &ControlUi::UpdateMainDisplayTextTimerFired);
+	mMainDisplayTimer->setSingleShot(true);
 }
 
 void
@@ -394,16 +401,38 @@ public:
 
 	virtual void exec() override
 	{
-		const QString prevTxt(mLabel->toPlainText());
+		const QString prevTxt(mUi->mPendingMainText.isEmpty() ? mLabel->toPlainText() : mUi->mPendingMainText);
 		// if RestoreMainTextEvent is being used, leave a blank line
 		// at the top of the display to prevent repeated shifting of
 		// display text which can occur when expression pedals are 
 		// in use.
 		const QString newTxt(QString("\n") + mUi->mMainText);
 		if (prevTxt != newTxt)
-			mLabel->setPlainText(newTxt);
+		{
+			mUi->mPendingMainText = newTxt;
+			mUi->UpdateMainDisplayTextTimerFired();
+		}
 	}
 };
+
+bool
+IsEmptyPatchText(const QString &txt)
+{
+	// if only digits and whitespace, start timer
+	const int len = txt.length();
+	for (int idx = 0; idx < len; ++idx)
+	{
+		const QChar ch = txt.at(idx);
+		if (ch >= '0' && ch <= '9')
+			;
+		else if (ch == ' ' || ch == '\n')
+			;
+		else
+			return false;
+	}
+
+	return true;
+}
 
 class EditTextOutEvent : public ControlUiEvent
 {
@@ -424,10 +453,10 @@ public:
 
 	virtual void exec() override
 	{
-		const QString prevTxt(mLabel->toPlainText());
+		const QString prevTxt(mUi->mPendingMainText.isEmpty() ? mLabel->toPlainText() : mUi->mPendingMainText);
 		if (mTransientText)
 		{
-			// transient text is prepended to non-transient
+			// prepend transient text to previous non-transient
 			mText = mText + mUi->mMainText;
 		}
 
@@ -435,7 +464,50 @@ public:
 		{
 			if (!mTransientText)
 				mUi->mMainText = mText;
-			mLabel->setPlainText(mText);
+			const QString prevPendingTxt(mUi->mPendingMainText);
+			mUi->mPendingMainText = mText;
+			if (mTransientText && mText.contains("Expr ", Qt::CaseSensitive))
+			{
+				// ensure responsive expression pedal reporting
+				mUi->UpdateMainDisplayTextTimerFired();
+			}
+			else if (mText.contains("Scene", Qt::CaseInsensitive))
+			{
+				// delay update of text so that async update from Axe-Fx 
+				// has a chance to update display without this update 
+				// causing flicker due to premature update without info.
+				// If no axe connected, or if is slow, then this update will
+				// occur, just after kMainDisplayTextTimerDuration delay.
+				mUi->mMainDisplayTimer->start(kMainDisplayTextTimerDuration);
+			}
+			else if (mText.contains("Next", Qt::CaseInsensitive) ||
+					 mText.contains("Prev", Qt::CaseInsensitive))
+			{
+				if (prevPendingTxt.count('\n', Qt::CaseSensitive) == 1 &&
+					(prevPendingTxt.contains("Next", Qt::CaseInsensitive) ||
+					 prevPendingTxt.contains("Prev", Qt::CaseInsensitive)))
+				{
+					// potential follow-up to initial longer wait
+					mUi->mMainDisplayTimer->start(kMainDisplayTextTimerDuration);
+				}
+				else
+				{
+					// longer wait for potential preset load
+					mUi->mMainDisplayTimer->start(250);
+				}
+			}
+			else
+			{
+				if (mText.length() <= 6 && ::IsEmptyPatchText(mText))
+				{
+					// if only digits and whitespace, start timer for potential later update
+					mUi->mMainDisplayTimer->start(kMainDisplayTextTimerDuration);
+					return;
+				}
+
+				// immediate update
+				mUi->UpdateMainDisplayTextTimerFired();
+			}
 		}
 	}
 };
@@ -461,7 +533,8 @@ public:
 		QString txt(mUi->mMainText);
 		txt += mText;
 		mUi->mMainText = txt;
-		mLabel->setPlainText(txt);
+		mUi->mPendingMainText = txt;
+		mUi->UpdateMainDisplayTextTimerFired();
 	}
 };
 
@@ -492,8 +565,9 @@ ControlUi::ClearDisplay()
 	if (!mMainDisplay)
 		return;
 
+	// set to " " so that the string check doesn't prevent display update
 	QCoreApplication::postEvent(this, 
-		new EditTextOutEvent(this, mMainDisplay, ""));
+		new EditTextOutEvent(this, mMainDisplay, " "));
 }
 
 void
@@ -2073,6 +2147,20 @@ ControlUi::DisplayTime()
 	{
 		mTimeDisplayTimer->stop();
 		disconnect(mTimeDisplayTimer, &QTimer::timeout, this, &ControlUi::DisplayTime);
+	}
+}
+
+void
+ControlUi::UpdateMainDisplayTextTimerFired()
+{
+	if (!mMainDisplay)
+		return;
+
+	const QString txt(mPendingMainText);
+	if (!txt.isEmpty())
+	{
+		mPendingMainText.clear();
+		mMainDisplay->setPlainText(txt);
 	}
 }
 

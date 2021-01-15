@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2015,2018,2020 Sean Echevarria
+ * Copyright (C) 2007-2015,2018,2020,2021 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -161,6 +161,7 @@ public slots:
 
 private slots:
 	void DisplayTime();
+	void UpdateMainDisplayTextTimerFired();
 
 	// sigh... the one time that I would use a macro but the Qt MOC doesn't support it (or the use of tokenization)!!
 	void UiButtonPressed_0() { ButtonPressed(0); }
@@ -360,10 +361,10 @@ private:
 	QRect						mTraceDiplayRc;
 	bool						mUserAdcSettings[ExpressionPedals::PedalCount];
 	bool						mDisplayTime;
-	QTimer						* mTimeDisplayTimer;
+	QTimer						* mTimeDisplayTimer = nullptr, * mMainDisplayTimer = nullptr;
 	DWORD						mBackgroundColor;
 	DWORD						mFrameHighlightColor;
-	QString						mMainText;
+	QString						mMainText, mPendingMainText;
 	bool						mSwitchLedUpdateEnabled;
 	QGridLayout					* mGrid = nullptr;
 	int							mDisplaysGridInfo[6] = { 0 };
