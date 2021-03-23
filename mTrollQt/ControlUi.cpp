@@ -69,7 +69,7 @@
 
 constexpr int kMaxRows = 8, kMaxCols = 8;
 constexpr int kMaxButtons = kMaxRows * kMaxCols;
-constexpr int kMainDisplayTextTimerDuration = 80;
+constexpr int kMainDisplayTextTimerDuration = 100;
 
 ControlUi::ControlUi(QWidget * parent, ITrollApplication * app) :
 	QWidget(parent),
