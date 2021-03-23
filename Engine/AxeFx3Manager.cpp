@@ -420,9 +420,19 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 				ReceiveSceneName(mSceneNameRequestIdx, &bytes[7], len - 9); // -7 + checksum and EOX
 
 				if (++mSceneNameRequestIdx < AxeScenes)
+				{
 					RequestSceneName(mSceneNameRequestIdx);
+				}
 				else
+				{
 					mSceneNameRequestIdx = -1;
+
+					if (mMainDisplay)
+					{
+						mMainDisplay->ClearDisplay();
+						DisplayPresetStatus();
+					}
+				}
 			}
 			else
 			{
