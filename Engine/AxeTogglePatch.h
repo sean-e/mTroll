@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2012,2014,2017-2018,2020 Sean Echevarria
+ * Copyright (C) 2010-2012,2014,2017-2018,2020-2021 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -58,6 +58,9 @@ public:
 		if (isScenePatch)
 		{
 			mPatchSupportsDisabledState = true;
+			// set to true so that per-preset scene names propagate to buttons
+			mHasDisplayText = true;
+			mActiveText = mInactiveText = name;
 			return;
 		}
 
@@ -93,6 +96,13 @@ public:
 	}
 
 	virtual ~AxeTogglePatch() = default;
+
+	virtual void SetName(const std::string& name, ISwitchDisplay * switchDisplay) override
+	{
+		// support for runtime per-preset scene name propagation to buttons
+		mActiveText = mInactiveText = name;
+		__super::SetName(name, switchDisplay);
+	}
 
 	virtual void UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) const override
 	{

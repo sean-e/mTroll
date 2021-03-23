@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2020 Sean Echevarria
+ * Copyright (C) 2020-2021 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -204,6 +204,8 @@ AxeFx3Manager::SetScenePatch(int scene, PatchPtr patch)
 	}
 
 	mScenePatches[scene - 1] = patch;
+
+	mOriginalScenePresetNames[scene - 1] = patch->GetName();
 }
 
 bool
@@ -402,10 +404,31 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 	case AxeFx3MessageIds::SceneName:
 		if (len > 7)
 		{
-			ReceiveSceneName(&bytes[7], len - 9); // -7 + checksum and EOX
-			ReceiveSceneStatus(&bytes[6], len - 8); // -6 + checksum and EOX
-			DisplayPresetStatus();
-			RequestStatusDump();
+			if (-1 == mSceneNameRequestIdx)
+			{
+				// active scene name requested due to preset change or polling timer, etc
+				ReceiveSceneName(&bytes[7], len - 9); // -7 + checksum and EOX
+				ReceiveSceneStatus(&bytes[6], len - 8); // -6 + checksum and EOX
+				DisplayPresetStatus();
+				RequestStatusDump();
+			}
+			else if (bytes[6] == mSceneNameRequestIdx &&
+				mCurrentAxePresetWhenSceneNamesRequested == mCurrentAxePreset &&
+				mCurrentAxePresetName == mCurrentAxePresetNameWhenSceneNamesRequested)
+			{
+				// scene name requested for all scenes of preset
+				ReceiveSceneName(mSceneNameRequestIdx, &bytes[7], len - 9); // -7 + checksum and EOX
+
+				if (++mSceneNameRequestIdx < AxeScenes)
+					RequestSceneName(mSceneNameRequestIdx);
+				else
+					mSceneNameRequestIdx = -1;
+			}
+			else
+			{
+				// bad state, stop active scene name request
+				mSceneNameRequestIdx = -1;
+			}
 		}
 		return;
 	case AxeFx3MessageIds::LooperState:
@@ -999,7 +1022,7 @@ AxeFx3Manager::ReceivePresetName(const byte * bytes, int len)
 }
 
 void
-AxeFx3Manager::RequestSceneName()
+AxeFx3Manager::RequestSceneName(int sceneNumber /*= kQueryCurrentScene*/)
 {
 	if (!mMidiOut)
 		return;
@@ -1011,7 +1034,10 @@ AxeFx3Manager::RequestSceneName()
 	if (!mFirmwareMajorVersion)
 		return;
 
-	Bytes bb{ FRACTAL_SYSEX_HEADER_BYTES, Axe3, (byte)AxeFx3MessageIds::SceneName, 0x7f };
+	if (kQueryCurrentScene == sceneNumber)
+		mSceneNameRequestIdx = -1;
+
+	Bytes bb{ FRACTAL_SYSEX_HEADER_BYTES, Axe3, (byte)AxeFx3MessageIds::SceneName, (byte)sceneNumber };
 	AppendChecksumAndTerminate(bb);
 	mMidiOut->MidiOut(bb);
 }
@@ -1026,6 +1052,37 @@ AxeFx3Manager::ReceiveSceneName(const byte * bytes, int len)
 	::CopyAndTrimName(name, bytes, len);
 
 	mCurrentAxeSceneName = name;
+}
+
+void
+AxeFx3Manager::ReceiveSceneName(int sceneNumber, const byte * bytes, int len)
+{
+	if (sceneNumber < 0 || sceneNumber >= AxeScenes)
+		return;
+
+	if (!mScenePatches[sceneNumber])
+		return;
+
+	if (len < kMaxNameLen)
+	{
+		mScenePatches[sceneNumber]->SetName(mOriginalScenePresetNames[sceneNumber], mSwitchDisplay);
+		return;
+	}
+
+	char name[kMaxNameLen + 1];
+	::CopyAndTrimName(name, bytes, len);
+
+	if (::strlen(name))
+	{
+		constexpr int kBuflen = 6;
+		char sceneBuf[kBuflen];
+		::_itoa_s(sceneNumber + 1, sceneBuf, 10);
+		::strcat_s(sceneBuf, kBuflen, ": ");
+		const std::string curText(std::string("Scn ") + sceneBuf); // #literalDependency
+		mScenePatches[sceneNumber]->SetName(curText + name, mSwitchDisplay);
+	}
+	else
+		mScenePatches[sceneNumber]->SetName(mOriginalScenePresetNames[sceneNumber], mSwitchDisplay);
 }
 
 void
@@ -1126,6 +1183,16 @@ AxeFx3Manager::ReceiveStatusDump(const byte * bytes, int len)
 				if (looperPatch->SupportsDisabledState())
 					looperPatch->Disable(mSwitchDisplay);
 		}
+	}
+
+	if (mCurrentAxePresetWhenSceneNamesRequested != mCurrentAxePreset ||
+		mCurrentAxePresetNameWhenSceneNamesRequested != mCurrentAxePresetName)
+	{
+		// update all scene names
+		mCurrentAxePresetWhenSceneNamesRequested = mCurrentAxePreset;
+		mCurrentAxePresetNameWhenSceneNamesRequested = mCurrentAxePresetName;
+		mSceneNameRequestIdx = 0;
+		RequestSceneName(mSceneNameRequestIdx);
 	}
 }
 

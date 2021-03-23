@@ -471,7 +471,8 @@ public:
 				// ensure responsive expression pedal reporting
 				mUi->UpdateMainDisplayTextTimerFired();
 			}
-			else if (mText.contains("Scene", Qt::CaseInsensitive))
+			else if (mText.contains("Scene", Qt::CaseInsensitive) || 
+				mText.contains("Scn ", Qt::CaseInsensitive)) // #literalDependency
 			{
 				// delay update of text so that async update from Axe-Fx 
 				// has a chance to update display without this update 

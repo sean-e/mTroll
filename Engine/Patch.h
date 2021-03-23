@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2012,2014-2015,2017-2018,2020 Sean Echevarria
+ * Copyright (C) 2007-2012,2014-2015,2017-2018,2020-2021 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -57,6 +57,7 @@ public:
 	void SetLedColors(unsigned int active, unsigned int inactive) { mLedActiveColor = active; mLedInactiveColor = inactive; }
 	const std::string & GetName() const { return mName; }
 	void SetName(const std::string& name) { mName = name; }
+	virtual void SetName(const std::string& name, ISwitchDisplay * switchDisplay);
 	virtual bool HasDisplayText() const { return false; }
 	virtual const std::string & GetDisplayText(bool checkState = false) const { return mName; }
 	int GetNumber() const {return mNumber;}

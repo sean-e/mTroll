@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2020 Sean Echevarria
+ * Copyright (C) 2020-2021 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -126,8 +126,10 @@ private:
 
 	void RequestPresetName(bool silentRequest = false);
 	void ReceivePresetName(const byte * bytes, int len);
-	void RequestSceneName();
+	static constexpr byte kQueryCurrentScene = 0x7f;
+	void RequestSceneName(int sceneNumber = kQueryCurrentScene);
 	void ReceiveSceneName(const byte * bytes, int len);
+	void ReceiveSceneName(int sceneNumber, const byte * bytes, int len);
 	void DisplayPresetStatus();
 
 	void RequestStatusDump();
@@ -147,6 +149,7 @@ private:
 	PatchPtr		mTempoPatch;
 	enum { AxeScenes = 8 };
 	PatchPtr		mScenePatches[AxeScenes];
+	std::string		mOriginalScenePresetNames[AxeScenes];
 	enum LoopPatchIdx { loopPatchRecord, loopPatchPlay, loopPatchPlayOnce, loopPatchUndo, loopPatchReverse, loopPatchHalf, loopPatchCnt };
 	PatchPtr		mLooperPatches[loopPatchCnt];
 	Axe3EffectBlocks mAxeEffectInfo;
@@ -167,6 +170,11 @@ private:
 	int				mLooperBlockIsPresent = -1;
 	bool			mLooperStatusRequested = false;
 	bool			mLooperOnceIsRunning = false;
+
+	// state for chained scene name requests that occur when presets change
+	int				mSceneNameRequestIdx = -1;
+	int				mCurrentAxePresetWhenSceneNamesRequested = -1;
+	std::string		mCurrentAxePresetNameWhenSceneNamesRequested;
 };
 
 #endif // AxeFx3Manager_h__
