@@ -1,5 +1,8 @@
 ### mTroll MIDI controller changelog / process milestones
 
+#### 2021.03.23
+- Patches that select Axe-Fx III scenes automatically update with the names of the scenes in the Axe-Fx III preset that has been activated
+
 #### 2021.01.14
 - Reduced main display flicker when updating after Axe-Fx query
 

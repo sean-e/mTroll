@@ -4,5 +4,5 @@
 ; or set it below
 
 #ifndef mTrollAppVersion
-#define mTrollAppVersion "2021.01.14"
+#define mTrollAppVersion "2021.03.23"
 #endif
