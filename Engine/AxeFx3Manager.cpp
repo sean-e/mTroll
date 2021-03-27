@@ -1120,9 +1120,6 @@ AxeFx3Manager::RequestStatusDump()
 			continue;
 		}
 
-		if (!cur.mPatch)
-			continue;
-
 		cur.mEffectIsPresentInAxePatch = false;
 	}
 
@@ -1151,11 +1148,12 @@ AxeFx3Manager::ReceiveStatusDump(const byte * bytes, int len)
 		}
 
 		Axe3EffectBlockInfo * inf = GetBlockInfoByEffectId(bytes + idx);
-		if (inf && inf->mPatch)
+		if (inf)
 		{
 			const byte dd = bytes[idx + 2];
 			inf->UpdateChannelStatus(mSwitchDisplay, (dd >> 4) & 0x7, (dd >> 1) & 0x7);
-			inf->mPatch->UpdateState(mSwitchDisplay, !(dd & 0x1));
+			if (inf->mPatch)
+				inf->mPatch->UpdateState(mSwitchDisplay, !(dd & 0x1));
 
 			if (inf->mSysexEffectId >= FractalAudio::AxeFx3::ID_LOOPER1 &&
 				inf->mSysexEffectId <= FractalAudio::AxeFx3::ID_LOOPER4)
@@ -1215,12 +1213,11 @@ AxeFx3Manager::TurnOffLedsForNaEffects()
 		if (-1 == cur.mSysexEffectId)
 			continue;
 
-		if (!cur.mPatch)
-			continue;
-
 		if (!cur.mEffectIsPresentInAxePatch)
 		{
-			cur.mPatch->Disable(mSwitchDisplay);
+			if (cur.mPatch)
+				cur.mPatch->Disable(mSwitchDisplay);
+
 			for (const auto &p : cur.mChannelSelectPatches)
 				if (p)
 					p->Disable(mSwitchDisplay);
