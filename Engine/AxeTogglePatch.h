@@ -108,19 +108,22 @@ public:
 	{
 		__super::UpdateDisplays(mainDisplay, switchDisplay);
 
-		if (!mIsScene)
-			return;
+		if (mAx && mAx->GetModel() == Axe3)
+		{
+			if (!mIsScene)
+				return;
 
-		// this causes preset and scene state to appear during for example MidiControlEngine::SwitchReleased_NavAndDescMode
-		if (IsActive())
-		{
-			if (!mCmdsA.empty())
-				UpdateAxeMgr();
-		}
-		else
-		{
-			if (!mCmdsB.empty())
-				UpdateAxeMgr();
+			// this causes preset and scene state to appear during for example MidiControlEngine::SwitchReleased_NavAndDescMode
+			if (IsActive())
+			{
+				if (!mCmdsA.empty())
+					UpdateAxeMgr();
+			}
+			else
+			{
+				if (!mCmdsB.empty())
+					UpdateAxeMgr();
+			}
 		}
 	}
 
@@ -145,16 +148,22 @@ public:
 	{
 		__super::ExecCommandsA();
 
-		if (!mCmdsA.empty())
-			UpdateAxeMgr();
+		if (mAx && mAx->GetModel() == Axe3)
+		{
+			if (!mIsScene || !mCmdsA.empty())
+				UpdateAxeMgr();
+		}
 	}
 
 	virtual void ExecCommandsB() override
 	{
 		__super::ExecCommandsB();
 
-		if (!mCmdsB.empty())
-			UpdateAxeMgr();
+		if (mAx && mAx->GetModel() == Axe3)
+		{
+			if (!mIsScene || !mCmdsB.empty())
+				UpdateAxeMgr();
+		}
 	}
 
 	void ClearAxeMgr() 
