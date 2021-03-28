@@ -1,13 +1,13 @@
 <?xml version="1.0" ?>
 <MidiControlUiSettings autogrid="1" >
 	<!-- layout grid coordinates are 1-based -->
-	<frame width="1280" height="790" backgroundColor="1a1a1a" frameHighlightColor="333333" />
+	<frame width="1278" height="779" backgroundColor="1a1a1a" frameHighlightColor="333333" />
 	<mainTextDisplay font-name="Lucida Console" font-height="44" foregroundColor="ffcc00" backgroundColor="0" row="5" column="1" columnSpan="3" />
 	<traceTextDisplay font-height="8" row="5" column="4" columnSpan="2" />
 	<hardware ledBrightness="1" />
 
 	<switchAssemblyConfig>
-		<switch font-name="Tahoma" font-weight="bold" font-height="13" foregroundColor="bbbbbb" />
+		<switch font-name="Tahoma" font-weight="bold" font-height="13" width="94" height="29" foregroundColor="bbbbbb" />
 		<switchTextDisplay font-name="Tahoma" font-height="24" foregroundColor="00ff00" backgroundColor="0" />
 		<!-- do switchLed and switch need width and height?? -->
 		<switchLed width="30" height="15" offColor="101010" ledColorGuiOffset="223" />
@@ -15,34 +15,46 @@
 
 	<!-- this is for mapping ordinal switch numbers to monome grid coords (all are zero based) -->
 	<switchMappings>
-		<switchMap number="0" row="0" col="0" />
+		<switchMap number="0" row="0" col="0" comment="physical bottom row" />
 		<switchMap number="1" row="0" col="1" />
 		<switchMap number="2" row="0" col="2" />
 		<switchMap number="3" row="0" col="3" />
 		<switchMap number="4" row="0" col="4" />
 
-		<switchMap number="5" row="1" col="0" />
+		<switchMap number="5" row="1" col="0" comment="physical middle row" />
 		<switchMap number="6" row="1" col="1" />
 		<switchMap number="7" row="1" col="2" />
 		<switchMap number="8" row="1" col="3" />
 		<switchMap number="9" row="1" col="4" />
 
-		<switchMap number="10" row="2" col="0" />
+		<switchMap number="10" row="2" col="0" comment="physical top row" />
 		<switchMap number="11" row="2" col="1" />
 		<switchMap number="12" row="2" col="2" />
 		<switchMap number="13" row="2" col="3" />
 		<switchMap number="14" row="2" col="4" />
 
-		<switchMap number="15" row="4" col="0" />
+		<switchMap number="15" row="4" col="0" comment="virtual aux/bottom row" />
 		<switchMap number="16" row="4" col="1" />
 		<switchMap number="17" row="4" col="2" />
 		<switchMap number="18" row="4" col="3" />
 		<switchMap number="19" row="4" col="4" />
 
-		<switchMap number="20" row="3" col="0" />
+		<switchMap number="20" row="3" col="0" comment="menu / midi ind / next / prev" />
 		<switchMap number="21" row="3" col="3" />
 		<switchMap number="22" row="3" col="4" />
 		<switchMap number="23" row="3" col="5" />
+
+		<!-- 
+		<switchMap number="25" row="6" col="0" comment="scenes row / leds only" />
+		<switchMap number="26" row="6" col="1" />
+		<switchMap number="27" row="6" col="2" />
+		<switchMap number="28" row="6" col="3" />
+
+		<switchMap number="29" row="7" col="0" />
+		<switchMap number="30" row="7" col="1" />
+		<switchMap number="31" row="7" col="2" />
+		<switchMap number="32" row="7" col="3" />
+		-->
 	</switchMappings>
 
 	<switchAssemblies>
@@ -120,53 +132,53 @@
 		<switchAssembly number="10" row="4" column="1" >
 			<switchTextDisplay />
 			<switchLed />
-			<switch label="&amp;A" />
+			<switch label="11  (&amp;A)" />
 		</switchAssembly>
 		<switchAssembly number="11" row="4" column="2" >
 			<switchTextDisplay />
 			<switchLed />
-			<switch label="&amp;B" />
+			<switch label="12  (&amp;B)" />
 		</switchAssembly>
 		<switchAssembly number="12" row="4" column="3" >
 			<switchTextDisplay />
 			<switchLed />
-			<switch label="&amp;C" />
+			<switch label="13  (&amp;C)" />
 		</switchAssembly>
 		<switchAssembly number="13" row="4" column="4" >
 			<switchTextDisplay />
 			<switchLed />
-			<switch label="&amp;D" />
+			<switch label="14  (&amp;D)" />
 		</switchAssembly>
 		<switchAssembly number="14" row="4" column="5" >
 			<switchTextDisplay />
 			<switchLed />
-			<switch label="&amp;E" />
+			<switch label="15  (&amp;E)" />
 		</switchAssembly>
 
 		<switchAssembly number="15" row="6" column="1" >
 			<switchTextDisplay />
 			<switchLed />
-			<switch label="Aux&amp;V" />
+			<switch label="&amp;V" />
 		</switchAssembly>
 		<switchAssembly number="16" row="6" column="2" >
 			<switchTextDisplay />
 			<switchLed />
-			<switch label="Aux&amp;W" />
+			<switch label="&amp;W" />
 		</switchAssembly>
 		<switchAssembly number="17" row="6" column="3" >
 			<switchTextDisplay />
 			<switchLed />
-			<switch label="Aux&amp;X" />
+			<switch label="&amp;X" />
 		</switchAssembly>
 		<switchAssembly number="18" row="6" column="4" >
 			<switchTextDisplay />
 			<switchLed />
-			<switch label="Aux&amp;Y" />
+			<switch label="&amp;Y" />
 		</switchAssembly>
 		<switchAssembly number="19" row="6" column="5" >
 			<switchTextDisplay />
 			<switchLed />
-			<switch label="Aux&amp;Z" />
+			<switch label="&amp;Z" />
 		</switchAssembly>
 
 	</switchAssemblies>
