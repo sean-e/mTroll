@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2013,2015,2018,2020 Sean Echevarria
+ * Copyright (C) 2007-2013,2015,2018,2020-2021 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -279,6 +279,20 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 		PatchBankPtr curItem = *it;
 		curItem->InitPatches(mPatches, mTrace);
 		curItem->SetDefaultMappings(defaultsBank);
+	}
+
+	for (const auto &mBankLoadSwitchNumber : mBankLoadSwitchNumbers)
+	{
+		PatchBankPtr bnk = GetBank(GetBankIndex(mBankLoadSwitchNumber.second));
+		if (!bnk)
+		{
+			if (mTrace)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error: failed to identify name of bank referenced by LoadBank command; bank number " << mBankLoadSwitchNumber.second << '\n' << std::ends;
+				mTrace->Trace(std::string(traceMsg.str()));
+			}
+		}
 	}
 
 	CalibrateExprSettings(pedalCalibrationSettings);
