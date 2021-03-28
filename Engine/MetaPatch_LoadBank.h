@@ -77,7 +77,7 @@ public:
 			else if (trc)
 			{
 				std::strstream traceMsg;
-				traceMsg << "Error: failed to identify name of bank used by LoadBank command; bank number " << bankNum << '\n' << std::ends;
+				traceMsg << "Error: failed to identify name of bank referenced by LoadBank command; bank number " << bankNum << '\n' << std::ends;
 				trc->Trace(std::string(traceMsg.str()));
 			}
 		}
