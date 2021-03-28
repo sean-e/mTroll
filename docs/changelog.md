@@ -1,5 +1,11 @@
 ### mTroll MIDI controller changelog / process milestones
 
+#### 2021.03.27
+- Updated Axe-Fx III example config
+- Report invalid banks referenced by system config
+- Removed unnecessary dependency on Axe-Fx III effect blocks in patches for Axe-Fx III effect block channels
+- Fixed display of patch state when Axe-Fx III effect block channel patch is executed twice (channels do not become inactive by being pressed a second time)
+
 #### 2021.03.23
 - Patches that select Axe-Fx III scenes automatically update with the names of the scenes in the Axe-Fx III preset that has been activated
 
