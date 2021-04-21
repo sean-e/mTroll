@@ -1,5 +1,8 @@
 ### mTroll MIDI controller changelog / process milestones
 
+#### 2021.04.20
+- Added compositeToggle patch type that creates a toggle patch composed of other patches
+
 #### 2021.03.27
 - Updated Axe-Fx III example config
 - Report invalid banks referenced by system config
