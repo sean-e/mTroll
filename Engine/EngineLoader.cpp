@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2015,2018,2020 Sean Echevarria
+ * Copyright (C) 2007-2015,2018,2020-2021 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -58,6 +58,7 @@
 #include "MetaPatch_ResetPatch.h"
 #include "AxeMomentaryPatch.h"
 #include "MetaPatch_AxeFxNav.h"
+#include "CompositeTogglePatch.h"
 
 
 #ifdef _MSC_VER
@@ -593,6 +594,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		IAxeFxPtr mgr = GetAxeMgr(pElem);
 		PatchCommands cmds, cmds2;
 		std::vector<int> intList;
+		std::vector<std::pair<int, int>> pairIntListA, pairIntListB;
 		TiXmlHandle hRoot(nullptr);
 		hRoot = TiXmlHandle(pElem);
 
@@ -687,6 +689,43 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				{
 					std::strstream traceMsg;
 					traceMsg << "Error loading config file: no (or invalid) patch number specified in patchListItem in patch " << patchName << '\n' << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
+				continue;
+			}
+			else if (patchElement == "refPatch")
+			{
+				std::string patchNumStr;
+				if (childElem->GetText())
+					patchNumStr = childElem->GetText();
+				const int num = ::atoi(patchNumStr.c_str());
+				if (-1 != num)
+				{
+					std::string refGroup;
+					childElem->QueryValueAttribute("refGroup", &refGroup);
+					if (refGroup.empty())
+					{
+						if (group == "A")
+							refGroup = "A";
+						else if (group == "B")
+							refGroup = "B";
+					}
+
+					if (group == "A")
+						pairIntListA.emplace_back(num, refGroup == "B");
+					else if (group == "B")
+						pairIntListB.emplace_back(num, refGroup == "B");
+					else if (mTraceDisplay)
+					{
+						std::strstream traceMsg;
+						traceMsg << "Error loading config file: no (or invalid) group specified for refPatch in patch " << patchName << '\n' << std::ends;
+						mTraceDisplay->Trace(std::string(traceMsg.str()));
+					}
+				}
+				else if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: no (or invalid) patch number specified in refPatch in patch " << patchName << '\n' << std::ends;
 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 				}
 				continue;
@@ -1004,6 +1043,8 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		}
 		else if (patchType == "sequence")
 			newPatch = std::make_shared<SequencePatch>(patchNumber, patchName, midiOut, cmds);
+		else if (patchType == "compositeToggle")
+			newPatch = std::make_shared<CompositeTogglePatch>(patchNumber, patchName, midiOut, pairIntListA, pairIntListB);
 		else if (patchType == "patchListSequence")
 		{
 			int immediateWrap = 0;

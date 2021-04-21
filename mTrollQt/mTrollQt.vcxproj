@@ -211,6 +211,7 @@
     <ClInclude Include="..\Engine\AxeFx3EffectIds.h" />
     <ClInclude Include="..\Engine\AxeFxModel.h" />
     <ClInclude Include="..\Engine\AxeMomentaryPatch.h" />
+    <ClInclude Include="..\Engine\CompositeTogglePatch.h" />
     <ClInclude Include="..\Engine\IAxeFx.h" />
     <ClInclude Include="..\Engine\MetaPatch_ResetPatch.h" />
     <ClInclude Include="..\Engine\MetaPatch_ResetExclusiveGroup.h" />

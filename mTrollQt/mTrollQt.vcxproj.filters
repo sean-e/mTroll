@@ -299,6 +299,9 @@
     <ClInclude Include="..\Engine\MetaPatch_AxeFxNav.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Engine\CompositeTogglePatch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="win\mTrollQt.rc">
