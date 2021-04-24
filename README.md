@@ -1,6 +1,6 @@
 ## mTroll Hybrid MIDI Controller
 
-mTroll is the software portion of a hybrid hardware/software MIDI foot controller. mTroll is the MIDI control engine that I use with my [monome-based]( http://monome.org/docs/tech:kits:40h_kit ) foot controller. mTroll outputs MIDI in response to input from the monome or the gui. mTroll can be used standalone without hardware as a virtual foot controller. mTroll has native support for Axe-Fx processors with round tripping of effect block bypass and channel states, scene control and looper block control.
+mTroll is the software portion of a hybrid hardware/software MIDI foot controller. mTroll is the MIDI control engine that I use with my [monome-based]( https://web.archive.org/web/20071011033743/http://monome.org/40h/kit ) foot controller. mTroll outputs MIDI in response to input from the monome or the gui. mTroll can be used standalone without hardware as a virtual foot controller. mTroll has native support for Axe-Fx processors with round tripping of effect block bypass and channel states, scene control and looper block control.
 
 [Original Project Homepage](http://www.creepingfog.com/mTroll/)
 
@@ -58,7 +58,7 @@ Other
 ## Download
 
 ### application software
-[mTroll](http://www.creepingfog.com/mTroll/downloads/mTrollSetup.2021.04.20.exe) (build [2021.04.20](docs/changelog.md)) Win32 application installer.
+[Latest mTroll](docs/changelog.md) Win32 application installer is available on the [releases page](releases/).
 
 [Usage notes here](docs/docs.md).
 
@@ -73,7 +73,7 @@ The GUI and hardware are accessed from the core through core-defined interfaces,
 
 The application uses [TinyXML](http://sourceforge.net/projects/tinyxml/) for parsing of the XML data files (licensed under the [zlib/libpng License](http://www.opensource.org/licenses/zlib-license.php)). (TinyXML was being used in the WTL version of the app, before the Qt port.)  
 
-The monome uses a simple [serial protocol](http://monome.org/docs/tech:serial:40h) over USB (by way of an FTDI serial to USB module). The application communicates with the monome using the [FTDI D2XXX API](http://www.ftdichip.com/Support/Documents/ProgramGuides/D2XX_Programmer%27s_Guide(FT_000071).pdf).  
+The monome uses a simple [serial protocol](https://web.archive.org/web/20071013125521/http://wiki.monome.org/view/SerialProtocol) over USB (by way of an FTDI serial to USB module). The application communicates with the monome using the [FTDI D2XXX API](http://www.ftdichip.com/Support/Documents/ProgramGuides/D2XX_Programmer%27s_Guide(FT_000071).pdf).  
 
 The repository includes the modified monome firmware and TinyXML source.  
 
