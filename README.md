@@ -58,7 +58,7 @@ Other
 ## Download
 
 ### application software
-[Latest mTroll](docs/changelog.md) Win32 application installer is available on the [releases page](releases/).
+[Latest mTroll](docs/changelog.md) Win32 application installer is available on the [releases page](../../releases/).
 
 [Usage notes here](docs/docs.md).
 
