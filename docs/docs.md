@@ -46,7 +46,7 @@ Press Ctrl+R to re-establish communication with the monome board.
 <a name="modes"></a> <a name="engineModes"></a> 
 ## Engine Control Modes and Commands
 
-The app supports up to a total of 64 switches split between preset switches and operating switches that are mode dependent. The function of each operating switch is dependent upon the control mode that is active. The Menu button/switch is used to choose a new operating mode (or escape out of a non-default mode). The `switches` block of the config.xml file allows you to define what modes are assigned to each switch. The only required assignments are for `menu` (formerly mode), `increment` and `decrement`. See the [Axe-Fx data file](downloads/axefx.config.xml) for example menu/switch assignments.  
+The app supports up to a total of 64 switches split between preset switches and operating switches that are mode dependent. The function of each operating switch is dependent upon the control mode that is active. The Menu button/switch is used to choose a new operating mode (or escape out of a non-default mode). The `switches` block of the config.xml file allows you to define what modes are assigned to each switch. The only required assignments are for `menu` (formerly mode), `increment` and `decrement`. See the [Axe-Fx data file](../data/axefx.config.xml) for example menu/switch assignments.  
 
 **Bank mode** (this is the default power up mode)  
 Preset switches activate patches  
@@ -60,7 +60,7 @@ All switches in this mode are customizable (there are defaults that can be overr
 Preset switches select one of the following described modes (or executes a described command)  
 Next and Previous cause a transition to Bank Navigation mode, displaying the next or previous bank  
 Menu switch escapes back to the default mode (with the bank that was previously active)  
-Switches can also be assigned to immediately load specific banks (reducing need for `LoadBank` metapatch; see [example](downloads/axefx.config.xml))  
+Switches can also be assigned to immediately load specific banks (reducing need for `LoadBank` metapatch; see [example](../data/axefx.config.xml))  
 Main Display Window displays mode name  
 
 **Bank Navigation mode**  
@@ -315,7 +315,7 @@ Bank number 0 is a special bank that can be used to define default patch maps. W
 
 Bank number 0 is also the best place to put any bank navigation switches you might want. By default, there are no reserved navigation switches. If you don't want bank increment/decrement switches, you don't need them (they're available in the Menu). If you want Next/Prev bank switches, map the commands to switches in bank 0\.  
 
-See the [Axe-Fx data file](downloads/axefx.config.xml) for an example of instant access switches (look for `<bank name="Defaults" number="0">`) including next/previous bank functionality.
+See the [Axe-Fx data file](../data/axefx.config.xml) for an example of instant access switches (look for `<bank name="Defaults" number="0">`) including next/previous bank functionality.
 
 <a name="exclusiveGroup"></a>
 ## Exclusive Switch Groups  
@@ -417,7 +417,7 @@ Disable any ADC port that is not in use by setting the `enable` attribute to "0"
 
 The selected ADC port must be enabled for the Raw ADC Value mode to be of value. If a port is not enabled, the main display window will not display values after that port has been selected.  
 
-For best results, flash the board with [this modified monome firmware](downloads/monome40hFirmware.zip) ([AVR-JTAG programmer](http://www.sparkfun.com/commerce/product_info.php?products_id=11) required).  
+For best results, flash the board with [this modified monome firmware](https://github.com/sean-e/monome40hFirmware/releases/) ([AVR-JTAG programmer](http://www.sparkfun.com/commerce/product_info.php?products_id=11) required).  
 [The original adc smoothing/filtering is based on the averaging of 16 reads. Even with the 16 buckets I still had to do some filtering in the app. The modification reduces the number of buckets in the firmware to 4\. The firmware does smoothing (based on averaging the contents of the buckets) while the app does jitter filtering (based on hard compares to the last 3 values received). It's a night and day difference in response when doing fast full-off to full-on pedal swings (wah-wah style). Above a certain pedal speed, the 16 buckets meant that the extremes disappeared - the extremes were averaged away. No more.] 
 
 Here is an annotated example of the complete `expression` block.  
