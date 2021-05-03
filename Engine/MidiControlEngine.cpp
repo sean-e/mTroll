@@ -423,8 +423,8 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 	}
 
 	PatchBank::SwitchPressDuration dur;
-	const int kLongPressMinDuration = 500; // milliseconds
-	const int kExtendedPressMinDuration = 3000; // milliseconds
+	const int kLongPressMinDuration = 300; // milliseconds
+	const int kExtendedPressMinDuration = 2000; // milliseconds
 	const unsigned int kDuration = CurTime() - mSwitchPressedEventTime;
 	if (kDuration > kLongPressMinDuration)
 	{
