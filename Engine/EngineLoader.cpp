@@ -883,6 +883,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		int axeFxScene = 0;
 		int axeFxBlockId = 0;
 		int axeFxBlockChannel = 0;
+		bool isAxeFx3EffectBlockBypassCommand = false;
 		int overrideCc = -1;
 		if (mgr && 
 			(patchType.empty() || patchType == "AxeToggle" || patchType == "AxeMomentary") && 
@@ -922,7 +923,12 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 					{
 						Bytes b1 = mAxeFx3Manager->GetCommandString(patchName, true);
 						if (!b1.empty())
+						{
+							if (b1.size() > 5 && b1[5] == (byte)AxeFx3MessageIds::EffectBypass)
+								isAxeFx3EffectBlockBypassCommand = true;
+
 							cmds.push_back(std::make_shared<MidiCommandString>(midiOut, b1));
+						}
 
 						Bytes b2 = mAxeFx3Manager->GetCommandString(patchName, false);
 						if (!b2.empty())
@@ -989,7 +995,16 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			newPatch = std::make_shared<PersistentPedalOverridePatch>(patchNumber, patchName, midiOut, cmds, cmds2);
 		else if (patchType == "AxeToggle")
 		{
-			auto axePatch = std::make_shared<AxeTogglePatch>(patchNumber, patchName, midiOut, cmds, cmds2, mgr, axeFxScene);
+			std::shared_ptr<AxeTogglePatch> axePatch;
+			if (axeFxScene && mgr && mgr->GetModel() == Axe3)
+				axePatch = std::make_shared<Axe3ScenePatch>(patchNumber, patchName, midiOut, cmds, cmds2, mgr, axeFxScene);
+			else if (isAxeFx3EffectBlockBypassCommand)
+				axePatch = std::make_shared<Axe3EffectBlockPatch>(patchNumber, patchName, midiOut, cmds, cmds2, mgr);
+			else if (axeFxBlockId)
+				axePatch = std::make_shared<Axe3EffectChannelPatch>(patchNumber, patchName, midiOut, cmds, cmds2, mgr);
+			else
+				axePatch = std::make_shared<AxeTogglePatch>(patchNumber, patchName, midiOut, cmds, cmds2, mgr);
+
 			if (mgr)
 			{
 				if (!axeFxScene)

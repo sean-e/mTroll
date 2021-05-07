@@ -177,4 +177,34 @@ private:
 	std::string		mCurrentAxePresetNameWhenSceneNamesRequested;
 };
 
+enum class AxeFx3MessageIds
+{
+	EditorSyncMsg = 0x01,
+
+	FirmwareVersion = 0x08,
+
+	EffectBypass = 0x0a,
+	EffectChannel = 0x0b,
+	Scene = 0x0c,
+	PresetName = 0x0d,
+	SceneName = 0x0e,
+	LooperState = 0x0f,
+	TapTempo = 0x10,
+	Tuner = 0x11,
+	EditorTunerMsg = 0x12,
+	StatusDump = 0x13,
+	Tempo = 0x14,
+
+	EditorSyncMsg2 = 0x47,
+
+	Ack = 0x64,
+
+	EditorAmpMsg1 = 0x74,			// Editor command: click on amp
+	EditorAmpMsg2 = 0x75,			// Editor command: click on amp
+	EditorAmpMsg3 = 0x76,			// Editor command: click on amp
+	PresetExportRequestAck = 0x77,	// Editor command: Export preset
+	PresetExportResponse = 0x78,	// Editor command: Export preset
+	PresetExportResponse2 = 0x79	// Editor command: Export preset
+};
+
 #endif // AxeFx3Manager_h__

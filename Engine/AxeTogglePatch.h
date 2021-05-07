@@ -28,7 +28,6 @@
 #include "TogglePatch.h"
 #include "IAxeFx.h"
 
-
 // AxeTogglePatch
 // -----------------------------------------------------------------------------
 // responds to SwitchPressed; SwitchReleased does not affect patch state
@@ -36,9 +35,9 @@
 //
 class AxeTogglePatch : public TogglePatch
 {
+protected:
 	IAxeFxPtr		mAx = nullptr;
 	bool			mHasDisplayText;
-	int				mIsScene;
 	std::string		mActiveText;
 	std::string		mInactiveText;
 
@@ -48,22 +47,11 @@ public:
 				IMidiOutPtr midiOut, 
 				PatchCommands & cmdsA, 
 				PatchCommands & cmdsB,
-				IAxeFxPtr axeMgr,
-				int isScenePatch) :
+				IAxeFxPtr axeMgr) :
 		TogglePatch(number, name, midiOut, cmdsA, cmdsB),
 		mAx(axeMgr),
-		mHasDisplayText(false),
-		mIsScene(isScenePatch)
+		mHasDisplayText(false)
 	{
-		if (isScenePatch)
-		{
-			mPatchSupportsDisabledState = true;
-			// set to true so that per-preset scene names propagate to buttons
-			mHasDisplayText = true;
-			mActiveText = mInactiveText = name;
-			return;
-		}
-
 		if (mAx && mAx->GetModel() >= Axe2)
 			mPatchSupportsDisabledState = true;
 
@@ -104,89 +92,194 @@ public:
 		__super::SetName(name, switchDisplay);
 	}
 
-	virtual void UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) const override
-	{
-		__super::UpdateDisplays(mainDisplay, switchDisplay);
-
-		if (mAx && mAx->GetModel() == Axe3)
-		{
-			if (!mIsScene)
-				return;
-
-			// this causes preset and scene state to appear during for example MidiControlEngine::SwitchReleased_NavAndDescMode
-			if (IsActive())
-			{
-				if (!mCmdsA.empty())
-					UpdateAxeMgr();
-			}
-			else
-			{
-				if (!mCmdsB.empty())
-					UpdateAxeMgr();
-			}
-		}
-	}
-
 	virtual const std::string & GetDisplayText(bool checkState /*= false*/) const override
 	{ 
 		if (mHasDisplayText)
 		{
 			if (IsActive())
 				return mActiveText;
-			else
-				return mInactiveText; 
+			return mInactiveText; 
 		}
 
 		return TogglePatch::GetDisplayText(checkState);
 	}
 
 	virtual bool HasDisplayText() const override { return mHasDisplayText; }
-	
+
 	virtual std::string GetPatchTypeStr() const override { return "axeToggle"; }
+
+	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) override
+	{
+		TogglePatch::SwitchPressed(mainDisplay, switchDisplay);
+		if (mAx && mAx->GetModel() != Axe3)
+			UpdateAxeMgr();
+	}
+
+	void ClearAxeMgr()
+	{
+		if (mAx)
+			mAx = nullptr;
+	}
+
+protected:
+	virtual void UpdateAxeMgr() const
+	{
+		if (!mAx)
+			return;
+
+		// Due to getting a response from the Axe-Fx II before state of
+		// externals was accurate (Feedback Return mute mapped to Extern
+		// 8 came back inaccurate when SyncEffectsFromAxe called immediately).
+		mAx->DelayedEffectsSyncFromAxe();
+	}
+};
+
+class Axe3ScenePatch : public AxeTogglePatch
+{
+	int mScene;
+
+public:
+	Axe3ScenePatch(int number,
+		const std::string & name,
+		IMidiOutPtr midiOut,
+		PatchCommands & cmdsA,
+		PatchCommands & cmdsB,
+		IAxeFxPtr axeMgr,
+		int scene) :
+		AxeTogglePatch(number, name, midiOut, cmdsA, cmdsB, axeMgr),
+		mScene(scene - 1)
+	{
+		// set to true so that per-preset scene names propagate to buttons
+		mHasDisplayText = true;
+		mActiveText = mInactiveText = name;
+	}
+
+	virtual ~Axe3ScenePatch() = default;
+
+	virtual std::string GetPatchTypeStr() const override { return "axe2ScenePatch"; }
+
+	virtual void UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) const override
+	{
+		__super::UpdateDisplays(mainDisplay, switchDisplay);
+
+		// this causes preset and scene state to appear during for example MidiControlEngine::SwitchReleased_NavAndDescMode
+		if (IsActive())
+		{
+			if (!mCmdsA.empty())
+				UpdateAxeMgr();
+		}
+		else
+		{
+			if (!mCmdsB.empty())
+				UpdateAxeMgr();
+		}
+	}
 
 	virtual void ExecCommandsA() override
 	{
 		__super::ExecCommandsA();
 
-		if (mAx && mAx->GetModel() == Axe3)
-		{
-			if (!mIsScene || !mCmdsA.empty())
-				UpdateAxeMgr();
-		}
+		if (!mCmdsA.empty())
+			UpdateAxeMgr();
 	}
 
 	virtual void ExecCommandsB() override
 	{
 		__super::ExecCommandsB();
 
-		if (mAx && mAx->GetModel() == Axe3)
-		{
-			if (!mIsScene || !mCmdsB.empty())
-				UpdateAxeMgr();
-		}
+		if (!mCmdsB.empty())
+			UpdateAxeMgr();
 	}
 
-	void ClearAxeMgr() 
-	{
-		if (mAx)
-			mAx = nullptr;
-	}
-
-private:
-	void UpdateAxeMgr() const
+protected:
+	virtual void UpdateAxeMgr() const override
 	{
 		if (!mAx)
 			return;
 
-		if (mIsScene)
-			mAx->UpdateSceneStatus(mIsScene - 1, true);
-		else
+		mAx->UpdateSceneStatus(mScene, true);
+	}
+};
+
+class Axe3EffectChannelPatch : public AxeTogglePatch
+{
+public:
+	Axe3EffectChannelPatch(int number,
+		const std::string & name,
+		IMidiOutPtr midiOut,
+		PatchCommands & cmdsA,
+		PatchCommands & cmdsB,
+		IAxeFxPtr axeMgr) :
+		AxeTogglePatch(number, name, midiOut, cmdsA, cmdsB, axeMgr)
+	{
+		mHasDisplayText = true;
+		mActiveText = mInactiveText = name;
+	}
+
+	virtual std::string GetPatchTypeStr() const override { return "axe3EffectChannelPatch"; }
+
+	virtual void ExecCommandsA() override
+	{
+		__super::ExecCommandsA();
+		UpdateAxeMgr();
+	}
+
+	virtual void ExecCommandsB() override
+	{
+		__super::ExecCommandsB();
+		UpdateAxeMgr();
+	}
+};
+
+class Axe3EffectBlockPatch : public Axe3EffectChannelPatch
+{
+public:
+	Axe3EffectBlockPatch(int number,
+		const std::string & name,
+		IMidiOutPtr midiOut,
+		PatchCommands & cmdsA,
+		PatchCommands & cmdsB,
+		IAxeFxPtr axeMgr) :
+		Axe3EffectChannelPatch(number, name, midiOut, cmdsA, cmdsB, axeMgr)
+	{
+	}
+
+	virtual std::string GetPatchTypeStr() const override { return "axe3EffectBlockPatch"; }
+
+	virtual void Disable(ISwitchDisplay * switchDisplay) override
+	{
+		if (!mPatchIsDisabled || mPatchIsActive)
 		{
-			// Due to getting a response from the Axe-Fx II before state of
-			// externals was accurate (Feedback Return mute mapped to Extern
-			// 8 came back inaccurate when SyncEffectsFromAxe called immediately).
-			mAx->DelayedEffectsSyncFromAxe();
+			// remove channel from patch name
+			// see #axe3blockChannelAppendToName
+			std::string nm(GetName());
+
+			int chPos = nm.rfind(' ');
+			if (-1 == chPos)
+			{
+				// no channel in name
+			}
+			else if (++chPos == nm.length() - 1)
+			{
+				char lastCh = nm[chPos];
+				if (lastCh >= 'A' && lastCh <= 'F')
+				{
+					// erase current channel
+					nm.replace(chPos - 1, 2, "");
+					SetName(nm, switchDisplay);
+				}
+				else
+				{
+					// no channel in name
+				}
+			}
+			else
+			{
+				// no channel in name
+			}
 		}
+
+		__super::Disable(switchDisplay);
 	}
 };
 
