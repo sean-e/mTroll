@@ -1,5 +1,9 @@
 ### mTroll MIDI controller changelog / process milestones
 
+#### 2021.05.06
+- Axe-Fx III effect block patches now display active block channel
+- Changed long press duration from 500ms to 300ms, and extended press duration from 3sec to 2sec
+
 #### 2021.04.20
 - Added compositeToggle patch type that creates a toggle patch composed of other patches
 
