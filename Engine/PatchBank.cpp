@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010-2016,2018 Sean Echevarria
+ * Copyright (C) 2007-2008,2010-2016,2018,2021 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -121,6 +121,7 @@ PatchBank::SetDefaultMappings(const PatchBankPtr defaultMapping)
 		});
 	}
 
+	std::set<int> skippedPrimarySwitches;
 	for (int idx = ssPrimary; idx < ssCount; ++idx)
 	{
 		SwitchFunctionAssignment ss = static_cast<SwitchFunctionAssignment>(idx);
@@ -132,10 +133,28 @@ PatchBank::SetDefaultMappings(const PatchBankPtr defaultMapping)
 			const int switchNumber = (*it).first;
 			PatchVect & curPatches = mPatches[switchNumber].GetPatchVect(ss);
 			if (!curPatches.empty())
+			{
+				if (ssPrimary == ss)
+				{
+					// save cur switchNumber so that we know not to modify ssSecondary behavior
+					skippedPrimarySwitches.insert(switchNumber);
+				}
+
 				continue;
+			}
 
 			if (ssSecondary == ss)
+			{
+				if (skippedPrimarySwitches.find(switchNumber) != skippedPrimarySwitches.end())
+				{
+					// switchNumber was skipped in ssPrimary loop, so skip for ssSecondary also
+					// (otherwise secondary assignments in default bank could be added even
+					// though switch is overridden, primary only, in current bank definition)
+					continue;
+				}
+
 				mPatches[switchNumber].mSfOp = (*it).second.mSfOp;
+			}
 
 			const PatchVect & patches = (*it).second.GetPatchVectConst(ss);
 			for (const BankPatchStatePtr& curItem : patches)
