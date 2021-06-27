@@ -1,5 +1,8 @@
 ### mTroll MIDI controller changelog / process milestones
 
+#### 2021.06.27
+- Fix for inadvertant propagation of secondary switch action defined in default bank when target bank contains primary switch definition
+
 #### 2021.05.06
 - Axe-Fx III effect block patches now display active block channel
 - Changed long press duration from 500ms to 300ms, and extended press duration from 3sec to 2sec
