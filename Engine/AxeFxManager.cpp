@@ -292,13 +292,13 @@ IsAxeFxSysex(const byte * bytes, const int len)
 	return false;
 }
 
-void
+bool
 AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 {
 	// http://www.fractalaudio.com/forum/viewtopic.php?f=14&t=21524&start=10
 	// http://axefxwiki.guitarlogic.org/index.php?title=Axe-Fx_SysEx_Documentation
 	if (!::IsAxeFxSysex(bytes, len))
-		return;
+		return false;
 
 	switch (bytes[5])
 	{
@@ -318,7 +318,7 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 			_ASSERTE(Axe2 > mModel);
 			ReceiveParamValue(&bytes[6], len - 6);
 		}
-		return;
+		break;
 	case 4:
 		// receive patch dump
 		if (kDbgFlag && mTrace)
@@ -326,15 +326,15 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 			const std::string msg("AxeFx: received patch dump\n");
 			mTrace->Trace(msg);
 		}
-		return;
+		break;
 	case 8:
 		if (mFirmwareMajorVersion)
-			return;
+			break;
 		ReceiveFirmwareVersionResponse(bytes, len);
-		return;
+		break;
 	case 0xd:
 		// tuner info
-		return;
+		break;
 	case 0xe:
 		if (Axe2 <= bytes[4])
 		{
@@ -346,10 +346,10 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 			_ASSERTE(Axe2 > mModel);
 			ReceivePresetEffects(&bytes[6], len - 6);
 		}
-		return;
+		break;
 	case 0xf:
 		ReceivePresetName(&bytes[6], len - 6);
-		return;
+		break;
 	case 0x10:
 		// Tempo: f0 00 01 74 01 10 f7
 		if (mTempoPatch)
@@ -357,7 +357,7 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 			mTempoPatch->ActivateSwitchDisplay(mSwitchDisplay, true);
 			mSwitchDisplay->SetIndicatorThreadSafe(false, mTempoPatch, 75);
 		}
-		return;
+		break;
 	case 0x11:
 		// x y state change (prior to axeII fw9?)
 //		DelayedEffectsSyncFromAxe();
@@ -366,27 +366,27 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 			const std::string msg("AxeFx: X/Y state change\n");
 			mTrace->Trace(msg);
 		}
-		return;
+		break;
 	case 0x14:
 		// preset loaded
 		ReceivePresetNumber(&bytes[6], len - 6);
 		DelayedNameSyncFromAxe(true);
-		return;
+		break;
 	case 0x20:
 		// routing grid layout
-		return;
+		break;
 	case 0x21:
 		// x/y change or scene selected
 		DelayedEffectsSyncFromAxe();
-		return;
+		break;
 	case 0x23:
 		// looper status
 		ReceiveLooperStatus(&bytes[6], len - 6);
-		return;
+		break;
 	case 0x29:
 		// scene status/update
 		ReceiveSceneStatus(&bytes[6], len - 6);
-		return;
+		break;
 	case 0x64:
 		// indicates an error or unsupported message
 		if (kDbgFlag && mTrace)
@@ -413,6 +413,8 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 			mTrace->Trace(std::string(traceMsg.str()));
 		}
 	}
+
+	return true;
 }
 
 // this SyncFromAxe helper is not currently being used

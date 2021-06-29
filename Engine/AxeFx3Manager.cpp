@@ -366,11 +366,11 @@ IsAxeFx3Sysex(const byte * bytes, const int len)
 	return true;
 }
 
-void
+bool
 AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 {
 	if (!::IsAxeFx3Sysex(bytes, len))
-		return;
+		return false;
 
 	switch (bytes[5])
 	{
@@ -383,24 +383,24 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 	case AxeFx3MessageIds::PresetExportRequestAck:
 	case AxeFx3MessageIds::PresetExportResponse:
 	case AxeFx3MessageIds::PresetExportResponse2:
-		return;
+		break;
 	case AxeFx3MessageIds::FirmwareVersion:
 		if (mFirmwareMajorVersion)
-			return;
+			break;
 		ReceiveFirmwareVersionResponse(bytes, len);
-		return;
+		break;
 	case AxeFx3MessageIds::EffectBypass:
 		// when we send set bypass, it responds with new state -- we could 
 		// update here rather than requesting a status dump
-		return;
+		break;
 	case AxeFx3MessageIds::EffectChannel:
 		// when we send set channel, it responds with new state -- we could 
 		// update here rather than requesting a status dump
-		return;
+		break;
 	case AxeFx3MessageIds::Scene:
 		// we read scene number when we get the scene name, so don't need to
 		// do anything here
-		return;
+		break;
 	case AxeFx3MessageIds::PresetName:
 		if (len > 8)
 		{
@@ -415,7 +415,7 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 				RequestSceneName();
 			}
 		}
-		return;
+		break;
 	case AxeFx3MessageIds::SceneName:
 		if (len > 7)
 		{
@@ -455,20 +455,20 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 				mSceneNameRequestIdx = -1;
 			}
 		}
-		return;
+		break;
 	case AxeFx3MessageIds::LooperState:
 		if (mLooperStatusRequested)
 			ReceiveLooperState(bytes[6]);
 		else
 			DelayedLooperSyncFromAxe();
-		return;
+		break;
 	case AxeFx3MessageIds::TapTempo:
 		if (mTempoPatch)
 		{
 			mTempoPatch->ActivateSwitchDisplay(mSwitchDisplay, true);
 			mSwitchDisplay->SetIndicatorThreadSafe(false, mTempoPatch, 75);
 		}
-		return;
+		break;
 	case AxeFx3MessageIds::Tuner:
 		// #axe3TunerSupport
 		// tuner is not sent on midi-over-usb
@@ -477,17 +477,17 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 		// nn = note 0-11
 		// ss = string 0-5, 0 = low E
 		// cc = cents offset binary, 63 = 0, 62 = -1, 64 = +1
-		return;
+		break;
 	case AxeFx3MessageIds::StatusDump:
 		ReceiveStatusDump(&bytes[6], len - 6);
-		return;
+		break;
 	case AxeFx3MessageIds::Tempo:
 		// set/get tempo
 		// tempo is not sent on midi-over-usb
 		// F0 00 01 74 10 14 dd dd cs F7
 		//	where dd dd is the desired tempo as two 7 - bit MIDI bytes, LS first.
 		//	To query the tempo let dd dd = 7F 7F.
-		return;
+		break;
 	case AxeFx3MessageIds::Ack:
 		if (len > 7)
 		{
@@ -497,16 +497,16 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 			case AxeFx3MessageIds::EditorAmpMsg2:
 			case AxeFx3MessageIds::EditorAmpMsg3:
 				// editor ack
-				return;
+				return true;
 
 			case AxeFx3MessageIds::TapTempo:
 				// tap tempo ack
-				return;
+				return true;
 
 			case AxeFx3MessageIds::Tuner:
 			case AxeFx3MessageIds::EditorTunerMsg:
 				// tuner ack
-				return;
+				return true;
 
 			case AxeFx3MessageIds::LooperState:
 				// looper status
@@ -514,13 +514,13 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 				{
 					// looper isn't present in preset
 					ResetLooperState();
-					return;
+					return true;
 				}
 				break;
 
 			case 0:
 				if (len > 8 && 0 == bytes[7])
-					return; // frequent ack when editor is open (64 00 00)
+					return true; // frequent ack when editor is open (64 00 00)
 				break;
 			}
 		}
@@ -543,6 +543,8 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 			mTrace->Trace(std::string(traceMsg.str()));
 		}
 	}
+
+	return true;
 }
 
 Axe3EffectBlockInfo *

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2014,2018,2020 Sean Echevarria
+ * Copyright (C) 2010-2014,2018,2020-2021 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -63,7 +63,7 @@ public:
 
 	// IMidiInSubscriber
 	virtual void ReceivedData(byte b1, byte b2, byte b3) override;
-	virtual void ReceivedSysex(const byte * bytes, int len) override;
+	virtual bool ReceivedSysex(const byte * bytes, int len) override;
 	virtual void Closed(IMidiInPtr midIn) override;
 
 	void CompleteInit(IMidiOutPtr midiOut);

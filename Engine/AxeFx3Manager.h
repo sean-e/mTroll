@@ -66,7 +66,7 @@ public:
 
 	// IMidiInSubscriber
 	virtual void ReceivedData(byte b1, byte b2, byte b3) override;
-	virtual void ReceivedSysex(const byte * bytes, int len) override;
+	virtual bool ReceivedSysex(const byte * bytes, int len) override;
 	virtual void Closed(IMidiInPtr midIn) override;
 
 	void CompleteInit(IMidiOutPtr midiOut);
