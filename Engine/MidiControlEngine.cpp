@@ -70,6 +70,7 @@ MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 									 IMidiOutPtr midiOut,
 									 IAxeFxPtr axMgr,
 									 IAxeFxPtr ax3Mgr,
+									 EdpManagerPtr edpMgr,
 									 int incrementSwitchNumber,
 									 int decrementSwitchNumber,
 									 int modeSwitchNumber) :
@@ -94,7 +95,8 @@ MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 	mDirectValueLastSent(0),
 	mDirectValue1LastSent(0),
 	mMidiOut(midiOut),
-	mSwitchPressedEventTime(0)
+	mSwitchPressedEventTime(0),
+	mEdpMgr(edpMgr)
 {
 #ifdef ITEM_COUNTING
 	++gMidiControlEngCnt;

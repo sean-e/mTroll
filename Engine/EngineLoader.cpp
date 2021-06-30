@@ -76,17 +76,12 @@ EngineLoader::EngineLoader(ITrollApplication * app,
 						   IMainDisplay * mainDisplay,
 						   ISwitchDisplay * switchDisplay,
 						   ITraceDisplay * traceDisplay) :
-	mEngine(nullptr),
 	mApp(app),
 	mMidiOutGenerator(midiOutGenerator),
 	mMidiInGenerator(midiInGenerator),
 	mMainDisplay(mainDisplay),
 	mSwitchDisplay(switchDisplay),
-	mTraceDisplay(traceDisplay),
-	mAxeFxManager(nullptr),
-	mAxeFx3Manager(nullptr),
-	mAxeSyncPort(-1),
-	mAxe3SyncPort(-1)
+	mTraceDisplay(traceDisplay)
 {
 	for (auto & adcEnable : mAdcEnables)
 		adcEnable = adc_default;
@@ -370,10 +365,12 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 				if (midiIn)
 				{
 					mMidiInPortToDeviceIdxMap[port] = inDeviceIdx;
-					if (mAxeFx3Manager && port == mAxe3SyncPort && midiIn)
+					if (mAxeFx3Manager && port == mAxe3SyncPort)
 						mAxeFx3Manager->SubscribeToMidiIn(midiIn);
-					if (mAxeFxManager && port == mAxeSyncPort && midiIn)
+					if (mAxeFxManager && port == mAxeSyncPort)
 						mAxeFxManager->SubscribeToMidiIn(midiIn);
+					if (mEdpManager && port == mEdpPort)
+						mEdpManager->SubscribeToMidiIn(midiIn);
 				}
 			}
 		}
@@ -384,7 +381,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 		engOut = mMidiOutGenerator->GetMidiOut((*mMidiOutPortToDeviceIdxMap.begin()).second);
 
 	mEngine = std::make_shared<MidiControlEngine>(mApp, mMainDisplay, mSwitchDisplay, mTraceDisplay,
-		engOut, mAxeFxManager, mAxeFx3Manager, incrementSwitch, decrementSwitch, modeSwitch);
+		engOut, mAxeFxManager, mAxeFx3Manager, mEdpManager, incrementSwitch, decrementSwitch, modeSwitch);
 	mEngine->SetPowerup(powerupBank, powerupPatch, powerupTimeout);
 	mEngine->FilterRedundantProgChg(filterPC ? true : false);
 
@@ -822,6 +819,44 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 						cmds2.push_back(std::make_shared<AxeFxProgramChange>(midiOut, bytes, mgr));
 					else
 						cmds.push_back(std::make_shared<AxeFxProgramChange>(midiOut, bytes, mgr));
+				}
+				else if (patchElement == "EdpProgramChange")
+				{
+					// <EdpProgramChange group="A" device="EDP" program="0" />
+					// data1 val range 0 - 15
+					childElem->QueryIntAttribute("program", &data1);
+					if (0 > data1 || data1 > 15)
+					{
+						if (mTraceDisplay)
+						{
+							std::strstream traceMsg;
+							traceMsg << "Error loading config file: too large a preset specified for EdpProgramChange in patch " << patchName << '\n' << std::ends;
+							mTraceDisplay->Trace(std::string(traceMsg.str()));
+						}
+						continue;
+					}
+
+					bytes.push_back(0xc0 | ch);
+					bytes.push_back(data1);
+
+					PatchCommands & theCmds = group == "B" ? cmds2 : cmds;
+					theCmds.push_back(std::make_shared<MidiCommandString>(midiOut, bytes));
+					bytes.clear();
+
+					if (mEdpManager)
+					{
+						theCmds.push_back(std::make_shared<SleepCommand>(400));
+						theCmds.push_back(std::make_shared<MidiCommandString>(midiOut, mEdpManager->GetLocalStateRequest()));
+					}
+					else
+					{
+						if (mTraceDisplay)
+						{
+							std::strstream traceMsg;
+							traceMsg << "Error loading config file: EdpProgramChange in patch " << patchName << " requires EDP device.\n" << std::ends;
+							mTraceDisplay->Trace(std::string(traceMsg.str()));
+						}
+					}
 				}
 				else if (patchElement == "ControlChange")
 				{
@@ -1664,6 +1699,28 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						else
 							patchNumber = ReservedPatchNumbers::kAxeFx3PrevScene;
 					}
+					else if (cmdName == "EdpShowLocalState")
+					{
+						if (-1 == mEdpPort)
+							continue;
+
+						patchNumber = autoGenPatchNumber--;
+						gendPatchName = "EDP Local State";
+						auto midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[mEdpPort]);
+						auto metPatch = std::make_shared<NormalPatch>(patchNumber, gendPatchName, midiOut, PatchCommands{ std::make_shared<MidiCommandString>(midiOut, mEdpManager->GetLocalStateRequest()) }, PatchCommands{});
+						cmdPatch = metPatch;
+					}
+					else if (cmdName == "EdpShowGlobalState")
+					{
+						if (-1 == mEdpPort)
+							continue;
+
+						patchNumber = autoGenPatchNumber--;
+						gendPatchName = "EDP Global State";
+						auto midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[mEdpPort]);
+						auto metPatch = std::make_shared<NormalPatch>(patchNumber, gendPatchName, midiOut, PatchCommands{ std::make_shared<MidiCommandString>(midiOut, mEdpManager->GetGlobalStateRequest()) }, PatchCommands{});
+						cmdPatch = metPatch;
+					}
 					else
 					{
 						if (mTraceDisplay)
@@ -1991,7 +2048,25 @@ EngineLoader::LoadDeviceChannelMap(TiXmlElement * pElem)
 		pElem->QueryIntAttribute("port", &port);
 		mDevicePorts[dev] = port;
 
-		if (dev == "AxeFx3" ||
+		if (dev == "EDP" || 
+			dev == "EDP+" ||
+			dev == "Echoplex Digital Pro" ||
+			dev == "Echoplex Digital Pro Plus" ||
+			dev == "Echoplex Digital Pro+")
+		{
+			if (!mEdpManager)
+			{
+				mEdpManager = std::make_shared<EdpManager>(mMainDisplay, mSwitchDisplay, mTraceDisplay);
+				mEdpPort = -1 == port ? 1 : port;
+			}
+			else if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: multiple Echoplex devices\n" << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
+		}
+		else if (dev == "AxeFx3" ||
 			dev == "Axe-Fx3" ||
 			dev == "Axe-Fx 3" ||
 			dev == "AxeFx III" ||

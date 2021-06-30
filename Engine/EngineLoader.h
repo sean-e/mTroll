@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2018,2020 Sean Echevarria
+ * Copyright (C) 2007-2010,2018,2020,2021 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -43,10 +43,12 @@ class TiXmlElement;
 class IMonome40h;
 class AxeFxManager;
 class AxeFx3Manager;
+class EdpManager;
 
 using MidiControlEnginePtr = std::shared_ptr<MidiControlEngine>;
 using AxeFxManagerPtr = std::shared_ptr<AxeFxManager>;
 using AxeFx3ManagerPtr = std::shared_ptr<AxeFx3Manager>;
+using EdpManagerPtr = std::shared_ptr<EdpManager>;
 
 constexpr unsigned int kFirstColorPreset = 0x80000000;
 constexpr unsigned int kPresetColorMarkerBit = 0x80000000;
@@ -93,12 +95,14 @@ private:
 	ITraceDisplay *			mTraceDisplay;
 	AxeFxManagerPtr			mAxeFxManager;
 	AxeFx3ManagerPtr		mAxeFx3Manager;
+	EdpManagerPtr			mEdpManager;
 	std::map<std::string, std::string> mDeviceChannels; // outboard device channels
 	std::map<std::string, int> mDevicePorts; // computer midi ports used to address outboard devices
 	std::string				mAxeDeviceName;
 	std::string				mAxe3DeviceName;
-	int						mAxeSyncPort;
-	int						mAxe3SyncPort;
+	int						mAxeSyncPort = -1;
+	int						mAxe3SyncPort = -1;
+	int						mEdpPort = -1;
 	std::array<unsigned int, 32> mLedPresetColors;
 	// device/patchType/state --> rgb color (or preset slot 0-31 if hi-bit set)
 	std::map<std::tuple<std::string, std::string, int>, unsigned int> mLedDefaultColors;

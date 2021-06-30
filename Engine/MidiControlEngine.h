@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2013,2015,2018,2020 Sean Echevarria
+ * Copyright (C) 2007-2013,2015,2018,2020-2021 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -35,6 +35,7 @@
 #include "../Monome40h/IMonome40hInputSubscriber.h"
 #include "IAxeFx.h"
 #include "EngineLoader.h"
+#include "EdpManager.h"
 
 
 class ITrollApplication;
@@ -59,6 +60,7 @@ public:
 					  IMidiOutPtr midiOut,
 					  IAxeFxPtr axMgr,
 					  IAxeFxPtr ax3Mgr,
+					  EdpManagerPtr edpMgr,
 					  int incrementSwitchNumber,
 					  int decrementSwitchNumber,
 					  int modeSwitchNumber);
@@ -161,6 +163,7 @@ private:
 	ISwitchDisplay *		mSwitchDisplay;
 	IMidiOutPtr				mMidiOut; // only used for emProgramChangeDirect/emControlChangeDirect
 	std::vector<IAxeFxPtr>	mAxeMgrs;
+	EdpManagerPtr			mEdpMgr;
 
 	PatchBankPtr			mActiveBank;
 	int						mActiveBankIndex;

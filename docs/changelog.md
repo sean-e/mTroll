@@ -1,7 +1,12 @@
 ### mTroll MIDI controller changelog / process milestones
 
+#### 2021.xx.xx
+- Added support for Echoplex Digital Pro and Pro Plus global and local state display
+- Added new patch command type, `EdpProgramChange`, which displays local/preset state after sending the requested program change
+- Added new meta commands `EdpShowGlobalState` and `EdpShowLocalState` for displaying state independent of program change commands
+
 #### 2021.06.27
-- Fix for inadvertant propagation of secondary switch action defined in default bank when target bank contains primary switch definition
+- Fix for inadvertent propagation of secondary switch action defined in default bank when target bank contains primary switch definition
 
 #### 2021.05.06
 - Axe-Fx III effect block patches now display active block channel
