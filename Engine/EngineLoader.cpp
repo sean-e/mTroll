@@ -475,7 +475,18 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 			int bnkNum = -1;
 			pChildElem->QueryIntAttribute("bankNumber", &bnkNum);
 			if (-1 == bnkNum)
+			{
+				std::string targetBankName;
+				// QueryValueAttribute does not work with string when there are 
+				// spaces (truncated at whitespace); use Attribute instead
+				if (pChildElem->Attribute("bankName"))
+				{
+					targetBankName = pChildElem->Attribute("bankName");
+					if (!targetBankName.empty())
+						mEngine->AssignCustomBankLoad(switchNumber, targetBankName);
+				}
 				continue;
+			}
 
 			mEngine->AssignCustomBankLoad(switchNumber, bnkNum);
 			continue;
@@ -1450,6 +1461,30 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 				childElem->QueryIntAttribute("patch", &patchNumber);
 				// patch may be empty; not an error; retain value of -1
 
+				if (-1 == patchNumber)
+				{
+					// support for switch assignment by patch name instead of patchNumber
+					std::string patchName;
+					// QueryValueAttribute does not work with string when there are 
+					// spaces (truncated at whitespace); use Attribute instead
+					if (childElem->Attribute("patchName"))
+						patchName = childElem->Attribute("patchName");
+					if (!patchName.empty())
+					{
+						patchNumber = mEngine->GetPatchNumber(patchName);
+						if (-1 == patchNumber)
+						{
+							if (mTraceDisplay)
+							{
+								std::strstream traceMsg;
+								traceMsg << "Error loading config file: switch " << switchNumber << " in bank " << bankNumber << " failed to locate patch name " << patchName << "\n" << std::ends;
+								mTraceDisplay->Trace(std::string(traceMsg.str()));
+							}
+							continue;
+						}
+					}
+				}
+
 				if (childElem->Attribute("command"))
 				{
 					// handle engineMetaPatch functionality without an explicit engineMetaPatch ("command" instead of "action")
@@ -1586,13 +1621,29 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						}
 						else
 						{
-							if (mTraceDisplay)
+							// support for selecting target by bank name instead of bank number
+							std::string targetBankName;
+							// QueryValueAttribute does not work with string when there are 
+							// spaces (truncated at whitespace); use Attribute instead
+							if (childElem->Attribute("bankName"))
+								targetBankName = childElem->Attribute("bankName");
+							if (!targetBankName.empty())
 							{
-								std::strstream traceMsg;
-								traceMsg << "Error loading config file: switch " << nameOverride << " missing LoadBank target\n" << std::ends;
-								mTraceDisplay->Trace(std::string(traceMsg.str()));
+								if (nameOverride.empty())
+									nameOverride = "meta load bank";
+								cmdPatch = std::make_shared<MetaPatch_LoadBank>(mEngine.get(), patchNumber, nameOverride, targetBankName);
+								nameOverride.clear();
 							}
-							continue;
+							else
+							{
+								if (mTraceDisplay)
+								{
+									std::strstream traceMsg;
+									traceMsg << "Error loading config file: switch " << nameOverride << " missing LoadBank target\n" << std::ends;
+									mTraceDisplay->Trace(std::string(traceMsg.str()));
+								}
+								continue;
+							}
 						}
 					}
 					else if (cmdName == "ResetPatch")

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010,2012,2015,2018 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2012,2015,2018,2021 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -35,7 +35,15 @@ public:
 	MetaPatch_LoadBank(MidiControlEngine * engine, int number, const std::string & name, int bankNumber) : 
 		Patch(number, name),
 		mEngine(engine),
-		mBankNumber(bankNumber)
+		mTargetBankNumber(bankNumber)
+	{
+		_ASSERTE(mEngine);
+	}
+
+	MetaPatch_LoadBank(MidiControlEngine * engine, int number, const std::string & name, const std::string &targetBankName) :
+		Patch(number, name),
+		mEngine(engine),
+		mOptionalTargetBankName(targetBankName)
 	{
 		_ASSERTE(mEngine);
 	}
@@ -51,7 +59,7 @@ public:
 
 	virtual void SwitchReleased(IMainDisplay *, ISwitchDisplay *) override
 	{
-		mEngine->LoadBankByNumber(mBankNumber);
+		mEngine->LoadBankByNumber(mTargetBankNumber);
 	}
 
 	virtual bool UpdateMainDisplayOnPress() const override {return false;}
@@ -62,6 +70,17 @@ public:
 	virtual void CompleteInit(MidiControlEngine * eng, ITraceDisplay * trc) override
 	{
 		__super::CompleteInit(eng, trc);
+
+		if (!mOptionalTargetBankName.empty())
+		{
+			mTargetBankNumber = mEngine->GetBankNumber(mOptionalTargetBankName);
+			if (-1 == mTargetBankNumber && trc)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error: failed to identify bank referenced by LoadBank command; bank name " << mOptionalTargetBankName << '\n' << std::ends;
+				trc->Trace(std::string(traceMsg.str()));
+			}
+		}
 
 		std::string name(GetName());
 		if (name == "meta load bank")
@@ -83,11 +102,12 @@ public:
 		}
 	}
 
-	int GetBankNumber() const { return mBankNumber; }
+	int GetBankNumber() const { return mTargetBankNumber; }
 
 private:
-	MidiControlEngine	* mEngine;
-	int			mBankNumber;
+	MidiControlEngine	*mEngine;
+	int					mTargetBankNumber = -1;
+	std::string			mOptionalTargetBankName;
 };
 
 

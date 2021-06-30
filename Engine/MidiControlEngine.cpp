@@ -175,6 +175,17 @@ MidiControlEngine::GetBankNameByNum(int bankNumberNotIndex)
 	return std::string();
 }
 
+int
+MidiControlEngine::GetBankNumber(const std::string& name) const
+{
+	for (const std::shared_ptr<PatchBank>& curItem : mBanks)
+	{
+		if (curItem->GetBankName() == name)
+			return curItem->GetBankNumber();
+	}
+	return -1;
+}
+
 void
 MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSettings, unsigned int ledColor)
 {
@@ -282,6 +293,24 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 		curItem->InitPatches(mPatches, mTrace);
 		curItem->SetDefaultMappings(defaultsBank);
 	}
+
+	for (const auto &it : mBankLoadSwitchBankNamesForInit)
+	{
+		int bankNum = GetBankNumber(it.second);
+		if (-1 == bankNum)
+		{
+			if (mTrace)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error: failed to locate bank referenced by LoadBank command; bank name " << it.second << '\n' << std::ends;
+				mTrace->Trace(std::string(traceMsg.str()));
+			}
+			continue;
+		}
+
+		mBankLoadSwitchNumbers[it.first] = bankNum;
+	}
+	mBankLoadSwitchBankNamesForInit.clear();
 
 	for (const auto &mBankLoadSwitchNumber : mBankLoadSwitchNumbers)
 	{
@@ -1137,10 +1166,27 @@ MidiControlEngine::GetPatch(int number)
 	return mPatches[number];
 }
 
+int
+MidiControlEngine::GetPatchNumber(const std::string & name) const
+{
+	for (const auto& curItem : mPatches)
+	{
+		if (curItem.second->GetName() == name)
+			return curItem.second->GetNumber();
+	}
+	return -1;
+}
+
 void
 MidiControlEngine::AssignCustomBankLoad(int switchNumber, int bankNumber)
 {
 	mBankLoadSwitchNumbers[switchNumber] = bankNumber;
+}
+
+void
+MidiControlEngine::AssignCustomBankLoad(int switchNumber, const std::string &bankName)
+{
+	mBankLoadSwitchBankNamesForInit[switchNumber] = bankName;
 }
 
 void

@@ -92,13 +92,16 @@ public:
 	void					SetPowerup(int powerupBank, int powerupPatch, int powerupTimeout);
 	void					FilterRedundantProgChg(bool filter) {mFilterRedundantProgramChanges = filter;}
 	void					AssignCustomBankLoad(int switchNumber, int bankNumber);
+	void					AssignCustomBankLoad(int switchNumber, const std::string &bankName);
 	void					AssignModeSwitchNumber(EngineModeSwitch mode, int switchNumber);
 	const std::string		GetBankNameByNum(int bankNumberNotIndex);
+	int						GetBankNumber(const std::string& name) const;
 	void					CompleteInit(const PedalCalibration * pedalCalibrationSettings, unsigned int ledColor);
 	void					Shutdown();
 
 	ExpressionPedals &		GetPedals() {return mGlobalPedals;}
 	PatchPtr				GetPatch(int number);
+	int						GetPatchNumber(const std::string & name) const;
 	ISwitchDisplay *		GetSwitchDisplay() const { return mSwitchDisplay; }
 
 	void					SwitchPressed(int switchNumber);
@@ -199,6 +202,7 @@ private:
 	int						mDecrementSwitchNumber;
 	std::map<EngineModeSwitch, int>		mOtherModeSwitchNumbers;
 	std::map<int, int>		mBankLoadSwitchNumbers;
+	std::map<int, std::string>	mBankLoadSwitchBankNamesForInit;
 };
 
 using MidiControlEnginePtr = std::shared_ptr<MidiControlEngine>;
