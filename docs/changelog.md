@@ -1,6 +1,6 @@
 ### mTroll MIDI controller changelog / process milestones
 
-#### 2021.06.xx
+#### 2021.06.30
 - Added support for Echoplex Digital Pro and Pro Plus global and local state display
 - Added new patch command type, `EdpProgramChange`, which displays local/preset state after sending the requested program change
 - Added new meta commands `EdpShowGlobalState` and `EdpShowLocalState` for displaying state independent of program change commands
