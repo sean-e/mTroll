@@ -778,8 +778,8 @@
 
 		<patch name="Axe Enhancer 2 Ch A" number="2072" axeBlockId="Enhancer 2" axeBlockChannel="A" device="Axe-Fx" />
 		<patch name="Axe Enhancer 2 Ch B" number="2073" axeBlockId="Enhancer 2" axeBlockChannel="B" device="Axe-Fx" />
-		<patch name="Axe Enhancer 2 Ch B" number="2074" axeBlockId="Enhancer 2" axeBlockChannel="C" device="Axe-Fx" />
-		<patch name="Axe Enhancer 2 Ch B" number="2075" axeBlockId="Enhancer 2" axeBlockChannel="D" device="Axe-Fx" />
+		<patch name="Axe Enhancer 2 Ch C" number="2074" axeBlockId="Enhancer 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Enhancer 2 Ch D" number="2075" axeBlockId="Enhancer 2" axeBlockChannel="D" device="Axe-Fx" />
 
 		<patch name="Axe Filter 1 Ch A" number="2076" axeBlockId="Filter 1" axeBlockChannel="A" device="Axe-Fx" />
 		<patch name="Axe Filter 1 Ch B" number="2077" axeBlockId="Filter 1" axeBlockChannel="B" device="Axe-Fx" />

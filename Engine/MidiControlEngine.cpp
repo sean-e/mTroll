@@ -82,9 +82,7 @@ MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 	mActiveBank(nullptr),
 	mActiveBankIndex(0),
 	mBankNavigationIndex(0),
-	mPowerUpTimeout(0),
 	mPowerUpBank(0),
-	mPowerUpPatch(-1),
 	mIncrementSwitchNumber(incrementSwitchNumber),
 	mDecrementSwitchNumber(decrementSwitchNumber),
 	mModeSwitchNumber(modeSwitchNumber),
@@ -156,13 +154,9 @@ MidiControlEngine::AddPatch(PatchPtr patch)
 }
 
 void
-MidiControlEngine::SetPowerup(int powerupBank,
-							  int powerupPatch,
-							  int powerupTimeout)
+MidiControlEngine::SetPowerup(int powerupBank)
 {
-	mPowerUpPatch = powerupPatch;
 	mPowerUpBank = powerupBank;
-	mPowerUpTimeout = powerupTimeout;
 }
 
 const std::string

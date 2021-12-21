@@ -89,7 +89,7 @@ public:
 	using Patches = std::map<int, PatchPtr>;
 	PatchBankPtr			AddBank(int number, const std::string & name);
 	void					AddPatch(PatchPtr patch);
-	void					SetPowerup(int powerupBank, int powerupPatch, int powerupTimeout);
+	void					SetPowerup(int powerupBank);
 	void					FilterRedundantProgChg(bool filter) {mFilterRedundantProgramChanges = filter;}
 	void					AssignCustomBankLoad(int switchNumber, int bankNumber);
 	void					AssignCustomBankLoad(int switchNumber, const std::string &bankName);
@@ -188,9 +188,7 @@ private:
 	Banks					mBanks;			// compressed; bankNum is not index
 
 	// retained state
-	int						mPowerUpTimeout;
 	int						mPowerUpBank;
-	int						mPowerUpPatch;
 	bool					mFilterRedundantProgramChanges;
 	ExpressionPedals		mGlobalPedals;
 	int						mPedalModePort;

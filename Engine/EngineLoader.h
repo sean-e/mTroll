@@ -29,6 +29,7 @@
 #include <map>
 #include <memory>
 #include <array>
+#include <set>
 #include "ExpressionPedals.h"
 #include "IAxeFx.h"
 
@@ -72,12 +73,15 @@ private:
 	void					LoadLedPresetColors(TiXmlElement * pElem);
 	void					LoadLedDefaultColors(TiXmlElement * pElem);
 	void					LoadExpressionPedalSettings(TiXmlElement * pElem, ExpressionPedals &pedals, int defaultChannel);
+	void					GeneratePatchNumbers(TiXmlElement* pElem);
 	void					LoadPatches(TiXmlElement * pElem);
 	void					LoadElementColorAttributes(TiXmlElement * pElem, unsigned int &ledActiveColor, unsigned int &ledInactiveColor);
 
 	IAxeFxPtr				GetAxeMgr(TiXmlElement * pElem);
 	void					LoadBanks(TiXmlElement * pElem);
 	unsigned int			LookUpColor(std::string device, std::string patchType, int activeState, unsigned int defaultColor = kFirstColorPreset);
+	int						GetPatchNumber(const std::string& name) const;
+	bool					IsPatchNumberUsed(int num) const;
 
 	using MidiPortToDeviceIdxMap = std::map<int, unsigned int>;
 	MidiPortToDeviceIdxMap	mMidiOutPortToDeviceIdxMap;
@@ -103,9 +107,15 @@ private:
 	int						mAxeSyncPort = -1;
 	int						mAxe3SyncPort = -1;
 	int						mEdpPort = -1;
+	int						mPowerupBank = 0;
+	std::string				mPowerupBankName;
 	std::array<unsigned int, 32> mLedPresetColors;
 	// device/patchType/state --> rgb color (or preset slot 0-31 if hi-bit set)
 	std::map<std::tuple<std::string, std::string, int>, unsigned int> mLedDefaultColors;
+
+	using Patches = std::map<const std::string, int>;
+	Patches					mPatchMap;
+	std::set<int>			mPatchNumbersUsed;
 };
 
 #endif // EngineLoader_h__
