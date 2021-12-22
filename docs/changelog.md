@@ -1,5 +1,10 @@
 ### mTroll MIDI controller changelog / process milestones
 
+
+#### 2021.12.xx
+- Added support for optional auto-generation of all patch and bank numbers to eliminate need for manual management of the numbers
+- Added support for `toggleControlChange` and `momentaryControlChange` patch types as shortcuts for toggle and momentary patch types that simply modify a single controller between 127 and 0 (patch requires device and controller attributes)
+
 #### 2021.06.30
 - Added support for Echoplex Digital Pro and Pro Plus global and local state display
 - Added new patch command type, `EdpProgramChange`, which displays local/preset state after sending the requested program change

@@ -1157,6 +1157,56 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			newPatch = std::make_shared<NormalPatch>(patchNumber, patchName, midiOut, cmds, cmds2);
 		else if (patchType == "toggle")
 			newPatch = std::make_shared<TogglePatch>(patchNumber, patchName, midiOut, cmds, cmds2);
+		else if (patchType == "toggleControlChange")
+		{
+			if (-1 == patchDefaultCh)
+			{
+				if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: patch " << patchName << " is of toggleControlChange type but does not specify a device\n" << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
+				continue;
+			}
+
+			int data1 = -1;
+			pElem->QueryIntAttribute("controller", &data1);
+			if (-1 == data1)
+			{
+				if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: no controller specified for toggleControlChange patch " << patchName << '\n' << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
+				continue;
+			}
+
+			if (data1 > 0xff)
+			{
+				if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: too large a controller value specified for toggleControlChange patch " << patchName << '\n' << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
+				continue;
+			}
+
+			Bytes bytesA, bytesB;
+			bytesA.push_back(0xb0 | patchDefaultCh);
+			bytesA.push_back(data1);
+			bytesA.push_back(127);
+
+			bytesB.push_back(0xb0 | patchDefaultCh);
+			bytesB.push_back(data1);
+			bytesB.push_back(0);
+
+			cmds.push_back(std::make_shared<MidiCommandString>(midiOut, bytesA));
+			cmds2.push_back(std::make_shared<MidiCommandString>(midiOut, bytesB));
+			newPatch = std::make_shared<TogglePatch>(patchNumber, patchName, midiOut, cmds, cmds2);
+		}
 		else if (patchType == "persistentPedalOverride")
 			newPatch = std::make_shared<PersistentPedalOverridePatch>(patchNumber, patchName, midiOut, cmds, cmds2);
 		else if (patchType == "AxeToggle")
@@ -1196,6 +1246,56 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		}
 		else if (patchType == "momentary")
 			newPatch = std::make_shared<MomentaryPatch>(patchNumber, patchName, midiOut, cmds, cmds2);
+		else if (patchType == "momentaryControlChange")
+		{
+			if (-1 == patchDefaultCh)
+			{
+				if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: patch " << patchName << " is of momentaryControlChange type but does not specify a device\n" << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
+				continue;
+			}
+
+			int data1 = -1;
+			pElem->QueryIntAttribute("controller", &data1);
+			if (-1 == data1)
+			{
+				if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: no controller specified for momentaryControlChange patch " << patchName << '\n' << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
+				continue;
+			}
+
+			if (data1 > 0xff)
+			{
+				if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: too large a controller value specified for momentaryControlChange patch " << patchName << '\n' << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
+				continue;
+			}
+
+			Bytes bytesA, bytesB;
+			bytesA.push_back(0xb0 | patchDefaultCh);
+			bytesA.push_back(data1);
+			bytesA.push_back(127);
+
+			bytesB.push_back(0xb0 | patchDefaultCh);
+			bytesB.push_back(data1);
+			bytesB.push_back(0);
+
+			cmds.push_back(std::make_shared<MidiCommandString>(midiOut, bytesA));
+			cmds2.push_back(std::make_shared<MidiCommandString>(midiOut, bytesB));
+			newPatch = std::make_shared<MomentaryPatch>(patchNumber, patchName, midiOut, cmds, cmds2);
+		}
 		else if (patchType == "AxeMomentary")
 		{
 			auto axePatch = std::make_shared<AxeMomentaryPatch>(patchNumber, patchName, midiOut, cmds, cmds2, mgr, axeFxScene);

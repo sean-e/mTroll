@@ -1824,70 +1824,22 @@
 			<patchListItemName>Axe Pitch Shift 1 Ch D</patchListItemName>
 		</patch>
 
-		<patch name="Axe Ext 1 (toggle)" device="Axe-Fx" type="toggle" >
-			<ControlChange group="A" controller="16" value="127" />
-			<ControlChange group="B" controller="16" value="0" />
-		</patch>
-		<patch name="Axe Ext 2 (toggle)" device="Axe-Fx" type="toggle" >
-			<ControlChange group="A" controller="17" value="127" />
-			<ControlChange group="B" controller="17" value="0" />
-		</patch>
-		<patch name="Axe Ext 3 (toggle)" device="Axe-Fx" type="toggle" >
-			<ControlChange group="A" controller="18" value="127" />
-			<ControlChange group="B" controller="18" value="0" />
-		</patch>
-		<patch name="Axe Ext 4 (toggle)" device="Axe-Fx" type="toggle" >
-			<ControlChange group="A" controller="19" value="127" />
-			<ControlChange group="B" controller="19" value="0" />
-		</patch>
-		<patch name="Axe Ext 5 (toggle)" device="Axe-Fx" type="toggle" >
-			<ControlChange group="A" controller="20" value="127" />
-			<ControlChange group="B" controller="20" value="0" />
-		</patch>
-		<patch name="Axe Ext 6 (toggle)" device="Axe-Fx" type="toggle" >
-			<ControlChange group="A" controller="21" value="127" />
-			<ControlChange group="B" controller="21" value="0" />
-		</patch>
-		<patch name="Axe Ext 7 (toggle)" device="Axe-Fx" type="toggle" >
-			<ControlChange group="A" controller="22" value="127" />
-			<ControlChange group="B" controller="22" value="0" />
-		</patch>
-		<patch name="Axe Ext 8 (toggle)" device="Axe-Fx" type="toggle" >
-			<ControlChange group="A" controller="23" value="127" />
-			<ControlChange group="B" controller="23" value="0" />
-		</patch>
-		<patch name="Axe Ext 9 (toggle)" device="Axe-Fx" type="toggle" >
-			<ControlChange group="A" controller="24" value="127" />
-			<ControlChange group="B" controller="24" value="0" />
-		</patch>
-		<patch name="Axe Ext 10 (toggle)" device="Axe-Fx" type="toggle" >
-			<ControlChange group="A" controller="25" value="127" />
-			<ControlChange group="B" controller="25" value="0" />
-		</patch>
-		<patch name="Axe Ext 11 (toggle)" device="Axe-Fx" type="toggle" >
-			<ControlChange group="A" controller="26" value="127" />
-			<ControlChange group="B" controller="26" value="0" />
-		</patch>
-		<patch name="Axe Ext 12 (toggle)" device="Axe-Fx" type="toggle" >
-			<ControlChange group="A" controller="27" value="127" />
-			<ControlChange group="B" controller="27" value="0" />
-		</patch>
-		<patch name="Axe Ext 13 (toggle)" device="Axe-Fx" type="toggle" >
-			<ControlChange group="A" controller="28" value="127" />
-			<ControlChange group="B" controller="28" value="0" />
-		</patch>
-		<patch name="Axe Ext 14 (toggle)" device="Axe-Fx" type="toggle" >
-			<ControlChange group="A" controller="29" value="127" />
-			<ControlChange group="B" controller="29" value="0" />
-		</patch>
-		<patch name="Axe Ext 15 (toggle)" device="Axe-Fx" type="toggle" >
-			<ControlChange group="A" controller="30" value="127" />
-			<ControlChange group="B" controller="30" value="0" />
-		</patch>
-		<patch name="Axe Ext 16 (toggle)" device="Axe-Fx" type="toggle" >
-			<ControlChange group="A" controller="31" value="127" />
-			<ControlChange group="B" controller="31" value="0" />
-		</patch>
+		<patch name="Axe Ext 1 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="16" />
+		<patch name="Axe Ext 2 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="17" />
+		<patch name="Axe Ext 3 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="18" />
+		<patch name="Axe Ext 4 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="19" />
+		<patch name="Axe Ext 5 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="20" />
+		<patch name="Axe Ext 6 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="21" />
+		<patch name="Axe Ext 7 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="22" />
+		<patch name="Axe Ext 8 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="23" />
+		<patch name="Axe Ext 9 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="24" />
+		<patch name="Axe Ext 10 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="25" />
+		<patch name="Axe Ext 11 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="26" />
+		<patch name="Axe Ext 12 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="27" />
+		<patch name="Axe Ext 13 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="28" />
+		<patch name="Axe Ext 14 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="29" />
+		<patch name="Axe Ext 15 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="30" />
+		<patch name="Axe Ext 16 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="31" />
 
 		<patch name="Scene 1" scene="1" device="Axe-Fx" />
 		<patch name="Scene 2" scene="2" device="Axe-Fx" />
