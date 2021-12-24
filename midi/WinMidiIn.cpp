@@ -146,8 +146,8 @@ WinMidiIn::ServiceThread()
 	_ASSERTE(res == MMSYSERR_NOERROR);
 
 	_ASSERTE(mDoneEvent && mDoneEvent != INVALID_HANDLE_VALUE);
-    for (;;)
-    {
+	for (;;)
+	{
 		DWORD result;
 		MSG msg;
 
@@ -181,7 +181,7 @@ WinMidiIn::ServiceThread()
 			break; // done event fired
 		else
 			break; // ??
-    }
+	}
 
 	mThreadState = tsEnding;
 	res = ::midiInReset(mMidiIn);
