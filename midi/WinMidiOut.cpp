@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010,2013,2015,2018,2020 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2013,2015,2018,2020-2021 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -282,7 +282,7 @@ WinMidiOut::MidiOut(byte singleByte,
 	if (!mMidiOut)
 		return;
 
-	MidiOut(singleByte, useIndicator);
+	MidiOut((DWORD)singleByte, useIndicator);
 }
 
 void
