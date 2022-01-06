@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<settings>
+  <item key="authentication_type" value="unauthenticated" />
+  <item key="token_enc" value="" />
+  <item key="repository_location" value="url" />
+  <item key="url" value="https://github.com/sean-e/mTroll/" />
+  <item key="git_command" value="git.exe remote get-url origin" />
+  <item key="show_last_comment" value="True" />
+</settings>

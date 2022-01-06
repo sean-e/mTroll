@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Link
+	Name="mTroll GitHub Issue"
+	Keywords="issue"
+	KeywordSfx="#=:"
+	ValueType="Number"
+	UrlExe=""
+	Args=""
+	Behavior="OpenInExtBrowser">
+	<Plugin
+		Name="GitHub (Whole Tomato Software)"
+		Id="4b3c44a7-d42b-39c2-b66c-6a1a5d4f5be8" />
+</Link>
