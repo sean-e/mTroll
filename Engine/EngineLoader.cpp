@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2015,2018,2020-2021 Sean Echevarria
+ * Copyright (C) 2007-2015,2018,2020-2022 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -390,9 +390,13 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 		}
 	}
 
-	IMidiOutPtr engOut; // for direct program change use
+	IMidiOutPtr engOut; // for direct program change, control change, and MIDI clock
 	if (!mMidiOutPortToDeviceIdxMap.empty())
+	{
+		// first device listed in config MidiDevices section is used for interactive 
+		// program change, control change, and MIDI clock (for enhancement, see issue #12)
 		engOut = mMidiOutGenerator->GetMidiOut((*mMidiOutPortToDeviceIdxMap.begin()).second);
+	}
 
 	mEngine = std::make_shared<MidiControlEngine>(mApp, mMainDisplay, mSwitchDisplay, mTraceDisplay,
 		engOut, mAxeFxManager, mAxeFx3Manager, mEdpManager, incrementSwitch, decrementSwitch, modeSwitch);
@@ -530,6 +534,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 		else if (name == "adcOverride") m = MidiControlEngine::kModeAdcOverride;
 		else if (name == "testLeds") m = MidiControlEngine::kModeTestLeds;
 		else if (name == "toggleTraceWindow") m = MidiControlEngine::kModeToggleTraceWindow;
+		else if (name == "midiClockSetup") m = MidiControlEngine::kModeClockSetup;
 
 		if (MidiControlEngine::kUnassignedSwitchNumber != m)
 			mEngine->AssignModeSwitchNumber(m, switchNumber);

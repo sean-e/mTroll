@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2013,2018,2020 Sean Echevarria
+ * Copyright (C) 2007-2008,2013,2018,2020,2022 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -51,6 +51,13 @@ public:
 	virtual void MidiOut(byte singleByte, bool useIndicator = true) override;
 	virtual void MidiOut(byte byte1, byte byte2, bool useIndicator = true) override;
 	virtual void MidiOut(byte byte1, byte byte2, byte byte3, bool useIndicator = true) override;
+	virtual void EnableMidiClock(bool enable) override;
+	virtual bool IsMidiClockEnabled() override
+	{
+		return mClockEnabled && mClockThread && mRunClockThread;
+	}
+	virtual void SetTempo(int bpm) override;
+	virtual int GetTempo() const override;
 	virtual bool SuspendMidiOut() override;
 	virtual bool ResumeMidiOut() override;
 	virtual void CloseMidiOut() override;
@@ -68,6 +75,9 @@ private:
 	static void CALLBACK TimerProc(HWND, UINT, UINT_PTR id, DWORD);
 	static void CALLBACK MidiOutCallbackProc(HMIDIOUT hmo, UINT wMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2);
 
+	static unsigned int __stdcall ClockThread(void* _this);
+	void ClockThread();
+
 	ITraceDisplay				* mTrace;
 	ISwitchDisplay				* mActivityIndicator;
 	volatile bool				mEnableActivityIndicator;
@@ -81,6 +91,17 @@ private:
 	LONG						mTimerEventCount;
 	unsigned int				mDeviceIdx;
 	unsigned int				mLedColor = kFirstColorPreset;
+
+	HANDLE						mClockThreadDoneEvent = nullptr;
+	HANDLE						mClockThread = nullptr;
+	DWORD						mClockThreadId = 0;
+	std::atomic_bool			mRunClockThread = false;
+	bool						mClockEnabled = false; // separate control state from thread loop since suspend command kills the thread
+
+	LARGE_INTEGER				mPerfFreq = { 0, 0 };
+	int							mTempo = 120;
+	LONGLONG					mTickInterval;
+	double						mTickTruncationError; // diff between ideal interval and mTickInterval
 };
 
 #endif // WinMidiOut_h__

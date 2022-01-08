@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010,2013,2015,2018,2020-2021 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2013,2015,2018,2020-2022 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -20,13 +20,28 @@
  * Let me know if you modify, extend or use mTroll.
  * Original project site: http://www.creepingfog.com/mTroll/
  * Contact Sean: "fester" at the domain of the original project site
+ *
  */
 
+/*
+ * The following notice applies to WinMidiOut::SetTempo and WinMidiOut::ClockThread:
+ * 
+Copyright (c) 2016 Pete Brown
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ **/
+
 #include <atomic>
-#include "..\midi\WinMidiOut.h"
+#include <cmath>
+#include "WinMidiOut.h"
 #include "..\Engine\ITraceDisplay.h"
 #include "..\Engine\ISwitchDisplay.h"
 #include <atlstr.h>
+#include "SleepShort.h"
 
 #pragma comment(lib, "winmm.lib")
 
@@ -57,6 +72,7 @@ WinMidiOut::WinMidiOut(ITraceDisplay * trace) :
 		ZeroMemory(&midiHdr, sizeof(MIDIHDR));
 
 	mTimerId = ::SetTimer(nullptr, mTimerId, 150, TimerProc);
+	::QueryPerformanceFrequency(&mPerfFreq);
 }
 
 WinMidiOut::~WinMidiOut()
@@ -136,6 +152,13 @@ WinMidiOut::OpenMidiOut(unsigned int deviceIdx)
 	MMRESULT res = ::midiOutOpen(&mMidiOut, deviceIdx, (DWORD_PTR)MidiOutCallbackProc, (DWORD_PTR)this, CALLBACK_FUNCTION);
 	if (MMSYSERR_NOERROR != res)
 		ReportMidiError(res, __LINE__);
+
+	if (mClockEnabled)
+	{
+		SetTempo(mTempo);
+		EnableMidiClock(true);
+	}
+
 	return res == MMSYSERR_NOERROR;
 }
 
@@ -314,9 +337,10 @@ void
 WinMidiOut::MidiOut(DWORD shortMsg, 
 					bool useIndicator /*= true*/)
 {
+	MMRESULT res;
 	for (;;)
 	{
-		const MMRESULT res = ::midiOutShortMsg(mMidiOut, shortMsg);
+		res = ::midiOutShortMsg(mMidiOut, shortMsg);
 		if (MMSYSERR_NOERROR != res)
 		{
 			if (MIDIERR_NOTREADY == res) 
@@ -333,6 +357,164 @@ WinMidiOut::MidiOut(DWORD shortMsg,
 			IndicateActivity();
 		break;
 	}
+}
+
+unsigned int __stdcall
+WinMidiOut::ClockThread(void* _thisParam)
+{
+	WinMidiOut* _this = static_cast<WinMidiOut*>(_thisParam);
+	_this->ClockThread();
+	_endthreadex(0);
+	return 0;
+}
+
+// if mPerfFreq is 10,000,000 counts per second, then:
+// 240bpm: (10000000 / (240 / 60)) / 24 = 104167 -> 96 pulses per second, ~10ms per clock pulse
+// 120bpm: (10000000 / (120 / 60)) / 24 = 208333 -> 48 pulses per second, ~21ms per clock pulse
+//  60bpm: (10000000 /  (60 / 60)) / 24 = 416666 -> 24 pulses per second, ~42ms per clock pulse
+
+// WinMidiOut::ClockThread is from the implementation of MidiClockGenerator::ThreadWorker by Pete Brown
+// https://github.com/Psychlist1972/Windows-10-MIDI-Library/blob/master/PeteBrown.Devices.Midi/PeteBrown.Devices.Midi/MidiClockGenerator.cpp
+// Copyright (c) 2016 Pete Brown
+// MIT License https://github.com/Psychlist1972/Windows-10-MIDI-Library/blob/master/LICENSE.md
+// https://github.com/Psychlist1972
+void
+WinMidiOut::ClockThread()
+{
+	MMRESULT res;
+	LARGE_INTEGER lastTime;
+	LONGLONG nextTime;
+	LARGE_INTEGER currentTime;
+
+	currentTime.QuadPart = 0;
+
+	double errorAccumulator = 0.0;
+	// not exact 5ms boundaries for breathing room...
+	const LONGLONG k40msInCycles = (LONGLONG)((mPerfFreq.QuadPart / 1000) * 40.2f);
+	const LONGLONG k35msInCycles = (LONGLONG)((mPerfFreq.QuadPart / 1000) * 35.2f);
+	const LONGLONG k30msInCycles = (LONGLONG)((mPerfFreq.QuadPart / 1000) * 30.2f);
+	const LONGLONG k25msInCycles = (LONGLONG)((mPerfFreq.QuadPart / 1000) * 25.2f);
+	const LONGLONG k20msInCycles = (LONGLONG)((mPerfFreq.QuadPart / 1000) * 20.2f);
+	const LONGLONG k15msInCycles = (LONGLONG)((mPerfFreq.QuadPart / 1000) * 15.2f);
+	const LONGLONG k10msInCycles = (LONGLONG)((mPerfFreq.QuadPart / 1000) * 10.4f);
+	const LONGLONG k5msInCycles = (LONGLONG)((mPerfFreq.QuadPart / 1000) * 5.5f);
+
+	while (mRunClockThread)
+	{
+		::QueryPerformanceCounter(&lastTime);
+
+		// send the message
+		res = ::midiOutShortMsg(mMidiOut, (DWORD)MIDI_CLOCK);
+
+		nextTime = lastTime.QuadPart + mTickInterval;
+
+		if (errorAccumulator >= 1.0)
+		{
+			// get the whole number part of the error and then remove it from
+			// the accumulator (which is a double)
+			nextTime += (long)(std::trunc(errorAccumulator));
+			errorAccumulator -= (long)(std::trunc(errorAccumulator));
+		}
+
+		::QueryPerformanceCounter(&currentTime);
+		if (nextTime > currentTime.QuadPart)
+		{
+			const LONGLONG waitCycles = nextTime - currentTime.QuadPart;
+			// if nextTime is more than XXms away, use SleepShort for at least XXms of the time
+			if (waitCycles > k40msInCycles)
+				::SleepShort(40.0); // 60bpm
+			else if (waitCycles > k35msInCycles)
+				::SleepShort(35.0);
+			else if (waitCycles > k30msInCycles)
+				::SleepShort(30.0);
+			else if (waitCycles > k25msInCycles)
+				::SleepShort(25.0); // 90bpm
+			else if (waitCycles > k20msInCycles)
+				::SleepShort(20.0); // 120bpm
+			else if (waitCycles > k15msInCycles)
+				::SleepShort(15.0); // 120bpm
+			else if (waitCycles > k10msInCycles)
+				::SleepShort(10.0); // 180bpm, 240bpm
+			else if (waitCycles > k5msInCycles)
+				::SleepShort(5.0);// 240bpm
+			else
+				; // 240bpm
+		}
+
+		// spin until this cycle is done
+		// This is the one part I really dislike here.
+		// sleeping the thread is no good due to durations required
+		while (currentTime.QuadPart < nextTime)
+			::QueryPerformanceCounter(&currentTime);
+
+		// accumulate some error :)
+		errorAccumulator += mTickTruncationError;
+	}
+
+	mClockThreadId = 0;
+}
+
+void
+WinMidiOut::EnableMidiClock(bool enable)
+{
+	if (enable)
+	{
+		if (mClockThread)
+		{
+			// end the thread if already running
+			EnableMidiClock(false);
+		}
+
+		// start the thread
+		mClockEnabled = mRunClockThread = true;
+		mClockThread = (HANDLE)_beginthreadex(nullptr, 0, ClockThread, this, 0, (unsigned int*)&mClockThreadId);
+	}
+	else 
+	{
+		mClockEnabled = false;
+		if (mRunClockThread)
+		{
+			// end the thread
+			if (mClockThread)
+			{
+				mRunClockThread = false;
+				::WaitForSingleObjectEx(mClockThread, 30000, FALSE);
+				::CloseHandle(mClockThread);
+				mClockThread = nullptr;
+			}
+		}
+	}
+}
+
+// WinMidiOut::SetTempo is from the implementation of MidiClockGenerator::Tempo::set by Pete Brown
+// https://github.com/Psychlist1972/Windows-10-MIDI-Library/blob/master/PeteBrown.Devices.Midi/PeteBrown.Devices.Midi/MidiClockGenerator.cpp
+// Copyright (c) 2016 Pete Brown
+// MIT License https://github.com/Psychlist1972/Windows-10-MIDI-Library/blob/master/LICENSE.md
+// https://github.com/Psychlist1972
+void
+WinMidiOut::SetTempo(int bpm)
+{
+	constexpr int ppqn = 24;
+
+	// The Fractal Audio Axe-FX III tempo range is 24-250, which seems reasonable to enforce
+	if (bpm < 24)
+		mTempo = 24;
+	else if (bpm > 250)
+		mTempo = 250;
+	else
+		mTempo = bpm;
+
+	// this is going to have rounding errors
+	// we account for this in the clock worker thread function
+	mTickInterval = (LONGLONG)(std::trunc(((double)mPerfFreq.QuadPart / (mTempo / 60.0F)) / ppqn));
+
+	mTickTruncationError = (double)(((double)mPerfFreq.QuadPart / (mTempo / 60.0F)) / ppqn) - mTickInterval;
+}
+
+int
+WinMidiOut::GetTempo() const
+{
+	return mTempo;
 }
 
 void CALLBACK 
@@ -414,7 +596,10 @@ WinMidiOut::SuspendMidiOut()
 {
 	if (mMidiOut)
 	{
+		const auto prevVal = mClockEnabled;
 		ReleaseMidiOut();
+		mClockEnabled = prevVal;
+
 		return true;
 	}
 
@@ -439,6 +624,8 @@ WinMidiOut::CloseMidiOut()
 void
 WinMidiOut::ReleaseMidiOut()
 {
+	EnableMidiClock(false);
+
 	if (mMidiOut)
 	{
 		MMRESULT res = ::midiOutReset(mMidiOut);

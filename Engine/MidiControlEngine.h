@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2013,2015,2018,2020-2021 Sean Echevarria
+ * Copyright (C) 2007-2013,2015,2018,2020-2022 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -82,7 +82,8 @@ public:
 		kModeAdcOverride,
 		kModeTestLeds,
 		kModeToggleTraceWindow,
-		kModeBankDesc
+		kModeBankDesc,
+		kModeClockSetup
 	};
 
 	// initialization
@@ -142,6 +143,7 @@ private:
 		emProgramChangeDirect, // manual send of program changes
 		emControlChangeDirect, // manual send of control changes
 		emLedTests,			// LED display tests
+		emClockSetup,		// setup MIDI beat clock
 		emNotValid 
 	};
 	void					ChangeMode(EngineMode newMode);
@@ -155,6 +157,8 @@ private:
 	void					SwitchReleased_ProgramChangeDirect(int switchNumber);
 	void					SwitchPressed_ControlChangeDirect(int switchNumber);
 	void					SwitchReleased_ControlChangeDirect(int switchNumber);
+	void					SwitchPressed_ClockSetup(int switchNumber);
+	void					SwitchReleased_ClockSetup(int switchNumber);
 	void					SwitchReleased_TimeDisplay(int switchNumber);
 	void					SwitchReleased_LedTests(int switchNumber);
 
@@ -164,7 +168,7 @@ private:
 	IMainDisplay *			mMainDisplay;
 	ITraceDisplay *			mTrace;
 	ISwitchDisplay *		mSwitchDisplay;
-	IMidiOutPtr				mMidiOut; // only used for emProgramChangeDirect/emControlChangeDirect
+	IMidiOutPtr				mMidiOut; // only used for emProgramChangeDirect / emControlChangeDirect / emClockSetup
 	std::vector<IAxeFxPtr>	mAxeMgrs;
 	EdpManagerPtr			mEdpMgr;
 
@@ -172,9 +176,9 @@ private:
 	int						mActiveBankIndex;
 	EngineMode				mMode;
 	int						mBankNavigationIndex;
-	std::string				mDirectNumber; // used by emBankDirect / emProgramChangeDirect / emControlChangeDirect
+	std::string				mDirectNumber; // used by emBankDirect / emProgramChangeDirect / emControlChangeDirect / emClockSetup
 	int						mDirectChangeChannel; // used by emProgramChangeDirect / emControlChangeDirect
-	int						mDirectValueLastSent; // used by emProgramChangeDirect / emControlChangeDirect
+	int						mDirectValueLastSent; // used by emProgramChangeDirect / emControlChangeDirect / emClockSetup
 	int						mDirectValue1LastSent; // used by emControlChangeDirect
 	std::stack<int>			mBackHistory;
 	std::stack<int>			mForwardHistory;
