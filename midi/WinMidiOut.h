@@ -92,7 +92,6 @@ private:
 	unsigned int				mDeviceIdx;
 	unsigned int				mLedColor = kFirstColorPreset;
 
-	HANDLE						mClockThreadDoneEvent = nullptr;
 	HANDLE						mClockThread = nullptr;
 	DWORD						mClockThreadId = 0;
 	std::atomic_bool			mRunClockThread = false;
