@@ -43,6 +43,7 @@ public:
 	// IMidiOut
 	virtual unsigned int GetMidiOutDeviceCount() const override;
 	virtual std::string GetMidiOutDeviceName(unsigned int deviceIdx) const override;
+	virtual std::string GetMidiOutDeviceName() const override;
 	virtual void SetActivityIndicator(ISwitchDisplay * activityIndicator, int activityIndicatorIdx, unsigned int ledColor) override;
 	virtual void EnableActivityIndicator(bool enable) override;
 	virtual bool OpenMidiOut(unsigned int deviceIdx) override;
@@ -78,6 +79,7 @@ private:
 	static unsigned int __stdcall ClockThread(void* _this);
 	void ClockThread();
 
+	std::string					mName;
 	ITraceDisplay				* mTrace;
 	ISwitchDisplay				* mActivityIndicator;
 	volatile bool				mEnableActivityIndicator;

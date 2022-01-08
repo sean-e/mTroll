@@ -45,6 +45,7 @@ public:
 
 	virtual unsigned int GetMidiOutDeviceCount() const = 0;
 	virtual std::string GetMidiOutDeviceName(unsigned int deviceIdx) const = 0;
+	virtual std::string GetMidiOutDeviceName() const = 0;
 	virtual void SetActivityIndicator(ISwitchDisplay * activityIndicator, int activityIndicatorIdx, unsigned int ledColor) = 0;
 	virtual void EnableActivityIndicator(bool enable) = 0;
 	virtual bool OpenMidiOut(unsigned int deviceIdx) = 0;

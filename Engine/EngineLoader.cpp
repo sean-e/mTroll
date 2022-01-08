@@ -399,7 +399,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 	}
 
 	mEngine = std::make_shared<MidiControlEngine>(mApp, mMainDisplay, mSwitchDisplay, mTraceDisplay,
-		engOut, mAxeFxManager, mAxeFx3Manager, mEdpManager, incrementSwitch, decrementSwitch, modeSwitch);
+		mMidiOutGenerator, engOut, mAxeFxManager, mAxeFx3Manager, mEdpManager, incrementSwitch, decrementSwitch, modeSwitch);
 	mEngine->FilterRedundantProgChg(filterPC ? true : false);
 
 	// <expression port="">
@@ -535,6 +535,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 		else if (name == "testLeds") m = MidiControlEngine::kModeTestLeds;
 		else if (name == "toggleTraceWindow") m = MidiControlEngine::kModeToggleTraceWindow;
 		else if (name == "midiClockSetup") m = MidiControlEngine::kModeClockSetup;
+		else if (name == "midiOutSelect") m = MidiControlEngine::kModeMidiOutSelect;
 
 		if (MidiControlEngine::kUnassignedSwitchNumber != m)
 			mEngine->AssignModeSwitchNumber(m, switchNumber);

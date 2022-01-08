@@ -118,6 +118,12 @@ WinMidiOut::GetMidiOutDeviceName(unsigned int deviceIdx) const
 	return devName;
 }
 
+std::string
+WinMidiOut::GetMidiOutDeviceName() const
+{
+	return mName;
+}
+
 void
 WinMidiOut::SetActivityIndicator(ISwitchDisplay * activityIndicator, 
 								 int activityIndicatorIdx, 
@@ -152,6 +158,8 @@ WinMidiOut::OpenMidiOut(unsigned int deviceIdx)
 	MMRESULT res = ::midiOutOpen(&mMidiOut, deviceIdx, (DWORD_PTR)MidiOutCallbackProc, (DWORD_PTR)this, CALLBACK_FUNCTION);
 	if (MMSYSERR_NOERROR != res)
 		ReportMidiError(res, __LINE__);
+	else
+		mName = GetMidiOutDeviceName(deviceIdx);
 
 	if (mClockEnabled)
 	{

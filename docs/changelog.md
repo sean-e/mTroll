@@ -2,6 +2,7 @@
 
 
 #### 2022.01.xx
+- Added support for selecting MIDI out port in manual/interactive program change, control change, and beat clock modes
 - Added MIDI beat clock engine mode for setting tempo and enabling/disabling generation of MIDI beat clock
 - Added support for optional auto-generation of all patch and bank numbers to eliminate need for manual management of the numbers
 - Added support for `toggleControlChange` and `momentaryControlChange` patch types as shortcuts for toggle and momentary patch types that simply modify a single controller between 127 and 0 (patch requires device and controller attributes)

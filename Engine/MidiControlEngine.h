@@ -40,6 +40,7 @@
 
 class ITrollApplication;
 class IMainDisplay;
+class IMidiOutGenerator;
 class ISwitchDisplay;
 class ITraceDisplay;
 class IMidiOut;
@@ -57,6 +58,7 @@ public:
 					  IMainDisplay * mainDisplay, 
 					  ISwitchDisplay * switchDisplay,
 					  ITraceDisplay * traceDisplay,
+					  IMidiOutGenerator * midiOutGenerator,
 					  IMidiOutPtr midiOut,
 					  IAxeFxPtr axMgr,
 					  IAxeFxPtr ax3Mgr,
@@ -83,7 +85,8 @@ public:
 		kModeTestLeds,
 		kModeToggleTraceWindow,
 		kModeBankDesc,
-		kModeClockSetup
+		kModeClockSetup,
+		kModeMidiOutSelect
 	};
 
 	// initialization
@@ -144,9 +147,11 @@ private:
 		emControlChangeDirect, // manual send of control changes
 		emLedTests,			// LED display tests
 		emClockSetup,		// setup MIDI beat clock
+		emMidiOutSelect,	// select midi out port to use for emProgramChangeDirect/emControlChangeDirect/emClockSetup
 		emNotValid 
 	};
 	void					ChangeMode(EngineMode newMode);
+	EngineMode				CurrentMode() const { return mMode.top(); }
 	void					SetupModeSelectSwitch(EngineModeSwitch m);
 	void					SwitchReleased_AdcOverrideMode(int switchNumber);
 	void					SwitchReleased_PedalDisplayMode(int switchNumber);
@@ -161,20 +166,22 @@ private:
 	void					SwitchReleased_ClockSetup(int switchNumber);
 	void					SwitchReleased_TimeDisplay(int switchNumber);
 	void					SwitchReleased_LedTests(int switchNumber);
+	void					SwitchReleased_MidiOutSelect(int switchNumber);
 
 private:
 	// non-retained runtime state
-	ITrollApplication *		mApplication;
-	IMainDisplay *			mMainDisplay;
-	ITraceDisplay *			mTrace;
-	ISwitchDisplay *		mSwitchDisplay;
+	ITrollApplication *		mApplication = nullptr;
+	IMainDisplay *			mMainDisplay = nullptr;
+	ITraceDisplay *			mTrace = nullptr;
+	ISwitchDisplay *		mSwitchDisplay = nullptr;
+	IMidiOutGenerator *		mMidiOutGenerator = nullptr;
 	IMidiOutPtr				mMidiOut; // only used for emProgramChangeDirect / emControlChangeDirect / emClockSetup
 	std::vector<IAxeFxPtr>	mAxeMgrs;
 	EdpManagerPtr			mEdpMgr;
 
 	PatchBankPtr			mActiveBank;
 	int						mActiveBankIndex;
-	EngineMode				mMode;
+	std::stack<EngineMode>	mMode;
 	int						mBankNavigationIndex;
 	std::string				mDirectNumber; // used by emBankDirect / emProgramChangeDirect / emControlChangeDirect / emClockSetup
 	int						mDirectChangeChannel; // used by emProgramChangeDirect / emControlChangeDirect

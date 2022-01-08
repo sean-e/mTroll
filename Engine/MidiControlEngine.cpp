@@ -30,6 +30,7 @@
 #include "IMainDisplay.h"
 #include "ISwitchDisplay.h"
 #include "ITraceDisplay.h"
+#include "IMidiOutGenerator.h"
 #include "MetaPatch_BankNav.h"
 #include "SleepCommand.h"
 #include "ITrollApplication.h"
@@ -67,6 +68,7 @@ MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 									 IMainDisplay * mainDisplay, 
 									 ISwitchDisplay * switchDisplay, 
 									 ITraceDisplay * traceDisplay,
+									 IMidiOutGenerator * midiOutGenerator,
 									 IMidiOutPtr midiOut,
 									 IAxeFxPtr axMgr,
 									 IAxeFxPtr ax3Mgr,
@@ -78,7 +80,6 @@ MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 	mMainDisplay(mainDisplay),
 	mSwitchDisplay(switchDisplay),
 	mTrace(traceDisplay),
-	mMode(emCreated),
 	mActiveBank(nullptr),
 	mActiveBankIndex(0),
 	mBankNavigationIndex(0),
@@ -92,6 +93,7 @@ MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 	mDirectChangeChannel(0),
 	mDirectValueLastSent(0),
 	mDirectValue1LastSent(0),
+	mMidiOutGenerator(midiOutGenerator),
 	mMidiOut(midiOut),
 	mSwitchPressedEventTime(0),
 	mEdpMgr(edpMgr)
@@ -99,6 +101,8 @@ MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 #ifdef ITEM_COUNTING
 	++gMidiControlEngCnt;
 #endif
+
+	mMode.push(emCreated);
 
 	if (axMgr)
 		mAxeMgrs.push_back(axMgr);
@@ -201,6 +205,7 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 		mOtherModeSwitchNumbers[kModeTestLeds] = kModeTestLeds;
 		mOtherModeSwitchNumbers[kModeToggleTraceWindow] = kModeToggleTraceWindow;
 		mOtherModeSwitchNumbers[kModeClockSetup] = kModeClockSetup;
+		mOtherModeSwitchNumbers[kModeMidiOutSelect] = kModeMidiOutSelect;
 	}
 
 	std::sort(mBanks.begin(), mBanks.end(), SortByBankNumber);
@@ -397,7 +402,8 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 	}
 
 	mSwitchPressedEventTime = CurTime();
-	if (emBank == mMode)
+	const EngineMode curMode = CurrentMode();
+	if (emBank == curMode)
 	{
 		if (switchNumber == mModeSwitchNumber)
 			return;
@@ -407,18 +413,22 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 		return;
 	}
 
-	if (emBankDirect == mMode || 
-		emProgramChangeDirect == mMode ||
-		emControlChangeDirect == mMode ||
-		emClockSetup == mMode)
+	if (emBankDirect == curMode || 
+		emProgramChangeDirect == curMode ||
+		emControlChangeDirect == curMode ||
+		emClockSetup == curMode)
 	{
 		bool doUpdate = false;
 		if ((switchNumber >= 0 && switchNumber <= 9) ||
-			switchNumber == mDecrementSwitchNumber || 
+			(switchNumber == mDecrementSwitchNumber 
+#ifndef DECREMENT_IS_BACKSPACE // emBankDirect always has decrement as Backspace
+				&& emBankDirect == curMode
+#endif
+				) ||
 			switchNumber == mIncrementSwitchNumber)
 			doUpdate = true;
 
-		if ((emProgramChangeDirect == mMode || emControlChangeDirect == mMode || emClockSetup == mMode) && 
+		if ((emProgramChangeDirect == curMode || emControlChangeDirect == curMode || emClockSetup == curMode) && 
 			switchNumber >= 10 && switchNumber <= 14)
 			doUpdate = true;
 
@@ -428,11 +438,11 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 			mSwitchDisplay->ForceSwitchDisplay(switchNumber, mEngineLedColor);
 		}
 
-		if (emProgramChangeDirect == mMode)
+		if (emProgramChangeDirect == curMode)
 			SwitchPressed_ProgramChangeDirect(switchNumber);
-		else if (emControlChangeDirect == mMode)
+		else if (emControlChangeDirect == curMode)
 			SwitchPressed_ControlChangeDirect(switchNumber);
-		else if (emClockSetup == mMode)
+		else if (emClockSetup == curMode)
 			SwitchPressed_ClockSetup(switchNumber);
 
 		return;
@@ -465,7 +475,8 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 	else
 		dur = PatchBank::spdShort;
 
-	switch (mMode)
+	const EngineMode curMode = CurrentMode();
+	switch (curMode)
 	{
 	case emBank:
 		// default mode
@@ -528,6 +539,9 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 	case emClockSetup:
 		SwitchReleased_ClockSetup(switchNumber);
 		return;
+
+	case emMidiOutSelect:
+		SwitchReleased_MidiOutSelect(switchNumber);
 	}
 }
 
@@ -536,7 +550,8 @@ MidiControlEngine::AdcValueChanged(int port,
 								   int newValue)
 {
 	_ASSERTE(port < ExpressionPedals::PedalCount);
-	switch (mMode)
+	const EngineMode curMode = CurrentMode();
+	switch (curMode)
 	{
 	case emExprPedalDisplay:
 		if (mMainDisplay && mPedalModePort == port)
@@ -554,6 +569,7 @@ MidiControlEngine::AdcValueChanged(int port,
 	case emTimeDisplay:
 	case emLedTests:
 	case emClockSetup:
+	case emMidiOutSelect:
 		// forward directly to active patch
 		if (!gActivePatchPedals || 
 			gActivePatchPedals->AdcValueChange(mMainDisplay, port, newValue))
@@ -620,7 +636,8 @@ MidiControlEngine::NavigateBankRelative(int relativeBankIndex)
 		}
 	}
 
-	if (emBank == mMode && mSwitchDisplay)
+	const EngineMode curMode = CurrentMode();
+	if (emBank == curMode && mSwitchDisplay)
 		mSwitchDisplay->EnableDisplayUpdate(true);
 
 	// display bank info
@@ -835,6 +852,7 @@ MidiControlEngine::HistoryRecall()
 // emModeSelect -> emControlChangeDirect
 // emModeSelect -> emExprPedalDisplay
 // emModeSelect -> emClockSetup
+// emModeSelect -> emMidiOutSelect
 // emBankNav -> emDefault
 // emBankDesc -> emDefault
 // emBankDirect -> emDefault
@@ -842,10 +860,13 @@ MidiControlEngine::HistoryRecall()
 // emControlChangeDirect -> emDefault
 // emExprPedalDisplay -> emDefault
 // emClockSetup -> emDefault
+// emMidiOutSelect -> (emDefault or pop back to emProgramChangeDirect/emControlChangeDirect/emClockSetup)
 void
 MidiControlEngine::ChangeMode(EngineMode newMode)
 {
-	mMode = newMode;
+	mMode.top() = newMode;
+	const EngineMode curMode = CurrentMode();
+	_ASSERTE(curMode == newMode);
 
 	if (mSwitchDisplay)
 	{
@@ -859,7 +880,8 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 
 	bool showModeInMainDisplay = true;
 	std::string msg;
-	switch (mMode)
+
+	switch (curMode)
 	{
 	case emBank:
 		msg = "Bank";
@@ -917,6 +939,7 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			SetupModeSelectSwitch(kModeAdcOverride);
 			SetupModeSelectSwitch(kModeTime);
 			SetupModeSelectSwitch(kModeClockSetup);
+			SetupModeSelectSwitch(kModeMidiOutSelect);
 
 			mSwitchDisplay->EnableDisplayUpdate(false);
 			for (std::map<int, int>::const_iterator it = mBankLoadSwitchNumbers.begin();
@@ -983,6 +1006,27 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			mSwitchDisplay->ForceSwitchDisplay(switchNumber + 4, mEngineLedColor);
 		}
 		break;
+	case emMidiOutSelect:
+		{
+			msg = "Select MIDI Out Port";
+			mSwitchDisplay->EnableDisplayUpdate(false);
+
+			// iterate over midi out devices
+			if (mMidiOutGenerator)
+			{
+				for (int idx = 0; idx < 15; ++idx)
+				{
+					IMidiOutPtr m = mMidiOutGenerator->GetMidiOut(idx);
+					if (m && m->IsMidiOutOpen())
+					{
+						std::string curName(m->GetMidiOutDeviceName());
+						mSwitchDisplay->SetSwitchText(idx, curName);
+						mSwitchDisplay->ForceSwitchDisplay(idx, mMidiOut && mMidiOut == m ? kFirstColorPreset + 1 : mEngineLedColor);
+					}
+				}
+			}
+		}
+		break;
 	case emExprPedalDisplay:
 		msg = "Raw ADC values";
 		mPedalModePort = 0;
@@ -1033,14 +1077,14 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		// fall-through
 	case emBankDirect:
 		mDirectNumber.clear();
-		if (emBankDirect == mMode)
+		if (emBankDirect == curMode)
 			msg = "Bank Direct";
-		else if (emProgramChangeDirect == mMode)
-			msg = "Manual Program Changes";
-		else if (emControlChangeDirect == mMode)
-			msg = "Manual Control Changes";
-		else if (emClockSetup == mMode)
-			msg = "MIDI beat clock setup";
+		else if (emProgramChangeDirect == curMode)
+			msg = "Manual Program Change";
+		else if (emControlChangeDirect == curMode)
+			msg = "Manual Control Change";
+		else if (emClockSetup == curMode)
+			msg = "MIDI beat clock";
 
 		if (mSwitchDisplay)
 		{
@@ -1064,66 +1108,76 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			mSwitchDisplay->ForceSwitchDisplay(8, mEngineLedColor);
 			mSwitchDisplay->SetSwitchText(9, "0");
 			mSwitchDisplay->ForceSwitchDisplay(9, mEngineLedColor);
-			mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "Backspace");
-			mSwitchDisplay->ForceSwitchDisplay(mDecrementSwitchNumber, mEngineLedColor);
-			if (emBankDirect == mMode)
+			if (emBankDirect == curMode)
 			{
+				mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "Backspace");
+				mSwitchDisplay->ForceSwitchDisplay(mDecrementSwitchNumber, mEngineLedColor);
 				mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Commit");
 				mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, mEngineLedColor);
 			}
-			else if (emProgramChangeDirect == mMode)
+			else
 			{
-				mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Clear");
-				mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, mEngineLedColor);
-				mSwitchDisplay->SetSwitchText(10, "Set channel");
-				mSwitchDisplay->ForceSwitchDisplay(10, mEngineLedColor);
-				mSwitchDisplay->SetSwitchText(11, "Send bank select");
-				mSwitchDisplay->ForceSwitchDisplay(11, mEngineLedColor);
-				mSwitchDisplay->SetSwitchText(12, "Send program change");
-				mSwitchDisplay->ForceSwitchDisplay(12, mEngineLedColor);
-				mSwitchDisplay->SetSwitchText(13, "Decrement program");
-				mSwitchDisplay->ForceSwitchDisplay(13, mEngineLedColor);
-				mSwitchDisplay->SetSwitchText(14, "Increment program");
-				mSwitchDisplay->ForceSwitchDisplay(14, mEngineLedColor);
-			}
-			else if (emControlChangeDirect == mMode)
-			{
-				mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Clear");
-				mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, mEngineLedColor);
-				mSwitchDisplay->SetSwitchText(10, "Set channel");
-				mSwitchDisplay->ForceSwitchDisplay(10, mEngineLedColor);
-				mSwitchDisplay->SetSwitchText(11, "Set controller");
-				mSwitchDisplay->ForceSwitchDisplay(11, mEngineLedColor);
-				mSwitchDisplay->SetSwitchText(12, "Send control change");
-				mSwitchDisplay->ForceSwitchDisplay(12, mEngineLedColor);
-				mSwitchDisplay->SetSwitchText(13, "Decrement value");
-				mSwitchDisplay->ForceSwitchDisplay(13, mEngineLedColor);
-				mSwitchDisplay->SetSwitchText(14, "Increment value");
-				mSwitchDisplay->ForceSwitchDisplay(14, mEngineLedColor);
-			}
-			else if (emClockSetup == mMode)
-			{
-				// clock mode: 
-				// 	1 		2 		3 		4 		5
-				// 	6		7		8		9		0
-				// 	Commit	Toggle	(tap)	Decr	Incr
-				mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Clear");
-				mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, mEngineLedColor);
-				mSwitchDisplay->SetSwitchText(10, "Set tempo");
-				mSwitchDisplay->ForceSwitchDisplay(10, mEngineLedColor);
-				mSwitchDisplay->SetSwitchText(11, "Toggle clock on/off");
-				mSwitchDisplay->ForceSwitchDisplay(11, mEngineLedColor);
-				mSwitchDisplay->SetSwitchText(12, ""); // maybe tap tempo??
-				// mSwitchDisplay->ForceSwitchDisplay(12, mEngineLedColor);
-				mSwitchDisplay->SetSwitchText(13, "Decrement tempo");
-				mSwitchDisplay->ForceSwitchDisplay(13, mEngineLedColor);
-				mSwitchDisplay->SetSwitchText(14, "Increment tempo");
-				mSwitchDisplay->ForceSwitchDisplay(14, mEngineLedColor);
+#ifdef DECREMENT_IS_BACKSPACE
+				mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "Backspace");
+#else
+				mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "Select MIDI Out...");
+#endif
+				mSwitchDisplay->ForceSwitchDisplay(mDecrementSwitchNumber, mEngineLedColor);
 
-				if (mMidiOut)
+				if (emProgramChangeDirect == curMode)
 				{
-					// update saved val with current tempo
-					mDirectValueLastSent = mMidiOut->GetTempo();
+					mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Clear");
+					mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, mEngineLedColor);
+					mSwitchDisplay->SetSwitchText(10, "Set channel");
+					mSwitchDisplay->ForceSwitchDisplay(10, mEngineLedColor);
+					mSwitchDisplay->SetSwitchText(11, "Send bank select");
+					mSwitchDisplay->ForceSwitchDisplay(11, mEngineLedColor);
+					mSwitchDisplay->SetSwitchText(12, "Send program change");
+					mSwitchDisplay->ForceSwitchDisplay(12, mEngineLedColor);
+					mSwitchDisplay->SetSwitchText(13, "Decrement program");
+					mSwitchDisplay->ForceSwitchDisplay(13, mEngineLedColor);
+					mSwitchDisplay->SetSwitchText(14, "Increment program");
+					mSwitchDisplay->ForceSwitchDisplay(14, mEngineLedColor);
+				}
+				else if (emControlChangeDirect == curMode)
+				{
+					mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Clear");
+					mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, mEngineLedColor);
+					mSwitchDisplay->SetSwitchText(10, "Set channel");
+					mSwitchDisplay->ForceSwitchDisplay(10, mEngineLedColor);
+					mSwitchDisplay->SetSwitchText(11, "Set controller");
+					mSwitchDisplay->ForceSwitchDisplay(11, mEngineLedColor);
+					mSwitchDisplay->SetSwitchText(12, "Send control change");
+					mSwitchDisplay->ForceSwitchDisplay(12, mEngineLedColor);
+					mSwitchDisplay->SetSwitchText(13, "Decrement value");
+					mSwitchDisplay->ForceSwitchDisplay(13, mEngineLedColor);
+					mSwitchDisplay->SetSwitchText(14, "Increment value");
+					mSwitchDisplay->ForceSwitchDisplay(14, mEngineLedColor);
+				}
+				else if (emClockSetup == curMode)
+				{
+					// clock mode: 
+					// 	1 		2 		3 		4 		5
+					// 	6		7		8		9		0
+					// 	Commit	Toggle	(tap)	Decr	Incr
+					mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Clear");
+					mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, mEngineLedColor);
+					mSwitchDisplay->SetSwitchText(10, "Set tempo");
+					mSwitchDisplay->ForceSwitchDisplay(10, mEngineLedColor);
+					mSwitchDisplay->SetSwitchText(11, "Toggle clock on/off");
+					mSwitchDisplay->ForceSwitchDisplay(11, mEngineLedColor);
+					mSwitchDisplay->SetSwitchText(12, ""); // maybe tap tempo??
+					// mSwitchDisplay->ForceSwitchDisplay(12, mEngineLedColor);
+					mSwitchDisplay->SetSwitchText(13, "Decrement tempo");
+					mSwitchDisplay->ForceSwitchDisplay(13, mEngineLedColor);
+					mSwitchDisplay->SetSwitchText(14, "Increment tempo");
+					mSwitchDisplay->ForceSwitchDisplay(14, mEngineLedColor);
+
+					if (mMidiOut)
+					{
+						// update saved val with current tempo
+						mDirectValueLastSent = mMidiOut->GetTempo();
+					}
 				}
 			}
 		}
@@ -1134,20 +1188,37 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 	}
 
 	if (showModeInMainDisplay && mMainDisplay && !msg.empty())
-		mMainDisplay->TextOut("mode: " +  msg);
+	{
+		mMainDisplay->TextOut("mode: " + msg);
+
+		if (emProgramChangeDirect == curMode ||
+			emControlChangeDirect == curMode ||
+			emClockSetup == curMode)
+		{
+			if (mMidiOut)
+			{
+				std::string curName(mMidiOut->GetMidiOutDeviceName());
+				if (!curName.empty())
+				{
+					std::string portInfo("\r\nport: " + curName);
+					mMainDisplay->AppendText(portInfo);
+				}
+			}
+		}
+	}
 
 	if (mSwitchDisplay)
 	{
 		if (!msg.empty())
 		{
-			if (emBankNav == mMode)
+			if (emBankNav == curMode)
 				msg = "Escape Navigation";
-			else if (emBank != mMode)
+			else if (emBank != curMode)
 				msg = "Exit " + msg;
 			mSwitchDisplay->SetSwitchText(mModeSwitchNumber, msg);
 		}
 
-		switch (mMode)
+		switch (curMode)
 		{
 		case emBank:
 			mSwitchDisplay->EnableDisplayUpdate(true);
@@ -1173,7 +1244,8 @@ MidiControlEngine::UpdateBankModeSwitchDisplay()
 	if (!mSwitchDisplay)
 		return;
 
-	_ASSERTE(emBank == mMode);
+	const EngineMode curMode = CurrentMode();
+	_ASSERTE(emBank == curMode);
 	if (mActiveBank)
 	{
 		std::strstream msg;
@@ -1286,7 +1358,10 @@ MidiControlEngine::SetupModeSelectSwitch(EngineModeSwitch m)
 		txt = "Time + utils...";
 		break;
 	case kModeClockSetup:
-		txt = "MIDI clock setup...";
+		txt = "MIDI beat clock...";
+		break;
+	case kModeMidiOutSelect:
+		txt = "Select MIDI Out...";
 		break;
 	default:
 		_ASSERTE(!"unhandled EngineModeSwitch");
@@ -1399,6 +1474,7 @@ MidiControlEngine::SwitchReleased_LedTests(int switchNumber)
 void
 MidiControlEngine::SwitchReleased_NavAndDescMode(int switchNumber)
 {
+	const EngineMode curMode = CurrentMode();
 	if (switchNumber == mIncrementSwitchNumber)
 	{
 		// bank inc/dec does not commit bank
@@ -1417,14 +1493,14 @@ MidiControlEngine::SwitchReleased_NavAndDescMode(int switchNumber)
 	{
 		EscapeToDefaultMode();
 	}
-	else if (emBankNav == mMode)
+	else if (emBankNav == curMode)
 	{
 		// any switch release (except inc/dec/util) after bank inc/dec commits bank
 		// reset to default mode when in bankNav mode
 		ChangeMode(emBank);
 		LoadBank(mBankNavigationIndex);
 	}
-	else if (emBankDesc == mMode)
+	else if (emBankDesc == curMode)
 	{
 		PatchBankPtr bank = GetBank(mBankNavigationIndex);
 		if (bank)
@@ -1500,6 +1576,8 @@ MidiControlEngine::SwitchReleased_ModeSelect(int switchNumber)
 		ChangeMode(emAdcOverride);
 	else if (switchNumber == GetSwitchNumber(kModeClockSetup))
 		ChangeMode(emClockSetup);
+	else if (switchNumber == GetSwitchNumber(kModeMidiOutSelect))
+		ChangeMode(emMidiOutSelect);
 	else
 	{
 		std::map<int, int>::const_iterator it = mBankLoadSwitchNumbers.find(switchNumber);
@@ -1670,9 +1748,15 @@ MidiControlEngine::SwitchPressed_ProgramChangeDirect(int switchNumber)
 	default:
 		if (switchNumber == mDecrementSwitchNumber)
 		{
+#ifdef DECREMENT_IS_BACKSPACE
 			// remove last char
 			if (mDirectNumber.length())
 				mDirectNumber = mDirectNumber.erase(mDirectNumber.length() - 1);
+#else
+			mMode.push(emMidiOutSelect);
+			ChangeMode(emMidiOutSelect);
+			return;
+#endif
 		}
 		else if (switchNumber == mIncrementSwitchNumber)
 		{
@@ -1844,9 +1928,15 @@ MidiControlEngine::SwitchPressed_ControlChangeDirect(int switchNumber)
 	default:
 		if (switchNumber == mDecrementSwitchNumber)
 		{
+#ifdef DECREMENT_IS_BACKSPACE
 			// remove last char
 			if (mDirectNumber.length())
 				mDirectNumber = mDirectNumber.erase(mDirectNumber.length() - 1);
+#else
+			mMode.push(emMidiOutSelect);
+			ChangeMode(emMidiOutSelect);
+			return;
+#endif
 		}
 		else if (switchNumber == mIncrementSwitchNumber)
 		{
@@ -1975,9 +2065,15 @@ MidiControlEngine::SwitchPressed_ClockSetup(int switchNumber)
 	default:
 		if (switchNumber == mDecrementSwitchNumber)
 		{
+#ifdef DECREMENT_IS_BACKSPACE
 			// remove last char
 			if (mDirectNumber.length())
 				mDirectNumber = mDirectNumber.erase(mDirectNumber.length() - 1);
+#else
+			mMode.push(emMidiOutSelect);
+			ChangeMode(emMidiOutSelect);
+			return;
+#endif
 		}
 		else if (switchNumber == mIncrementSwitchNumber)
 		{
@@ -2035,5 +2131,43 @@ MidiControlEngine::SwitchReleased_ClockSetup(int switchNumber)
 	else if (mSwitchDisplay)
 	{
 		mSwitchDisplay->EnableDisplayUpdate(false);
+	}
+}
+
+void
+MidiControlEngine::SwitchReleased_MidiOutSelect(int switchNumber)
+{
+	bool exitMode = false;
+	if (mModeSwitchNumber == switchNumber)
+	{
+		exitMode = true;
+	}
+	else if (mMidiOutGenerator)
+	{
+		if (switchNumber < 15)
+		{
+			IMidiOutPtr m = mMidiOutGenerator->GetMidiOut(switchNumber);
+			if (m)
+			{
+				mMidiOut = m;
+				exitMode = true;
+			}
+		}
+	}
+
+	if (exitMode)
+	{
+		if (1 == mMode.size())
+		{
+			if (mSwitchDisplay)
+				mSwitchDisplay->EnableDisplayUpdate(true);
+
+			EscapeToDefaultMode();
+		}
+		else
+		{
+			mMode.pop();
+			ChangeMode(mMode.top());
+		}
 	}
 }
