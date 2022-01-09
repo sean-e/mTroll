@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010,2013,2015,2018,2020 Sean Echevarria
+ * Copyright (C) 2010,2013,2015,2018,2020,2022 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -56,7 +56,6 @@ WinMidiIn::WinMidiIn(ITraceDisplay * trace) :
 
 	for (auto & midiHdr : mMidiHdrs)
 		ZeroMemory(&midiHdr, sizeof(MIDIHDR));
-	::InitializeCriticalSection(&mCs);
 	mDoneEvent = ::CreateEvent(nullptr, FALSE, FALSE, nullptr);
 }
 
@@ -65,7 +64,6 @@ WinMidiIn::~WinMidiIn()
 	CloseMidiIn();
 	if (mDoneEvent && mDoneEvent != INVALID_HANDLE_VALUE)
 		::CloseHandle(mDoneEvent);
-	::DeleteCriticalSection(&mCs);
 
 #ifdef ITEM_COUNTING
 	--gWinMidiInCnt;
@@ -106,7 +104,10 @@ WinMidiIn::OpenMidiIn(unsigned int deviceIdx)
 	mThreadState = tsStarting;
 	mThread = (HANDLE)_beginthreadex(nullptr, 0, ServiceThread, this, 0, (unsigned int*)&mThreadId);
 	if (!mThread)
+	{
+		mThreadState = tsNotStarted;
 		return false;
+	}
 
 	while (mThread && mThreadState == tsStarting)
 		::Sleep(500);

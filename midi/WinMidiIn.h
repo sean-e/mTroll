@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010,2013,2018 Sean Echevarria
+ * Copyright (C) 2010,2013,2018,2022 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -68,7 +68,6 @@ private:
 	HMIDIIN						mMidiIn;
 	enum { MIDIHDR_CNT = 512 };
 	MIDIHDR						mMidiHdrs[MIDIHDR_CNT];
-	CRITICAL_SECTION			mCs;
 	int							mCurMidiHdrIdx;
 	unsigned int				mDeviceIdx;
 	bool						mMidiInError;
