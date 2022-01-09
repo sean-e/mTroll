@@ -65,13 +65,6 @@ public:
 	void Closed(IMidiInPtr midIn) override;
 
 private:
-	// basically an overload of IMidiInSubscriber::shared_from_this() but returning 
-	// EdpManagerPtr instead of IMidiInSubscriberPtr
-	EdpManagerPtr GetSharedThis()
-	{
-		return std::dynamic_pointer_cast<EdpManager>(IMidiInSubscriber::shared_from_this());
-	}
-
 	void ReceiveInfoData(const byte * bytes, int len);
 	void ReceiveGlobalParamData(const byte * bytes, int len);
 	void ReceiveLocalParamData(const byte * bytes, int len);
