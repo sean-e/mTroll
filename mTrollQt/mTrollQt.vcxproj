@@ -160,6 +160,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Engine\AxeFx3Manager.cpp" />
+    <ClCompile Include="..\Engine\ControllerInputMonitor.cpp" />
     <ClCompile Include="..\Engine\EdpManager.cpp" />
     <ClCompile Include="..\Engine\PersistentPedalOverridePatch.cpp" />
     <ClCompile Include="..\Engine\TwoStatePatch.cpp" />
@@ -214,6 +215,8 @@
     <ClInclude Include="..\Engine\AxeFxModel.h" />
     <ClInclude Include="..\Engine\AxeMomentaryPatch.h" />
     <ClInclude Include="..\Engine\CompositeTogglePatch.h" />
+    <ClInclude Include="..\Engine\ControllerInputMonitor.h" />
+    <ClInclude Include="..\Engine\ControllerTogglePatch.h" />
     <ClInclude Include="..\Engine\EdpIds.h" />
     <ClInclude Include="..\Engine\EdpManager.h" />
     <ClInclude Include="..\Engine\IAxeFx.h" />

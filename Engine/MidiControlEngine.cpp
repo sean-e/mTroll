@@ -840,6 +840,18 @@ MidiControlEngine::HistoryRecall()
 	}
 }
 
+ControllerInputMonitorPtr
+MidiControlEngine::GetControllerInputMonitor(int inputDevicePort)
+{
+	return mInputMonitors[inputDevicePort];
+}
+
+void
+MidiControlEngine::AddControllerInputMonitor(int inputDevicePort, ControllerInputMonitorPtr mon)
+{
+	mInputMonitors[inputDevicePort] = mon;
+}
+
 // possible mode transitions:
 // emCreated -> emDefault
 // emDefault -> emBankNav

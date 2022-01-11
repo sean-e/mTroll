@@ -1,7 +1,8 @@
 ### mTroll MIDI controller changelog / process milestones
 
 
-#### 2022.01.xx
+#### 2022.01.10
+- Added support for monitoring external control change messages on patches of type `toggleControlChange`
 - Added support for selecting MIDI out port in manual/interactive program change, control change, and beat clock modes
 - Added MIDI beat clock engine mode for setting tempo and enabling/disabling generation of MIDI beat clock
 - Added support for optional auto-generation of all patch and bank numbers to eliminate need for manual management of the numbers

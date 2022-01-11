@@ -59,6 +59,8 @@
 #include "AxeMomentaryPatch.h"
 #include "MetaPatch_AxeFxNav.h"
 #include "CompositeTogglePatch.h"
+#include "ControllerTogglePatch.h"
+#include "ControllerInputMonitor.h"
 
 
 #ifdef _MSC_VER
@@ -321,11 +323,14 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 			unsigned int idx = mMidiOutGenerator->GetMidiOutDeviceIndex(outDevice);
 			if (-1 != idx)
 				deviceIdx = idx;
-			else if (mTraceDisplay)
+			else
 			{
-				std::strstream traceMsg;
-				traceMsg << "Error loading config file midiDevices section: MidiOut device name not found: " << outDevice << '\n' << std::ends;
-				mTraceDisplay->Trace(std::string(traceMsg.str()));
+				if (mTraceDisplay) 
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file midiDevices section: MidiOut device name not found: " << outDevice << '\n' << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
 
 				if (-1 == deviceIdx)
 				{
@@ -340,11 +345,14 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 			unsigned int idx = mMidiInGenerator->GetMidiInDeviceIndex(inDevice);
 			if (-1 != idx)
 				inDeviceIdx = idx;
-			else if (mTraceDisplay)
+			else
 			{
-				std::strstream traceMsg;
-				traceMsg << "Error loading config file midiDevices section: MidiIn device name not found: " << inDevice << '\n' << std::ends;
-				mTraceDisplay->Trace(std::string(traceMsg.str()));
+				if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file midiDevices section: MidiIn device name not found: " << inDevice << '\n' << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
 
 				if (-1 == inDeviceIdx)
 				{
@@ -394,7 +402,8 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 	if (!mMidiOutPortToDeviceIdxMap.empty())
 	{
 		// first device listed in config MidiDevices section is used for interactive 
-		// program change, control change, and MIDI clock (for enhancement, see issue #12)
+		// program change, control change, and MIDI clock by default 
+		// override via implementation of issue #12
 		engOut = mMidiOutGenerator->GetMidiOut((*mMidiOutPortToDeviceIdxMap.begin()).second);
 	}
 
@@ -711,7 +720,17 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		if (-1 == midiOutPortNumber)
 			midiOutPortNumber = 1;
 
-		IMidiOutPtr midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[midiOutPortNumber]);
+		IMidiOutPtr midiOut;
+		if (mMidiOutPortToDeviceIdxMap.find(midiOutPortNumber) != mMidiOutPortToDeviceIdxMap.end())
+		{
+			midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[midiOutPortNumber]);
+		}
+		else if (mTraceDisplay)
+		{
+			std::strstream traceMsg;
+			traceMsg << "Error loading patch: device port not mapped to midi device for patchname: " << patchName << '\n' << std::ends;
+			mTraceDisplay->Trace(std::string(traceMsg.str()));
+		}
 
 		IAxeFxPtr mgr = GetAxeMgr(pElem);
 		PatchCommands cmds, cmds2;
@@ -1200,18 +1219,75 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				continue;
 			}
 
-			Bytes bytesA, bytesB;
-			bytesA.push_back(0xb0 | patchDefaultCh);
-			bytesA.push_back(data1);
-			bytesA.push_back(127);
+			ControllerTogglePatchPtr ctp{std::make_shared<ControllerTogglePatch>(patchNumber, patchName, midiOut, patchDefaultCh, data1)};
+			newPatch = ctp;
 
-			bytesB.push_back(0xb0 | patchDefaultCh);
-			bytesB.push_back(data1);
-			bytesB.push_back(0);
+			// [issue: #18] if attribute "inputDevice" exists, set up input monitor
+			// 
+			// QueryValueAttribute does not work with string when there are 
+			// spaces (truncated at whitespace); use Attribute instead
+			if (mMidiInGenerator && pElem->Attribute("inputDevice"))
+			{
+				const std::string inputDeviceName{pElem->Attribute("inputDevice")};
+				if (!inputDeviceName.empty())
+				{
+					int inputDeviceChannel = -1;
+					int inputDevicePort = -1;
 
-			cmds.push_back(std::make_shared<MidiCommandString>(midiOut, bytesA));
-			cmds2.push_back(std::make_shared<MidiCommandString>(midiOut, bytesB));
-			newPatch = std::make_shared<TogglePatch>(patchNumber, patchName, midiOut, cmds, cmds2);
+					const std::string tmp{mDeviceChannels[inputDeviceName]};
+					if (!tmp.empty())
+					{
+						inputDeviceChannel = ::atoi(tmp.c_str()) - 1; // channels in device map are 1-based
+						inputDevicePort = mDevicePorts[inputDeviceName];
+						if (-1 == inputDeviceChannel || -1 == inputDevicePort)
+						{
+							if (mTraceDisplay)
+							{
+								std::strstream traceMsg;
+								traceMsg << "Error loading toggleControlChange patch: midiInputDevice channel or port not found: " << inputDeviceName << '\n' << std::ends;
+								mTraceDisplay->Trace(std::string(traceMsg.str()));
+							}
+						}
+					}
+					else
+					{
+						if (mTraceDisplay)
+						{
+							std::strstream traceMsg;
+							traceMsg << "Error loading toggleControlChange patch: midiInputDevice name not found (1): " << inputDeviceName << '\n' << std::ends;
+							mTraceDisplay->Trace(std::string(traceMsg.str()));
+						}
+					}
+
+					if (-1 != inputDeviceChannel && -1 != inputDevicePort)
+					{
+						// get the monitor (one per port) from the engine
+						ControllerInputMonitorPtr mon{ mEngine->GetControllerInputMonitor(inputDevicePort) };
+						if (!mon)
+						{
+							// create a new monitor
+							mon = std::make_shared<ControllerInputMonitor>(mSwitchDisplay, mTraceDisplay);
+							if (mMidiInPortToDeviceIdxMap.find(inputDevicePort) != mMidiInPortToDeviceIdxMap.end())
+							{
+								IMidiInPtr midiIn{ mMidiInGenerator->CreateMidiIn(mMidiInPortToDeviceIdxMap[inputDevicePort]) };
+								if (midiIn)
+									mon->SubscribeToMidiIn(midiIn);
+							}
+							else if (mTraceDisplay)
+							{
+								std::strstream traceMsg;
+								traceMsg << "Error loading toggleControlChange patch: midiInputDevice port not defined: " << inputDeviceName << '\n' << std::ends;
+								mTraceDisplay->Trace(std::string(traceMsg.str()));
+							}
+
+							// store monitor in MidiControlEngine
+							mEngine->AddControllerInputMonitor(inputDevicePort, mon);
+						}
+
+						mon->AddPatch(ctp, inputDeviceChannel, data1);
+					}
+				}
+			}
 		}
 		else if (patchType == "persistentPedalOverride")
 			newPatch = std::make_shared<PersistentPedalOverridePatch>(patchNumber, patchName, midiOut, cmds, cmds2);

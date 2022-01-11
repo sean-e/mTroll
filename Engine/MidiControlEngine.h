@@ -46,9 +46,11 @@ class ITraceDisplay;
 class IMidiOut;
 class Patch;
 class PatchBank;
+class ControllerInputMonitor;
 
 using PatchBankPtr = std::shared_ptr<PatchBank>;
 using IMidiOutPtr = std::shared_ptr<IMidiOut>;
+using ControllerInputMonitorPtr = std::shared_ptr<ControllerInputMonitor>;
 
 
 class MidiControlEngine : public IMonome40hAdcSubscriber
@@ -122,6 +124,9 @@ public:
 	void					HistoryForward();
 	void					HistoryRecall();
 
+	ControllerInputMonitorPtr GetControllerInputMonitor(int inputDevicePort);
+	void AddControllerInputMonitor(int inputDevicePort, ControllerInputMonitorPtr mon);
+
 private:
 	void					LoadStartupBank();
 	bool					NavigateBankRelative(int relativeBankIndex);
@@ -178,6 +183,8 @@ private:
 	IMidiOutPtr				mMidiOut; // only used for emProgramChangeDirect / emControlChangeDirect / emClockSetup
 	std::vector<IAxeFxPtr>	mAxeMgrs;
 	EdpManagerPtr			mEdpMgr;
+	using ListenerMap = std::map<int, ControllerInputMonitorPtr>;
+	ListenerMap				mInputMonitors;
 
 	PatchBankPtr			mActiveBank;
 	int						mActiveBankIndex;
