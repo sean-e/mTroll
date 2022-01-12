@@ -1,6 +1,9 @@
 ### mTroll MIDI controller changelog / process milestones
 
 
+#### 2022.01.12
+- Support dark mode titlebar when window is inactive
+
 #### 2022.01.10
 - Added support for monitoring external control change messages on patches of type `toggleControlChange`
 - Added support for selecting MIDI out port in manual/interactive program change, control change, and beat clock modes
