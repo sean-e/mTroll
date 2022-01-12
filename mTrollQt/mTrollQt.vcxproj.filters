@@ -138,6 +138,9 @@
     <ClCompile Include="..\Engine\ControllerInputMonitor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\winUtil\WinDark.cpp">
+      <Filter>winUtils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AboutDlg.h">
@@ -325,6 +328,9 @@
     </ClInclude>
     <ClInclude Include="..\Engine\ControllerInputMonitor.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\winUtil\WinDark.h">
+      <Filter>winUtils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

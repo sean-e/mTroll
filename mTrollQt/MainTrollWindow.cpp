@@ -37,6 +37,7 @@
 #if defined(Q_OS_WIN)
 #include <windows.h>
 #include <powrprof.h>
+#include "..\winUtil\WinDark.h"
 #endif
 
 
@@ -55,6 +56,10 @@ MainTrollWindow::MainTrollWindow() :
 	QCoreApplication::setOrganizationName(kOrganizationKey);
 	QCoreApplication::setOrganizationDomain(kOrganizationDomain);
 	QCoreApplication::setApplicationName(kAppKey);
+
+#if defined(Q_OS_WIN)
+	WinDark::setDarkTitlebar(HWND(winId()), true);
+#endif
 
 	setWindowTitle(tr("mTroll MIDI Controller"));
 	QSettings settings;
