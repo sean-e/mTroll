@@ -256,8 +256,8 @@ const char * const EdpEnumToString(EdpMuteMode v) noexcept
 {
 	switch (v)
 	{
-	case EdpMuteMode::Continuous:		return "Continuous (Cnt) (Undo will start)";
-	case EdpMuteMode::Start:			return "Start (STA) (Undo will continue)";
+	case EdpMuteMode::Continuous:		return "Continuous (Cnt) (Undo will start; Insert will play once then mute)";
+	case EdpMuteMode::Start:			return "Start (STA) (Undo will continue; Insert will play once then mute)";
 	default:							return "invalid value";
 	}
 }
