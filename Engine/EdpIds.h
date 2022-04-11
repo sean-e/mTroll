@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2021 Sean Echevarria
+ * Copyright (C) 2021-2022 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -310,7 +310,7 @@ const char * const EdpEnumToString(EdpNextLoopCopy v) noexcept
 	{
 	case EdpNextLoopCopy::Off:			return "Off";
 	case EdpNextLoopCopy::Timing:		return "Timing (ti)";
-	case EdpNextLoopCopy::Sound:		return "Sound (Snd)";
+	case EdpNextLoopCopy::Sound:		return "Sound or Off (EDP reporting error)"; // "Sound (Snd)"
 	case EdpNextLoopCopy::NA:			return "NA";
 	default:							return "invalid value";
 	}
