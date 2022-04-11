@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2021 Sean Echevarria
+ * Copyright (C) 2021-2022 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -221,6 +221,7 @@ EdpManager::ReceiveLocalParamData(const byte * bytes, int len)
 	dispMsg << "\nNext loop switch quantization: " << ::EdpEnumToString(static_cast<EdpLoopSwitchQuant>(bytes[(int)EdpLocalParamIndexes::SwitchLoopQuantization + kByteOffset]));
 	dispMsg << "\nNext loop copy: " << ::EdpEnumToString(static_cast<EdpNextLoopCopy>(bytes[(int)EdpLocalParamIndexes::NextLoopCopy + kByteOffset]));
 	dispMsg << "\nNext loop auto record: " << ::EdpEnumToString(static_cast<EdpAutoRecord>(bytes[(int)EdpLocalParamIndexes::AutoRecord + kByteOffset]));
+	dispMsg << "\nSampler style: " << ::EdpEnumToString(static_cast<EdpSamplerStyle>(bytes[(int)EdpLocalParamIndexes::SamplerStyle + kByteOffset]));
 
 	dispMsg << "\nRecord trigger threshold: " << (int)bytes[(int)EdpLocalParamIndexes::TrigThreshold + kByteOffset];
 	dispMsg << "\n8th/cycle: " << ::DecodeEdpEighthsPerCycle(bytes[(int)EdpLocalParamIndexes::EighthsPerCycle + kByteOffset]);
@@ -228,7 +229,6 @@ EdpManager::ReceiveLocalParamData(const byte * bytes, int len)
 	dispMsg << "\nLoops: " << (int)bytes[(int)EdpLocalParamIndexes::MoreLoops + kByteOffset] + 1;
 	dispMsg << "\nSync mode: " << ::EdpEnumToString(static_cast<EdpSyncMode>(bytes[(int)EdpLocalParamIndexes::SyncMode + kByteOffset]));
 	dispMsg << "\nVelocity: " << ::EdpEnumToString(static_cast<EdpVelocity>(bytes[(int)EdpLocalParamIndexes::Velocity + kByteOffset]));
-	dispMsg << "\nSampler style: " << ::EdpEnumToString(static_cast<EdpSamplerStyle>(bytes[(int)EdpLocalParamIndexes::SamplerStyle + kByteOffset]));
 	dispMsg << "\nOverflow: " << ::EdpEnumToString(static_cast<EdpOverflow>(bytes[(int)EdpLocalParamIndexes::Overflow + kByteOffset]));
 
 	if (bytes[21])
