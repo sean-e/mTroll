@@ -143,7 +143,7 @@ Executes the [CTRL+T](#keybindings) command from the hardware to toggle the disp
 
 A `patch` is simply a collection of commands that is identified by a name and number. It has a type that defines when the commands are executed.  
 
-Patches can be defined to be `Toggle`, `Momentary`, `Normal`, `AxeToggle`, `AxeMomentary`, `AxeFxTapTempo`, `Sequence`, `patchListSequence`, `compositeToggle` or `persistentPedalOverride`. Except for sequence patches, patches can have commands that are assigned to one of two groups: `"A"` and `"B"`. `Toggle` patches operate by sending the group `A` commands on one press of a switch, and sending the group `B` commands on a second press of the switch. `Momentary` patches operate by sending the group `A` commands on the press of the switch, and sending the group `B` commands on the release of the switch. `Normal` patches operate by sending the group `A` commands on the press of the switch and sending the group `B` commands when another `Normal` patch is activated. Pressing the switch for a `Normal` patch two times in a row results in the group `A` commands being exectuted, followed by the group `B` commands and then the group `A` commands again.  
+Patches can be defined to be `Toggle`, `Momentary`, `Normal`, `AxeToggle`, `AxeMomentary`, `AxeFxTapTempo`, `Sequence`, `patchListSequence`, `compositeToggle`, `repeatingToggle`, `repeatingMomentary`, or `persistentPedalOverride`. Except for sequence patches, patches can have commands that are assigned to one of two groups: `"A"` and `"B"`. `Toggle` patches operate by sending the group `A` commands on one press of a switch, and sending the group `B` commands on a second press of the switch. `Momentary` patches operate by sending the group `A` commands on the press of the switch, and sending the group `B` commands on the release of the switch. `Normal` patches operate by sending the group `A` commands on the press of the switch and sending the group `B` commands when another `Normal` patch is activated. Pressing the switch for a `Normal` patch two times in a row results in the group `A` commands being exectuted, followed by the group `B` commands and then the group `A` commands again.  
 
 `persistentPedalOverride` is a toggle patch used to reassign expression pedals such that the reassignment sticks until the patch is toggled off or until another `persistentPedalOverride` patch is activated. It overrides pedal assignments made in subsequently activated patches that are not of type `persistentPedalOverride`.  
 
@@ -175,6 +175,8 @@ example 2: a switch that on press 1 assigns an expression pedal to a cc, on pres
     <refPatch group="B" refGroup="A">403</refPatch>  
     <refPatch group="B">405</refPatch>  <!-- Group B of patch 405 will be executed on second press of switch assigned to patch 406 -->  
     </patch>
+
+`repeatingToggle` and `repeatingMomentary` patches are similar to `toggle` and `momentary` except that the A commands are continuously repeated until the patch is deactivated.
 
 `Patch`es support an optional `channel` (or `device`) attribute that is used as the default `channel`/`device` for `patchCommand`s in the `patch`. Even if a `channel`/`device` is specified, `patchCommand`s can specify their own.  
 

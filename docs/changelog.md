@@ -1,6 +1,9 @@
 ### mTroll MIDI controller changelog / process milestones
 
 
+#### 2023.0x.xx
+- Support for automatic repeat of `A` group commands specified in `repeatingToggle` and `repeatingMomentary` patch types
+
 #### 2022.01.12
 - Support dark mode titlebar when window is inactive
 

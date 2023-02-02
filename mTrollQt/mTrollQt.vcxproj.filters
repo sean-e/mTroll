@@ -135,11 +135,11 @@
     <ClCompile Include="..\midi\SleepShort.cpp">
       <Filter>midi</Filter>
     </ClCompile>
-    <ClCompile Include="..\Engine\ControllerInputMonitor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\winUtil\WinDark.cpp">
       <Filter>winUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\ControllerInputMonitor.cpp">
+      <Filter>Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -308,12 +308,6 @@
     <ClInclude Include="..\Engine\MetaPatch_ResetPatch.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="..\Engine\MetaPatch_AxeFxNav.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Engine\CompositeTogglePatch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\Engine\EdpIds.h">
       <Filter>Engine</Filter>
     </ClInclude>
@@ -323,14 +317,29 @@
     <ClInclude Include="..\midi\SleepShort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Engine\ControllerTogglePatch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Engine\ControllerInputMonitor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\winUtil\WinDark.h">
       <Filter>winUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\RepeatingTogglePatch.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\RepeatingPatch.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\RepeatingMomentaryPatch.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\MetaPatch_AxeFxNav.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\CompositeTogglePatch.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\ControllerInputMonitor.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\ControllerTogglePatch.h">
+      <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2015,2018,2020-2022 Sean Echevarria
+ * Copyright (C) 2007-2015,2018,2020-2023 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -61,6 +61,8 @@
 #include "CompositeTogglePatch.h"
 #include "ControllerTogglePatch.h"
 #include "ControllerInputMonitor.h"
+#include "RepeatingMomentaryPatch.h"
+#include "RepeatingTogglePatch.h"
 
 
 #ifdef _MSC_VER
@@ -1182,6 +1184,8 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			newPatch = std::make_shared<NormalPatch>(patchNumber, patchName, midiOut, cmds, cmds2);
 		else if (patchType == "toggle")
 			newPatch = std::make_shared<TogglePatch>(patchNumber, patchName, midiOut, cmds, cmds2);
+		else if (patchType == "repeatingToggle")
+			newPatch = std::make_shared<RepeatingTogglePatch>(patchNumber, patchName, midiOut, cmds, cmds2);
 		else if (patchType == "toggleControlChange")
 		{
 			if (-1 == patchDefaultCh)
@@ -1328,6 +1332,8 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		}
 		else if (patchType == "momentary")
 			newPatch = std::make_shared<MomentaryPatch>(patchNumber, patchName, midiOut, cmds, cmds2);
+		else if (patchType == "repeatingMomentary")
+			newPatch = std::make_shared<RepeatingMomentaryPatch>(patchNumber, patchName, midiOut, cmds, cmds2);
 		else if (patchType == "momentaryControlChange")
 		{
 			if (-1 == patchDefaultCh)
