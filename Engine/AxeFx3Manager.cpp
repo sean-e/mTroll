@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2020-2021 Sean Echevarria
+ * Copyright (C) 2020-2021,2023 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -1796,7 +1796,9 @@ AxeFx3Manager::LoadEffectPool()
 		{ FractalAudio::AxeFx3::ID_IRPLAYER4, "IR Player 4" },
 		{ FractalAudio::AxeFx3::ID_FOOTCONTROLLER, "" },
 		{ FractalAudio::AxeFx3::ID_PRESET_FC, "" },
-		{ FractalAudio::AxeFx3::ID_UNKNOWN_THING, "" }
+		{ FractalAudio::AxeFx3::ID_UNKNOWN_THING, "" },
+		{ FractalAudio::AxeFx3::ID_DYNAMIC_DIST1, "Dynamic Distortion 1" },
+		{ FractalAudio::AxeFx3::ID_DYNAMIC_DIST2, "Dynamic Distortion 2" }
 	};
 }
 
@@ -1899,6 +1901,12 @@ Axe3SynonymNormalization(std::string & name)
 		MapName("dly 2", "delay 2");
 		MapName("dly 3", "delay 3");
 		MapName("dly 4", "delay 4");
+		MapName("dyn dist 1", "dynamic distortion 1");
+		MapName("dyn dist 2", "dynamic distortion 2");
+		MapName("dyn distortion 1", "dynamic distortion 1");
+		MapName("dyn distortion 2", "dynamic distortion 2");
+		MapName("dynamic dist 1", "dynamic distortion 1");
+		MapName("dynamic dist 2", "dynamic distortion 2");
 		break;
 	case 'e':
 		MapName("enhancer", "enhancer 1");

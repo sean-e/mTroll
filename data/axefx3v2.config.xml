@@ -603,7 +603,9 @@
 		<patch name="Drive 2" device="Axe-Fx" />
 		<patch name="Drive 3" device="Axe-Fx" />
 		<patch name="Drive 4" device="Axe-Fx" />
-		<patch name="Enhancer 1" device="Axe-Fx" />
+    <patch name="Dyn Dist 1" device="Axe-Fx" />
+    <patch name="Dyn Dist 2" device="Axe-Fx" />
+    <patch name="Enhancer 1" device="Axe-Fx" />
 		<patch name="Enhancer 2" device="Axe-Fx" />
 		<patch name="Filter 1" device="Axe-Fx" />
 		<patch name="Filter 2" device="Axe-Fx" />
@@ -881,7 +883,29 @@
 			<patchListItemName>Axe Drive 4 Ch D</patchListItemName>
 		</patch>
 
-		<patch name="Axe Enhancer 1 Ch A" axeBlockId="Enhancer 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Dyn Dist 1 Ch A" axeBlockId="Dyn Dist 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Dyn Dist 1 Ch B" axeBlockId="Dyn Dist 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Dyn Dist 1 Ch C" axeBlockId="Dyn Dist 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Dyn Dist 1 Ch D" axeBlockId="Dyn Dist 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Dyn Dist 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Dyn Dist 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Dyn Dist 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Dyn Dist 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Dyn Dist 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Dyn Dist 2 Ch A" axeBlockId="Dyn Dist 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Dyn Dist 2 Ch B" axeBlockId="Dyn Dist 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Dyn Dist 2 Ch C" axeBlockId="Dyn Dist 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Dyn Dist 2 Ch D" axeBlockId="Dyn Dist 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Dyn Dist 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Dyn Dist 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Dyn Dist 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Dyn Dist 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Dyn Dist 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Enhancer 1 Ch A" axeBlockId="Enhancer 1" axeBlockChannel="A" device="Axe-Fx" />
 		<patch name="Axe Enhancer 1 Ch B" axeBlockId="Enhancer 1" axeBlockChannel="B" device="Axe-Fx" />
 		<patch name="Axe Enhancer 1 Ch C" axeBlockId="Enhancer 1" axeBlockChannel="C" device="Axe-Fx" />
 		<patch name="Axe Enhancer 1 Ch D" axeBlockId="Enhancer 1" axeBlockChannel="D" device="Axe-Fx" />
@@ -2209,8 +2233,11 @@
 			<switch number="7" command="LoadBank" bankName="Axe-Fx Volume 3/4 Channels" secondFunction="immediateToggle" />
 			<switch number="8" patchName="Volume 4" />
 			<switch number="8" command="LoadBank" bankName="Axe-Fx Volume 3/4 Channels" secondFunction="immediateToggle" />
-			<switch number="9" patchName="" />
-			<switch number="10" patchName="" />
+      <switch number="9" patchName="Dyn Dist 1" />
+      <switch number="9" command="LoadBank" bankName="Axe-Fx Dyn Dist Channels" secondFunction="immediateToggle" />
+      <switch number="10" patchName="Dyn Dist 2" />
+      <switch number="10" command="LoadBank" bankName="Axe-Fx Dyn Dist Channels" secondFunction="immediateToggle" />
+
 			<switch number="11" patchName="" />
 			<switch number="12" patchName="" />
 			<switch number="13" patchName="" />
@@ -2406,7 +2433,29 @@
 
 			<switch number="22" command="BankHistoryBackward" />
 		</bank>
-		<bank name="Axe-Fx Flanger Channels">
+    <bank name="Axe-Fx Dyn Dist Channels">
+      <ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+      <switch number="1" patchName="Axe Dyn Dist 1 Ch A" />
+      <switch number="2" patchName="Axe Dyn Dist 1 Ch B" />
+      <switch number="3" patchName="Axe Dyn Dist 1 Ch C" />
+      <switch number="4" patchName="Axe Dyn Dist 1 Ch D" />
+      <switch number="5" patchName="Dyn Dist 1" />
+      <ExclusiveSwitchGroup>6 7 8 9</ExclusiveSwitchGroup>
+      <switch number="6" patchName="Axe Dyn Dist 2 Ch A" />
+      <switch number="7" patchName="Axe Dyn Dist 2 Ch B" />
+      <switch number="8" patchName="Axe Dyn Dist 2 Ch C" />
+      <switch number="9" patchName="Axe Dyn Dist 2 Ch D" />
+      <switch number="10" patchName="Dyn Dist 2" />
+
+      <switch number="11" command="LoadBank" bankName="Axe-Fx Drv 1/2 Channels" />
+      <switch number="12" command="LoadBank" bankName="Axe-Fx Amp Channels" />
+      <switch number="13" patchName="" />
+      <switch number="14" patchName="" />
+      <switch number="15" patchName="" />
+
+      <switch number="22" command="BankHistoryBackward" />
+    </bank>
+    <bank name="Axe-Fx Flanger Channels">
 			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
 			<switch number="1" patchName="Axe Flanger 1 Ch A" />
 			<switch number="2" patchName="Axe Flanger 1 Ch B" />

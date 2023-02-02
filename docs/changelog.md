@@ -2,7 +2,8 @@
 
 
 #### 2023.0x.xx
-- Support for automatic repeat of `A` group commands specified in `repeatingToggle` and `repeatingMomentary` patch types
+- Support for automatic repeat of `A` group commands specified in `repeatingToggle` and `repeatingMomentary` patch types (enabling a repeating patch type creates a unique thread for the patch that runs the commands in a loop -- use the `[Sleep](docs.md#patchCommands)` patch command as needed)
+- Added support for Dynamic Distortion blocks added in Axe-FX III firmware version 20.00
 
 #### 2022.01.12
 - Support dark mode titlebar when window is inactive
