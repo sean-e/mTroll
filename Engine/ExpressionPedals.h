@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2014-2015,2018,2020 Sean Echevarria
+ * Copyright (C) 2007-2010,2014-2015,2018,2020,2023 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -43,50 +43,33 @@ struct PedalCalibration
 {
 	enum {MaxAdcVal = 1023};
 
-	PedalCalibration() : 
-		mMinAdcVal(0),
-		mMaxAdcVal(MaxAdcVal),
-		mBottomToggleZoneSize(0),
-		mBottomToggleDeadzoneSize(0),
-		mTopToggleZoneSize(0),
-		mTopToggleDeadzoneSize(0)
-	{ }
+	PedalCalibration() = default;
 
-	int		mMinAdcVal;
-	int		mMaxAdcVal;
-	int		mBottomToggleZoneSize;
-	int		mBottomToggleDeadzoneSize;
-	int		mTopToggleZoneSize;
-	int		mTopToggleDeadzoneSize;
+	int		mMinAdcVal = 0;
+	int		mMaxAdcVal = MaxAdcVal;
+	int		mBottomToggleZoneSize = 0;
+	int		mBottomToggleDeadzoneSize = 0;
+	int		mTopToggleZoneSize = 0;
+	int		mTopToggleDeadzoneSize = 0;
 };
 
 
 struct PedalToggle
 {
-	bool				mToggleIsEnabled;
-	int					mTogglePatchNumber;
+	bool				mToggleIsEnabled = false;
+	int					mTogglePatchNumber = -1;
 
 	// runtime values calculated during pedal calibration
-	int					mMinActivateAdcVal;			// bottom of active zone that sends ccs and may result in exec of ON command
-	int					mMaxActivateAdcVal;			// top of active zone that sends ccs and may result in exec of ON command
-	int					mMinDeactivateAdcVal;		// bottom of zone that execs OFF command
-	int					mMaxDeactivateAdcVal;		// top of zone that execs OFF command
+	int					mMinActivateAdcVal = 0;			// bottom of active zone that sends ccs and may result in exec of ON command
+	int					mMaxActivateAdcVal = 0;			// top of active zone that sends ccs and may result in exec of ON command
+	int					mMinDeactivateAdcVal = 0;		// bottom of zone that execs OFF command
+	int					mMaxDeactivateAdcVal = 0;		// top of zone that execs OFF command
 
 	// runtime state
 	PatchPtr			mPatch;
-	ISwitchDisplay		* mSwitchDisplay;
+	ISwitchDisplay		* mSwitchDisplay = nullptr;
 
-	PedalToggle() :
-		mToggleIsEnabled(false),
-		mMinActivateAdcVal(0),
-		mMinDeactivateAdcVal(0),
-		mMaxActivateAdcVal(0),
-		mMaxDeactivateAdcVal(0),
-		mTogglePatchNumber(-1),
-		mPatch(nullptr),
-		mSwitchDisplay(nullptr)
-	{
-	}
+	PedalToggle() = default;
 
 	bool IsInActivationZone(int adcVal) const
 	{
@@ -136,40 +119,20 @@ public:
 
 	struct InitParams
 	{
-		InitParams() :
-		  mInvert(false),
-		  mChannel(1),
-		  mControlNumber(1),
-		  mMinVal(0),
-		  mMaxVal(127),
-		  mDoubleByte(false),
-		  mCurve(scLinear),
-		  mBottomTogglePatchNumber(-1),
-		  mTopTogglePatchNumber(-1)
-		{ }
+		InitParams() = default;
 
-		bool mInvert;
-		byte mChannel;
-		byte mControlNumber;
-		int mMinVal;
-		int mMaxVal;
-		bool mDoubleByte;
-		SweepCurve mCurve;
-		int mBottomTogglePatchNumber;
-		int mTopTogglePatchNumber;
+		bool mInvert = false;
+		byte mChannel = 1;
+		byte mControlNumber = 1;
+		int mMinVal = 0;
+		int mMaxVal = 127;
+		bool mDoubleByte = false;
+		SweepCurve mCurve = scLinear;
+		int mBottomTogglePatchNumber = -1;
+		int mTopTogglePatchNumber = -1;
 	};
 
-	ExpressionControl() : 
-		mPedalNumber(1),
-		mEnabled(false), 
-		mSweepCurve(scLinear),
-		mMinAdcVal(0), 
-		mMaxAdcVal(PedalCalibration::MaxAdcVal), 
-		mActiveAdcRangeStart(0),
-		mActiveAdcRangeEnd(PedalCalibration::MaxAdcVal),
-		mAdcValRange(PedalCalibration::MaxAdcVal),
-		mMidiOut(nullptr)
-	{ }
+	ExpressionControl() = default;
 
 	void Init(int pedal, const InitParams & params);
 	void InitMidiOut(IMidiOutPtr midiOut) { mMidiOut = midiOut; }
@@ -180,26 +143,26 @@ public:
 
 private:
 	IMidiOutPtr			mMidiOut;
-	int					mPedalNumber;
-	bool				mEnabled;
-	bool				mInverted;
-	bool				mIsDoubleByte;
-	byte				mChannel;
-	byte				mControlNumber;
-	int					mMinCcVal;
-	int					mMaxCcVal;
-	int					mCcValRange;
-	SweepCurve			mSweepCurve;
+	int					mPedalNumber = 1;
+	bool				mEnabled = false;
+	bool				mInverted = false;
+	bool				mIsDoubleByte = false;
+	byte				mChannel = 1;
+	byte				mControlNumber = 1;
+	int					mMinCcVal = 0;
+	int					mMaxCcVal = 127;
+	int					mCcValRange = 0;
+	SweepCurve			mSweepCurve = scLinear;
 	// 4 bytes used for single byte controllers
 	// 5 bytes used for double byte controllers
 	// each get one extra byte to reduce adc jitter
-	byte				mMidiData[5];
+	byte				mMidiData[5] = { 0 };
 
-	int					mMinAdcVal;
-	int					mMaxAdcVal;
-	int					mAdcValRange;
-	int					mActiveAdcRangeStart;
-	int					mActiveAdcRangeEnd;
+	int					mMinAdcVal = 0;
+	int					mMaxAdcVal = PedalCalibration::MaxAdcVal;
+	int					mAdcValRange = PedalCalibration::MaxAdcVal;
+	int					mActiveAdcRangeStart = 0;
+	int					mActiveAdcRangeEnd = PedalCalibration::MaxAdcVal;
 	TopToggle			mTopToggle;
 	BottomToggle		mBottomToggle;
 };
@@ -256,7 +219,7 @@ class ExpressionPedals
 public:
 	enum {PedalCount = 4};
 
-	ExpressionPedals(IMidiOutPtr midiOut = nullptr) : mHasAnyNondefault(false)
+	ExpressionPedals(IMidiOutPtr midiOut = nullptr)
 	{
 		for (auto & globalEnable : mGlobalEnables)
 			globalEnable = true;
@@ -343,7 +306,7 @@ public:
 	}
 
 private:
-	bool					mHasAnyNondefault;
+	bool					mHasAnyNondefault = false;
 	bool					mGlobalEnables[PedalCount];
 	bool					mPedalEnables[PedalCount];	// true if either cc is enabled for a pedal
 	ExpressionPedal			mPedals[PedalCount];
