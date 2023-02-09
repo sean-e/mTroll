@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2011,2014-2015,2018,2020 Sean Echevarria
+ * Copyright (C) 2007-2011,2014-2015,2018,2020,2023 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -38,6 +38,7 @@
 bool
 PedalToggle::Activate()
 {
+	mPatchIsActivated = true;
 	if (mPatch->IsActive())
 		return false;
 
@@ -50,6 +51,7 @@ PedalToggle::Activate()
 bool
 PedalToggle::Deactivate()
 {
+	mPatchIsActivated = false;
 	if (!mPatch->IsActive())
 		return false;
 
@@ -128,6 +130,10 @@ ExpressionControl::Calibrate(const PedalCalibration & calibrationSetting,
 			mBottomToggle.mMaxActivateAdcVal = mMaxAdcVal;
 			mAdcValRange = mMaxAdcVal - mBottomToggle.mMinActivateAdcVal;
 
+			const int deadzoneLen = mBottomToggle.mMinActivateAdcVal - mBottomToggle.mMaxDeactivateAdcVal;
+			if (deadzoneLen > 1)
+				mBottomToggle.mTransitionToActivationAdcVal = (deadzoneLen / 2) + mBottomToggle.mMaxDeactivateAdcVal;
+
 			if (eng)
 			{
 				mBottomToggle.mPatch = eng->GetPatch(mBottomToggle.mTogglePatchNumber);
@@ -154,6 +160,11 @@ ExpressionControl::Calibrate(const PedalCalibration & calibrationSetting,
 			mTopToggle.mMaxDeactivateAdcVal = mMaxAdcVal;
 			mTopToggle.mMinDeactivateAdcVal = mTopToggle.mMaxDeactivateAdcVal - calibrationSetting.mTopToggleZoneSize;
 			mTopToggle.mMaxActivateAdcVal = mTopToggle.mMinDeactivateAdcVal - calibrationSetting.mTopToggleDeadzoneSize;
+
+			const int deadzoneLen = mTopToggle.mMinDeactivateAdcVal - mTopToggle.mMaxActivateAdcVal;
+			if (deadzoneLen > 1)
+				mTopToggle.mTransitionToActivationAdcVal = mTopToggle.mMinDeactivateAdcVal - (deadzoneLen / 2);
+
 			if (mBottomToggle.mToggleIsEnabled)
 			{
 				mTopToggle.mMinActivateAdcVal = mBottomToggle.mMinActivateAdcVal;
@@ -213,7 +224,7 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 			mMinAdcVal : 
 			(newVal > mMaxAdcVal) ? mMaxAdcVal : newVal;
 
-	int adcVal = cappedAdcVal - mActiveAdcRangeStart;
+	int adcVal = cappedAdcVal - mActiveAdcRangeStart; // this might result in a value that is not valid for CC send, handled after curves
 	switch (mSweepCurve)
 	{
 	case scLinear:
@@ -302,6 +313,8 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 					showStatus = bottomActivated = true;
 				else if (!doCcSend)
 					showStatus = true;
+
+				mCurrentZone = Zones::activeZone;
 			}
 			else if (mBottomToggle.IsInDeactivationZone(cappedAdcVal))
 			{
@@ -309,16 +322,39 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 				if (mBottomToggle.Deactivate())
 				{
 					showStatus = bottomDeactivated = true;
-					newCcVal = mMinCcVal;
+					newCcVal = 0;
 				}
-				else if (!doCcSend)
-					showStatus = true;
+				else
+				{
+					if (!doCcSend)
+						showStatus = true;
+					// since deactivation was not necessary, clear previous text
+					if (mainDisplay)
+						mainDisplay->ClearTransientText();
+				}
+
+				mCurrentZone = Zones::deactivateZone;
 			}
 			else if (mBottomToggle.IsInDeadzone(cappedAdcVal))
 			{
 				_ASSERTE(!doCcSend);
 				showStatus = bottomDeadzone = true;
-				newCcVal = mMinCcVal;
+				newCcVal = 0;
+
+				if (Zones::deadZone == mCurrentZone)
+				{
+					if (mBottomToggle.IsInDeadZoneButCloseToActive(cappedAdcVal))
+					{
+						mCurrentZone = Zones::deadZoneButCloseToActive;
+						if (mBottomToggle.Activate())
+						{
+							bottomActivated = true;
+							doCcSend = true;
+						}
+					}
+				}
+				else
+					mCurrentZone = Zones::deadZone;
 			}
 			else
 			{
@@ -335,6 +371,8 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 					showStatus = topActivated = true;
 				else if (!doCcSend)
 					showStatus = true;
+
+				mCurrentZone = Zones::activeZone;
 			}
 			else if (mTopToggle.IsInDeactivationZone(cappedAdcVal))
 			{
@@ -344,14 +382,37 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 					showStatus = topDeactivated = true;
 					newCcVal = mMaxCcVal;
 				}
-				else if (!doCcSend)
-					showStatus = true;
+				else
+				{
+					if (!doCcSend)
+						showStatus = true;
+					// since deactivation was not necessary, clear previous text
+					if (mainDisplay)
+						mainDisplay->ClearTransientText();
+				}
+
+				mCurrentZone = Zones::deactivateZone;
 			}
 			else if (mTopToggle.IsInDeadzone(cappedAdcVal))
 			{
 				_ASSERTE(!doCcSend);
 				showStatus = topDeadzone = true;
 				newCcVal = mMaxCcVal;
+
+				if (Zones::deadZone == mCurrentZone)
+				{
+					if (mTopToggle.IsInDeadZoneButCloseToActive(cappedAdcVal))
+					{
+						mCurrentZone = Zones::deadZoneButCloseToActive;
+						if (mTopToggle.Activate())
+						{
+							topActivated = true;
+							doCcSend = true;
+						}
+					}
+				}
+				else
+					mCurrentZone = Zones::deadZone;
 			}
 			else
 			{
@@ -508,14 +569,20 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 				else if (topActivated)
 					displayMsg << "top toggle activated\n";
 
-				if (doCcSend)
+				if (mBottomToggle.mToggleIsEnabled && mBottomToggle.mPatch)
 				{
-					if (newCcVal == mMinCcVal)
-						displayMsg << "........  ";
-					else if (newCcVal == mMaxCcVal)
-						displayMsg << "||||||||  ";
+					if (mBottomToggle.mPatchIsActivated)
+						displayMsg << "pedal bottom patch active\n";
 					else
-						displayMsg << "          ";
+						displayMsg << "pedal bottom patch inactive\n";
+				}
+
+				if (mTopToggle.mToggleIsEnabled && mTopToggle.mPatch)
+				{
+					if (mTopToggle.mPatchIsActivated)
+						displayMsg << "pedal top patch active\n";
+					else
+						displayMsg << "pedal top patch inactive\n";
 				}
 
 				if (bottomDeadzone)
@@ -527,67 +594,106 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 			{
 				if (doCcSend)
 				{
+					const int ccRange = mMaxCcVal - mMinCcVal;
+					constexpr int kMaxShortRange = 31;
 					displayMsg << "Expr " << mPedalNumber << ": ";
 					if (newCcVal != 0 && newCcVal == mMinCcVal)
-						displayMsg << "n";
+						displayMsg << (int)mMidiData[2] << " (min)";
 					else if (newCcVal != 127 && newCcVal == mMaxCcVal)
-						displayMsg << "|||||||||||||||||||X  (" << (int)mMidiData[2] << ")";
+					{
+						if (ccRange < kMaxShortRange)
+							displayMsg << (int)mMidiData[2] << " (max)";
+						else
+							displayMsg << "|||||||||||||||||||X  (" << (int)mMidiData[2] << " max)";
+					}
 					else if (newCcVal >= 0)
 					{
-						if (newCcVal == 0)
-							displayMsg << "0";
-						else if (newCcVal == 1)
-							displayMsg << "1";
-						else if (newCcVal == 2)
-							displayMsg << "2";
-						else if (newCcVal == 3)
-							displayMsg << "3";
-						else if (newCcVal == 4)
-							displayMsg << "4";
-						else if (newCcVal == 5)
-							displayMsg << "5";
-						else if (newCcVal <= 9)
-							displayMsg << "|";
-						else if (newCcVal <= 16)
-							displayMsg << "||";
-						else if (newCcVal <= 24)
-							displayMsg << "|||";
-						else if (newCcVal < 32)
-							displayMsg << "||||";
-						else if (newCcVal == 32)
-							displayMsg << "||||:";
-						else if (newCcVal <= 40)
-							displayMsg << "||||:|";
-						else if (newCcVal <= 48)
-							displayMsg << "||||:||";
-						else if (newCcVal <= 56)
-							displayMsg << "||||:|||";
-						else if (newCcVal < 64)
-							displayMsg << "||||:||||";
-						else if (newCcVal == 64)
-							displayMsg << "||||:||||:";
-						else if (newCcVal <= 72)
-							displayMsg << "||||:||||:|";
-						else if (newCcVal <= 80)
-							displayMsg << "||||:||||:||";
-						else if (newCcVal <= 88)
-							displayMsg << "||||:||||:|||";
-						else if (newCcVal < 96)
-							displayMsg << "||||:||||:||||";
-						else if (newCcVal == 96)
-							displayMsg << "||||:||||:||||:";
-						else if (newCcVal <= 104)
-							displayMsg << "||||:||||:||||:|";
-						else if (newCcVal <= 112)
-							displayMsg << "||||:||||:||||:||";
-						else if (newCcVal <= 120)
-							displayMsg << "||||:||||:||||:|||";
-						else if (newCcVal < 127)
-							displayMsg << "||||:||||:||||:||||";
-						else if (newCcVal == 127)
-							displayMsg << "|||||||||||||||||||X";
+						if (mMinCcVal == 0 && mMaxCcVal == 127)
+						{
+							if (newCcVal == 0)
+								displayMsg << "0";
+							else if (newCcVal == 1)
+								displayMsg << "1";
+							else if (newCcVal == 2)
+								displayMsg << "2";
+							else if (newCcVal == 3)
+								displayMsg << "3";
+							else if (newCcVal == 4)
+								displayMsg << "4";
+							else if (newCcVal == 5)
+								displayMsg << "5";
+							else if (newCcVal <= 9)
+								displayMsg << "|";
+							else if (newCcVal <= 16)
+								displayMsg << "||";
+							else if (newCcVal <= 24)
+								displayMsg << "|||";
+							else if (newCcVal < 32)
+								displayMsg << "||||";
+							else if (newCcVal == 32)
+								displayMsg << "||||:";
+							else if (newCcVal <= 40)
+								displayMsg << "||||:|";
+							else if (newCcVal <= 48)
+								displayMsg << "||||:||";
+							else if (newCcVal <= 56)
+								displayMsg << "||||:|||";
+							else if (newCcVal < 64)
+								displayMsg << "||||:||||";
+							else if (newCcVal == 64)
+								displayMsg << "||||:||||:";
+							else if (newCcVal <= 72)
+								displayMsg << "||||:||||:|";
+							else if (newCcVal <= 80)
+								displayMsg << "||||:||||:||";
+							else if (newCcVal <= 88)
+								displayMsg << "||||:||||:|||";
+							else if (newCcVal < 96)
+								displayMsg << "||||:||||:||||";
+							else if (newCcVal == 96)
+								displayMsg << "||||:||||:||||:";
+							else if (newCcVal <= 104)
+								displayMsg << "||||:||||:||||:|";
+							else if (newCcVal <= 112)
+								displayMsg << "||||:||||:||||:||";
+							else if (newCcVal <= 120)
+								displayMsg << "||||:||||:||||:|||";
+							else if (newCcVal < 127)
+								displayMsg << "||||:||||:||||:||||";
+							else if (newCcVal == 127)
+								displayMsg << "|||||||||||||||||||X";
+							else
+								displayMsg << "XXXXXXXXXXXXXXXXXXXX";
+						}
+						else if (ccRange < kMaxShortRange)
+						{
+							// short range, just show actual value
+							displayMsg << (int)newCcVal;
+						}
 						else
-							displayMsg << "XXXXXXXXXXXXXXXXXXXX";
+						{
+							// truncated version -- want to maintain :::: scaling for actual cc value rather than range approximation
+							if (newCcVal < mMinCcVal + 6)
+								displayMsg << (int)newCcVal;
+							else if (newCcVal < 32)
+								displayMsg << "||                    (" << (int)mMidiData[2] << ")";
+							else if (newCcVal == 32)
+								displayMsg << "||||:";
+							else if (newCcVal < 64)
+								displayMsg << "||||:||               (" << (int)mMidiData[2] << ")";
+							else if (newCcVal == 64)
+								displayMsg << "||||:||||:";
+							else if (newCcVal < 96 && mMaxCcVal > 96)
+								displayMsg << "||||:||||:||          (" << (int)mMidiData[2] << ")";
+							else if (newCcVal == 96 && mMaxCcVal > 96)
+								displayMsg << "||||:||||:||||:";
+							else if (newCcVal < mMaxCcVal)
+								displayMsg << "||||:||||:||||:||     (" << (int)mMidiData[2] << ")";
+							else if (newCcVal == mMaxCcVal)
+								displayMsg << "|||||||||||||||||||X";
+							else
+								displayMsg << "XXXXXXXXXXXXXXXXXXXX";
+						}
 					}
 				}
 				else if (bottomDeadzone)
@@ -605,24 +711,31 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 			{
 				if (gEnableStatusDetails)
 				{
+					std::strstream finalMsg;
 					if (mIsDoubleByte)
 					{
-						displayMsg << "[ch " << (int)mChannel << ", ctrl " << (int)mControlNumber << "] " << newVal << " -> " << (int)mMidiData[2];
-						displayMsg << "[ch " << (int)mChannel << ", ctrl " << ((int)mControlNumber) + 31 << "] " << newVal << " -> " << (int)mMidiData[3];
+						finalMsg << "[ch " << (int)mChannel << ", ctrl " << (int)mControlNumber << "] " << newVal << " -> " << (int)mMidiData[2];
+						finalMsg << "[ch " << (int)mChannel << ", ctrl " << ((int)mControlNumber) + 31 << "] " << newVal << " -> " << (int)mMidiData[3];
 					}
 					else
 					{
 #ifdef PEDAL_TESTxx
 						// to ease insert into spreadsheet
-						displayMsg << newVal << ", " << (int)mMidiData[2];
+						finalMsg << newVal << ", " << (int)mMidiData[2];
 #else
-						displayMsg << "[ch " << (int)mChannel << ", ctrl " << (int)mControlNumber << "] " << newVal << " -> " << (int)mMidiData[2];
+						finalMsg << "[ch " << (int)mChannel << ", ctrl " << (int)mControlNumber << "] " << newVal << " -> " << (int)mMidiData[2];
 #endif
 					}
+
+					displayMsg << std::ends;
+					finalMsg << '\n' << displayMsg.str() << std::ends;
+					mainDisplay->TransientTextOut(finalMsg.str());
 				}
-	
-				displayMsg << '\n' << std::ends;
-				mainDisplay->TransientTextOut(displayMsg.str());
+				else
+				{
+					displayMsg << '\n' << std::ends;
+					mainDisplay->TransientTextOut(displayMsg.str());
+				}
 			}
 			else if (bottomDeadzone || topDeadzone)
 			{

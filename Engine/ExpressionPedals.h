@@ -64,10 +64,12 @@ struct PedalToggle
 	int					mMaxActivateAdcVal = 0;			// top of active zone that sends ccs and may result in exec of ON command
 	int					mMinDeactivateAdcVal = 0;		// bottom of zone that execs OFF command
 	int					mMaxDeactivateAdcVal = 0;		// top of zone that execs OFF command
+	int					mTransitionToActivationAdcVal = 0; // middle of deadzone, used to trigger advanced exec of ON command
 
 	// runtime state
 	PatchPtr			mPatch;
 	ISwitchDisplay		* mSwitchDisplay = nullptr;
+	bool				mPatchIsActivated = false;
 
 	PedalToggle() = default;
 
@@ -98,6 +100,13 @@ struct BottomToggle : public PedalToggle
 			return true;
 		return false; 
 	}
+
+	bool IsInDeadZoneButCloseToActive(int adcVal) const
+	{
+		if (mTransitionToActivationAdcVal && adcVal >= mTransitionToActivationAdcVal && adcVal <= mMinActivateAdcVal)
+			return true;
+		return false;
+	}
 };
 
 
@@ -105,9 +114,17 @@ struct TopToggle : public PedalToggle
 {
 	bool IsInDeadzone(int adcVal) const 
 	{ 
-		if (adcVal > mMinActivateAdcVal && adcVal < mMaxDeactivateAdcVal)
+		if (adcVal > mMaxActivateAdcVal && adcVal < mMinDeactivateAdcVal)
 			return true;
 		return false; 
+	}
+
+
+	bool IsInDeadZoneButCloseToActive(int adcVal) const
+	{
+		if (mTransitionToActivationAdcVal && adcVal <= mTransitionToActivationAdcVal && adcVal >= mMaxActivateAdcVal)
+			return true;
+		return false;
 	}
 };
 
@@ -165,6 +182,8 @@ private:
 	int					mActiveAdcRangeEnd = PedalCalibration::MaxAdcVal;
 	TopToggle			mTopToggle;
 	BottomToggle		mBottomToggle;
+	enum class Zones { initZone, deactivateZone, deadZone, deadZoneButCloseToActive, activeZone };
+	Zones				mCurrentZone = Zones::initZone;
 };
 
 
