@@ -7,6 +7,7 @@
 - Fixed expression pedal handling when restricting MIDI CC output range
 - Fixed expression pedal virtual button activation failure to trigger half-way through deadzone
 - Updated monitoring of expression pedals (both simple and detailed display variants)
+- Allow multiple patch definitions for Axe-FX III effect blocks so that multiple patch types can exist for each effect block (for example, separate toggle and momentary patches for Flanger 1)
 
 #### 2022.01.12
 - Support dark mode titlebar when window is inactive

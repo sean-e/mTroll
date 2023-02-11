@@ -534,9 +534,11 @@
 			<localExpr inputNumber="1" assignmentNumber="1" controller="12" min="0" max="127" invert="0" enable="1" />
 		</patch>
 
-		<patch name="Axe Ext 1 (pedal 1)" comment="External 1 cc16" type="persistentPedalOverride" device="Axe-Fx">
+		<patch name="Axe Ext 1-2 (pedal 1-2)" comment="External 1 cc16, Ext 2 cc17" type="persistentPedalOverride" device="Axe-Fx">
 			<globalExpr inputNumber="1" enable="0" />
 			<localExpr inputNumber="1" assignmentNumber="1" controller="16" min="0" max="127" invert="0" enable="1" />
+			<globalExpr inputNumber="2" enable="0" />
+			<localExpr inputNumber="2" assignmentNumber="1" controller="17" min="0" max="127" invert="0" enable="1" />
 		</patch>
 
 		<patch name="Axe Tap Tempo" type="AxeFxTapTempo" device="Axe-Fx" />
@@ -575,7 +577,7 @@
 			<localExpr inputNumber="4" assignmentNumber="1" controller="23" min="0" max="127" invert="0" enable="1" />
 		</patch>
 
-		<!-- Axe-Fx default controllers; note no controllers specifed, mTroll will look up 
+		<!-- Axe-Fx default controllers; note no controllers specified, mTroll will look up 
 			default based on patch name.
 			Axe, AxeFx, Axe-Fx are removed prior to lookup (not necessary in name).
 			Lookup is not case-sensitive.
@@ -591,6 +593,8 @@
 		<patch name="Cab 2" device="Axe-Fx" />
 		<patch name="Chorus 1" device="Axe-Fx" />
 		<patch name="Chorus 2" device="Axe-Fx" />
+		<patch name="Chorus 1 (mom)" device="Axe-Fx" type="AxeMomentary" />
+		<patch name="Chorus 2 (mom)" device="Axe-Fx" type="AxeMomentary" />
 		<patch name="Compressor 1" device="Axe-Fx" />
 		<patch name="Compressor 2" device="Axe-Fx" />
 		<patch name="Crossover 1" device="Axe-Fx" />
@@ -599,13 +603,23 @@
 		<patch name="Delay 2" device="Axe-Fx" />
 		<patch name="Delay 3 (mod)" device="Axe-Fx" />
 		<patch name="Delay 4" device="Axe-Fx" />
+		<patch name="Delay 1 (mom)" device="Axe-Fx" type="AxeMomentary" />
+		<patch name="Delay 2 (mom)" device="Axe-Fx" type="AxeMomentary" />
+		<patch name="Delay 3 (mom)" device="Axe-Fx" type="AxeMomentary" />
+		<patch name="Delay 4 (mom)" device="Axe-Fx" type="AxeMomentary" />
 		<patch name="Drive 1" device="Axe-Fx" />
 		<patch name="Drive 2" device="Axe-Fx" />
 		<patch name="Drive 3" device="Axe-Fx" />
 		<patch name="Drive 4" device="Axe-Fx" />
-    <patch name="Dyn Dist 1" device="Axe-Fx" />
-    <patch name="Dyn Dist 2" device="Axe-Fx" />
-    <patch name="Enhancer 1" device="Axe-Fx" />
+		<patch name="Drive 1 (mom)" device="Axe-Fx" type="AxeMomentary" />
+		<patch name="Drive 2 (mom)" device="Axe-Fx" type="AxeMomentary" />
+		<patch name="Drive 3 (mom)" device="Axe-Fx" type="AxeMomentary" />
+		<patch name="Drive 4 (mom)" device="Axe-Fx" type="AxeMomentary" />
+		<patch name="Dyn Dist 1" device="Axe-Fx" />
+		<patch name="Dyn Dist 2" device="Axe-Fx" />
+		<patch name="Dyn Dist 1 (mom)" device="Axe-Fx" type="AxeMomentary" />
+		<patch name="Dyn Dist 2 (mom)" device="Axe-Fx" type="AxeMomentary" />
+		<patch name="Enhancer 1" device="Axe-Fx" />
 		<patch name="Enhancer 2" device="Axe-Fx" />
 		<patch name="Filter 1" device="Axe-Fx" />
 		<patch name="Filter 2" device="Axe-Fx" />
@@ -613,6 +627,8 @@
 		<patch name="Filter 4" device="Axe-Fx" />
 		<patch name="Flanger 1" device="Axe-Fx" />
 		<patch name="Flanger 2" device="Axe-Fx" />
+		<patch name="Flanger 1 (mom)" device="Axe-Fx" type="AxeMomentary" />
+		<patch name="Flanger 2 (mom)" device="Axe-Fx" type="AxeMomentary" />
 		<patch name="Formant 1" device="Axe-Fx" />
 		<patch name="Formant 2" device="Axe-Fx" />
 		<patch name="Gate 1" device="Axe-Fx" />
@@ -627,12 +643,16 @@
 		<patch name="IR Player 2" device="Axe-Fx" />
 		<patch name="MegaTap 1" device="Axe-Fx" />
 		<patch name="MegaTap 2" device="Axe-Fx" />
+		<patch name="MegaTap 1 (mom)" device="Axe-Fx" type="AxeMomentary" />
+		<patch name="MegaTap 2 (mom)" device="Axe-Fx" type="AxeMomentary" />
 		<patch name="Mixer 1" device="Axe-Fx" />
 		<patch name="Mixer 2" device="Axe-Fx" />
 		<patch name="Mixer 3" device="Axe-Fx" />
 		<patch name="Mixer 4" device="Axe-Fx" />
 		<patch name="Multi-Delay 1" device="Axe-Fx" />
 		<patch name="Multi-Delay 2" device="Axe-Fx" />
+		<patch name="Multi-Delay 1 (mom)" device="Axe-Fx" type="AxeMomentary" />
+		<patch name="Multi-Delay 2 (mom)" device="Axe-Fx" type="AxeMomentary" />
 		<patch name="Multiband Comp 1" device="Axe-Fx" />
 		<patch name="Multiband Comp 2" device="Axe-Fx" />
 		<patch name="Multiplexer 1" device="Axe-Fx" />
@@ -643,30 +663,49 @@
 		<patch name="Para EQ 4" device="Axe-Fx" />
 		<patch name="Phaser 1" device="Axe-Fx" />
 		<patch name="Phaser 2" device="Axe-Fx" />
+		<patch name="Phaser 1 (mom)" device="Axe-Fx" type="AxeMomentary" />
+		<patch name="Phaser 2 (mom)" device="Axe-Fx" type="AxeMomentary" />
 		<patch name="Pitch 1" device="Axe-Fx" />
 		<patch name="Pitch 2" device="Axe-Fx" />
+		<patch name="Pitch 1 (mom)" device="Axe-Fx" type="AxeMomentary" />
+		<patch name="Pitch 2 (mom)" device="Axe-Fx" type="AxeMomentary" />
 		<patch name="Plex Delay 1" device="Axe-Fx" />
 		<patch name="Plex Delay 2" device="Axe-Fx" />
+		<patch name="Plex Delay 1 (mom)" device="Axe-Fx" type="AxeMomentary" />
+		<patch name="Plex Delay 2 (mom)" device="Axe-Fx" type="AxeMomentary" />
 		<patch name="Resonator 1" device="Axe-Fx" />
 		<patch name="Resonator 2" device="Axe-Fx" />
+		<patch name="Resonator 1 (mom)" device="Axe-Fx" type="AxeMomentary" />
+		<patch name="Resonator 2 (mom)" device="Axe-Fx" type="AxeMomentary" />
 		<patch name="Return 1" device="Axe-Fx" />
 		<patch name="Return 2" device="Axe-Fx" />
 		<patch name="Reverb 1" device="Axe-Fx" />
 		<patch name="Reverb 2" device="Axe-Fx" />
+		<patch name="Reverb 1 (mom)" device="Axe-Fx" type="AxeMomentary" />
+		<patch name="Reverb 2 (mom)" device="Axe-Fx" type="AxeMomentary" />
 		<patch name="Ring Mod" device="Axe-Fx" />
+		<patch name="Ring Mod (mom)" device="Axe-Fx" type="AxeMomentary" />
 		<patch name="Rotary 1" device="Axe-Fx" />
 		<patch name="Rotary 2" device="Axe-Fx" />
+		<patch name="Rotary 1 (mom)" device="Axe-Fx" type="AxeMomentary" />
+		<patch name="Rotary 2 (mom)" device="Axe-Fx" type="AxeMomentary" />
 		<patch name="RTA" device="Axe-Fx" />
 		<patch name="Scene MIDI" device="Axe-Fx" />
 		<patch name="Send 1" device="Axe-Fx" />
 		<patch name="Send 2" device="Axe-Fx" />
 		<patch name="Synth 1" device="Axe-Fx" />
 		<patch name="Synth 2" device="Axe-Fx" />
+		<patch name="Synth 1 (mom)" device="Axe-Fx" type="AxeMomentary" />
+		<patch name="Synth 2 (mom)" device="Axe-Fx" type="AxeMomentary" />
 		<patch name="Ten-Tap Delay 1" device="Axe-Fx" />
 		<patch name="Ten-Tap Delay 2" device="Axe-Fx" />
+		<patch name="Ten-Tap Delay 1 (mom)" device="Axe-Fx" type="AxeMomentary" />
+		<patch name="Ten-Tap Delay 2 (mom)" device="Axe-Fx" type="AxeMomentary" />
 		<patch name="Tone Match" device="Axe-Fx" />
 		<patch name="Tremolo 1" device="Axe-Fx" />
 		<patch name="Tremolo 2" device="Axe-Fx" />
+		<patch name="Tremolo 1 (mom)" device="Axe-Fx" type="AxeMomentary" />
+		<patch name="Tremolo 2 (mom)" device="Axe-Fx" type="AxeMomentary" />
 		<patch name="Vocoder" device="Axe-Fx" />
 		<patch name="Volume 1" device="Axe-Fx" />
 		<patch name="Volume 2" device="Axe-Fx" />
@@ -883,29 +922,29 @@
 			<patchListItemName>Axe Drive 4 Ch D</patchListItemName>
 		</patch>
 
-    <patch name="Axe Dyn Dist 1 Ch A" axeBlockId="Dyn Dist 1" axeBlockChannel="A" device="Axe-Fx" />
-    <patch name="Axe Dyn Dist 1 Ch B" axeBlockId="Dyn Dist 1" axeBlockChannel="B" device="Axe-Fx" />
-    <patch name="Axe Dyn Dist 1 Ch C" axeBlockId="Dyn Dist 1" axeBlockChannel="C" device="Axe-Fx" />
-    <patch name="Axe Dyn Dist 1 Ch D" axeBlockId="Dyn Dist 1" axeBlockChannel="D" device="Axe-Fx" />
-    <patch type="patchListSequence" name="Dyn Dist 1 Ch" gaplessRestart="1">
-      <patchListItemName>Axe Dyn Dist 1 Ch A</patchListItemName>
-      <patchListItemName>Axe Dyn Dist 1 Ch B</patchListItemName>
-      <patchListItemName>Axe Dyn Dist 1 Ch C</patchListItemName>
-      <patchListItemName>Axe Dyn Dist 1 Ch D</patchListItemName>
-    </patch>
+		<patch name="Axe Dyn Dist 1 Ch A" axeBlockId="Dyn Dist 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Dyn Dist 1 Ch B" axeBlockId="Dyn Dist 1" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Dyn Dist 1 Ch C" axeBlockId="Dyn Dist 1" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Dyn Dist 1 Ch D" axeBlockId="Dyn Dist 1" axeBlockChannel="D" device="Axe-Fx" />
+		<patch type="patchListSequence" name="Dyn Dist 1 Ch" gaplessRestart="1">
+			<patchListItemName>Axe Dyn Dist 1 Ch A</patchListItemName>
+			<patchListItemName>Axe Dyn Dist 1 Ch B</patchListItemName>
+			<patchListItemName>Axe Dyn Dist 1 Ch C</patchListItemName>
+			<patchListItemName>Axe Dyn Dist 1 Ch D</patchListItemName>
+		</patch>
 
-    <patch name="Axe Dyn Dist 2 Ch A" axeBlockId="Dyn Dist 2" axeBlockChannel="A" device="Axe-Fx" />
-    <patch name="Axe Dyn Dist 2 Ch B" axeBlockId="Dyn Dist 2" axeBlockChannel="B" device="Axe-Fx" />
-    <patch name="Axe Dyn Dist 2 Ch C" axeBlockId="Dyn Dist 2" axeBlockChannel="C" device="Axe-Fx" />
-    <patch name="Axe Dyn Dist 2 Ch D" axeBlockId="Dyn Dist 2" axeBlockChannel="D" device="Axe-Fx" />
-    <patch type="patchListSequence" name="Dyn Dist 2 Ch" gaplessRestart="1">
-      <patchListItemName>Axe Dyn Dist 2 Ch A</patchListItemName>
-      <patchListItemName>Axe Dyn Dist 2 Ch B</patchListItemName>
-      <patchListItemName>Axe Dyn Dist 2 Ch C</patchListItemName>
-      <patchListItemName>Axe Dyn Dist 2 Ch D</patchListItemName>
-    </patch>
+		<patch name="Axe Dyn Dist 2 Ch A" axeBlockId="Dyn Dist 2" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Dyn Dist 2 Ch B" axeBlockId="Dyn Dist 2" axeBlockChannel="B" device="Axe-Fx" />
+		<patch name="Axe Dyn Dist 2 Ch C" axeBlockId="Dyn Dist 2" axeBlockChannel="C" device="Axe-Fx" />
+		<patch name="Axe Dyn Dist 2 Ch D" axeBlockId="Dyn Dist 2" axeBlockChannel="D" device="Axe-Fx" />
+		<patch type="patchListSequence" name="Dyn Dist 2 Ch" gaplessRestart="1">
+			<patchListItemName>Axe Dyn Dist 2 Ch A</patchListItemName>
+			<patchListItemName>Axe Dyn Dist 2 Ch B</patchListItemName>
+			<patchListItemName>Axe Dyn Dist 2 Ch C</patchListItemName>
+			<patchListItemName>Axe Dyn Dist 2 Ch D</patchListItemName>
+		</patch>
 
-    <patch name="Axe Enhancer 1 Ch A" axeBlockId="Enhancer 1" axeBlockChannel="A" device="Axe-Fx" />
+		<patch name="Axe Enhancer 1 Ch A" axeBlockId="Enhancer 1" axeBlockChannel="A" device="Axe-Fx" />
 		<patch name="Axe Enhancer 1 Ch B" axeBlockId="Enhancer 1" axeBlockChannel="B" device="Axe-Fx" />
 		<patch name="Axe Enhancer 1 Ch C" axeBlockId="Enhancer 1" axeBlockChannel="C" device="Axe-Fx" />
 		<patch name="Axe Enhancer 1 Ch D" axeBlockId="Enhancer 1" axeBlockChannel="D" device="Axe-Fx" />
@@ -2233,10 +2272,10 @@
 			<switch number="7" command="LoadBank" bankName="Axe-Fx Volume 3/4 Channels" secondFunction="immediateToggle" />
 			<switch number="8" patchName="Volume 4" />
 			<switch number="8" command="LoadBank" bankName="Axe-Fx Volume 3/4 Channels" secondFunction="immediateToggle" />
-      <switch number="9" patchName="Dyn Dist 1" />
-      <switch number="9" command="LoadBank" bankName="Axe-Fx Dyn Dist Channels" secondFunction="immediateToggle" />
-      <switch number="10" patchName="Dyn Dist 2" />
-      <switch number="10" command="LoadBank" bankName="Axe-Fx Dyn Dist Channels" secondFunction="immediateToggle" />
+			<switch number="9" patchName="Dyn Dist 1" />
+			<switch number="9" command="LoadBank" bankName="Axe-Fx Dyn Dist Channels" secondFunction="immediateToggle" />
+			<switch number="10" patchName="Dyn Dist 2" />
+			<switch number="10" command="LoadBank" bankName="Axe-Fx Dyn Dist Channels" secondFunction="immediateToggle" />
 
 			<switch number="11" patchName="" />
 			<switch number="12" patchName="" />
@@ -2315,8 +2354,8 @@
 			<switch number="9" patchName="Axe Chorus 2 Ch D" />
 			<switch number="10" patchName="Chorus 2" />
 
-			<switch number="11" patchName="" />
-			<switch number="12" patchName="" />
+			<switch number="11" patchName="Chorus 1 (mom)" />
+			<switch number="12" patchName="Chorus 2 (mom)" />
 			<switch number="13" patchName="" />
 			<switch number="14" patchName="" />
 			<switch number="15" patchName="" />
@@ -2359,11 +2398,11 @@
 			<switch number="9" patchName="Axe Delay 2 Ch D" />
 			<switch number="10" patchName="Delay 2" />
 
-			<switch number="11" command="LoadBank" bankName="Axe-Fx Dly 3/4 Channels" />
-			<switch number="12" patchName="" />
+			<switch number="11" patchName="Delay 1 (mom)" />
+			<switch number="12" patchName="Delay 2 (mom)" />
 			<switch number="13" patchName="" />
 			<switch number="14" patchName="" />
-			<switch number="15" patchName="" />
+			<switch number="15" command="LoadBank" bankName="Axe-Fx Dly 3/4 Channels" />
 
 			<switch number="22" command="BankHistoryBackward" />
 		</bank>
@@ -2381,11 +2420,11 @@
 			<switch number="9" patchName="Axe Delay 4 Ch D" />
 			<switch number="10" patchName="Delay 4" />
 
-			<switch number="11" command="LoadBank" bankName="Axe-Fx Dly 1/2 Channels" />
-			<switch number="12" patchName="" />
+			<switch number="11" patchName="Delay 3 (mom)" />
+			<switch number="12" patchName="Delay 4 (mom)" />
 			<switch number="13" patchName="" />
 			<switch number="14" patchName="" />
-			<switch number="15" patchName="" />
+			<switch number="15" command="LoadBank" bankName="Axe-Fx Dly 1/2 Channels" />
 
 			<switch number="22" command="BankHistoryBackward" />
 		</bank>
@@ -2403,11 +2442,11 @@
 			<switch number="9" patchName="Axe Drive 2 Ch D" />
 			<switch number="10" patchName="Drive 2" />
 
-			<switch number="11" command="LoadBank" bankName="Axe-Fx Drv 3/4 Channels" />
-			<switch number="12" command="LoadBank" bankName="Axe-Fx Amp Channels" />
+			<switch number="11" patchName="Drive 1 (mom)" />
+			<switch number="12" patchName="Drive 2 (mom)" />
 			<switch number="13" patchName="" />
-			<switch number="14" patchName="" />
-			<switch number="15" patchName="" />
+			<switch number="14" command="LoadBank" bankName="Axe-Fx Drv 3/4 Channels" />
+			<switch number="15" command="LoadBank" bankName="Axe-Fx Amp Channels" />
 
 			<switch number="22" command="BankHistoryBackward" />
 		</bank>
@@ -2425,37 +2464,37 @@
 			<switch number="9" patchName="Axe Drive 4 Ch D" />
 			<switch number="10" patchName="Drive 4" />
 
-			<switch number="11" command="LoadBank" bankName="Axe-Fx Drv 1/2 Channels" />
-			<switch number="12" patchName="" />
+			<switch number="11" patchName="Drive 3 (mom)" />
+			<switch number="12" patchName="Drive 4 (mom)" />
 			<switch number="13" patchName="" />
 			<switch number="14" patchName="" />
-			<switch number="15" patchName="" />
+			<switch number="15" command="LoadBank" bankName="Axe-Fx Drv 1/2 Channels" />
 
 			<switch number="22" command="BankHistoryBackward" />
 		</bank>
-    <bank name="Axe-Fx Dyn Dist Channels">
-      <ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
-      <switch number="1" patchName="Axe Dyn Dist 1 Ch A" />
-      <switch number="2" patchName="Axe Dyn Dist 1 Ch B" />
-      <switch number="3" patchName="Axe Dyn Dist 1 Ch C" />
-      <switch number="4" patchName="Axe Dyn Dist 1 Ch D" />
-      <switch number="5" patchName="Dyn Dist 1" />
-      <ExclusiveSwitchGroup>6 7 8 9</ExclusiveSwitchGroup>
-      <switch number="6" patchName="Axe Dyn Dist 2 Ch A" />
-      <switch number="7" patchName="Axe Dyn Dist 2 Ch B" />
-      <switch number="8" patchName="Axe Dyn Dist 2 Ch C" />
-      <switch number="9" patchName="Axe Dyn Dist 2 Ch D" />
-      <switch number="10" patchName="Dyn Dist 2" />
+		<bank name="Axe-Fx Dyn Dist Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Dyn Dist 1 Ch A" />
+			<switch number="2" patchName="Axe Dyn Dist 1 Ch B" />
+			<switch number="3" patchName="Axe Dyn Dist 1 Ch C" />
+			<switch number="4" patchName="Axe Dyn Dist 1 Ch D" />
+			<switch number="5" patchName="Dyn Dist 1" />
+			<ExclusiveSwitchGroup>6 7 8 9</ExclusiveSwitchGroup>
+			<switch number="6" patchName="Axe Dyn Dist 2 Ch A" />
+			<switch number="7" patchName="Axe Dyn Dist 2 Ch B" />
+			<switch number="8" patchName="Axe Dyn Dist 2 Ch C" />
+			<switch number="9" patchName="Axe Dyn Dist 2 Ch D" />
+			<switch number="10" patchName="Dyn Dist 2" />
 
-      <switch number="11" command="LoadBank" bankName="Axe-Fx Drv 1/2 Channels" />
-      <switch number="12" command="LoadBank" bankName="Axe-Fx Amp Channels" />
-      <switch number="13" patchName="" />
-      <switch number="14" patchName="" />
-      <switch number="15" patchName="" />
+			<switch number="11" patchName="Dyn Dist 1 (mom)" />
+			<switch number="12" patchName="Dyn Dist 2 (mom)" />
+			<switch number="13" patchName="" />
+			<switch number="14" command="LoadBank" bankName="Axe-Fx Drv 1/2 Channels" />
+			<switch number="15" command="LoadBank" bankName="Axe-Fx Amp Channels" />
 
-      <switch number="22" command="BankHistoryBackward" />
-    </bank>
-    <bank name="Axe-Fx Flanger Channels">
+			<switch number="22" command="BankHistoryBackward" />
+		</bank>
+		<bank name="Axe-Fx Flanger Channels">
 			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
 			<switch number="1" patchName="Axe Flanger 1 Ch A" />
 			<switch number="2" patchName="Axe Flanger 1 Ch B" />
@@ -2469,11 +2508,11 @@
 			<switch number="9" patchName="Axe Flanger 2 Ch D" />
 			<switch number="10" patchName="Flanger 2" />
 
-			<switch number="11" command="LoadBank" bankName="Axe-Fx Phaser Channels" />
-			<switch number="12" patchName="" />
+			<switch number="11" patchName="Flanger 1 (mom)" />
+			<switch number="12" patchName="Flanger 2 (mom)" />
 			<switch number="13" patchName="" />
 			<switch number="14" patchName="" />
-			<switch number="15" patchName="" />
+			<switch number="15" command="LoadBank" bankName="Axe-Fx Phaser Channels" />
 
 			<switch number="22" command="BankHistoryBackward" />
 		</bank>
@@ -2491,11 +2530,11 @@
 			<switch number="9" patchName="Axe Multi-delay 2 Ch D" />
 			<switch number="10" patchName="Multi-Delay 2" />
 
-			<switch number="11" command="LoadBank" bankName="Axe-Fx Plex Channels" />
-			<switch number="12" patchName="" />
+			<switch number="11" patchName="Multi-Delay 1 (mom)" />
+			<switch number="12" patchName="Multi-Delay 2 (mom)" />
 			<switch number="13" patchName="" />
 			<switch number="14" patchName="" />
-			<switch number="15" patchName="" />
+			<switch number="15" command="LoadBank" bankName="Axe-Fx Plex Channels" />
 
 			<switch number="22" command="BankHistoryBackward" />
 		</bank>
@@ -2513,11 +2552,11 @@
 			<switch number="9" patchName="Axe Phaser 2 Ch D" />
 			<switch number="10" patchName="Phaser 2" />
 
-			<switch number="11" command="LoadBank" bankName="Axe-Fx Flanger Channels" />
-			<switch number="12" patchName="" />
+			<switch number="11" patchName="Phaser 1 (mom)" />
+			<switch number="12" patchName="Phaser 2 (mom)" />
 			<switch number="13" patchName="" />
 			<switch number="14" patchName="" />
-			<switch number="15" patchName="" />
+			<switch number="15" command="LoadBank" bankName="Axe-Fx Flanger Channels" />
 
 			<switch number="22" command="BankHistoryBackward" />
 		</bank>
@@ -2535,8 +2574,8 @@
 			<switch number="9" patchName="Axe Pitch Shift 2 Ch D" />
 			<switch number="10" patchName="Pitch 2" />
 
-			<switch number="11" patchName="" />
-			<switch number="12" patchName="" />
+			<switch number="11" patchName="Pitch 1 (mom)" />
+			<switch number="12" patchName="Pitch 2 (mom)" />
 			<switch number="13" patchName="" />
 			<switch number="14" patchName="" />
 			<switch number="15" patchName="" />
@@ -2557,11 +2596,11 @@
 			<switch number="9" patchName="Axe Plex Delay 2 Ch D" />
 			<switch number="10" patchName="Plex Delay 2" />
 
-			<switch number="11" command="LoadBank" bankName="Axe-Fx MultiDly Channels" />
-			<switch number="12" patchName="" />
+			<switch number="11" patchName="Plex Delay 1 (mom)" />
+			<switch number="12" patchName="Plex Delay 2 (mom)" />
 			<switch number="13" patchName="" />
 			<switch number="14" patchName="" />
-			<switch number="15" patchName="" />
+			<switch number="15" command="LoadBank" bankName="Axe-Fx MultiDly Channels" />
 
 			<switch number="22" command="BankHistoryBackward" />
 		</bank>
@@ -2579,8 +2618,8 @@
 			<switch number="9" patchName="Axe Reverb 2 Ch D" />
 			<switch number="10" patchName="Reverb 2" />
 
-			<switch number="11" patchName="" />
-			<switch number="12" patchName="" />
+			<switch number="11" patchName="Reverb 1 (mom)" />
+			<switch number="12" patchName="Reverb 2 (mom)" />
 			<switch number="13" patchName="" />
 			<switch number="14" patchName="" />
 			<switch number="15" patchName="" />
@@ -2601,8 +2640,8 @@
 			<switch number="9" patchName="Axe Rotary 2 Ch D" />
 			<switch number="10" patchName="Rotary 2" />
 
-			<switch number="11" patchName="" />
-			<switch number="12" patchName="" />
+			<switch number="11" patchName="Rotary 1 (mom)" />
+			<switch number="12" patchName="Rotary 2 (mom)" />
 			<switch number="13" patchName="" />
 			<switch number="14" patchName="" />
 			<switch number="15" patchName="" />
@@ -2623,8 +2662,8 @@
 			<switch number="9" patchName="Axe Tremolo 2 Ch D" />
 			<switch number="10" patchName="Tremolo 2" />
 
-			<switch number="11" patchName="" />
-			<switch number="12" patchName="" />
+			<switch number="11" patchName="Tremolo 1 (mom)" />
+			<switch number="12" patchName="Tremolo 2 (mom)" />
 			<switch number="13" patchName="" />
 			<switch number="14" patchName="" />
 			<switch number="15" patchName="" />
@@ -2909,8 +2948,8 @@
 			<switch number="9" patchName="" />
 			<switch number="10" patchName="MegaTap 2" />
 
-			<switch number="11" patchName="" />
-			<switch number="12" patchName="" />
+			<switch number="11" patchName="MegaTap 1 (mom)" />
+			<switch number="12" patchName="MegaTap 2 (mom)" />
 			<switch number="13" patchName="" />
 			<switch number="14" patchName="" />
 			<switch number="15" patchName="" />
@@ -3063,8 +3102,8 @@
 			<switch number="9" patchName="" />
 			<switch number="10" patchName="Resonator 2" />
 
-			<switch number="11" patchName="" />
-			<switch number="12" patchName="" />
+			<switch number="11" patchName="Resonator 1 (mom)" />
+			<switch number="12" patchName="Resonator 2 (mom)" />
 			<switch number="13" patchName="" />
 			<switch number="14" patchName="" />
 			<switch number="15" patchName="" />
@@ -3085,7 +3124,7 @@
 			<switch number="9" patchName="" />
 			<switch number="10" patchName="" />
 
-			<switch number="11" patchName="" />
+			<switch number="11" patchName="Ring Mod (mom)" />
 			<switch number="12" patchName="" />
 			<switch number="13" patchName="" />
 			<switch number="14" patchName="" />
@@ -3107,8 +3146,8 @@
 			<switch number="9" patchName="Axe Synth 2 Ch D" />
 			<switch number="10" patchName="Synth 2" />
 
-			<switch number="11" patchName="" />
-			<switch number="12" patchName="" />
+			<switch number="11" patchName="Synth 1 (mom)" />
+			<switch number="12" patchName="Synth 2 (mom)" />
 			<switch number="13" patchName="" />
 			<switch number="14" patchName="" />
 			<switch number="15" patchName="" />
@@ -3129,8 +3168,8 @@
 			<switch number="9" patchName="Axe Ten-tap Delay 2 Ch D" />
 			<switch number="10" patchName="Ten-Tap Delay 2" />
 
-			<switch number="11" patchName="" />
-			<switch number="12" patchName="" />
+			<switch number="11" patchName="Ten-Tap Delay 1 (mom)" />
+			<switch number="12" patchName="Ten-Tap Delay 2 (mom)" />
 			<switch number="13" patchName="" />
 			<switch number="14" patchName="" />
 			<switch number="15" patchName="" />

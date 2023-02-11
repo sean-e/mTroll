@@ -67,7 +67,7 @@ struct Axe3EffectBlockInfo
 	int					mSysexEffectId = -1;		// unique per name
 	int					mSysexEffectIdMs = -1;		//	derived 
 	int					mSysexEffectIdLs = -1;		//	derived
-	PatchPtr			mPatch;						// the patch assigned to this effectId
+	std::vector<PatchPtr> mPatches;					// the patches assigned to this effectId
 	PatchPtr			mChannelSelectPatches[kMaxChannels]; // optional channel select patches for this effectId
 
 	// basically const, but requires deferred runtime init from the device
@@ -127,45 +127,48 @@ struct Axe3EffectBlockInfo
 
 	void UpdatePatchNameWithChannel(int channel, ISwitchDisplay * switchDisplay)
 	{
-		if (!mPatch)
+		if (mPatches.empty())
 			return;
 
 		if (channel >= kMaxChannels)
 			return;
 
-		// display channel after effect block patch name #axe3blockChannelAppendToName
-		std::string nm(mPatch->GetName());
+		for (auto &patch : mPatches)
+		{
+			// display channel after effect block patch name #axe3blockChannelAppendToName
+			std::string nm(patch->GetName());
 
-		int chPos = nm.rfind(' ');
-		if (-1 == chPos)
-		{
-			// will append channel
-			nm += " ";
-		}
-		else if (++chPos == nm.length() - 1)
-		{
-			char lastCh = nm[chPos];
-			if (lastCh >= 'A' && lastCh <= 'F')
+			int chPos = nm.rfind(' ');
+			if (-1 == chPos)
 			{
-				// erase current channel
-				nm.replace(chPos, 1, "");
+				// will append channel
+				nm += " ";
+			}
+			else if (++chPos == nm.length() - 1)
+			{
+				char lastCh = nm[chPos];
+				if (lastCh >= 'A' && lastCh <= 'F')
+				{
+					// erase current channel
+					nm.replace(chPos, 1, "");
+				}
+				else
+				{
+					// will append channel after instance number
+					nm += " ";
+				}
 			}
 			else
 			{
-				// will append channel after instance number
+				// will append channel
 				nm += " ";
 			}
-		}
-		else
-		{
-			// will append channel
-			nm += " ";
-		}
 
-		char chStr = 'A' + channel;
-		// append channel character to patch name
-		nm += chStr;
-		mPatch->SetName(nm, switchDisplay);
+			char chStr = 'A' + channel;
+			// append channel character to patch name
+			nm += chStr;
+			patch->SetName(nm, switchDisplay);
+		}
 	}
 };
 
@@ -261,13 +264,13 @@ AxeFx3Manager::SetSyncPatch(PatchPtr patch, int effectId, int channel)
 	{
 		if (cur.mNormalizedName == normalizedEffectName)
 		{
-			if (cur.mPatch && mTrace)
+			if (!cur.mPatches.empty() && mTrace)
 			{
-				std::string msg("Warning: multiple Axe-Fx patches for " + patch->GetName() + "\n");
-				mTrace->Trace(msg);
+				// std::string msg("Warning: multiple Axe-Fx III patches for " + cur.mNormalizedName + " effect block\n");
+				// mTrace->Trace(msg);
 			}
 
-			cur.mPatch = patch;
+			cur.mPatches.emplace_back(patch);
 			return true;
 		}
 	}
@@ -1169,8 +1172,8 @@ AxeFx3Manager::ReceiveStatusDump(const byte * bytes, int len)
 		{
 			const byte dd = bytes[idx + 2];
 			inf->UpdateChannelStatus(mSwitchDisplay, (dd >> 4) & 0x7, (dd >> 1) & 0x7);
-			if (inf->mPatch)
-				inf->mPatch->UpdateState(mSwitchDisplay, !(dd & 0x1));
+			for (auto &patch : inf->mPatches)
+				patch->UpdateState(mSwitchDisplay, !(dd & 0x1));
 
 			if (inf->mSysexEffectId >= FractalAudio::AxeFx3::ID_LOOPER1 &&
 				inf->mSysexEffectId <= FractalAudio::AxeFx3::ID_LOOPER4)
@@ -1232,8 +1235,8 @@ AxeFx3Manager::TurnOffLedsForNaEffects()
 
 		if (!cur.mEffectIsPresentInAxePatch)
 		{
-			if (cur.mPatch)
-				cur.mPatch->Disable(mSwitchDisplay);
+			for (auto &patch : cur.mPatches)
+				patch->Disable(mSwitchDisplay);
 
 			for (const auto &p : cur.mChannelSelectPatches)
 				if (p)
