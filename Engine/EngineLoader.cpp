@@ -322,7 +322,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 
 		if (!outDevice.empty())
 		{
-			unsigned int idx = mMidiOutGenerator->GetMidiOutDeviceIndex(outDevice);
+			unsigned int idx = GetMidiOutDeviceIndex(outDevice);
 			if (-1 != idx)
 				deviceIdx = idx;
 			else
@@ -344,7 +344,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 
 		if (!inDevice.empty() && mMidiInGenerator)
 		{
-			unsigned int idx = mMidiInGenerator->GetMidiInDeviceIndex(inDevice);
+			unsigned int idx = GetMidiInDeviceIndex(inDevice);
 			if (-1 != idx)
 				inDeviceIdx = idx;
 			else
@@ -572,6 +572,88 @@ bool
 EngineLoader::IsPatchNumberUsed(int num) const
 {
 	return mPatchNumbersUsed.find(num) != mPatchNumbersUsed.end();
+}
+
+void
+SplitDevNames(std::string deviceNamesStr, std::vector<std::string> &devNames)
+{
+	if (-1 == deviceNamesStr.find(';'))
+		return;
+
+	if (';' != deviceNamesStr.at(deviceNamesStr.length() - 1))
+		deviceNamesStr += ";";
+
+	std::string::size_type startPos = 0;
+	while (startPos < deviceNamesStr.length())
+	{
+		const std::string::size_type endPos = deviceNamesStr.find(';', startPos);
+		if (endPos == -1)
+		{
+			// not possible since we force an end delimiter before the loop...
+			break;
+		}
+
+		if (endPos == startPos)
+		{
+			// multiple consecutive delimiters
+			++startPos;
+			continue;
+		}
+
+		const std::string curDev = deviceNamesStr.substr(startPos, endPos - startPos);
+		if (!curDev.empty())
+			devNames.emplace_back(curDev);
+
+		startPos = endPos + 1;
+	}
+}
+
+unsigned int
+EngineLoader::GetMidiOutDeviceIndex(std::string outDevice)
+{
+	_ASSERTE(!outDevice.empty() && mMidiOutGenerator);
+	unsigned int deviceIdx = mMidiOutGenerator->GetMidiOutDeviceIndex(outDevice);
+	if (deviceIdx != -1)
+		return deviceIdx;
+
+	if (-1 == outDevice.find(';'))
+		return deviceIdx;
+
+	std::vector<std::string> devNames;
+	::SplitDevNames(outDevice, devNames);
+
+	for (const auto &it : devNames)
+	{
+		deviceIdx = mMidiOutGenerator->GetMidiOutDeviceIndex(it);
+		if (deviceIdx != -1)
+			return deviceIdx;
+	}
+
+	return -1;
+}
+
+unsigned int
+EngineLoader::GetMidiInDeviceIndex(std::string inDevice)
+{
+	_ASSERTE(!inDevice.empty() && mMidiInGenerator);
+	unsigned int deviceIdx = mMidiInGenerator->GetMidiInDeviceIndex(inDevice);
+	if (deviceIdx != -1)
+		return deviceIdx;
+
+	if (-1 == inDevice.find(';'))
+		return deviceIdx;
+
+	std::vector<std::string> devNames;
+	::SplitDevNames(inDevice, devNames);
+
+	for (const auto &it : devNames)
+	{
+		deviceIdx = mMidiInGenerator->GetMidiInDeviceIndex(it);
+		if (deviceIdx != -1)
+			return deviceIdx;
+	}
+
+	return -1;
 }
 
 void

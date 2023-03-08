@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2018,2020,2021 Sean Echevarria
+ * Copyright (C) 2007-2010,2018,2020,2021,2023 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -30,6 +30,7 @@
 #include <memory>
 #include <array>
 #include <set>
+#include <vector>
 #include "ExpressionPedals.h"
 #include "IAxeFx.h"
 
@@ -82,6 +83,8 @@ private:
 	unsigned int			LookUpColor(std::string device, std::string patchType, int activeState, unsigned int defaultColor = kFirstColorPreset);
 	int						GetPatchNumber(const std::string& name) const;
 	bool					IsPatchNumberUsed(int num) const;
+	unsigned int			GetMidiOutDeviceIndex(std::string outDevice);
+	unsigned int			GetMidiInDeviceIndex(std::string inDevice);
 
 	using MidiPortToDeviceIdxMap = std::map<int, unsigned int>;
 	MidiPortToDeviceIdxMap	mMidiOutPortToDeviceIdxMap;
