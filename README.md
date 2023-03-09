@@ -1,6 +1,12 @@
 ## mTroll Hybrid MIDI Controller
 
-mTroll is the software portion of a hybrid hardware/software MIDI foot controller. mTroll is the MIDI control engine that I use with my [monome-based]( https://web.archive.org/web/20071011033743/http://monome.org/40h/kit ) foot controller. mTroll outputs MIDI in response to input from the monome or the gui. mTroll can be used standalone without hardware as a virtual foot controller. mTroll has native support for Axe-Fx processors with round tripping of effect block bypass and channel states, scene control and looper block control.
+mTroll is the software portion of a hybrid hardware/software MIDI foot controller. 
+mTroll is the MIDI control engine that I use with my [monome-based]( https://web.archive.org/web/20071011033743/http://monome.org/40h/kit ) foot controller. 
+mTroll outputs MIDI in response to input from the monome or the gui. 
+mTroll can be used standalone without hardware as a virtual foot controller. 
+mTroll has native support for Axe-Fx processors with round tripping of effect block bypass and channel states, scene control, and looper block control.
+mTroll has native support for displaying global and local parameter state of Echoplex Digital Pro and Echoplex Digital Pro Plus devices.
+mTroll supports listening for MIDI CC state changes.
 
 [Original Project Homepage](http://www.creepingfog.com/mTroll/)
 
@@ -20,7 +26,8 @@ Patches
 - Patch state is retained across bank loads  
 - [Meta-patch](docs/docs.md#metaPatches) for resetting all patches loaded in a bank  
 - [Meta-patch](docs/docs.md#metaPatches) for loading another bank  
-- [Native support](docs/axe.html) for [Axe-Fx processors](http://www.fractalaudio.com/products-fa-axefx.html) (when used with MIDI In)  
+- [Native support](docs/axe.html) for [Axe-Fx processors](http://www.fractalaudio.com/products-fa-axefx.html) (when used with MIDI In)
+- Native support for displaying global local parameter state of Echoplex Digital Pro and Echoplex Digital Pro Plus  (when used with MIDI In)  
 
 Banks (Pages)
 - Banks are basically the same as pages as implemented in full-featured MIDI foot controllers that started being produced after 2010 (i.e., every bank is an explicitly defined page)
