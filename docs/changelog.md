@@ -2,7 +2,7 @@
 
 
 #### 2023.03.08
-- Support for automatic repeat of `A` group commands specified in `repeatingToggle` and `repeatingMomentary` patch types (enabling a repeating patch type creates a unique thread for the patch that runs the commands in a loop -- use the `[Sleep](docs.md#patchCommands)` patch command as needed)
+- Support for automatic repeat of `A` group commands specified in `repeatingToggle` and `repeatingMomentary` patch types (enabling a repeating patch type creates a unique thread for the patch that runs the commands in a loop -- use the [Sleep](docs.md#patchCommands) patch command as needed)
 - Added support for Dynamic Distortion blocks added in Axe-FX III firmware version 20.00
 - Fixed expression pedal handling when restricting MIDI CC output range
 - Fixed expression pedal virtual button activation failure to trigger half-way through deadzone
@@ -171,9 +171,9 @@
 
 #### 2012.07.21  
 - Added Axe-Fx II support.  
-- Created `[patchListSequence](docs.md#patches)` patch type that steps through a list of patches.  
+- Created [patchListSequence](docs.md#patches) patch type that steps through a list of patches.  
 - Added [secondary function](docs.md#secondFunction) switch support accessed via long-press of switches (defined in a `PatchMap` of a `Bank`).  
-- Mode switch invokes `[Backward](docs.md#metaPatches)` metapatch on long-press.  
+- Mode switch invokes [Backward](docs.md#metaPatches) metapatch on long-press.  
 - Updated LED illumination of mode, next and back switches.  
 
 #### 2011.10.15  
@@ -197,7 +197,7 @@
 - Status updates to main display by expression pedals are prepended to existing text rather than overwriting it.  
 - Expression pedals are bound only to the first patch if there are multiple patches assigned to the same switch.  
 - Patches can optionally define a default channel for all commands (that can be overridden on individual commands).  
-- Added a `[Sleep](docs.md#patchCommands)` patch command.  
+- Added a [Sleep](docs.md#patchCommands) patch command.  
 - [PatchMap](docs.md#patchmaps) accepts empty patch number in order to defeat a default mapping without actually overriding it.  
 - Mappings in PatchMaps have new optional `override` and `sync` attributes.  
 - Added time display engine mode.  
@@ -206,7 +206,7 @@
 - Added support for direct access to any mTroll bank during mode select (reducing need for the `LoadBank` metapatch).  
 - Made the `recall`, `backward` and `forward` metapatches available during mode select.  
 - Reorganized default switches used in mode select.  
-- Created new `[LoadNextBank](docs.md#metaPatches)` and `[LoadPreviousBank](docs.md#metaPatches)` metapatches that load the next/previous bank (without confirmation, in contrast to the `Next` and `Prev` commands of Bank Navigation mode).  
+- Created new [LoadNextBank](docs.md#metaPatches) and [LoadPreviousBank](docs.md#metaPatches) metapatches that load the next/previous bank (without confirmation, in contrast to the `Next` and `Prev` commands of Bank Navigation mode).  
 - Added support for spaces in button labels.  
 - Made UI background and element frame colors customizable.  
 - Updated default colors.  
@@ -228,8 +228,8 @@
 #### 2010.01.03  
 - Many changes to XML data files:  
 	- Added support for multiple commands per patch group (instead of a single, long hex string per patch).  
-	- Added support for simpler non-binary commands for `[ProgramChange](docs.md#patchCommands)`, `[ControlChange](docs.md#patchCommands)`, `[NoteOn](docs.md#patchCommands)`, `[NoteOff](docs.md#patchCommands)` (which can be used instead of `[midiByteString](docs.md#patchCommands)`s).  
-	- Added support for new patch command: `[RefirePedal](docs.md#patchCommands)`.  
+	- Added support for simpler non-binary commands for [ProgramChange](docs.md#patchCommands), [ControlChange](docs.md#patchCommands), [NoteOn](docs.md#patchCommands), [NoteOff](docs.md#patchCommands) (which can be used instead of [midiByteString](docs.md#patchCommands)s).  
+	- Added support for new patch command: [RefirePedal](docs.md#patchCommands).
 	- Added config data file validation messages.  
 	- Fixed crash loading malformed data files.  
 - Improved expression pedal jitter control.  
