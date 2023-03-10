@@ -295,9 +295,9 @@ The `sync` attribute is only applicable when multiple `patch`es are mapped to a 
 Secondary functions can be assigned to switches via a `Switch` attribute. When the attribute is not present, the switch works normally regardless of the length of the press on the switch. When the attribute is present, the switch behaves differently depending on the length of time the switch is held down. Momentary patches will not work when a secondary function has been defined for a switch. Secondary function works best with toggle patches.  
 
 When a secondary function is present, there are three switch press durations:  
-- normal press, less than 500ms: causes no transition between primary and secondary modes  
-- long press, greater than 500ms and less than 3sec: causes transition into or out of secondary mode as defined by the attribute value  
-- extended press, greater than 3sec: causes transition into or out of secondary function mode ignoring the type of transition specified by the attribute value (extended press overrides the attribute value and uses `manual`)  
+- normal press, less than 300ms: causes no transition between primary and secondary modes  
+- long press, greater than 300ms and less than 2sec: causes transition into or out of secondary mode as defined by the attribute value  
+- extended press, greater than 2sec: causes transition into or out of secondary function mode ignoring the type of transition specified by the attribute value (extended press overrides the attribute value and uses `manual`)  
 
 The attribute is `secondFunction="manual|auto|autoOn|autoOff|immediateToggle"`  
 
