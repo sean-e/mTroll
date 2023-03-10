@@ -59,3 +59,11 @@ When `AxeProgramChange` command is invoked, a sync will occur and the name of th
 ###  Axe-Fx III Notes
 Many of the Axe-Fx and Axe-Fx II notes also apply to Axe-Fx III.
 Refer to the Axe-Fx III optimized [axefx3v2.config.xml](../data/axefx3v2.config.xml) config file.
+
+#### Main window display
+- Axe-Fx III preset names are displayed automatically on the last line of the display whenever an Axe-Fx program change is issued
+- Axe-Fx III preset names are displayed automatically in the display whenever
+a preset on the Axe-Fx III is loaded or whenever a scene change occurs
+- Axe-Fx III scene numbers and names are displayed automatically whenever the preset name is displayed
+- Axe-Fx III effect block active channel is displayed in patch scribble strips when channel changes
+- When using the Axe-Fx II looper block, looper status is displayed on the first line of the display window.  Status is sent by the Axe-Fx III.
