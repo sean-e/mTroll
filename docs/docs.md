@@ -2,7 +2,7 @@
 
 ## Overview
 
-The first three sections below describe the software UI and engine modes/commands. The rest of this document describes features of the software that are tied to the XML data files (which are [semi-documented here](xmlDataFiles.html)).
+The first three sections below describe the software UI and engine modes/commands. The rest of this document describes features of the software that are tied to the XML data files (which are [semi-documented here](xmlDataFiles.md)).
 
 Contents  
 - [User Interface](#ui)  
@@ -147,7 +147,7 @@ Patches can be defined to be `Toggle`, `Momentary`, `Normal`, `AxeToggle`, `AxeM
 
 `persistentPedalOverride` is a toggle patch used to reassign expression pedals such that the reassignment sticks until the patch is toggled off or until another `persistentPedalOverride` patch is activated. It overrides pedal assignments made in subsequently activated patches that are not of type `persistentPedalOverride`.  
 
-`AxeToggle` and `AxeMomentary` patches work the same as `Toggle` and `Momentary` except that they do an Axe-Fx sync after the command has been invoked. See the [Axe-Fx page](axe.html) for more info.  
+`AxeToggle` and `AxeMomentary` patches work the same as `Toggle` and `Momentary` except that they do an Axe-Fx sync after the command has been invoked. See the [Axe-Fx page](axe.md) for more info.  
 
 `AxeFxTapTempo` is the same as `Momentary` except that the switch LED blinks in response to the real-time tempo sysex message sent by an Axe-Fx (if a) the MIDI Out is connected to the MIDI In of mTroll and b) the Axe-Fx is configured to send real-time tempo sysex messages).  
 
@@ -241,7 +241,7 @@ The `ResetExclusiveGroup` meta-patch resets all of the patches in an exclusive g
 `ResetExclusiveGroup` example:  
 `<engineMetaPatch name="Reset group (meta)" number="55" action="ResetExclusiveGroup" activeSwitch="10" />`  
 
-The `SyncAxeFx` meta-patch is used in conjunction with an Axe-Fx processor. See the [Axe-Fx page](axe.html) for more info.  
+The `SyncAxeFx` meta-patch is used in conjunction with an Axe-Fx processor. See the [Axe-Fx page](axe.md) for more info.  
 
 `SyncAxeFx` example:  
 `<engineMetaPatch name="Sync Up AxeFx Bypass States" number="912" action="SyncAxeFx" />`

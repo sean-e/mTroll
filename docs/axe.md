@@ -58,4 +58,4 @@ When `AxeProgramChange` command is invoked, a sync will occur and the name of th
 
 ###  Axe-Fx III Notes
 Many of the Axe-Fx and Axe-Fx II notes also apply to Axe-Fx III.
-Refer to the Axe-Fx III optimized [axefx3v2.config.xml](../data/afxfx3v2.config.xml) config file.
+Refer to the Axe-Fx III optimized [axefx3v2.config.xml](../data/axefx3v2.config.xml) config file.
