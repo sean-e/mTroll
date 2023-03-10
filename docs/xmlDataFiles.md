@@ -83,3 +83,19 @@ setting `enable="0"`).  The `globalExpr` settings are defeated by adc port;
 it is not possible to defeat only one of two assignments made to an adc port.  A 
 `patch` can have a maximum of 4 `globalExpr` defeating entries 
 (one for each adc port).
+
+The `LedPresetColors` section optionally overrides any of the 32 predefined color slots.
+
+The `LedDefaultColors` section defines colors for devices or categories of patches.  Assignment of 
+colors to patches occurs via lookup/matching in this order (where `type` could be patch or command type): 
+- `device+type`
+- `Axe-Fx type`
+- `device`
+- `type`
+
+`LedDefaultColors` are used if a patch does not explicitly set its own color attributes.  That is, 
+by default, patches do not need to set their own color.  mTroll will map either the patch type or device
+used in the patch to a color defined in `LedDefaultColors`.  Patches can explicitly set their own color
+directly or via `LedPresetColors` preset slot.
+- Example direct color attributes: `ledColor="00000f" ledInactiveColor="000004"`
+- Example preset color attributes: `ledColorPreset="1" ledInactiveColorPreset="30"`
