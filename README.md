@@ -26,7 +26,7 @@ Patches
 - Patch state is retained across bank loads  
 - [Meta-patch](docs/docs.md#metaPatches) for resetting all patches loaded in a bank  
 - [Meta-patch](docs/docs.md#metaPatches) for loading another bank  
-- [Native support](docs/axe.html) for [Axe-Fx processors](http://www.fractalaudio.com/products-fa-axefx.html) (when used with MIDI In)
+- [Native support](docs/axe.md) for [Axe-Fx processors](http://www.fractalaudio.com/) (when used with MIDI In)
 - Native support for displaying global and local parameter state of Echoplex Digital Pro and Echoplex Digital Pro Plus (when used with MIDI In)
 
 Banks (Pages)
