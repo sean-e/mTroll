@@ -198,6 +198,8 @@ The `Sleep` command can be used to pause a command sequence for an amount of tim
 
 The `AxeProgramChange` command is an Axe-Fx specific version of the generic `ProgramChange` command. When you use this command, you do not have to use bank select messages. You can use the actual Axe-Fx preset number. mTroll will translate the preset into the correct bank select and program change. Afterwards, mTroll will sync up all `AxeToggle` and `AxeMomentary` patches. It will also display the name of the preset in the main window. Example code to load Axe-Fx preset 361: `<AxeProgramChange program="361"/>`  
 
+The `EdpProgramChange` command is an Echoplex Digital Pro specific version of the generic `ProgramChange` command.  When you use this command, mTroll queries and displays global and local state after sending the requested program change.
+
 <a name="metaPatches"></a>
 ## Meta-Patches  
 
@@ -242,7 +244,9 @@ The `ResetExclusiveGroup` meta-patch resets all of the patches in an exclusive g
 The `SyncAxeFx` meta-patch is used in conjunction with an Axe-Fx processor. See the [Axe-Fx page](axe.html) for more info.  
 
 `SyncAxeFx` example:  
-`<engineMetaPatch name="Sync Up AxeFx Bypass States" number="912" action="SyncAxeFx" />`  
+`<engineMetaPatch name="Sync Up AxeFx Bypass States" number="912" action="SyncAxeFx" />`
+
+`EdpShowGlobalState` and `EdpShowLocalState` can be used to explicitly query and display Echoplex Digital Pro state without sending a program change.
 
 <a name="banks"></a>
 ## Banks  
