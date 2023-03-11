@@ -1,26 +1,16 @@
 # mTroll MIDI controller XML Data Files
 
-I think these files are pretty straightforward.  
-If anything can't be deduced from the example files and aren't explained below or on 
-the [docs/usage page](docs.md), open an issue.
+I think these files are pretty straightforward.  If anything can't be deduced 
+from the example files and aren't explained below or on the [docs/usage page](docs.md), 
+open an issue.
 
-## *.ui.xml ([example](../data/testdata.ui.xml))
+## *.ui.xml ([auto grid example](../data/autoGrid.ui.xml) or [old explicit position example](../data/testdata.ui.xml))
 ui.xml files define the GUI of the application.
 
-Item position can be specified via top and left coordinates.  You can also
-specify relative positions which makes it easier to position a lot of elements.  
-`incrementalVpos` adjusts the top coordinate relative to the previous sibling 
-element.  `incrementalHpos` adjusts the left coordinate	relative to the 
-previous element.  Do not specify both relative and absolute positions for the same 
-dimension (`incrementalVpos` and `top`, or `incrementalHpos` 
-and `left`); mixing relative and absolute is fine for different dimensions 
-(`incrementalVpos` and `left`, or `incrementalHpos` 
-and `top`).
-
-The `SwitchMappings` section is required if using the software with monome-based hardware.
-It is used to associate on screen switch displays with monome switches (the software uses ordinal 
-based switch identifiers that can be mapped to any monome switch identified by a `row` and 
-`column` coordinate).
+The `SwitchMappings` section is required if using the software with monome-based 
+hardware. It is used to associate on screen switch displays with monome switches 
+(the software uses ordinal based switch identifiers that can be mapped to any 
+monome switch identified by a `row` and `column` coordinate).
 		
 The `switchAssemblyConfig` section is required for the `switchAssemblies` 
 section to load; it defines global properties for the switchAssemblies.
@@ -28,7 +18,21 @@ section to load; it defines global properties for the switchAssemblies.
 A `switchAssembly` may contain a `switch`, `switchTextDisplay` 
 and `switchLED`; none of these items are required.
 
-## *.config.xml ([example](../data/testdata.config.xml) or [with XSL](../data/testdataWithXsl.config.xml))
+`switchAssembly` item positions can be specified explicitly or can be handled automatically.
+
+Explicit positions are specified via top and left coordinates.  You can also
+specify relative positions which makes it easier to position a lot of elements.  
+`incrementalVpos` adjusts the top coordinate relative to the previous sibling 
+element.  `incrementalHpos` adjusts the left coordinate	relative to the 
+previous element.  Do not specify both relative and absolute positions for the same 
+dimension (`incrementalVpos` and `top`, or `incrementalHpos` 
+and `left`); mixing relative and absolute is fine for different dimensions 
+(`incrementalVpos` and `left`, or `incrementalHpos` and `top`).
+
+Automatic positioning is handled via `row` and `column` attributes.  See the 
+[autoGrid.ui.xml config file](../data/autoGrid.ui.xml) for usage.
+
+## *.config.xml ([example for Axe-Fx III that uses automatic patch and bank numbering](../data/axefx3v2.config.xml) or [old example with explicit patch and bank numbers](../data/testdata.config.xml) or [old example with explicit patch and bank numbers using XSL](../data/testdataWithXsl.config.xml))
 config.xml files define the banks, patches and expression pedal settings.
 
 The `DeviceChannelMap` section is optional and is used to map text names to MIDI 
@@ -96,6 +100,6 @@ colors to patches occurs via lookup/matching in this order (where `type` could b
 `LedDefaultColors` are used if a patch does not explicitly set its own color attributes.  That is, 
 by default, patches do not need to set their own color.  mTroll will map either the patch type or device
 used in the patch to a color defined in `LedDefaultColors`.  Patches can explicitly set their own color
-directly or via `LedPresetColors` preset slot.
-- Example direct color attributes: `ledColor="00000f" ledInactiveColor="000004"`
-- Example preset color attributes: `ledColorPreset="1" ledInactiveColorPreset="30"`
+directly or via `LedPresetColors` preset slot.  Example attributes in patch definitions:
+- direct color attributes: `ledColor="00000f" ledInactiveColor="000004"`
+- preset color attributes: `ledColorPreset="1" ledInactiveColorPreset="30"`

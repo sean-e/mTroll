@@ -11,7 +11,7 @@ Contents
 - Patch Topics  
 	- [Patches](#patches)  
 	- [Patch Commands](#patchCommands)  
-	- [Meta-Patches](#metaPatches)  
+	- [Switch Commands (formerly Meta-Patches)](#metaPatches)  
 - Bank and Switch Topics  
 	- [Banks](#banks)  
 	- [Switches](#patchmaps) (formerly PatchMaps)  
@@ -60,7 +60,7 @@ All switches in this mode are customizable (there are defaults that can be overr
 Preset switches select one of the following described modes (or executes a described command)  
 Next and Previous cause a transition to Bank Navigation mode, displaying the next or previous bank  
 Menu switch escapes back to the default mode (with the bank that was previously active)  
-Switches can also be assigned to immediately load specific banks (reducing need for `LoadBank` metapatch; see [example](../data/axefx.config.xml))  
+Switches can also be assigned to immediately load specific banks (reducing need for `LoadBank` switch command; see [example](../data/axefx3v2.config.xml))  
 Main Display Window displays mode name  
 
 **Bank Navigation mode**  
@@ -124,7 +124,7 @@ It makes it possible to modify ADC overrides from the hardware
 **Recall Bank command**
 **Backward command**
 **Forward command**
-These three items were originally [meta-patches](#metaPatches) (and they still are), but they make much more sense as a mode commands. Backward and forward operate like the history function of a web browser. The Backward and Forward commands operate instantly (no confirmation switch press is required). Recall causes the controller to switch back and forth between the currently loaded bank and the previously loaded one; it is similar to 'channel recall' on TV remote controls. It can be invoked repeatedly to switch back and forth between two banks. (Recall is basically an automatic application of Backward and Forward.)  
+These three items were originally [meta-patches](#metaPatches) (and they still are, or rather are switch commands), but they make much more sense as a mode commands. Backward and forward operate like the history function of a web browser. The Backward and Forward commands operate instantly (no confirmation switch press is required). Recall causes the controller to switch back and forth between the currently loaded bank and the previously loaded one; it is similar to 'channel recall' on TV remote controls. It can be invoked repeatedly to switch back and forth between two banks. (Recall is basically an automatic application of Backward and Forward.)  
 
 **Test LEDs command**  
 This is a command that is available in the Menu  
@@ -141,7 +141,7 @@ Executes the [CTRL+T](#keybindings) command from the hardware to toggle the disp
 <a name="patches"></a>
 ## Patches  
 
-A `patch` is simply a collection of commands that is identified by a name and number. It has a type that defines when the commands are executed.  
+A `patch` is simply a collection of commands that is identified by a name (and optionally a number). It has a type that defines when the commands are executed.  
 
 Patches can be defined to be `Toggle`, `Momentary`, `Normal`, `AxeToggle`, `AxeMomentary`, `AxeFxTapTempo`, `Sequence`, `patchListSequence`, `toggleControlChange`, `momentaryControlChange `, `compositeToggle`, `repeatingToggle`, `repeatingMomentary`, or `persistentPedalOverride`. Except for sequence patches, patches can have commands that are assigned to one of two groups: `"A"` and `"B"`. `Toggle` patches operate by sending the group `A` commands on one press of a switch, and sending the group `B` commands on a second press of the switch. `Momentary` patches operate by sending the group `A` commands on the press of the switch, and sending the group `B` commands on the release of the switch. `Normal` patches operate by sending the group `A` commands on the press of the switch and sending the group `B` commands when another `Normal` patch is activated. Pressing the switch for a `Normal` patch two times in a row results in the group `A` commands being exectuted, followed by the group `B` commands and then the group `A` commands again.  
 
@@ -157,12 +157,12 @@ Patches can be defined to be `Toggle`, `Momentary`, `Normal`, `AxeToggle`, `AxeM
 example 1: a switch that on press 1 turns on tuner, on press 2 turns off tuner and executes the `back` command.  
 example 2: a switch that on press 1 assigns an expression pedal to a cc, on press 2 assigns to a different cc, on press 3 assigns to another cc, etc.  
 
-`patchListSequence` sample definition (patches 401-403 are not shown):  
+`patchListSequence` sample definition (the definitions of the patches referenced in the patchListItems are not shown):  
 
-    <patch type="patchListSequence" name="Pedal List" number="400">  
-    <patchListItem>401</patchListItem>  
-    <patchListItem>402</patchListItem>  
-    <patchListItem>403</patchListItem>  
+    <patch type="patchListSequence" name="Pedal List">  
+        <patchListItem>Some Patch</patchListItem>  
+        <patchListItem>Another Patch</patchListItem>  
+        <patchListItem>One More Patch</patchListItem>  
     </patch>
 
 `toggleControlChange` and `momentaryControlChange` are shortcuts for toggle and momentary patch types that simply modify a single controller between 127 and 0 (patch requires `device` and `controller` attributes).  
@@ -171,12 +171,12 @@ example 2: a switch that on press 1 assigns an expression pedal to a cc, on pres
 `compositeToggle` sample definition that executes the B commands from some patches on first press, and the A commands on some patches on second press (patches 401-405 are not shown):  
 
     <patch type="compositeToggle" name="A Composite Toggle Patch" number="406">  
-    <refPatch group="A" refGroup="B">401</refPatch>  
-    <refPatch group="A" refGroup="B">402</refPatch>  
-    <refPatch group="A">404</refPatch>  <!-- Group A of patch 404 will be executed on first press of switch assigned to patch 406 -->
-    <refPatch group="B" refGroup="A">402</refPatch>  
-    <refPatch group="B" refGroup="A">403</refPatch>  
-    <refPatch group="B">405</refPatch>  <!-- Group B of patch 405 will be executed on second press of switch assigned to patch 406 -->  
+        <refPatch group="A" refGroup="B">401</refPatch>  
+        <refPatch group="A" refGroup="B">402</refPatch>  
+        <refPatch group="A">404</refPatch>  <!-- Group A of patch 404 will be executed on first press of switch assigned to patch 406 -->
+        <refPatch group="B" refGroup="A">402</refPatch>  
+        <refPatch group="B" refGroup="A">403</refPatch>  
+        <refPatch group="B">405</refPatch>  <!-- Group B of patch 405 will be executed on second press of switch assigned to patch 406 -->  
     </patch>
 
 `repeatingToggle` and `repeatingMomentary` patches are similar to `toggle` and `momentary` except that the A commands are continuously repeated (via a dedicated per-patch thread) until the patch is deactivated.
@@ -200,78 +200,35 @@ The `AxeProgramChange` command is an Axe-Fx specific version of the generic `Pro
 
 The `EdpProgramChange` command is an Echoplex Digital Pro specific version of the generic `ProgramChange` command.  When you use this command, mTroll queries and displays global and local state after sending the requested program change.
 
-<a name="metaPatches"></a>
-## Meta-Patches  
-
-*engineMetaPatch is deprecated.  
-Use the command attribute on Switch in a Bank instead.  
-Every engineMetaPatch "action" can be used as a "command" directly in a Switch (without manually creating a patch and without using a "patch" attribute in the Switch).*  
-
-A meta-patch is a patch that affects the control engine state itself rather than affecting an external MIDI device. Like regular patches, meta-patches are defined in the `patches` list using the `engineMetaPatch` tag.  
-
-The `ResetBankPatches` meta-patch resets all of the patches in a bank that are currently considered active (without sending any MIDI data out the MIDI port) and clears the switch LEDs (turns off any lit LEDs). This is useful for clearing patches like toggle or sequence mode patches, but would not have any effect on momentary mode patches.  
-
-`ResetBankPatches` example:  
-`<engineMetaPatch name="Reset bank (meta)" number="50" action="ResetBankPatches" />`  
-
-The `LoadBank` meta-patch is a patch that can be assigned to any switch in a bank that causes the controller to load another bank. This could be used to create a sequence of banks and provides for immediate one switch access to any bank from any bank.  
-
-`LoadBank` example:  
-`<engineMetaPatch name="Load bank 1 (meta)" number="51" action="LoadBank" bankNumber="1" />`  
-
-The `Backward` and `Forward` meta-patches are patches that can be assigned to any switch in a bank that operate like the history function of a web browser. They are unlike Next and Previous in that they remember the order of banks that you have actually loaded. The `Backward` and `Forward` meta-patches operate instantly (no confirmation switch press is required).  
-
-`Backward` and `Forward` examples:  
-`<engineMetaPatch name="Last Bank Visited" number="52" action="BankHistoryBackward" />`  
-`<engineMetaPatch name="Forward" number="53" action="BankHistoryForward" />`  
-
-The `Recall` meta-patch is a patch that can be assigned to any switch in a bank that causes the controller to switch back and forth between the currently loaded bank and the previously loaded one; it is similar to 'channel recall' on TV remote controls. It can be invoked repeatedly to switch back and forth between two banks (map it to the same switch in multiple banks). (This is basically an automatic application of `Backward` and `Forward`.)  
-
-`Recall` example:  
-`<engineMetaPatch name="Bank Recall" number="54" action="BankHistoryRecall" />`  
-
-The `LoadNextBank` and `LoadPreviousBank` meta-patches are patches that can be assigned to any switch in a bank that operate like conventional MIDI foot controller bank navigation switches. They are unlike Next and Previous in Bank Navigation mode in that operate instantly; no confirmation switch press is required as is during Bank Navigation mode.  
-
-`LoadNextBank` and `LoadPreviousBank` examples:  
-`<engineMetaPatch name="Prev Bank" number="910" action="LoadPreviousBank" />`  
-`<engineMetaPatch name="Next Bank" number="911" action="LoadNextBank" />`  
-
-The `ResetExclusiveGroup` meta-patch resets all of the patches in an exclusive group that are currently considered active (without sending any MIDI data out the MIDI port) and clears the switch LEDs (turns off any lit LEDs). The `activeSwitch` attribute is a switch number from the group that should be set active.  
-
-`ResetExclusiveGroup` example:  
-`<engineMetaPatch name="Reset group (meta)" number="55" action="ResetExclusiveGroup" activeSwitch="10" />`  
-
-The `SyncAxeFx` meta-patch is used in conjunction with an Axe-Fx processor. See the [Axe-Fx page](axe.md) for more info.  
-
-`SyncAxeFx` example:  
-`<engineMetaPatch name="Sync Up AxeFx Bypass States" number="912" action="SyncAxeFx" />`
-
-`EdpShowGlobalState` and `EdpShowLocalState` can be used to explicitly query and display Echoplex Digital Pro state without sending a program change.
-
 <a name="banks"></a>
 ## Banks  
 
-Banks consist of mappings of `Patches` to switch numbers. The mappings are made via `Switch`. Banks have a name and a number. They are also where `ExclusiveSwitchGroup`s are defined. Think of the mappings as temporary; they are only in effect when the bank is actually loaded. Only one bank at a time is ever loaded/active.  
+Banks consist of mappings of `Patches` and commands to switch numbers. The mappings are made via `Switch`. Banks have a name; you may optionally define a bank number. They are also where `ExclusiveSwitchGroup`s are defined. Think of the mappings as temporary; they are only in effect when the bank is actually loaded. Only one bank at a time is ever loaded/active.  
 
 Example:  
 
-    <bank name="Some Bank" number="2">
-    <switch number="9" patch="25" />
-    <switch number="10" patch="26" />
-    <ExclusiveSwitchGroup>9 10</ExclusiveSwitchGroup>
+    <bank name="Some Bank">
+        <switch number="9" patchName="Some Patch" />
+        <switch number="10" patchName="Another Patch" />
+        <ExclusiveSwitchGroup>9 10</ExclusiveSwitchGroup>
     </bank>
 
 <a name="patchmaps"></a>
 ## Switch  
 
-A `Switch` associates a `patch` or command with a switch while the `bank` is loaded. Think of the mappings as temporary; they are only in effect when the bank in which they are defined is active. Multiple patches can be associated with a single switch via multiple `Switch` statements.  
+A `Switch` associates a `patch` or command with a switch while the `bank` is loaded. Think of the mappings as 
+temporary; they are only in effect when the bank in which they are defined is active. Multiple patches can be 
+associated with a single switch via multiple `Switch` statements.  The switch can be associated with a patch
+either by patch number or patch name.
 
 Example:  
 
-    <Switch number="8" patch="20" />
-    <Switch number="9" patch="25" />
-    <Switch number="9" patch="32" />
-    <Switch number="9" patch="45" label="Different Text"/>
+    <switch number="8" patch="20" />
+    <switch number="9" patch="25" />
+    <switch number="9" patch="32" />
+    <switch number="9" patch="45" label="Different Text"/>
+    <switch number="10" command="LoadNextBank" />
+    <switch number="11" patchName="Some Patch" />
 
 (`Switch` was formerly known as `PatchMap`.)  
 
@@ -287,7 +244,9 @@ The `override` attribute prevents `Toggle` patches from changing state when the 
 
 The `sync` attribute is only applicable when multiple `patch`es are mapped to a single switch (via multiple `Switch`es). Like the `override` attribute, `sync` is only applicable to `Toggle` patches. `sync` allows you to control how the `patch`es toggle relative to the primary `patch` (the first one mapped to the switch). The first `patch` behaves as usual. The others can be configured to toggle in phase or out of phase with the first. `<Switch number="8" patch="20" sync="outOfPhase" />`  
 
-`sync` options work relative to the first `Switch` per switch in a `bank`. `sync` options are not applicable to the first `Switch` per switch. If the `sync` attribute is not present, sync among patches assigned to the same switch is ignored (sibling patches are toggled as is; they might all be in the same state, they might not - they are not explicitly sync'd up). `sync="inPhase"` will cause the sibling patch to sync identically to the master/primary patch. `sync="outOfPhase"` will cause the sibling patch to sync to the opposite state of the master/primary patch.  
+`sync` options work relative to the first `Switch` per switch in a `bank`. `sync` options are not applicable to the first `Switch` per switch. If the `sync` attribute is not present, sync among patches assigned to the same switch is ignored (sibling patches are toggled as is; they might all be in the same state, they might not - they are not explicitly sync'd up). `sync="inPhase"` will cause the sibling patch to sync identically to the master/primary patch. `sync="outOfPhase"` will cause the sibling patch to sync to the opposite state of the master/primary patch.
+
+see also Second Function and Switch Commands.
 
 <a name="secondFunction"></a>
 ## Second Function  
@@ -314,6 +273,55 @@ Example definition:
     <Switch number="10" patch="25" secondFunction="immediateToggle" />
     <Switch number="11" patch="32" />
     <Switch number="11" patch="45" secondFunction="auto" />
+
+<a name="metaPatches"></a><a name="switchCommands"></a>
+## Switch Commands (formerly Meta-Patches)
+
+*engineMetaPatch is deprecated.  
+Use the `command` attribute on `Switch` in a `Bank` instead.  
+Every engineMetaPatch `action` can be used as a `command` directly in a Switch (without manually creating a patch and without using a "patch" attribute in the Switch).*  
+
+Switch commands typically affect the control engine state itself rather than affecting an external MIDI device.  Some commands 
+require parameters passed via additional attributes defined on the `Switch` where the command is defined; see the examples below.
+
+The `ResetBankPatches` command resets all of the patches in a bank that are currently considered active (without sending any MIDI data out the MIDI port) and clears the switch LEDs (turns off any lit LEDs). This is useful for clearing patches like toggle or sequence mode patches, but would not have any effect on momentary mode patches.  
+
+`ResetBankPatches` example:  
+`<switch number="15" command="ResetBankPatches" />`  
+
+The `LoadBank` command causes the controller to load another bank. This could be used to create a sequence of banks and provides for immediate one switch access to any bank from any bank.  
+
+`LoadBank` example:  
+`<switch number="1" label="Load Scenes bank" command="LoadBank" bankName="Axe-Fx Scenes" />`  
+
+The `Backward` and `Forward` commands operate like the history function of a web browser. They are unlike Next and Previous in that they remember the order of banks that you have actually loaded. The `Backward` and `Forward` commands operate instantly (no confirmation switch press is required).  
+
+`Backward` and `Forward` examples:  
+`<switch number="22" command="BankHistoryBackward" />`  
+`<switch number="23" command="BankHistoryForward" />`  
+
+The `Recall` command causes the controller to switch back and forth between the currently loaded bank and the previously loaded one; it is similar to 'channel recall' on TV remote controls. It can be invoked repeatedly to switch back and forth between two banks (map it to the same switch in multiple banks). (This is basically an automatic application of `Backward` and `Forward`.)  
+
+`Recall` example:  
+`<switch name="Bank Recall" number="9" command="BankHistoryRecall" />`  
+
+The `LoadNextBank` and `LoadPreviousBank` commands operate like conventional MIDI foot controller bank navigation switches. They are unlike Next and Previous in Bank Navigation mode in that operate instantly; no confirmation switch press is required as is during Bank Navigation mode.  
+
+`LoadNextBank` and `LoadPreviousBank` examples:  
+`<switch number="25" command="LoadPreviousBank" />`  
+`<switch number="26" command="LoadNextBank" />`  
+
+The `ResetExclusiveGroup` command resets all of the patches in an exclusive group that are currently considered active (without sending any MIDI data out the MIDI port) and clears the switch LEDs (turns off any lit LEDs). The `activeSwitch` attribute is a switch number from the group that should be set active.  
+
+`ResetExclusiveGroup` example:  
+`<switch label="Reset group" number="5" command="ResetExclusiveGroup" activeSwitch="10" />`  
+
+The `SyncAxeFx` command is used in conjunction with an Axe-Fx processor. See the [Axe-Fx page](axe.md) for more info.  
+
+`SyncAxeFx` example:  
+`<switch name="Sync Up AxeFx Bypass States" number="9" command="SyncAxeFx" />`
+
+The `EdpShowGlobalState` and `EdpShowLocalState` commands can be used to explicitly query and display Echoplex Digital Pro state without sending a program change.
 
 <a name="instantAccess"></a>
 ## Instant Access Support  
