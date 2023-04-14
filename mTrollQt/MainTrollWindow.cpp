@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2012-2013,2015,2018,2020 Sean Echevarria
+ * Copyright (C) 2007-2010,2012-2013,2015,2018,2020,2023 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -212,8 +212,8 @@ MainTrollWindow::MainTrollWindow() :
 		helpMenu->setStyleSheet(touchMenuStyle);
 	helpMenu->addAction(tr("&About mTroll..."), this, &MainTrollWindow::About);
 
-	mUiFilename = settings.value(kActiveUiFile, "config/testdata.ui.xml").value<QString>();
-	mConfigFilename = settings.value(kActiveConfigFile, "config/testdata.config.xml").value<QString>();
+	mUiFilename = settings.value(kActiveUiFile, "config/autoGrid.ui.xml").value<QString>();
+	mConfigFilename = settings.value(kActiveConfigFile, "config/axefx3v2.config.xml").value<QString>();
 
 	Refresh();
 }
