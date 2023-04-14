@@ -52,7 +52,7 @@ Expression Pedals
 
 Configuration
 - Patch and bank settings are stored in plain text XML file ([example](data/testdata.config.xml))  
-- UI is configured via an independent plain text XML file ([example](data/testdata.ui.xml))  
+- UI is configured via an independent plain text XML file ([example](data/autoGrid.ui.xml))  
 - Same data file can be used with different UI files for display on different resolutions or form factors  
 
 Other

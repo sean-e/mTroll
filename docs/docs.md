@@ -37,7 +37,7 @@ Contents
 
 The application is not an editor (it only reads the XML files, does not generate them). Version 2.5.1 of [Raymond, the PMC10 editor,](http://www.creepingfog.com/sean/pmc/download.html) can be used to generate config.xml files using the Export to XML command.  
 
-The current version loads a pair of files, testdata.config.xml (the patches and banks) and testdata.ui.xml (the GUI definitions) automatically at startup (it looks in the startup directory). Press Ctrl+O to load a different set (the last opened set of files is remembered across restarts).  
+The current version loads a pair of files, axefx3v2.config.xml (patches and banks for Axe-Fx III) and autoGrid.ui.xml (the GUI definitions) automatically at startup (it looks in the startup directory). Press Ctrl+O to load a different set (the last opened set of files is remembered across restarts).  
 
 Press F5 to reload the both the UI and config files.  
 Press Ctrl+T to toggle the visibility of the trace window and resize the main display.  
