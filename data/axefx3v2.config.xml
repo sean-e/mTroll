@@ -515,6 +515,7 @@
 		<patch name="Axe 383" type="normal" device="Axe-Fx"><AxeProgramChange program="382"/></patch>
 		<patch name="Axe 384" type="normal" device="Axe-Fx"><AxeProgramChange program="383"/></patch>
 
+		<!-- start default axefx3v2.config.xml non-preset patches -->
 		<!-- Axe-Fx default controllers -->
 		<patch name="Disable ped 1" type="persistentPedalOverride"><globalExpr inputNumber="1" enable="0" /></patch>
 		<patch name="Disable ped 2" type="persistentPedalOverride"><globalExpr inputNumber="2" enable="0" /></patch>
@@ -599,7 +600,7 @@
 		<patch name="Compressor 2" device="Axe-Fx" />
 		<patch name="Crossover 1" device="Axe-Fx" />
 		<patch name="Crossover 2" device="Axe-Fx" />
-		<patch name="Delay 1 (rev)" device="Axe-Fx" />
+		<patch name="Delay 1" device="Axe-Fx" />
 		<patch name="Delay 2" device="Axe-Fx" />
 		<patch name="Delay 3 (mod)" device="Axe-Fx" />
 		<patch name="Delay 4" device="Axe-Fx" />
@@ -1920,6 +1921,246 @@
 			<patchListItemName>Scene 4</patchListItemName>
 			<patchListItemName>Scene 5</patchListItemName>
 		</patch>
+
+		<!-- sysex messages that are unsupported by Fractal Audio, but appear to work fine -->
+		<patch name="Amp1 Boost" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 52 00 3A 00 28 00 00 00 00 7C 03 00 00 00 00 2B F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 52 00 3A 00 28 00 00 00 00 00 00 00 00 00 00 54 F7</midiByteString>
+		</patch>
+		<patch name="Amp1 Cut" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 52 00 3A 00 2D 00 00 00 00 7C 03 00 00 00 00 2E F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 52 00 3A 00 2D 00 00 00 00 00 00 00 00 00 00 51 F7</midiByteString>
+		</patch>
+		<patch name="Amp1 Fat" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 52 00 3A 00 4E 00 00 00 00 7C 03 00 00 00 00 4D F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 52 00 3A 00 4E 00 00 00 00 00 00 00 00 00 00 32 F7</midiByteString>
+		</patch>
+		<patch name="Amp1 BS" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 52 00 3A 00 27 00 00 00 00 7C 03 00 00 00 00 24 F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 52 00 3A 00 27 00 00 00 00 00 00 00 00 00 00 5B F7</midiByteString>
+		</patch>
+		<patch name="Amp1 Eq" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 52 00 3A 00 7E 00 00 00 00 7C 03 00 00 00 00 7D F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 52 00 3A 00 7E 00 00 00 00 00 00 00 00 00 00 02 F7</midiByteString>
+		</patch>
+
+		<patch name="Amp2 Boost" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 52 00 3B 00 28 00 00 00 00 7C 03 00 00 00 00 2A F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 52 00 3B 00 28 00 00 00 00 00 00 00 00 00 00 55 F7</midiByteString>
+		</patch>
+		<patch name="Amp2 Cut" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 52 00 3B 00 2D 00 00 00 00 7C 03 00 00 00 00 2F F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 52 00 3B 00 2D 00 00 00 00 00 00 00 00 00 00 50 F7</midiByteString>
+		</patch>
+		<patch name="Amp2 Fat" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 52 00 3B 00 4E 00 00 00 00 7C 03 00 00 00 00 4C F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 52 00 3B 00 4E 00 00 00 00 00 00 00 00 00 00 33 F7</midiByteString>
+		</patch>
+		<patch name="Amp2 BS" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 52 00 3B 00 27 00 00 00 00 7C 03 00 00 00 00 25 F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 52 00 3B 00 27 00 00 00 00 00 00 00 00 00 00 5A F7</midiByteString>
+		</patch>
+		<patch name="Amp2 Eq" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 52 00 3B 00 7E 00 00 00 00 7C 03 00 00 00 00 7C F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 52 00 3B 00 7E 00 00 00 00 00 00 00 00 00 00 03 F7</midiByteString>
+		</patch>
+
+		<!-- reverb repeat: individual toggle for each, 2x toggle 2 states, sequence all 3 states -->
+		<patch name="Reverb 1 Hold" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 42 00 2C 00 00 00 00 00 04 00 00 77 F7</midiByteString>
+		</patch>
+		<patch name="Reverb 1 Stack" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 42 00 2C 00 00 00 00 7C 03 00 00 0C F7</midiByteString>
+		</patch>
+		<patch name="Reverb 1 no repeat" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 42 00 2C 00 00 00 00 00 00 00 00 73 F7</midiByteString>
+		</patch>
+		<patch name="Reverb 1 Hold (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Reverb 1 no repeat</patchListItemName>
+			<patchListItemName>Reverb 1 Hold</patchListItemName>
+		</patch>
+		<patch name="Reverb 1 Stack (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Reverb 1 no repeat</patchListItemName>
+			<patchListItemName>Reverb 1 Stack</patchListItemName>
+		</patch>
+		<patch name="Reverb 1 Hold (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 42 00 2C 00 00 00 00 00 04 00 00 77 F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 42 00 2C 00 00 00 00 00 00 00 00 73 F7</midiByteString>
+		</patch>
+		<patch name="Reverb 1 Stack (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 42 00 2C 00 00 00 00 7C 03 00 00 0C F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 42 00 2C 00 00 00 00 00 00 00 00 73 F7</midiByteString>
+		</patch>
+		<patch type="patchListSequence" name="Reverb 1 Repeat" gaplessRestart="1">
+			<patchListItemName>Reverb 1 no repeat</patchListItemName>
+			<patchListItemName>Reverb 1 Hold</patchListItemName>
+			<patchListItemName>Reverb 1 Stack</patchListItemName>
+		</patch>
+
+		<patch name="Reverb 2 Hold" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 43 00 2C 00 00 00 00 00 04 00 00 76 F7</midiByteString>
+		</patch>
+		<patch name="Reverb 2 Stack" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 43 00 2C 00 00 00 00 7C 03 00 00 0D F7</midiByteString>
+		</patch>
+		<patch name="Reverb 2 no repeat" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 43 00 2C 00 00 00 00 00 00 00 00 72 F7</midiByteString>
+		</patch>
+		<patch name="Reverb 2 Hold (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Reverb 2 no repeat</patchListItemName>
+			<patchListItemName>Reverb 2 Hold</patchListItemName>
+		</patch>
+		<patch name="Reverb 2 Stack (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Reverb 2 no repeat</patchListItemName>
+			<patchListItemName>Reverb 2 Stack</patchListItemName>
+		</patch>
+		<patch name="Reverb 2 Hold (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 43 00 2C 00 00 00 00 00 04 00 00 76 F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 43 00 2C 00 00 00 00 00 00 00 00 72 F7</midiByteString>
+		</patch>
+		<patch name="Reverb 2 Stack (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 43 00 2C 00 00 00 00 7C 03 00 00 0D F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 43 00 2C 00 00 00 00 00 00 00 00 72 F7</midiByteString>
+		</patch>
+		<patch type="patchListSequence" name="Reverb 2 Repeat" gaplessRestart="1">
+			<patchListItemName>Reverb 2 no repeat</patchListItemName>
+			<patchListItemName>Reverb 2 Hold</patchListItemName>
+			<patchListItemName>Reverb 2 Stack</patchListItemName>
+		</patch>
+
+		<!-- delay repeat: individual toggle for each, 2x toggle 2 states, sequence all 3 states -->
+		<!-- alt:
+			Delay 1 Hold    : F0 00 01 74 10 01 52 00 46 00 1B 00 00 00 00 7C 03 00 00 00 00 64 F7
+			Delay 1 Off     : F0 00 01 74 10 01 52 00 46 00 1B 00 00 00 00 00 00 00 00 00 00 1B F7 -->
+		<patch name="Delay 1 Hold" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 1B 00 00 00 00 00 04 00 00 44 F7</midiByteString>
+		</patch>
+		<patch name="Delay 1 Stack" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 1B 00 00 00 00 7C 03 00 00 3F F7</midiByteString>
+		</patch>
+		<patch name="Delay 1 no repeat" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 1B 00 00 00 00 00 00 00 00 40 F7</midiByteString>
+		</patch>
+		<patch name="Delay 1 Hold (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Delay 1 no repeat</patchListItemName>
+			<patchListItemName>Delay 1 Hold</patchListItemName>
+		</patch>
+		<patch name="Delay 1 Stack (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Delay 1 no repeat</patchListItemName>
+			<patchListItemName>Delay 1 Stack</patchListItemName>
+		</patch>
+		<patch name="Delay 1 Hold (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 1B 00 00 00 00 00 04 00 00 44 F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 46 00 1B 00 00 00 00 00 00 00 00 40 F7</midiByteString>
+		</patch>
+		<patch name="Delay 1 Stack (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 1B 00 00 00 00 7C 03 00 00 3F F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 46 00 1B 00 00 00 00 00 00 00 00 40 F7</midiByteString>
+		</patch>
+		<patch type="patchListSequence" name="Delay 1 Repeat" gaplessRestart="1">
+			<patchListItemName>Delay 1 no repeat</patchListItemName>
+			<patchListItemName>Delay 1 Hold</patchListItemName>
+			<patchListItemName>Delay 1 Stack</patchListItemName>
+		</patch>
+
+		<patch name="Delay 2 Hold" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 1B 00 00 00 00 00 04 00 00 45 F7</midiByteString>
+		</patch>
+		<patch name="Delay 2 Stack" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 1B 00 00 00 00 7C 03 00 00 3E F7</midiByteString>
+		</patch>
+		<patch name="Delay 2 no repeat" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 1B 00 00 00 00 00 00 00 00 41 F7</midiByteString>
+		</patch>
+		<patch name="Delay 2 Hold (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Delay 2 no repeat</patchListItemName>
+			<patchListItemName>Delay 2 Hold</patchListItemName>
+		</patch>
+		<patch name="Delay 2 Stack (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Delay 2 no repeat</patchListItemName>
+			<patchListItemName>Delay 2 Stack</patchListItemName>
+		</patch>
+		<patch name="Delay 2 Hold (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 1B 00 00 00 00 00 04 00 00 45 F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 47 00 1B 00 00 00 00 00 00 00 00 41 F7</midiByteString>
+		</patch>
+		<patch name="Delay 2 Stack (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 1B 00 00 00 00 7C 03 00 00 3E F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 47 00 1B 00 00 00 00 00 00 00 00 41 F7</midiByteString>
+		</patch>
+		<patch type="patchListSequence" name="Delay 2 Repeat" gaplessRestart="1">
+			<patchListItemName>Delay 2 no repeat</patchListItemName>
+			<patchListItemName>Delay 2 Hold</patchListItemName>
+			<patchListItemName>Delay 2 Stack</patchListItemName>
+		</patch>
+
+		<patch name="Delay 3 Hold" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 1B 00 00 00 00 00 04 00 00 4A F7</midiByteString>
+		</patch>
+		<patch name="Delay 3 Stack" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 1B 00 00 00 00 7C 03 00 00 31 F7</midiByteString>
+		</patch>
+		<patch name="Delay 3 no repeat" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 1B 00 00 00 00 00 00 00 00 4E F7</midiByteString>
+		</patch>
+		<patch name="Delay 3 Hold (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Delay 3 no repeat</patchListItemName>
+			<patchListItemName>Delay 3 Hold</patchListItemName>
+		</patch>
+		<patch name="Delay 3 Stack (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Delay 3 no repeat</patchListItemName>
+			<patchListItemName>Delay 3 Stack</patchListItemName>
+		</patch>
+		<patch name="Delay 3 Hold (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 1B 00 00 00 00 00 04 00 00 4A F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 48 00 1B 00 00 00 00 00 00 00 00 4E F7</midiByteString>
+		</patch>
+		<patch name="Delay 3 Stack (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 1B 00 00 00 00 7C 03 00 00 31 F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 48 00 1B 00 00 00 00 00 00 00 00 4E F7</midiByteString>
+		</patch>
+		<patch type="patchListSequence" name="Delay 3 Repeat" gaplessRestart="1">
+			<patchListItemName>Delay 3 no repeat</patchListItemName>
+			<patchListItemName>Delay 3 Hold</patchListItemName>
+			<patchListItemName>Delay 3 Stack</patchListItemName>
+		</patch>
+
+		<patch name="Delay 4 Hold" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 1B 00 00 00 00 00 04 00 00 4B F7</midiByteString>
+		</patch>
+		<patch name="Delay 4 Stack" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 1B 00 00 00 00 7C 03 00 00 30 F7</midiByteString>
+		</patch>
+		<patch name="Delay 4 no repeat" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 1B 00 00 00 00 00 00 00 00 4F F7</midiByteString>
+		</patch>
+		<patch name="Delay 4 Hold (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Delay 4 no repeat</patchListItemName>
+			<patchListItemName>Delay 4 Hold</patchListItemName>
+		</patch>
+		<patch name="Delay 4 Stack (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Delay 4 no repeat</patchListItemName>
+			<patchListItemName>Delay 4 Stack</patchListItemName>
+		</patch>
+		<patch name="Delay 4 Hold (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 1B 00 00 00 00 00 04 00 00 4B F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 49 00 1B 00 00 00 00 00 00 00 00 4F F7</midiByteString>
+		</patch>
+		<patch name="Delay 4 Stack (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 1B 00 00 00 00 7C 03 00 00 30 F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 49 00 1B 00 00 00 00 00 00 00 00 4F F7</midiByteString>
+		</patch>
+		<patch type="patchListSequence" name="Delay 4 Repeat" gaplessRestart="1">
+			<patchListItemName>Delay 4 no repeat</patchListItemName>
+			<patchListItemName>Delay 4 Hold</patchListItemName>
+			<patchListItemName>Delay 4 Stack</patchListItemName>
+		</patch>
+
+		<!--
+			Reverb 1 Quality = Economy: F0 00 01 74 10 01 09 00 42 00 2B 00 03 00 00 00 00 00 00 00 77 F7
+			Reverb 2 Quality = Economy: F0 00 01 74 10 01 09 00 43 00 2B 00 03 00 00 00 00 00 00 00 76 F7
+		-->
+		<!-- end default axefx3v2.config.xml patches -->
 	</patches>
 
 
@@ -2015,6 +2256,7 @@
 			<switch number="10" patchName="Axe 040" />
 		</bank>
 
+		<!-- start Axe-Fx III axefx3v2 data file non-preset banks -->
 		<bank name="Axe-Fx Scenes">
 			<ExclusiveSwitchGroup>1 2 3 4 6 7 8 9</ExclusiveSwitchGroup>
 			<switch number="1" patchName="Scene 1" />
@@ -2085,9 +2327,9 @@
 		</bank>
 		<bank name="Axe-Fx Reveal 1">
 			<switch number="1" patchName="Amp 1" />
-			<switch number="1" command="LoadBank" bankName="Axe-Fx Amp Channels" secondFunction="immediateToggle" />
+			<switch number="1" command="LoadBank" bankName="Axe-Fx Amp 1 Channels" secondFunction="immediateToggle" />
 			<switch number="2" patchName="Amp 2" />
-			<switch number="2" command="LoadBank" bankName="Axe-Fx Amp Channels" secondFunction="immediateToggle" />
+			<switch number="2" command="LoadBank" bankName="Axe-Fx Amp 2 Channels" secondFunction="immediateToggle" />
 			<switch number="3" patchName="Chorus 1" />
 			<switch number="3" command="LoadBank" bankName="Axe-Fx Chorus Channels" secondFunction="immediateToggle" />
 			<switch number="4" patchName="Chorus 2" />
@@ -2096,14 +2338,14 @@
 			<switch number="5" command="LoadBank" bankName="Axe-Fx Comp Channels" secondFunction="immediateToggle" />
 			<switch number="6" patchName="Compressor 2" />
 			<switch number="6" command="LoadBank" bankName="Axe-Fx Comp Channels" secondFunction="immediateToggle" />
-			<switch number="7" patchName="Delay 1 (rev)" />
-			<switch number="7" command="LoadBank" bankName="Axe-Fx Dly 1/2 Channels" secondFunction="immediateToggle" />
+			<switch number="7" patchName="Delay 1" />
+			<switch number="7" command="LoadBank" bankName="Axe-Fx Dly 1 Channels" secondFunction="immediateToggle" />
 			<switch number="8" patchName="Delay 2" />
-			<switch number="8" command="LoadBank" bankName="Axe-Fx Dly 1/2 Channels" secondFunction="immediateToggle" />
+			<switch number="8" command="LoadBank" bankName="Axe-Fx Dly 2 Channels" secondFunction="immediateToggle" />
 			<switch number="9" patchName="Delay 3 (mod)" />
-			<switch number="9" command="LoadBank" bankName="Axe-Fx Dly 3/4 Channels" secondFunction="immediateToggle" />
+			<switch number="9" command="LoadBank" bankName="Axe-Fx Dly 3 Channels" secondFunction="immediateToggle" />
 			<switch number="10" patchName="Delay 4" />
-			<switch number="10" command="LoadBank" bankName="Axe-Fx Dly 3/4 Channels" secondFunction="immediateToggle" />
+			<switch number="10" command="LoadBank" bankName="Axe-Fx Dly 4 Channels" secondFunction="immediateToggle" />
 			<switch number="11" patchName="Drive 1" />
 			<switch number="11" command="LoadBank" bankName="Axe-Fx Drv 1/2 Channels" secondFunction="immediateToggle" />
 			<switch number="12" patchName="Drive 2" />
@@ -2137,9 +2379,9 @@
 			<switch number="8" patchName="Plex Delay 2" />
 			<switch number="8" command="LoadBank" bankName="Axe-Fx Plex Channels" secondFunction="immediateToggle" />
 			<switch number="9" patchName="Reverb 1" />
-			<switch number="9" command="LoadBank" bankName="Axe-Fx Reverb Channels" secondFunction="immediateToggle" />
+			<switch number="9" command="LoadBank" bankName="Axe-Fx Reverb 1 Channels" secondFunction="immediateToggle" />
 			<switch number="10" patchName="Reverb 2" />
-			<switch number="10" command="LoadBank" bankName="Axe-Fx Reverb Channels" secondFunction="immediateToggle" />
+			<switch number="10" command="LoadBank" bankName="Axe-Fx Reverb 2 Channels" secondFunction="immediateToggle" />
 			<switch number="11" patchName="Rotary 1" />
 			<switch number="11" command="LoadBank" bankName="Axe-Fx Rotary Channels" secondFunction="immediateToggle" />
 			<switch number="12" patchName="Tremolo 1" />
@@ -2318,25 +2560,47 @@
 			<switch number="22" patchName="" secondFunction="immediateToggle" />
 		</bank>
 
-		<bank name="Axe-Fx Amp Channels">
+		<bank name="Axe-Fx Amp 1 Channels">
 			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
 			<switch number="1" patchName="Axe Amp 1 Ch A" />
 			<switch number="2" patchName="Axe Amp 1 Ch B" />
 			<switch number="3" patchName="Axe Amp 1 Ch C" />
 			<switch number="4" patchName="Axe Amp 1 Ch D" />
 			<switch number="5" patchName="Amp 1" />
-			<ExclusiveSwitchGroup>6 7 8 9</ExclusiveSwitchGroup>
-			<switch number="6" patchName="Axe Amp 2 Ch A" />
-			<switch number="7" patchName="Axe Amp 2 Ch B" />
-			<switch number="8" patchName="Axe Amp 2 Ch C" />
-			<switch number="9" patchName="Axe Amp 2 Ch D" />
-			<switch number="10" patchName="Amp 2" />
+
+			<switch number="6" patchName="Amp1 Boost" />
+			<switch number="7" patchName="Amp1 Cut" />
+			<switch number="8" patchName="Amp1 Fat" />
+			<switch number="9" patchName="Amp1 BS" />
+			<switch number="10" patchName="Amp1 Eq" />
 
 			<switch number="11" command="LoadBank" bankName="Axe-Fx Cab Channels" />
-			<switch number="12" command="LoadBank" bankName="Axe-Fx Dly 3/4 Channels" />
-			<switch number="13" patchName="" />
+			<switch number="12" command="LoadBank" bankName="Axe-Fx Drv 1/2 Channels" />
+			<switch number="13" command="LoadBank" bankName="Axe-Fx Dly 1 Channels" />
 			<switch number="14" patchName="" />
 			<switch number="15" patchName="" />
+
+			<switch number="22" command="BankHistoryBackward" />
+		</bank>
+		<bank name="Axe-Fx Amp 2 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Amp 2 Ch A" />
+			<switch number="2" patchName="Axe Amp 2 Ch B" />
+			<switch number="3" patchName="Axe Amp 2 Ch C" />
+			<switch number="4" patchName="Axe Amp 2 Ch D" />
+			<switch number="5" patchName="Amp 2" />
+
+			<switch number="6" patchName="Amp2 Boost" />
+			<switch number="7" patchName="Amp2 Cut" />
+			<switch number="8" patchName="Amp2 Fat" />
+			<switch number="9" patchName="Amp2 BS" />
+			<switch number="10" patchName="Amp2 Eq" />
+
+			<switch number="11" command="LoadBank" bankName="Axe-Fx Cab Channels" />
+			<switch number="12" command="LoadBank" bankName="Axe-Fx Drv 1/2 Channels" />
+			<switch number="13" command="LoadBank" bankName="Axe-Fx Dly 1 Channels" />
+			<switch number="14" patchName="" />
+			<switch number="15" command="LoadBank" bankName="Axe-Fx Amp 1 Channels" />
 
 			<switch number="22" command="BankHistoryBackward" />
 		</bank>
@@ -2384,47 +2648,91 @@
 
 			<switch number="22" command="BankHistoryBackward" />
 		</bank>
-		<bank name="Axe-Fx Dly 1/2 Channels">
+		<bank name="Axe-Fx Dly 1 Channels">
 			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
 			<switch number="1" patchName="Axe Delay 1 Ch A" />
 			<switch number="2" patchName="Axe Delay 1 Ch B" />
 			<switch number="3" patchName="Axe Delay 1 Ch C" />
 			<switch number="4" patchName="Axe Delay 1 Ch D" />
-			<switch number="5" patchName="Delay 1 (rev)" />
-			<ExclusiveSwitchGroup>6 7 8 9</ExclusiveSwitchGroup>
-			<switch number="6" patchName="Axe Delay 2 Ch A" />
-			<switch number="7" patchName="Axe Delay 2 Ch B" />
-			<switch number="8" patchName="Axe Delay 2 Ch C" />
-			<switch number="9" patchName="Axe Delay 2 Ch D" />
-			<switch number="10" patchName="Delay 2" />
+			<switch number="5" patchName="Delay 1" />
+			<ExclusiveSwitchGroup>6 7 8 9 12 13 14 15</ExclusiveSwitchGroup>
+			<switch number="6" patchName="Delay 1 no repeat" />
+			<switch number="7" patchName="Delay 1 Hold" />
+			<switch number="8" patchName="Delay 1 Stack" />
+			<switch number="9" patchName="Delay 1 Repeat" />
+			<switch number="10" patchName="" />
 
 			<switch number="11" patchName="Delay 1 (mom)" />
-			<switch number="12" patchName="Delay 2 (mom)" />
-			<switch number="13" patchName="" />
-			<switch number="14" patchName="" />
-			<switch number="15" command="LoadBank" bankName="Axe-Fx Dly 3/4 Channels" />
+			<switch number="12" patchName="Delay 1 Hold (mom)" />
+			<switch number="13" patchName="Delay 1 Stack (mom)" />
+			<switch number="14" patchName="Delay 1 Hold (tgl)" />
+			<switch number="15" patchName="Delay 1 Stack (tgl)" />
 
 			<switch number="22" command="BankHistoryBackward" />
 		</bank>
-		<bank name="Axe-Fx Dly 3/4 Channels">
+		<bank name="Axe-Fx Dly 2 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Delay 2 Ch A" />
+			<switch number="2" patchName="Axe Delay 2 Ch B" />
+			<switch number="3" patchName="Axe Delay 2 Ch C" />
+			<switch number="4" patchName="Axe Delay 2 Ch D" />
+			<switch number="5" patchName="Delay 2" />
+			<ExclusiveSwitchGroup>6 7 8 9 12 13 14 15</ExclusiveSwitchGroup>
+			<switch number="6" patchName="Delay 2 no repeat" />
+			<switch number="7" patchName="Delay 2 Hold" />
+			<switch number="8" patchName="Delay 2 Stack" />
+			<switch number="9" patchName="Delay 2 Repeat" />
+			<switch number="10" command="LoadBank" bankName="Axe-Fx Dly 1 Channels" />
+
+			<switch number="11" patchName="Delay 2 (mom)" />
+			<switch number="12" patchName="Delay 2 Hold (mom)" />
+			<switch number="13" patchName="Delay 2 Stack (mom)" />
+			<switch number="14" patchName="Delay 2 Hold (tgl)" />
+			<switch number="15" patchName="Delay 2 Stack (tgl)" />
+
+			<switch number="22" command="BankHistoryBackward" />
+		</bank>
+		<bank name="Axe-Fx Dly 3 Channels">
 			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
 			<switch number="1" patchName="Axe Delay 3 Ch A" />
 			<switch number="2" patchName="Axe Delay 3 Ch B" />
 			<switch number="3" patchName="Axe Delay 3 Ch C" />
 			<switch number="4" patchName="Axe Delay 3 Ch D" />
 			<switch number="5" patchName="Delay 3 (mod)" />
-			<ExclusiveSwitchGroup>6 7 8 9</ExclusiveSwitchGroup>
-			<switch number="6" patchName="Axe Delay 4 Ch A" />
-			<switch number="7" patchName="Axe Delay 4 Ch B" />
-			<switch number="8" patchName="Axe Delay 4 Ch C" />
-			<switch number="9" patchName="Axe Delay 4 Ch D" />
-			<switch number="10" patchName="Delay 4" />
+			<ExclusiveSwitchGroup>6 7 8 9 12 13 14 15</ExclusiveSwitchGroup>
+			<switch number="6" patchName="Delay 3 no repeat" />
+			<switch number="7" patchName="Delay 3 Hold" />
+			<switch number="8" patchName="Delay 3 Stack" />
+			<switch number="9" patchName="Delay 3 Repeat" />
+			<switch number="10" command="LoadBank" bankName="Axe-Fx Dly 2 Channels" />
 
 			<switch number="11" patchName="Delay 3 (mom)" />
-			<switch number="12" patchName="Delay 4 (mom)" />
-			<switch number="13" patchName="" />
-			<switch number="14" patchName="" />
-			<switch number="15" command="LoadBank" bankName="Axe-Fx Dly 1/2 Channels" />
+			<switch number="12" patchName="Delay 3 Hold (mom)" />
+			<switch number="13" patchName="Delay 3 Stack (mom)" />
+			<switch number="14" patchName="Delay 3 Hold (tgl)" />
+			<switch number="15" patchName="Delay 3 Stack (tgl)" />
+
+			<switch number="22" command="BankHistoryBackward" />
+		</bank>
+		<bank name="Axe-Fx Dly 4 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Delay 4 Ch A" />
+			<switch number="2" patchName="Axe Delay 4 Ch B" />
+			<switch number="3" patchName="Axe Delay 4 Ch C" />
+			<switch number="4" patchName="Axe Delay 4 Ch D" />
+			<switch number="5" patchName="Delay 4" />
+			<ExclusiveSwitchGroup>6 7 8 9 12 13 14 15</ExclusiveSwitchGroup>
+			<switch number="6" patchName="Delay 4 no repeat" />
+			<switch number="7" patchName="Delay 4 Hold" />
+			<switch number="8" patchName="Delay 4 Stack" />
+			<switch number="9" patchName="Delay 4 Repeat" />
+			<switch number="10" command="LoadBank" bankName="Axe-Fx Dly 3 Channels" />
+
+			<switch number="11" patchName="Delay 4 (mom)" />
+			<switch number="12" patchName="Delay 4 Hold (mom)" />
+			<switch number="13" patchName="Delay 4 Stack (mom)" />
+			<switch number="14" patchName="Delay 4 Hold (tgl)" />
+			<switch number="15" patchName="Delay 4 Stack (tgl)" />
 
 			<switch number="22" command="BankHistoryBackward" />
 		</bank>
@@ -2446,7 +2754,7 @@
 			<switch number="12" patchName="Drive 2 (mom)" />
 			<switch number="13" patchName="" />
 			<switch number="14" command="LoadBank" bankName="Axe-Fx Drv 3/4 Channels" />
-			<switch number="15" command="LoadBank" bankName="Axe-Fx Amp Channels" />
+			<switch number="15" command="LoadBank" bankName="Axe-Fx Amp 1 Channels" />
 
 			<switch number="22" command="BankHistoryBackward" />
 		</bank>
@@ -2490,7 +2798,7 @@
 			<switch number="12" patchName="Dyn Dist 2 (mom)" />
 			<switch number="13" patchName="" />
 			<switch number="14" command="LoadBank" bankName="Axe-Fx Drv 1/2 Channels" />
-			<switch number="15" command="LoadBank" bankName="Axe-Fx Amp Channels" />
+			<switch number="15" command="LoadBank" bankName="Axe-Fx Amp 1 Channels" />
 
 			<switch number="22" command="BankHistoryBackward" />
 		</bank>
@@ -2604,25 +2912,47 @@
 
 			<switch number="22" command="BankHistoryBackward" />
 		</bank>
-		<bank name="Axe-Fx Reverb Channels">
+		<bank name="Axe-Fx Reverb 1 Channels">
 			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
 			<switch number="1" patchName="Axe Reverb 1 Ch A" />
 			<switch number="2" patchName="Axe Reverb 1 Ch B" />
 			<switch number="3" patchName="Axe Reverb 1 Ch C" />
 			<switch number="4" patchName="Axe Reverb 1 Ch D" />
 			<switch number="5" patchName="Reverb 1" />
-			<ExclusiveSwitchGroup>6 7 8 9</ExclusiveSwitchGroup>
-			<switch number="6" patchName="Axe Reverb 2 Ch A" />
-			<switch number="7" patchName="Axe Reverb 2 Ch B" />
-			<switch number="8" patchName="Axe Reverb 2 Ch C" />
-			<switch number="9" patchName="Axe Reverb 2 Ch D" />
-			<switch number="10" patchName="Reverb 2" />
+			<ExclusiveSwitchGroup>6 7 8 9 12 13 14 15</ExclusiveSwitchGroup>
+			<switch number="6" patchName="Reverb 1 no repeat" />
+			<switch number="7" patchName="Reverb 1 Hold" />
+			<switch number="8" patchName="Reverb 1 Stack" />
+			<switch number="9" patchName="Reverb 1 Repeat" />
+			<switch number="10" patchName="" />
 
 			<switch number="11" patchName="Reverb 1 (mom)" />
-			<switch number="12" patchName="Reverb 2 (mom)" />
-			<switch number="13" patchName="" />
-			<switch number="14" patchName="" />
-			<switch number="15" patchName="" />
+			<switch number="12" patchName="Reverb 1 Hold (mom)" />
+			<switch number="13" patchName="Reverb 1 Stack (mom)" />
+			<switch number="14" patchName="Reverb 1 Hold (tgl)" />
+			<switch number="15" patchName="Reverb 1 Stack (tgl)" />
+
+			<switch number="22" command="BankHistoryBackward" />
+		</bank>
+		<bank name="Axe-Fx Reverb 2 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Reverb 2 Ch A" />
+			<switch number="2" patchName="Axe Reverb 2 Ch B" />
+			<switch number="3" patchName="Axe Reverb 2 Ch C" />
+			<switch number="4" patchName="Axe Reverb 2 Ch D" />
+			<switch number="5" patchName="Reverb 2" />
+			<ExclusiveSwitchGroup>6 7 8 9 12 13 14 15</ExclusiveSwitchGroup>
+			<switch number="6" patchName="Reverb 2 no repeat" />
+			<switch number="7" patchName="Reverb 2 Hold" />
+			<switch number="8" patchName="Reverb 2 Stack" />
+			<switch number="9" patchName="Reverb 2 Repeat" />
+			<switch number="10" command="LoadBank" bankName="Axe-Fx Reverb 1 Channels" />
+
+			<switch number="11" patchName="Reverb 2 (mom)" />
+			<switch number="12" patchName="Reverb 2 Hold (mom)" />
+			<switch number="13" patchName="Reverb 2 Stack (mom)" />
+			<switch number="14" patchName="Reverb 2 Hold (tgl)" />
+			<switch number="15" patchName="Reverb 2 Stack (tgl)" />
 
 			<switch number="22" command="BankHistoryBackward" />
 		</bank>
@@ -2706,7 +3036,7 @@
 			<switch number="9" patchName="Axe Cabinet 2 Ch D" />
 			<switch number="10" patchName="Cab 2" />
 
-			<switch number="11" command="LoadBank" bankName="Axe-Fx Amp Channels" />
+			<switch number="11" command="LoadBank" bankName="Axe-Fx Amp 1 Channels" />
 			<switch number="12" patchName="" />
 			<switch number="13" patchName="" />
 			<switch number="14" patchName="" />
@@ -3309,6 +3639,6 @@
 
 			<switch number="22" command="BankHistoryBackward" />
 		</bank>
-
+		<!-- end Axe-Fx III axefx3v2 data file banks -->
 	</banks>
 </MidiControlSettings>
