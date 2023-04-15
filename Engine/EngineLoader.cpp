@@ -1500,7 +1500,9 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		{
 			int immediateWrap = 0;
 			pElem->QueryIntAttribute("gaplessRestart", &immediateWrap);
-			newPatch = std::make_shared<PatchListSequencePatch>(patchNumber, patchName, intList, immediateWrap);
+			int initialStep = 0;
+			pElem->QueryIntAttribute("initialStep", &initialStep);
+			newPatch = std::make_shared<PatchListSequencePatch>(patchNumber, patchName, intList, immediateWrap, initialStep);
 		}
 		else if (patchType == "AxeFxTapTempo")
 		{

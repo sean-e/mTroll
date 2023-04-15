@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2012-2013,2015,2017-2018,2020 Sean Echevarria
+ * Copyright (C) 2012-2013,2015,2017-2018,2020,2023 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -43,9 +43,9 @@ using PatchPtr = std::shared_ptr<Patch>;
 class PatchListSequencePatch : public Patch
 {
 public:
-	PatchListSequencePatch(int number, const std::string & name, std::vector<int> & patchList, bool immediateWraparound) :
+	PatchListSequencePatch(int number, const std::string & name, std::vector<int> & patchList, bool immediateWraparound, int initial) :
 		Patch(number, name),
-		mCurIndex(0),
+		mCurIndex(initial),
 		mCurrentSubPatch(nullptr),
 		mImmediateWraparound(immediateWraparound)
 	{

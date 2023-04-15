@@ -1,5 +1,7 @@
 ### mTroll MIDI controller changelog / process milestones
 
+#### 2023.04.15
+- Added support for optional `patchListSequence` attribute `initialStep` to override default initial starting item
 
 #### 2023.03.08
 - Support for automatic repeat of `A` group commands specified in `repeatingToggle` and `repeatingMomentary` patch types (enabling a repeating patch type creates a unique thread for the patch that runs the commands in a loop -- use the [Sleep](docs.md#patchCommands) patch command as needed)
