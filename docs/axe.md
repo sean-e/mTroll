@@ -66,4 +66,4 @@ Refer to the Axe-Fx III optimized [axefx3v2.config.xml](../data/axefx3v2.config.
 a preset on the Axe-Fx III is loaded or whenever a scene change occurs
 - Axe-Fx III scene numbers and names are displayed automatically whenever the preset name is displayed
 - Axe-Fx III effect block active channel is displayed in patch scribble strips when channel changes
-- When using the Axe-Fx II looper block, looper status is displayed on the first line of the display window.  Status is sent by the Axe-Fx III.
+- When using the Axe-Fx III looper block, looper status is displayed on the first line of the display window.  Status is sent by the Axe-Fx III.
