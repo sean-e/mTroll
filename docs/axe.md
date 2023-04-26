@@ -60,6 +60,13 @@ When `AxeProgramChange` command is invoked, a sync will occur and the name of th
 Many of the Axe-Fx and Axe-Fx II notes also apply to Axe-Fx III.
 Refer to the Axe-Fx III optimized [axefx3v2.config.xml](../data/axefx3v2.config.xml) config file.
 
+The config file has default buttons for scenes 1-5 on the bottom row.  The buttons have long-press functions to double their functionality.
+- The button for Scene 1 has long-press support for Scene 6.
+- The button for Scene 2 has long-press support for Scene 7.
+- The button for Scene 3 has long-press support for Scene 8.
+- The button for Scene 4 has long-press support for Decrement Preset.
+- The button for Scene 5 has long-press support for Increment Preset.
+
 #### Main window display
 - Axe-Fx III preset names are displayed automatically on the last line of the display whenever an Axe-Fx program change is issued
 - Axe-Fx III preset names are displayed automatically in the display whenever
