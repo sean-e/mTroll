@@ -2543,10 +2543,15 @@
 			<ExclusiveSwitchGroup>11 12 13 14 15</ExclusiveSwitchGroup>
 			<!-- override toggle behavior so that press doesn't clear LED (not normal so that presets are) -->
 			<switch number="11" patchName="Scene 1" override="A" />
+			<switch number="11" patchName="Scene 6" override="A" secondFunction="immediateToggle" />
 			<switch number="12" patchName="Scene 2" override="A" />
+			<switch number="12" patchName="Scene 7" override="A" secondFunction="immediateToggle" />
 			<switch number="13" patchName="Scene 3" override="A" />
+			<switch number="13" patchName="Scene 8" override="A" secondFunction="immediateToggle" />
 			<switch number="14" patchName="Scene 4" override="A" />
+			<switch number="14" command="AxeFx3DecrementPreset" secondFunction="immediateToggle" />
 			<switch number="15" patchName="Scene 5" override="A" />
+			<switch number="15" command="AxeFx3IncrementPreset" secondFunction="immediateToggle" />
 
 			<!-- Previous and Next Bank switches are not required. -->
 			<switch number="22" command="LoadPreviousBank" />
