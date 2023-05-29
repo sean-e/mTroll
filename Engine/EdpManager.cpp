@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2021-2022 Sean Echevarria
+ * Copyright (C) 2021-2023 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -49,9 +49,13 @@ EdpManager::EdpManager(IMainDisplay * mainDisp, ISwitchDisplay * switchDisp, ITr
 }
 
 void
-EdpManager::SubscribeToMidiIn(IMidiInPtr midiIn)
+EdpManager::SubscribeToMidiIn(IMidiInPtr midiIn, int deviceIdx)
 {
 	midiIn->Subscribe(shared_from_this());
+
+	const std::string name(midiIn->GetMidiInDeviceName(deviceIdx));
+	if (-1 != name.find("U2MIDI"))
+		mHackForCmeInterface = true;
 }
 
 void
@@ -78,10 +82,26 @@ IsEdpSysex(const byte * bytes, const int len)
 }
 
 bool
-EdpManager::ReceivedSysex(const byte * bytes, int len)
+EdpManager::ReceivedSysex(const byte * bytesIn, int len)
 {
-	if (!::IsEdpSysex(bytes, len))
+	if (!::IsEdpSysex(bytesIn, len))
 		return false;
+
+	const byte* bytes = bytesIn;
+	std::vector<byte> backingStore;
+	if (mHackForCmeInterface)
+	{
+		// EDP sends a SYSTEM RESET (0xFF) message in response to local data request.
+		// EDP sends 2 SYSTEM RESET (0xFF) messages in response to global data request.
+		// CME U2MIDI Pro interface munges those SYSTEM RESET messages into the SYSEX bytes.
+		backingStore.reserve(len);
+		for (int idx = 0; idx < len; ++idx)
+			if (bytesIn[idx] != 0xFF)
+				backingStore.push_back(bytesIn[idx]);
+
+		len = backingStore.size();
+		bytes = &backingStore[0];
+	}
 
 	if (len < 12)
 		return true;

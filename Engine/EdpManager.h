@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2021 Sean Echevarria
+ * Copyright (C) 2021,2023 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -47,7 +47,7 @@ public:
 	EdpManager(IMainDisplay * mainDisp, ISwitchDisplay * switchDisp, ITraceDisplay * pTrace);
 	virtual ~EdpManager() = default;
 
-	void SubscribeToMidiIn(IMidiInPtr midiIn);
+	void SubscribeToMidiIn(IMidiInPtr midiIn, int deviceIdx);
 
 	static Bytes GetGlobalStateRequest()
 	{
@@ -73,6 +73,7 @@ private:
 	IMainDisplay	* mMainDisplay;
 	ITraceDisplay	* mTrace;
 	ISwitchDisplay	* mSwitchDisplay;
+	bool			mHackForCmeInterface = false;
 };
 
 #endif // EdpManager_h__

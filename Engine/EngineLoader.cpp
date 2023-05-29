@@ -394,7 +394,7 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 					if (mAxeFxManager && port == mAxeSyncPort)
 						mAxeFxManager->SubscribeToMidiIn(midiIn);
 					if (mEdpManager && port == mEdpPort)
-						mEdpManager->SubscribeToMidiIn(midiIn);
+						mEdpManager->SubscribeToMidiIn(midiIn, inDeviceIdx);
 				}
 			}
 		}

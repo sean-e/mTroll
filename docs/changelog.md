@@ -1,5 +1,8 @@
 ### mTroll MIDI controller changelog / process milestones
 
+#### 2023.05.28
+- Fix for bad sysex stream from Echoplex when using CME U2MIDI Pro interface
+
 #### 2023.04.15
 - Added support for optional `patchListSequence` attribute `initialStep` to override default initial starting item
 - Updated Axe-Fx III config file adding sysex commands for Delay and Reverb Hold/Stack params and various Amp block params
