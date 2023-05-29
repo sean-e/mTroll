@@ -2,6 +2,7 @@
 
 #### 2023.05.28
 - Fix for bad sysex stream from Echoplex when using CME U2MIDI Pro interface
+- Rearrange Echoplex local param data display
 
 #### 2023.04.15
 - Added support for optional `patchListSequence` attribute `initialStep` to override default initial starting item

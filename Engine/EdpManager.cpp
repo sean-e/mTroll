@@ -234,9 +234,10 @@ EdpManager::ReceiveLocalParamData(const byte * bytes, int len)
 	dispMsg << "\nRecord mode: " << ::EdpEnumToString(static_cast<EdpRecordMode>(bytes[(int)EdpLocalParamIndexes::RecordMode + kByteOffset]));
 	dispMsg << "\nOverdub mode: " << ::EdpEnumToString(static_cast<EdpOverdubMode>(bytes[(int)EdpLocalParamIndexes::OverdubMode + kByteOffset]));
 	dispMsg << "\nInsert mode: " << ::EdpEnumToString(static_cast<EdpInsertMode>(bytes[(int)EdpLocalParamIndexes::InsertMode + kByteOffset]));
+	dispMsg << "\nTime quantize mode: " << ::EdpEnumToString(static_cast<EdpTimeQuantization>(bytes[(int)EdpLocalParamIndexes::TimingQuantization + kByteOffset]));
+	dispMsg << "\n8th/cycle: " << ::DecodeEdpEighthsPerCycle(bytes[(int)EdpLocalParamIndexes::EighthsPerCycle + kByteOffset]);
 	dispMsg << "\nMute mode: " << ::EdpEnumToString(static_cast<EdpMuteMode>(bytes[(int)EdpLocalParamIndexes::MuteMode + kByteOffset]));
 	dispMsg << "\nRound mode: " << ::EdpEnumToString(static_cast<EdpRoundMode>(bytes[(int)EdpLocalParamIndexes::RoundMode + kByteOffset]));
-	dispMsg << "\nTime quantization: " << ::EdpEnumToString(static_cast<EdpTimeQuantization>(bytes[(int)EdpLocalParamIndexes::TimingQuantization + kByteOffset]));
 
 	dispMsg << "\nNext loop switch quantization: " << ::EdpEnumToString(static_cast<EdpLoopSwitchQuant>(bytes[(int)EdpLocalParamIndexes::SwitchLoopQuantization + kByteOffset]));
 	dispMsg << "\nNext loop copy: " << ::EdpEnumToString(static_cast<EdpNextLoopCopy>(bytes[(int)EdpLocalParamIndexes::NextLoopCopy + kByteOffset]));
@@ -244,7 +245,6 @@ EdpManager::ReceiveLocalParamData(const byte * bytes, int len)
 	dispMsg << "\nSampler style: " << ::EdpEnumToString(static_cast<EdpSamplerStyle>(bytes[(int)EdpLocalParamIndexes::SamplerStyle + kByteOffset]));
 
 	dispMsg << "\nRecord trigger threshold: " << (int)bytes[(int)EdpLocalParamIndexes::TrigThreshold + kByteOffset];
-	dispMsg << "\n8th/cycle: " << ::DecodeEdpEighthsPerCycle(bytes[(int)EdpLocalParamIndexes::EighthsPerCycle + kByteOffset]);
 	dispMsg << "\nInterface mode: " << ::EdpEnumToString(static_cast<EdpInterfaceModes>(bytes[(int)EdpLocalParamIndexes::InterfaceMode + kByteOffset]));
 	dispMsg << "\nLoops: " << (int)bytes[(int)EdpLocalParamIndexes::MoreLoops + kByteOffset] + 1;
 	dispMsg << "\nSync mode: " << ::EdpEnumToString(static_cast<EdpSyncMode>(bytes[(int)EdpLocalParamIndexes::SyncMode + kByteOffset]));
