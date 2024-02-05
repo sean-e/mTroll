@@ -1,6 +1,6 @@
 ### mTroll MIDI controller changelog / process milestones
 
-#### 2024.02.xx
+#### 2024.02.05
 - Added a [SleepRandom](docs.md#patchCommands) patch command.  
 
 #### 2023.05.28
