@@ -21,13 +21,13 @@
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -215,6 +215,7 @@
     <ClInclude Include="..\Engine\AxeFx3EffectIds.h" />
     <ClInclude Include="..\Engine\AxeFxModel.h" />
     <ClInclude Include="..\Engine\AxeMomentaryPatch.h" />
+    <ClInclude Include="..\Engine\BaseSleepCommand.h" />
     <ClInclude Include="..\Engine\CompositeTogglePatch.h" />
     <ClInclude Include="..\Engine\ControllerInputMonitor.h" />
     <ClInclude Include="..\Engine\ControllerTogglePatch.h" />
@@ -227,6 +228,7 @@
     <ClInclude Include="..\Engine\RepeatingMomentaryPatch.h" />
     <ClInclude Include="..\Engine\RepeatingPatch.h" />
     <ClInclude Include="..\Engine\RepeatingTogglePatch.h" />
+    <ClInclude Include="..\Engine\SleepRandomCommand.h" />
     <ClInclude Include="..\midi\SleepShort.h" />
     <ClInclude Include="..\winUtil\WinDark.h" />
     <ClInclude Include="AboutDlg.h" />

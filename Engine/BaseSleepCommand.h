@@ -22,31 +22,33 @@
  * Contact Sean: "fester" at the domain of the original project site
  */
 
-#ifndef SleepCommand_h__
-#define SleepCommand_h__
+#ifndef BaseSleepCommand_h__
+#define BaseSleepCommand_h__
 
-#include "BaseSleepCommand.h"
+#include "IPatchCommand.h"
+#include "IMidiOut.h"
+#ifdef _WINDOWS
+#include <windows.h>
+	#define SLEEP	Sleep
+	#undef TextOut		// stupid unicode support defines TextOut to TextOutW
+#else
+	#define SLEEP	sleep
+#endif // _WINDOWS
 
 
-class SleepCommand : public BaseSleepCommand
+
+class BaseSleepCommand : public IPatchCommand
 {
 public:
-	SleepCommand(int sleepAmt) noexcept :
-		mSleepAmt(sleepAmt)
+	BaseSleepCommand() = default;
+
+	virtual void Exec() override
 	{
+		SLEEP(GetSleepAmount()); // amount in milliseconds
 	}
 
 protected:
-	int GetSleepAmount() noexcept override
-	{
-		return mSleepAmt;
-	}
-
-private:
-	SleepCommand();
-
-private:
-	int			mSleepAmt;
+	virtual int GetSleepAmount() = 0;
 };
 
-#endif // SleepCommand_h__
+#endif // BaseSleepCommand_h__

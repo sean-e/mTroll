@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2009-2010,2018,2024 Sean Echevarria
+ * Copyright (C) 2024 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -22,31 +22,33 @@
  * Contact Sean: "fester" at the domain of the original project site
  */
 
-#ifndef SleepCommand_h__
-#define SleepCommand_h__
+#ifndef SleepRandomCommand_h__
+#define SleepRandomCommand_h__
 
+#include <random>
 #include "BaseSleepCommand.h"
 
 
-class SleepCommand : public BaseSleepCommand
+class SleepRandomCommand : public BaseSleepCommand
 {
 public:
-	SleepCommand(int sleepAmt) noexcept :
-		mSleepAmt(sleepAmt)
+	SleepRandomCommand(int minSleepAmt, int maxSleepAmt) :
+		mDistribution(minSleepAmt, maxSleepAmt)
 	{
 	}
 
 protected:
-	int GetSleepAmount() noexcept override
+	int GetSleepAmount() override
 	{
-		return mSleepAmt;
+		return mDistribution(mGenerator);
 	}
 
 private:
-	SleepCommand();
+	SleepRandomCommand();
 
 private:
-	int			mSleepAmt;
+	std::default_random_engine mGenerator;
+	std::uniform_int_distribution<int> mDistribution;
 };
 
-#endif // SleepCommand_h__
+#endif // SleepRandomCommand_h__

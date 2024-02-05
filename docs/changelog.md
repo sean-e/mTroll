@@ -1,5 +1,8 @@
 ### mTroll MIDI controller changelog / process milestones
 
+#### 2024.02.xx
+- Added a [SleepRandom](docs.md#patchCommands) patch command.  
+
 #### 2023.05.28
 - Fix for bad sysex stream from Echoplex when using CME U2MIDI Pro interface
 - Rearrange Echoplex local param data display

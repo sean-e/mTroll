@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2015,2018,2020-2023 Sean Echevarria
+ * Copyright (C) 2007-2015,2018,2020-2024 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -63,6 +63,7 @@
 #include "ControllerInputMonitor.h"
 #include "RepeatingMomentaryPatch.h"
 #include "RepeatingTogglePatch.h"
+#include "SleepRandomCommand.h"
 
 
 #ifdef _MSC_VER
@@ -73,6 +74,7 @@
 static PatchBank::PatchState GetLoadState(const std::string & tmpLoad);
 static PatchBank::PatchSyncState GetSyncState(const std::string & tmpLoad);
 static PatchBank::SecondFunctionOperation GetSecondFuncOp(const std::string & tmp);
+static void ReadTwoIntValues(std::string tmp, int & val1, int & val2);
 
 EngineLoader::EngineLoader(ITrollApplication * app,
 						   IMidiOutGenerator * midiOutGenerator,
@@ -892,6 +894,29 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				{
 					std::strstream traceMsg;
 					traceMsg << "Error loading config file: no (or invalid) time specified in Sleep in patch " << patchName << '\n' << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
+				continue;
+			}
+			else if (patchElement == "SleepRandom")
+			{
+				std::string sleepAmtStr;
+				if (childElem->GetText())
+					sleepAmtStr = childElem->GetText();
+				int sleepMinAmt = 0;
+				int sleepMaxAmt = 0;
+				::ReadTwoIntValues(sleepAmtStr, sleepMinAmt, sleepMaxAmt);
+				if (0 < sleepMinAmt && 0 < sleepMaxAmt)
+				{
+					if (group == "B")
+						cmds2.push_back(std::make_shared<SleepRandomCommand>(sleepMinAmt, sleepMaxAmt));
+					else
+						cmds.push_back(std::make_shared<SleepRandomCommand>(sleepMinAmt, sleepMaxAmt));
+				}
+				else if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: no (or invalid) times specified in SleepRandom in patch " << patchName << '\n' << std::ends;
 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 				}
 				continue;
@@ -3007,4 +3032,24 @@ GetSecondFuncOp(const std::string & secFuncOp)
 		return PatchBank::sfoStatelessToggle;
 	else
 		return PatchBank::sfoManual;
+}
+
+void
+ReadTwoIntValues(std::string tmp, int & val1, int & val2)
+{
+	if (tmp.empty())
+		return;
+
+	int tokenPos = tmp.find_first_of(" ,:;");
+	if (std::string::npos == tokenPos)
+		return;
+
+	val1 = ::atoi(tmp.c_str());
+
+	tmp = tmp.substr(tokenPos + 1);
+	while ((tokenPos = tmp.find_first_of(" ,:;")) != std::string::npos)
+		tmp = tmp.substr(tokenPos + 1);
+
+	if (!tmp.empty())
+		val2 = ::atoi(tmp.c_str());
 }
