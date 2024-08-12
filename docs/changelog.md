@@ -1,5 +1,8 @@
 ### mTroll MIDI controller changelog / process milestones
 
+#### 2024.08.xx
+- Added support for specifying MIDI note values by name. #30
+
 #### 2024.02.05
 - Added a [SleepRandom](docs.md#patchCommands) patch command.  
 
