@@ -64,6 +64,7 @@
 #include "RepeatingMomentaryPatch.h"
 #include "RepeatingTogglePatch.h"
 #include "SleepRandomCommand.h"
+#include "DynamicMidiCommand.h"
 
 
 #ifdef _MSC_VER
@@ -755,6 +756,7 @@ EngineLoader::GeneratePatchNumbers(TiXmlElement* pElem)
 void
 EngineLoader::LoadPatches(TiXmlElement * pElem)
 {
+	bool dynamicPortInit = false;
 	for ( ; pElem; pElem = pElem->NextSiblingElement())
 	{
 		std::string patchName;
@@ -771,12 +773,21 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		std::string patchType;
 		pElem->QueryValueAttribute("type", &patchType);
 
+		bool isDynamicDevice = false;
 		std::string device;
 		if (pElem->Attribute("device"))
+		{
 			device = pElem->Attribute("device");
+			if (device == "*")
+			{
+				isDynamicDevice = true;
+				device.clear();
+			}
+		}
 
 		// optional default channel in <patch> so that it doesn't need to be specified in each patch command
 		int patchDefaultCh = -1;
+		bool isDynamicCh = false;
 		{
 			std::string chStr;
 			pElem->QueryValueAttribute("channel", &chStr);
@@ -785,38 +796,67 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 
 			if (!chStr.empty())
 			{
-				patchDefaultCh = ::atoi(chStr.c_str()) - 1;
-				if (patchDefaultCh < 0 || patchDefaultCh > 15)
+				if (chStr == "*")
 				{
-					if (mTraceDisplay)
+					// potentially isDynamicCh
+					isDynamicDevice = true;
+				}
+				else
+				{
+					patchDefaultCh = ::atoi(chStr.c_str()) - 1;
+					if (patchDefaultCh < 0 || patchDefaultCh > 15)
 					{
-						std::strstream traceMsg;
-						traceMsg << "Error loading config file: invalid command channel in patch " << patchName << '\n' << std::ends;
-						mTraceDisplay->Trace(std::string(traceMsg.str()));
+						if (mTraceDisplay)
+						{
+							std::strstream traceMsg;
+							traceMsg << "Error loading config file: invalid command channel in patch " << patchName << '\n' << std::ends;
+							mTraceDisplay->Trace(std::string(traceMsg.str()));
+						}
+						patchDefaultCh = -1;
 					}
-					patchDefaultCh = -1;
 				}
 			}
 		}
 
+		bool isDynamicPort = false;
 		int midiOutPortNumber = -1;
-		pElem->QueryIntAttribute("port", &midiOutPortNumber);
-		if (-1 == midiOutPortNumber && !device.empty())
-			midiOutPortNumber = mDevicePorts[device]; // see if a port mapping was set up for the device
+		if (TIXML_WRONG_TYPE == pElem->QueryIntAttribute("port", &midiOutPortNumber))
+		{
+			const std::string portStr(pElem->Attribute("port"));
+			if (portStr == "*")
+				isDynamicPort = true;
+		}
 
-		if (-1 == midiOutPortNumber)
-			midiOutPortNumber = 1;
+		if (-1 == midiOutPortNumber && !isDynamicPort && device == "*")
+			isDynamicPort = true;
 
 		IMidiOutPtr midiOut;
-		if (mMidiOutPortToDeviceIdxMap.find(midiOutPortNumber) != mMidiOutPortToDeviceIdxMap.end())
+		if (isDynamicPort)
 		{
-			midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[midiOutPortNumber]);
+			if (!dynamicPortInit)
+			{
+				DynamicMidiCommand::SetDynamicPortData(mMidiOutGenerator, mMidiOutPortToDeviceIdxMap);
+				dynamicPortInit = true;
+			}
 		}
-		else if (mTraceDisplay)
+		else
 		{
-			std::strstream traceMsg;
-			traceMsg << "Error loading patch: device port not mapped to midi device for patchname: " << patchName << '\n' << std::ends;
-			mTraceDisplay->Trace(std::string(traceMsg.str()));
+			if (-1 == midiOutPortNumber && !device.empty())
+				midiOutPortNumber = mDevicePorts[device]; // see if a port mapping was set up for the device
+
+			if (-1 == midiOutPortNumber)
+				midiOutPortNumber = 1;
+
+			if (mMidiOutPortToDeviceIdxMap.find(midiOutPortNumber) != mMidiOutPortToDeviceIdxMap.end())
+			{
+				midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[midiOutPortNumber]);
+			}
+			else if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading patch: device port not mapped to midi device for patchname: " << patchName << '\n' << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
 		}
 
 		IAxeFxPtr mgr = GetAxeMgr(pElem);
@@ -831,6 +871,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			 childElem; 
 			 childElem = childElem->NextSiblingElement())
 		{
+			bool isDynamicVel = false;
 			Bytes bytes;
 			const std::string& patchElement = childElem->ValueStr();
 			std::string group;
@@ -922,6 +963,92 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				}
 				continue;
 			}
+			else if (patchElement == "SetDynamicPort")
+			{
+				std::string portStr;
+				if (childElem->GetText())
+					portStr = childElem->GetText();
+				const int portVal = ::atoi(portStr.c_str());
+				if (0 <= portVal && 16 > portVal)
+				{
+					if (group == "B")
+						cmds2.push_back(std::make_shared<SetDynamicPortCommand>(portVal));
+					else
+						cmds.push_back(std::make_shared<SetDynamicPortCommand>(portVal));
+				}
+				else if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: no (or invalid) velocity specified in SetDynamicPort in patch " << patchName << '\n' << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
+				continue;
+			}
+			else if (patchElement == "SetDynamicChannel")
+			{
+				std::string channelStr;
+				if (childElem->GetText())
+					channelStr = childElem->GetText();
+				const int channelVal = ::atoi(channelStr.c_str());
+				if (0 <= channelVal && 16 > channelVal)
+				{
+					if (group == "B")
+						cmds2.push_back(std::make_shared<SetDynamicChannelCommand>(channelVal));
+					else
+						cmds.push_back(std::make_shared<SetDynamicChannelCommand>(channelVal));
+				}
+				else if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: no (or invalid) velocity specified in SetDynamicChannel in patch " << patchName << '\n' << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
+				continue;
+			}
+			else if (patchElement == "SetDynamicChannelVelocity")
+			{
+				std::string velocityStr;
+				if (childElem->GetText())
+					velocityStr = childElem->GetText();
+				const int velocityVal = ::atoi(velocityStr.c_str());
+				if (0 <= velocityVal && 128 > velocityVal)
+				{
+					if (group == "B")
+						cmds2.push_back(std::make_shared<SetDynamicChannelVelocityCommand>(velocityVal));
+					else
+						cmds.push_back(std::make_shared<SetDynamicChannelVelocityCommand>(velocityVal));
+				}
+				else if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: no (or invalid) velocity specified in SetDynamicChannelVelocity in patch " << patchName << '\n' << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
+				continue;
+			}
+			else if (patchElement == "SetDynamicChannelRandomVelocity")
+			{
+				std::string randomAmtStr;
+				if (childElem->GetText())
+					randomAmtStr = childElem->GetText();
+				int randomMinVal = 0;
+				int randomMaxVal = 0;
+				::ReadTwoIntValues(randomAmtStr, randomMinVal, randomMaxVal);
+				if (0 <= randomMinVal && 0 <= randomMaxVal && randomMinVal < randomMaxVal && 128 > randomMaxVal)
+				{
+					if (group == "B")
+						cmds2.push_back(std::make_shared<SetDynamicChannelRandomVelocityCommand>(randomMinVal, randomMaxVal));
+					else
+						cmds.push_back(std::make_shared<SetDynamicChannelRandomVelocityCommand>(randomMinVal, randomMaxVal));
+				}
+				else if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: no (or invalid) times specified in SetDynamicChannelRandomVelocity in patch " << patchName << '\n' << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
+				continue;
+			}
 			else if (patchElement == "localExpr")
 				continue;
 			else if (patchElement == "globalExpr")
@@ -997,7 +1124,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			{
 				std::string chStr;
 				childElem->QueryValueAttribute("channel", &chStr);
-				if (chStr.empty())
+				if (chStr.empty() && !isDynamicDevice)
 				{
 					std::string device2;
 					if (childElem->Attribute("device"))
@@ -1020,23 +1147,33 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				}
 
 				int ch = -1;
-				if (!chStr.empty())
-					ch = ::atoi(chStr.c_str()) - 1;
-
-				if (ch < 0 || ch > 15)
+				if (chStr == "*" || (isDynamicDevice && chStr.empty()))
 				{
-					if (patchDefaultCh < 0 || patchDefaultCh > 15)
+					// explicitly requested dynamic channel, 
+					// but if the command type doesn't support dynamic channel, then default to 0.
+					// at present, only ProgramChange and NoteOn support dynamic channel.
+					ch = 0;
+				}
+				else
+				{
+					if (!chStr.empty())
+						ch = ::atoi(chStr.c_str()) - 1;
+
+					if (ch < 0 || ch > 15)
 					{
-						if (mTraceDisplay)
+						if (patchDefaultCh < 0 || patchDefaultCh > 15)
 						{
-							std::strstream traceMsg;
-							traceMsg << "Error loading config file: invalid command channel in patch " << patchName << '\n' << std::ends;
-							mTraceDisplay->Trace(std::string(traceMsg.str()));
+							if (mTraceDisplay)
+							{
+								std::strstream traceMsg;
+								traceMsg << "Error loading config file: invalid command channel in patch " << patchName << '\n' << std::ends;
+								mTraceDisplay->Trace(std::string(traceMsg.str()));
+							}
+							continue;
 						}
-						continue;
+						else
+							ch = patchDefaultCh;
 					}
-					else
-						ch = patchDefaultCh;
 				}
 
 				byte cmdByte = 0;
@@ -1047,6 +1184,8 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				{
 					// <ProgramChange group="A" channel="0" program="0" />
 					childElem->QueryIntAttribute("program", &data1);
+					if (chStr == "*" || (chStr.empty() && isDynamicDevice))
+						isDynamicCh = true;
 					cmdByte = 0xc0;
 					useDataByte2 = false;
 				}
@@ -1135,15 +1274,24 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				{
 					// <NoteOn group="B" channel="0" note="60" velocity="120" />
 					// <NoteOn group="B" channel="0" note="C4" velocity="120" />
+					if (chStr == "*" || (chStr.empty() && isDynamicDevice))
+						isDynamicCh = true;
 					const std::string noteData(childElem->Attribute("note"));
 					data1 = StringToNoteValue(noteData.c_str());
-					childElem->QueryIntAttribute("velocity", &data2);
+					if (TIXML_WRONG_TYPE == childElem->QueryIntAttribute("velocity", &data2))
+					{
+						const std::string velStr(childElem->Attribute("velocity"));
+						if (velStr == "*")
+							isDynamicVel = true;
+					}
 					cmdByte = 0x90;
 				}
 				else if (patchElement == "NoteOff")
 				{
 					// <NoteOff group="B" channel="0" note="60" velocity="0" />
 					// <NoteOff group="B" channel="0" note="C4" velocity="0" />
+					if (chStr == "*" || (chStr.empty() && isDynamicDevice))
+						isDynamicCh = true;
 					const std::string noteData(childElem->Attribute("note"));
 					data1 = ::StringToNoteValue(noteData.c_str());
 					childElem->QueryIntAttribute("velocity", &data2);
@@ -1169,7 +1317,10 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 						continue;
 					}
 
-					bytes.push_back(cmdByte | ch);
+					if (isDynamicCh)
+						bytes.push_back(cmdByte);
+					else
+						bytes.push_back(cmdByte | ch);
 					bytes.push_back(data1);
 					if (useDataByte2)
 						bytes.push_back(data2);
@@ -1178,10 +1329,26 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 
 			if (!bytes.empty())
 			{
+				// If isDynamicPort, midiOut will be nullptr
+				_ASSERTE(!isDynamicPort || !midiOut);
+
+				// commented out check for isDynamicPort because if that is the only dynamic 
+				// element, then too many additional commands would need to be supported.
+				// Dynamic port then is really only supported for program change, note on, and note off.
 				if (group == "B")
-					cmds2.push_back(std::make_shared<MidiCommandString>(midiOut, bytes));
+				{
+					if (/*isDynamicPort ||*/ isDynamicCh || isDynamicVel)
+						cmds2.push_back(std::make_shared<DynamicMidiCommand>(midiOut, bytes, isDynamicCh, isDynamicVel));
+					else
+						cmds2.push_back(std::make_shared<MidiCommandString>(midiOut, bytes));
+				}
 				else
-					cmds.push_back(std::make_shared<MidiCommandString>(midiOut, bytes));
+				{
+					if (/*isDynamicPort ||*/ isDynamicCh || isDynamicVel)
+						cmds.push_back(std::make_shared<DynamicMidiCommand>(midiOut, bytes, isDynamicCh, isDynamicVel));
+					else
+						cmds.push_back(std::make_shared<MidiCommandString>(midiOut, bytes));
+				}
 			}
 		}
 

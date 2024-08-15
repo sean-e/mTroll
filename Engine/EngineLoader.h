@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2018,2020,2021,2023 Sean Echevarria
+ * Copyright (C) 2007-2010,2018,2020,2021,2023-2024 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -51,6 +51,7 @@ using MidiControlEnginePtr = std::shared_ptr<MidiControlEngine>;
 using AxeFxManagerPtr = std::shared_ptr<AxeFxManager>;
 using AxeFx3ManagerPtr = std::shared_ptr<AxeFx3Manager>;
 using EdpManagerPtr = std::shared_ptr<EdpManager>;
+using MidiPortToDeviceIdxMap = std::map<int, unsigned int>;
 
 constexpr unsigned int kFirstColorPreset = 0x80000000;
 constexpr unsigned int kPresetColorMarkerBit = 0x80000000;
@@ -86,7 +87,6 @@ private:
 	unsigned int			GetMidiOutDeviceIndex(std::string outDevice);
 	unsigned int			GetMidiInDeviceIndex(std::string inDevice);
 
-	using MidiPortToDeviceIdxMap = std::map<int, unsigned int>;
 	MidiPortToDeviceIdxMap	mMidiOutPortToDeviceIdxMap;
 	MidiPortToDeviceIdxMap	mMidiInPortToDeviceIdxMap;
 	enum AdcEnableState {adc_default, adc_used, adc_forceOn, adc_forceOff};

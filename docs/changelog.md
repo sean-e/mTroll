@@ -1,7 +1,11 @@
 ### mTroll MIDI controller changelog / process milestones
 
 #### 2024.08.xx
-- Added support for specifying MIDI note values by name. #30
+- Added support for dynamic channel in `NoteOn` and `ProgramChange` commands (via patch command `SetDynamicChannel`). #28
+- Added support for dynamic velocity in `NoteOn` commands (via patch command `SetDynamicChannelVelocity`). #28
+- Added support for dynamic random velocity in `NoteOn` commands (via patch command `SetDynamicChannelRandomVelocity`). #31
+- Added support for dynamic output port in `NoteOn` commands (via patch command `SetDynamicPort`). #28
+- Added support for specifying MIDI note values by name (for example, `C4`) in `NoteOn` commands (note value range of 0-127 mapped to note names C-1 to G9). #30
 
 #### 2024.02.05
 - Added a [SleepRandom](docs.md#patchCommands) patch command.  
