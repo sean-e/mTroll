@@ -75,6 +75,7 @@ private:
 	void					LoadLedPresetColors(TiXmlElement * pElem);
 	void					LoadLedDefaultColors(TiXmlElement * pElem);
 	void					LoadExpressionPedalSettings(TiXmlElement * pElem, ExpressionPedals &pedals, int defaultChannel);
+	void					GenerateDefaultNotePatches();
 	void					GeneratePatchNumbers(TiXmlElement* pElem);
 	void					LoadPatches(TiXmlElement * pElem);
 	void					LoadElementColorAttributes(TiXmlElement * pElem, unsigned int &ledActiveColor, unsigned int &ledInactiveColor);
