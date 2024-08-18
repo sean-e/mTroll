@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2013,2015,2018,2020-2022 Sean Echevarria
+ * Copyright (C) 2007-2013,2015,2018,2020-2022,2024 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -46,6 +46,7 @@
 #include "MetaPatch_ResetBankPatches.h"
 #include "MetaPatch_SyncAxeFx.h"
 #include "MetaPatch_AxeFxNav.h"
+#include "DynamicMidiCommand.h"
 
 
 #ifdef _MSC_VER
@@ -354,6 +355,7 @@ void
 MidiControlEngine::Shutdown()
 {
 	gActivePatchPedals = nullptr;
+	DynamicMidiCommand::ReleaseDynamicData();
 	for (const auto& mgr : mAxeMgrs)
 		mgr->Shutdown();
 	mAxeMgrs.clear();

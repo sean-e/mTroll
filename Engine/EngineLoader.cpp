@@ -175,6 +175,7 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 		return mEngine;
 	}
 
+	DynamicMidiCommand::InitDynamicData(mMidiOutGenerator, mMidiOutPortToDeviceIdxMap);
 	GenerateDefaultNotePatches();
 
 	pElem = hRoot.FirstChild("patches").FirstChildElement().Element();
@@ -802,18 +803,14 @@ EngineLoader::GenerateDefaultNotePatches()
 		PatchCommands cmds, cmds2;
 
 		{
-			Bytes bytes;
-			bytes.push_back(0x90); // NoteOn
-			bytes.push_back(it.second);
-			bytes.push_back(0);
+			// NoteOn
+			Bytes bytes { 0x90, (byte)it.second, 0 };
 			cmds.push_back(std::make_shared<DynamicMidiCommand>(nullptr, bytes, true, true));
 		}
 
 		{
-			Bytes bytes;
-			bytes.push_back(0x80); // NoteOff
-			bytes.push_back(it.second);
-			bytes.push_back(0);
+			// NoteOff
+			Bytes bytes { 0x80, (byte)it.second, 0 };
 			cmds2.push_back(std::make_shared<DynamicMidiCommand>(nullptr, bytes, true, false));
 		}
 
@@ -825,7 +822,6 @@ EngineLoader::GenerateDefaultNotePatches()
 void
 EngineLoader::LoadPatches(TiXmlElement * pElem)
 {
-	bool dynamicPortInit = false;
 	for ( ; pElem; pElem = pElem->NextSiblingElement())
 	{
 		std::string patchName;
@@ -900,15 +896,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			isDynamicPort = true;
 
 		IMidiOutPtr midiOut;
-		if (isDynamicPort)
-		{
-			if (!dynamicPortInit)
-			{
-				DynamicMidiCommand::SetDynamicPortData(mMidiOutGenerator, mMidiOutPortToDeviceIdxMap);
-				dynamicPortInit = true;
-			}
-		}
-		else
+		if (!isDynamicPort)
 		{
 			if (-1 == midiOutPortNumber && !device.empty())
 				midiOutPortNumber = mDevicePorts[device]; // see if a port mapping was set up for the device

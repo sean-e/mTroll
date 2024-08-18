@@ -26,90 +26,146 @@
 #include "IMidiOutGenerator.h"
 
 
-// class static member initializers
-IMidiOutGenerator *DynamicMidiCommand::sMidiOutGenerator = nullptr;
-MidiPortToDeviceIdxMap DynamicMidiCommand::sMidiOutPortToDeviceIdxMap { };
-int DynamicMidiCommand::sDynamicOutPort = 0;
-IMidiOutPtr DynamicMidiCommand::sDynamicMidiOut[kMaxDynamicPorts];
-int DynamicMidiCommand::sDynamicChannel = 0;
-constexpr int kDefaultVelocity = 127;
-// upper and lower are same if not random; start out dynamic but not random
-int DynamicMidiCommand::sRandomNoteVelocityLower[kMidiChannels] { 
-	kDefaultVelocity, kDefaultVelocity, kDefaultVelocity, kDefaultVelocity, 
-	kDefaultVelocity, kDefaultVelocity, kDefaultVelocity, kDefaultVelocity, 
-	kDefaultVelocity, kDefaultVelocity, kDefaultVelocity, kDefaultVelocity, 
-	kDefaultVelocity, kDefaultVelocity, kDefaultVelocity, kDefaultVelocity 
+class DynamicMidiData
+{
+public:
+	DynamicMidiData(IMidiOutGenerator *midiOutGen, const MidiPortToDeviceIdxMap &portMap) :
+		mMidiOutGenerator(midiOutGen),
+		mMidiOutPortToDeviceIdxMap(portMap)
+	{
+		if (!mMidiOutPortToDeviceIdxMap.empty())
+		{
+			// set default out port to first in the map
+			SetDynamicOutPort((*mMidiOutPortToDeviceIdxMap.begin()).first);
+		}
+	}
+
+	void SetDynamicOutPort(int port)
+	{
+		if (!mMidiOutGenerator)
+		{
+			_ASSERTE(mMidiOutGenerator);
+			return;
+		}
+
+		if (port < 0 || port >= kMaxDynamicPorts)
+		{
+			_ASSERTE(!"unhandled dynamic port number");
+			return;
+		}
+
+		mDynamicOutPort = port;
+
+		if (mMidiOutPortToDeviceIdxMap.find(mDynamicOutPort) != mMidiOutPortToDeviceIdxMap.end())
+			mDynamicMidiOut[mDynamicOutPort] = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[mDynamicOutPort]);
+	}
+
+	IMidiOutPtr GetDynamicMidiOut() const
+	{
+		return mDynamicMidiOut[mDynamicOutPort];
+	}
+
+	int GetDynamicOutPort() const { return mDynamicOutPort; }
+
+	void SetDynamicChannel(int ch)
+	{
+		if (ch >= 0 && ch < kMidiChannels)
+			mDynamicChannel = ch;
+	}
+
+	int GetDynamicChannel() const { return mDynamicChannel; }
+
+	void SetDynamicChannelVelocity(int vel)
+	{
+		mRandomNoteVelocityLower[mDynamicChannel] = mRandomNoteVelocityUpper[mDynamicChannel] = vel;
+	}
+
+	void SetDynamicChannelRandomVelocity(int lowerVel, int upperVel)
+	{
+		if (lowerVel == upperVel)
+		{
+			SetDynamicChannelVelocity(lowerVel);
+			return;
+		}
+
+		mRandomNoteVelocityLower[mDynamicChannel] = lowerVel;
+		mRandomNoteVelocityUpper[mDynamicChannel] = upperVel;
+		mRandomVelocityDistribution[mDynamicChannel] = std::uniform_int_distribution<int>(mRandomNoteVelocityLower[mDynamicChannel], mRandomNoteVelocityUpper[mDynamicChannel]);
+	}
+
+	int GetDynamicVelocity()
+	{
+		if (mRandomNoteVelocityLower[mDynamicChannel] == mRandomNoteVelocityUpper[mDynamicChannel])
+			return (byte)mRandomNoteVelocityLower[mDynamicChannel];
+		return (byte)mRandomVelocityDistribution[mDynamicChannel](mGenerator);
+	}
+
+private:
+	DynamicMidiData() = delete;
+
+	// state used by SetDynamicOutPort, required to get IMidiOut for a given port
+	IMidiOutGenerator *mMidiOutGenerator = nullptr;
+	MidiPortToDeviceIdxMap mMidiOutPortToDeviceIdxMap{};
+
+
+	static constexpr int kMidiChannels = 16;
+	static constexpr int kMaxDynamicPorts = 16;
+	static constexpr int kDefaultVelocity = 127;
+
+	int mDynamicOutPort = 0; // used as index into the sDynamicMidiOut array
+	IMidiOutPtr mDynamicMidiOut[kMaxDynamicPorts];
+
+	int mDynamicChannel = 0; // used as index into the next 3 arrays
+	// velocity can be set independently per channel (even though channel in a particular 
+	// command instance might not be dynamic)
+	// upper and lower are same if not random; start out dynamic but not random
+	int mRandomNoteVelocityLower[kMidiChannels]{
+		kDefaultVelocity, kDefaultVelocity, kDefaultVelocity, kDefaultVelocity,
+		kDefaultVelocity, kDefaultVelocity, kDefaultVelocity, kDefaultVelocity,
+		kDefaultVelocity, kDefaultVelocity, kDefaultVelocity, kDefaultVelocity,
+		kDefaultVelocity, kDefaultVelocity, kDefaultVelocity, kDefaultVelocity
+	};
+	int mRandomNoteVelocityUpper[kMidiChannels]{
+		kDefaultVelocity, kDefaultVelocity, kDefaultVelocity, kDefaultVelocity,
+		kDefaultVelocity, kDefaultVelocity, kDefaultVelocity, kDefaultVelocity,
+		kDefaultVelocity, kDefaultVelocity, kDefaultVelocity, kDefaultVelocity,
+		kDefaultVelocity, kDefaultVelocity, kDefaultVelocity, kDefaultVelocity
+	};
+	std::uniform_int_distribution<int> mRandomVelocityDistribution[kMidiChannels];
+
+	std::default_random_engine mGenerator;
 };
-int DynamicMidiCommand::sRandomNoteVelocityUpper[kMidiChannels] { 
-	kDefaultVelocity, kDefaultVelocity, kDefaultVelocity, kDefaultVelocity, 
-	kDefaultVelocity, kDefaultVelocity, kDefaultVelocity, kDefaultVelocity, 
-	kDefaultVelocity, kDefaultVelocity, kDefaultVelocity, kDefaultVelocity, 
-	kDefaultVelocity, kDefaultVelocity, kDefaultVelocity, kDefaultVelocity 
-};
-std::uniform_int_distribution<int> DynamicMidiCommand::sRandomVelocityDistribution[kMidiChannels] { };
-std::default_random_engine DynamicMidiCommand::sGenerator{ };
+
+DynamicMidiData* gDynamicMidiData = nullptr;
 
 
 void
-DynamicMidiCommand::SetDynamicPortData(IMidiOutGenerator *midiOutGen, 
-									   const MidiPortToDeviceIdxMap &portMap)
+DynamicMidiCommand::InitDynamicData(IMidiOutGenerator *midiOutGen, 
+								    const MidiPortToDeviceIdxMap &portMap)
 {
-	sMidiOutGenerator = midiOutGen;
-	sMidiOutPortToDeviceIdxMap = portMap;
+	_ASSERTE(!gDynamicMidiData);
+	gDynamicMidiData = new DynamicMidiData(midiOutGen, portMap);
 }
 
 void
-DynamicMidiCommand::SetDynamicOutPort(int port)
+DynamicMidiCommand::ReleaseDynamicData()
 {
-	if (!sMidiOutGenerator)
-	{
-		_ASSERTE(sMidiOutGenerator);
-		return;
-	}
-
-	if (port < 0 || port >= kMaxDynamicPorts)
-	{
-		_ASSERTE(!"unhandled dynamic port number");
-		return;
-	}
-
-	sDynamicOutPort = port;
-
-	if (sMidiOutPortToDeviceIdxMap.find(sDynamicOutPort) != sMidiOutPortToDeviceIdxMap.end())
-		sDynamicMidiOut[sDynamicOutPort] = sMidiOutGenerator->GetMidiOut(sMidiOutPortToDeviceIdxMap[sDynamicOutPort]);
-}
-
-void
-DynamicMidiCommand::SetDynamicChannel(int ch)
-{
-	if (ch >= 0 && ch < kMidiChannels) 
-		sDynamicChannel = ch;
-}
-
-void
-DynamicMidiCommand::SetDynamicChannelVelocity(int vel)
-{
-	sRandomNoteVelocityLower[sDynamicChannel] = sRandomNoteVelocityUpper[sDynamicChannel] = vel;
-}
-
-void
-DynamicMidiCommand::SetDynamicChannelRandomVelocity(int lowerVel, int upperVel)
-{
-	if (lowerVel == upperVel)
-	{
-		SetDynamicChannelVelocity(lowerVel);
-		return;
-	}
-
-	sRandomNoteVelocityLower[sDynamicChannel] = lowerVel;
-	sRandomNoteVelocityUpper[sDynamicChannel] = upperVel;
-	sRandomVelocityDistribution[sDynamicChannel] = std::uniform_int_distribution<int>(sRandomNoteVelocityLower[sDynamicChannel], sRandomNoteVelocityUpper[sDynamicChannel]);
+	auto tmp = gDynamicMidiData;
+	gDynamicMidiData = nullptr;
+	delete tmp;
 }
 
 void
 DynamicMidiCommand::Exec()
 {
-	IMidiOutPtr	curMidiOut = mMidiOut ? mMidiOut : sDynamicMidiOut[sDynamicOutPort];
+	auto pMidiData = gDynamicMidiData;
+	if (!pMidiData)
+	{
+		_ASSERTE(pMidiData);
+		return;
+	}
+
+	IMidiOutPtr	curMidiOut = mMidiOut ? mMidiOut : pMidiData->GetDynamicMidiOut();
 	if (!curMidiOut)
 		return;
 
@@ -122,27 +178,22 @@ DynamicMidiCommand::Exec()
 		{
 			// Note on
 			if (mDynamicChannel)
-				commandString[0] = commandString[0] | sDynamicChannel;
+				commandString[0] = commandString[0] | pMidiData->GetDynamicChannel();
 
 			if (mDynamicVelocity)
-			{
-				if (sRandomNoteVelocityLower[sDynamicChannel] == sRandomNoteVelocityUpper[sDynamicChannel])
-					commandString[2] = (byte)sRandomNoteVelocityLower[sDynamicChannel];
-				else
-					commandString[2] = (byte)sRandomVelocityDistribution[sDynamicChannel](sGenerator);
-			}
+				commandString[2] = pMidiData->GetDynamicVelocity();
 		}
 		else if (mDynamicChannel && (commandString[0] & 0xF0) == 0x80)
 		{
 			// Note off -- don't use dynamic velocity
-			commandString[0] = commandString[0] | sDynamicChannel;
+			commandString[0] = commandString[0] | pMidiData->GetDynamicChannel();
 		}
 
 		curMidiOut->MidiOut(commandString[0], commandString[1], commandString[2]);
 		break;
 	case 2:
 		if (mDynamicChannel && (commandString[0] & 0xF0) == 0xc0)
-			commandString[0] = commandString[0] | sDynamicChannel;
+			commandString[0] = commandString[0] | pMidiData->GetDynamicChannel();
 
 		curMidiOut->MidiOut(commandString[0], commandString[1]);
 		break;
@@ -151,4 +202,56 @@ DynamicMidiCommand::Exec()
 	default:
 		curMidiOut->MidiOut(commandString);
 	}
+}
+
+void
+SetDynamicPortCommand::Exec()
+{
+	auto pMidiData = gDynamicMidiData;
+	if (!pMidiData)
+	{
+		_ASSERTE(pMidiData);
+		return;
+	}
+
+	pMidiData->SetDynamicOutPort(mPort);
+}
+
+void
+SetDynamicChannelCommand::Exec()
+{
+	auto pMidiData = gDynamicMidiData;
+	if (!pMidiData)
+	{
+		_ASSERTE(pMidiData);
+		return;
+	}
+
+	pMidiData->SetDynamicChannel(mChannel);
+}
+
+void
+SetDynamicChannelVelocityCommand::Exec()
+{
+	auto pMidiData = gDynamicMidiData;
+	if (!pMidiData)
+	{
+		_ASSERTE(pMidiData);
+		return;
+	}
+
+	pMidiData->SetDynamicChannelVelocity(mVelocity);
+}
+
+void
+SetDynamicChannelRandomVelocityCommand::Exec()
+{
+	auto pMidiData = gDynamicMidiData;
+	if (!pMidiData)
+	{
+		_ASSERTE(pMidiData);
+		return;
+	}
+
+	pMidiData->SetDynamicChannelRandomVelocity(mMinVelocity, mMaxVelocity);
 }

@@ -36,9 +36,6 @@ class IMidiOutGenerator;
 
 class DynamicMidiCommand : public IPatchCommand
 {
-	static constexpr int kMidiChannels = 16;
-	static constexpr int kMaxDynamicPorts = 16;
-
 public:
 	DynamicMidiCommand(IMidiOutPtr midiOut,
 					  Bytes & midiString,
@@ -53,11 +50,8 @@ public:
 
 	virtual void Exec() override;
 
-	static void SetDynamicPortData(IMidiOutGenerator *midiOutGen, const MidiPortToDeviceIdxMap &portMap);
-	static void SetDynamicOutPort(int port);
-	static void SetDynamicChannel(int ch);
-	static void SetDynamicChannelVelocity(int vel);
-	static void SetDynamicChannelRandomVelocity(int lowerVel, int upperVel);
+	static void InitDynamicData(IMidiOutGenerator *midiOutGen, const MidiPortToDeviceIdxMap &portMap);
+	static void ReleaseDynamicData();
 
 private:
 	DynamicMidiCommand();
@@ -67,23 +61,6 @@ private:
 	Bytes	mCommandStringTemplate;
 	bool	mDynamicChannel = false;
 	bool	mDynamicVelocity = false;
-
-
-	// state used by SetDynamicOutPort, required to get IMidiOut for a given port
-	static IMidiOutGenerator *sMidiOutGenerator;
-	static MidiPortToDeviceIdxMap sMidiOutPortToDeviceIdxMap;
-
-	static int sDynamicOutPort; // used as index into the sDynamicMidiOut array
-	static IMidiOutPtr sDynamicMidiOut[kMaxDynamicPorts];
-
-	static int sDynamicChannel; // used as index into the next 3 arrays
-	// velocity can be set independently per channel (even though channel in a particular 
-	// command instance might not be dynamic)
-	static int sRandomNoteVelocityLower[kMidiChannels];
-	static int sRandomNoteVelocityUpper[kMidiChannels];
-	static std::uniform_int_distribution<int> sRandomVelocityDistribution[kMidiChannels];
-
-	static std::default_random_engine sGenerator;
 };
 
 
@@ -92,10 +69,7 @@ class SetDynamicPortCommand : public IPatchCommand
 public:
 	SetDynamicPortCommand(int port) : mPort(port) { }
 
-	virtual void Exec() override
-	{
-		DynamicMidiCommand::SetDynamicOutPort(mPort);
-	}
+	virtual void Exec() override;
 
 private:
 	const int mPort;
@@ -109,10 +83,7 @@ class SetDynamicChannelCommand : public IPatchCommand
 public:
 	SetDynamicChannelCommand(int channel) : mChannel(channel) { }
 
-	virtual void Exec() override
-	{
-		DynamicMidiCommand::SetDynamicChannel(mChannel);
-	}
+	virtual void Exec() override;
 
 private:
 	const int mChannel;
@@ -126,10 +97,7 @@ class SetDynamicChannelVelocityCommand : public IPatchCommand
 public:
 	SetDynamicChannelVelocityCommand(int velocity) : mVelocity(velocity) { }
 
-	virtual void Exec() override
-	{
-		DynamicMidiCommand::SetDynamicChannelVelocity(mVelocity);
-	}
+	virtual void Exec() override;
 
 private:
 	const int mVelocity;
@@ -144,10 +112,7 @@ public:
 	SetDynamicChannelRandomVelocityCommand(int minVelocity, int maxVelocity) :
 		mMinVelocity(minVelocity), mMaxVelocity(maxVelocity) { }
 
-	virtual void Exec() override
-	{
-		DynamicMidiCommand::SetDynamicChannelRandomVelocity(mMinVelocity, mMaxVelocity);
-	}
+	virtual void Exec() override;
 
 private:
 	const int mMinVelocity;
