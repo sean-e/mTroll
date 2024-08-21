@@ -1024,8 +1024,8 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			{
 				std::string portStr;
 				if (childElem->GetText())
-					portStr = childElem->GetText();
-				const int portVal = ::atoi(portStr.c_str());
+					portStr = childElem->GetText(); // 1-16
+				const int portVal = ::atoi(portStr.c_str()) - 1;
 				if (0 <= portVal && 16 > portVal)
 				{
 					if (group == "B")
@@ -1036,7 +1036,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				else if (mTraceDisplay)
 				{
 					std::strstream traceMsg;
-					traceMsg << "Error loading config file: no (or invalid) velocity specified in SetDynamicPort in patch " << patchName << '\n' << std::ends;
+					traceMsg << "Error loading config file: no (or invalid) port specified in SetDynamicPort in patch " << patchName << '\n' << std::ends;
 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 				}
 				continue;
@@ -1045,8 +1045,8 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			{
 				std::string channelStr;
 				if (childElem->GetText())
-					channelStr = childElem->GetText();
-				const int channelVal = ::atoi(channelStr.c_str());
+					channelStr = childElem->GetText(); // 1-16
+				const int channelVal = ::atoi(channelStr.c_str()) - 1;
 				if (0 <= channelVal && 16 > channelVal)
 				{
 					if (group == "B")
@@ -1057,7 +1057,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				else if (mTraceDisplay)
 				{
 					std::strstream traceMsg;
-					traceMsg << "Error loading config file: no (or invalid) velocity specified in SetDynamicChannel in patch " << patchName << '\n' << std::ends;
+					traceMsg << "Error loading config file: no (or invalid) channel specified in SetDynamicChannel in patch " << patchName << '\n' << std::ends;
 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 				}
 				continue;
