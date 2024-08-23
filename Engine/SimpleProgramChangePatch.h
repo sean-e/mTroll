@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2009,2018,2024 Sean Echevarria
+ * Copyright (C) 2024 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -22,58 +22,52 @@
  * Contact Sean: "fester" at the domain of the original project site
  */
 
-#ifndef NormalPatch_h__
-#define NormalPatch_h__
+#ifndef SimpleProgramChangePatch_h__
+#define SimpleProgramChangePatch_h__
 
 #include "TwoStatePatch.h"
-#include "DynamicMidiCommand.h"
 
 
-// NormalPatch
-// -----------------------------------------------------------------------------
-// responds to SwitchPressed; SwitchReleased does not affect patch state
-// 
-class NormalPatch : public TwoStatePatch
+ // SimpleProgramChangePatch
+ // -----------------------------------------------------------------------------
+ // responds to SwitchPressed; SwitchReleased does not affect patch state
+ // 
+class SimpleProgramChangePatch : public TwoStatePatch
 {
 public:
-	NormalPatch(int number, 
-				const std::string & name, 
-				IMidiOutPtr midiOut, 
-				PatchCommands & cmdsA, 
-				PatchCommands & cmdsB,
-				int programChangeMidiChannel) :
-		TwoStatePatch(number, name, midiOut, cmdsA, cmdsB, psAllow),
-		mMidiChannel(programChangeMidiChannel)
+	SimpleProgramChangePatch(int number,
+		const std::string & name,
+		IMidiOutPtr midiOut,
+		PatchCommands & cmds,
+		int midiChannel) :
+		TwoStatePatch(number, name, midiOut, cmds, PatchCommands{}, psDisallow),
+		mMidiChannel(midiChannel)
 	{
+		_ASSERTE(-1 != mMidiChannel);
+		_ASSERTE(-2 == mMidiChannel || (0 <= mMidiChannel && 16 > mMidiChannel));
 	}
 
-	virtual std::string GetPatchTypeStr() const override { return "normal"; }
-	virtual bool IsPatchVolatile() const override { return true; }
-	virtual void DeactivateVolatilePatch() override { ExecCommandsB(); }
+	virtual std::string GetPatchTypeStr() const override { return "simpleProgramChange"; }
 
 	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) override
 	{
-		if (mPatchIsActive)
-		{
-			ExecCommandsB();
-			ExecCommandsA();
-		}
+		if (IsActive())
+			mPatchIsActive = false; // ExecCommandsB();
 		else
 			ExecCommandsA();
 
 		UpdateDisplays(mainDisplay, switchDisplay);
 	}
 
-	virtual int GetDeviceProgramChangeChannel() const override
-	{
-		// -1 is ignore
+	virtual int GetDeviceProgramChangeChannel() const override 
+	{ 
 		if (-2 == mMidiChannel)
 			return DynamicMidiCommand::GetDynamicMidiChannel();
-		return mMidiChannel;
+		return mMidiChannel; 
 	}
 
 private:
-	int mMidiChannel;
+	const int mMidiChannel;
 };
 
-#endif // NormalPatch_h__
+#endif // SimpleProgramChangePatch_h__

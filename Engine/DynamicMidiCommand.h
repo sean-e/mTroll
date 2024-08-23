@@ -52,6 +52,7 @@ public:
 
 	static void InitDynamicData(IMidiOutGenerator *midiOutGen, const MidiPortToDeviceIdxMap &portMap);
 	static void ReleaseDynamicData();
+	static int GetDynamicMidiChannel(); // this is a cheat for SimpleProgramChangePatch...
 
 private:
 	DynamicMidiCommand();

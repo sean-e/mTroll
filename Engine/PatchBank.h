@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010,2012-2015,2018 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2012-2015,2018,2024 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -152,6 +152,8 @@ private:
 	};
 	using BankPatchStatePtr = std::shared_ptr<BankPatchState>;
 	using PatchVect = std::vector<BankPatchStatePtr>;
+
+	void CheckForDeviceProgramChange(BankPatchState *curSwitchItem, ISwitchDisplay *switchDisplay, IMainDisplay *mainDisplay);
 
 	struct DualPatchVect
 	{

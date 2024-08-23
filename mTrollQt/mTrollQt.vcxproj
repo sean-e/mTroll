@@ -86,6 +86,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -135,6 +136,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -230,6 +232,7 @@
     <ClInclude Include="..\Engine\RepeatingMomentaryPatch.h" />
     <ClInclude Include="..\Engine\RepeatingPatch.h" />
     <ClInclude Include="..\Engine\RepeatingTogglePatch.h" />
+    <ClInclude Include="..\Engine\SimpleProgramChangePatch.h" />
     <ClInclude Include="..\Engine\SleepRandomCommand.h" />
     <ClInclude Include="..\midi\SleepShort.h" />
     <ClInclude Include="..\winUtil\WinDark.h" />

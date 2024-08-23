@@ -1,12 +1,14 @@
 ### mTroll MIDI controller changelog / process milestones
 
 #### 2024.08.xx
+- Added support for device program change patch type for per-device exclusive patch functionality. #22
 - Added support for dynamic channel (1-16) in `NoteOn` and `ProgramChange` commands (via patch command `SetDynamicChannel`). #28
 - Added support for dynamic velocity in `NoteOn` commands (via patch command `SetDynamicChannelVelocity`). #28
 - Added support for dynamic random velocity in `NoteOn` commands (via patch command `SetDynamicChannelRandomVelocity`). #31
 - Added support for dynamic output port (1...) in `NoteOn` commands (via patch command `SetDynamicPort`). #28
 - Added support for specifying MIDI note values by name (for example, `C4`) in `NoteOn` commands (note value range of 0-127 mapped to note names C-1 to G9). #30
 - Added auto-generated patches for dynamic, momentary `NoteOn`+`NoteOff` commands (128 patches named the same as the note names: C-1 to G9) #32
+- Fixed unintended application window deactivation after using Ctrl+O to load a new autogrid config. #33
 
 #### 2024.02.05
 - Added a [SleepRandom](docs.md#patchCommands) patch command.  

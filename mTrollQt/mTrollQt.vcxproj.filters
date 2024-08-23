@@ -353,6 +353,9 @@
     <ClInclude Include="..\Engine\DynamicMidiCommand.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="..\Engine\SimpleProgramChangePatch.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="win\mTrollQt.rc">

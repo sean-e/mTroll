@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2012,2014-2015,2017-2018,2020-2021 Sean Echevarria
+ * Copyright (C) 2007-2012,2014-2015,2017-2018,2020-2021,2024 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -76,6 +76,7 @@ public:
 	virtual std::string GetPatchTypeStr() const = 0;
 	virtual bool IsPatchVolatile() const {return false;} // load of one volatile patch affects loaded volatile patch (typically normal mode patches)
 	virtual void DeactivateVolatilePatch() { }
+	virtual int GetDeviceProgramChangeChannel() const { return -1; }
 
 	virtual void BankTransitionActivation() = 0;
 	virtual void BankTransitionDeactivation() = 0;

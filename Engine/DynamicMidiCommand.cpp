@@ -155,6 +155,19 @@ DynamicMidiCommand::ReleaseDynamicData()
 	delete tmp;
 }
 
+int
+DynamicMidiCommand::GetDynamicMidiChannel()
+{
+	auto pMidiData = gDynamicMidiData;
+	if (!pMidiData)
+	{
+		_ASSERTE(pMidiData);
+		return 0;
+	}
+
+	return pMidiData->GetDynamicChannel();
+}
+
 void
 DynamicMidiCommand::Exec()
 {

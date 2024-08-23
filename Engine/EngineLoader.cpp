@@ -65,6 +65,7 @@
 #include "RepeatingTogglePatch.h"
 #include "SleepRandomCommand.h"
 #include "DynamicMidiCommand.h"
+#include "SimpleProgramChangePatch.h"
 
 
 #ifdef _MSC_VER
@@ -923,8 +924,12 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		TiXmlHandle hRoot(nullptr);
 		hRoot = TiXmlHandle(pElem);
 
+		const auto firstChildElem = hRoot.FirstChildElement().Element();
+		const bool kHasSingleChild = firstChildElem && !firstChildElem->NextSiblingElement();
+		int simpleProgramChangeChannel = -1;
+
 		TiXmlElement * childElem;
-		for (childElem = hRoot.FirstChildElement().Element(); 
+		for (childElem = firstChildElem;
 			 childElem; 
 			 childElem = childElem->NextSiblingElement())
 		{
@@ -1245,6 +1250,9 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 						isDynamicCh = true;
 					cmdByte = 0xc0;
 					useDataByte2 = false;
+
+					// if (kHasSingleChild) -- unconditional for partial normalpatch support of simple program change tracking
+						simpleProgramChangeChannel = isDynamicCh ? -2 : ch;
 				}
 				else if (patchElement == "AxeProgramChange")
 				{
@@ -1277,6 +1285,9 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 					bytes.push_back(0xc0 | ch);
 					bytes.push_back(data1);
 
+					// if (kHasSingleChild) -- unconditional for partial normalpatch support of simple program change tracking
+						simpleProgramChangeChannel = ch;
+
 					if (group == "B")
 						cmds2.push_back(std::make_shared<AxeFxProgramChange>(midiOut, bytes, mgr));
 					else
@@ -1300,6 +1311,9 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 
 					bytes.push_back(0xc0 | ch);
 					bytes.push_back(data1);
+
+					// if (kHasSingleChild) -- unconditional for partial normalpatch support of simple program change tracking
+						simpleProgramChangeChannel = ch;
 
 					PatchCommands & theCmds = group == "B" ? cmds2 : cmds;
 					theCmds.push_back(std::make_shared<MidiCommandString>(midiOut, bytes));
@@ -1516,8 +1530,28 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 
 		bool patchTypeErr = false;
 		PatchPtr newPatch = nullptr;
-		if (patchType == "normal")
-			newPatch = std::make_shared<NormalPatch>(patchNumber, patchName, midiOut, cmds, cmds2);
+		if (patchType == "simpleProgramChange")
+		{
+			if (kHasSingleChild && -1 != simpleProgramChangeChannel && cmds2.empty()) // -2 is valid simpleProgramChangeChannel value
+				newPatch = std::make_shared<SimpleProgramChangePatch>(patchNumber, patchName, midiOut, cmds, simpleProgramChangeChannel);
+			else
+			{
+				if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: invalid simpleProgramChange (dynamic/multi command/channel?/B Group?) patch " << patchName << '\n' << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
+				continue;
+			}
+		}
+		else if (patchType == "normal")
+		{
+			if (kHasSingleChild && -1 != simpleProgramChangeChannel && cmds2.empty()) // -2 is valid simpleProgramChangeChannel value
+				newPatch = std::make_shared<SimpleProgramChangePatch>(patchNumber, patchName, midiOut, cmds, simpleProgramChangeChannel);
+			else
+				newPatch = std::make_shared<NormalPatch>(patchNumber, patchName, midiOut, cmds, cmds2, simpleProgramChangeChannel);
+		}
 		else if (patchType == "toggle")
 			newPatch = std::make_shared<TogglePatch>(patchNumber, patchName, midiOut, cmds, cmds2);
 		else if (patchType == "repeatingToggle")
@@ -2467,7 +2501,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						patchNumber = autoGenPatchNumber--;
 						gendPatchName = "EDP Local State";
 						auto midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[mEdpPort]);
-						auto metPatch = std::make_shared<NormalPatch>(patchNumber, gendPatchName, midiOut, PatchCommands{ std::make_shared<MidiCommandString>(midiOut, mEdpManager->GetLocalStateRequest()) }, PatchCommands{});
+						auto metPatch = std::make_shared<NormalPatch>(patchNumber, gendPatchName, midiOut, PatchCommands{ std::make_shared<MidiCommandString>(midiOut, mEdpManager->GetLocalStateRequest()) }, PatchCommands{}, -1);
 						cmdPatch = metPatch;
 					}
 					else if (cmdName == "EdpShowGlobalState")
@@ -2478,7 +2512,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 						patchNumber = autoGenPatchNumber--;
 						gendPatchName = "EDP Global State";
 						auto midiOut = mMidiOutGenerator->GetMidiOut(mMidiOutPortToDeviceIdxMap[mEdpPort]);
-						auto metPatch = std::make_shared<NormalPatch>(patchNumber, gendPatchName, midiOut, PatchCommands{ std::make_shared<MidiCommandString>(midiOut, mEdpManager->GetGlobalStateRequest()) }, PatchCommands{});
+						auto metPatch = std::make_shared<NormalPatch>(patchNumber, gendPatchName, midiOut, PatchCommands{ std::make_shared<MidiCommandString>(midiOut, mEdpManager->GetGlobalStateRequest()) }, PatchCommands{}, -1);
 						cmdPatch = metPatch;
 					}
 					else
