@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2012-2013,2015,2018,2020,2023 Sean Echevarria
+ * Copyright (C) 2007-2010,2012-2013,2015,2018,2020,2023,2024 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -288,7 +288,7 @@ MainTrollWindow::Refresh()
 		// create a scroll area so that if defined controls exceed space of main 
 		// window, they remain accessible via scrollbars (though it doesn't work 
 		// without QGridLayout (?) )
-		QScrollArea *scrollArea = new QScrollArea;
+		QScrollArea *scrollArea = new QScrollArea(this);
 		extern QString sHorizontalScrollStyle;
 		extern QString sVerticalScrollStyle;
 		scrollArea->horizontalScrollBar()->setStyleSheet(sHorizontalScrollStyle);
