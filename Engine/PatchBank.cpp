@@ -510,10 +510,18 @@ PatchBank::PatchSwitchPressed(SwitchFunctionAssignment st,
 
 		if (curSwitchItem->mPatch->UpdateMainDisplayOnPress())
 		{
+			const std::string txt(curSwitchItem->mPatch->GetDisplayText(true));
+			msgstr << txt;
 			const int patchNum = curSwitchItem->mPatch->GetNumber();
 			if (patchNum > 0)
-				msgstr << patchNum << " ";
-			msgstr << curSwitchItem->mPatch->GetDisplayText(true) << '\n';
+			{
+				if (txt.empty())
+					msgstr << "(" << patchNum << ")\n";
+				else
+					msgstr << "  (" << patchNum << ")\n";
+			}
+			else
+				msgstr << '\n';
 		}
 		else
 			doDisplayUpdate = false;
@@ -710,7 +718,7 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 					   bool temporaryDisplay)
 {
 	std::ostrstream info;
-	info << mNumber << " " << mName;
+	info << mName << "  (bank " << mNumber << ")";
 
 	if (showPatchInfo)
 	{
@@ -752,8 +760,6 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 							info << "-2:";
 						else
 							info << ":  ";
-						if (patchNum > 0)
-							info << std::setw(3) << patchNum << " ";
 		
 						if (temporaryDisplay)
 						{
@@ -765,11 +771,13 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 					{
 						// secondary patches
 						info << "       ";
-						if (patchNum > 0)
-							info << std::setw(3) << patchNum << " ";
 					}
 
-					info << curItem->mPatch->GetName() << '\n';
+					info << curItem->mPatch->GetName();
+					if (patchNum > 0)
+						info << "  (" << std::setw(3) << patchNum << ")\n";
+					else
+						info << '\n';
 				}
 			}
 		}
@@ -784,9 +792,10 @@ void
 PatchBank::DisplayDetailedPatchInfo(int switchNumber, IMainDisplay * mainDisplay)
 {
 	std::ostrstream info;
-	info << "Status for bank " << std::setw(2) << mNumber << " '" << mName << "'\nswitch " 
-		<< std::setw(2) << (switchNumber + 1) << '\n';
+	info << "Patch info for bank '" << mName << "' (" << mNumber << "), switch "
+		<< (switchNumber + 1) << ":\n";
 
+	bool displayedPatchheader = false;
 	for (int idx = ssPrimary; idx < ssCount; ++idx)
 	{
 		for (auto & curPatch : mPatches)
@@ -798,26 +807,31 @@ PatchBank::DisplayDetailedPatchInfo(int switchNumber, IMainDisplay * mainDisplay
 			SwitchFunctionAssignment ss = static_cast<SwitchFunctionAssignment>(idx);
 			PatchVect & patches = curPatch.second.GetPatchVect(ss);
 			if (ssSecondary == ss && !patches.empty())
-				info << "switch " << std::setw(2) << (switchNumber + 1) << " secondary\n";
+				info << "secondary switch functions:\n";
 
 			for (const BankPatchStatePtr& curItem : patches)
 			{
 				if (!curItem || !curItem->mPatch)
 					continue;
 
-				if (cnt == 0)
-					info << "Num On/Off Type      Name\n";
+				if (cnt == 0 && !displayedPatchheader)
+				{
+					info << "Status / Type / Name (num)\n";
+					displayedPatchheader = true;
+				}
 
 // 				if (cnt == 1)
 // 					info << "(Hidden patches)\n";
 
+				info << (curItem->mPatch->IsActive() ? "ON   " : "off  ") 
+					<< std::setiosflags(std::ios::left) << std::setw(19) << curItem->mPatch->GetPatchTypeStr() 
+					<< "  " << curItem->mPatch->GetName();
+
 				const int patchNum = curItem->mPatch->GetNumber();
 				if (patchNum > 0)
-					info << std::setw(3) << patchNum << " ";
-
-				info << (curItem->mPatch->IsActive() ? "ON     " : "off    ") 
-					<< std::setiosflags(std::ios::left) << std::setw(10) << curItem->mPatch->GetPatchTypeStr() 
-					<< curItem->mPatch->GetName() << '\n';
+					info << "  (" << std::setw(3) << patchNum << ")\n";
+				else
+					info << '\n';
 
 				++cnt;
 			}

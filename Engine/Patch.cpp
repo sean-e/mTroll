@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2012,2014-2015,2017-2018,2020-2021 Sean Echevarria
+ * Copyright (C) 2007-2012,2014-2015,2017-2018,2020-2021,2024 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -122,10 +122,18 @@ Patch::UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay
 
 	if (mainDisplay)
 	{
+		const std::string txt(GetDisplayText(true));
 		std::strstream msgstr;
+		msgstr << txt;
 		if (mNumber > 0)
-			msgstr << mNumber << " ";
-		msgstr << GetDisplayText(true) << '\n' << std::ends;
+		{
+			if (txt.empty())
+				msgstr << "(" << mNumber << ")\n" << std::ends;
+			else
+				msgstr << "  (" << mNumber << ")\n" << std::ends;
+		}
+		else
+			msgstr << '\n' << std::ends;
 		mainDisplay->TextOut(msgstr.str());
 	}
 }
