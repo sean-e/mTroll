@@ -8,6 +8,7 @@
 - Added support for dynamic output port (1...) in `NoteOn` commands (via patch command `SetDynamicPort`). #28
 - Added support for specifying MIDI note values by name (for example, `C4`) in `NoteOn` commands (note value range of 0-127 mapped to note names C-1 to G9). #30
 - Added auto-generated patches for dynamic, momentary `NoteOn`+`NoteOff` commands (128 patches named the same as the note names: C-1 to G9) #32
+- Add new File menu commands to load only data config (`Ctrl+O`) or UI config (`Ctrl+U`) independently of each other; old Open command now assigned to `Ctrl+Shift+O`. #20
 - Fixed unintended application window deactivation after using Ctrl+O to load a new autogrid config. #33
 - In text displays, moved patch number from in front of patch name to afterwards and in parens. #34
 

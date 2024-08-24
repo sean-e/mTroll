@@ -129,9 +129,11 @@ MainTrollWindow::MainTrollWindow() :
 #endif
 	if (hasTouchInput)
 		fileMenu->setStyleSheet(touchMenuStyle);
-	fileMenu->addAction(tr("&Open..."), this, &MainTrollWindow::OpenFile, QKeySequence(tr("Ctrl+O")));
+	fileMenu->addAction(tr("Open &Config..."), this, &MainTrollWindow::OpenDataFile, QKeySequence(tr("Ctrl+O")));
+	fileMenu->addAction(tr("Open &UI..."), this, &MainTrollWindow::OpenUiFile, QKeySequence(tr("Ctrl+U")));
+	fileMenu->addAction(tr("&Open..."), this, &MainTrollWindow::OpenConfigAndUiFiles, QKeySequence(tr("Ctrl+Shift+O")));
 	fileMenu->addAction(tr("&Refresh"), this, &MainTrollWindow::Refresh, QKeySequence(tr("F5")));
-	fileMenu->addAction(tr("Re&connect to monome device"), this, &MainTrollWindow::Reconnect, QKeySequence(tr("Ctrl+R")));
+	fileMenu->addAction(tr("Reconnect to &monome device"), this, &MainTrollWindow::Reconnect, QKeySequence(tr("Ctrl+R")));
 
 	if (!hasTouchInput)
 		fileMenu->addSeparator();
@@ -245,28 +247,37 @@ MainTrollWindow::About()
 }
 
 void
-MainTrollWindow::OpenFile()
+MainTrollWindow::OpenFile(bool config, bool ui)
 {
-	const QString cfgFleSelection = QFileDialog::getOpenFileName(this, 
-			tr("Select Config Settings File"),
-			mConfigFilename,
-			tr("Config files (*.config.xml)"));
-	if (cfgFleSelection.isEmpty())
-		return;
+	{
+		QSettings settings;
 
-	const QString uiFileSelection = QFileDialog::getOpenFileName(this, 
-			tr("Select UI Settings File"),
-			mUiFilename,
-			tr("UI files (*.ui.xml)"));
-	if (uiFileSelection.isEmpty())
-		return;
+		if (config)
+		{
+			const QString cfgFleSelection = QFileDialog::getOpenFileName(this,
+				tr("Select Config Settings File"),
+				mConfigFilename,
+				tr("Config files (*.config.xml)"));
+			if (cfgFleSelection.isEmpty())
+				return;
 
-	mConfigFilename = cfgFleSelection;
-	mUiFilename = uiFileSelection;
+			mConfigFilename = cfgFleSelection;
+			settings.setValue(kActiveConfigFile, mConfigFilename);
+		}
 
-	QSettings settings;
-	settings.setValue(kActiveUiFile, mUiFilename);
-	settings.setValue(kActiveConfigFile, mConfigFilename);
+		if (ui)
+		{
+			const QString uiFileSelection = QFileDialog::getOpenFileName(this,
+				tr("Select UI Settings File"),
+				mUiFilename,
+				tr("UI files (*.ui.xml)"));
+			if (uiFileSelection.isEmpty())
+				return;
+
+			mUiFilename = uiFileSelection;
+			settings.setValue(kActiveUiFile, mUiFilename);
+		}
+	}
 
 	Refresh();
 }

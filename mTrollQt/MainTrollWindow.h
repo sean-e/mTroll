@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2013,2015,2018,2020 Sean Echevarria
+ * Copyright (C) 2007-2010,2013,2015,2018,2020.2024 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -43,13 +43,16 @@ public:
 
 private slots:
 	void About();
-	void OpenFile();
+	void OpenDataFile() { OpenFile(true, false); }
+	void OpenUiFile() { OpenFile(false, true); }
+	void OpenConfigAndUiFiles() { OpenFile(true, true); }
 	void SuspendMidiToggle(bool checked);
 	void ToggleExpressionPedalDetails(bool checked);
 	virtual void Refresh();
 	virtual void Reconnect() override;
 	virtual void ToggleTraceWindow() override;
 	virtual std::string ApplicationDirectory() override;
+	void OpenFile(bool config, bool ui);
 	void ToggleAdc0Override(bool checked) { ToggleAdcOverride(0, checked); }
 	void ToggleAdc1Override(bool checked) { ToggleAdcOverride(1, checked); }
 	void ToggleAdc2Override(bool checked) { ToggleAdcOverride(2, checked); }
