@@ -1,7 +1,7 @@
 ### mTroll MIDI controller changelog / process milestones
 
 #### 2024.08.xx
-- Added support for device program change patch type for per-device exclusive patch functionality. [#22](/issues/22)
+- Added support for device program change patch type for per-device exclusive patch functionality. [#22](../../../issues/22)
 - Added support for dynamic channel (1-16) in `NoteOn` and `ProgramChange` commands (via patch command `SetDynamicChannel`). #28
 - Added support for dynamic velocity in `NoteOn` commands (via patch command `SetDynamicChannelVelocity`). #28
 - Added support for dynamic random velocity in `NoteOn` commands (via patch command `SetDynamicChannelRandomVelocity`). #31
