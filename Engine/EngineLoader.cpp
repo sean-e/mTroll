@@ -816,6 +816,17 @@ EngineLoader::GenerateDefaultNotePatches()
 		}
 
 		auto newPatch = std::make_shared<MomentaryPatch>(mPatchMap[patchName], patchName, nullptr, cmds, cmds2);
+
+		// setup patch led color
+		{
+			const unsigned int ledActiveColor = LookUpColor("dynamic", "momentary", 1, kFirstColorPreset);
+			unsigned int ledInactiveColor = LookUpColor("dynamic", "momentary", 0, -1);
+			if (-1 == ledInactiveColor)
+				ledInactiveColor = kFirstColorPreset;
+
+			newPatch->SetLedColors(ledActiveColor, ledInactiveColor);
+		}
+
 		mEngine->AddPatch(newPatch);
 	}
 }
