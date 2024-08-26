@@ -41,9 +41,11 @@ std::atomic<int> gPatchBankCnt;
 #endif
 
 PatchBank::PatchBank(int number, 
-					 const std::string & name) :
+					 const std::string & name, 
+					 const std::string & additionalText) :
 	mNumber(number),
 	mName(name),
+	mAdditionalText(additionalText),
 	mLoaded(false)
 {
 #ifdef ITEM_COUNTING
@@ -719,6 +721,12 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 {
 	std::ostrstream info;
 	info << mName << "  (bank " << mNumber << ")";
+
+	if (!mAdditionalText.empty())
+	{
+		info << '\n';
+		info << mAdditionalText;
+	}
 
 	if (showPatchInfo)
 	{

@@ -2117,6 +2117,10 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 			continue;
 		}
 
+		std::string bankNotes;
+		if (pElem->Attribute("notes"))
+			bankNotes = pElem->Attribute("notes");
+
 		int bankNumber = -1;
 		pElem->QueryIntAttribute("number", &bankNumber);
 		if (-1 == bankNumber)
@@ -2164,7 +2168,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 			continue;
 		}
 
-		PatchBankPtr bank = mEngine->AddBank(bankNumber, bankName); 
+		PatchBankPtr bank = mEngine->AddBank(bankNumber, bankName, bankNotes); 
 		if (bank && bankNumber)
 			++nonDefaultBankCount;
 

@@ -41,7 +41,7 @@ class ISwitchDisplay;
 class PatchBank
 {
 public:
-	PatchBank(int number, const std::string & name);
+	PatchBank(int number, const std::string & name, const std::string & additionalText);
 	~PatchBank();
 
 	enum SwitchFunctionAssignment
@@ -188,6 +188,7 @@ private:
 
 	const int					mNumber;	// unique across all patchBanks
 	const std::string			mName;
+	const std::string			mAdditionalText;
 	// a switch in a bank can have multiple patches
 	// only the first patch associated with a switch gets control of the switch
 	// only the name of the first patch will be displayed

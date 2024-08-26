@@ -124,7 +124,8 @@ MidiControlEngine::~MidiControlEngine()
 
 PatchBankPtr
 MidiControlEngine::AddBank(int number,
-						   const std::string & name)
+						   const std::string & name,
+						   const std::string & notes)
 {
 	if (mTrace)
 	{
@@ -139,7 +140,7 @@ MidiControlEngine::AddBank(int number,
 		}
 	}
 
-	PatchBankPtr pBank = std::make_shared<PatchBank>(number, name);
+	PatchBankPtr pBank = std::make_shared<PatchBank>(number, name, notes);
 	mBanks.push_back(pBank);
 	return pBank;
 }
@@ -270,7 +271,7 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 			defaultsBank = nullptr;
 	}
 
-	PatchBankPtr tmpDefaultBank = std::make_shared<PatchBank>(0, "nav default");
+	PatchBankPtr tmpDefaultBank = std::make_shared<PatchBank>(0, "nav default", "");
 
 	// this is how we allow users to override Next and Prev switches in their banks
 	// while at the same time reserving them for use by our modes.

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2013,2015,2018,2020-2022 Sean Echevarria
+ * Copyright (C) 2007-2013,2015,2018,2020-2022,2024 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -93,7 +93,7 @@ public:
 
 	// initialization
 	using Patches = std::map<int, PatchPtr>;
-	PatchBankPtr			AddBank(int number, const std::string & name);
+	PatchBankPtr			AddBank(int number, const std::string & name, const std::string & notes);
 	void					AddPatch(PatchPtr patch);
 	void					SetPowerup(int powerupBank);
 	void					FilterRedundantProgChg(bool filter) {mFilterRedundantProgramChanges = filter;}
