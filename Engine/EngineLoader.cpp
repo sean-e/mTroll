@@ -1440,7 +1440,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		bool isAxeFx3EffectBlockBypassCommand = false;
 		int overrideCc = -1;
 		if (mgr && 
-			(patchType.empty() || patchType == "AxeToggle" || patchType == "AxeMomentary") && 
+			(patchType.empty() || patchType == "AxeToggle" || patchType == "AxeHybridToggle" || patchType == "AxeMomentary") &&
 			cmds.empty() && cmds2.empty() &&
 			patchDefaultCh != -1)
 		{
@@ -1565,6 +1565,8 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		}
 		else if (patchType == "toggle")
 			newPatch = std::make_shared<TogglePatch>(patchNumber, patchName, midiOut, cmds, cmds2);
+		else if (patchType == "hybridToggle")
+			newPatch = std::make_shared<TogglePatch>(patchNumber, patchName, midiOut, cmds, cmds2, TogglePatch::PatchLogicStyle::Hybrid);
 		else if (patchType == "repeatingToggle")
 			newPatch = std::make_shared<RepeatingTogglePatch>(patchNumber, patchName, midiOut, cmds, cmds2);
 		else if (patchType == "toggleControlChange")
@@ -1676,17 +1678,18 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		}
 		else if (patchType == "persistentPedalOverride")
 			newPatch = std::make_shared<PersistentPedalOverridePatch>(patchNumber, patchName, midiOut, cmds, cmds2);
-		else if (patchType == "AxeToggle")
+		else if (patchType == "AxeToggle" || patchType == "AxeHybridToggle")
 		{
+			const TogglePatch::PatchLogicStyle style = patchType == "AxeToggle" ? TogglePatch::PatchLogicStyle::Toggle : TogglePatch::PatchLogicStyle::Hybrid;
 			std::shared_ptr<AxeTogglePatch> axePatch;
 			if (axeFxScene && mgr && mgr->GetModel() == Axe3)
-				axePatch = std::make_shared<Axe3ScenePatch>(patchNumber, patchName, midiOut, cmds, cmds2, mgr, axeFxScene);
+				axePatch = std::make_shared<Axe3ScenePatch>(patchNumber, patchName, midiOut, cmds, cmds2, mgr, axeFxScene, style);
 			else if (isAxeFx3EffectBlockBypassCommand)
-				axePatch = std::make_shared<Axe3EffectBlockPatch>(patchNumber, patchName, midiOut, cmds, cmds2, mgr);
+				axePatch = std::make_shared<Axe3EffectBlockPatch>(patchNumber, patchName, midiOut, cmds, cmds2, mgr, style);
 			else if (axeFxBlockId)
-				axePatch = std::make_shared<Axe3EffectChannelPatch>(patchNumber, patchName, midiOut, cmds, cmds2, mgr);
+				axePatch = std::make_shared<Axe3EffectChannelPatch>(patchNumber, patchName, midiOut, cmds, cmds2, mgr, style);
 			else
-				axePatch = std::make_shared<AxeTogglePatch>(patchNumber, patchName, midiOut, cmds, cmds2, mgr);
+				axePatch = std::make_shared<AxeTogglePatch>(patchNumber, patchName, midiOut, cmds, cmds2, mgr, 0, style);
 
 			if (mgr)
 			{
@@ -1914,7 +1917,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				{
 					ledInactiveColor = kFirstColorPreset;
 					if (axeFxScene || axeFxBlockId || isAxeLooperPatch || 
-						patchType == "AxeToggle" || patchType == "AxeMomentary")
+						patchType == "AxeToggle" || patchType == "AxeHybridToggle" || patchType == "AxeMomentary")
 					{
 						if (ledActiveColor == kFirstColorPreset)
 							ledInactiveColor = 0; // just set dim to off
@@ -3151,7 +3154,7 @@ EngineLoader::LoadLedDefaultColors(TiXmlElement * pElem)
 			device = pElem->Attribute("device");
 		if (device.empty())
 			device = "*";
-		else if (device != "*" && device != "mtroll" && device != "midi" && mDeviceChannels.find(device) == mDeviceChannels.end())
+		else if (device != "*" && device != "mtroll" && device != "midi" && device != "dynamic" && mDeviceChannels.find(device) == mDeviceChannels.end())
 		{
 			if (mTraceDisplay)
 			{

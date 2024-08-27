@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2018 Sean Echevarria
+ * Copyright (C) 2007-2010,2018,2024 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -25,15 +25,17 @@
 #ifndef MomentaryPatch_h__
 #define MomentaryPatch_h__
 
-#include "TwoStatePatch.h"
+#include "TogglePatch.h"
 
 
 // MomentaryPatch
 // -----------------------------------------------------------------------------
 // responds to SwitchPressed and SwitchReleased
 // No expression pedal support
+// This class was originally a sibling of TogglePatch but changed to a descendent 
+// in order to support hybrid toggle/momentary patch types.
 //
-class MomentaryPatch : public TwoStatePatch
+class MomentaryPatch : public TogglePatch
 {
 public:
 	MomentaryPatch(int number, 
@@ -41,30 +43,8 @@ public:
 					IMidiOutPtr midiOut, 
 					PatchCommands & cmdsA, 
 					PatchCommands & cmdsB) :
-		TwoStatePatch(number, name, midiOut, cmdsA, cmdsB, psDisallow)
+		TogglePatch(number, name, midiOut, cmdsA, cmdsB, TogglePatch::PatchLogicStyle::Momentary)
 	{
-	}
-
-	virtual std::string GetPatchTypeStr() const override { return "momentary"; }
-	
-	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) override
-	{
-		ExecCommandsA();
-		UpdateDisplays(mainDisplay, switchDisplay);
-	}
-
-	virtual void SwitchReleased(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) override
-	{
-		ExecCommandsB();
-		UpdateDisplays(mainDisplay, switchDisplay);
-	}
-
-	virtual void Deactivate(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) override
-	{
-		if (!IsActive())
-			return;
-
-		SwitchReleased(mainDisplay, switchDisplay);
 	}
 };
 

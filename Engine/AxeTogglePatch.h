@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2012,2014,2017-2018,2020-2021 Sean Echevarria
+ * Copyright (C) 2010-2012,2014,2017-2018,2020-2021,2024 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -30,8 +30,7 @@
 
 // AxeTogglePatch
 // -----------------------------------------------------------------------------
-// responds to SwitchPressed; SwitchReleased does not affect patch state
-// supports expression pedals (psAllowOnlyActive) - but should it?
+// see TogglePatch description of PatchLogicStyle behaviors
 //
 class AxeTogglePatch : public TogglePatch
 {
@@ -40,6 +39,8 @@ protected:
 	bool			mHasDisplayText;
 	std::string		mActiveText;
 	std::string		mInactiveText;
+	int				mIsScene = 0;
+	bool			mUpdateAxMgrDuringExec = false;
 
 public:
 	AxeTogglePatch(int number, 
@@ -47,43 +48,70 @@ public:
 				IMidiOutPtr midiOut, 
 				PatchCommands & cmdsA, 
 				PatchCommands & cmdsB,
-				IAxeFxPtr axeMgr) :
-		TogglePatch(number, name, midiOut, cmdsA, cmdsB),
+				IAxeFxPtr axeMgr,
+				int isScenePatch = 0,
+				PatchLogicStyle style = PatchLogicStyle::Toggle) :
+		TogglePatch(number, name, midiOut, cmdsA, cmdsB, style),
 		mAx(axeMgr),
-		mHasDisplayText(false)
+		mHasDisplayText(false),
+		mIsScene(isScenePatch),
+		mUpdateAxMgrDuringExec(!!isScenePatch)
 	{
 		if (mAx && mAx->GetModel() >= Axe2)
 			mPatchSupportsDisabledState = true;
 
-		if (mAx && mAx->GetModel() != Axe3)
+		if (TogglePatch::PatchLogicStyle::Toggle == style)
 		{
-			std::string baseEffectName(name);
-			std::string xy(" x/y");
-			int xyPos = -1;
-			xyPos = baseEffectName.find(xy);
-			if (-1 == xyPos)
+			if (mAx && mAx->GetModel() < Axe3)
 			{
-				xy = " X/Y";
+				std::string baseEffectName(name);
+				std::string xy(" x/y");
+				int xyPos = -1;
 				xyPos = baseEffectName.find(xy);
-			}
+				if (-1 == xyPos)
+				{
+					xy = " X/Y";
+					xyPos = baseEffectName.find(xy);
+				}
 
-			if (-1 != xyPos)
-			{
-				mHasDisplayText = true;
-				baseEffectName.replace(xyPos, xy.length(), "");
-				// originally, I had X as active and Y as inactive but I prefer
-				// LED off for X and on for Y
-				mActiveText = baseEffectName + " Y";
-				mInactiveText = baseEffectName + " X";
-				// swap commands to support inverted LED behavior for X and Y.
-				// see also UpdateState call in AxeFxManager::ReceivePresetEffectsV2
-				// for the other change required to support LED inversion for X/Y.
-				mCmdsA.swap(mCmdsB);
+				if (-1 != xyPos)
+				{
+					mHasDisplayText = true;
+					baseEffectName.replace(xyPos, xy.length(), "");
+					// originally, I had X as active and Y as inactive but I prefer
+					// LED off for X and on for Y
+					mActiveText = baseEffectName + " Y";
+					mInactiveText = baseEffectName + " X";
+					// swap commands to support inverted LED behavior for X and Y.
+					// see also UpdateState call in AxeFxManager::ReceivePresetEffectsV2
+					// for the other change required to support LED inversion for X/Y.
+					mCmdsA.swap(mCmdsB);
+				}
 			}
 		}
 	}
 
 	virtual ~AxeTogglePatch() = default;
+
+	virtual std::string GetPatchTypeStr() const override 
+	{
+		switch (mPatchLogicStyle)
+		{
+		case PatchLogicStyle::Toggle:				return "axeToggle";
+		case PatchLogicStyle::Momentary:			return "axeMomentary";
+		case PatchLogicStyle::Hybrid:
+			switch (mHybridState)
+			{
+			case HybridState::Reset:				return "axeHybridInReset";
+			case HybridState::ConvertedToToggle:	return "axeHybridToggle";
+			case HybridState::PressedAndWaitingForRelease: return "axeHybridWaitingForRelease";
+			}
+			[[fallthrough]];
+		default:
+			_ASSERTE(!"not possible");
+			return "impossible ToggleStyle/HybridState state";
+		}
+	}
 
 	virtual void SetName(const std::string& name, ISwitchDisplay * switchDisplay) override
 	{
@@ -101,18 +129,44 @@ public:
 			return mInactiveText; 
 		}
 
-		return TogglePatch::GetDisplayText(checkState);
+		return __super::GetDisplayText(checkState);
 	}
 
 	virtual bool HasDisplayText() const override { return mHasDisplayText; }
 
-	virtual std::string GetPatchTypeStr() const override { return "axeToggle"; }
-
 	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) override
 	{
-		TogglePatch::SwitchPressed(mainDisplay, switchDisplay);
-		if (mAx && mAx->GetModel() != Axe3)
-			UpdateAxeMgr();
+		const bool kWasTogglePatchType = IsTogglePatchType(); // type could change in __super::SwitchPressed
+
+		__super::SwitchPressed(mainDisplay, switchDisplay);
+
+		if (kWasTogglePatchType)
+		{
+			if (mAx && mAx->GetModel() != Axe3)
+				UpdateAxeMgr();
+		}
+	}
+
+	virtual void ExecCommandsA() override
+	{
+		__super::ExecCommandsA();
+
+		if (mUpdateAxMgrDuringExec || !IsTogglePatchType())
+		{
+			if (!mCmdsA.empty())
+				UpdateAxeMgr();
+		}
+	}
+
+	virtual void ExecCommandsB() override
+	{
+		__super::ExecCommandsB();
+
+		if (mUpdateAxMgrDuringExec || !IsTogglePatchType())
+		{
+			if (!mCmdsB.empty())
+				UpdateAxeMgr();
+		}
 	}
 
 	void ClearAxeMgr()
@@ -127,17 +181,20 @@ protected:
 		if (!mAx)
 			return;
 
-		// Due to getting a response from the Axe-Fx II before state of
-		// externals was accurate (Feedback Return mute mapped to Extern
-		// 8 came back inaccurate when SyncEffectsFromAxe called immediately).
-		mAx->DelayedEffectsSyncFromAxe();
+		if (mIsScene)
+			mAx->UpdateSceneStatus(mIsScene - 1, true);
+		else
+		{
+			// Due to getting a response from the Axe-Fx II before state of
+			// externals was accurate (Feedback Return mute mapped to Extern
+			// 8 came back inaccurate when SyncEffectsFromAxe called immediately).
+			mAx->DelayedEffectsSyncFromAxe();
+		}
 	}
 };
 
 class Axe3ScenePatch : public AxeTogglePatch
 {
-	int mScene;
-
 public:
 	Axe3ScenePatch(int number,
 		const std::string & name,
@@ -145,9 +202,9 @@ public:
 		PatchCommands & cmdsA,
 		PatchCommands & cmdsB,
 		IAxeFxPtr axeMgr,
-		int scene) :
-		AxeTogglePatch(number, name, midiOut, cmdsA, cmdsB, axeMgr),
-		mScene(scene - 1)
+		int scene,
+		PatchLogicStyle style = PatchLogicStyle::Toggle) :
+		AxeTogglePatch(number, name, midiOut, cmdsA, cmdsB, axeMgr, scene, style)
 	{
 		// set to true so that per-preset scene names propagate to buttons
 		mHasDisplayText = true;
@@ -156,7 +213,7 @@ public:
 
 	virtual ~Axe3ScenePatch() = default;
 
-	virtual std::string GetPatchTypeStr() const override { return "axe2ScenePatch"; }
+	virtual std::string GetPatchTypeStr() const override { return "axe3ScenePatch"; }
 
 	virtual void UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) const override
 	{
@@ -174,31 +231,6 @@ public:
 				UpdateAxeMgr();
 		}
 	}
-
-	virtual void ExecCommandsA() override
-	{
-		__super::ExecCommandsA();
-
-		if (!mCmdsA.empty())
-			UpdateAxeMgr();
-	}
-
-	virtual void ExecCommandsB() override
-	{
-		__super::ExecCommandsB();
-
-		if (!mCmdsB.empty())
-			UpdateAxeMgr();
-	}
-
-protected:
-	virtual void UpdateAxeMgr() const override
-	{
-		if (!mAx)
-			return;
-
-		mAx->UpdateSceneStatus(mScene, true);
-	}
 };
 
 class Axe3EffectChannelPatch : public AxeTogglePatch
@@ -209,26 +241,16 @@ public:
 		IMidiOutPtr midiOut,
 		PatchCommands & cmdsA,
 		PatchCommands & cmdsB,
-		IAxeFxPtr axeMgr) :
-		AxeTogglePatch(number, name, midiOut, cmdsA, cmdsB, axeMgr)
+		IAxeFxPtr axeMgr,
+		PatchLogicStyle style = PatchLogicStyle::Toggle) :
+		AxeTogglePatch(number, name, midiOut, cmdsA, cmdsB, axeMgr, 0, style)
 	{
 		mHasDisplayText = true;
 		mActiveText = mInactiveText = name;
+		mUpdateAxMgrDuringExec = true;
 	}
 
 	virtual std::string GetPatchTypeStr() const override { return "axe3EffectChannelPatch"; }
-
-	virtual void ExecCommandsA() override
-	{
-		__super::ExecCommandsA();
-		UpdateAxeMgr();
-	}
-
-	virtual void ExecCommandsB() override
-	{
-		__super::ExecCommandsB();
-		UpdateAxeMgr();
-	}
 };
 
 class Axe3EffectBlockPatch : public Axe3EffectChannelPatch
@@ -239,8 +261,9 @@ public:
 		IMidiOutPtr midiOut,
 		PatchCommands & cmdsA,
 		PatchCommands & cmdsB,
-		IAxeFxPtr axeMgr) :
-		Axe3EffectChannelPatch(number, name, midiOut, cmdsA, cmdsB, axeMgr)
+		IAxeFxPtr axeMgr,
+		PatchLogicStyle style = PatchLogicStyle::Toggle) :
+		Axe3EffectChannelPatch(number, name, midiOut, cmdsA, cmdsB, axeMgr, style)
 	{
 	}
 

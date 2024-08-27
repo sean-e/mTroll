@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2020 Sean Echevarria
+ * Copyright (C) 2020,2024 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -25,20 +25,18 @@
 #ifndef AxeMomentaryPatch_h__
 #define AxeMomentaryPatch_h__
 
-#include "MomentaryPatch.h"
-#include "IAxeFx.h"
+#include "AxeTogglePatch.h"
 
 
- // MomentaryPatch
- // -----------------------------------------------------------------------------
- // responds to SwitchPressed and SwitchReleased
- // No expression pedal support
- //
-class AxeMomentaryPatch : public MomentaryPatch
+// MomentaryPatch
+// -----------------------------------------------------------------------------
+// responds to SwitchPressed and SwitchReleased
+// No expression pedal support
+// This class was originally a descendant of MomentaryPatch but changed to a descendent 
+// of AxeTogglePatch in order to support hybrid toggle/momentary patch types.
+//
+class AxeMomentaryPatch : public AxeTogglePatch
 {
-	IAxeFxPtr		mAx = nullptr;
-	int				mIsScene;
-
 public:
 	AxeMomentaryPatch(int number,
 			const std::string & name,
@@ -47,51 +45,8 @@ public:
 			PatchCommands & cmdsB,
 			IAxeFxPtr axeMgr,
 			int isScenePatch) :
-		MomentaryPatch(number, name, midiOut, cmdsA, cmdsB),
-		mAx(axeMgr),
-		mIsScene(isScenePatch)
+		AxeTogglePatch(number, name, midiOut, cmdsA, cmdsB, axeMgr, isScenePatch, TogglePatch::PatchLogicStyle::Momentary)
 	{
-	}
-
-	virtual std::string GetPatchTypeStr() const override { return "axeMomentary"; }
-
-	virtual void ExecCommandsA() override
-	{
-		__super::ExecCommandsA();
-
-		if (!mCmdsA.empty())
-			UpdateAxeMgr();
-	}
-
-	virtual void ExecCommandsB() override
-	{
-		__super::ExecCommandsB();
-
-		if (!mCmdsB.empty())
-			UpdateAxeMgr();
-	}
-
-	void ClearAxeMgr()
-	{
-		if (mAx)
-			mAx = nullptr;
-	}
-
-private:
-	void UpdateAxeMgr()
-	{
-		if (!mAx)
-			return;
-
-		if (mIsScene)
-			mAx->UpdateSceneStatus(mIsScene - 1, true);
-		else
-		{
-			// Due to getting a response from the Axe-Fx II before state of
-			// externals was accurate (Feedback Return mute mapped to Extern
-			// 8 came back inaccurate when SyncEffectsFromAxe called immediately).
-			mAx->DelayedEffectsSyncFromAxe();
-		}
 	}
 };
 
