@@ -12,7 +12,7 @@
 - Added support for bank notes/text that appear in main display upon load of bank (via `notes` attribute in `bank` definition). [#35](../../../issues/35)
 - Added `hybridToggle` and `AxeHybridToggle` patch types that normally work as `toggle` but work as `momentary` if the release of a button press takes longer than 250ms; bank switch secondary functions take precedence over momentary behavior of a hybridToggle. [#24](../../../issues/24)
 - Fixed unintended application window deactivation after using Ctrl+O to load a new autogrid config. [#33](../../../issues/33)
-- In text displays, moved patch number from in front of patch name to afterwards and in parens. [#34](../../../issues/34)
+- Removed backwards compatible support for user defined bank and patch numbers; all bank and patch references are now only by name.  Removed display of bank and patch numbers from the main display.
 
 #### 2024.02.05
 - Added a [SleepRandom](docs.md#patchCommands) patch command.  

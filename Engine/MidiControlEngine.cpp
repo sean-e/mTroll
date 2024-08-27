@@ -1299,12 +1299,6 @@ MidiControlEngine::GetPatchNumber(const std::string & name) const
 }
 
 void
-MidiControlEngine::AssignCustomBankLoad(int switchNumber, int bankNumber)
-{
-	mBankLoadSwitchNumbers[switchNumber] = bankNumber;
-}
-
-void
 MidiControlEngine::AssignCustomBankLoad(int switchNumber, const std::string &bankName)
 {
 	mBankLoadSwitchBankNamesForInit[switchNumber] = bankName;

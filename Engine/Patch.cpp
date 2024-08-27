@@ -128,12 +128,14 @@ Patch::UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay
 		if (mNumber > 0)
 		{
 			if (txt.empty())
-				msgstr << "(" << mNumber << ")\n" << std::ends;
+				msgstr << "(" << mNumber << ')';
+#ifdef _DEBUG
 			else
-				msgstr << "  (" << mNumber << ")\n" << std::ends;
+				msgstr << "   (" << mNumber << ')';
+#endif
 		}
-		else
-			msgstr << '\n' << std::ends;
+
+		msgstr << '\n' << std::ends;
 		mainDisplay->TextOut(msgstr.str());
 	}
 }

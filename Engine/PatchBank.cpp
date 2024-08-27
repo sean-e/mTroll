@@ -518,12 +518,13 @@ PatchBank::PatchSwitchPressed(SwitchFunctionAssignment st,
 			if (patchNum > 0)
 			{
 				if (txt.empty())
-					msgstr << "(" << patchNum << ")\n";
+					msgstr << "(" << patchNum << ")";
+#ifdef _DEBUG
 				else
-					msgstr << "  (" << patchNum << ")\n";
+					msgstr << "   (" << patchNum << ")";
+#endif
 			}
-			else
-				msgstr << '\n';
+			msgstr << '\n';
 		}
 		else
 			doDisplayUpdate = false;
@@ -720,7 +721,10 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 					   bool temporaryDisplay)
 {
 	std::ostrstream info;
-	info << mName << "  (bank " << mNumber << ")";
+	info << mName;
+#ifdef _DEBUG
+	info << "   (bank " << mNumber << ")";
+#endif
 
 	if (!mAdditionalText.empty())
 	{
@@ -782,9 +786,11 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 					}
 
 					info << curItem->mPatch->GetName();
+#ifdef _DEBUG
 					if (patchNum > 0)
-						info << "  (" << std::setw(3) << patchNum << ")\n";
+						info << "   (" << patchNum << ")\n";
 					else
+#endif
 						info << '\n';
 				}
 			}
@@ -800,7 +806,12 @@ void
 PatchBank::DisplayDetailedPatchInfo(int switchNumber, IMainDisplay * mainDisplay)
 {
 	std::ostrstream info;
-	info << "Patch info for bank '" << mName << "' (" << mNumber << "), switch "
+	info << "Patch info for bank '" << mName
+#ifdef _DEBUG
+		<< "' (" << mNumber << "), switch "
+#else
+		<< "', switch "
+#endif
 		<< (switchNumber + 1) << ":\n";
 
 	bool displayedPatchheader = false;
@@ -835,10 +846,12 @@ PatchBank::DisplayDetailedPatchInfo(int switchNumber, IMainDisplay * mainDisplay
 					<< std::setiosflags(std::ios::left) << std::setw(19) << curItem->mPatch->GetPatchTypeStr() 
 					<< "  " << curItem->mPatch->GetName();
 
+#ifdef _DEBUG
 				const int patchNum = curItem->mPatch->GetNumber();
 				if (patchNum > 0)
-					info << "  (" << std::setw(3) << patchNum << ")\n";
+					info << "   (" << patchNum << ")\n";
 				else
+#endif
 					info << '\n';
 
 				++cnt;

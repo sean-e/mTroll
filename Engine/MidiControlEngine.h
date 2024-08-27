@@ -97,7 +97,6 @@ public:
 	void					AddPatch(PatchPtr patch);
 	void					SetPowerup(int powerupBank);
 	void					FilterRedundantProgChg(bool filter) {mFilterRedundantProgramChanges = filter;}
-	void					AssignCustomBankLoad(int switchNumber, int bankNumber);
 	void					AssignCustomBankLoad(int switchNumber, const std::string &bankName);
 	void					AssignModeSwitchNumber(EngineModeSwitch mode, int switchNumber);
 	const std::string		GetBankNameByNum(int bankNumberNotIndex);

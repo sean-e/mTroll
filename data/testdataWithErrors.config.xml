@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <MidiControlSettings>
 	<SystemConfig filterPC="0">
-		<powerup timeout="0" bank="1" patch="0" />
+		<powerup timeout="0" bankName="First Bank" />
 		<switches>
 			<switch command="menu" id="20" />
 			<switch command="decrement" id="21" />
@@ -16,7 +16,7 @@
 			<adc inputNumber="3" enable="0" minimumAdcVal="10" maximumAdcVal="1015" />
 			<adc inputNumber="4" enable="0" minimumAdcVal="10" maximumAdcVal="1015" />
 			<globalExpr inputNumber="1" assignmentNumber="1" channel="7" controller="2" min="0" max="127" invert="0" enable="1" />
-			<globalExpr inputNumber="2" assignmentNumber="1" channel="4" controller="2" min="0" max="127" invert="0" enable="1" bottomTogglePatchNumber="1" topTogglePatchNumber="2" />
+			<globalExpr inputNumber="2" assignmentNumber="1" channel="4" controller="2" min="0" max="127" invert="0" enable="1" bottomTogglePatchName="Toggle 1" topTogglePatchName="Toggle 2" />
 			<globalExpr inputNumber="3" assignmentNumber="1" channel="11" controller="110" min="0" max="127" invert="0" enable="1" />
 			<globalExpr inputNumber="4" assignmentNumber="1" channel="0" controller="111" min="0" max="127" invert="0" enable="1" />
 		</expression>
@@ -28,91 +28,89 @@
 		<Deviced channel="3">Bar</Deviced>
 	</DeviceChannelMap>
 	<patches>
-		<patch name="Toggle 1" number="1" type="toggle" port="1">
+		<patch name="Toggle 1" type="toggle" port="1">
 			<midiByteString name="A">ca 00 ba 6f 29</midiByteString>
 			<midiByteString name="B">ca 02 ba 6f 7f</midiByteString>
 		</patch>
-		<patch name="Toggle 2" number="2" type="toggle" port="1">
+		<patch name="Toggle 2" type="toggle" port="1">
 			<midiByteString name="A">ca 00</midiByteString>
 			<midiByteString name="B">ca 02</midiByteString>
 		</patch>
-		<patch name="Toggle 3" number="3" type="toggle" port="1">
+		<patch name="Toggle 3" type="toggle" port="1">
 			<midiByteString name="A">ba 09 00</midiByteString>
 			<midiByteString name="B">ba 09 7f</midiByteString>
 		</patch>
-		<patch name="Momentary 1" number="10" type="momentary" port="1">
+		<patch name="Momentary 1" type="momentary" port="1">
 			<midiByteString name="A">ba 09 00</midiByteString>
 			<midiByteString name="B">ba 09 7f</midiByteString>
 		</patch>
-		<patch name="Momentary 2" number="11" type="momentary" port="1">
+		<patch name="Momentary 2" type="momentary" port="1">
 			<midiByteString name="A">ba 0a 00</midiByteString>
 			<midiByteString name="B">ba 0a 7f</midiByteString>
 		</patch>
-		<patch name="Momentary 3" number="12" type="momentary" port="1">
+		<patch name="Momentary 3" type="momentary" port="1">
 			<midiByteString name="A">ba 0a 00</midiByteString>
 			<midiByteString name="B">ba 0a 7f</midiByteString>
 		</patch>
-		<patch name="Normal 1" number="20" type="normal" port="1">
+		<patch name="Normal 1" type="normal" port="1">
 			<midiByteString name="A">b2 07 7f b2 07 00</midiByteString>
 			<midiByteString name="B">b2 07 7f b2 07 00</midiByteString>
 		</patch>
-		<patch name="Normal 2" number="21" type="normal" port="1">
+		<patch name="Normal 2" type="normal" port="1">
 			<midiByteString name="A">b2 08 7f b2 08 00</midiByteString>
 			<midiByteString name="B">b2 08 7f b2 08 00</midiByteString>
 		</patch>
-		<patch name="Normal 3" number="22" type="normal" port="1">
+		<patch name="Normal 3" type="normal" port="1">
 			<midiByteString name="A">b2 0a 7f b2 0a 00</midiByteString>
 			<midiByteString name="B">b2 0a 7f b2 0a 00</midiByteString>
 		</patch>
-		<patch name="Normal 4" number="23" type="normal" port="1">
+		<patch name="Normal 4" type="normal" port="1">
 			<globalExpr inputNumber="2" enable="0" />
 			<localExpr inputNumber="2" assignmentNumber="1" channel="12" controller="1" min="0" max="127" invert="0" enable="1" />
 			<localExpr inputNumber="2" assignmentNumber="2" channel="12" controller="2" min="0" max="127" invert="1" enable="1" />
 			<midiByteString name="A">b2 0b 7f b2 0b 00</midiByteString>
 			<midiByteString name="B">b2 0b 7f b2 0b 00</midiByteString>
 		</patch>
-		<patch name="Stacked toggles" number="24" type="toggle" port="1" />
-		<patch name="Sequence 1" number="25" type="sequence" port="1">
+		<patch name="Stacked toggles" type="toggle" port="1" />
+		<patch name="Sequence 1" type="sequence" port="1">
 			<midiByteString>b2 0a 01</midiByteString>
 			<midiByteString>b2 0a 02</midiByteString>
 			<midiByteString>b2 0a 03</midiByteString>
 			<midiByteString>b2 0a 04</midiByteString>
 			<midiByteString>b2 0a 05</midiByteString>
 		</patch>
-		<patch name="Sequence 2" number="26" type="sequence" port="1">
+		<patch name="Sequence 2" type="sequence" port="1">
 			<midiByteString>b2 0a 11</midiByteString>
 			<midiByteString>b2 0a 12</midiByteString>
 			<midiByteString>b2 0a 13</midiByteString>
 			<midiByteString>b2 0a 14</midiByteString>
 			<midiByteString>b2 0a 15</midiByteString>
 		</patch>
-		<patch name="Default Toggle" number="30" type="toggle" port="1">
+		<patch name="Default Toggle" type="toggle" port="1">
 			<midiByteString name="A">ca 00 ba 6f 29</midiByteString>
 			<midiByteString name="B">ca 02 ba 6f 7f</midiByteString>
 		</patch>
-		<patch name="Default Toggle 2" number="31" type="toggle" port="1">
+		<patch name="Default Toggle 2" type="toggle" port="1">
 		</patch>
 		<foo />
-		<patch number="60" />
-		<patch name="No Number" />
-		<patch name="No Type" number="61" />
-		<patch name="Invalid Type" number="62" type="fdf" />
-		<patch name="Invalid Bytes" number="63" type="toggle" port="1">
+		<patch name="No Type" />
+		<patch name="Invalid Type" type="fdf" />
+		<patch name="Invalid Bytes" type="toggle" port="1">
 			<midiByteString name="A">XY</midiByteString>
 			<midiByteString name="B">ca2 ba 6f 7f</midiByteString>
 			<midiByteString name="B"></midiByteString>
 			<midiByteString name="B" />
 		</patch>
-		<patch name="Bad Refire - No Pedal" number="64" type="toggle" port="1">
+		<patch name="Bad Refire - No Pedal" type="toggle" port="1">
 			<RefirePedal group="A" />
 		</patch>
-		<patch name="Bad Refire - No Group" number="65" type="toggle" port="1">
+		<patch name="Bad Refire - No Group" type="toggle" port="1">
 			<RefirePedal pedal="1" />
 		</patch>
-		<patch name="Bad Refire - Bad Pedal" number="66" type="toggle" port="1">
+		<patch name="Bad Refire - Bad Pedal" type="toggle" port="1">
 			<RefirePedal pedal="0" group="A" />
 		</patch>
-		<patch name="Bad Commands" number="67" type="toggle" port="1">
+		<patch name="Bad Commands" type="toggle" port="1">
 			<ProgramChange />
 			<ProgramChange channel="0" />
 			<ProgramChange channel="1" />
@@ -124,66 +122,66 @@
 			<ControlChange device="Guest" group="A" controller="2" value="65535" />
 			<ControlChange device="Guest" group="A" controller="2" value="12" />
 		</patch>
-		<patch name="Bad Sleep" number="68" type="toggle" port="1">
+		<patch name="Bad Sleep" type="toggle" port="1">
 			<Sleep />
 			<Sleep>25</Sleep>
 		</patch>
 	</patches>
 	<banks>
-		<bank name="These are the defaults" number="0">
-			<switch number="16" patch="30" />
-			<switch number="20" patch="31" />
+		<bank name="defaults" >
+			<switch number="16" patchName="Default Toggle" />
+			<switch number="20" patchName="Default Toggle 2" />
 		</bank>
-		<bank name="First Bank" number="1">
-			<switch number="1" patch="1" loadState="" unloadState="" />
-			<switch number="2" patch="2" loadState="" unloadState="" />
-			<switch number="3" patch="3" loadState="" unloadState="" />
-			<switch number="6" patch="10" loadState="" unloadState="" />
-			<switch number="7" patch="11" loadState="" unloadState="" />
-			<switch number="8" patch="12" loadState="" unloadState="" />
-			<switch number="11" patch="20" loadState="" unloadState="" />
-			<switch number="12" patch="21" loadState="" unloadState="" />
-			<switch number="13" patch="22" loadState="" unloadState="" />
-			<switch number="14" patch="23" loadState="" unloadState="" />
+		<bank name="First Bank" >
+			<switch number="1" patchName="Toggle 1" loadState="" unloadState="" />
+			<switch number="2" patchName="Toggle 2" loadState="" unloadState="" />
+			<switch number="3" patchName="Toggle 3" loadState="" unloadState="" />
+			<switch number="6" patchName="Momentary 1" loadState="" unloadState="" />
+			<switch number="7" patchName="Momentary 2" loadState="" unloadState="" />
+			<switch number="8" patchName="Momentary 3" loadState="" unloadState="" />
+			<switch number="11" patchName="Normal 1" loadState="" unloadState="" />
+			<switch number="12" patchName="Normal 2" loadState="" unloadState="" />
+			<switch number="13" patchName="Normal 3" loadState="" unloadState="" />
+			<switch number="14" patchName="Normal 4" loadState="" unloadState="" />
 		</bank>
-		<bank name="Second Bank" number="2">
-			<switch number="1" patch="20" loadState="" unloadState="" />
-			<switch number="2" patch="21" loadState="" unloadState="" />
-			<switch number="3" patch="22" loadState="" unloadState="" />
-			<switch number="4" patch="23" loadState="" unloadState="" />
-			<switch number="11" patch="25" loadState="A" unloadState="" />
-			<switch number="12" patch="26" loadState="" unloadState="B" />
+		<bank name="Second Bank" >
+			<switch number="1" patchName="Normal 1" loadState="" unloadState="" />
+      <switch number="2" patchName="Normal 2" loadState="" unloadState="" />
+      <switch number="3" patchName="Normal 3" loadState="" unloadState="" />
+      <switch number="4" patchName="Normal 4" loadState="" unloadState="" />
+			<switch number="11" patchName="Sequence 1" loadState="A" unloadState="" />
+      <switch number="12" patchName="Sequence 2" loadState="" unloadState="B" />
 		</bank>
-		<bank name="Third Bank" number="3">
+		<bank name="Third Bank" >
 			<ExclusiveSwitchGroup></ExclusiveSwitchGroup>
 			<ExclusiveSwitchGroup />
 			<switch number="1" label="Reset Bank (meta)" command="ResetBankPatches"  />
-			<switch number="6" patch="20" loadState="" unloadState="" />
-			<switch number="7" patch="21" loadState="" unloadState="" />
-			<switch number="8" patch="22" loadState="" unloadState="" />
-			<switch number="9" patch="23" loadState="" unloadState="" />
-			<switch number="11" patch="24" loadState="" unloadState="" />
-			<switch number="11" patch="1" loadState="" unloadState="" />
-			<switch number="11" patch="2" loadState="" unloadState="" />
-			<switch number="11" patch="3" loadState="" unloadState="" />
-			<switch number="16" patch="1" loadState="" unloadState="" />
-			<switch number="17" patch="2" loadState="" unloadState="" />
-			<switch number="18" patch="3" loadState="" unloadState="" />
+			<switch number="6" patchName="Normal 1" loadState="" unloadState="" />
+      <switch number="7" patchName="Normal 2" loadState="" unloadState="" />
+      <switch number="8" patchName="Normal 3" loadState="" unloadState="" />
+      <switch number="9" patchName="Normal 4" loadState="" unloadState="" />
+			<switch number="11" patchName="Stacked toggles" loadState="" unloadState="" />
+      <switch number="11" patchName="Toggle 1" loadState="" unloadState="" />
+      <switch number="11" patchName="Toggle 2" loadState="" unloadState="" />
+      <switch number="11" patchName="Toggle 3" loadState="" unloadState="" />
+      <switch number="16" patchName="Toggle 1" loadState="" unloadState="" />
+      <switch number="17" patchName="Toggle 2" loadState="" unloadState="" />
+      <switch number="18" patchName="Toggle 3" loadState="" unloadState="" />
 		</bank>
-		<bank name="Fourth Bank" number="4">
+		<bank name="Fourth Bank" >
 			<ExclusiveSwitchGroup>2 7 12</ExclusiveSwitchGroup>
-			<switch number="2" patch="1" loadState="" unloadState="" />
-			<switch patch="2" loadState="" unloadState="" />
+			<switch number="2" patchName="Toggle 1" loadState="" unloadState="" />
+			<switch patchName="Toggle 2" loadState="" unloadState="" />
 			<switch number="12" loadState="" unloadState="" />
-			<switch number="5" command="LoadBank" bankNumber="2" />
-			<switch number="6" patch="68" loadState="" unloadState="" />
+			<switch number="5" command="LoadBank" bankName="Second Bank" />
+			<switch number="6" patchName="Bad Sleep" loadState="" unloadState="" />
 			<AnotherThing />
 		</bank>
-		<bank name="Fifth Bank" number="5">
-			<switch number="1" label="Load Bank (meta)" command="LoadBank" bankNumber="3" />
+		<bank name="Fifth Bank" >
+			<switch number="1" label="Load Bank (meta)" command="LoadBank" bankName="Third Bank" />
 			<switch number="2" label="Invalid command (meta)" command="Foo" />
 			<switch number="3" label="Incomplete Load Bank command -- missing bankNumber (meta)" command="LoadBank" />
-			<switch number="4" label="Missing command (meta)" />
+			<switch number="4" label="Missing command" />
 		</bank>
 		<bank name="No Number" >
 		</bank>
