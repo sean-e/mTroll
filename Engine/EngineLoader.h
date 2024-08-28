@@ -82,6 +82,7 @@ private:
 
 	IAxeFxPtr				GetAxeMgr(TiXmlElement * pElem);
 	void					LoadBanks(TiXmlElement * pElem);
+	void					LoadSetOrder(TiXmlElement * pElem, std::vector<std::string> &setorder);
 	unsigned int			LookUpColor(std::string device, std::string patchType, int activeState, unsigned int defaultColor = kFirstColorPreset);
 	int						GetPatchNumber(const std::string& name) const;
 	bool					IsPatchNumberUsed(int num) const;
@@ -111,7 +112,6 @@ private:
 	int						mAxeSyncPort = -1;
 	int						mAxe3SyncPort = -1;
 	int						mEdpPort = -1;
-	int						mPowerupBank = 0;
 	std::string				mPowerupBankName;
 	std::array<unsigned int, 32> mLedPresetColors;
 	// device/patchType/state --> rgb color (or preset slot 0-31 if hi-bit set)

@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <strstream>
 #include <atomic>
+#include <set>
 #include "MidiControlEngine.h"
 #include "PatchBank.h"
 #include "IMainDisplay.h"
@@ -84,7 +85,6 @@ MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 	mActiveBank(nullptr),
 	mActiveBankIndex(0),
 	mBankNavigationIndex(0),
-	mPowerUpBank(0),
 	mIncrementSwitchNumber(incrementSwitchNumber),
 	mDecrementSwitchNumber(decrementSwitchNumber),
 	mModeSwitchNumber(modeSwitchNumber),
@@ -110,7 +110,7 @@ MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 	if (ax3Mgr)
 		mAxeMgrs.push_back(ax3Mgr);
 
-	mBanks.reserve(999);
+	mBanks.reserve(100);
 }
 
 MidiControlEngine::~MidiControlEngine()
@@ -160,9 +160,9 @@ MidiControlEngine::AddPatch(PatchPtr patch)
 }
 
 void
-MidiControlEngine::SetPowerup(int powerupBank)
+MidiControlEngine::SetPowerup(const std::string& name)
 {
-	mPowerUpBank = powerupBank;
+	mPowerUpBankName = name;
 }
 
 const std::string
@@ -187,7 +187,7 @@ MidiControlEngine::GetBankNumber(const std::string& name) const
 }
 
 void
-MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSettings, unsigned int ledColor)
+MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSettings, unsigned int ledColor, std::vector<std::string> &setorder)
 {
 	mEngineLedColor = ledColor;
 
@@ -211,6 +211,7 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 	}
 
 	std::sort(mBanks.begin(), mBanks.end(), SortByBankNumber);
+	SetBankNavOrder(setorder);
 
 	AddPatch(std::make_shared<MetaPatch_BankNavNext>(this, ReservedPatchNumbers::kBankNavNext, "Nav next"));
 	AddPatch(std::make_shared<MetaPatch_BankNavPrevious>(this, ReservedPatchNumbers::kBankNavPrev, "Nav previous"));
@@ -374,24 +375,29 @@ MidiControlEngine::CalibrateExprSettings(const PedalCalibration * pedalCalibrati
 void
 MidiControlEngine::LoadStartupBank()
 {
-	int powerUpBankIndex = -1;
-	int itIdx = 0;
-	for (Banks::iterator it = mBanks.begin();
-		it != mBanks.end();
-		++it, ++itIdx)
+	if (mBanks == mBanksInNavOrder)
 	{
-		PatchBankPtr curItem = *it;
-		if (curItem->GetBankNumber() == mPowerUpBank)
+		if (!mPowerUpBankName.empty())
 		{
-			powerUpBankIndex = itIdx;
-			break;
+			int powerUpBankIndex = GetBankNumber(mPowerUpBankName);
+			if (-1 != powerUpBankIndex)
+			{
+				powerUpBankIndex = GetBankIndex(powerUpBankIndex);
+				if (-1 != powerUpBankIndex)
+				{
+					LoadBank(powerUpBankIndex);
+					return;
+				}
+			}
 		}
 	}
+	else
+	{
+		// don't use powerup bank if a setOrder has been defined -- 
+		// instead, use the first item in the set
+	}
 
-	if (powerUpBankIndex == -1)
-		powerUpBankIndex = 0;
-
-	LoadBank(powerUpBankIndex);
+	LoadBank(0);
 }
 
 void
@@ -616,7 +622,7 @@ bool
 MidiControlEngine::NavigateBankRelative(int relativeBankIndex)
 {
 	// bank inc/dec does not commit bank
-	const int kBankCnt = mBanks.size();
+	const int kBankCnt = mBanksInNavOrder.size();
 	if (!kBankCnt || kBankCnt == 1)
 		return false;
 
@@ -656,7 +662,7 @@ void
 MidiControlEngine::LoadBankRelative(int relativeBankIndex)
 {
 	// navigate and commit bank
-	const int kBankCnt = mBanks.size();
+	const int kBankCnt = mBanksInNavOrder.size();
 	if (!kBankCnt || kBankCnt == 1)
 		return;
 
@@ -721,8 +727,9 @@ int
 MidiControlEngine::GetBankIndex(int bankNumber)
 {
 	int idx = 0;
-	for (Banks::iterator it = mBanks.begin();
-		it != mBanks.end();
+	auto &banks = mBanksInNavOrder.empty() ? mBanks : mBanksInNavOrder;
+	for (Banks::iterator it = banks.begin();
+		it != banks.end();
 		++it, ++idx)
 	{
 		PatchBankPtr curItem = *it;
@@ -735,11 +742,11 @@ MidiControlEngine::GetBankIndex(int bankNumber)
 PatchBankPtr
 MidiControlEngine::GetBank(int bankIndex)
 {
-	const int kBankCnt = mBanks.size();
-	if (bankIndex < 0 || bankIndex >= kBankCnt)
+	auto &banks = mBanksInNavOrder.empty() ? mBanks : mBanksInNavOrder;
+	if (bankIndex < 0 || bankIndex >= (int)banks.size())
 		return nullptr;
 
-	PatchBankPtr bank = mBanks[bankIndex];
+	PatchBankPtr bank = banks[bankIndex];
 	return bank;
 }
 
@@ -755,7 +762,7 @@ MidiControlEngine::LoadBank(int bankIndex)
 
 	mActiveBank = bank;
 
-	if (hmWentBack == mHistoryNavMode || 
+	if (hmWentBack == mHistoryNavMode ||
 		hmWentForward == mHistoryNavMode)
 	{
 		// leave recall mode
@@ -778,7 +785,7 @@ MidiControlEngine::LoadBank(int bankIndex)
 	mBankNavigationIndex = mActiveBankIndex = bankIndex;
 	mActiveBank->Load(mMainDisplay, mSwitchDisplay);
 	UpdateBankModeSwitchDisplay();
-	
+
 	return true;
 }
 
@@ -2179,4 +2186,57 @@ MidiControlEngine::SwitchReleased_MidiOutSelect(int switchNumber)
 			ChangeMode(mMode.top());
 		}
 	}
+}
+
+void
+MidiControlEngine::SetBankNavOrder(std::vector<std::string> &setorder)
+{
+	std::set<std::string> bankNamesAddedToSet;
+	Banks tmpBanksInNavOrder;
+	tmpBanksInNavOrder.reserve(mBanks.size());
+
+	for (const auto& cur : setorder)
+	{
+		int bankIdx = GetBankNumber(cur);
+		if (-1 == bankIdx)
+			continue;
+
+		auto bnk = GetBank(bankIdx);
+		if (!bnk)
+			continue;
+
+		bankNamesAddedToSet.emplace(cur);
+		tmpBanksInNavOrder.emplace_back(bnk);
+	}
+
+	// for each bank we have, if the bank is not already in tmpBanksInNavOrder, append it
+	if (tmpBanksInNavOrder.empty())
+	{
+		tmpBanksInNavOrder = mBanks;
+	}
+	else
+	{
+		int idx = 0;
+		int skippedDefaults = 0;
+		for (const PatchBankPtr &curItem : mBanks)
+		{
+			const std::string curBankName(curItem->GetBankName());
+			if (curBankName != "default" && curBankName != "defaults" &&
+				curBankName != "Default" && curBankName != "Defaults")
+			{
+				auto it = bankNamesAddedToSet.find(curBankName);
+				if (it == bankNamesAddedToSet.end())
+					tmpBanksInNavOrder.emplace_back(curItem);
+			}
+			else
+			{
+				skippedDefaults++;
+			}
+			++idx;
+		}
+
+		_ASSERTE(tmpBanksInNavOrder.size() >= (mBanks.size() - skippedDefaults));
+	}
+
+	mBanksInNavOrder.swap(tmpBanksInNavOrder);
 }

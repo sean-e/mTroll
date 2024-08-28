@@ -95,13 +95,13 @@ public:
 	using Patches = std::map<int, PatchPtr>;
 	PatchBankPtr			AddBank(int number, const std::string & name, const std::string & notes);
 	void					AddPatch(PatchPtr patch);
-	void					SetPowerup(int powerupBank);
+	void					SetPowerup(const std::string &powerupBank);
 	void					FilterRedundantProgChg(bool filter) {mFilterRedundantProgramChanges = filter;}
 	void					AssignCustomBankLoad(int switchNumber, const std::string &bankName);
 	void					AssignModeSwitchNumber(EngineModeSwitch mode, int switchNumber);
 	const std::string		GetBankNameByNum(int bankNumberNotIndex);
 	int						GetBankNumber(const std::string& name) const;
-	void					CompleteInit(const PedalCalibration * pedalCalibrationSettings, unsigned int ledColor);
+	void					CompleteInit(const PedalCalibration * pedalCalibrationSettings, unsigned int ledColor, std::vector<std::string> &setorder);
 	void					Shutdown();
 
 	ExpressionPedals &		GetPedals() {return mGlobalPedals;}
@@ -127,6 +127,7 @@ public:
 	void AddControllerInputMonitor(int inputDevicePort, ControllerInputMonitorPtr mon);
 
 private:
+	void					SetBankNavOrder(std::vector<std::string> &setorder);
 	void					LoadStartupBank();
 	bool					NavigateBankRelative(int relativeBankIndex);
 	bool					LoadBank(int bankIndex);
@@ -202,10 +203,11 @@ private:
 	// retained in different form
 	Patches					mPatches;		// patchNum is key
 	using Banks = std::vector<PatchBankPtr>;
-	Banks					mBanks;			// compressed; bankNum is not index
+	Banks					mBanks;			// compressed; bankNum is not index; used during init and as backing store
+	Banks					mBanksInNavOrder; // used at runtime -- could be identical to mBanks
 
 	// retained state
-	int						mPowerUpBank;
+	std::string				mPowerUpBankName;
 	bool					mFilterRedundantProgramChanges;
 	ExpressionPedals		mGlobalPedals;
 	int						mPedalModePort;
@@ -223,6 +225,7 @@ private:
 using MidiControlEnginePtr = std::shared_ptr<MidiControlEngine>;
 
 // reserved patch numbers
+// As 2024-08-27, this isn't really necessary since user-defined patch numbers are no longer supported.
 // patch number reservations
 // -1 to -1000 are reserved for engine
 // -1001 to -2000 are user-defined patch numbers of auto-generated patches defined via bank switch (not required)

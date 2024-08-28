@@ -10,6 +10,7 @@
 - Added auto-generated patches for dynamic, momentary `NoteOn`+`NoteOff` commands (128 patches named the same as the note names: C-1 to G9) [#32](../../../issues/32)
 - Add new File menu commands to load only data config (`Ctrl+O`) or UI config (`Ctrl+U`) independently of each other; old Open command now assigned to `Ctrl+Shift+O`. [#20](../../../issues/20)
 - Added support for bank notes/text that appear in main display upon load of bank (via `notes` attribute in `bank` definition). [#35](../../../issues/35)
+- Added support for defining bank navigation order (independent of bank definition order) via `setOrder` list of `bank` items. [#36](../../../issues/36)
 - Added `hybridToggle` and `AxeHybridToggle` patch types that normally work as `toggle` but work as `momentary` if the release of a button press takes longer than 250ms; bank switch secondary functions take precedence over momentary behavior of a hybridToggle. [#24](../../../issues/24)
 - Fixed unintended application window deactivation after using Ctrl+O to load a new autogrid config. [#33](../../../issues/33)
 - Removed backwards compatible support for user defined bank and patch numbers; all bank and patch references are now only by name.  Removed display of bank and patch numbers from the main display.

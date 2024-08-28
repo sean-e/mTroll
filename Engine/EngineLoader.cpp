@@ -185,6 +185,8 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 	pElem = hRoot.FirstChild("banks").FirstChildElement().Element();
 	LoadBanks(pElem);
 
+	pElem = hRoot.FirstChild("setOrder").FirstChildElement().Element();
+
 	mSwitchDisplay->UpdatePresetColors(mLedPresetColors);
 
 	mMidiOutGenerator->OpenMidiOuts();
@@ -241,9 +243,12 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 	}
 
 	if (!mPowerupBankName.empty())
-		mPowerupBank = mEngine->GetBankNumber(mPowerupBankName);
-	mEngine->SetPowerup(mPowerupBank);
-	mEngine->CompleteInit(mAdcCalibration, LookUpColor("mtroll", "*", 1));
+		mEngine->SetPowerup(mPowerupBankName);
+
+	std::vector<std::string> setorder;
+	LoadSetOrder(pElem, setorder);
+
+	mEngine->CompleteInit(mAdcCalibration, LookUpColor("mtroll", "*", 1), setorder);
 
 	MidiControlEnginePtr createdEngine = mEngine;
 	mEngine = nullptr;
@@ -2513,6 +2518,53 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 				mTraceDisplay->Trace(std::string(traceMsg.str()));
 			}
 		}
+	}
+}
+
+void
+EngineLoader::LoadSetOrder(TiXmlElement * pElem, std::vector<std::string> &setorder)
+{
+	setorder.reserve(64);
+
+	for (; pElem; pElem = pElem->NextSiblingElement())
+	{
+		if (pElem->ValueStr() != "bank")
+		{
+			if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: unrecognized setOrder item\n" << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
+			continue;
+		}
+
+		std::string bankName;
+		if (pElem->GetText())
+			bankName = pElem->GetText();
+		else
+		{
+			if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: missing bank name in setOrder\n" << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
+			continue;
+		}
+		
+		if (-1 == mEngine->GetBankNumber(bankName))
+		{
+			if (mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: unknown bank name used in setOrder -- " << bankName << '\n' << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
+			continue;
+		}
+
+		setorder.emplace_back(bankName);
 	}
 }
 
