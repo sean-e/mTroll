@@ -100,7 +100,7 @@ public:
 		_ASSERTE(PatchLogicStyle::Hybrid != mPatchLogicStyle || mHybridState == HybridState::Reset || mHybridState == HybridState::ConvertedToToggle);
 		if (IsActive() || IsTogglePatchType())
 		{
-			_ASSERTE(PatchLogicStyle::Momentary != mPatchLogicStyle);
+			// _ASSERTE(PatchLogicStyle::Momentary != mPatchLogicStyle); -- this will fire if a momentary patch has been auto-activated on bank load
 			if (IsActive())
 			{
 				ExecCommandsB();

@@ -196,16 +196,24 @@ DynamicMidiCommand::Exec()
 			if (mDynamicVelocity)
 				commandString[2] = pMidiData->GetDynamicVelocity();
 		}
-		else if (mDynamicChannel && (commandString[0] & 0xF0) == 0x80)
+		else if (mDynamicChannel)
 		{
-			// Note off -- don't use dynamic velocity
-			commandString[0] = commandString[0] | pMidiData->GetDynamicChannel();
+			if ((commandString[0] & 0xF0) == 0x80)
+			{
+				// Note off -- don't use dynamic velocity
+				commandString[0] = commandString[0] | pMidiData->GetDynamicChannel();
+			}
+			else if ((commandString[0] & 0xF0) == 0xb0)
+			{
+				// Control change
+				commandString[0] = commandString[0] | pMidiData->GetDynamicChannel();
+			}
 		}
 
 		curMidiOut->MidiOut(commandString[0], commandString[1], commandString[2]);
 		break;
 	case 2:
-		if (mDynamicChannel && (commandString[0] & 0xF0) == 0xc0)
+		if (mDynamicChannel && (commandString[0] & 0xF0) == 0xc0) // Program change
 			commandString[0] = commandString[0] | pMidiData->GetDynamicChannel();
 
 		curMidiOut->MidiOut(commandString[0], commandString[1]);

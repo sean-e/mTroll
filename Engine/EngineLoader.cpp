@@ -1292,6 +1292,8 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				else if (patchElement == "ControlChange")
 				{
 					// <ControlChange group="A" channel="0" controller="0" value="0" />
+					if (chStr == "*" || (chStr.empty() && isDynamicDevice))
+						isDynamicCh = true;
 					childElem->QueryIntAttribute("controller", &data1);
 					childElem->QueryIntAttribute("value", &data2);
 					cmdByte = 0xb0;
@@ -1360,7 +1362,8 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 
 				// commented out check for isDynamicPort because if that is the only dynamic 
 				// element, then too many additional commands would need to be supported.
-				// Dynamic port then is really only supported for program change, note on, and note off.
+				// Dynamic port then is really only supported for program change, note on, note 
+				// off, and control change.
 				if (group == "B")
 				{
 					if (/*isDynamicPort ||*/ isDynamicCh || isDynamicVel)
@@ -1664,7 +1667,9 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			newPatch = std::make_shared<RepeatingMomentaryPatch>(patchNumber, patchName, midiOut, cmds, cmds2);
 		else if (patchType == "momentaryControlChange")
 		{
-			if (-1 == patchDefaultCh)
+			if (isDynamicDevice)
+				isDynamicCh = true;
+			if (-1 == patchDefaultCh && !isDynamicCh)
 			{
 				if (mTraceDisplay)
 				{
@@ -1700,16 +1705,24 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			}
 
 			Bytes bytesA, bytesB;
-			bytesA.push_back(0xb0 | patchDefaultCh);
+			bytesA.push_back(0xb0 | (isDynamicCh ? 0 : patchDefaultCh));
 			bytesA.push_back(data1);
 			bytesA.push_back(127);
 
-			bytesB.push_back(0xb0 | patchDefaultCh);
+			bytesB.push_back(0xb0 | (isDynamicCh ? 0 : patchDefaultCh));
 			bytesB.push_back(data1);
 			bytesB.push_back(0);
 
-			cmds.push_back(std::make_shared<MidiCommandString>(midiOut, bytesA));
-			cmds2.push_back(std::make_shared<MidiCommandString>(midiOut, bytesB));
+			if (isDynamicCh)
+			{
+				cmds.push_back(std::make_shared<DynamicMidiCommand>(midiOut, bytesA, isDynamicCh));
+				cmds2.push_back(std::make_shared<DynamicMidiCommand>(midiOut, bytesB, isDynamicCh));
+			}
+			else
+			{
+				cmds.push_back(std::make_shared<MidiCommandString>(midiOut, bytesA));
+				cmds2.push_back(std::make_shared<MidiCommandString>(midiOut, bytesB));
+			}
 			newPatch = std::make_shared<MomentaryPatch>(patchNumber, patchName, midiOut, cmds, cmds2);
 		}
 		else if (patchType == "AxeMomentary")
