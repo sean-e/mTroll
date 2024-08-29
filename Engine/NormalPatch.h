@@ -47,12 +47,15 @@ public:
 	{
 	}
 
-	virtual std::string GetPatchTypeStr() const override { return "normal"; }
-	virtual bool IsPatchVolatile() const override { return true; }
+	virtual std::string GetPatchTypeStr() const override { return mGroupId.empty() ? "normal" : "groupNormal"; }
+	// patch grouping by groupId overrides volatility of NormalPatch
+	virtual bool IsPatchVolatile() const override { return mGroupId.empty() ? true : false; }
 	virtual void DeactivateVolatilePatch() override { ExecCommandsB(); }
 
 	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) override
 	{
+		__super::SwitchPressed(mainDisplay, switchDisplay);
+
 		if (mPatchIsActive)
 		{
 			ExecCommandsB();

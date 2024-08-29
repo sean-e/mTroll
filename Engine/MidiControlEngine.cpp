@@ -48,6 +48,7 @@
 #include "MetaPatch_SyncAxeFx.h"
 #include "MetaPatch_AxeFxNav.h"
 #include "DynamicMidiCommand.h"
+#include "TwoStatePatch.h"
 
 
 #ifdef _MSC_VER
@@ -2239,4 +2240,24 @@ MidiControlEngine::SetBankNavOrder(std::vector<std::string> &setorder)
 	}
 
 	mBanksInNavOrder.swap(tmpBanksInNavOrder);
+}
+
+void
+MidiControlEngine::AddToPatchGroup(const std::string &groupId, TwoStatePatch* patch)
+{
+	mPatchGroups[groupId].emplace_back(patch);
+}
+
+void
+MidiControlEngine::DeactivateRestOfPatchGroup(const std::string &groupId, 
+	TwoStatePatch* activePatch, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
+{
+	for (auto curPatchItem : mPatchGroups[groupId])
+	{
+		if (curPatchItem == activePatch)
+			continue;
+
+		curPatchItem->DeactivateGroupedPatch();
+		curPatchItem->UpdateDisplays(mainDisplay, switchDisplay);
+	}
 }

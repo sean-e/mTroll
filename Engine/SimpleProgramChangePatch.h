@@ -47,13 +47,13 @@ public:
 		_ASSERTE(-2 == mMidiChannel || (0 <= mMidiChannel && 16 > mMidiChannel));
 	}
 
-	virtual std::string GetPatchTypeStr() const override { return "simpleProgramChange"; }
+	virtual std::string GetPatchTypeStr() const override { return mGroupId.empty() ? "simpleProgramChange" : "groupsimpleProgramChange"; }
 
 	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) override
 	{
-		if (IsActive())
-			mPatchIsActive = false; // ExecCommandsB();
-		else
+		__super::SwitchPressed(mainDisplay, switchDisplay);
+
+		if (!IsActive())
 			ExecCommandsA();
 
 		UpdateDisplays(mainDisplay, switchDisplay);

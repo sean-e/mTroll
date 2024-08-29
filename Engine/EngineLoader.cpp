@@ -1896,6 +1896,24 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			newPatch->SetLedColors(ledActiveColor, ledInactiveColor);
 		}
 
+		if (pElem->Attribute("groupId"))
+		{
+			TwoStatePatch *tspatch = dynamic_cast<TwoStatePatch*>(newPatch.get());
+			if (tspatch)
+			{
+				const std::string groupId(pElem->Attribute("groupId"));
+				if (!tspatch->SetGroupId(groupId))
+					tspatch = nullptr;
+			}
+			
+			if (!tspatch && mTraceDisplay)
+			{
+				std::strstream traceMsg;
+				traceMsg << "Error loading config file: groupdId specified for patch '" << patchName << "' that doesn't support grouping\n" << std::ends;
+				mTraceDisplay->Trace(std::string(traceMsg.str()));
+			}
+		}
+
 		mEngine->AddPatch(newPatch);
 
 		ExpressionPedals & pedals = newPatch->GetPedals();

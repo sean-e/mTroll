@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2013,2015,2018,2021 Sean Echevarria
+ * Copyright (C) 2007-2010,2013,2015,2018,2021,2024 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -30,9 +30,15 @@
 #include "IPatchCommand.h"
 
 
+class MidiControlEngine;
+
+
 // TwoStatePatch
 // -----------------------------------------------------------------------------
 // Base class for classic pmc10 patch types.
+//
+// If groupId is set, then all patches of same groupId coordinate so that only 
+// one of that group is ever active.
 //
 class TwoStatePatch : public Patch
 {
@@ -54,10 +60,16 @@ protected:
 
 	~TwoStatePatch() = default;
 
-	virtual void BankTransitionActivation() override { ExecCommandsA(); }
+public:
+	virtual bool SetGroupId(const std::string &groupId) { mGroupId = groupId; return true; }
+	virtual void DeactivateGroupedPatch() { ExecCommandsB(); }
+
+	virtual void CompleteInit(MidiControlEngine * eng, ITraceDisplay * trc) override;
+	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) override;
+
+	virtual void BankTransitionActivation() override;
 	virtual void BankTransitionDeactivation() override { ExecCommandsB(); }
 
-public:
 	virtual void ExecCommandsA();
 	virtual void ExecCommandsB();
 
@@ -69,6 +81,8 @@ protected:
 	PatchCommands	mCmdsA;
 	PatchCommands	mCmdsB;
 	const PedalSupport	mPedalSupport;
+	MidiControlEngine	*mEng = nullptr;
+	std::string		mGroupId;
 };
 
 #endif // TwoStatePatch_h__

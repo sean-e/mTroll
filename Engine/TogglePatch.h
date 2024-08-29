@@ -97,6 +97,7 @@ public:
 
 	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) override
 	{
+		__super::SwitchPressed(mainDisplay, switchDisplay);
 		_ASSERTE(PatchLogicStyle::Hybrid != mPatchLogicStyle || mHybridState == HybridState::Reset || mHybridState == HybridState::ConvertedToToggle);
 		if (IsActive() || IsTogglePatchType())
 		{

@@ -1,6 +1,6 @@
 /*
 * mTroll MIDI Controller
-* Copyright (C) 2015-2016,2018 Sean Echevarria
+* Copyright (C) 2015-2016,2018,2024 Sean Echevarria
 *
 * This file is part of mTroll.
 *
@@ -24,7 +24,35 @@
 
 #include "TwoStatePatch.h"
 #include "PersistentPedalOverridePatch.h"
+#include "MidiControlEngine.h"
 
+
+void
+TwoStatePatch::CompleteInit(MidiControlEngine * eng, ITraceDisplay * trc)
+{
+	if (!mGroupId.empty())
+	{
+		_ASSERTE(eng);
+		mEng = eng;
+		mEng->AddToPatchGroup(mGroupId, this);
+	}
+}
+
+void
+TwoStatePatch::SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
+{
+	if (mEng && !mGroupId.empty())
+		mEng->DeactivateRestOfPatchGroup(mGroupId, this, mainDisplay, switchDisplay);
+}
+
+void
+TwoStatePatch::BankTransitionActivation()
+{
+	if (mEng && !mGroupId.empty())
+		mEng->DeactivateRestOfPatchGroup(mGroupId, this, nullptr, nullptr);
+
+	ExecCommandsA();
+}
 
 void
 TwoStatePatch::ExecCommandsA()

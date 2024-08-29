@@ -47,6 +47,7 @@ class IMidiOut;
 class Patch;
 class PatchBank;
 class ControllerInputMonitor;
+class TwoStatePatch;
 
 using PatchBankPtr = std::shared_ptr<PatchBank>;
 using IMidiOutPtr = std::shared_ptr<IMidiOut>;
@@ -101,6 +102,8 @@ public:
 	void					AssignModeSwitchNumber(EngineModeSwitch mode, int switchNumber);
 	const std::string		GetBankNameByNum(int bankNumberNotIndex);
 	int						GetBankNumber(const std::string& name) const;
+	void					AddToPatchGroup(const std::string &groupId, TwoStatePatch* patch);
+	void					DeactivateRestOfPatchGroup(const std::string &groupId, TwoStatePatch * activePatch, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 	void					CompleteInit(const PedalCalibration * pedalCalibrationSettings, unsigned int ledColor, std::vector<std::string> &setorder);
 	void					Shutdown();
 
@@ -205,6 +208,7 @@ private:
 	using Banks = std::vector<PatchBankPtr>;
 	Banks					mBanks;			// compressed; bankNum is not index; used during init and as backing store
 	Banks					mBanksInNavOrder; // used at runtime -- could be identical to mBanks
+	std::map<std::string, std::vector<TwoStatePatch*>> mPatchGroups;
 
 	// retained state
 	std::string				mPowerUpBankName;

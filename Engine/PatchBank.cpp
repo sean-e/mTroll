@@ -349,7 +349,6 @@ PatchBank::PatchSwitchPressed(SwitchFunctionAssignment st,
 {
 	PatchVect & curPatches = mPatches[switchNumber].GetPatchVect(st);
 	PatchVect::iterator it;
-	bool curSwitchHasVolatilePatch = false;
 
 	// if any patch for the switch is normal, then need to do normal processing
 	// on current normal patches.
@@ -363,25 +362,21 @@ PatchBank::PatchSwitchPressed(SwitchFunctionAssignment st,
 
 		if (curSwitchItem->mPatch->IsPatchVolatile())
 		{
-			curSwitchHasVolatilePatch = true;
-			break;
-		}
-	}
-
-	if (curSwitchHasVolatilePatch)
-	{
-		// do B processing
-		for (std::list<PatchPtr>::iterator it2 = sActiveVolatilePatches.begin();
-			it2 != sActiveVolatilePatches.end();
-			it2 = sActiveVolatilePatches.begin())
-		{
-			PatchPtr curPatchItem = *it2;
-			if (curPatchItem && curPatchItem->IsActive())
+			// do B processing
+			for (std::list<PatchPtr>::iterator it2 = sActiveVolatilePatches.begin();
+				it2 != sActiveVolatilePatches.end();
+				it2 = sActiveVolatilePatches.begin())
 			{
-				curPatchItem->DeactivateVolatilePatch();
-				curPatchItem->UpdateDisplays(mainDisplay, switchDisplay);
+				PatchPtr curPatchItem = *it2;
+				if (curPatchItem && curPatchItem->IsActive())
+				{
+					curPatchItem->DeactivateVolatilePatch();
+					curPatchItem->UpdateDisplays(mainDisplay, switchDisplay);
+				}
+				sActiveVolatilePatches.erase(it2);
 			}
-			sActiveVolatilePatches.erase(it2);
+
+			break;
 		}
 	}
 

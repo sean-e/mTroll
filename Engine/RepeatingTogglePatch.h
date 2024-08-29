@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2023 Sean Echevarria
+ * Copyright (C) 2023-2024 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -46,6 +46,7 @@ public:
 	}
 
 	virtual std::string GetPatchTypeStr() const override { return "repeatingToggle"; }
+	virtual bool SetGroupId(const std::string &) override { return false; } // doesn't support grouping
 
 	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) override
 	{
