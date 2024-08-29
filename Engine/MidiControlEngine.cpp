@@ -494,7 +494,7 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 		{
 			if (PatchBank::spdShort != dur)
 			{
-				// #consider: long-press function of mode switch could be user-definable
+				// #consider: long-press function of menu/mode switch could be user-definable
 				HistoryBackward();
 			}
 			else
@@ -1133,10 +1133,24 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			mSwitchDisplay->ForceSwitchDisplay(9, mEngineLedColor);
 			if (emBankDirect == curMode)
 			{
+				showModeInMainDisplay = false;
 				mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "Backspace");
 				mSwitchDisplay->ForceSwitchDisplay(mDecrementSwitchNumber, mEngineLedColor);
-				mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Commit");
+				mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Commit/Load");
 				mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, mEngineLedColor);
+
+				// display list of banks
+				if (mMainDisplay)
+				{
+					mMainDisplay->TextOut("mode: Bank Direct\n");
+
+					for (const std::shared_ptr<PatchBank>& curItem : mBanks)
+					{
+						std::ostrstream bankInfo;
+						bankInfo << curItem->GetBankNumber() << ": " << curItem->GetBankName() << "\n" << std::ends;
+						mMainDisplay->AppendText(bankInfo.str());
+					}
+				}
 			}
 			else
 			{
