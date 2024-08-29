@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <MidiControlSettings>
 	<SystemConfig>
-		<powerup bank="10" />
+		<powerup bankName="Directory" />
 		<switches>
 			<!-- 'menu', 'decrement' and 'increment' switch nodes are required.
 				switch id attributes are 0-based and map to the switchMappings block in the .ui.xml file.
@@ -27,7 +27,6 @@
 			<switch command="adcDisplay" id="16" />
 			<switch command="testLeds" id="17" />
 			<switch command="bankDescription" id="18" />
-			<switch command="toggleLedInversion" id="19" />
 
 			<!-- Optional bank load assignments. Make sure these don't conflict with defaults if 
 				defaults aren't specified.

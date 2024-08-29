@@ -542,6 +542,12 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 
 		if (MidiControlEngine::kUnassignedSwitchNumber != m)
 			mEngine->AssignModeSwitchNumber(m, switchNumber);
+		else if (mTraceDisplay)
+		{
+			std::strstream traceMsg;
+			traceMsg << "Error loading config file switches section: command name unrecognized: " << name << '\n' << std::ends;
+			mTraceDisplay->Trace(std::string(traceMsg.str()));
+		}
 	}
 
 	return true;
