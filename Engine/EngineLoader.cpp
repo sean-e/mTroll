@@ -840,7 +840,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 						if (mTraceDisplay)
 						{
 							std::strstream traceMsg;
-							traceMsg << "Error loading config file: invalid command channel in patch " << patchName << '\n' << std::ends;
+							traceMsg << "Error loading config file: invalid command channel in patch '" << patchName << "'\n" << std::ends;
 							mTraceDisplay->Trace(std::string(traceMsg.str()));
 						}
 						patchDefaultCh = -1;
@@ -877,7 +877,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 			else if (mTraceDisplay)
 			{
 				std::strstream traceMsg;
-				traceMsg << "Error loading patch: device port not mapped to midi device for patchname: " << patchName << '\n' << std::ends;
+				traceMsg << "Error loading patch: device port not mapped to midi device for patch '" << patchName << "'\n" << std::ends;
 				mTraceDisplay->Trace(std::string(traceMsg.str()));
 			}
 		}
@@ -919,7 +919,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 					if (mTraceDisplay)
 					{
 						std::strstream traceMsg;
-						traceMsg << "Error loading config file: invalid midiByteString in patch " << patchName << '\n' << std::ends;
+						traceMsg << "Error loading config file: invalid midiByteString in patch '" << patchName << "'\n" << std::ends;
 						mTraceDisplay->Trace(std::string(traceMsg.str()));
 					}
 					continue;
@@ -941,7 +941,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				else if (mTraceDisplay)
 				{
 					std::strstream traceMsg;
-					traceMsg << "Error loading config file: invalid pedal specified in RefirePedal in patch " << patchName << '\n' << std::ends;
+					traceMsg << "Error loading config file: invalid pedal specified in RefirePedal in patch '" << patchName << "'\n" << std::ends;
 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 				}
 				continue;
@@ -962,7 +962,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				else if (mTraceDisplay)
 				{
 					std::strstream traceMsg;
-					traceMsg << "Error loading config file: no (or invalid) time specified in Sleep in patch " << patchName << '\n' << std::ends;
+					traceMsg << "Error loading config file: no (or invalid) time specified in Sleep in patch '" << patchName << "'\n" << std::ends;
 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 				}
 				continue;
@@ -985,7 +985,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				else if (mTraceDisplay)
 				{
 					std::strstream traceMsg;
-					traceMsg << "Error loading config file: no (or invalid) times specified in SleepRandom in patch " << patchName << '\n' << std::ends;
+					traceMsg << "Error loading config file: no (or invalid) times specified in SleepRandom in patch '" << patchName << "'\n" << std::ends;
 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 				}
 				continue;
@@ -1006,7 +1006,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				else if (mTraceDisplay)
 				{
 					std::strstream traceMsg;
-					traceMsg << "Error loading config file: no (or invalid) port specified in SetDynamicPort in patch " << patchName << '\n' << std::ends;
+					traceMsg << "Error loading config file: no (or invalid) port specified in SetDynamicPort in patch '" << patchName << "'\n" << std::ends;
 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 				}
 				continue;
@@ -1027,7 +1027,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				else if (mTraceDisplay)
 				{
 					std::strstream traceMsg;
-					traceMsg << "Error loading config file: no (or invalid) channel specified in SetDynamicChannel in patch " << patchName << '\n' << std::ends;
+					traceMsg << "Error loading config file: no (or invalid) channel specified in SetDynamicChannel in patch '" << patchName << "'\n" << std::ends;
 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 				}
 				continue;
@@ -1048,7 +1048,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				else if (mTraceDisplay)
 				{
 					std::strstream traceMsg;
-					traceMsg << "Error loading config file: no (or invalid) velocity specified in SetDynamicChannelVelocity in patch " << patchName << '\n' << std::ends;
+					traceMsg << "Error loading config file: no (or invalid) velocity specified in SetDynamicChannelVelocity in patch '" << patchName << "'\n" << std::ends;
 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 				}
 				continue;
@@ -1071,7 +1071,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				else if (mTraceDisplay)
 				{
 					std::strstream traceMsg;
-					traceMsg << "Error loading config file: no (or invalid) times specified in SetDynamicChannelRandomVelocity in patch " << patchName << '\n' << std::ends;
+					traceMsg << "Error loading config file: no (or invalid) times specified in SetDynamicChannelRandomVelocity in patch '" << patchName << "'\n" << std::ends;
 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 				}
 				continue;
@@ -1094,7 +1094,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				else if (mTraceDisplay)
 				{
 					std::strstream traceMsg;
-					traceMsg << "Error loading config file: no or invalid patch name specified in patchListItemName in patch " << patchName << '\n' << std::ends;
+					traceMsg << "Error loading config file: no or invalid patch name specified in patchListItemName in patch '" << patchName << "'\n" << std::ends;
 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 				}
 				continue;
@@ -1125,14 +1125,14 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 					else if (mTraceDisplay)
 					{
 						std::strstream traceMsg;
-						traceMsg << "Error loading config file: no (or invalid) group specified for refPatchName in patch " << patchName << '\n' << std::ends;
+						traceMsg << "Error loading config file: no (or invalid) group specified for refPatchName in patch '" << patchName << "'\n" << std::ends;
 						mTraceDisplay->Trace(std::string(traceMsg.str()));
 					}
 				}
 				else if (mTraceDisplay)
 				{
 					std::strstream traceMsg;
-					traceMsg << "Error loading config file: no or invalid patch name specified in refPatchName in patch " << patchName << '\n' << std::ends;
+					traceMsg << "Error loading config file: no or invalid patch name specified in refPatchName in patch '" << patchName << "'\n" << std::ends;
 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 				}
 				continue;
@@ -1155,7 +1155,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 							if (mTraceDisplay)
 							{
 								std::strstream traceMsg;
-								traceMsg << "Error loading config file: command missing channel in patch " << patchName << '\n' << std::ends;
+								traceMsg << "Error loading config file: command missing channel in patch '" << patchName << "'\n" << std::ends;
 								mTraceDisplay->Trace(std::string(traceMsg.str()));
 							}
 							continue;
@@ -1183,7 +1183,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 							if (mTraceDisplay)
 							{
 								std::strstream traceMsg;
-								traceMsg << "Error loading config file: invalid command channel in patch " << patchName << '\n' << std::ends;
+								traceMsg << "Error loading config file: invalid command channel in patch '" << patchName << "'\n" << std::ends;
 								mTraceDisplay->Trace(std::string(traceMsg.str()));
 							}
 							continue;
@@ -1220,7 +1220,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 						if (mTraceDisplay)
 						{
 							std::strstream traceMsg;
-							traceMsg << "Error loading config file: too large a preset specified for AxeProgramChange in patch " << patchName << '\n' << std::ends;
+							traceMsg << "Error loading config file: too large a preset specified for AxeProgramChange in patch '" << patchName << "'\n" << std::ends;
 							mTraceDisplay->Trace(std::string(traceMsg.str()));
 						}
 						continue;
@@ -1258,7 +1258,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 						if (mTraceDisplay)
 						{
 							std::strstream traceMsg;
-							traceMsg << "Error loading config file: too large a preset specified for EdpProgramChange in patch " << patchName << '\n' << std::ends;
+							traceMsg << "Error loading config file: too large a preset specified for EdpProgramChange in patch '" << patchName << "'\n" << std::ends;
 							mTraceDisplay->Trace(std::string(traceMsg.str()));
 						}
 						continue;
@@ -1284,7 +1284,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 						if (mTraceDisplay)
 						{
 							std::strstream traceMsg;
-							traceMsg << "Error loading config file: EdpProgramChange in patch " << patchName << " requires EDP device.\n" << std::ends;
+							traceMsg << "Error loading config file: EdpProgramChange in patch '" << patchName << "' requires EDP device.\n" << std::ends;
 							mTraceDisplay->Trace(std::string(traceMsg.str()));
 						}
 					}
@@ -1328,7 +1328,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				else if (mTraceDisplay)
 				{
 					std::strstream traceMsg;
-					traceMsg << "Error loading config file: unrecognized command in patch " << patchName << '\n' << std::ends;
+					traceMsg << "Error loading config file: unrecognized command in patch '" << patchName << "'\n" << std::ends;
 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 				}
 
@@ -1339,7 +1339,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 						if (mTraceDisplay)
 						{
 							std::strstream traceMsg;
-							traceMsg << "Error loading config file: too large a value specified for command in patch " << patchName << '\n' << std::ends;
+							traceMsg << "Error loading config file: too large a value specified for command in patch '" << patchName << "'\n" << std::ends;
 							mTraceDisplay->Trace(std::string(traceMsg.str()));
 						}
 						continue;
@@ -1497,7 +1497,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				if (mTraceDisplay)
 				{
 					std::strstream traceMsg;
-					traceMsg << "Error loading config file: invalid simpleProgramChange (dynamic/multi command/channel?/B Group?) patch " << patchName << '\n' << std::ends;
+					traceMsg << "Error loading config file: invalid simpleProgramChange (dynamic/multi command/channel?/B Group?) patch '" << patchName << "'\n" << std::ends;
 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 				}
 				continue;
@@ -1523,7 +1523,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				if (mTraceDisplay)
 				{
 					std::strstream traceMsg;
-					traceMsg << "Error loading config file: patch " << patchName << " is of toggleControlChange type but does not specify a device\n" << std::ends;
+					traceMsg << "Error loading config file: patch '" << patchName << "' is of toggleControlChange type but does not specify a device\n" << std::ends;
 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 				}
 				continue;
@@ -1536,7 +1536,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				if (mTraceDisplay)
 				{
 					std::strstream traceMsg;
-					traceMsg << "Error loading config file: no controller specified for toggleControlChange patch " << patchName << '\n' << std::ends;
+					traceMsg << "Error loading config file: no controller specified for toggleControlChange patch '" << patchName << "'\n" << std::ends;
 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 				}
 				continue;
@@ -1547,7 +1547,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				if (mTraceDisplay)
 				{
 					std::strstream traceMsg;
-					traceMsg << "Error loading config file: too large a controller value specified for toggleControlChange patch " << patchName << '\n' << std::ends;
+					traceMsg << "Error loading config file: too large a controller value specified for toggleControlChange patch '" << patchName << "'\n" << std::ends;
 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 				}
 				continue;
@@ -1674,7 +1674,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				if (mTraceDisplay)
 				{
 					std::strstream traceMsg;
-					traceMsg << "Error loading config file: patch " << patchName << " is of momentaryControlChange type but does not specify a device\n" << std::ends;
+					traceMsg << "Error loading config file: patch '" << patchName << "' is of momentaryControlChange type but does not specify a device\n" << std::ends;
 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 				}
 				continue;
@@ -1687,7 +1687,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				if (mTraceDisplay)
 				{
 					std::strstream traceMsg;
-					traceMsg << "Error loading config file: no controller specified for momentaryControlChange patch " << patchName << '\n' << std::ends;
+					traceMsg << "Error loading config file: no controller specified for momentaryControlChange patch '" << patchName << "'\n" << std::ends;
 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 				}
 				continue;
@@ -1698,7 +1698,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				if (mTraceDisplay)
 				{
 					std::strstream traceMsg;
-					traceMsg << "Error loading config file: too large a controller value specified for momentaryControlChange patch " << patchName << '\n' << std::ends;
+					traceMsg << "Error loading config file: too large a controller value specified for momentaryControlChange patch '" << patchName << "'\n" << std::ends;
 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 				}
 				continue;
@@ -1802,7 +1802,7 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 		if (patchTypeErr && mTraceDisplay)
 		{
 			std::strstream traceMsg;
-			traceMsg << "Error loading config file: invalid patch type specified for patch " << patchName << '\n' << std::ends;
+			traceMsg << "Error loading config file: invalid patch type specified for patch '" << patchName << "'\n" << std::ends;
 			mTraceDisplay->Trace(std::string(traceMsg.str()));
 		}
 
@@ -2153,7 +2153,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 							if (mTraceDisplay)
 							{
 								std::strstream traceMsg;
-								traceMsg << "Error loading config file: switch " << switchNumber << " in bank " << bankNumber << " failed to locate patch name " << patchName << "\n" << std::ends;
+								traceMsg << "Error loading config file: switch " << switchNumber << " in bank " << bankNumber << " failed to locate patch '" << patchName << "'\n" << std::ends;
 								mTraceDisplay->Trace(std::string(traceMsg.str()));
 							}
 							continue;
