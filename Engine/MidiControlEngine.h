@@ -129,6 +129,11 @@ public:
 	ControllerInputMonitorPtr GetControllerInputMonitor(int inputDevicePort);
 	void AddControllerInputMonitor(int inputDevicePort, ControllerInputMonitorPtr mon);
 
+	void					SetTempo(int val);
+	int						GetTempo() const noexcept { return mTempo; }
+	void					EnableMidiClock(bool enable);
+	bool					IsMidiClockEnabled() const;
+
 private:
 	void					SetBankNavOrder(std::vector<std::string> &setorder);
 	void					LoadStartupBank();
@@ -202,6 +207,7 @@ private:
 	enum HistoryNavMode		{ hmNone, hmBack, hmForward, hmWentBack, hmWentForward};
 	HistoryNavMode			mHistoryNavMode;
 	unsigned int			mSwitchPressedEventTime;
+	int						mTempo = 120;
 
 	// retained in different form
 	Patches					mPatches;		// patchNum is key

@@ -219,6 +219,7 @@
     <ClInclude Include="..\Engine\AxeFxModel.h" />
     <ClInclude Include="..\Engine\AxeMomentaryPatch.h" />
     <ClInclude Include="..\Engine\BaseSleepCommand.h" />
+    <ClInclude Include="..\Engine\ClockCommands.h" />
     <ClInclude Include="..\Engine\CompositeTogglePatch.h" />
     <ClInclude Include="..\Engine\ControllerInputMonitor.h" />
     <ClInclude Include="..\Engine\ControllerTogglePatch.h" />
@@ -232,6 +233,7 @@
     <ClInclude Include="..\Engine\RepeatingMomentaryPatch.h" />
     <ClInclude Include="..\Engine\RepeatingPatch.h" />
     <ClInclude Include="..\Engine\RepeatingTogglePatch.h" />
+    <ClInclude Include="..\Engine\RestCommand.h" />
     <ClInclude Include="..\Engine\SimpleProgramChangePatch.h" />
     <ClInclude Include="..\Engine\SleepRandomCommand.h" />
     <ClInclude Include="..\midi\SleepShort.h" />

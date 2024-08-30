@@ -66,6 +66,8 @@
 #include "SleepRandomCommand.h"
 #include "DynamicMidiCommand.h"
 #include "SimpleProgramChangePatch.h"
+#include "RestCommand.h"
+#include "ClockCommands.h"
 
 
 #ifdef _MSC_VER
@@ -948,6 +950,64 @@ EngineLoader::LoadPatches(TiXmlElement * pElem)
 				{
 					std::strstream traceMsg;
 					traceMsg << "Error loading config file: invalid pedal specified in RefirePedal in patch '" << patchName << "'\n" << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
+				continue;
+			}
+			else if (patchElement == "EnableMidiClock")
+			{
+				if (group == "B")
+					cmds2.push_back(std::make_shared<EnableMidiClockCommand>(mEngine.get()));
+				else
+					cmds.push_back(std::make_shared<EnableMidiClockCommand>(mEngine.get()));
+				continue;
+			}
+			else if (patchElement == "DisableMidiClock")
+			{
+				if (group == "B")
+					cmds2.push_back(std::make_shared<DisableMidiClockCommand>(mEngine.get()));
+				else
+					cmds.push_back(std::make_shared<DisableMidiClockCommand>(mEngine.get()));
+				continue;
+			}
+			else if (patchElement == "SetClockTempo")
+			{
+				std::string tempoBpmStr;
+				if (childElem->GetText())
+					tempoBpmStr = childElem->GetText();
+				const int tempo = ::atoi(tempoBpmStr.c_str());
+				if (0 < tempo)
+				{
+					if (group == "B")
+						cmds2.push_back(std::make_shared<SetClockTempoCommand>(mEngine.get(), tempo));
+					else
+						cmds.push_back(std::make_shared<SetClockTempoCommand>(mEngine.get(), tempo));
+				}
+				else if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: no (or invalid) tempo value specified in SetClockTempo in patch '" << patchName << "'\n" << std::ends;
+					mTraceDisplay->Trace(std::string(traceMsg.str()));
+				}
+				continue;
+			}
+			else if (patchElement == "Rest")
+			{
+				std::string restValtr;
+				if (childElem->GetText())
+					restValtr = childElem->GetText();
+				RestCommand::RestNoteValue rv = RestCommand::StringToNoteValue(restValtr);
+				if (rv != RestCommand::RestNoteValue::UnknownValue)
+				{
+					if (group == "B")
+						cmds2.push_back(std::make_shared<RestCommand>(mEngine.get(), rv));
+					else
+						cmds.push_back(std::make_shared<RestCommand>(mEngine.get(), rv));
+				}
+				else if (mTraceDisplay)
+				{
+					std::strstream traceMsg;
+					traceMsg << "Error loading config file: no (or invalid) note value specified in Rest in patch '" << patchName << "'\n" << std::ends;
 					mTraceDisplay->Trace(std::string(traceMsg.str()));
 				}
 				continue;

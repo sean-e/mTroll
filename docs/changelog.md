@@ -1,6 +1,7 @@
 ### mTroll MIDI controller changelog / process milestones
 
 #### 2024.08.xx
+- Many of these changes came about due to having started using the controller to play synth notes with my feet while playing bass
 - Added support for device program change patch type for per-device exclusive patch functionality. [#22](../../../issues/22)
 - Added support for dynamic channel (1-16) in `NoteOn`, `ProgramChange` and `ControlChange` commands, and `momentaryControlChange` patch type (via patch command `SetDynamicChannel`). [#28](../../../issues/28)
 - Added support for dynamic velocity in `NoteOn` commands (via patch command `SetDynamicChannelVelocity`). [#28](../../../issues/28)
@@ -13,6 +14,8 @@
 - Added support for defining bank navigation order (independent of bank definition order) via `setOrder` list of `bank` items. [#36](../../../issues/36)
 - Added `hybridToggle` and `AxeHybridToggle` patch types that normally work as `toggle` but work as `momentary` if the release of a button press takes longer than 250ms; bank switch secondary functions take precedence over momentary behavior of a hybridToggle. [#24](../../../issues/24)
 - Added support for exclusive group patches via `groupId` attribute on patch definition.  Activating one patch in a group will deactivate any other previously active patches in the group (a way to support radio button exclusivity behavior  independent of bank definitions). [#37](../../../issues/37)
+- Added patch commands for control of MIDI tempo: `EnableMidiClock`, `DisableMidiClock`, `SetClockTempo` [#19](../../../issues/19)
+- Added `Rest` patch command whose value of `1/2/4/8/16/32/whole/half/quarter/eighth/sixteenth/thirtysecond` executes a sleep command whose duration is calculated based on the then current tempo as set by `SetClockTempo` (even if MIDI clock is not enabled).  [#29](../../../issues/29)
 - Fixed unintended application window deactivation after using Ctrl+O to load a new autogrid config. [#33](../../../issues/33)
 - In Bank Direct mode, added listing of all banks in bank definition order to the main display. [#38](../../../issues/38)
 - Removed backwards compatible support for user defined bank and patch numbers; all bank and patch references are now only by name.  Removed display of bank and patch numbers from the main display.

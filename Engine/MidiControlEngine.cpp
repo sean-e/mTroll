@@ -2021,6 +2021,37 @@ MidiControlEngine::SwitchReleased_ControlChangeDirect(int switchNumber)
 }
 
 void
+MidiControlEngine::SetTempo(int val)
+{
+	if (val > 0)
+		mTempo = val;
+	else
+		mTempo = 120;
+
+	if (mMidiOut)
+	{
+		mMidiOut->SetTempo(val);
+		mTempo = mMidiOut->GetTempo();
+	}
+}
+
+void
+MidiControlEngine::EnableMidiClock(bool enable)
+{
+	if (mMidiOut)
+		mMidiOut->EnableMidiClock(enable);
+}
+
+bool
+MidiControlEngine::IsMidiClockEnabled() const
+{
+	if (mMidiOut)
+		return mMidiOut->IsMidiClockEnabled();
+
+	return false;
+}
+
+void
 MidiControlEngine::SwitchPressed_ClockSetup(int switchNumber)
 {
 	std::string msg;
@@ -2042,7 +2073,7 @@ MidiControlEngine::SwitchPressed_ClockSetup(int switchNumber)
 	case 10:
 		// commit tempo
 		if (mDirectNumber.empty())
-			clockTempo = mDirectValueLastSent;
+			clockTempo = mTempo;
 		else
 			clockTempo = ::atoi(mDirectNumber.c_str());
 		mDirectNumber.clear();
@@ -2051,11 +2082,11 @@ MidiControlEngine::SwitchPressed_ClockSetup(int switchNumber)
 		// toggle clock on/off
 		if (mMidiOut)
 		{
-			mMidiOut->EnableMidiClock(!mMidiOut->IsMidiClockEnabled());
+			EnableMidiClock(!IsMidiClockEnabled());
 			if (mMainDisplay)
 			{
 				msg += "MIDI clock ";
-				if (mMidiOut->IsMidiClockEnabled())
+				if (IsMidiClockEnabled())
 				{
 					std::strstream strm;
 					strm << mMidiOut->GetTempo() << std::ends;
@@ -2080,7 +2111,7 @@ MidiControlEngine::SwitchPressed_ClockSetup(int switchNumber)
 	case 14:
 		// dec/inc clock
 		if (mDirectNumber.empty())
-			clockTempo = mDirectValueLastSent;
+			clockTempo = mTempo;
 		else
 			clockTempo = ::atoi(mDirectNumber.c_str());
 
@@ -2118,18 +2149,14 @@ MidiControlEngine::SwitchPressed_ClockSetup(int switchNumber)
 
 	if (-1 != clockTempo)
 	{
-		if (mMidiOut)
-		{
-			mMidiOut->SetTempo(clockTempo);
-			clockTempo = mMidiOut->GetTempo();
-		}
+		SetTempo(clockTempo);
 
-		mDirectValueLastSent = clockTempo;
+		mDirectValueLastSent = mTempo;
 
 		if (mMainDisplay)
 		{
 			std::strstream strm;
-			strm << clockTempo << std::ends;
+			strm << mTempo << std::ends;
 
 			msg += "set tempo: ";
 			msg += strm.str();
@@ -2138,7 +2165,7 @@ MidiControlEngine::SwitchPressed_ClockSetup(int switchNumber)
 			if (mMidiOut)
 			{
 				msg += "\r\nclock is ";
-				msg += mMidiOut->IsMidiClockEnabled() ? "enabled" : "disabled";
+				msg += IsMidiClockEnabled() ? "enabled" : "disabled";
 			}
 
 			mMainDisplay->TextOut(msg);
