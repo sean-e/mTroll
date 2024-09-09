@@ -1,6 +1,6 @@
 ### mTroll MIDI controller changelog / process milestones
 
-#### 2024.08.xx
+#### 2024.09.09
 - Many of these changes came about due to having started using the controller to play synth notes with my feet while playing bass
 - Added support for device program change patch type for per-device exclusive patch functionality. [#22](../../../issues/22)
 - Added support for dynamic channel (1-16) in `NoteOn`, `ProgramChange` and `ControlChange` commands, and `momentaryControlChange` patch type (via patch command `SetDynamicChannel`). [#28](../../../issues/28)
