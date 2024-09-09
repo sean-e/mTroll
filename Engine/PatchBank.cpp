@@ -512,11 +512,14 @@ PatchBank::PatchSwitchPressed(SwitchFunctionAssignment st,
 			const int patchNum = curSwitchItem->mPatch->GetNumber();
 			if (patchNum > 0)
 			{
-				if (txt.empty())
-					msgstr << "(" << patchNum << ")";
 #ifdef _DEBUG
+				if (txt.empty())
+					msgstr << "(off)   (" << patchNum << ")";
 				else
 					msgstr << "   (" << patchNum << ")";
+#else
+				if (txt.empty())
+					msgstr << "(off)";
 #endif
 			}
 			msgstr << '\n';

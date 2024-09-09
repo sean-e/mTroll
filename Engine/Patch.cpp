@@ -127,11 +127,14 @@ Patch::UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay
 		msgstr << txt;
 		if (mNumber > 0)
 		{
-			if (txt.empty())
-				msgstr << "(" << mNumber << ')';
 #ifdef _DEBUG
+			if (txt.empty())
+				msgstr << "(off)   (" << mNumber << ')';
 			else
 				msgstr << "   (" << mNumber << ')';
+#else
+			if (txt.empty())
+				msgstr << "(off)";
 #endif
 		}
 
