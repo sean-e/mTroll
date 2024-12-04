@@ -1,5 +1,8 @@
 ### mTroll MIDI controller changelog / process milestones
 
+#### XXXX
+- In `repeatingToggle` and `repeatingMomentary` patches, guarantee a minimum of one execution per invocation
+
 #### 2024.09.09
 - Many of these changes came about due to having started using the controller to play synth notes with my feet while playing bass
 - Added support for device program change patch type for per-device exclusive patch functionality. [#22](../../../issues/22)

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2023 Sean Echevarria
+ * Copyright (C) 2023-2024 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -96,6 +96,12 @@ public:
 		};
 
 		ManageRunState rs(mThreadIsRunning);
+
+		// guarantee a minimum of one execution per run (a momentary patch 
+		// could potentially reset mThreadShouldRun on release before the 
+		// thread started the first exec of the press)
+		ExecCommandsA();
+
 		while (mThreadShouldRun)
 			ExecCommandsA();
 	}
