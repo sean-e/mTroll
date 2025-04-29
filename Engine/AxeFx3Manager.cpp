@@ -395,10 +395,12 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 	case AxeFx3MessageIds::EffectBypass:
 		// when we send set bypass, it responds with new state -- we could 
 		// update here rather than requesting a status dump
+		// This message is not sent in response to changes on the device or the editor.
 		break;
 	case AxeFx3MessageIds::EffectChannel:
 		// when we send set channel, it responds with new state -- we could 
-		// update here rather than requesting a status dump
+		// update here rather than requesting a status dump.
+		// This message is not sent in response to changes on the device or the editor.
 		break;
 	case AxeFx3MessageIds::Scene:
 		// we read scene number when we get the scene name, so don't need to
