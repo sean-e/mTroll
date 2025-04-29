@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2014-2015,2018,2020,2023 Sean Echevarria
+ * Copyright (C) 2007-2010,2014-2015,2018,2020,2023,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -232,6 +232,8 @@ private:
 	ExpressionControl	mPedalControlData[ccsPerPedals];
 };
 
+using ExpressionPedalPtr = std::shared_ptr<ExpressionPedal>;
+
 
 class ExpressionPedals
 {
@@ -240,6 +242,11 @@ public:
 
 	ExpressionPedals(IMidiOutPtr midiOut = nullptr)
 	{
+		mPedals[0] = std::make_shared<ExpressionPedal>();
+		mPedals[1] = std::make_shared<ExpressionPedal>();
+		mPedals[2] = std::make_shared<ExpressionPedal>();
+		mPedals[3] = std::make_shared<ExpressionPedal>();
+
 		for (auto & globalEnable : mGlobalEnables)
 			globalEnable = true;
 		for (auto & pedalEnable : mPedalEnables)
@@ -250,6 +257,7 @@ public:
 
 	bool HasAnySettings() const { return mHasAnyNondefault; }
 
+	// this is only called on patch-defined pedals, not by the system global default pedals
 	void EnableGlobal(int pedal, bool enable)
 	{
 		_ASSERTE(pedal < PedalCount);
@@ -264,8 +272,9 @@ public:
 	{
 		for (auto & pedal : mPedals)
 		{
-			pedal.InitMidiOut(0, midiOut);
-			pedal.InitMidiOut(1, midiOut);
+			_ASSERTE(pedal);
+			pedal->InitMidiOut(0, midiOut);
+			pedal->InitMidiOut(1, midiOut);
 		}
 	}
 
@@ -273,7 +282,10 @@ public:
 	{
 		_ASSERTE(pedal < PedalCount);
 		if (pedal < PedalCount)
-			mPedals[pedal].InitMidiOut(ccIdx, midiOut);
+		{
+			_ASSERTE(mPedals[pedal]);
+			mPedals[pedal]->InitMidiOut(ccIdx, midiOut);
+		}
 	}
 
 	void Init(int pedal, 
@@ -283,8 +295,12 @@ public:
 		_ASSERTE(pedal < PedalCount);
 		if (pedal < PedalCount)
 		{
-			mPedals[pedal].Init(pedal + 1, idx, params);
-			mPedalEnables[pedal] = true;
+			_ASSERTE(mPedals[pedal]);
+			mPedals[pedal]->Init(pedal + 1, idx, params);
+			mPedalEnables[pedal] = true; // note that the mPedals member is valid
+			// automatically disable global pedal if this is a patch-defined pedal (config file no longer requires it be explicit)
+			// for system global default pedal, the value of mGlobalEnables doesn't really matter
+			mGlobalEnables[pedal] = false;
 			mHasAnyNondefault = true;
 		}
 	}
@@ -292,7 +308,10 @@ public:
 	void Calibrate(const PedalCalibration * calibrationSetting, MidiControlEngine * eng, ITraceDisplay * traceDisp)
 	{
 		for (int idx = 0; idx < PedalCount; ++idx)
-			mPedals[idx].Calibrate(calibrationSetting[idx], eng, traceDisp);
+		{
+			_ASSERTE(mPedals[idx]);
+			mPedals[idx]->Calibrate(calibrationSetting[idx], eng, traceDisp);
+		}
 	}
 
 	bool AdcValueChange(IMainDisplay * mainDisplay, 
@@ -303,7 +322,8 @@ public:
 		if (pedal < PedalCount)
 		{
 			if (mPedalEnables[pedal])
-				mPedals[pedal].AdcValueChange(mainDisplay, newVal);
+				if (mPedals[pedal])
+					mPedals[pedal]->AdcValueChange(mainDisplay, newVal);
 			return mGlobalEnables[pedal];
 		}
 
@@ -317,18 +337,104 @@ public:
 		if (pedal < PedalCount)
 		{
 			if (mPedalEnables[pedal])
-				mPedals[pedal].Refire(mainDisplay);
+				if (mPedals[pedal])
+					mPedals[pedal]->Refire(mainDisplay);
 			return mGlobalEnables[pedal];
 		}
 
 		return false;
 	}
 
-private:
+	// used by PersistentPedalOverridePatches to manage an aggregate ExpressionPedals instance at runtime
+	// method is not used by or with system global default pedals
+	bool IsLocalPedalEnabled(int idx) const
+	{
+		return mPedalEnables[idx];
+	}
+
+	// used by PersistentPedalOverridePatches to manage an aggregate ExpressionPedals instance at runtime
+	// method is not used by or with system global default pedals
+	bool IsGlobalPedalDisabled(int idx) const
+	{
+		return !mGlobalEnables[idx];
+	}
+
+	ExpressionPedalPtr GetPedal(int idx) const
+	{
+		_ASSERTE(idx >=0 && idx < PedalCount);
+		return mPedals[idx];
+	}
+
+protected:
 	bool					mHasAnyNondefault = false;
+	// these two arrays are used by both patch-defined pedals and the global default definitions.
+	// mGlobalEnables true if system global default pedal should be processed after the local pedal definition
+	// Value of mGlobalEnables is irrelevant for the system global default pedals
 	bool					mGlobalEnables[PedalCount];
-	bool					mPedalEnables[PedalCount];	// true if either cc is enabled for a pedal
-	ExpressionPedal			mPedals[PedalCount];
+	// mPedalEnables true if either cc is enabled for a pedal; true if corresponding mPedal is inited
+	bool					mPedalEnables[PedalCount];
+	ExpressionPedalPtr		mPedals[PedalCount];
+};
+
+
+class ExpressionPedalAggregate : public ExpressionPedals
+{
+public:
+	ExpressionPedalAggregate() : ExpressionPedals(nullptr) { }
+
+	// used by PersistentPedalOverridePatches to manage an aggregate ExpressionPedals instance at runtime.
+	// method is not used by or with system global default pedals
+	void ClearPedalOverrides(const ExpressionPedals& pedals)
+	{
+		for (int idx = 0; idx < PedalCount; ++idx)
+		{
+			if (pedals.IsLocalPedalEnabled(idx) || pedals.IsGlobalPedalDisabled(idx))
+			{
+				mGlobalEnables[idx] = true;
+				mPedalEnables[idx] = false;
+				mPedals[idx] = nullptr;
+			}
+		}
+
+		bool anyLeft = false;
+		for (const auto pedalEnable : mPedalEnables)
+		{
+			if (pedalEnable)
+			{
+				anyLeft = true;
+				break;
+			}
+		}
+
+		if (!anyLeft)
+		{
+			for (const auto pedalEnable : mGlobalEnables)
+			{
+				if (!pedalEnable)
+					return;
+			}
+
+			mHasAnyNondefault = false;
+		}
+	}
+
+	// used by PersistentPedalOverridePatches to manage an aggregate ExpressionPedals instance at runtime
+	// method is not used by or with system global default pedals
+	void OverridePedals(const ExpressionPedals& pedals)
+	{
+		for (int idx = 0; idx < PedalCount; ++idx)
+		{
+			if (pedals.IsLocalPedalEnabled(idx) || pedals.IsGlobalPedalDisabled(idx))
+			{
+				mGlobalEnables[idx] = !pedals.IsGlobalPedalDisabled(idx);
+				mPedalEnables[idx] = pedals.IsLocalPedalEnabled(idx);
+
+				auto ped = pedals.GetPedal(idx);
+				if (mPedals[idx] != ped)
+					mPedals[idx] = ped;
+			}
+		}
+	}
 };
 
 #endif // ExpressionPedals_h__

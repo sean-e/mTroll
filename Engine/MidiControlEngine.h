@@ -107,7 +107,7 @@ public:
 	void					CompleteInit(const PedalCalibration * pedalCalibrationSettings, unsigned int ledColor, std::vector<std::string> &setorder);
 	void					Shutdown();
 
-	ExpressionPedals &		GetPedals() {return mGlobalPedals;}
+	ExpressionPedals &		GetPedals() {return mGlobalPedals;} // only used during init/load
 	PatchPtr				GetPatch(int number);
 	int						GetPatchNumber(const std::string & name) const;
 	ISwitchDisplay *		GetSwitchDisplay() const { return mSwitchDisplay; }

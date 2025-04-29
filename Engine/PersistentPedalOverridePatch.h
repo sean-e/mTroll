@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2015,2018 Sean Echevarria
+ * Copyright (C) 2015,2018,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -26,6 +26,7 @@
 #define PersistentPedalOverridePatch_h__
 
 #include "TogglePatch.h"
+#include "ExpressionPedals.h"
 
 
 // PersistentPedalOverridePatch
@@ -43,12 +44,26 @@ public:
 		PatchCommands & cmdsB) :
 		TogglePatch(number, name, midiOut, cmdsA, cmdsB)
 	{
+		if (!sAggregateOverridePedals)
+			sAggregateOverridePedals = new ExpressionPedalAggregate();
 	}
 
 	virtual ~PersistentPedalOverridePatch()
 	{
-		if (sActiveOverride == this)
-			sActiveOverride = nullptr;
+		bool emptyActiveOverrides = true;
+		for (auto &cur : sActiveOverride)
+		{
+			if (cur == this)
+				cur = nullptr;
+			if (cur != nullptr)
+				emptyActiveOverrides = false;
+		}
+
+		if (emptyActiveOverrides && sAggregateOverridePedals)
+		{
+			delete sAggregateOverridePedals;
+			sAggregateOverridePedals = nullptr;
+		}
 	}
 
 	virtual std::string GetPatchTypeStr() const override { return "persistentPedalOverride"; }
@@ -58,15 +73,21 @@ public:
 	virtual void ExecCommandsA() override;
 	virtual void ExecCommandsB() override;
 
-	static bool PedalOverridePatchIsActive() { return sActiveOverride != nullptr; }
+	static bool PedalOverridePatchIsActive() 
+	{ 
+		static_assert(ExpressionPedals::PedalCount == 4);
+		return sActiveOverride[0] || sActiveOverride[1] || sActiveOverride[2] || sActiveOverride[3];
+	}
+
 	static void SetInactivePedals(ExpressionPedals * newPedals)
 	{
 		sInactivePedals = newPedals;
 	}
 
 private:
-	static PersistentPedalOverridePatch *sActiveOverride;
+	static PersistentPedalOverridePatch *sActiveOverride[ExpressionPedals::PedalCount];
 	static ExpressionPedals				*sInactivePedals;
+	static ExpressionPedalAggregate		*sAggregateOverridePedals;
 };
 
 #endif // PersistentPedalOverridePatch_h__

@@ -1,6 +1,8 @@
 ### mTroll MIDI controller changelog / process milestones
 
-#### XXXX
+#### 2025.04.29
+- `persistentPedalOverride` patches now apply on a per-pedal basis, so for example, 2 different `persistentPedalOverride` patches that override unique pedals can be engaged and disengaged without interfering with each other.
+- `localExpr` patch definition automatically disables the corresponding system `globalExpr` definition
 - In `repeatingToggle` and `repeatingMomentary` patches, guarantee a minimum of one execution per invocation
 
 #### 2024.09.09

@@ -526,22 +526,17 @@
 		<patch name="Disable ped 4" type="persistentPedalOverride"><globalExpr inputNumber="4" enable="0" /></patch>
 
 		<patch name="Axe Input Volume" comment="Input Volume 10" type="normal" device="Axe-Fx">
-			<globalExpr inputNumber="1" enable="0" />
 			<localExpr inputNumber="1" assignmentNumber="1" controller="10" min="0" max="127" invert="0" enable="1" />
 		</patch>
 		<patch name="Axe Out 1 Volume (pedal 1)" comment="Out 1 Volume 11" type="normal" device="Axe-Fx">
-			<globalExpr inputNumber="1" enable="0" />
 			<localExpr inputNumber="1" assignmentNumber="1" controller="11" min="0" max="127" invert="0" enable="1" />
 		</patch>
 		<patch name="Axe Out 2 Volume" comment="Out 2 Volume 12" type="normal" device="Axe-Fx">
-			<globalExpr inputNumber="1" enable="0" />
 			<localExpr inputNumber="1" assignmentNumber="1" controller="12" min="0" max="127" invert="0" enable="1" />
 		</patch>
 
 		<patch name="Axe Ext 1-2 (pedal 1-2)" comment="External 1 cc16, Ext 2 cc17" type="persistentPedalOverride" device="Axe-Fx">
-			<globalExpr inputNumber="1" enable="0" />
 			<localExpr inputNumber="1" assignmentNumber="1" controller="16" min="0" max="127" invert="0" enable="1" />
-			<globalExpr inputNumber="2" enable="0" />
 			<localExpr inputNumber="2" assignmentNumber="1" controller="17" min="0" max="127" invert="0" enable="1" />
 		</patch>
 
@@ -549,35 +544,27 @@
 		<patch name="Axe Tuner" device="Axe-Fx" />
 
 		<patch name="Axe Ext 1 (pedal 4)" comment="External 1 cc16" type="normal" device="Axe-Fx">
-			<globalExpr inputNumber="4" enable="0" />
 			<localExpr inputNumber="4" assignmentNumber="1" controller="16" min="0" max="127" invert="0" enable="1" />
 		</patch>
 		<patch name="Axe Ext 2 (pedal 4)" comment="External 2 cc17" type="normal" device="Axe-Fx">
-			<globalExpr inputNumber="4" enable="0" />
 			<localExpr inputNumber="4" assignmentNumber="1" controller="17" min="0" max="127" invert="0" enable="1" />
 		</patch>
 		<patch name="Axe Ext 3 (pedal 4)" comment="External 3 cc18" type="normal" device="Axe-Fx">
-			<globalExpr inputNumber="4" enable="0" />
 			<localExpr inputNumber="4" assignmentNumber="1" controller="18" min="0" max="127" invert="0" enable="1" />
 		</patch>
 		<patch name="Axe Ext 4 (pedal 4)" comment="External 4 cc19" type="normal" device="Axe-Fx">
-			<globalExpr inputNumber="4" enable="0" />
 			<localExpr inputNumber="4" assignmentNumber="1" controller="19" min="0" max="127" invert="0" enable="1" />
 		</patch>
 		<patch name="Axe Ext 5 (pedal 4)" comment="External 5 cc20" type="normal" device="Axe-Fx">
-			<globalExpr inputNumber="4" enable="0" />
 			<localExpr inputNumber="4" assignmentNumber="1" controller="20" min="0" max="127" invert="0" enable="1" />
 		</patch>
 		<patch name="Axe Ext 6 (pedal 4)" comment="External 6 cc21" type="normal" device="Axe-Fx">
-			<globalExpr inputNumber="4" enable="0" />
 			<localExpr inputNumber="4" assignmentNumber="1" controller="21" min="0" max="127" invert="0" enable="1" />
 		</patch>
 		<patch name="Axe Ext 7 (pedal 4)" comment="External 7 cc22" type="normal" device="Axe-Fx">
-			<globalExpr inputNumber="4" enable="0" />
 			<localExpr inputNumber="4" assignmentNumber="1" controller="22" min="0" max="127" invert="0" enable="1" />
 		</patch>
 		<patch name="Axe Ext 8 (pedal 4)" comment="External 8 cc23" type="normal" device="Axe-Fx">
-			<globalExpr inputNumber="4" enable="0" />
 			<localExpr inputNumber="4" assignmentNumber="1" controller="23" min="0" max="127" invert="0" enable="1" />
 		</patch>
 
