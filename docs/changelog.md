@@ -1,13 +1,17 @@
 ### mTroll MIDI controller changelog / process milestones
 
+#### 2025.05.xx
+- `localExpr` patch definition supports attributes `topToggleDeadzoneSize` and `bottomToggleDeadzoneSize` to override in a local expression definition, the global deadzone sizes defined in the system config [#40](../../../issues/40)
+- 
+
 #### 2025.04.29
-- `persistentPedalOverride` patches now apply on a per-pedal basis, so for example, 2 different `persistentPedalOverride` patches that override unique pedals can be engaged and disengaged without interfering with each other.
+- `persistentPedalOverride` patches now apply on a per-pedal basis, so for example, 2 different `persistentPedalOverride` patches that override unique pedals can be engaged and disengaged without interfering with each other [#39](../../../issues/39)
 - `localExpr` patch definition automatically disables the corresponding system `globalExpr` definition
 - In `repeatingToggle` and `repeatingMomentary` patches, guarantee a minimum of one execution per invocation
 
 #### 2024.09.09
 - Many of these changes came about due to having started using the controller to play synth notes with my feet while playing bass
-- Added support for device program change patch type for per-device exclusive patch functionality. [#22](../../../issues/22)
+- Added support for device program change patch type for per-device exclusive patch functionality [#22](../../../issues/22)
 - Added support for dynamic channel (1-16) in `NoteOn`, `ProgramChange` and `ControlChange` commands, and `momentaryControlChange` patch type (via patch command `SetDynamicChannel`). [#28](../../../issues/28)
 - Added support for dynamic velocity in `NoteOn` commands (via patch command `SetDynamicChannelVelocity`). [#28](../../../issues/28)
 - Added support for dynamic random velocity in `NoteOn` commands (via patch command `SetDynamicChannelRandomVelocity`). [#31](../../../issues/31)

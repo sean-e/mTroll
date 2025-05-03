@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2015,2018,2020-2024 Sean Echevarria
+ * Copyright (C) 2007-2015,2018,2020-2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -2732,6 +2732,8 @@ EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem,
 	int bottomTogglePatchNumber = -1;
 	int topTogglePatchNumber = -1;
 	int midiOutPortNumber = -1;
+	int overrideBottomToggleDeadzoneSize = -1;
+	int overrideTopToggleDeadzoneSize = -1;
 	ExpressionControl::SweepCurve curve = ExpressionControl::scLinear;
 
 	childElem->QueryIntAttribute("inputNumber", &exprInputNumber);
@@ -2763,6 +2765,8 @@ EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem,
 	childElem->QueryIntAttribute("invert", &invert);
 	childElem->QueryIntAttribute("enable", &enable);
 	childElem->QueryIntAttribute("doubleByte", &isDoubleByte);
+	childElem->QueryIntAttribute("topToggleDeadzoneSize", &overrideTopToggleDeadzoneSize);
+	childElem->QueryIntAttribute("bottomToggleDeadzoneSize", &overrideBottomToggleDeadzoneSize);
 
 	{
 		std::string patchName;
@@ -2828,6 +2832,8 @@ EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem,
 		initParams.mBottomTogglePatchNumber = bottomTogglePatchNumber;
 		initParams.mTopTogglePatchNumber = topTogglePatchNumber;
 		initParams.mCurve = curve;
+		initParams.mOverrideTopToggleDeadzoneSize = overrideTopToggleDeadzoneSize;
+		initParams.mOverrideBottomToggleDeadzoneSize = overrideBottomToggleDeadzoneSize;
 		pedals.Init(exprInputNumber - 1, assignmentIndex - 1, initParams);
 
 		childElem->QueryIntAttribute("port", &midiOutPortNumber);

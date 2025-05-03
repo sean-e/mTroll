@@ -147,6 +147,8 @@ public:
 		SweepCurve mCurve = scLinear;
 		int mBottomTogglePatchNumber = -1;
 		int mTopTogglePatchNumber = -1;
+		int mOverrideBottomToggleDeadzoneSize = -1;
+		int mOverrideTopToggleDeadzoneSize = -1;
 	};
 
 	ExpressionControl() = default;
@@ -184,6 +186,8 @@ private:
 	BottomToggle		mBottomToggle;
 	enum class Zones { initZone, deactivateZone, deadZone, deadZoneButCloseToActive, activeZone };
 	Zones				mCurrentZone = Zones::initZone;
+	int					mOverrideBottomToggleDeadzoneSize = -1;
+	int					mOverrideTopToggleDeadzoneSize = -1;
 };
 
 

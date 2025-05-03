@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2011,2014-2015,2018,2020,2023 Sean Echevarria
+ * Copyright (C) 2007-2011,2014-2015,2018,2020,2023,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -100,6 +100,8 @@ ExpressionControl::Init(int pedal, const InitParams & params)
 
 	mBottomToggle.mTogglePatchNumber = params.mBottomTogglePatchNumber;
 	mTopToggle.mTogglePatchNumber = params.mTopTogglePatchNumber;
+	mOverrideBottomToggleDeadzoneSize = params.mOverrideBottomToggleDeadzoneSize;
+	mOverrideTopToggleDeadzoneSize = params.mOverrideTopToggleDeadzoneSize;
 }
 
 void
@@ -113,7 +115,7 @@ ExpressionControl::Calibrate(const PedalCalibration & calibrationSetting,
 
 	if (mBottomToggle.mTogglePatchNumber != -1)
 	{
-		if (-1 == calibrationSetting.mBottomToggleZoneSize || -1 == calibrationSetting.mBottomToggleDeadzoneSize)
+		if (-1 == calibrationSetting.mBottomToggleZoneSize || (-1 == calibrationSetting.mBottomToggleDeadzoneSize && -1 == mOverrideBottomToggleDeadzoneSize))
 		{
 			if (traceDisp)
 			{
@@ -126,7 +128,7 @@ ExpressionControl::Calibrate(const PedalCalibration & calibrationSetting,
 		{
 			mBottomToggle.mMinDeactivateAdcVal = mMinAdcVal;
 			mBottomToggle.mMaxDeactivateAdcVal = mBottomToggle.mMinDeactivateAdcVal + calibrationSetting.mBottomToggleZoneSize;
-			mBottomToggle.mMinActivateAdcVal = mBottomToggle.mMaxDeactivateAdcVal + calibrationSetting.mBottomToggleDeadzoneSize;
+			mBottomToggle.mMinActivateAdcVal = mBottomToggle.mMaxDeactivateAdcVal + (-1 != mOverrideBottomToggleDeadzoneSize ? mOverrideBottomToggleDeadzoneSize : calibrationSetting.mBottomToggleDeadzoneSize);
 			mBottomToggle.mMaxActivateAdcVal = mMaxAdcVal;
 			mAdcValRange = mMaxAdcVal - mBottomToggle.mMinActivateAdcVal;
 
@@ -146,7 +148,7 @@ ExpressionControl::Calibrate(const PedalCalibration & calibrationSetting,
 
 	if (mTopToggle.mTogglePatchNumber != -1)
 	{
-		if (-1 == calibrationSetting.mTopToggleZoneSize || -1 == calibrationSetting.mTopToggleDeadzoneSize)
+		if (-1 == calibrationSetting.mTopToggleZoneSize || (-1 == calibrationSetting.mTopToggleDeadzoneSize && -1 == mOverrideTopToggleDeadzoneSize))
 		{
 			if (traceDisp)
 			{
@@ -159,7 +161,7 @@ ExpressionControl::Calibrate(const PedalCalibration & calibrationSetting,
 		{
 			mTopToggle.mMaxDeactivateAdcVal = mMaxAdcVal;
 			mTopToggle.mMinDeactivateAdcVal = mTopToggle.mMaxDeactivateAdcVal - calibrationSetting.mTopToggleZoneSize;
-			mTopToggle.mMaxActivateAdcVal = mTopToggle.mMinDeactivateAdcVal - calibrationSetting.mTopToggleDeadzoneSize;
+			mTopToggle.mMaxActivateAdcVal = mTopToggle.mMinDeactivateAdcVal - (-1 != mOverrideTopToggleDeadzoneSize ? mOverrideTopToggleDeadzoneSize : calibrationSetting.mTopToggleDeadzoneSize);
 
 			const int deadzoneLen = mTopToggle.mMinDeactivateAdcVal - mTopToggle.mMaxActivateAdcVal;
 			if (deadzoneLen > 1)
