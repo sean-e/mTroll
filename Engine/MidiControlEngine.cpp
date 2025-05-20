@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2013,2015,2018,2020-2022,2024 Sean Echevarria
+ * Copyright (C) 2007-2013,2015,2018,2020-2022,2024-2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -89,7 +89,6 @@ MidiControlEngine::MidiControlEngine(ITrollApplication * app,
 	mIncrementSwitchNumber(incrementSwitchNumber),
 	mDecrementSwitchNumber(decrementSwitchNumber),
 	mModeSwitchNumber(modeSwitchNumber),
-	mFilterRedundantProgramChanges(false),
 	mPedalModePort(0),
 	mHistoryNavMode(hmNone),
 	mDirectChangeChannel(0),

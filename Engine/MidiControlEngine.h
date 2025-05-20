@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2013,2015,2018,2020-2022,2024 Sean Echevarria
+ * Copyright (C) 2007-2013,2015,2018,2020-2022,2024-2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -97,7 +97,6 @@ public:
 	PatchBankPtr			AddBank(int number, const std::string & name, const std::string & notes);
 	void					AddPatch(PatchPtr patch);
 	void					SetPowerup(const std::string &powerupBank);
-	void					FilterRedundantProgChg(bool filter) {mFilterRedundantProgramChanges = filter;}
 	void					AssignCustomBankLoad(int switchNumber, const std::string &bankName);
 	void					AssignModeSwitchNumber(EngineModeSwitch mode, int switchNumber);
 	const std::string		GetBankNameByNum(int bankNumberNotIndex);
@@ -218,7 +217,6 @@ private:
 
 	// retained state
 	std::string				mPowerUpBankName;
-	bool					mFilterRedundantProgramChanges;
 	ExpressionPedals		mGlobalPedals;
 	int						mPedalModePort;
 	unsigned int			mEngineLedColor = kFirstColorPreset;

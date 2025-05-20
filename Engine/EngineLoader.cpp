@@ -263,12 +263,9 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 	if (!pElem)
 		return false;
 
-	int filterPC = 0;
 	int incrementSwitch = -1;
 	int decrementSwitch = -1;
 	int modeSwitch = -1;
-
-	pElem->QueryIntAttribute("filterPC", &filterPC);
 
 	TiXmlHandle hRoot(nullptr);
 	hRoot = TiXmlHandle(pElem);
@@ -425,7 +422,6 @@ EngineLoader::LoadSystemConfig(TiXmlElement * pElem)
 
 	mEngine = std::make_shared<MidiControlEngine>(mApp, mMainDisplay, mSwitchDisplay, mTraceDisplay,
 		mMidiOutGenerator, engOut, mAxeFxManager, mAxeFx3Manager, mEdpManager, incrementSwitch, decrementSwitch, modeSwitch);
-	mEngine->FilterRedundantProgChg(filterPC ? true : false);
 
 	// <expression port="">
 	//   <globaExpr inputNumber="1" assignmentNumber="1" channel="" controller="" min="" max="" invert="0" enable="" />
