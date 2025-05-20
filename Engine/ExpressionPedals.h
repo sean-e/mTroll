@@ -185,7 +185,7 @@ private:
 	TopToggle			mTopToggle;
 	BottomToggle		mBottomToggle;
 	enum class Zones { initZone, deactivateZone, deadZone, deadZoneButCloseToActive, activeZone };
-	Zones				mCurrentZone = Zones::initZone;
+	Zones				mCurrentZone = Zones::initZone, mPreviousZone = Zones::initZone;
 	int					mOverrideBottomToggleDeadzoneSize = -1;
 	int					mOverrideTopToggleDeadzoneSize = -1;
 };

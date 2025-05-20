@@ -311,17 +311,21 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 			if (mBottomToggle.IsInActivationZone(cappedAdcVal))
 			{
 				_ASSERTE(doCcSend);
-				if (mBottomToggle.Activate())
+				if (Zones::activeZone != mCurrentZone && mBottomToggle.Activate())
 					showStatus = bottomActivated = true;
 				else if (!doCcSend)
 					showStatus = true;
 
-				mCurrentZone = Zones::activeZone;
+				if (Zones::activeZone != mCurrentZone)
+				{
+					mPreviousZone = mCurrentZone;
+					mCurrentZone = Zones::activeZone;
+				}
 			}
 			else if (mBottomToggle.IsInDeactivationZone(cappedAdcVal))
 			{
 				_ASSERTE(!doCcSend);
-				if (mBottomToggle.Deactivate())
+				if (Zones::deactivateZone != mCurrentZone && mBottomToggle.Deactivate())
 				{
 					showStatus = bottomDeactivated = true;
 					newCcVal = 0;
@@ -335,7 +339,11 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 						mainDisplay->ClearTransientText();
 				}
 
-				mCurrentZone = Zones::deactivateZone;
+				if (Zones::deactivateZone != mCurrentZone)
+				{
+					mPreviousZone = mCurrentZone;
+					mCurrentZone = Zones::deactivateZone;
+				}
 			}
 			else if (mBottomToggle.IsInDeadzone(cappedAdcVal))
 			{
@@ -343,10 +351,14 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 				showStatus = bottomDeadzone = true;
 				newCcVal = 0;
 
-				if (Zones::deadZone == mCurrentZone)
+				if (Zones::deadZoneButCloseToActive == mCurrentZone)
+					;
+				else if (Zones::deadZone == mCurrentZone)
 				{
-					if (mBottomToggle.IsInDeadZoneButCloseToActive(cappedAdcVal))
+					if (Zones::activeZone != mPreviousZone && 
+						mBottomToggle.IsInDeadZoneButCloseToActive(cappedAdcVal))
 					{
+						mPreviousZone = mCurrentZone;
 						mCurrentZone = Zones::deadZoneButCloseToActive;
 						if (mBottomToggle.Activate())
 						{
@@ -356,7 +368,13 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 					}
 				}
 				else
-					mCurrentZone = Zones::deadZone;
+				{
+					if (Zones::deadZone != mCurrentZone)
+					{
+						mPreviousZone = mCurrentZone;
+						mCurrentZone = Zones::deadZone;
+					}
+				}
 			}
 			else
 			{
@@ -369,17 +387,21 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 			if (mTopToggle.IsInActivationZone(cappedAdcVal))
 			{
 				_ASSERTE(doCcSend);
-				if (mTopToggle.Activate())
+				if (Zones::activeZone != mCurrentZone && mTopToggle.Activate())
 					showStatus = topActivated = true;
 				else if (!doCcSend)
 					showStatus = true;
 
-				mCurrentZone = Zones::activeZone;
+				if (Zones::activeZone != mCurrentZone)
+				{
+					mPreviousZone = mCurrentZone;
+					mCurrentZone = Zones::activeZone;
+				}
 			}
 			else if (mTopToggle.IsInDeactivationZone(cappedAdcVal))
 			{
 				_ASSERTE(!doCcSend);
-				if (mTopToggle.Deactivate())
+				if (Zones::deactivateZone != mCurrentZone && mTopToggle.Deactivate())
 				{
 					showStatus = topDeactivated = true;
 					newCcVal = mMaxCcVal;
@@ -393,7 +415,11 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 						mainDisplay->ClearTransientText();
 				}
 
-				mCurrentZone = Zones::deactivateZone;
+				if (Zones::deactivateZone != mCurrentZone)
+				{
+					mPreviousZone = mCurrentZone;
+					mCurrentZone = Zones::deactivateZone;
+				}
 			}
 			else if (mTopToggle.IsInDeadzone(cappedAdcVal))
 			{
@@ -401,10 +427,14 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 				showStatus = topDeadzone = true;
 				newCcVal = mMaxCcVal;
 
-				if (Zones::deadZone == mCurrentZone)
+				if (Zones::deadZoneButCloseToActive == mCurrentZone)
+					;
+				else if (Zones::deadZone == mCurrentZone)
 				{
-					if (mTopToggle.IsInDeadZoneButCloseToActive(cappedAdcVal))
+					if (Zones::activeZone != mPreviousZone && 
+						mTopToggle.IsInDeadZoneButCloseToActive(cappedAdcVal))
 					{
+						mPreviousZone = mCurrentZone;
 						mCurrentZone = Zones::deadZoneButCloseToActive;
 						if (mTopToggle.Activate())
 						{
@@ -414,7 +444,13 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 					}
 				}
 				else
-					mCurrentZone = Zones::deadZone;
+				{
+					if (Zones::deadZone != mCurrentZone)
+					{
+						mPreviousZone = mCurrentZone;
+						mCurrentZone = Zones::deadZone;
+					}
+				}
 			}
 			else
 			{

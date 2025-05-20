@@ -2,7 +2,7 @@
 
 #### 2025.05.xx
 - `localExpr` patch definition supports attributes `topToggleDeadzoneSize` and `bottomToggleDeadzoneSize` to override in a local expression definition, the global deadzone sizes defined in the system config [#40](../../../issues/40)
-- 
+- When expression pedal patch toggles have been defined, prevent spurious patch activations/deactivations after pedals have been switched between various definitions [#42](../../../issues/42)
 
 #### 2025.04.29
 - `persistentPedalOverride` patches now apply on a per-pedal basis, so for example, 2 different `persistentPedalOverride` patches that override unique pedals can be engaged and disengaged without interfering with each other [#39](../../../issues/39)
