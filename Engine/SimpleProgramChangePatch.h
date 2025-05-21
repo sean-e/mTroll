@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2024 Sean Echevarria
+ * Copyright (C) 2024-2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -53,8 +53,8 @@ public:
 	{
 		__super::SwitchPressed(mainDisplay, switchDisplay);
 
-		if (!IsActive())
-			ExecCommandsA();
+		// Like NormalPatch, SimpleProgramChangePatch always execs the A commands on switch press.
+		ExecCommandsA();
 
 		UpdateDisplays(mainDisplay, switchDisplay);
 	}
