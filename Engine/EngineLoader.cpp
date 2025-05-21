@@ -223,7 +223,7 @@ EngineLoader::CreateEngine(const std::string & engineSettingsFile)
 			}
 		}
 
-		mAxeFx3Manager->CompleteInit(midiOut);
+		mAxeFx3Manager->CompleteInit(mEngine, midiOut);
 	}
 
 	if (mAxeFxManager)

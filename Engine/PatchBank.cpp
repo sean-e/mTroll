@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010-2016,2018,2021,2024 Sean Echevarria
+ * Copyright (C) 2007-2008,2010-2016,2018,2021,2024-2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -34,15 +34,15 @@
 #include "ITraceDisplay.h"
 
 
-static std::list<PatchPtr>	sActiveVolatilePatches;
-static PatchPtr sActiveProgramChangePatches[16];
 #ifdef ITEM_COUNTING
 std::atomic<int> gPatchBankCnt;
 #endif
 
-PatchBank::PatchBank(int number, 
+PatchBank::PatchBank(MidiControlEnginePtr eng,
+					 int number, 
 					 const std::string & name, 
 					 const std::string & additionalText) :
+	mEngine(eng),
 	mNumber(number),
 	mName(name),
 	mAdditionalText(additionalText),
@@ -55,9 +55,6 @@ PatchBank::PatchBank(int number,
 
 PatchBank::~PatchBank()
 {
-	sActiveVolatilePatches.clear();
-	for (auto &patch : sActiveProgramChangePatches)
-		patch = nullptr;
 #ifdef ITEM_COUNTING
 	--gPatchBankCnt;
 #endif
@@ -219,7 +216,7 @@ PatchBank::InitPatches(const MidiControlEngine::Patches & enginePatches,
 }
 
 void
-PatchBank::CalibrateExprSettings(const PedalCalibration * pedalCalibration, MidiControlEngine * eng, ITraceDisplay * traceDisp)
+PatchBank::CalibrateExprSettings(const PedalCalibration * pedalCalibration, ITraceDisplay * traceDisp)
 {
 	for (auto & curPatch : mPatches)
 	{
@@ -232,7 +229,7 @@ PatchBank::CalibrateExprSettings(const PedalCalibration * pedalCalibration, Midi
 				if (curItem && curItem->mPatch)
 				{
 					ExpressionPedals & pedals = curItem->mPatch->GetPedals();
-					pedals.Calibrate(pedalCalibration, eng, traceDisp);
+					pedals.Calibrate(pedalCalibration, mEngine.get(), traceDisp);
 				}
 			}
 		}
@@ -261,7 +258,7 @@ PatchBank::Load(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 				if (stA == curItem->mPatchStateAtBankLoad)
 				{
 					curItem->mPatch->BankTransitionActivation();
-					CheckForDeviceProgramChange(curItem.get(), switchDisplay, mainDisplay);
+					mEngine->CheckForDeviceProgramChange(curItem.get()->mPatch, switchDisplay, mainDisplay);
 				}
 				else if (stB == curItem->mPatchStateAtBankLoad)
 					curItem->mPatch->BankTransitionDeactivation();
@@ -308,7 +305,7 @@ PatchBank::Unload(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 				if (stA == curItem->mPatchStateAtBankUnload)
 				{
 					curItem->mPatch->BankTransitionActivation();
-					CheckForDeviceProgramChange(curItem.get(), switchDisplay, mainDisplay);
+					mEngine->CheckForDeviceProgramChange(curItem.get()->mPatch, switchDisplay, mainDisplay);
 				}
 				else if (stB == curItem->mPatchStateAtBankUnload)
 					curItem->mPatch->BankTransitionDeactivation();
@@ -363,19 +360,7 @@ PatchBank::PatchSwitchPressed(SwitchFunctionAssignment st,
 		if (curSwitchItem->mPatch->IsPatchVolatile())
 		{
 			// do B processing
-			for (std::list<PatchPtr>::iterator it2 = sActiveVolatilePatches.begin();
-				it2 != sActiveVolatilePatches.end();
-				it2 = sActiveVolatilePatches.begin())
-			{
-				PatchPtr curPatchItem = *it2;
-				if (curPatchItem && curPatchItem->IsActive())
-				{
-					curPatchItem->DeactivateVolatilePatch();
-					curPatchItem->UpdateDisplays(mainDisplay, switchDisplay);
-				}
-				sActiveVolatilePatches.erase(it2);
-			}
-
+			mEngine->DeactivateVolatilePatches(mainDisplay, switchDisplay);
 			break;
 		}
 	}
@@ -498,12 +483,9 @@ PatchBank::PatchSwitchPressed(SwitchFunctionAssignment st,
 			curSwitchItem->mPatch->OverridePedals(false);
 
 		if (curSwitchItem->mPatch->IsPatchVolatile())
-		{
-			_ASSERTE(std::find(sActiveVolatilePatches.begin(), sActiveVolatilePatches.end(), curSwitchItem->mPatch) == sActiveVolatilePatches.end());
-			sActiveVolatilePatches.push_back(curSwitchItem->mPatch);
-		}
+			mEngine->VolatilePatchIsActive(curSwitchItem->mPatch);
 
-		CheckForDeviceProgramChange(curSwitchItem.get(), switchDisplay, mainDisplay);
+		mEngine->CheckForDeviceProgramChange(curSwitchItem.get()->mPatch, switchDisplay, mainDisplay);
 
 		if (curSwitchItem->mPatch->UpdateMainDisplayOnPress())
 		{
@@ -928,30 +910,6 @@ PatchBank::ResetExclusiveGroup(ISwitchDisplay * switchDisplay,
 				continue;
 
 			curSwitchItem->mPatch->UpdateState(switchDisplay, enabled);
-		}
-	}
-}
-
-void
-PatchBank::CheckForDeviceProgramChange(BankPatchState *curSwitchItem,
-									   ISwitchDisplay *switchDisplay, 
-									   IMainDisplay *mainDisplay)
-{
-	// support for device program change tracking (actually limited to MIDI channel 
-	// rather than device) [#22]
-	const int ch = curSwitchItem->mPatch->GetDeviceProgramChangeChannel();
-	if (-1 < ch)
-	{
-		_ASSERTE(0 <= ch && 16 > ch);
-		PatchPtr oldChannelPatchItem = sActiveProgramChangePatches[ch];
-		if (oldChannelPatchItem != curSwitchItem->mPatch)
-		{
-			if (oldChannelPatchItem && oldChannelPatchItem->IsActive())
-			{
-				oldChannelPatchItem->UpdateState(switchDisplay, false);
-				oldChannelPatchItem->UpdateDisplays(mainDisplay, switchDisplay);
-			}
-			sActiveProgramChangePatches[ch] = curSwitchItem->mPatch;
 		}
 	}
 }

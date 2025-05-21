@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2020-2021,2023 Sean Echevarria
+ * Copyright (C) 2020-2021,2023,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -319,8 +319,9 @@ AxeFx3Manager::SetSyncPatch(PatchPtr patch, int bypassCc)
 }
 
 void
-AxeFx3Manager::CompleteInit(IMidiOutPtr midiOut)
+AxeFx3Manager::CompleteInit(MidiControlEnginePtr eng, IMidiOutPtr midiOut)
 {
+	mEngine = eng;
 	mMidiOut = midiOut;
 	if (!mMidiOut && mTrace)
 	{
@@ -1582,6 +1583,9 @@ AxeFx3Manager::RequestProgramChange(int offset)
 	}
 
 	SyncNameAndEffectsFromAxe();
+
+	if (mEngine)
+		mEngine->ReleaseProgramChangePatchForChannel(GetChannel(), mSwitchDisplay, mMainDisplay);
 }
 
 void

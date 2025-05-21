@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2020-2021 Sean Echevarria
+ * Copyright (C) 2020-2021,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -34,6 +34,7 @@
 #include "AxemlLoader.h"
 #include "IAxeFx.h"
 #include "HexStringUtils.h"
+#include "MidiControlEngine.h"
 
 class IMainDisplay;
 class ITraceDisplay;
@@ -69,7 +70,7 @@ public:
 	virtual bool ReceivedSysex(const byte * bytes, int len) override;
 	virtual void Closed(IMidiInPtr midIn) override;
 
-	void CompleteInit(IMidiOutPtr midiOut);
+	void CompleteInit(MidiControlEnginePtr eng, IMidiOutPtr midiOut);
 	void SubscribeToMidiIn(IMidiInPtr midiIn);
 
 	// IAxeFx
@@ -142,6 +143,7 @@ private:
 
 private:
 	int				mAxeChannel;
+	MidiControlEnginePtr mEngine;
 	IMainDisplay	* mMainDisplay;
 	ITraceDisplay	* mTrace;
 	ISwitchDisplay	* mSwitchDisplay;

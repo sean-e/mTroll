@@ -140,7 +140,7 @@ MidiControlEngine::AddBank(int number,
 		}
 	}
 
-	PatchBankPtr pBank = std::make_shared<PatchBank>(number, name, notes);
+	PatchBankPtr pBank = std::make_shared<PatchBank>(shared_from_this(), number, name, notes);
 	mBanks.push_back(pBank);
 	return pBank;
 }
@@ -272,7 +272,7 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 			defaultsBank = nullptr;
 	}
 
-	PatchBankPtr tmpDefaultBank = std::make_shared<PatchBank>(0, "nav default", "");
+	PatchBankPtr tmpDefaultBank = std::make_shared<PatchBank>(shared_from_this(), 0, "nav default", "");
 
 	// this is how we allow users to override Next and Prev switches in their banks
 	// while at the same time reserving them for use by our modes.
@@ -361,6 +361,17 @@ MidiControlEngine::Shutdown()
 	for (const auto& mgr : mAxeMgrs)
 		mgr->Shutdown();
 	mAxeMgrs.clear();
+	mEdpMgr = nullptr;
+	mActiveVolatilePatches.clear();
+	for (auto &patch : mActiveProgramChangePatches)
+		patch = nullptr;
+	mBanks.clear();
+	mBanksInNavOrder.clear();
+	mInputMonitors.clear();
+	mActiveBank = nullptr;
+	mPatches.clear();
+	mPatchGroups.clear();
+	mMidiOut = nullptr;
 }
 
 void
@@ -369,7 +380,7 @@ MidiControlEngine::CalibrateExprSettings(const PedalCalibration * pedalCalibrati
 	mGlobalPedals.Calibrate(pedalCalibrationSettings, this, mTrace);
 
 	for (const PatchBankPtr& curItem : mBanks)
-		curItem->CalibrateExprSettings(pedalCalibrationSettings, this, mTrace);
+		curItem->CalibrateExprSettings(pedalCalibrationSettings, mTrace);
 }
 
 void
@@ -551,6 +562,31 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 
 	case emMidiOutSelect:
 		SwitchReleased_MidiOutSelect(switchNumber);
+	}
+}
+
+void
+MidiControlEngine::VolatilePatchIsActive(PatchPtr patch)
+{
+	_ASSERTE(std::find(mActiveVolatilePatches.begin(), mActiveVolatilePatches.end(), patch) == mActiveVolatilePatches.end());
+	mActiveVolatilePatches.push_back(patch);
+
+}
+
+void
+MidiControlEngine::DeactivateVolatilePatches(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
+{
+	for (std::list<PatchPtr>::iterator it2 = mActiveVolatilePatches.begin();
+		it2 != mActiveVolatilePatches.end();
+		it2 = mActiveVolatilePatches.begin())
+	{
+		PatchPtr curPatchItem = *it2;
+		if (curPatchItem && curPatchItem->IsActive())
+		{
+			curPatchItem->DeactivateVolatilePatch();
+			curPatchItem->UpdateDisplays(mainDisplay, switchDisplay);
+		}
+		mActiveVolatilePatches.erase(it2);
 	}
 }
 
@@ -1823,6 +1859,12 @@ MidiControlEngine::SwitchPressed_ProgramChangeDirect(int switchNumber)
 		sJustDidProgramChange = true;
 	}
 
+	if (mMidiOut && !bytes.empty())
+	{
+		// release before writing to display, otherwise the release overwrites our intended output
+		ReleaseProgramChangePatchForChannel(mDirectChangeChannel, mSwitchDisplay, mMainDisplay);
+	}
+
 	if (mMainDisplay)
 		mMainDisplay->TextOut(msg + mDirectNumber);
 
@@ -1835,6 +1877,7 @@ MidiControlEngine::SwitchPressed_ProgramChangeDirect(int switchNumber)
 				const std::string byteDump("\r\n" + ::GetAsciiHexStr(bytes, true) + "\r\n");
 				mMainDisplay->AppendText(byteDump);
 			}
+
 			mMidiOut->MidiOut(bytes);
 
 			if (sJustDidProgramChange)
@@ -2289,8 +2332,10 @@ MidiControlEngine::AddToPatchGroup(const std::string &groupId, TwoStatePatch* pa
 }
 
 void
-MidiControlEngine::DeactivateRestOfPatchGroup(const std::string &groupId, 
-	TwoStatePatch* activePatch, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
+MidiControlEngine::DeactivateRestOfPatchGroup(const std::string &groupId,
+	TwoStatePatch* activePatch,
+	IMainDisplay * mainDisplay,
+	ISwitchDisplay * switchDisplay)
 {
 	for (auto curPatchItem : mPatchGroups[groupId])
 	{
@@ -2299,5 +2344,43 @@ MidiControlEngine::DeactivateRestOfPatchGroup(const std::string &groupId,
 
 		curPatchItem->DeactivateGroupedPatch();
 		curPatchItem->UpdateDisplays(mainDisplay, switchDisplay);
+	}
+}
+
+void
+MidiControlEngine::ReleaseProgramChangePatchForChannel(int channel,
+	ISwitchDisplay * switchDisplay,
+	IMainDisplay * mainDisplay)
+{
+	if (-1 < channel)
+	{
+		_ASSERTE(0 <= channel && 16 > channel);
+		PatchPtr oldChannelPatchItem = mActiveProgramChangePatches[channel];
+		if (oldChannelPatchItem && oldChannelPatchItem->IsActive())
+		{
+			oldChannelPatchItem->UpdateState(switchDisplay, false);
+			oldChannelPatchItem->UpdateDisplays(mainDisplay, switchDisplay);
+		}
+		mActiveProgramChangePatches[channel] = nullptr;
+	}
+}
+
+void
+MidiControlEngine::CheckForDeviceProgramChange(PatchPtr patch,
+	ISwitchDisplay * switchDisplay,
+	IMainDisplay * mainDisplay)
+{
+	// support for device program change tracking (actually limited to MIDI channel 
+	// rather than device) [#22]
+	const int ch = patch->GetDeviceProgramChangeChannel();
+	if (-1 < ch)
+	{
+		_ASSERTE(0 <= ch && 16 > ch);
+		PatchPtr oldChannelPatchItem = mActiveProgramChangePatches[ch];
+		if (oldChannelPatchItem != patch)
+		{
+			ReleaseProgramChangePatchForChannel(ch, switchDisplay, mainDisplay);
+			mActiveProgramChangePatches[ch] = patch;
+		}
 	}
 }

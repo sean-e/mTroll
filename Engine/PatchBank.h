@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010,2012-2015,2018,2024 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2012-2015,2018,2024-2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -29,7 +29,6 @@
 #include <list>
 #include <string>
 #include <set>
-#include <list>
 #include <memory>
 #include "MidiControlEngine.h"
 
@@ -41,7 +40,7 @@ class ISwitchDisplay;
 class PatchBank
 {
 public:
-	PatchBank(int number, const std::string & name, const std::string & additionalText);
+	PatchBank(MidiControlEnginePtr eng, int number, const std::string & name, const std::string & additionalText);
 	~PatchBank();
 
 	enum SwitchFunctionAssignment
@@ -87,7 +86,7 @@ public:
 	// creation/init
 	void AddSwitchAssignment(int switchNumber, int patchNumber, const std::string &overrideName, SwitchFunctionAssignment st, SecondFunctionOperation sfoOp, PatchState patchLoadState, PatchState patchUnloadState, PatchState patchStateOverride, PatchSyncState patchSyncState);
 	void InitPatches(const MidiControlEngine::Patches & patches, ITraceDisplay * traceDisp);
-	void CalibrateExprSettings(const PedalCalibration * pedalCalibration, MidiControlEngine * eng, ITraceDisplay * traceDisp);
+	void CalibrateExprSettings(const PedalCalibration * pedalCalibration, ITraceDisplay * traceDisp);
 	void SetDefaultMappings(const PatchBankPtr defaultMapping);
 
 	void Load(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
@@ -153,8 +152,6 @@ private:
 	using BankPatchStatePtr = std::shared_ptr<BankPatchState>;
 	using PatchVect = std::vector<BankPatchStatePtr>;
 
-	void CheckForDeviceProgramChange(BankPatchState *curSwitchItem, ISwitchDisplay *switchDisplay, IMainDisplay *mainDisplay);
-
 	struct DualPatchVect
 	{
 		SwitchFunctionAssignment	mCurrentSwitchState;	// events affect primary or secondary patches
@@ -186,6 +183,7 @@ private:
 		}
 	};
 
+	MidiControlEnginePtr		mEngine;
 	const int					mNumber;	// unique across all patchBanks
 	const std::string			mName;
 	const std::string			mAdditionalText;

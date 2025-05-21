@@ -29,6 +29,7 @@
 #include <vector>
 #include <stack>
 #include <memory>
+#include <list>
 
 #include "Patch.h"
 #include "ExpressionPedals.h"
@@ -54,7 +55,9 @@ using IMidiOutPtr = std::shared_ptr<IMidiOut>;
 using ControllerInputMonitorPtr = std::shared_ptr<ControllerInputMonitor>;
 
 
-class MidiControlEngine : public IMonome40hAdcSubscriber
+class MidiControlEngine : 
+	public IMonome40hAdcSubscriber,
+	public std::enable_shared_from_this<MidiControlEngine>
 {
 public:
 	MidiControlEngine(ITrollApplication * app,
@@ -102,7 +105,6 @@ public:
 	const std::string		GetBankNameByNum(int bankNumberNotIndex);
 	int						GetBankNumber(const std::string& name) const;
 	void					AddToPatchGroup(const std::string &groupId, TwoStatePatch* patch);
-	void					DeactivateRestOfPatchGroup(const std::string &groupId, TwoStatePatch * activePatch, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 	void					CompleteInit(const PedalCalibration * pedalCalibrationSettings, unsigned int ledColor, std::vector<std::string> &setorder);
 	void					Shutdown();
 
@@ -113,6 +115,11 @@ public:
 
 	void					SwitchPressed(int switchNumber);
 	void					SwitchReleased(int switchNumber);
+	void					VolatilePatchIsActive(PatchPtr patch);
+	void					DeactivateVolatilePatches(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
+	void					DeactivateRestOfPatchGroup(const std::string &groupId, TwoStatePatch * activePatch, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
+	void					ReleaseProgramChangePatchForChannel(int channel, ISwitchDisplay * switchDisplay, IMainDisplay * mainDisplay);
+	void					CheckForDeviceProgramChange(PatchPtr patch, ISwitchDisplay * switchDisplay, IMainDisplay * mainDisplay);
 	virtual void			AdcValueChanged(int port, int curValue) override;
 	void					RefirePedal(int pedal);
 	void					ResetBankPatches();
@@ -192,6 +199,8 @@ private:
 	EdpManagerPtr			mEdpMgr;
 	using ListenerMap = std::map<int, ControllerInputMonitorPtr>;
 	ListenerMap				mInputMonitors;
+	std::list<PatchPtr>		mActiveVolatilePatches;
+	PatchPtr				mActiveProgramChangePatches[16];
 
 	PatchBankPtr			mActiveBank;
 	int						mActiveBankIndex;
