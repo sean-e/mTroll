@@ -227,6 +227,11 @@ MidiControlEngine::CompleteInit(const PedalCalibration * pedalCalibrationSetting
 		AddPatch(metPatch);
 	}
 	{
+		auto metPatch = std::make_shared<MetaPatch_AxeFxReloadCurrentPreset>(ReservedPatchNumbers::kAxeFx3ReloadCurrentPreset, "AxeFx Reload Current Preset");
+		metPatch->AddAxeManagers(mAxeMgrs);
+		AddPatch(metPatch);
+	}
+	{
 		auto metPatch = std::make_shared<MetaPatch_AxeFxNextPreset>(ReservedPatchNumbers::kAxeFx3NextPreset, "AxeFx Next Preset");
 		metPatch->AddAxeManagers(mAxeMgrs);
 		AddPatch(metPatch);

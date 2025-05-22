@@ -264,6 +264,7 @@ enum /*class*/ ReservedPatchNumbers
 	kAxeFx3PrevPreset						= -12,
 	kAxeFx3NextScene						= -13,
 	kAxeFx3PrevScene						= -14,
+	kAxeFx3ReloadCurrentPreset				= -15,
 
 	// auto-gen'd patches
 	kAutoGenPatchNumberStart				= -2000

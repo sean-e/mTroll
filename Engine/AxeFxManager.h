@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2014,2018,2020-2021 Sean Echevarria
+ * Copyright (C) 2010-2014,2018,2020-2021,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -78,6 +78,7 @@ public:
 	int GetChannel() const override { return mAxeChannel; }
 	void SyncPatchFromAxe(PatchPtr patch);
 	AxeFxModel GetModel() const override { return mModel; }
+	void ReloadCurrentPreset() override {}
 	void IncrementPreset() override { }
 	void DecrementPreset() override { }
 	void IncrementScene() override { }

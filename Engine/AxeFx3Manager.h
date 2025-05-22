@@ -81,6 +81,7 @@ public:
 	bool SetSyncPatch(PatchPtr patch, int effectId, int channel) override;
 	int GetChannel() const override { return mAxeChannel; }
 	AxeFxModel GetModel() const override { return mModel; }
+	void ReloadCurrentPreset() override;
 	void IncrementPreset() override;
 	void DecrementPreset() override;
 	void IncrementScene() override;

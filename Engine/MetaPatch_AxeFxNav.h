@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2020 Sean Echevarria
+ * Copyright (C) 2020,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -56,6 +56,23 @@ public:
 
 protected:
 	std::vector<IAxeFxPtr>	mAxes;
+};
+
+class MetaPatch_AxeFxReloadCurrentPreset : public MetaPatch_AxeFxNav
+{
+public:
+	MetaPatch_AxeFxReloadCurrentPreset(int number, const std::string & name) :
+		MetaPatch_AxeFxNav(number, name)
+	{
+	}
+
+	std::string GetPatchTypeStr() const override { return "meta: AxeFxReloadCurrentPreset"; }
+
+	void SwitchPressed(IMainDisplay *, ISwitchDisplay *) override
+	{
+		for (const auto &axe : mAxes)
+			axe->ReloadCurrentPreset();
+	}
 };
 
 class MetaPatch_AxeFxNextPreset : public MetaPatch_AxeFxNav

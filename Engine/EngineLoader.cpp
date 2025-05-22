@@ -2445,6 +2445,21 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 							continue;
 						}
 					}
+					else if (cmdName == "AxeFx3ReloadCurrentPreset")
+					{
+						if (!isAutoGendPatchNumber)
+						{
+							gendPatchName = "AxeFx: Reload Current Preset";
+							auto metPatch = std::make_shared<MetaPatch_AxeFxReloadCurrentPreset>(patchNumber, gendPatchName);
+							std::vector<IAxeFxPtr> mgrs;
+							if (mAxeFx3Manager)
+								mgrs.push_back(mAxeFx3Manager);
+							metPatch->AddAxeManagers(mgrs);
+							cmdPatch = metPatch;
+						}
+						else
+							patchNumber = ReservedPatchNumbers::kAxeFx3ReloadCurrentPreset;
+					}
 					else if (cmdName == "AxeFx3IncrementPreset")
 					{
 						if (!isAutoGendPatchNumber)

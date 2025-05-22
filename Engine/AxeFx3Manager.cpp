@@ -1584,8 +1584,14 @@ AxeFx3Manager::RequestProgramChange(int offset)
 
 	SyncNameAndEffectsFromAxe();
 
-	if (mEngine)
+	if (offset && mEngine)
 		mEngine->ReleaseProgramChangePatchForChannel(GetChannel(), mSwitchDisplay, mMainDisplay);
+}
+
+void
+AxeFx3Manager::ReloadCurrentPreset()
+{
+	RequestProgramChange(0);
 }
 
 void

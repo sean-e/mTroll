@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2020 Sean Echevarria
+ * Copyright (C) 2020,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -49,6 +49,7 @@ __interface IAxeFx
 	virtual void ForceRefreshAxeState();
 	virtual void DelayedNameSyncFromAxe(bool force = false);
 	virtual void DelayedEffectsSyncFromAxe();
+	virtual void ReloadCurrentPreset();
 	virtual void IncrementPreset();
 	virtual void DecrementPreset();
 	virtual void IncrementScene();
