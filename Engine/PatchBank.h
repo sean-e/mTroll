@@ -91,6 +91,8 @@ public:
 
 	void Load(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
 	void Unload(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay);
+	void ReengageSwitchesWithoutLoad(ISwitchDisplay * switchDisplay);
+	void DisengageSwitchesWithoutUnload(ISwitchDisplay * switchDisplay);
 	void DisplayInfo(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay, bool showPatchInfo, bool temporaryDisplay);
 	void DisplayDetailedPatchInfo(int switchNumber, IMainDisplay * mainDisplay);
 

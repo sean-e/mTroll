@@ -1137,13 +1137,19 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 				mMainDisplay->TextOut("Program change, control change, and MIDI clock not available without MIDI out");
 			break;
 		}
-		// fall-through
+		[[fallthrough]];
 	case emBankDirect:
 		mDirectNumber.clear();
 		if (emBankDirect == curMode)
 			msg = "Bank Direct";
 		else if (emProgramChangeDirect == curMode)
+		{
 			msg = "Manual Program Change";
+			// [#45] disengage bank switches so that updates to active bank do 
+			// not overwrite switch labels in this mode
+			if (mActiveBank)
+				mActiveBank->DisengageSwitchesWithoutUnload(mSwitchDisplay);
+		}
 		else if (emControlChangeDirect == curMode)
 			msg = "Manual Control Change";
 		else if (emClockSetup == curMode)
@@ -1905,6 +1911,11 @@ MidiControlEngine::SwitchReleased_ProgramChangeDirect(int switchNumber)
 	if (switchNumber == mModeSwitchNumber)
 	{
 		EscapeToDefaultMode();
+
+		// EscapeToDefaultMode does a bank refresh/update, so no need to explicitly 
+		// reengage switches after leaving this mode
+		// if (mActiveBank)
+		//	mActiveBank->ReengageSwitchesWithoutLoad(mSwitchDisplay);
 	}
 	else if (mSwitchDisplay)
 	{

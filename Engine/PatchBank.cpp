@@ -324,6 +324,64 @@ PatchBank::Unload(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 }
 
 void
+PatchBank::ReengageSwitchesWithoutLoad(ISwitchDisplay * switchDisplay)
+{
+	_ASSERTE(mLoaded);
+	if (!mLoaded)
+		return;
+
+	for (auto & curPatch : mPatches)
+	{
+		for (int idx = ssPrimary; idx < ssCount; ++idx)
+		{
+			bool once = true;
+			SwitchFunctionAssignment ss = static_cast<SwitchFunctionAssignment>(idx);
+			PatchVect & patches = curPatch.second.GetPatchVect(ss);
+			for (const BankPatchStatePtr& curItem : patches)
+			{
+				if (!curItem || !curItem->mPatch)
+					continue;
+
+				// only assign a switch to the first patch (if multiple 
+				// patches are assigned to the same switch)
+				if (once && ssPrimary == ss)
+				{
+					once = false;
+					curItem->mPatch->AssignSwitch(curPatch.first, switchDisplay);
+					if (curItem->mOverrideSwitchName.length() && switchDisplay)
+						switchDisplay->SetSwitchText(curPatch.first, curItem->mOverrideSwitchName);
+				}
+			}
+		}
+	}
+}
+
+void
+PatchBank::DisengageSwitchesWithoutUnload(ISwitchDisplay * switchDisplay)
+{
+	_ASSERTE(mLoaded);
+	if (!mLoaded)
+		return;
+
+	for (auto & curPatch : mPatches)
+	{
+		for (int idx = ssPrimary; idx < ssCount; ++idx)
+		{
+			bool once = true;
+			SwitchFunctionAssignment ss = static_cast<SwitchFunctionAssignment>(idx);
+			PatchVect & patches = curPatch.second.GetPatchVect(ss);
+			for (const BankPatchStatePtr& curItem : patches)
+			{
+				if (!curItem || !curItem->mPatch)
+					continue;
+
+				curItem->mPatch->ClearSwitch(switchDisplay);
+			}
+		}
+	}
+}
+
+void
 PatchBank::PatchSwitchPressed(int switchNumber, IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay)
 {
 	if (SwitchHasSecondaryLogic(switchNumber))
