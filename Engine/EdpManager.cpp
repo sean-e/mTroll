@@ -24,7 +24,7 @@
 
 #include <string>
 #include <memory.h>
-#include <strstream>
+#include <sstream>
 #include <algorithm>
 #include "EdpManager.h"
 #include "ITraceDisplay.h"
@@ -134,9 +134,9 @@ EdpManager::ReceivedSysex(const byte * bytesIn, int len)
 			if (kDbgFlag && mTrace)
 			{
 				const std::string byteDump(::GetAsciiHexStr(&bytes[kCmdPos], len - kCmdPos, true));
-				std::strstream traceMsg;
-				traceMsg << "EDP unexpected sysex: " << byteDump.c_str() << '\n' << std::ends;
-				mTrace->Trace(std::string(traceMsg.str()));
+				std::ostringstream traceMsg;
+				traceMsg << "EDP unexpected sysex: " << byteDump.c_str() << '\n';
+				mTrace->Trace(traceMsg.str());
 			}
 		}
 	}
@@ -161,9 +161,9 @@ EdpManager::ReceiveGlobalParamData(const byte * bytes, int len)
 		if (kDbgFlag && mTrace)
 		{
 			const std::string byteDump(::GetAsciiHexStr(bytes, len, true));
-			std::strstream traceMsg;
-			traceMsg << "EDP unexpected global param data len: " << byteDump.c_str() << '\n' << std::ends;
-			mTrace->Trace(std::string(traceMsg.str()));
+			std::ostringstream traceMsg;
+			traceMsg << "EDP unexpected global param data len: " << byteDump.c_str() << '\n';
+			mTrace->Trace(traceMsg.str());
 		}
 		return;
 	}
@@ -173,15 +173,15 @@ EdpManager::ReceiveGlobalParamData(const byte * bytes, int len)
 		if (kDbgFlag && mTrace)
 		{
 			const std::string byteDump(::GetAsciiHexStr(bytes, len, true));
-			std::strstream traceMsg;
-			traceMsg << "EDP unexpected global param data: " << byteDump.c_str() << '\n' << std::ends;
-			mTrace->Trace(std::string(traceMsg.str()));
+			std::ostringstream traceMsg;
+			traceMsg << "EDP unexpected global param data: " << byteDump.c_str() << '\n';
+			mTrace->Trace(traceMsg.str());
 		}
 		return;
 	}
 
 	constexpr int kByteOffset = 3;
-	std::strstream dispMsg;
+	std::ostringstream dispMsg;
 	dispMsg << "EDP Global State";
 	dispMsg << "\nPreset: " << (int)bytes[(int)EdpGlobalParamIndexes::ParamSet + kByteOffset];
 	if (bytes[(int)EdpGlobalParamIndexes::PrevParamSet + kByteOffset] != bytes[(int)EdpGlobalParamIndexes::ParamSet + kByteOffset])
@@ -189,8 +189,7 @@ EdpManager::ReceiveGlobalParamData(const byte * bytes, int len)
 	dispMsg << "\nMIDI ch/dev ID: " << (int)bytes[(int)EdpGlobalParamIndexes::MIDIChannel + kByteOffset] << "/" << (int)bytes[(int)EdpGlobalParamIndexes::MIDIDevID + kByteOffset];
 	dispMsg << "\nCtrl/loop source: " << (int)bytes[(int)EdpGlobalParamIndexes::MIDIFirstKey + kByteOffset] << "/" << (int)bytes[(int)EdpGlobalParamIndexes::MIDIFirstLoop + kByteOffset];
 	dispMsg << "\nVolume/feedback ctrl: " << (int)bytes[(int)EdpGlobalParamIndexes::MIDIVolCtrlr + kByteOffset] << "/" << (int)bytes[(int)EdpGlobalParamIndexes::MIDIFBCtrlr + kByteOffset];
-	dispMsg << std::ends;
-	mMainDisplay->TextOut(std::string(dispMsg.str()));
+	mMainDisplay->TextOut(dispMsg.str());
 }
 
 // req: F0 00 01 30 0B 01 01 12 00 13 00 F7
@@ -204,9 +203,9 @@ EdpManager::ReceiveLocalParamData(const byte * bytes, int len)
 		if (kDbgFlag && mTrace)
 		{
 			const std::string byteDump(::GetAsciiHexStr(bytes, len, true));
-			std::strstream traceMsg;
-			traceMsg << "EDP unexpected local param data len: " << byteDump.c_str() << '\n' << std::ends;
-			mTrace->Trace(std::string(traceMsg.str()));
+			std::ostringstream traceMsg;
+			traceMsg << "EDP unexpected local param data len: " << byteDump.c_str() << '\n';
+			mTrace->Trace(traceMsg.str());
 		}
 		return;
 	}
@@ -216,15 +215,15 @@ EdpManager::ReceiveLocalParamData(const byte * bytes, int len)
 		if (kDbgFlag && mTrace)
 		{
 			const std::string byteDump(::GetAsciiHexStr(bytes, len, true));
-			std::strstream traceMsg;
-			traceMsg << "EDP unexpected local param data: " << byteDump.c_str() << '\n' << std::ends;
-			mTrace->Trace(std::string(traceMsg.str()));
+			std::ostringstream traceMsg;
+			traceMsg << "EDP unexpected local param data: " << byteDump.c_str() << '\n';
+			mTrace->Trace(traceMsg.str());
 		}
 		return;
 	}
 
 	constexpr int kByteOffset = 3;
-	std::strstream dispMsg;
+	std::ostringstream dispMsg;
 	dispMsg << "EDP Local State";
 	if (bytes[2])
 		dispMsg << "\nPreset: " << (int)bytes[2]; // preset 0 is the active/edit buffer
@@ -254,6 +253,5 @@ EdpManager::ReceiveLocalParamData(const byte * bytes, int len)
 	if (bytes[21])
 		dispMsg << "\nTempo: " << ::DecodeEdpTempo(bytes[(int)EdpLocalParamIndexes::Tempo + kByteOffset]) << "bpm";
 
-	dispMsg << std::ends;
-	mMainDisplay->TextOut(std::string(dispMsg.str()));
+	mMainDisplay->TextOut(dispMsg.str());
 }

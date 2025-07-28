@@ -32,7 +32,7 @@
 	#define SLEEP	Sleep
 	#undef TextOut		// stupid unicode support defines TextOut to TextOutW
 #else
-	#define SLEEP	sleep
+	#define SLEEP	Sleep  // Cross-platform implementation in CrossPlatform.h
 #endif // _WINDOWS
 
 

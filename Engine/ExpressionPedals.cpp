@@ -23,7 +23,7 @@
  */
 
 #include <string>
-#include <strstream>
+#include <sstream>
 #include <complex>
 #include "ExpressionPedals.h"
 #include "IMainDisplay.h"
@@ -119,9 +119,9 @@ ExpressionControl::Calibrate(const PedalCalibration & calibrationSetting,
 		{
 			if (traceDisp)
 			{
-				std::strstream traceMsg;
-				traceMsg << "Error setting up expression pedal bottom toggle - bottomToggleZoneSize and/or bottomToggleDeadzoneSize are not set\n" << std::ends;
-				traceDisp->Trace(std::string(traceMsg.str()));
+				std::ostringstream traceMsg;
+				traceMsg << "Error setting up expression pedal bottom toggle - bottomToggleZoneSize and/or bottomToggleDeadzoneSize are not set\n";
+				traceDisp->Trace(traceMsg.str());
 			}
 		}
 		else
@@ -152,9 +152,9 @@ ExpressionControl::Calibrate(const PedalCalibration & calibrationSetting,
 		{
 			if (traceDisp)
 			{
-				std::strstream traceMsg;
-				traceMsg << "Error setting up expression pedal top toggle - topToggleZoneSize and/or topToggleDeadzoneSize are not set\n" << std::ends;
-				traceDisp->Trace(std::string(traceMsg.str()));
+				std::ostringstream traceMsg;
+				traceMsg << "Error setting up expression pedal top toggle - topToggleZoneSize and/or topToggleDeadzoneSize are not set\n";
+				traceDisp->Trace(traceMsg.str());
 			}
 		}
 		else
@@ -594,7 +594,7 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 #endif
 		if (showStatus || sHadStatus || doCcSend)
 		{
-			std::strstream displayMsg;
+			std::ostringstream displayMsg;
 			if (gEnableStatusDetails)
 			{
 				if (bottomDeactivated)
@@ -749,7 +749,7 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 			{
 				if (gEnableStatusDetails)
 				{
-					std::strstream finalMsg;
+					std::ostringstream finalMsg;
 					if (mIsDoubleByte)
 					{
 						finalMsg << "[ch " << (int)mChannel << ", ctrl " << (int)mControlNumber << "] " << newVal << " -> " << (int)mMidiData[2];
@@ -765,28 +765,27 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 #endif
 					}
 
-					displayMsg << std::ends;
-					finalMsg << '\n' << displayMsg.str() << std::ends;
+					finalMsg << '\n' << displayMsg.str();
 					mainDisplay->TransientTextOut(finalMsg.str());
 				}
 				else
 				{
-					displayMsg << '\n' << std::ends;
+					displayMsg << '\n';
 					mainDisplay->TransientTextOut(displayMsg.str());
 				}
 			}
 			else if (bottomDeadzone || topDeadzone)
 			{
-				displayMsg << '\n' << std::ends;
+				displayMsg << '\n';
 				mainDisplay->TransientTextOut(displayMsg.str());
 			}
-			else if (gEnableStatusDetails || !displayMsg.pcount())
+			else if (gEnableStatusDetails || displayMsg.str().empty())
 			{
 				mainDisplay->ClearTransientText();
 			}
 			else
 			{ 
-				displayMsg << '\n' << std::ends;
+				displayMsg << '\n';
 				mainDisplay->TransientTextOut(displayMsg.str());
 			}
 		}

@@ -6,3 +6,5 @@
 moc_*.cpp
 mTrollQt/Debug/*
 mTrollQt/Release/*
+build/*
+.DS_Store

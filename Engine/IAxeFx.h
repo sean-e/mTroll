@@ -31,30 +31,33 @@
 class Patch;
 using PatchPtr = std::shared_ptr<Patch>;
 
-__interface IAxeFx
+class IAxeFx
 {
+public:
+	virtual ~IAxeFx() = default;
+
 	// info
-	virtual AxeFxModel GetModel() const;
-	virtual int GetChannel() const;
+	virtual AxeFxModel GetModel() const = 0;
+	virtual int GetChannel() const = 0;
 
 	// engine load init
-	virtual void SetScenePatch(int scene, PatchPtr patch);
-	virtual void SetTempoPatch(PatchPtr patch);
-	virtual bool SetLooperPatch(PatchPtr patch);
-	virtual bool SetSyncPatch(PatchPtr patch, int effectId, int channel);
-	virtual bool SetSyncPatch(PatchPtr patch, int bypassCc);
+	virtual void SetScenePatch(int scene, PatchPtr patch) = 0;
+	virtual void SetTempoPatch(PatchPtr patch) = 0;
+	virtual bool SetLooperPatch(PatchPtr patch) = 0;
+	virtual bool SetSyncPatch(PatchPtr patch, int effectId, int channel) = 0;
+	virtual bool SetSyncPatch(PatchPtr patch, int bypassCc = -1) = 0;
 
 	// runtime
-	virtual void UpdateSceneStatus(int newScene, bool internalUpdate);
-	virtual void ForceRefreshAxeState();
-	virtual void DelayedNameSyncFromAxe(bool force = false);
-	virtual void DelayedEffectsSyncFromAxe();
-	virtual void ReloadCurrentPreset();
-	virtual void IncrementPreset();
-	virtual void DecrementPreset();
-	virtual void IncrementScene();
-	virtual void DecrementScene();
-	virtual void Shutdown();
+	virtual void UpdateSceneStatus(int newScene, bool internalUpdate) = 0;
+	virtual void ForceRefreshAxeState() = 0;
+	virtual void DelayedNameSyncFromAxe(bool force = false) = 0;
+	virtual void DelayedEffectsSyncFromAxe() = 0;
+	virtual void ReloadCurrentPreset() = 0;
+	virtual void IncrementPreset() = 0;
+	virtual void DecrementPreset() = 0;
+	virtual void IncrementScene() = 0;
+	virtual void DecrementScene() = 0;
+	virtual void Shutdown() = 0;
 };
 
 using IAxeFxPtr = std::shared_ptr<IAxeFx>;

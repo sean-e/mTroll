@@ -44,7 +44,7 @@ public:
 
 	void Exec() override
 	{
-		__super::Exec();
+		MidiCommandString::Exec();
 		if (mAxeMgr)
 			mAxeMgr->DelayedNameSyncFromAxe();
 	}

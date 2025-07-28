@@ -24,7 +24,7 @@
 
 #include <string>
 #include <memory.h>
-#include <strstream>
+#include <sstream>
 #include <algorithm>
 #include <QEvent>
 #include <QApplication>
@@ -408,9 +408,9 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 		if (kDbgFlag && mTrace)
 		{
 			const std::string byteDump(::GetAsciiHexStr(&bytes[5], len - 5, true));
-			std::strstream traceMsg;
-			traceMsg << byteDump.c_str() << '\n' << std::ends;
-			mTrace->Trace(std::string(traceMsg.str()));
+			std::ostringstream traceMsg;
+			traceMsg << byteDump.c_str() << '\n';
+			mTrace->Trace(traceMsg.str());
 		}
 	}
 
@@ -610,25 +610,25 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 					{
 						const std::string byteDump(::GetAsciiHexStr(bytes + 4, len - 6, true));
 						const std::string asciiDump(::GetAsciiStr(&bytes[6], len - 8));
-						std::strstream traceMsg;
-						traceMsg << inf->mName << " : " << byteDump.c_str() << " : " << asciiDump.c_str() << '\n' << std::ends;
-						mTrace->Trace(std::string(traceMsg.str()));
+						std::ostringstream traceMsg;
+						traceMsg << inf->mName << " : " << byteDump.c_str() << " : " << asciiDump.c_str() << '\n';
+						mTrace->Trace(traceMsg.str());
 					}
 				}
 				else if (mTrace)
 				{
 					const std::string byteDump(::GetAsciiHexStr(bytes, len - 2, true));
-					std::strstream traceMsg;
-					traceMsg << "Unrecognized bypass param value for " << inf->mName << " " << byteDump.c_str() << '\n' << std::ends;
-					mTrace->Trace(std::string(traceMsg.str()));
+					std::ostringstream traceMsg;
+					traceMsg << "Unrecognized bypass param value for " << inf->mName << " " << byteDump.c_str() << '\n';
+					mTrace->Trace(traceMsg.str());
 				}
 			}
 			else if (mTrace)
 			{
 				const std::string byteDump(::GetAsciiHexStr(bytes, len - 2, true));
-				std::strstream traceMsg;
-				traceMsg << "Unhandled bypass MS param value for " << inf->mName << " " << byteDump.c_str() << '\n' << std::ends;
-				mTrace->Trace(std::string(traceMsg.str()));
+				std::ostringstream traceMsg;
+				traceMsg << "Unhandled bypass MS param value for " << inf->mName << " " << byteDump.c_str() << '\n';
+				mTrace->Trace(traceMsg.str());
 			}
 		}
 		else
@@ -1109,9 +1109,9 @@ AxeFxManager::ReceiveFirmwareVersionResponse(const byte * bytes, int len)
 
 	if (mTrace)
 	{
-		std::strstream traceMsg;
-		traceMsg << "Axe-Fx " << model << "version " << (int) bytes[6] << "." << (int) bytes[7] << '\n' << std::ends;
-		mTrace->Trace(std::string(traceMsg.str()));
+		std::ostringstream traceMsg;
+		traceMsg << "Axe-Fx " << model << "version " << (int) bytes[6] << "." << (int) bytes[7] << '\n';
+		mTrace->Trace(traceMsg.str());
 	}
 
 	mFirmwareMajorVersion = (int) bytes[6];
@@ -1231,9 +1231,9 @@ AxeFxManager::ReceivePresetEffects(const byte * bytes, int len)
 			inf = IdentifyBlockInfoUsingEffectId(bytes + idx);
 			if (inf && mTrace && inf->mNormalizedName != "feedback return")
 			{
-				std::strstream traceMsg;
-				traceMsg << "Axe sync warning: potentially unexpected sync for  " << inf->mName << " " << '\n' << std::ends;
-				mTrace->Trace(std::string(traceMsg.str()));
+				std::ostringstream traceMsg;
+				traceMsg << "Axe sync warning: potentially unexpected sync for  " << inf->mName << " " << '\n';
+				mTrace->Trace(traceMsg.str());
 			}
 		}
 
@@ -1252,9 +1252,9 @@ AxeFxManager::ReceivePresetEffects(const byte * bytes, int len)
 			else if (mTrace)
 			{
 				const std::string byteDump(::GetAsciiHexStr(bytes + idx, 5, true));
-				std::strstream traceMsg;
-				traceMsg << "Unrecognized bypass param value for " << inf->mName << " " << byteDump.c_str() << '\n' << std::ends;
-				mTrace->Trace(std::string(traceMsg.str()));
+				std::ostringstream traceMsg;
+				traceMsg << "Unrecognized bypass param value for " << inf->mName << " " << byteDump.c_str() << '\n';
+				mTrace->Trace(traceMsg.str());
 			}
 		}
 		else
@@ -1334,9 +1334,9 @@ AxeFxManager::ReceivePresetEffectsV2(const byte * bytes, int len)
 			inf = IdentifyBlockInfoUsingEffectId(bytes + idx + 1);
 			if (inf && mTrace && inf->mNormalizedName != "feedback return")
 			{
-				std::strstream traceMsg;
-				traceMsg << "Axe sync warning: potentially unexpected sync for  " << inf->mName << " " << '\n' << std::ends;
-				mTrace->Trace(std::string(traceMsg.str()));
+				std::ostringstream traceMsg;
+				traceMsg << "Axe sync warning: potentially unexpected sync for  " << inf->mName << " " << '\n';
+				mTrace->Trace(traceMsg.str());
 			}
 		}
 
@@ -1369,9 +1369,9 @@ AxeFxManager::ReceivePresetEffectsV2(const byte * bytes, int len)
 			else if (mTrace)
 			{
 				const std::string byteDump(::GetAsciiHexStr(bytes + idx, 5, true));
-				std::strstream traceMsg;
-				traceMsg << "Unrecognized bypass param value for " << inf->mName << " " << byteDump.c_str() << '\n' << std::ends;
-				mTrace->Trace(std::string(traceMsg.str()));
+				std::ostringstream traceMsg;
+				traceMsg << "Unrecognized bypass param value for " << inf->mName << " " << byteDump.c_str() << '\n';
+				mTrace->Trace(traceMsg.str());
 			}
 		}
 		else
@@ -1556,9 +1556,9 @@ AxeFxManager::ReceiveLooperStatus(const byte * bytes, int len)
 
 	if (mMainDisplay)
 	{
-		std::strstream traceMsg;
-		traceMsg << "Axe-Fx looper: " << GetLooperStateDesc(mLooperState) << '\n' << std::ends;
-		mMainDisplay->TransientTextOut(std::string(traceMsg.str()));
+		std::ostringstream traceMsg;
+		traceMsg << "Axe-Fx looper: " << GetLooperStateDesc(mLooperState) << '\n';
+		mMainDisplay->TransientTextOut(traceMsg.str());
 	}
 }
 
@@ -1654,7 +1654,7 @@ AxeFxManager::DisplayPresetStatus()
 	if (mCurrentAxePreset > -1 && mCurrentAxePreset < 1000)
 	{
 		char presetBuf[4];
-		::_itoa_s(mCurrentAxePreset + 1, presetBuf, 10);
+		::_itoa_s(mCurrentAxePreset + 1, presetBuf, sizeof(presetBuf), 10);
 		if (mCurrentAxePresetName.empty())
 			curText += kPrefix + presetBuf;
 		else
@@ -1666,7 +1666,7 @@ AxeFxManager::DisplayPresetStatus()
 	if (Axe2 <= mModel && mFirmwareMajorVersion > 8 && -1 != mCurrentScene)
 	{
 		char sceneBuf[4];
-		::_itoa_s(mCurrentScene + 1, sceneBuf, 10);
+		::_itoa_s(mCurrentScene + 1, sceneBuf, sizeof(sceneBuf), 10);
 		curText += std::string("\nAxeFx scn: ") + sceneBuf;
 	}
 

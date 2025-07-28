@@ -25,7 +25,7 @@
 #ifndef WinMidiIn_h__
 #define WinMidiIn_h__
 
-#include "..\Engine\IMidiIn.h"
+#include "../Engine/IMidiIn.h"
 #include <Windows.h>
 #include <MMSystem.h>
 #include <tchar.h>

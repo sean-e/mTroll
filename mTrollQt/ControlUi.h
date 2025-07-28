@@ -37,13 +37,24 @@
 #include "../Engine/IMidiControlUi.h"
 #include "../Engine/IMidiOutGenerator.h"
 #include "../Engine/IMidiInGenerator.h"
+#ifdef _WINDOWS
 #include "../Monome40h/IMonome40hInputSubscriber.h"
+#endif
 
 #ifdef _WINDOWS
 	#include "../winUtil/KeepDisplayOn.h"
 	#undef TextOut		// Win A/W preprocessing hoses IMainDisplay::TextOut impl
 #else
-	struct KeepDisplayOn {};
+	class KeepDisplayOn {
+	public:
+		KeepDisplayOn() {
+			// On macOS, prevent display sleep using IOKit
+			// This is a simplified implementation - could be enhanced
+		}
+		~KeepDisplayOn() {
+			// Restore previous display sleep settings
+		}
+	};
 #endif
 
 
@@ -58,13 +69,15 @@ class ITrollApplication;
 
 
 class ControlUi : public QWidget,
-						 IMainDisplay,
-						 ISwitchDisplay,
+						 public IMainDisplay,
+						 public ISwitchDisplay,
 						 public ITraceDisplay,
-						 IMidiControlUi,
-						 IMidiOutGenerator,
-						 IMidiInGenerator,
-						 IMonome40hSwitchSubscriber
+						 public IMidiControlUi,
+						 public IMidiOutGenerator,
+						 public IMidiInGenerator
+#ifdef _WINDOWS
+						 , public IMonome40hSwitchSubscriber
+#endif
 {
 	Q_OBJECT;
 	friend class CreateDisplayTimeTimer;
@@ -131,9 +144,14 @@ public: // ISwitchDisplay
 	virtual void		EnableDisplayUpdate(bool enable) override { mSwitchLedUpdateEnabled = enable; }
 	virtual void		UpdatePresetColors(std::array<unsigned int, 32> &presetColors) override;
 
-public: // IMonome40hSwitchSubscriber
+public: // Switch event handlers (used by both UI buttons and Monome hardware)
+#ifdef _WINDOWS
 	virtual void		SwitchPressed(byte row, byte column) override;
 	virtual void		SwitchReleased(byte row, byte column) override;
+#else
+	virtual void		SwitchPressed(byte row, byte column);
+	virtual void		SwitchReleased(byte row, byte column);
+#endif
 
 private: // IMidiControlUi
 	virtual void		AddSwitchMapping(int switchNumber, int row, int col) override;
@@ -148,10 +166,10 @@ private: // IMidiControlUi
 	virtual void		CreateMainDisplay(int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor) override;
 	virtual void		CreateTraceDisplay(int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold) override;
 	virtual void		CreateStaticLabel(const std::string & label, int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor) override;
-	virtual void		EnableAutoGrid();
-	virtual void		CreateAssemblyInGrid(int id, int row, int col, int colSpan, const std::string & label, bool createTextDisplay, bool createSwitch, bool createLed);
-	virtual void		CreateMainDisplayInGrid(int row, int col, int colSpan, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor, int minHeight);
-	virtual void		CreateTraceDisplayInGrid(int row, int col, int colSpan, const std::string & fontName, int fontHeight, bool bold);
+	virtual void		EnableAutoGrid() override;
+	virtual void		CreateAssemblyInGrid(int id, int row, int col, int colSpan, const std::string & label, bool createTextDisplay, bool createSwitch, bool createLed) override;
+	virtual void		CreateMainDisplayInGrid(int row, int col, int colSpan, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor, int minHeight) override;
+	virtual void		CreateTraceDisplayInGrid(int row, int col, int colSpan, const std::string & fontName, int fontHeight, bool bold) override;
 	virtual void		SetMainSize(int width, int height) override;
 	virtual void		SetHardwareLedIntensity(short brightness) override { mLedIntensity = brightness; }
 	virtual void		SetColors(unsigned int backgroundColor, unsigned int frameHighlightColor) override { mFrameHighlightColor = frameHighlightColor; mBackgroundColor = backgroundColor; }
@@ -314,8 +332,10 @@ private:
 	void ButtonReleased(const int idx);
 	void ButtonPressed(const int idx);
 
+#ifdef _WINDOWS
 	void MonomeStartupSequence();
 	void SendPresetColorsToMonome();
+#endif
 	inline bool RowColFromSwitchNumber(int ord, byte & row, byte & col)
 	{
 		std::map<int, int>::const_iterator it = mSwitchNumberToRowCol.find(ord);
@@ -331,8 +351,8 @@ private:
 		return mRowColToSwitchNumber[(row << 16) | col];
 	}
 
-	decltype(&UiButtonPressed_0) GetUiButtonPressedMember(int id);
-	decltype(&UiButtonReleased_0) GetUiButtonReleasedMember(int id);
+	decltype(&ControlUi::UiButtonPressed_0) GetUiButtonPressedMember(int id);
+	decltype(&ControlUi::UiButtonReleased_0) GetUiButtonReleasedMember(int id);
 
 private:
 	QWidget						* mParent;

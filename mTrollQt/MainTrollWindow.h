@@ -27,8 +27,8 @@
 
 #include <QMainWindow>
 #include <QDateTime>
-#include "..\Engine\ExpressionPedals.h"
-#include "..\Engine\ITrollApplication.h"
+#include "../Engine/ExpressionPedals.h"
+#include "../Engine/ITrollApplication.h"
 
 class ControlUi;
 class QAction;

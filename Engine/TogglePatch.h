@@ -29,7 +29,7 @@
 	#include <windows.h>
 	#define CurTime	GetTickCount // time in ms (used to measure elapsed time between events, origin doesn't matter)
 #else
-	#define CurTime	??
+	#define CurTime	GetTickCount // Cross-platform implementation in CrossPlatform.h
 #endif // _WINDOWS
 #include "TwoStatePatch.h"
 
@@ -97,7 +97,7 @@ public:
 
 	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) override
 	{
-		__super::SwitchPressed(mainDisplay, switchDisplay);
+		TwoStatePatch::SwitchPressed(mainDisplay, switchDisplay);
 		_ASSERTE(PatchLogicStyle::Hybrid != mPatchLogicStyle || mHybridState == HybridState::Reset || mHybridState == HybridState::ConvertedToToggle);
 		if (IsActive() || IsTogglePatchType())
 		{
@@ -170,7 +170,7 @@ public:
 			SwitchReleased(mainDisplay, switchDisplay); // this could convert hybrid to toggle mode...
 
 		if (IsTogglePatchType())
-			__super::Deactivate(mainDisplay, switchDisplay); // for toggle, calls SwitchPressed if is active
+			TwoStatePatch::Deactivate(mainDisplay, switchDisplay); // for toggle, calls SwitchPressed if is active
 	}
 
 	virtual const std::string & GetDisplayText(bool checkState = false) const override
@@ -185,7 +185,7 @@ public:
 			return empty;
 		}
 
-		return __super::GetDisplayText(checkState);
+		return TwoStatePatch::GetDisplayText(checkState);
 	}
 
 protected:

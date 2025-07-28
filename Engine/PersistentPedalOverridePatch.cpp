@@ -35,7 +35,7 @@ PersistentPedalOverridePatch::SwitchPressed(IMainDisplay * mainDisplay, ISwitchD
 {
 	const PersistentPedalOverridePatch * prev[ExpressionPedals::PedalCount] = { sActiveOverride[0], sActiveOverride[1], sActiveOverride[2], sActiveOverride[3] };
 
-	__super::SwitchPressed(mainDisplay, switchDisplay);
+	TogglePatch::SwitchPressed(mainDisplay, switchDisplay);
 
 	for (int idx = 0; idx < ExpressionPedals::PedalCount; ++idx)
 	{
@@ -77,7 +77,7 @@ PersistentPedalOverridePatch::ExecCommandsA()
 	}
 
 	OverridePedals(true);
-	__super::ExecCommandsA();
+	TogglePatch::ExecCommandsA();
 	OverridePedals(false);
 
 	_ASSERTE(gActivePatchPedals == sAggregateOverridePedals); // assert if the exec changed it underneath us
@@ -92,7 +92,7 @@ PersistentPedalOverridePatch::ExecCommandsB()
 	_ASSERTE(gActivePatchPedals == sAggregateOverridePedals);
 
 	OverridePedals(true);
-	__super::ExecCommandsB();
+	TogglePatch::ExecCommandsB();
 	OverridePedals(false);
 
 	_ASSERTE(sInactivePedals != &mPedals);

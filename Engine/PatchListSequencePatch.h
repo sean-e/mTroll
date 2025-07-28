@@ -28,7 +28,7 @@
 #include "IMidiOut.h"
 #include "IPatchCommand.h"
 #include <algorithm>
-#include <strstream>
+#include <sstream>
 #include <memory>
 #include "MidiControlEngine.h"
 #include "PersistentPedalOverridePatch.h"
@@ -79,14 +79,13 @@ public:
 		if (!mCurrentSubPatch)
 			return GetName();
 
-		std::strstream msgstr;
+		std::ostringstream msgstr;
 		msgstr << mCurrentSubPatch->GetName();
 #ifdef _DEBUG
 		const int patchNum = mCurrentSubPatch->GetNumber();
 		if (patchNum > 0)
 			msgstr << "   (" << patchNum << ")";
 #endif
-		msgstr << std::ends;
 		static std::string sSubPatchDisplayText;
 		sSubPatchDisplayText = msgstr.str();
 		return sSubPatchDisplayText;
@@ -207,9 +206,9 @@ public:
 			
 			if (!curPatch && trc)
 			{
-				std::strstream traceMsg;
-				traceMsg << "Patch " << curNum << " referenced in PatchListSequence " << GetName() << " (" << GetNumber() << ") does not exist!\n" << std::ends;
-				trc->Trace(std::string(traceMsg.str()));
+				std::ostringstream traceMsg;
+				traceMsg << "Patch " << curNum << " referenced in PatchListSequence " << GetName() << " (" << GetNumber() << ") does not exist!\n";
+				trc->Trace(traceMsg.str());
 			}
 		}
 	}

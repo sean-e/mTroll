@@ -5,13 +5,13 @@
 // to question: 
 //		https://stackoverflow.com/questions/85122/how-to-make-thread-sleep-less-than-a-millisecond-on-windows
 
-#include <windows.h>
 #include "SleepShort.h"
 
+#ifdef _WINDOWS
+#include <windows.h>
 
 static NTSTATUS(__stdcall* NtDelayExecution)(BOOL Alertable, PLARGE_INTEGER DelayInterval) = (NTSTATUS(__stdcall*)(BOOL, PLARGE_INTEGER)) GetProcAddress(GetModuleHandleW(L"ntdll.dll"), "NtDelayExecution");
 static NTSTATUS(__stdcall* ZwSetTimerResolution)(IN ULONG RequestedResolution, IN BOOLEAN Set, OUT PULONG ActualResolution) = (NTSTATUS(__stdcall*)(ULONG, BOOLEAN, PULONG)) GetProcAddress(GetModuleHandleW(L"ntdll.dll"), "ZwSetTimerResolution");
-
 
 void SleepShort(float milliseconds) 
 {
@@ -27,3 +27,14 @@ void SleepShort(float milliseconds)
 	interval.QuadPart = -1 * (int)(milliseconds * 10000.0f);
 	NtDelayExecution(false, &interval);
 }
+
+#else
+#include <thread>
+#include <chrono>
+
+void SleepShort(float milliseconds) 
+{
+	auto duration = std::chrono::duration<float, std::milli>(milliseconds);
+	std::this_thread::sleep_for(duration);
+}
+#endif

@@ -27,6 +27,7 @@
 
 #include "Patch.h"
 #include "MidiControlEngine.h"
+#include <sstream>
 
 
 class MetaPatch_LoadBank : public Patch
@@ -69,16 +70,16 @@ public:
 
 	virtual void CompleteInit(MidiControlEngine * eng, ITraceDisplay * trc) override
 	{
-		__super::CompleteInit(eng, trc);
+		Patch::CompleteInit(eng, trc);
 
 		if (!mOptionalTargetBankName.empty())
 		{
 			mTargetBankNumber = mEngine->GetBankNumber(mOptionalTargetBankName);
 			if (-1 == mTargetBankNumber && trc)
 			{
-				std::strstream traceMsg;
-				traceMsg << "Error: failed to identify bank referenced by LoadBank command; bank name " << mOptionalTargetBankName << '\n' << std::ends;
-				trc->Trace(std::string(traceMsg.str()));
+				std::ostringstream traceMsg;
+				traceMsg << "Error: failed to identify bank referenced by LoadBank command; bank name " << mOptionalTargetBankName << '\n';
+				trc->Trace(traceMsg.str());
 			}
 		}
 
@@ -95,9 +96,9 @@ public:
 			}
 			else if (trc)
 			{
-				std::strstream traceMsg;
-				traceMsg << "Error: failed to identify name of bank referenced by LoadBank command; bank number " << bankNum << '\n' << std::ends;
-				trc->Trace(std::string(traceMsg.str()));
+				std::ostringstream traceMsg;
+				traceMsg << "Error: failed to identify name of bank referenced by LoadBank command; bank number " << bankNum << '\n';
+				trc->Trace(traceMsg.str());
 			}
 		}
 	}

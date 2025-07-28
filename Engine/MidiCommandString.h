@@ -33,10 +33,10 @@ class MidiCommandString : public IPatchCommand
 {
 public:
 	MidiCommandString(IMidiOutPtr midiOut, 
-					  Bytes & midiString) :
-		mMidiOut(midiOut)
+					  const Bytes & midiString) :
+		mMidiOut(midiOut),
+		mCommandString(midiString)
 	{
-		mCommandString.swap(midiString);
 	}
 
 	virtual void Exec() override

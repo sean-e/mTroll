@@ -33,11 +33,11 @@
 #include <QScrollBar>
 #include "AboutDlg.h"
 #include "ControlUi.h"
-#include "..\Engine\ScopeSet.h"
+#include "../Engine/ScopeSet.h"
 #if defined(Q_OS_WIN)
 #include <windows.h>
 #include <powrprof.h>
-#include "..\winUtil\WinDark.h"
+#include "../winUtil/WinDark.h"
 #endif
 
 

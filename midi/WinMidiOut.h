@@ -25,11 +25,11 @@
 #ifndef WinMidiOut_h__
 #define WinMidiOut_h__
 
-#include "..\Engine\IMidiOut.h"
+#include "../Engine/IMidiOut.h"
 #include <Windows.h>
 #include <MMSystem.h>
 #include <tchar.h>
-#include "..\Engine\EngineLoader.h"
+#include "../Engine/EngineLoader.h"
 
 class ITraceDisplay;
 

@@ -26,6 +26,7 @@
 #define CompositeTogglePatch_h__
 
 #include "TogglePatch.h"
+#include <sstream>
 
 
  // CompositeTogglePatch
@@ -41,7 +42,7 @@ public:
 		IMidiOutPtr midiOut,
 		std::vector<std::pair<int, int>> groupA,
 		std::vector<std::pair<int, int>> groupB) :
-		TogglePatch(number, name, midiOut, PatchCommands{}, PatchCommands{}),
+		TogglePatch(number, name, midiOut, mCmdsA, mCmdsB),
 		mPatchNumbersA(groupA),
 		mPatchNumbersB(groupB)
 	{
@@ -64,16 +65,16 @@ public:
 					mPatchesA.emplace_back(curPatch, curPair.second);
 				else if (trc)
 				{
-					std::strstream traceMsg;
-					traceMsg << "Patch " << curPatchNum << " referenced in CompositeTogglePatch " << GetName() << " (" << GetNumber() << ") is not a two-state patch type!\n" << std::ends;
-					trc->Trace(std::string(traceMsg.str()));
+					std::ostringstream traceMsg;
+					traceMsg << "Patch " << curPatchNum << " referenced in CompositeTogglePatch " << GetName() << " (" << GetNumber() << ") is not a two-state patch type!\n";
+					trc->Trace(traceMsg.str());
 				}
 			}
 			else if (trc)
 			{
-				std::strstream traceMsg;
-				traceMsg << "Patch " << curPatchNum << " referenced in CompositeTogglePatch " << GetName() << " (" << GetNumber() << ") does not exist!\n" << std::ends;
-				trc->Trace(std::string(traceMsg.str()));
+				std::ostringstream traceMsg;
+				traceMsg << "Patch " << curPatchNum << " referenced in CompositeTogglePatch " << GetName() << " (" << GetNumber() << ") does not exist!\n";
+				trc->Trace(traceMsg.str());
 			}
 		}
 
@@ -88,16 +89,16 @@ public:
 					mPatchesB.emplace_back(curPatch, curPair.second);
 				else if (trc)
 				{
-					std::strstream traceMsg;
-					traceMsg << "Patch " << curPatchNum << " referenced in CompositeTogglePatch " << GetName() << " (" << GetNumber() << ") is not a two-state patch type!\n" << std::ends;
-					trc->Trace(std::string(traceMsg.str()));
+					std::ostringstream traceMsg;
+					traceMsg << "Patch " << curPatchNum << " referenced in CompositeTogglePatch " << GetName() << " (" << GetNumber() << ") is not a two-state patch type!\n";
+					trc->Trace(traceMsg.str());
 				}
 			}
 			else if (trc)
 			{
-				std::strstream traceMsg;
-				traceMsg << "Patch " << curPatchNum << " referenced in CompositeTogglePatch " << GetName() << " (" << GetNumber() << ") does not exist!\n" << std::ends;
-				trc->Trace(std::string(traceMsg.str()));
+				std::ostringstream traceMsg;
+				traceMsg << "Patch " << curPatchNum << " referenced in CompositeTogglePatch " << GetName() << " (" << GetNumber() << ") does not exist!\n";
+				trc->Trace(traceMsg.str());
 			}
 		}
 	}
@@ -142,6 +143,7 @@ public:
 	}
 
 private:
+	PatchCommands mCmdsA, mCmdsB;
 	std::vector<std::pair<int, int>>		mPatchNumbersA, mPatchNumbersB;
 	std::vector<std::pair<PatchPtr, int>>	mPatchesA, mPatchesB;
 };

@@ -23,7 +23,7 @@
  */
 
 #include "Patch.h"
-#include <strstream>
+#include <sstream>
 #include <atomic>
 #include "IMidiOut.h"
 #include "IMainDisplay.h"
@@ -123,7 +123,7 @@ Patch::UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay
 	if (mainDisplay)
 	{
 		const std::string txt(GetDisplayText(true));
-		std::strstream msgstr;
+		std::ostringstream msgstr;
 		msgstr << txt;
 		if (mNumber > 0)
 		{
@@ -138,7 +138,7 @@ Patch::UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay
 #endif
 		}
 
-		msgstr << '\n' << std::ends;
+		msgstr << '\n';
 		mainDisplay->TextOut(msgstr.str());
 	}
 }

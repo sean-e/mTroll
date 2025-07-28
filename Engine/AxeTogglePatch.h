@@ -117,7 +117,7 @@ public:
 	{
 		// support for runtime per-preset scene name propagation to buttons
 		mActiveText = mInactiveText = name;
-		__super::SetName(name, switchDisplay);
+		TogglePatch::SetName(name, switchDisplay);
 	}
 
 	virtual const std::string & GetDisplayText(bool checkState /*= false*/) const override
@@ -129,16 +129,16 @@ public:
 			return mInactiveText; 
 		}
 
-		return __super::GetDisplayText(checkState);
+		return TogglePatch::GetDisplayText(checkState);
 	}
 
 	virtual bool HasDisplayText() const override { return mHasDisplayText; }
 
 	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) override
 	{
-		const bool kWasTogglePatchType = IsTogglePatchType(); // type could change in __super::SwitchPressed
+		const bool kWasTogglePatchType = IsTogglePatchType(); // type could change in TogglePatch::SwitchPressed
 
-		__super::SwitchPressed(mainDisplay, switchDisplay);
+		TogglePatch::SwitchPressed(mainDisplay, switchDisplay);
 
 		if (kWasTogglePatchType)
 		{
@@ -149,7 +149,7 @@ public:
 
 	virtual void ExecCommandsA() override
 	{
-		__super::ExecCommandsA();
+		TogglePatch::ExecCommandsA();
 
 		if (mUpdateAxMgrDuringExec || !IsTogglePatchType())
 		{
@@ -160,7 +160,7 @@ public:
 
 	virtual void ExecCommandsB() override
 	{
-		__super::ExecCommandsB();
+		TogglePatch::ExecCommandsB();
 
 		if (mUpdateAxMgrDuringExec || !IsTogglePatchType())
 		{
@@ -217,7 +217,7 @@ public:
 
 	virtual void UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) const override
 	{
-		__super::UpdateDisplays(mainDisplay, switchDisplay);
+		TogglePatch::UpdateDisplays(mainDisplay, switchDisplay);
 
 		// this causes preset and scene state to appear during for example MidiControlEngine::SwitchReleased_NavAndDescMode
 		if (IsActive())
@@ -302,7 +302,7 @@ public:
 			}
 		}
 
-		__super::Disable(switchDisplay);
+		TogglePatch::Disable(switchDisplay);
 	}
 };
 

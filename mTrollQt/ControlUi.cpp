@@ -23,7 +23,7 @@
  */
 
 #include <algorithm>
-#include <strstream>
+#include <sstream>
 
 #include <QApplication>
 #include <qthread.h>
@@ -55,15 +55,13 @@
 	using XMidiIn = WinMidiIn;
 	#define SLEEP	Sleep
 #else
-	#error "include the midiOut header file for this platform"
-	using XMidiOut = YourMidiOut;
-
-//	#define USE_MIDI_IN
-	#ifdef USE_MIDI_IN
-		#error "include the midiIn header file for this platform"
-		using XMidiIn = YourMidiIn;
-	#endif
-	#define SLEEP	sleep
+	#include "../CrossPlatform.h"
+	#include "../midi/MacMidiOut.h"
+	#include "../midi/MacMidiIn.h"
+	#define USE_MIDI_IN
+	using XMidiOut = MacMidiOut;
+	using XMidiIn = MacMidiIn;
+	#define SLEEP	Sleep  // Cross-platform implementation in CrossPlatform.h
 #endif
 #include "MainTrollWindow.h"
 
@@ -137,11 +135,13 @@ ControlUi::Unload()
 {
 	StopTimer();
 
+#ifdef _WINDOWS
 	if (mHardwareUi)
 	{
 		mHardwareUi->Unsubscribe(mEngine.get());
 		mHardwareUi->Unsubscribe(this);
 	}
+#endif
 
 	CloseMidiIns();
 	CloseMidiOuts();
@@ -153,17 +153,21 @@ ControlUi::Unload()
 	}
 
 	// clear leds
+#ifdef _WINDOWS
 	if (mHardwareUi)
 	{
 		for (auto & mStupidSwitchState : mStupidSwitchStates)
 			TurnOffSwitchDisplay(mStupidSwitchState.first);
 	}
+#endif
 
 	QCoreApplication::removePostedEvents(this, QEvent::User);
 	mStupidSwitchStates.clear();
 
+#ifdef _WINDOWS
 	delete mHardwareUi;
 	mHardwareUi = nullptr;
+#endif
 
 	delete mMainDisplay;
 	mMainDisplay = nullptr;
@@ -218,29 +222,33 @@ ControlUi::Load(const std::string & uiSettingsFile,
 		userAdcSetting = false;
 
 	LoadUi(uiSettingsFile);
+#ifdef _WINDOWS
 	LoadMonome(true);
+#endif
 	LoadMidiSettings(configSettingsFile, adcOverrides);
 
+#ifdef _WINDOWS
 	if (mHardwareUi)
 	{
 		SendPresetColorsToMonome();
 		mHardwareUi->Subscribe(this);
 		mHardwareUi->Subscribe(mEngine.get());
-
-		bool anyMidiOutOpen = false;
-		for (auto & mMidiOut : mMidiOuts)
-		{
-			IMidiOutPtr curOut = mMidiOut.second;
-			if (curOut && curOut->IsMidiOutOpen())
-			{
-				anyMidiOutOpen = true;
-				break;
-			}
-		}
-
-		if (anyMidiOutOpen)
-			mSystemPowerOverride = new KeepDisplayOn;
 	}
+#endif
+
+	bool anyMidiOutOpen = false;
+	for (auto & mMidiOut : mMidiOuts)
+	{
+		IMidiOutPtr curOut = mMidiOut.second;
+		if (curOut && curOut->IsMidiOutOpen())
+		{
+			anyMidiOutOpen = true;
+			break;
+		}
+	}
+
+	if (anyMidiOutOpen)
+		mSystemPowerOverride = new KeepDisplayOn;
 }
 
 void
@@ -258,8 +266,8 @@ ControlUi::LoadUi(const std::string & uiSettingsFile)
 		const int kMidiOutCnt = midiOut->GetMidiOutDeviceCount();
 		for (int idx = 0; idx < kMidiOutCnt; ++idx)
 		{
-			std::strstream msg;
-			msg << "  " << idx << ": " << midiOut->GetMidiOutDeviceName(idx) << '\n' << std::ends;
+			std::ostringstream msg;
+			msg << "  " << idx << ": " << midiOut->GetMidiOutDeviceName(idx) << '\n';
 			Trace(msg.str());
 		}
 		Trace("\n");
@@ -274,8 +282,8 @@ ControlUi::LoadUi(const std::string & uiSettingsFile)
 		const int kMidiInCnt = midiIn->GetMidiInDeviceCount();
 		for (int idx = 0; idx < kMidiInCnt; ++idx)
 		{
-			std::strstream msg;
-			msg << "  " << idx << ": " << midiIn->GetMidiInDeviceName(idx) << '\n' << std::ends;
+			std::ostringstream msg;
+			msg << "  " << idx << ": " << midiIn->GetMidiInDeviceName(idx) << '\n';
 			Trace(msg.str());
 		}
 		Trace("\n");
@@ -291,6 +299,7 @@ ControlUi::LoadUi(const std::string & uiSettingsFile)
 	mMainDisplayTimer->setSingleShot(true);
 }
 
+#ifdef _WINDOWS  
 void
 ControlUi::LoadMonome(bool displayStartSequence)
 {
@@ -319,15 +328,14 @@ ControlUi::LoadMonome(bool displayStartSequence)
 	{
 		Trace(e);
 	}
-#ifdef _WINDOWS
 	catch (const SEHexception &)
 	{
 		Trace("ERROR: failed to load monome\n");
 	}
-#endif // _WINDOWS
 
 	delete monome;
 }
+#endif // _WINDOWS
 
 void
 ControlUi::LoadMidiSettings(const std::string & file, 
@@ -344,8 +352,10 @@ ControlUi::LoadMidiSettings(const std::string & file,
 	mEngine = ldr.CreateEngine(file);
 	if (mEngine)
 	{
+#ifdef _WINDOWS
 		if (mHardwareUi)
 			ldr.InitMonome(mHardwareUi, adcOverrides, mUserAdcSettings);
+#endif
 	}
 	else
 		TextOut("Failed to load MIDI settings.");
@@ -726,6 +736,7 @@ ControlUi::ForceSwitchDisplay(int switchNumber,
 	_ASSERTE(switchNumber < kMaxButtons);
 	const bool kColorIsPreset = color & kPresetColorMarkerBit;
 
+#ifdef _WINDOWS
 	if (mHardwareUi)
 	{
 		byte row, col;
@@ -737,6 +748,7 @@ ControlUi::ForceSwitchDisplay(int switchNumber,
 				mHardwareUi->EnableLed(row, col, color);
 		}
 	}
+#endif
 
 	if (!mLeds[switchNumber] || !mLeds[switchNumber]->isEnabled())
 		return;
@@ -767,6 +779,7 @@ ControlUi::DimSwitchDisplay(int switchNumber,
 	_ASSERTE(ledColor);
 	const bool kColorIsPreset = ledColor & kPresetColorMarkerBit;
 
+#ifdef _WINDOWS
 	if (mHardwareUi)
 	{
 		byte row, col;
@@ -778,6 +791,7 @@ ControlUi::DimSwitchDisplay(int switchNumber,
 				mHardwareUi->EnableLed(row, col, ledColor);
 		}
 	}
+#endif
 
 	if (!mLeds[switchNumber] || !mLeds[switchNumber]->isEnabled())
 		return;
@@ -1083,7 +1097,7 @@ ControlUi::CreateSwitch(int id,
 	{
 		// override default shortcut so that Alt key does 
 		// not need to be held down
-		const QString shortCutKey = label[pos + 1];
+		const QString shortCutKey = QString(label[pos + 1]);
 		curSwitch->setShortcut(QKeySequence(shortCutKey));
 	}
 	
@@ -1572,13 +1586,13 @@ ControlUi::OpenMidiOuts()
 		if (!curOut || curOut->IsMidiOutOpen())
 			continue;
 
-		std::strstream traceMsg;
+		std::ostringstream traceMsg;
 		const unsigned int kDeviceIdx = mMidiOut.first;
 
 		if (curOut->OpenMidiOut(kDeviceIdx))
-			traceMsg << "Opened MIDI out " << kDeviceIdx << " " << curOut->GetMidiOutDeviceName(kDeviceIdx) << '\n' << std::ends;
+			traceMsg << "Opened MIDI out " << kDeviceIdx << " " << curOut->GetMidiOutDeviceName(kDeviceIdx) << '\n';
 		else
-			traceMsg << "Failed to open MIDI out " << kDeviceIdx << '\n' << std::ends;
+			traceMsg << "Failed to open MIDI out " << kDeviceIdx << '\n';
 
 		Trace(traceMsg.str());
 	}
@@ -1636,6 +1650,7 @@ ControlUi::MonomeStartupSequence()
 		mHardwareUi->EnableLedColumn(idx, 0);
 	}
 }
+#endif
 
 decltype(&ControlUi::UiButtonPressed_0)
 ControlUi::GetUiButtonPressedMember(int id)
@@ -1829,6 +1844,7 @@ ControlUi::Reconnect()
 		mHardwareUi->Subscribe(this);
 		mHardwareUi->Subscribe(mEngine.get());
 	}
+#endif
 
 	QApplication::restoreOverrideCursor();
 }
@@ -1951,11 +1967,12 @@ ControlUi::UpdateAdcs(const bool adcOverrides[ExpressionPedals::PedalCount])
 		mHardwareUi->EnableAdc(idx - 1, enable);
 		if (mTraceDisplay)
 		{
-			std::strstream traceMsg;
-			traceMsg << "  ADC port " << idx << (enable ? " enabled" : " disabled") << '\n' << std::ends;
-			Trace(std::string(traceMsg.str()));
+			std::ostringstream traceMsg;
+			traceMsg << "  ADC port " << idx << (enable ? " enabled" : " disabled") << '\n';
+			Trace(traceMsg.str());
 		}
 	}
+#endif
 }
 
 void
@@ -2208,13 +2225,13 @@ ControlUi::OpenMidiIns()
 		if (!curIn || curIn->IsMidiInOpen())
 			continue;
 
-		std::strstream traceMsg;
+		std::ostringstream traceMsg;
 		const unsigned int kDeviceIdx = mMidiIn.first;
 
 		if (curIn->OpenMidiIn(kDeviceIdx))
-			traceMsg << "Opened MIDI in " << kDeviceIdx << " " << curIn->GetMidiInDeviceName(kDeviceIdx) << '\n' << std::ends;
+			traceMsg << "Opened MIDI in " << kDeviceIdx << " " << curIn->GetMidiInDeviceName(kDeviceIdx) << '\n';
 		else
-			traceMsg << "Failed to open MIDI in " << kDeviceIdx << '\n' << std::ends;
+			traceMsg << "Failed to open MIDI in " << kDeviceIdx << '\n';
 
 		Trace(traceMsg.str());
 	}
@@ -2270,8 +2287,8 @@ ControlUi::SuspendMidi()
 
 	if (anySuspended)
 	{
-		std::strstream msg;
-		msg << "Suspended MIDI connections\n" << std::ends;
+		std::ostringstream msg;
+		msg << "Suspended MIDI connections\n";
 		Trace(msg.str());
 	}
 
@@ -2292,8 +2309,8 @@ ControlUi::ResumeMidi()
 
 	if (allResumed)
 	{
-		std::strstream msg;
-		msg << "Resumed MIDI connections\n" << std::ends;
+		std::ostringstream msg;
+		msg << "Resumed MIDI connections\n";
 		Trace(msg.str());
 	}
 

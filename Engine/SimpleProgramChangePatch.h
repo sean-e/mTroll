@@ -40,7 +40,7 @@ public:
 		IMidiOutPtr midiOut,
 		PatchCommands & cmds,
 		int midiChannel) :
-		TwoStatePatch(number, name, midiOut, cmds, PatchCommands{}, psDisallow),
+		TwoStatePatch(number, name, midiOut, cmds, mCmdsB, psDisallow),
 		mMidiChannel(midiChannel)
 	{
 		_ASSERTE(-1 != mMidiChannel);
@@ -51,7 +51,7 @@ public:
 
 	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) override
 	{
-		__super::SwitchPressed(mainDisplay, switchDisplay);
+		TwoStatePatch::SwitchPressed(mainDisplay, switchDisplay);
 
 		// Like NormalPatch, SimpleProgramChangePatch always execs the A commands on switch press.
 		ExecCommandsA();
@@ -67,6 +67,7 @@ public:
 	}
 
 private:
+	PatchCommands mCmdsB;
 	const int mMidiChannel;
 };
 

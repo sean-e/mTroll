@@ -22,7 +22,7 @@
  * Contact Sean: "fester" at the domain of the original project site
  */
 
-#include <strstream>
+#include <sstream>
 #include "ControllerInputMonitor.h"
 #include "ITraceDisplay.h"
 #include "HexStringUtils.h"
@@ -49,9 +49,9 @@ ControllerInputMonitor::AddPatch(ControllerTogglePatchPtr p, int channel, int co
 	{
 		if (mTrace)
 		{
-			std::strstream traceMsg;
-			traceMsg << "Error setting up input device monitor: duplicate port+channel in DeviceChannelMap?\n" << std::ends;
-			mTrace->Trace(std::string(traceMsg.str()));
+			std::ostringstream traceMsg;
+			traceMsg << "Error setting up input device monitor: duplicate port+channel in DeviceChannelMap?\n";
+			mTrace->Trace(traceMsg.str());
 		}
 		return;
 	}

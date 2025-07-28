@@ -38,8 +38,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include <atomic>
 #include <cmath>
 #include "WinMidiOut.h"
-#include "..\Engine\ITraceDisplay.h"
-#include "..\Engine\ISwitchDisplay.h"
+#include "../Engine/ITraceDisplay.h"
+#include "../Engine/ISwitchDisplay.h"
 #include <atlstr.h>
 #include "SleepShort.h"
 

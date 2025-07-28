@@ -27,7 +27,7 @@
 #include "MainTrollWindow.h"
 
 #if defined(_WINDOWS)
-#include "..\winUtil\SEHexception.h"
+#include "../winUtil/SEHexception.h"
 #endif // _WINDOWS
 
 

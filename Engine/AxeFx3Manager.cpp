@@ -24,7 +24,7 @@
 
 #include <string>
 #include <memory.h>
-#include <strstream>
+#include <sstream>
 #include <algorithm>
 #include <QEvent>
 #include <QApplication>
@@ -378,36 +378,36 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 
 	switch (bytes[5])
 	{
-	case AxeFx3MessageIds::EditorSyncMsg:
-	case AxeFx3MessageIds::EditorSyncMsg2:
-	case AxeFx3MessageIds::EditorTunerMsg:
-	case AxeFx3MessageIds::EditorAmpMsg1:
-	case AxeFx3MessageIds::EditorAmpMsg2:
-	case AxeFx3MessageIds::EditorAmpMsg3:
-	case AxeFx3MessageIds::PresetExportRequestAck:
-	case AxeFx3MessageIds::PresetExportResponse:
-	case AxeFx3MessageIds::PresetExportResponse2:
+	case static_cast<int>(AxeFx3MessageIds::EditorSyncMsg):
+	case static_cast<int>(AxeFx3MessageIds::EditorSyncMsg2):
+	case static_cast<int>(AxeFx3MessageIds::EditorTunerMsg):
+	case static_cast<int>(AxeFx3MessageIds::EditorAmpMsg1):
+	case static_cast<int>(AxeFx3MessageIds::EditorAmpMsg2):
+	case static_cast<int>(AxeFx3MessageIds::EditorAmpMsg3):
+	case static_cast<int>(AxeFx3MessageIds::PresetExportRequestAck):
+	case static_cast<int>(AxeFx3MessageIds::PresetExportResponse):
+	case static_cast<int>(AxeFx3MessageIds::PresetExportResponse2):
 		break;
-	case AxeFx3MessageIds::FirmwareVersion:
+	case static_cast<int>(AxeFx3MessageIds::FirmwareVersion):
 		if (mFirmwareMajorVersion)
 			break;
 		ReceiveFirmwareVersionResponse(bytes, len);
 		break;
-	case AxeFx3MessageIds::EffectBypass:
+	case static_cast<int>(AxeFx3MessageIds::EffectBypass):
 		// when we send set bypass, it responds with new state -- we could 
 		// update here rather than requesting a status dump
 		// This message is not sent in response to changes on the device or the editor.
 		break;
-	case AxeFx3MessageIds::EffectChannel:
+	case static_cast<int>(AxeFx3MessageIds::EffectChannel):
 		// when we send set channel, it responds with new state -- we could 
 		// update here rather than requesting a status dump.
 		// This message is not sent in response to changes on the device or the editor.
 		break;
-	case AxeFx3MessageIds::Scene:
+	case static_cast<int>(AxeFx3MessageIds::Scene):
 		// we read scene number when we get the scene name, so don't need to
 		// do anything here
 		break;
-	case AxeFx3MessageIds::PresetName:
+	case static_cast<int>(AxeFx3MessageIds::PresetName):
 		if (len > 8)
 		{
 			const int curPreset = mCurrentAxePreset;
@@ -422,7 +422,7 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 			}
 		}
 		break;
-	case AxeFx3MessageIds::SceneName:
+	case static_cast<int>(AxeFx3MessageIds::SceneName):
 		if (len > 7)
 		{
 			if (-1 == mSceneNameRequestIdx)
@@ -462,20 +462,20 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 			}
 		}
 		break;
-	case AxeFx3MessageIds::LooperState:
+	case static_cast<int>(AxeFx3MessageIds::LooperState):
 		if (mLooperStatusRequested)
 			ReceiveLooperState(bytes[6]);
 		else
 			DelayedLooperSyncFromAxe();
 		break;
-	case AxeFx3MessageIds::TapTempo:
+	case static_cast<int>(AxeFx3MessageIds::TapTempo):
 		if (mTempoPatch)
 		{
 			mTempoPatch->ActivateSwitchDisplay(mSwitchDisplay, true);
 			mSwitchDisplay->SetIndicatorThreadSafe(false, mTempoPatch, 75);
 		}
 		break;
-	case AxeFx3MessageIds::Tuner:
+	case static_cast<int>(AxeFx3MessageIds::Tuner):
 		// #axe3TunerSupport
 		// tuner is not sent on midi-over-usb
 		// tuner info
@@ -484,37 +484,37 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 		// ss = string 0-5, 0 = low E
 		// cc = cents offset binary, 63 = 0, 62 = -1, 64 = +1
 		break;
-	case AxeFx3MessageIds::StatusDump:
+	case static_cast<int>(AxeFx3MessageIds::StatusDump):
 		ReceiveStatusDump(&bytes[6], len - 6);
 		break;
-	case AxeFx3MessageIds::Tempo:
+	case static_cast<int>(AxeFx3MessageIds::Tempo):
 		// set/get tempo
 		// tempo is not sent on midi-over-usb
 		// F0 00 01 74 10 14 dd dd cs F7
 		//	where dd dd is the desired tempo as two 7 - bit MIDI bytes, LS first.
 		//	To query the tempo let dd dd = 7F 7F.
 		break;
-	case AxeFx3MessageIds::Ack:
+	case static_cast<int>(AxeFx3MessageIds::Ack):
 		if (len > 7)
 		{
 			switch (bytes[6])
 			{
-			case AxeFx3MessageIds::EditorAmpMsg1:
-			case AxeFx3MessageIds::EditorAmpMsg2:
-			case AxeFx3MessageIds::EditorAmpMsg3:
+			case static_cast<int>(AxeFx3MessageIds::EditorAmpMsg1):
+			case static_cast<int>(AxeFx3MessageIds::EditorAmpMsg2):
+			case static_cast<int>(AxeFx3MessageIds::EditorAmpMsg3):
 				// editor ack
 				return true;
 
-			case AxeFx3MessageIds::TapTempo:
+			case static_cast<int>(AxeFx3MessageIds::TapTempo):
 				// tap tempo ack
 				return true;
 
-			case AxeFx3MessageIds::Tuner:
-			case AxeFx3MessageIds::EditorTunerMsg:
+			case static_cast<int>(AxeFx3MessageIds::Tuner):
+			case static_cast<int>(AxeFx3MessageIds::EditorTunerMsg):
 				// tuner ack
 				return true;
 
-			case AxeFx3MessageIds::LooperState:
+			case static_cast<int>(AxeFx3MessageIds::LooperState):
 				// looper status
 				if (0x08 == bytes[7])
 				{
@@ -544,9 +544,9 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 		if (kDbgFlag && mTrace)
 		{
 			const std::string byteDump(::GetAsciiHexStr(&bytes[5], len - 5, true));
-			std::strstream traceMsg;
-			traceMsg << byteDump.c_str() << '\n' << std::ends;
-			mTrace->Trace(std::string(traceMsg.str()));
+			std::ostringstream traceMsg;
+			traceMsg << byteDump.c_str() << '\n';
+			mTrace->Trace(traceMsg.str());
 		}
 	}
 
@@ -991,12 +991,11 @@ AxeFx3Manager::ReceiveFirmwareVersionResponse(const byte * bytes, int len)
 
 	if (mTrace)
 	{
-		std::strstream traceMsg;
+		std::ostringstream traceMsg;
 		traceMsg << "Axe-Fx " << model << "firmware version " << (int) bytes[6] << "." << (int) bytes[7] << '\n';
 		if (len > 10)
 			traceMsg << "Axe-Fx " << model << "USB firmware version " << (int)bytes[9] << "." << (int)bytes[10] << '\n';
-		traceMsg << std::ends;
-		mTrace->Trace(std::string(traceMsg.str()));
+		mTrace->Trace(traceMsg.str());
 	}
 
 	mFirmwareMajorVersion = (int) bytes[6];
@@ -1109,7 +1108,7 @@ AxeFx3Manager::ReceiveSceneName(int sceneNumber, const byte * bytes, int len)
 	{
 		constexpr int kBuflen = 6;
 		char sceneBuf[kBuflen];
-		::_itoa_s(sceneNumber + 1, sceneBuf, 10);
+		::_itoa_s(sceneNumber + 1, sceneBuf, sizeof(sceneBuf), 10);
 		::strcat_s(sceneBuf, kBuflen, ": ");
 		const std::string curText(std::string("Scn ") + sceneBuf); // #literalDependency
 		mScenePatches[sceneNumber]->SetName(curText + name, mSwitchDisplay);
@@ -1403,9 +1402,9 @@ AxeFx3Manager::ReceiveLooperState(byte newLoopState)
 
 	if (mMainDisplay)
 	{
-		std::strstream traceMsg;
-		traceMsg << "AxeFx lpr: " << GetLooperStateDesc(mLooperState) << '\n' << std::ends;
-		mMainDisplay->TransientTextOut(std::string(traceMsg.str()));
+		std::ostringstream traceMsg;
+		traceMsg << "AxeFx lpr: " << GetLooperStateDesc(mLooperState) << '\n';
+		mMainDisplay->TransientTextOut(traceMsg.str());
 	}
 }
 
@@ -1516,7 +1515,7 @@ AxeFx3Manager::DisplayPresetStatus()
 	if (mCurrentAxePreset > -1 && mCurrentAxePreset < 1025)
 	{
 		char presetBuf[5];
-		::_itoa_s(mCurrentAxePreset + 1, presetBuf, 10);
+		::_itoa_s(mCurrentAxePreset + 1, presetBuf, sizeof(presetBuf), 10);
 		if (mCurrentAxePresetName.empty())
 			curText += kPrefix + presetBuf;
 		else
@@ -1528,7 +1527,7 @@ AxeFx3Manager::DisplayPresetStatus()
 	if (-1 != mCurrentScene)
 	{
 		char sceneBuf[4];
-		::_itoa_s(mCurrentScene + 1, sceneBuf, 10);
+		::_itoa_s(mCurrentScene + 1, sceneBuf, sizeof(sceneBuf), 10);
 		curText += std::string("\nAxeFx scn: ") + sceneBuf;
 		if (!mCurrentAxeSceneName.empty())
 			curText += std::string(" ") + mCurrentAxeSceneName;

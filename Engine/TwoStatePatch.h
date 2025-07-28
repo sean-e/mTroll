@@ -58,6 +58,19 @@ protected:
 		mCmdsB.swap(cmdsB);
 	}
 
+	TwoStatePatch(int number, 
+				  const std::string & name, 
+				  IMidiOutPtr midiOut, 
+				  const PatchCommands & cmdsA, 
+				  const PatchCommands & cmdsB, 
+				  PedalSupport pedalSupport) :
+		Patch(number, name, midiOut),
+		mPedalSupport(pedalSupport),
+		mCmdsA(cmdsA),
+		mCmdsB(cmdsB)
+	{
+	}
+
 	~TwoStatePatch() = default;
 
 public:

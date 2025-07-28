@@ -24,10 +24,10 @@
 
 #include <atomic>
 #include "WinMidiIn.h"
-#include "..\Engine\IMidiInSubscriber.h"
-#include "..\Engine\ITraceDisplay.h"
-#include "..\Engine\ISwitchDisplay.h"
-#include "..\Engine\HexStringUtils.h"
+#include "../Engine/IMidiInSubscriber.h"
+#include "../Engine/ITraceDisplay.h"
+#include "../Engine/ISwitchDisplay.h"
+#include "../Engine/HexStringUtils.h"
 #include <atlstr.h>
 
 #pragma comment(lib, "winmm.lib")

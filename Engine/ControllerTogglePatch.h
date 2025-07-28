@@ -43,7 +43,7 @@ public:
 		IMidiOutPtr midiOut,
 		int channel,
 		int controller) :
-		TogglePatch(number, name, midiOut, PatchCommands{}, PatchCommands{})
+		TogglePatch(number, name, midiOut, mCmdsA, mCmdsB)
 	{
 		Bytes bytesA, bytesB;
 		bytesA.push_back(0xb0 | channel);
@@ -59,6 +59,9 @@ public:
 	}
 
 	virtual std::string GetPatchTypeStr() const override { return "controllerToggle"; }
+
+private:
+	PatchCommands mCmdsA, mCmdsB;
 };
 
 using ControllerTogglePatchPtr = std::shared_ptr<ControllerTogglePatch>;

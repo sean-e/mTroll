@@ -39,8 +39,8 @@ public:
 	NormalPatch(int number, 
 				const std::string & name, 
 				IMidiOutPtr midiOut, 
-				PatchCommands & cmdsA, 
-				PatchCommands & cmdsB,
+				const PatchCommands & cmdsA, 
+				const PatchCommands & cmdsB,
 				int programChangeMidiChannel) :
 		TwoStatePatch(number, name, midiOut, cmdsA, cmdsB, psAllow),
 		mMidiChannel(programChangeMidiChannel)
@@ -54,7 +54,7 @@ public:
 
 	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) override
 	{
-		__super::SwitchPressed(mainDisplay, switchDisplay);
+		TwoStatePatch::SwitchPressed(mainDisplay, switchDisplay);
 
 		if (mPatchIsActive)
 		{

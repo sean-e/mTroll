@@ -23,7 +23,7 @@
  */
 
 #include <algorithm>
-#include <strstream>
+#include <sstream>
 #include <iomanip>
 #include <atomic>
 #include "PatchBank.h"
@@ -192,9 +192,9 @@ PatchBank::InitPatches(const MidiControlEngine::Patches & enginePatches,
 						{
 							if (traceDisp)
 							{
-								std::strstream traceMsg;
-								traceMsg << "Patch " << curItem->mPatchNumber << " referenced in bank " << mName << " (" << mNumber << ") does not exist!\n" << std::ends;
-								traceDisp->Trace(std::string(traceMsg.str()));
+								std::ostringstream traceMsg;
+								traceMsg << "Patch " << curItem->mPatchNumber << " referenced in bank " << mName << " (" << mNumber << ") does not exist!\n";
+								traceDisp->Trace(traceMsg.str());
 							}
 
 							inc = false;
@@ -491,7 +491,7 @@ PatchBank::PatchSwitchPressed(SwitchFunctionAssignment st,
 
 	// do standard pressed processing (send A)
 	bool once = (st == ssPrimary);
-	std::strstream msgstr;
+	std::ostringstream msgstr;
 	for (it = curPatches.begin();
 		 it != curPatches.end();
 		 ++it)
@@ -570,7 +570,6 @@ PatchBank::PatchSwitchPressed(SwitchFunctionAssignment st,
 
 	if (mainDisplay && doDisplayUpdate)
 	{
-		msgstr << std::ends;
 		mainDisplay->TextOut(msgstr.str());
 	}
 }
@@ -758,7 +757,7 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 					   bool showPatchInfo,
 					   bool temporaryDisplay)
 {
-	std::ostrstream info;
+	std::ostringstream info;
 	info << mName;
 #ifdef _DEBUG
 	info << "   (bank " << mNumber << ")";
@@ -835,7 +834,6 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 		}
 	}
 
-	info << std::ends;
 	if (mainDisplay)
 		mainDisplay->TextOut(info.str());
 }
@@ -843,7 +841,7 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 void
 PatchBank::DisplayDetailedPatchInfo(int switchNumber, IMainDisplay * mainDisplay)
 {
-	std::ostrstream info;
+	std::ostringstream info;
 	info << "Patch info for bank '" << mName
 #ifdef _DEBUG
 		<< "' (" << mNumber << "), switch "
@@ -899,7 +897,6 @@ PatchBank::DisplayDetailedPatchInfo(int switchNumber, IMainDisplay * mainDisplay
 		}
 	}
 
-	info << std::ends;
 	if (mainDisplay)
 		mainDisplay->TextOut(info.str());
 }
@@ -926,8 +923,8 @@ PatchBank::ResetPatches(IMainDisplay * mainDisplay,
 
 	if (mainDisplay)
 	{
-		std::ostrstream info;
-		info << "Bank patches reset\n" << std::ends;
+		std::ostringstream info;
+		info << "Bank patches reset\n";
 		mainDisplay->TextOut(info.str());
 	}
 }

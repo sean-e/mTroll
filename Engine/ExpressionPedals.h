@@ -26,7 +26,7 @@
 #define ExpressionPedals_h__
 
 #include <memory>
-#include "..\Monome40h\IMonome40hInputSubscriber.h"
+#include "../Monome40h/IMonome40hInputSubscriber.h"
 
 class Patch;
 class IMainDisplay;
