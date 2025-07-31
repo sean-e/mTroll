@@ -572,7 +572,7 @@ ExpressionControl::AdcValueChange(IMainDisplay * mainDisplay,
 		if (doCcSend)
 		{
 			mMidiData[3] = mMidiData[2];
-			mMidiData[2] = newCcVal;
+			mMidiData[2] = (byte)newCcVal;
 			if (mMidiOut)
 				mMidiOut->MidiOut(mMidiData[0], mMidiData[1], mMidiData[2], showStatus);
 		}

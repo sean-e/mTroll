@@ -282,7 +282,7 @@ Monome40hFtqt::Send(const MonomeSerialProtocolData & data)
 	const byte * pDat = data.Data();
 	
 	for (DWORD totalBytesWritten = 0, cnt = 0; 
-		totalBytesWritten != data.DataLen() && cnt < 10; ++cnt)
+		(int)totalBytesWritten != data.DataLen() && cnt < 10; ++cnt)
 	{
 		DWORD bytesWritten = 0;
 		retval = ::FT_W32_WriteFile(mFtDevice, (void*)&pDat[totalBytesWritten], data.DataLen() - totalBytesWritten, &bytesWritten, nullptr);
@@ -424,7 +424,7 @@ Monome40hFtqt::ReadInput(byte * readData)
 				{
 					if (prevValsForCurPort[idx] == adcValue)
 					{
-						if (false && mTrace)
+						if constexpr (false && mTrace)
 							mTrace->Trace(std::format("adc val repeat: {}\n", adcValue));
 						return true;
 					}

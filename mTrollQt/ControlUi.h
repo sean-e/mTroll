@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2015,2018,2020,2021 Sean Echevarria
+ * Copyright (C) 2007-2015,2018,2020,2021,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -58,13 +58,13 @@ class ITrollApplication;
 
 
 class ControlUi : public QWidget,
-						 IMainDisplay,
-						 ISwitchDisplay,
+						 public IMainDisplay,
+						 public ISwitchDisplay,
 						 public ITraceDisplay,
-						 IMidiControlUi,
-						 IMidiOutGenerator,
-						 IMidiInGenerator,
-						 IMonome40hSwitchSubscriber
+						 public IMidiControlUi,
+						 public IMidiOutGenerator,
+						 public IMidiInGenerator,
+						 public IMonome40hSwitchSubscriber
 {
 	Q_OBJECT;
 	friend class CreateDisplayTimeTimer;
@@ -148,10 +148,10 @@ private: // IMidiControlUi
 	virtual void		CreateMainDisplay(int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor) override;
 	virtual void		CreateTraceDisplay(int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold) override;
 	virtual void		CreateStaticLabel(const std::string & label, int top, int left, int width, int height, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor) override;
-	virtual void		EnableAutoGrid();
-	virtual void		CreateAssemblyInGrid(int id, int row, int col, int colSpan, const std::string & label, bool createTextDisplay, bool createSwitch, bool createLed);
-	virtual void		CreateMainDisplayInGrid(int row, int col, int colSpan, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor, int minHeight);
-	virtual void		CreateTraceDisplayInGrid(int row, int col, int colSpan, const std::string & fontName, int fontHeight, bool bold);
+	virtual void		EnableAutoGrid() override;
+	virtual void		CreateAssemblyInGrid(int id, int row, int col, int colSpan, const std::string & label, bool createTextDisplay, bool createSwitch, bool createLed) override;
+	virtual void		CreateMainDisplayInGrid(int row, int col, int colSpan, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor, int minHeight) override;
+	virtual void		CreateTraceDisplayInGrid(int row, int col, int colSpan, const std::string & fontName, int fontHeight, bool bold) override;
 	virtual void		SetMainSize(int width, int height) override;
 	virtual void		SetHardwareLedIntensity(short brightness) override { mLedIntensity = brightness; }
 	virtual void		SetColors(unsigned int backgroundColor, unsigned int frameHighlightColor) override { mFrameHighlightColor = frameHighlightColor; mBackgroundColor = backgroundColor; }
@@ -331,8 +331,8 @@ private:
 		return mRowColToSwitchNumber[(row << 16) | col];
 	}
 
-	decltype(&UiButtonPressed_0) GetUiButtonPressedMember(int id);
-	decltype(&UiButtonReleased_0) GetUiButtonReleasedMember(int id);
+	decltype(&ControlUi::UiButtonPressed_0) GetUiButtonPressedMember(int id);
+	decltype(&ControlUi::UiButtonReleased_0) GetUiButtonReleasedMember(int id);
 
 private:
 	QWidget						* mParent;

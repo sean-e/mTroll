@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2011,2015,2018 Sean Echevarria
+ * Copyright (C) 2010-2011,2015,2018,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -186,10 +186,10 @@ AxemlLoader::LoadParameterLists(TiXmlElement* pElem)
 				// Amp Chorus Flanger Pitch
 				const std::string kFlags("_FLAGS");
 				pos = paramName.find(kFlags);
-				if (-1 == pos || pos != paramName.length() - kFlags.length())
+				if (-1 == pos || (size_t)pos != paramName.length() - kFlags.length())
 					continue;
 			}
-			else if (pos != paramName.length() - kBypass.length())
+			else if ((size_t)pos != paramName.length() - kBypass.length())
 				continue; // _BYPASSMODE
 			else
 				foundBypass = true;

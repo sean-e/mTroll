@@ -44,9 +44,9 @@
 #include "../Engine/UiLoader.h"
 #include "../Engine/HexStringUtils.h"
 #include "../Monome40h/IMonome40h.h"
-#include "../Monome40h/qt/Monome40hFtqt.h"
 
 #ifdef _WINDOWS
+	#include "../Monome40h/qt/Monome40hFtqt.h"
 	#include "../winUtil/SEHexception.h"
 	#include "../midi/WinMidiOut.h"
 	#include "../midi/WinMidiIn.h"
@@ -286,6 +286,7 @@ ControlUi::LoadUi(const std::string & uiSettingsFile)
 void
 ControlUi::LoadMonome(bool displayStartSequence)
 {
+#ifdef _WINDOWS
 	IMonome40h * monome = nullptr;
 	try
 	{
@@ -319,6 +320,7 @@ ControlUi::LoadMonome(bool displayStartSequence)
 #endif // _WINDOWS
 
 	delete monome;
+#endif
 }
 
 void
@@ -1029,7 +1031,7 @@ ControlUi::CreateSwitch(int id,
 	pal.setColor(QPalette::Button, mFrameHighlightColor);
 	pal.setColor(QPalette::Dark, mFrameHighlightColor);
 	pal.setColor(QPalette::Light, mFrameHighlightColor);
-	if (mSwitchConfig.mFgColor != -1)
+	if (mSwitchConfig.mFgColor != UINT_MAX)
 		pal.setColor(QPalette::ButtonText, mSwitchConfig.mFgColor);
 	curSwitch->setPalette(pal);
 	curSwitch->setAutoFillBackground(true);
@@ -1545,7 +1547,7 @@ ControlUi::GetMidiOutDeviceIndex(const std::string &deviceName)
 			return idx;
 	}
 
-	return -1;
+	return UINT_MAX;
 }
 
 
@@ -2231,7 +2233,7 @@ ControlUi::GetMidiInDeviceIndex(const std::string &deviceName)
 			return idx;
 	}
 
-	return -1;
+	return UINT_MAX;
 #else
 	return NULL;
 #endif // USE_MIDI_IN

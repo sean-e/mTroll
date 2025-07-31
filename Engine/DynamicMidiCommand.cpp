@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2024 Sean Echevarria
+ * Copyright (C) 2024-2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -191,22 +191,22 @@ DynamicMidiCommand::Exec()
 		{
 			// Note on
 			if (mDynamicChannel)
-				commandString[0] = commandString[0] | pMidiData->GetDynamicChannel();
+				commandString[0] = commandString[0] | (byte)pMidiData->GetDynamicChannel();
 
 			if (mDynamicVelocity)
-				commandString[2] = pMidiData->GetDynamicVelocity();
+				commandString[2] = (byte)pMidiData->GetDynamicVelocity();
 		}
 		else if (mDynamicChannel)
 		{
 			if ((commandString[0] & 0xF0) == 0x80)
 			{
 				// Note off -- don't use dynamic velocity
-				commandString[0] = commandString[0] | pMidiData->GetDynamicChannel();
+				commandString[0] = commandString[0] | (byte)pMidiData->GetDynamicChannel();
 			}
 			else if ((commandString[0] & 0xF0) == 0xb0)
 			{
 				// Control change
-				commandString[0] = commandString[0] | pMidiData->GetDynamicChannel();
+				commandString[0] = commandString[0] | (byte)pMidiData->GetDynamicChannel();
 			}
 		}
 
@@ -214,7 +214,7 @@ DynamicMidiCommand::Exec()
 		break;
 	case 2:
 		if (mDynamicChannel && (commandString[0] & 0xF0) == 0xc0) // Program change
-			commandString[0] = commandString[0] | pMidiData->GetDynamicChannel();
+			commandString[0] = commandString[0] | (byte)pMidiData->GetDynamicChannel();
 
 		curMidiOut->MidiOut(commandString[0], commandString[1]);
 		break;

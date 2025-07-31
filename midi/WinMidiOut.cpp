@@ -111,7 +111,7 @@ WinMidiOut::GetMidiOutDeviceName(unsigned int deviceIdx) const
 	{
 		CString errMsg(::GetMidiErrorText(res));
 		CString msg;
-		msg.Format(_T("Error getting name of out device %d: %s"), deviceIdx, errMsg);
+		msg.Format(_T("Error getting name of out device %d: %s"), deviceIdx, (LPCWSTR)errMsg);
 		devName = CStringA(msg);
 	}
 
@@ -536,7 +536,10 @@ WinMidiOut::MidiOutCallbackProc(HMIDIOUT hmo,
 	{
 		WinMidiOut * _this = (WinMidiOut *) dwInstance;
 		LPMIDIHDR hdr = (LPMIDIHDR) dwParam1;
-		MMRESULT res = ::midiOutUnprepareHeader(_this->mMidiOut, hdr, sizeof(MIDIHDR));
+#ifdef _DEBUG
+		MMRESULT res = 
+#endif
+			::midiOutUnprepareHeader(_this->mMidiOut, hdr, sizeof(MIDIHDR));
 		hdr->dwFlags = 0;
 		_ASSERTE(MMSYSERR_NOERROR == res);
 	}
@@ -653,7 +656,7 @@ WinMidiOut::ReportMidiError(MMRESULT resultCode,
 	CString msg;
 
 	mMidiOutError = true;
-	msg.Format(_T("Error: %s\nError location: %s (%d)\n"), errMsg, CString(__FILE__), lineNumber);
+	msg.Format(_T("Error: %s\nError location: %s (%d)\n"), (LPCWSTR)errMsg, (LPCWSTR)CString(__FILE__), lineNumber);
 	if (mTrace)
 		mTrace->Trace(std::string(CStringA(msg)));
 }

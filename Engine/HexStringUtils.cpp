@@ -1,5 +1,5 @@
 /*
-Original code copyright (c) 2007-2009,2010,2015,2020 Sean Echevarria ( http://www.creepingfog.com/sean/ )
+Original code copyright (c) 2007-2009,2010,2015,2020,2025 Sean Echevarria ( http://www.creepingfog.com/sean/ )
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any
@@ -156,7 +156,7 @@ GetAsciiHexStr(const Bytes & inBytes,
 			   bool format /*= true*/)
 {
 	const int len = inBytes.size();
-	return GetAsciiHexStr(&inBytes[0], inBytes.size(), format);
+	return GetAsciiHexStr(&inBytes[0], len, format);
 }
 
 std::string

@@ -144,7 +144,7 @@ struct Axe3EffectBlockInfo
 				// will append channel
 				nm += " ";
 			}
-			else if (++chPos == nm.length() - 1)
+			else if (++chPos == (int)(nm.length() - 1))
 			{
 				char lastCh = nm[chPos];
 				if (lastCh >= 'A' && lastCh <= 'F')
@@ -534,19 +534,25 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 		}
 
 		// indicates an error, unsupported message, or unhandled ack
-		if (kDbgFlag && mTrace)
+		if constexpr (kDbgFlag)
 		{
-			const std::string msg("AxeFx3: error, unsupported message, or unhandled ack:\n");
-			mTrace->Trace(msg);
+			if (mTrace)
+			{
+				const std::string msg("AxeFx3: error, unsupported message, or unhandled ack:\n");
+				mTrace->Trace(msg);
+			}
 		}
 
 		[[fallthrough]];
 
 	default:
-		if (kDbgFlag && mTrace)
+		if constexpr (kDbgFlag)
 		{
-			const std::string byteDump(::GetAsciiHexStr(&bytes[5], len - 5, true));
-			mTrace->Trace(std::format("{}\n", byteDump));
+			if (mTrace)
+			{
+				const std::string byteDump(::GetAsciiHexStr(&bytes[5], len - 5, true));
+				mTrace->Trace(std::format("{}\n", byteDump));
+			}
 		}
 	}
 
@@ -1162,7 +1168,7 @@ AxeFx3Manager::ReceiveStatusDump(const byte * bytes, int len)
 	constexpr int kEffectPacketLen = 3;
 	for (int idx = 0; (idx + kEffectPacketLen) < len; idx += kEffectPacketLen)
 	{
-		if (false && kDbgFlag && mTrace)
+		if constexpr (false && kDbgFlag && mTrace)
 		{
 			const std::string byteDump(::GetAsciiHexStr(&bytes[idx], kEffectPacketLen, true) + "\n");
 			mTrace->Trace(byteDump);

@@ -131,10 +131,13 @@ EdpManager::ReceivedSysex(const byte * bytesIn, int len)
 		case EdpSysexCommands::LocalParamReset:
 			break;
 		default:
-			if (kDbgFlag && mTrace)
+			if constexpr (kDbgFlag)
 			{
-				const std::string byteDump(::GetAsciiHexStr(&bytes[kCmdPos], len - kCmdPos, true));
-				mTrace->Trace(std::format("EDP unexpected sysex: {}\n", byteDump));
+				if (mTrace)
+				{
+					const std::string byteDump(::GetAsciiHexStr(&bytes[kCmdPos], len - kCmdPos, true));
+					mTrace->Trace(std::format("EDP unexpected sysex: {}\n", byteDump));
+				}
 			}
 		}
 	}
@@ -156,20 +159,26 @@ EdpManager::ReceiveGlobalParamData(const byte * bytes, int len)
 {
 	if (14 != len)
 	{
-		if (kDbgFlag && mTrace)
+		if constexpr (kDbgFlag)
 		{
-			const std::string byteDump(::GetAsciiHexStr(bytes, len, true));
-			mTrace->Trace(std::format("EDP unexpected global param data len: {}\n", byteDump));
+			if (mTrace)
+			{
+				const std::string byteDump(::GetAsciiHexStr(bytes, len, true));
+				mTrace->Trace(std::format("EDP unexpected global param data len: {}\n", byteDump));
+			}
 		}
 		return;
 	}
 
 	if (bytes[0] != 0 || bytes[1] != 0xb || bytes[2] != 0x7f)
 	{
-		if (kDbgFlag && mTrace)
+		if constexpr (kDbgFlag)
 		{
-			const std::string byteDump(::GetAsciiHexStr(bytes, len, true));
-			mTrace->Trace(std::format("EDP unexpected global param data: {}\n", byteDump));
+			if (mTrace)
+			{
+				const std::string byteDump(::GetAsciiHexStr(bytes, len, true));
+				mTrace->Trace(std::format("EDP unexpected global param data: {}\n", byteDump));
+			}
 		}
 		return;
 	}
@@ -194,20 +203,26 @@ EdpManager::ReceiveLocalParamData(const byte * bytes, int len)
 {
 	if (23 != len)
 	{
-		if (kDbgFlag && mTrace)
+		if constexpr (kDbgFlag)
 		{
-			const std::string byteDump(::GetAsciiHexStr(bytes, len, true));
-			mTrace->Trace(std::format("EDP unexpected local param data len: {}\n", byteDump));
+			if (mTrace)
+			{
+				const std::string byteDump(::GetAsciiHexStr(bytes, len, true));
+				mTrace->Trace(std::format("EDP unexpected local param data len: {}\n", byteDump));
+			}
 		}
 		return;
 	}
 
 	if (bytes[0] != 0 || bytes[1] != 0x13)
 	{
-		if (kDbgFlag && mTrace)
+		if constexpr (kDbgFlag)
 		{
-			const std::string byteDump(::GetAsciiHexStr(bytes, len, true));
-			mTrace->Trace(std::format("EDP unexpected local param data: {}\n", byteDump));
+			if (mTrace)
+			{
+				const std::string byteDump(::GetAsciiHexStr(bytes, len, true));
+				mTrace->Trace(std::format("EDP unexpected local param data: {}\n", byteDump));
+			}
 		}
 		return;
 	}

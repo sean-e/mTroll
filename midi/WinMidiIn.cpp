@@ -89,7 +89,7 @@ WinMidiIn::GetMidiInDeviceName(unsigned int deviceIdx) const
 	{
 		CString errMsg(::GetMidiErrorText(res));
 		CString msg;
-		msg.Format(_T("Error getting name of in device %d: %s"), deviceIdx, errMsg);
+		msg.Format(_T("Error getting name of in device %d: %s"), deviceIdx, (LPCWSTR)errMsg);
 		devName = CStringA(msg);
 	}
 
@@ -306,7 +306,7 @@ WinMidiIn::ReportMidiError(MMRESULT resultCode,
 	CString msg;
 
 	mMidiInError = true;
-	msg.Format(_T("Error: %s\nError location: %s (%d)\n"), errMsg, CString(__FILE__), lineNumber);
+	msg.Format(_T("Error: %s\nError location: %s (%d)\n"), (LPCWSTR)errMsg, (LPCWSTR)CString(__FILE__), lineNumber);
 	if (mTrace)
 		mTrace->Trace(std::string(CStringA(msg)));
 }

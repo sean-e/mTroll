@@ -46,12 +46,12 @@ public:
 		TogglePatch(number, name, midiOut)
 	{
 		Bytes bytesA, bytesB;
-		bytesA.push_back(0xb0 | channel);
-		bytesA.push_back(controller);
+		bytesA.push_back(0xb0 | (byte)channel);
+		bytesA.push_back((byte)controller);
 		bytesA.push_back(127);
 
-		bytesB.push_back(0xb0 | channel);
-		bytesB.push_back(controller);
+		bytesB.push_back(0xb0 | (byte)channel);
+		bytesB.push_back((byte)controller);
 		bytesB.push_back(0);
 
 		mCmdsA.push_back(std::make_shared<MidiCommandString>(midiOut, bytesA));

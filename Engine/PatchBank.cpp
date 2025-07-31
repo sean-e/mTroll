@@ -363,7 +363,6 @@ PatchBank::DisengageSwitchesWithoutUnload(ISwitchDisplay * switchDisplay)
 	{
 		for (int idx = ssPrimary; idx < ssCount; ++idx)
 		{
-			bool once = true;
 			SwitchFunctionAssignment ss = static_cast<SwitchFunctionAssignment>(idx);
 			PatchVect & patches = curPatch.second.GetPatchVect(ss);
 			for (const BankPatchStatePtr& curItem : patches)
@@ -779,7 +778,9 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 					if (!curItem || !curItem->mPatch)
 						continue;
 
+#ifdef _DEBUG
 					const int patchNum = curItem->mPatch->GetNumber();
+#endif
 					if (once)
 					{
 						// primary patch

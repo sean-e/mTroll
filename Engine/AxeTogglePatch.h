@@ -285,7 +285,7 @@ public:
 			{
 				// no channel in name
 			}
-			else if (++chPos == nm.length() - 1)
+			else if (++chPos == (int)(nm.length() - 1))
 			{
 				char lastCh = nm[chPos];
 				if (lastCh >= 'A' && lastCh <= 'F')

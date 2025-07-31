@@ -44,9 +44,9 @@
 // Consider: restrict effect bypasses to mEffectIsPresentInAxePatch?
 
 #ifdef _DEBUG
-static const int kDbgFlag = 1;
+constexpr int kDbgFlag = 1;
 #else
-static const int kDbgFlag = 0;
+constexpr int kDbgFlag = 0;
 #endif
 
 static void SynonymNormalization(std::string & name);
@@ -307,10 +307,13 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 		{
 			_ASSERTE(Axe2 == mModel || Axe2XL == mModel || Axe2XLPlus == mModel);
 			// ReceiveParamValue hasn't been updated for Axe-FX II
-			if (kDbgFlag && mTrace)
+			if constexpr (kDbgFlag)
 			{
-				const std::string msg("AxeFx2: received param value?\n");
-				mTrace->Trace(msg);
+				if (mTrace)
+				{
+					const std::string msg("AxeFx2: received param value?\n");
+					mTrace->Trace(msg);
+				}
 			}
 		}
 		else
@@ -321,10 +324,13 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 		break;
 	case 4:
 		// receive patch dump
-		if (kDbgFlag && mTrace)
+		if constexpr (kDbgFlag)
 		{
-			const std::string msg("AxeFx: received patch dump\n");
-			mTrace->Trace(msg);
+			if (mTrace)
+			{
+				const std::string msg("AxeFx: received patch dump\n");
+				mTrace->Trace(msg);
+			}
 		}
 		break;
 	case 8:
@@ -361,10 +367,10 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 	case 0x11:
 		// x y state change (prior to axeII fw9?)
 //		DelayedEffectsSyncFromAxe();
-		if (kDbgFlag && mTrace)
+		if constexpr (kDbgFlag)
 		{
-			const std::string msg("AxeFx: X/Y state change\n");
-			mTrace->Trace(msg);
+			if (mTrace)
+				mTrace->Trace("AxeFx: X/Y state change\n");
 		}
 		break;
 	case 0x14:
@@ -389,26 +395,31 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 		break;
 	case 0x64:
 		// indicates an error or unsupported message
-		if (kDbgFlag && mTrace)
+		if constexpr (kDbgFlag)
 		{
-			if ((len - 5) > 2 && bytes[6] == 0x23)
+			if (mTrace)
 			{
-				// ignore looper status monitor ack.
-				// the message to enable the monitor is required, the status messages are not 
-				// otherwise sent; but no idea why 0x64 is sent as ack.
-				break;
-			}
-			else
-			{
-				const std::string msg("AxeFx: error or unsupported message\n");
-				mTrace->Trace(msg);
+				if ((len - 5) > 2 && bytes[6] == 0x23)
+				{
+					// ignore looper status monitor ack.
+					// the message to enable the monitor is required, the status messages are not 
+					// otherwise sent; but no idea why 0x64 is sent as ack.
+					break;
+				}
+				else
+				{
+					mTrace->Trace("AxeFx: error or unsupported message\n");
+				}
 			}
 		}
 	default:
-		if (kDbgFlag && mTrace)
+		if constexpr (kDbgFlag)
 		{
-			const std::string byteDump(::GetAsciiHexStr(&bytes[5], len - 5, true));
-			mTrace->Trace(byteDump + "\n");
+			if (mTrace)
+			{
+				const std::string byteDump(::GetAsciiHexStr(&bytes[5], len - 5, true));
+				mTrace->Trace(byteDump + "\n");
+			}
 		}
 	}
 
@@ -604,7 +615,7 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 					if (inf->mPatch->IsActive() != notBypassed)
 						inf->mPatch->UpdateState(mSwitchDisplay, notBypassed);
 
-					if (false && mTrace)
+					if constexpr (false && mTrace)
 					{
 						const std::string byteDump(::GetAsciiHexStr(bytes + 4, len - 6, true));
 						const std::string asciiDump(::GetAsciiStr(&bytes[6], len - 8));
@@ -1203,7 +1214,7 @@ AxeFxManager::ReceivePresetEffects(const byte * bytes, int len)
 	// 0A 06 05 02 00
 	for (int idx = 0; (idx + 5) < len; idx += 5)
 	{
-		if (false && mTrace)
+		if constexpr (false && mTrace)
 		{
 			const std::string byteDump(::GetAsciiHexStr(&bytes[idx], 5, true) + "\n");
 			mTrace->Trace(byteDump);
@@ -1300,7 +1311,7 @@ AxeFxManager::ReceivePresetEffectsV2(const byte * bytes, int len)
 	//	
 	for (int idx = 0; (idx + 5) < len; idx += 5)
 	{
-		if (false && kDbgFlag && mTrace)
+		if constexpr (false && kDbgFlag && mTrace)
 		{
 			const std::string byteDump(::GetAsciiHexStr(&bytes[idx], 5, true) + "\n");
 			mTrace->Trace(byteDump);
@@ -1331,7 +1342,9 @@ AxeFxManager::ReceivePresetEffectsV2(const byte * bytes, int len)
 				if (inf->mXyPatch)
 				{
 					// X is the active state, Y is inactive
+#ifdef _DEBUG
 					const bool isX = isActive || isBypassed;
+#endif
 					const bool isY = isActiveY || isBypassedY;
 					_ASSERTE(isX ^ isY);
 					// Axe-FxII considers X active and Y inactive, but I prefer

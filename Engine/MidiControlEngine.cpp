@@ -401,7 +401,7 @@ MidiControlEngine::LoadStartupBank()
 void
 MidiControlEngine::SwitchPressed(int switchNumber)
 {
-	if (false && mTrace)
+	if constexpr (false && mTrace)
 		mTrace->Trace(std::format("SwitchPressed: {}\n", switchNumber));
 
 	mSwitchPressedEventTime = CurTime();
@@ -457,7 +457,7 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 void
 MidiControlEngine::SwitchReleased(int switchNumber)
 {
-	if (false && mTrace)
+	if constexpr (false && mTrace)
 		mTrace->Trace(std::format("SwitchReleased: {}\n", switchNumber));
 
 	PatchBank::SwitchPressDuration dur;
@@ -1279,8 +1279,10 @@ MidiControlEngine::UpdateBankModeSwitchDisplay()
 	if (!mSwitchDisplay)
 		return;
 
+#ifdef _DEBUG
 	const EngineMode curMode = CurrentMode();
 	_ASSERTE(emBank == curMode);
+#endif
 	if (mActiveBank)
 	{
 		mSwitchDisplay->SetSwitchText(mModeSwitchNumber, std::format("{}: {}", mActiveBank->GetBankNumber(), mActiveBank->GetBankName()));
@@ -1730,9 +1732,9 @@ MidiControlEngine::SwitchPressed_ProgramChangeDirect(int switchNumber)
 				bank = 127;
 			else if (bank < 0)
 				bank = 0;
-			bytes.push_back(0xb0 | mDirectChangeChannel);
+			bytes.push_back(0xb0 | (byte)mDirectChangeChannel);
 			bytes.push_back(0);
-			bytes.push_back(bank);
+			bytes.push_back((byte)bank);
 		}
 		msg += "send bank select " + mDirectNumber;
 		mDirectNumber.clear();
@@ -1799,14 +1801,14 @@ MidiControlEngine::SwitchPressed_ProgramChangeDirect(int switchNumber)
 			}
 
 			// bank select
-			bytes.push_back(0xb0 | mDirectChangeChannel);
+			bytes.push_back(0xb0 | (byte)mDirectChangeChannel);
 			bytes.push_back(0);
-			bytes.push_back(bank);
+			bytes.push_back((byte)bank);
 			msg += "bank and ";
 		}
 
-		bytes.push_back(0xc0 | mDirectChangeChannel);
-		bytes.push_back(program);
+		bytes.push_back(0xc0 | (byte)mDirectChangeChannel);
+		bytes.push_back((byte)program);
 		mDirectValueLastSent = program;
 		msg += "program change ";
 		sJustDidProgramChange = true;
@@ -1976,9 +1978,9 @@ MidiControlEngine::SwitchPressed_ControlChangeDirect(int switchNumber)
 
 	if (-1 != ctrlValue)
 	{
-		bytes.push_back(0xb0 | mDirectChangeChannel);
-		bytes.push_back(mDirectValue1LastSent);
-		bytes.push_back(ctrlValue);
+		bytes.push_back(0xb0 | (byte)mDirectChangeChannel);
+		bytes.push_back((byte)mDirectValue1LastSent);
+		bytes.push_back((byte)ctrlValue);
 		mDirectValueLastSent = ctrlValue;
 		msg += "send control value ";
 		sJustDidControlChange = true;
