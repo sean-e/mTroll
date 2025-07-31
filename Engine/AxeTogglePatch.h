@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2012,2014,2017-2018,2020-2021,2024 Sean Echevarria
+ * Copyright (C) 2010-2012,2014,2017-2018,2020-2021,2024-2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -117,7 +117,7 @@ public:
 	{
 		// support for runtime per-preset scene name propagation to buttons
 		mActiveText = mInactiveText = name;
-		__super::SetName(name, switchDisplay);
+		Base::SetName(name, switchDisplay);
 	}
 
 	virtual const std::string & GetDisplayText(bool checkState /*= false*/) const override
@@ -129,16 +129,16 @@ public:
 			return mInactiveText; 
 		}
 
-		return __super::GetDisplayText(checkState);
+		return Base::GetDisplayText(checkState);
 	}
 
 	virtual bool HasDisplayText() const override { return mHasDisplayText; }
 
 	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) override
 	{
-		const bool kWasTogglePatchType = IsTogglePatchType(); // type could change in __super::SwitchPressed
+		const bool kWasTogglePatchType = IsTogglePatchType(); // type could change in Base::SwitchPressed
 
-		__super::SwitchPressed(mainDisplay, switchDisplay);
+		Base::SwitchPressed(mainDisplay, switchDisplay);
 
 		if (kWasTogglePatchType)
 		{
@@ -149,7 +149,7 @@ public:
 
 	virtual void ExecCommandsA() override
 	{
-		__super::ExecCommandsA();
+		Base::ExecCommandsA();
 
 		if (mUpdateAxMgrDuringExec || !IsTogglePatchType())
 		{
@@ -160,7 +160,7 @@ public:
 
 	virtual void ExecCommandsB() override
 	{
-		__super::ExecCommandsB();
+		Base::ExecCommandsB();
 
 		if (mUpdateAxMgrDuringExec || !IsTogglePatchType())
 		{
@@ -191,6 +191,9 @@ protected:
 			mAx->DelayedEffectsSyncFromAxe();
 		}
 	}
+
+private:
+	using Base = TogglePatch;
 };
 
 class Axe3ScenePatch : public AxeTogglePatch
@@ -217,7 +220,7 @@ public:
 
 	virtual void UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) const override
 	{
-		__super::UpdateDisplays(mainDisplay, switchDisplay);
+		AxeTogglePatch::UpdateDisplays(mainDisplay, switchDisplay);
 
 		// this causes preset and scene state to appear during for example MidiControlEngine::SwitchReleased_NavAndDescMode
 		if (IsActive())
@@ -302,7 +305,7 @@ public:
 			}
 		}
 
-		__super::Disable(switchDisplay);
+		Axe3EffectChannelPatch::Disable(switchDisplay);
 	}
 };
 

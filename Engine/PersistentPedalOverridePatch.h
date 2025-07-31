@@ -85,6 +85,7 @@ public:
 	}
 
 private:
+	using Base = TogglePatch;
 	static PersistentPedalOverridePatch *sActiveOverride[ExpressionPedals::PedalCount];
 	static ExpressionPedals				*sInactivePedals;
 	static ExpressionPedalAggregate		*sAggregateOverridePedals;

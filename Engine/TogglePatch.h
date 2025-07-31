@@ -109,7 +109,7 @@ public:
 
 	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) override
 	{
-		__super::SwitchPressed(mainDisplay, switchDisplay);
+		Base::SwitchPressed(mainDisplay, switchDisplay);
 		_ASSERTE(PatchLogicStyle::Hybrid != mPatchLogicStyle || mHybridState == HybridState::Reset || mHybridState == HybridState::ConvertedToToggle);
 		if (IsActive() || IsTogglePatchType())
 		{
@@ -182,7 +182,7 @@ public:
 			SwitchReleased(mainDisplay, switchDisplay); // this could convert hybrid to toggle mode...
 
 		if (IsTogglePatchType())
-			__super::Deactivate(mainDisplay, switchDisplay); // for toggle, calls SwitchPressed if is active
+			Base::Deactivate(mainDisplay, switchDisplay); // for toggle, calls SwitchPressed if is active
 	}
 
 	virtual const std::string & GetDisplayText(bool checkState = false) const override
@@ -197,7 +197,7 @@ public:
 			return empty;
 		}
 
-		return __super::GetDisplayText(checkState);
+		return Base::GetDisplayText(checkState);
 	}
 
 protected:
@@ -218,6 +218,7 @@ protected:
 	}
 
 private:
+	using Base = TwoStatePatch;
 	unsigned int mSwitchPressedEventTime = 0;
 };
 

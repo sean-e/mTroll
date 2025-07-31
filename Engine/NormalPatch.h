@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2009,2018,2024 Sean Echevarria
+ * Copyright (C) 2007-2009,2018,2024-2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -54,7 +54,7 @@ public:
 
 	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) override
 	{
-		__super::SwitchPressed(mainDisplay, switchDisplay);
+		TwoStatePatch::SwitchPressed(mainDisplay, switchDisplay);
 
 		if (mPatchIsActive)
 		{

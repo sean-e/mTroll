@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2012,2018,2020 Sean Echevarria
+ * Copyright (C) 2010-2012,2018,2020,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -44,7 +44,7 @@ public:
 
 	void Exec() override
 	{
-		__super::Exec();
+		MidiCommandString::Exec();
 		if (mAxeMgr)
 			mAxeMgr->DelayedNameSyncFromAxe();
 	}

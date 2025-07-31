@@ -51,7 +51,7 @@ public:
 
 	virtual void SwitchPressed(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay) override
 	{
-		__super::SwitchPressed(mainDisplay, switchDisplay);
+		TwoStatePatch::SwitchPressed(mainDisplay, switchDisplay);
 
 		// Like NormalPatch, SimpleProgramChangePatch always execs the A commands on switch press.
 		ExecCommandsA();

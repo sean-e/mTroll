@@ -70,7 +70,7 @@ public:
 
 	virtual void CompleteInit(MidiControlEngine * eng, ITraceDisplay * trc) override
 	{
-		__super::CompleteInit(eng, trc);
+		Patch::CompleteInit(eng, trc);
 
 		if (!mOptionalTargetBankName.empty())
 		{
