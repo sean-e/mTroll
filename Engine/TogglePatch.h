@@ -25,13 +25,9 @@
 #ifndef TogglePatch_h__
 #define TogglePatch_h__
 
-#ifdef _WINDOWS
-	#include <windows.h>
-	#define CurTime	GetTickCount // time in ms (used to measure elapsed time between events, origin doesn't matter)
-#else
-	#define CurTime	??
-#endif // _WINDOWS
 #include "TwoStatePatch.h"
+#include "CrossPlatform.h"
+
 
 
 // TogglePatch
@@ -133,7 +129,7 @@ public:
 
 			if (PatchLogicStyle::Hybrid == mPatchLogicStyle)
 			{
-				mSwitchPressedEventTime = ::CurTime();
+				mSwitchPressedEventTime = xp::CurTime();
 				mHybridState = HybridState::PressedAndWaitingForRelease;
 			}
 		}
@@ -149,7 +145,7 @@ public:
 		bool handleMomentaryRelease = PatchLogicStyle::Momentary == mPatchLogicStyle;
 		if (HybridState::PressedAndWaitingForRelease == mHybridState)
 		{
-			const unsigned int kDuration = ::CurTime() - mSwitchPressedEventTime;
+			const unsigned int kDuration = xp::CurTime() - mSwitchPressedEventTime;
 			_ASSERTE(mSwitchPressedEventTime);
 			mSwitchPressedEventTime = 0;
 

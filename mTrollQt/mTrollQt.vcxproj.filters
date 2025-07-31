@@ -362,6 +362,9 @@
     <ClInclude Include="..\Engine\ClockCommands.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="..\Engine\CrossPlatform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="win\mTrollQt.rc">

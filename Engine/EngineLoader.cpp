@@ -68,11 +68,7 @@
 #include "SimpleProgramChangePatch.h"
 #include "RestCommand.h"
 #include "ClockCommands.h"
-
-
-#ifdef _MSC_VER
-#pragma warning(disable:4482)
-#endif
+#include "CrossPlatform.h"
 
 
 static PatchBank::PatchState GetLoadState(const std::string & tmpLoad);
@@ -2526,19 +2522,19 @@ EngineLoader::LoadExpressionPedalSettings(TiXmlElement * childElem,
 	childElem->QueryValueAttribute("sweepCurve", &tmp);
 	if (tmp.length())
 	{
-		if (!::_stricmp(tmp.c_str(), "linear"))
+		if (!xp::_stricmp(tmp.c_str(), "linear"))
 			curve = ExpressionControl::scLinear;
-		else if (!::_stricmp(tmp.c_str(), "AudioLog"))
+		else if (!xp::_stricmp(tmp.c_str(), "AudioLog"))
 			curve = ExpressionControl::scAudioLog;
-		else if (!::_stricmp(tmp.c_str(), "ShallowLog"))
+		else if (!xp::_stricmp(tmp.c_str(), "ShallowLog"))
 			curve = ExpressionControl::scShallowLog;
-		else if (!::_stricmp(tmp.c_str(), "ReverseShallowLog"))
+		else if (!xp::_stricmp(tmp.c_str(), "ReverseShallowLog"))
 			curve = ExpressionControl::scReverseShallowLog;
-		else if (!::_stricmp(tmp.c_str(), "ReverseAudioLog"))
+		else if (!xp::_stricmp(tmp.c_str(), "ReverseAudioLog"))
 			curve = ExpressionControl::scReverseAudioLog;
-		else if (!::_stricmp(tmp.c_str(), "ReversePseudoAudioLog"))
+		else if (!xp::_stricmp(tmp.c_str(), "ReversePseudoAudioLog"))
 			curve = ExpressionControl::scReversePseudoAudioLog;
-		else if (!::_stricmp(tmp.c_str(), "PseudoAudioLog"))
+		else if (!xp::_stricmp(tmp.c_str(), "PseudoAudioLog"))
 			curve = ExpressionControl::scPseudoAudioLog;
 		else
 			curveOk = false;

@@ -1,3 +1,5 @@
+#ifdef _WINDOWS
+
 // Code from 2015 answer: 
 //		https://stackoverflow.com/a/31411628/103912
 // by user Oskar Dahlberg: 
@@ -27,3 +29,5 @@ void SleepShort(float milliseconds)
 	interval.QuadPart = -1 * (int)(milliseconds * 10000.0f);
 	NtDelayExecution(false, &interval);
 }
+
+#endif

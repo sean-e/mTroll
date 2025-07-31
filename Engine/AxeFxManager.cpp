@@ -30,6 +30,7 @@
 #include <QApplication>
 #include <QTimer>
 #include <atomic>
+#include "CrossPlatform.h"
 #include "AxeFxManager.h"
 #include "ITraceDisplay.h"
 #include "HexStringUtils.h"
@@ -1635,8 +1636,9 @@ AxeFxManager::DisplayPresetStatus()
 	
 	if (mCurrentAxePreset > -1 && mCurrentAxePreset < 1000)
 	{
-		char presetBuf[4];
-		::_itoa_s(mCurrentAxePreset + 1, presetBuf, 10);
+		constexpr int kBuflen = 4;
+		char presetBuf[kBuflen];
+		xp::_itoa_s(mCurrentAxePreset + 1, presetBuf, kBuflen, 10);
 		if (mCurrentAxePresetName.empty())
 			curText += kPrefix + presetBuf;
 		else
@@ -1647,8 +1649,9 @@ AxeFxManager::DisplayPresetStatus()
 
 	if (Axe2 <= mModel && mFirmwareMajorVersion > 8 && -1 != mCurrentScene)
 	{
-		char sceneBuf[4];
-		::_itoa_s(mCurrentScene + 1, sceneBuf, 10);
+		constexpr int kBuflen = 4;
+		char sceneBuf[kBuflen];
+		xp::_itoa_s(mCurrentScene + 1, sceneBuf, kBuflen, 10);
 		curText += std::string("\nAxeFx scn: ") + sceneBuf;
 	}
 

@@ -225,6 +225,7 @@
     <ClInclude Include="..\Engine\CompositeTogglePatch.h" />
     <ClInclude Include="..\Engine\ControllerInputMonitor.h" />
     <ClInclude Include="..\Engine\ControllerTogglePatch.h" />
+    <ClInclude Include="..\Engine\CrossPlatform.h" />
     <ClInclude Include="..\Engine\DynamicMidiCommand.h" />
     <ClInclude Include="..\Engine\EdpIds.h" />
     <ClInclude Include="..\Engine\EdpManager.h" />

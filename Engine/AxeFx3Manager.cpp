@@ -22,7 +22,6 @@
  * Contact Sean: "fester" at the domain of the original project site
  */
 
-#include <string>
 #include <memory.h>
 #include <format>
 #include <algorithm>
@@ -30,6 +29,7 @@
 #include <QApplication>
 #include <QTimer>
 #include <atomic>
+#include "CrossPlatform.h"
 #include "AxeFx3Manager.h"
 #include "ITraceDisplay.h"
 #include "HexStringUtils.h"
@@ -1113,8 +1113,8 @@ AxeFx3Manager::ReceiveSceneName(int sceneNumber, const byte * bytes, int len)
 	{
 		constexpr int kBuflen = 6;
 		char sceneBuf[kBuflen];
-		::_itoa_s(sceneNumber + 1, sceneBuf, 10);
-		::strcat_s(sceneBuf, kBuflen, ": ");
+		xp::_itoa_s(sceneNumber + 1, sceneBuf, kBuflen, 10);
+		xp::strcat_s(sceneBuf, kBuflen, ": ");
 		const std::string curText(std::string("Scn ") + sceneBuf); // #literalDependency
 		mScenePatches[sceneNumber]->SetName(curText + name, mSwitchDisplay);
 	}
@@ -1515,8 +1515,9 @@ AxeFx3Manager::DisplayPresetStatus()
 	
 	if (mCurrentAxePreset > -1 && mCurrentAxePreset < 1025)
 	{
-		char presetBuf[5];
-		::_itoa_s(mCurrentAxePreset + 1, presetBuf, 10);
+		constexpr int kBuflen = 5;
+		char presetBuf[kBuflen];
+		xp::_itoa_s(mCurrentAxePreset + 1, presetBuf, kBuflen, 10);
 		if (mCurrentAxePresetName.empty())
 			curText += kPrefix + presetBuf;
 		else
@@ -1527,8 +1528,9 @@ AxeFx3Manager::DisplayPresetStatus()
 
 	if (-1 != mCurrentScene)
 	{
-		char sceneBuf[4];
-		::_itoa_s(mCurrentScene + 1, sceneBuf, 10);
+		constexpr int kBuflen = 4;
+		char sceneBuf[kBuflen];
+		xp::_itoa_s(mCurrentScene + 1, sceneBuf, kBuflen, 10);
 		curText += std::string("\nAxeFx scn: ") + sceneBuf;
 		if (!mCurrentAxeSceneName.empty())
 			curText += std::string(" ") + mCurrentAxeSceneName;

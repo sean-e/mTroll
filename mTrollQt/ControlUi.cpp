@@ -38,34 +38,37 @@
 #include <QScrollArea>
 
 #include "ControlUi.h"
+#include "../Engine/CrossPlatform.h"
 #include "../Engine/ITrollApplication.h"
 #include "../Engine/EngineLoader.h"
 #include "../Engine/MidiControlEngine.h"
 #include "../Engine/UiLoader.h"
 #include "../Engine/HexStringUtils.h"
 #include "../Monome40h/IMonome40h.h"
+#include "MainTrollWindow.h"
 
 #ifdef _WINDOWS
 	#include "../Monome40h/qt/Monome40hFtqt.h"
 	#include "../winUtil/SEHexception.h"
 	#include "../midi/WinMidiOut.h"
 	#include "../midi/WinMidiIn.h"
-	#define USE_MIDI_IN
+
 	using XMidiOut = WinMidiOut;
 	using XMidiIn = WinMidiIn;
-	#define SLEEP	Sleep
+#elif defined _MAC
+	#include "../midi/MacMidiOut.h"
+	#include "../midi/MacMidiIn.h"
+
+	using XMidiOut = MacMidiOut;
+	using XMidiIn = MacMidiIn;
 #else
 	#error "include the midiOut header file for this platform"
-	using XMidiOut = YourMidiOut;
+	#error "include the midiIn header file for this platform"
 
-//	#define USE_MIDI_IN
-	#ifdef USE_MIDI_IN
-		#error "include the midiIn header file for this platform"
-		using XMidiIn = YourMidiIn;
-	#endif
-	#define SLEEP	sleep
+	using XMidiOut = YourMidiOut;
+	using XMidiIn = YourMidiIn;
 #endif
-#include "MainTrollWindow.h"
+
 
 constexpr int kMaxRows = 8, kMaxCols = 8;
 constexpr int kMaxButtons = kMaxRows * kMaxCols;
@@ -226,21 +229,21 @@ ControlUi::Load(const std::string & uiSettingsFile,
 		SendPresetColorsToMonome();
 		mHardwareUi->Subscribe(this);
 		mHardwareUi->Subscribe(mEngine.get());
-
-		bool anyMidiOutOpen = false;
-		for (auto & mMidiOut : mMidiOuts)
-		{
-			IMidiOutPtr curOut = mMidiOut.second;
-			if (curOut && curOut->IsMidiOutOpen())
-			{
-				anyMidiOutOpen = true;
-				break;
-			}
-		}
-
-		if (anyMidiOutOpen)
-			mSystemPowerOverride = new KeepDisplayOn;
 	}
+
+	bool anyMidiOutOpen = false;
+	for (auto & mMidiOut : mMidiOuts)
+	{
+		IMidiOutPtr curOut = mMidiOut.second;
+		if (curOut && curOut->IsMidiOutOpen())
+		{
+			anyMidiOutOpen = true;
+			break;
+		}
+	}
+
+	if (anyMidiOutOpen)
+		mSystemPowerOverride = new KeepDisplayOn;
 }
 
 void
@@ -1616,14 +1619,14 @@ ControlUi::MonomeStartupSequence()
 	for (idx = 0; idx < kMaxRows; ++idx)
 	{
 		mHardwareUi->EnableLedRow(idx, vals);
-		SLEEP(100);
+		xp::Sleep(100);
 		mHardwareUi->EnableLedRow(idx, 0);
 	}
 
 	for (idx = 0; idx < kMaxCols; ++idx)
 	{
 		mHardwareUi->EnableLedColumn(idx, vals);
-		SLEEP(100);
+		xp::Sleep(100);
 		mHardwareUi->EnableLedColumn(idx, 0);
 	}
 }
@@ -1962,7 +1965,7 @@ ControlUi::TestLeds(int testPattern)
 
 		QApplication::processEvents();
 		QApplication::processEvents();
-		SLEEP(750);
+		xp::Sleep(750);
 
 		// turn all off
 		for (row = 0; row < kMaxRows; ++row)
@@ -1982,7 +1985,7 @@ ControlUi::TestLeds(int testPattern)
 			}
 			QApplication::processEvents();
 			QApplication::processEvents();
-			SLEEP(200);
+			xp::Sleep(200);
 			for (col = 0; col < kMaxCols; ++col)
 			{
 				switchNumber = mRowColToSwitchNumber[(row << 16) | col];
@@ -2002,7 +2005,7 @@ ControlUi::TestLeds(int testPattern)
 			}
 			QApplication::processEvents();
 			QApplication::processEvents();
-			SLEEP(200);
+			xp::Sleep(200);
 			for (row = 0; row < kMaxRows; ++row)
 			{
 				switchNumber = mRowColToSwitchNumber[(row << 16) | col];
@@ -2020,7 +2023,7 @@ ControlUi::TestLeds(int testPattern)
 
 		QApplication::processEvents();
 		QApplication::processEvents();
-		SLEEP(750);
+		xp::Sleep(750);
 
 		// turn all off
 		for (row = 0; row < kMaxRows; ++row)
@@ -2055,7 +2058,7 @@ ControlUi::TestLeds(int testPattern)
 			QApplication::processEvents();
 			QApplication::processEvents();
 			if (displayed)
-				SLEEP(displayed < 5 ? 2000 : 5000);
+				xp::Sleep(displayed < 5 ? 2000 : 5000);
 
 			// can't use row commands on IMonome since we need to update GUI also
 			for (int row = 0; row < kMaxRows; ++row)
@@ -2066,7 +2069,7 @@ ControlUi::TestLeds(int testPattern)
 
 			QApplication::processEvents();
 			QApplication::processEvents();
-			SLEEP(100);
+			xp::Sleep(100);
 		}
 
 		QApplication::restoreOverrideCursor();
@@ -2207,20 +2210,15 @@ ControlUi::OpenMidiIns()
 IMidiInPtr
 ControlUi::CreateMidiIn(unsigned int deviceIdx)
 {
-#ifdef USE_MIDI_IN
 	if (!mMidiIns[deviceIdx])
 		mMidiIns[deviceIdx] = std::make_shared<XMidiIn>(this);
 
 	return mMidiIns[deviceIdx];
-#else
-	return NULL;
-#endif // USE_MIDI_IN
 }
 
 unsigned int
 ControlUi::GetMidiInDeviceIndex(const std::string &deviceName)
 {
-#ifdef USE_MIDI_IN
 	XMidiIn midiIn(nullptr);
 	std::string devNameLower(deviceName);
 	std::transform(devNameLower.begin(), devNameLower.end(), devNameLower.begin(), ::tolower);
@@ -2234,9 +2232,6 @@ ControlUi::GetMidiInDeviceIndex(const std::string &deviceName)
 	}
 
 	return UINT_MAX;
-#else
-	return NULL;
-#endif // USE_MIDI_IN
 }
 
 

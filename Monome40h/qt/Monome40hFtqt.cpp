@@ -31,13 +31,10 @@
 #include "../../Engine/ITraceDisplay.h"
 #include "../../Engine/ScopeSet.h"
 #include "../../Engine/EngineLoader.h"
-#ifdef _WINDOWS
-#include <windows.h>
-	#define SLEEP	Sleep
-#else
+#include "../../Engine/CrossPlatform.h"
+#ifndef _WINDOWS
 #include "../notWin32/FTTypes.h"
-	#define SLEEP	sleep
-#endif // _WINDOWS
+#endif
 #include "../FTD2XX.H"
 
 
@@ -499,7 +496,7 @@ Monome40hFtqt::DeviceServiceThread()
 
 							mTrace->Trace(std::format("monome read interrupted: retry {} failed cmd({} {})\n", cnt, (short)n1, (short)n2));
 						}
-						SLEEP(10);
+						xp::Sleep(10);
 					}
 				}
 

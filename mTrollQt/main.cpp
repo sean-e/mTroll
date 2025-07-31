@@ -23,7 +23,6 @@
  */
 
 #include <QApplication>
-#include <qdebug.h>
 #include "MainTrollWindow.h"
 
 #if defined(_WINDOWS)

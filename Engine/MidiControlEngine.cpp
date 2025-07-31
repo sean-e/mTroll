@@ -36,12 +36,6 @@
 #include "SleepCommand.h"
 #include "ITrollApplication.h"
 #include "HexStringUtils.h"
-#ifdef _WINDOWS
-	#include <windows.h>
-	#define CurTime	GetTickCount // time in ms (used to measure elapsed time between events, origin doesn't matter)
-#else
-	#define CurTime	??
-#endif // _WINDOWS
 #include "MetaPatch_LoadBank.h"
 #include "MetaPatch_BankHistory.h"
 #include "MetaPatch_ResetBankPatches.h"
@@ -49,11 +43,8 @@
 #include "MetaPatch_AxeFxNav.h"
 #include "DynamicMidiCommand.h"
 #include "TwoStatePatch.h"
+#include "CrossPlatform.h"
 
-
-#ifdef _MSC_VER
-#pragma warning(disable:4482)
-#endif
 
 #ifdef ITEM_COUNTING
 std::atomic<int> gMidiControlEngCnt = 0;
@@ -404,7 +395,7 @@ MidiControlEngine::SwitchPressed(int switchNumber)
 	if constexpr (false && mTrace)
 		mTrace->Trace(std::format("SwitchPressed: {}\n", switchNumber));
 
-	mSwitchPressedEventTime = CurTime();
+	mSwitchPressedEventTime = xp::CurTime();
 	const EngineMode curMode = CurrentMode();
 	if (emBank == curMode)
 	{
@@ -463,7 +454,7 @@ MidiControlEngine::SwitchReleased(int switchNumber)
 	PatchBank::SwitchPressDuration dur;
 	const int kLongPressMinDuration = 300; // milliseconds
 	const int kExtendedPressMinDuration = 2000; // milliseconds
-	const unsigned int kDuration = CurTime() - mSwitchPressedEventTime;
+	const unsigned int kDuration = xp::CurTime() - mSwitchPressedEventTime;
 	if (kDuration > kLongPressMinDuration)
 	{
 		if (kDuration > kExtendedPressMinDuration)

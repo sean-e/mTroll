@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2009-2010,2018,2024 Sean Echevarria
+ * Copyright (C) 2009-2010,2018,2024-2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -27,12 +27,9 @@
 
 #include "IPatchCommand.h"
 #include "IMidiOut.h"
+#include "CrossPlatform.h"
 #ifdef _WINDOWS
-#include <windows.h>
-	#define SLEEP	Sleep
-	#undef TextOut		// stupid unicode support defines TextOut to TextOutW
-#else
-	#define SLEEP	sleep
+#undef TextOut		// stupid unicode support defines TextOut to TextOutW
 #endif // _WINDOWS
 
 
@@ -44,7 +41,7 @@ public:
 
 	virtual void Exec() override
 	{
-		SLEEP(GetSleepAmount()); // amount in milliseconds
+		xp::Sleep(GetSleepAmount()); // amount in milliseconds
 	}
 
 protected:
