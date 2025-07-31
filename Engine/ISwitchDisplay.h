@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010,2014,2020 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2014,2020,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -41,6 +41,8 @@ using PatchPtr = std::shared_ptr<Patch>;
 class ISwitchDisplay
 {
 public:
+	virtual ~ISwitchDisplay() = default;
+
 	virtual void SetSwitchDisplay(int switchNumber, unsigned int color) = 0;
 	virtual void TurnOffSwitchDisplay(int switchNumber) = 0;
 	virtual void ForceSwitchDisplay(int switchNumber, unsigned int color) = 0;

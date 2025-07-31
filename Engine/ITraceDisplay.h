@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008 Sean Echevarria
+ * Copyright (C) 2007-2008,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -35,6 +35,8 @@
 class ITraceDisplay
 {
 public:
+	virtual ~ITraceDisplay() = default;
+
 	virtual void Trace(const std::string & txt) = 0;
 };
 

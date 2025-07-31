@@ -1,5 +1,5 @@
 /*
-Original code copyright (c) 2007-2008,2014,2018,2020 Sean Echevarria ( http://www.creepingfog.com/sean/ )
+Original code copyright (c) 2007-2008,2014,2018,2020,2025 Sean Echevarria ( http://www.creepingfog.com/sean/ )
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any
@@ -36,7 +36,7 @@ using byte = unsigned char;
 class IMonome40h
 {
 public:
-	virtual ~IMonome40h() {}
+	virtual ~IMonome40h() = default;
 
 	// monome 40h controls
 	virtual void EnableLed(byte row, byte col, bool on) = 0;

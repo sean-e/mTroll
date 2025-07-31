@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010,2018,2021 Sean Echevarria
+ * Copyright (C) 2010,2018,2021,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -39,6 +39,8 @@ using IMidiInPtr = std::shared_ptr<IMidiIn>;
 class IMidiInSubscriber : public std::enable_shared_from_this<IMidiInSubscriber>
 {
 public:
+	virtual ~IMidiInSubscriber() = default;
+
 	virtual void ReceivedData(byte b1, byte b2, byte b3) = 0;
 	virtual bool ReceivedSysex(const byte * bytes, int len) = 0;
 	virtual void Closed(IMidiInPtr midIn) = 0;

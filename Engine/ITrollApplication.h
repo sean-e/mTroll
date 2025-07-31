@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010,2015 Sean Echevarria
+ * Copyright (C) 2010,2015,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -32,6 +32,8 @@
 class ITrollApplication
 {
 public:
+	virtual ~ITrollApplication() = default;
+
 	enum ExitAction { soeExit, soeExitAndSleep, soeExitAndHibernate };
 	virtual void Reconnect() = 0;
 	virtual void ToggleTraceWindow() = 0;

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010,2015,2020 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2015,2020,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -35,6 +35,8 @@
 class IMidiControlUi
 {
 public:
+	virtual ~IMidiControlUi() = default;
+
 	virtual void	AddSwitchMapping(int switchNumber, int row, int col) = 0;
 
 	virtual void	SetSwitchLedConfig(int width, int height, int vOffset, int hOffset, unsigned int offColor, int uiColorOffset) = 0;

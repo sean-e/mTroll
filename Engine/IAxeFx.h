@@ -36,6 +36,8 @@ using PatchPtr = std::shared_ptr<Patch>;
 class IAxeFx
 {
 public:
+	virtual ~IAxeFx() = default;
+
 	// info
 	virtual AxeFxModel GetModel() const = 0;
 	virtual int GetChannel() const = 0;

@@ -1,5 +1,5 @@
 /*
-Original code copyright (c) 2007,2018 Sean Echevarria ( http://www.creepingfog.com/sean/ )
+Original code copyright (c) 2007,2018,2025 Sean Echevarria ( http://www.creepingfog.com/sean/ )
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any
@@ -34,6 +34,8 @@ using byte = unsigned char;
 class IMonome40hSwitchSubscriber
 {
 public:
+	virtual ~IMonome40hSwitchSubscriber() = default;
+
 	virtual void SwitchPressed(byte row, byte column) = 0;
 	virtual void SwitchReleased(byte row, byte column) = 0;
 };
@@ -45,6 +47,8 @@ public:
 class IMonome40hAdcSubscriber
 {
 public:
+	virtual ~IMonome40hAdcSubscriber() = default;
+
 	virtual void AdcValueChanged(int port, int curValue) = 0;
 };
 
