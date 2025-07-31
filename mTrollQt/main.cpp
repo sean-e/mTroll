@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2018,2020 Sean Echevarria
+ * Copyright (C) 2007-2008,2018,2020,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -27,7 +27,7 @@
 #include "MainTrollWindow.h"
 
 #if defined(_WINDOWS)
-#include "..\winUtil\SEHexception.h"
+#include "../winUtil/SEHexception.h"
 #endif // _WINDOWS
 
 

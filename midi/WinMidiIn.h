@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010,2013,2018,2022 Sean Echevarria
+ * Copyright (C) 2010,2013,2018,2022,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -25,7 +25,7 @@
 #ifndef WinMidiIn_h__
 #define WinMidiIn_h__
 
-#include "..\Engine\IMidiIn.h"
+#include "../Engine/IMidiIn.h"
 #include <Windows.h>
 #include <MMSystem.h>
 #include <tchar.h>

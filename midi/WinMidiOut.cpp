@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010,2013,2015,2018,2020-2022 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2013,2015,2018,2020-2022,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -38,8 +38,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include <atomic>
 #include <cmath>
 #include "WinMidiOut.h"
-#include "..\Engine\ITraceDisplay.h"
-#include "..\Engine\ISwitchDisplay.h"
+#include "../Engine/ITraceDisplay.h"
+#include "../Engine/ISwitchDisplay.h"
 #include <atlstr.h>
 #include "SleepShort.h"
 

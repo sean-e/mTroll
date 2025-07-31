@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2013,2018,2020,2022 Sean Echevarria
+ * Copyright (C) 2007-2008,2013,2018,2020,2022,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -25,11 +25,11 @@
 #ifndef WinMidiOut_h__
 #define WinMidiOut_h__
 
-#include "..\Engine\IMidiOut.h"
+#include "../Engine/IMidiOut.h"
 #include <Windows.h>
 #include <MMSystem.h>
 #include <tchar.h>
-#include "..\Engine\EngineLoader.h"
+#include "../Engine/EngineLoader.h"
 
 class ITraceDisplay;
 

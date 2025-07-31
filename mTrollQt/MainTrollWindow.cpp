@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2012-2013,2015,2018,2020,2023,2024 Sean Echevarria
+ * Copyright (C) 2007-2010,2012-2013,2015,2018,2020,2023-2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -33,11 +33,11 @@
 #include <QScrollBar>
 #include "AboutDlg.h"
 #include "ControlUi.h"
-#include "..\Engine\ScopeSet.h"
+#include "../Engine/ScopeSet.h"
 #if defined(Q_OS_WIN)
 #include <windows.h>
 #include <powrprof.h>
-#include "..\winUtil\WinDark.h"
+#include "../winUtil/WinDark.h"
 #endif
 
 

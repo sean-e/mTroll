@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010,2013,2015,2018,2020,2022 Sean Echevarria
+ * Copyright (C) 2010,2013,2015,2018,2020,2022,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -24,10 +24,10 @@
 
 #include <atomic>
 #include "WinMidiIn.h"
-#include "..\Engine\IMidiInSubscriber.h"
-#include "..\Engine\ITraceDisplay.h"
-#include "..\Engine\ISwitchDisplay.h"
-#include "..\Engine\HexStringUtils.h"
+#include "../Engine/IMidiInSubscriber.h"
+#include "../Engine/ITraceDisplay.h"
+#include "../Engine/ISwitchDisplay.h"
+#include "../Engine/HexStringUtils.h"
 #include <atlstr.h>
 
 #pragma comment(lib, "winmm.lib")

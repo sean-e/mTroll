@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2013,2015,2018,2020.2024 Sean Echevarria
+ * Copyright (C) 2007-2010,2013,2015,2018,2020,2024-2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -27,8 +27,8 @@
 
 #include <QMainWindow>
 #include <QDateTime>
-#include "..\Engine\ExpressionPedals.h"
-#include "..\Engine\ITrollApplication.h"
+#include "../Engine/ExpressionPedals.h"
+#include "../Engine/ITrollApplication.h"
 
 class ControlUi;
 class QAction;
