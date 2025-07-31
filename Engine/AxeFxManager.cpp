@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2015,2018,2020 Sean Echevarria
+ * Copyright (C) 2010-2015,2018,2020,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -24,7 +24,7 @@
 
 #include <string>
 #include <memory.h>
-#include <strstream>
+#include <format>
 #include <algorithm>
 #include <QEvent>
 #include <QApplication>
@@ -408,9 +408,7 @@ AxeFxManager::ReceivedSysex(const byte * bytes, int len)
 		if (kDbgFlag && mTrace)
 		{
 			const std::string byteDump(::GetAsciiHexStr(&bytes[5], len - 5, true));
-			std::strstream traceMsg;
-			traceMsg << byteDump.c_str() << '\n' << std::ends;
-			mTrace->Trace(std::string(traceMsg.str()));
+			mTrace->Trace(byteDump + "\n");
 		}
 	}
 
@@ -610,34 +608,25 @@ AxeFxManager::ReceiveParamValue(const byte * bytes, int len)
 					{
 						const std::string byteDump(::GetAsciiHexStr(bytes + 4, len - 6, true));
 						const std::string asciiDump(::GetAsciiStr(&bytes[6], len - 8));
-						std::strstream traceMsg;
-						traceMsg << inf->mName << " : " << byteDump.c_str() << " : " << asciiDump.c_str() << '\n' << std::ends;
-						mTrace->Trace(std::string(traceMsg.str()));
+						mTrace->Trace(std::format("{} : {} : {}\n", inf->mName, byteDump, asciiDump));
 					}
 				}
 				else if (mTrace)
 				{
 					const std::string byteDump(::GetAsciiHexStr(bytes, len - 2, true));
-					std::strstream traceMsg;
-					traceMsg << "Unrecognized bypass param value for " << inf->mName << " " << byteDump.c_str() << '\n' << std::ends;
-					mTrace->Trace(std::string(traceMsg.str()));
+					mTrace->Trace(std::format("Unrecognized bypass param value for {} {}\n", inf->mName, byteDump));
 				}
 			}
 			else if (mTrace)
 			{
 				const std::string byteDump(::GetAsciiHexStr(bytes, len - 2, true));
-				std::strstream traceMsg;
-				traceMsg << "Unhandled bypass MS param value for " << inf->mName << " " << byteDump.c_str() << '\n' << std::ends;
-				mTrace->Trace(std::string(traceMsg.str()));
+				mTrace->Trace(std::format("Unhandled bypass MS param value for {} {}\n", inf->mName, byteDump));
 			}
 		}
 		else
 		{
 			if (mTrace)
-			{
-				const std::string msg("Axe sync error: No inf or patch\n");
-				mTrace->Trace(msg);
-			}
+				mTrace->Trace("Axe sync error: No inf or patch\n");
 		}
 	}
 
@@ -1084,15 +1073,15 @@ AxeFxManager::ReceiveFirmwareVersionResponse(const byte * bytes, int len)
 	switch (bytes[4])
 	{
 	case AxeStd:
-		model = "Standard ";
+		model = "Standard";
 		mModel = AxeStd;
 		break;
 	case AxeUltra:
-		model = "Ultra ";
+		model = "Ultra";
 		mModel = AxeUltra;
 		break;
 	case Axe2:
-		model = "II ";
+		model = "II";
 		mModel = Axe2;
 		break;
 	case Axe2XL:
@@ -1104,15 +1093,11 @@ AxeFxManager::ReceiveFirmwareVersionResponse(const byte * bytes, int len)
 		mModel = Axe2XLPlus;
 		break;
 	default:
-		model = "Unknown model ";
+		model = "Unknown model";
 	}
 
 	if (mTrace)
-	{
-		std::strstream traceMsg;
-		traceMsg << "Axe-Fx " << model << "version " << (int) bytes[6] << "." << (int) bytes[7] << '\n' << std::ends;
-		mTrace->Trace(std::string(traceMsg.str()));
-	}
+		mTrace->Trace(std::format("Axe-Fx {} version {}.{}\n", model, (int)bytes[6], (int)bytes[7]));
 
 	mFirmwareMajorVersion = (int) bytes[6];
 	if (Axe2 <= mModel)
@@ -1230,11 +1215,7 @@ AxeFxManager::ReceivePresetEffects(const byte * bytes, int len)
 		{
 			inf = IdentifyBlockInfoUsingEffectId(bytes + idx);
 			if (inf && mTrace && inf->mNormalizedName != "feedback return")
-			{
-				std::strstream traceMsg;
-				traceMsg << "Axe sync warning: potentially unexpected sync for  " << inf->mName << " " << '\n' << std::ends;
-				mTrace->Trace(std::string(traceMsg.str()));
-			}
+				mTrace->Trace(std::format("Axe sync warning: potentially unexpected sync for  {} \n", inf->mName));
 		}
 
 		if (inf && inf->mPatch)
@@ -1252,9 +1233,7 @@ AxeFxManager::ReceivePresetEffects(const byte * bytes, int len)
 			else if (mTrace)
 			{
 				const std::string byteDump(::GetAsciiHexStr(bytes + idx, 5, true));
-				std::strstream traceMsg;
-				traceMsg << "Unrecognized bypass param value for " << inf->mName << " " << byteDump.c_str() << '\n' << std::ends;
-				mTrace->Trace(std::string(traceMsg.str()));
+				mTrace->Trace(std::format("Unrecognized bypass param value for {} {}\n", inf->mName, byteDump));
 			}
 		}
 		else
@@ -1333,11 +1312,7 @@ AxeFxManager::ReceivePresetEffectsV2(const byte * bytes, int len)
 		{
 			inf = IdentifyBlockInfoUsingEffectId(bytes + idx + 1);
 			if (inf && mTrace && inf->mNormalizedName != "feedback return")
-			{
-				std::strstream traceMsg;
-				traceMsg << "Axe sync warning: potentially unexpected sync for  " << inf->mName << " " << '\n' << std::ends;
-				mTrace->Trace(std::string(traceMsg.str()));
-			}
+				mTrace->Trace(std::format("Axe sync warning: potentially unexpected sync for  {} \n", inf->mName));
 		}
 
 		if (inf && inf->mPatch)
@@ -1369,9 +1344,7 @@ AxeFxManager::ReceivePresetEffectsV2(const byte * bytes, int len)
 			else if (mTrace)
 			{
 				const std::string byteDump(::GetAsciiHexStr(bytes + idx, 5, true));
-				std::strstream traceMsg;
-				traceMsg << "Unrecognized bypass param value for " << inf->mName << " " << byteDump.c_str() << '\n' << std::ends;
-				mTrace->Trace(std::string(traceMsg.str()));
+				mTrace->Trace(std::format("Unrecognized bypass param value for {} {}\n", inf->mName, byteDump));
 			}
 		}
 		else
@@ -1555,11 +1528,7 @@ AxeFxManager::ReceiveLooperStatus(const byte * bytes, int len)
 	mLooperState = newLoopState;
 
 	if (mMainDisplay)
-	{
-		std::strstream traceMsg;
-		traceMsg << "Axe-Fx looper: " << GetLooperStateDesc(mLooperState) << '\n' << std::ends;
-		mMainDisplay->TransientTextOut(std::string(traceMsg.str()));
-	}
+		mMainDisplay->TransientTextOut(std::format("Axe-Fx looper: {}\n", GetLooperStateDesc(mLooperState)));
 }
 
 bool

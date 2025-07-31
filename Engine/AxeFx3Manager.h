@@ -182,6 +182,8 @@ private:
 
 enum class AxeFx3MessageIds
 {
+	OtherEditorAck = 0,
+
 	EditorSyncMsg = 0x01,
 
 	FirmwareVersion = 0x08,

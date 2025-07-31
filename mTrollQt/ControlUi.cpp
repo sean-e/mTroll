@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2015,2018,2020,2021 Sean Echevarria
+ * Copyright (C) 2007-2015,2018,2020,2021,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -23,7 +23,7 @@
  */
 
 #include <algorithm>
-#include <strstream>
+#include <format>
 
 #include <QApplication>
 #include <qthread.h>
@@ -257,11 +257,7 @@ ControlUi::LoadUi(const std::string & uiSettingsFile)
 	{
 		const int kMidiOutCnt = midiOut->GetMidiOutDeviceCount();
 		for (int idx = 0; idx < kMidiOutCnt; ++idx)
-		{
-			std::strstream msg;
-			msg << "  " << idx << ": " << midiOut->GetMidiOutDeviceName(idx) << '\n' << std::ends;
-			Trace(msg.str());
-		}
+			Trace(std::format("  {}: {}\n", idx, midiOut->GetMidiOutDeviceName(idx)));
 		Trace("\n");
 		midiOut->CloseMidiOut();
 		mMidiOuts.erase(0);
@@ -273,11 +269,7 @@ ControlUi::LoadUi(const std::string & uiSettingsFile)
 		Trace("Midi Input Devices:\n");
 		const int kMidiInCnt = midiIn->GetMidiInDeviceCount();
 		for (int idx = 0; idx < kMidiInCnt; ++idx)
-		{
-			std::strstream msg;
-			msg << "  " << idx << ": " << midiIn->GetMidiInDeviceName(idx) << '\n' << std::ends;
-			Trace(msg.str());
-		}
+			Trace(std::format("  {}: {}\n", idx, midiIn->GetMidiInDeviceName(idx)));
 		Trace("\n");
 		midiIn->CloseMidiIn();
 		mMidiIns.erase(0);
@@ -1083,7 +1075,7 @@ ControlUi::CreateSwitch(int id,
 	{
 		// override default shortcut so that Alt key does 
 		// not need to be held down
-		const QString shortCutKey = label[pos + 1];
+		const QString shortCutKey = QChar(label[pos + 1]);
 		curSwitch->setShortcut(QKeySequence(shortCutKey));
 	}
 	
@@ -1572,15 +1564,12 @@ ControlUi::OpenMidiOuts()
 		if (!curOut || curOut->IsMidiOutOpen())
 			continue;
 
-		std::strstream traceMsg;
 		const unsigned int kDeviceIdx = mMidiOut.first;
 
 		if (curOut->OpenMidiOut(kDeviceIdx))
-			traceMsg << "Opened MIDI out " << kDeviceIdx << " " << curOut->GetMidiOutDeviceName(kDeviceIdx) << '\n' << std::ends;
+			Trace(std::format("Opened MIDI out {} {}\n", kDeviceIdx, curOut->GetMidiOutDeviceName(kDeviceIdx)));
 		else
-			traceMsg << "Failed to open MIDI out " << kDeviceIdx << '\n' << std::ends;
-
-		Trace(traceMsg.str());
+			Trace(std::format("Failed to open MIDI out {}\n", kDeviceIdx));
 	}
 }
 
@@ -1950,11 +1939,7 @@ ControlUi::UpdateAdcs(const bool adcOverrides[ExpressionPedals::PedalCount])
 		const bool enable = !adcOverrides[idx - 1] && mUserAdcSettings[idx - 1];
 		mHardwareUi->EnableAdc(idx - 1, enable);
 		if (mTraceDisplay)
-		{
-			std::strstream traceMsg;
-			traceMsg << "  ADC port " << idx << (enable ? " enabled" : " disabled") << '\n' << std::ends;
-			Trace(std::string(traceMsg.str()));
-		}
+			Trace(std::format("  ADC port {} {}\n", idx, (enable ? "enabled" : "disabled")));
 	}
 }
 
@@ -2208,15 +2193,12 @@ ControlUi::OpenMidiIns()
 		if (!curIn || curIn->IsMidiInOpen())
 			continue;
 
-		std::strstream traceMsg;
 		const unsigned int kDeviceIdx = mMidiIn.first;
 
 		if (curIn->OpenMidiIn(kDeviceIdx))
-			traceMsg << "Opened MIDI in " << kDeviceIdx << " " << curIn->GetMidiInDeviceName(kDeviceIdx) << '\n' << std::ends;
+			Trace(std::format("Opened MIDI in {} {}\n", kDeviceIdx, curIn->GetMidiInDeviceName(kDeviceIdx)));
 		else
-			traceMsg << "Failed to open MIDI in " << kDeviceIdx << '\n' << std::ends;
-
-		Trace(traceMsg.str());
+			Trace(std::format("Failed to open MIDI in {}\n", kDeviceIdx));
 	}
 }
 
@@ -2269,11 +2251,7 @@ ControlUi::SuspendMidi()
 			anySuspended = true;
 
 	if (anySuspended)
-	{
-		std::strstream msg;
-		msg << "Suspended MIDI connections\n" << std::ends;
-		Trace(msg.str());
-	}
+		Trace("Suspended MIDI connections\n");
 
 	return anySuspended;
 }
@@ -2291,11 +2269,7 @@ ControlUi::ResumeMidi()
 			allResumed = false;
 
 	if (allResumed)
-	{
-		std::strstream msg;
-		msg << "Resumed MIDI connections\n" << std::ends;
-		Trace(msg.str());
-	}
+		Trace("Resumed MIDI connections\n");
 
 	return allResumed;
 }

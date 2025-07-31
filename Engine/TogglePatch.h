@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2009,2017-2018,2024 Sean Echevarria
+ * Copyright (C) 2007-2009,2017-2018,2024-2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -68,6 +68,18 @@ public:
 				IMidiOutPtr midiOut, 
 				PatchCommands & cmdsA, 
 				PatchCommands & cmdsB,
+				PatchLogicStyle style = PatchLogicStyle::Toggle) :
+		TwoStatePatch(number, name, midiOut, cmdsA, cmdsB, 
+			PatchLogicStyle::Toggle == style ? psAllowOnlyActive : psDisallow),
+		mPatchLogicStyle(style)
+	{
+	}
+
+	TogglePatch(int number, 
+				const std::string & name, 
+				IMidiOutPtr midiOut, 
+				PatchCommands * cmdsA = nullptr, 
+				PatchCommands * cmdsB = nullptr,
 				PatchLogicStyle style = PatchLogicStyle::Toggle) :
 		TwoStatePatch(number, name, midiOut, cmdsA, cmdsB, 
 			PatchLogicStyle::Toggle == style ? psAllowOnlyActive : psDisallow),

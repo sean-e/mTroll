@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2012,2014-2015,2017-2018,2020-2021,2024 Sean Echevarria
+ * Copyright (C) 2007-2012,2014-2015,2017-2018,2020-2021,2024-2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -23,7 +23,7 @@
  */
 
 #include "Patch.h"
-#include <strstream>
+#include <format>
 #include <atomic>
 #include "IMidiOut.h"
 #include "IMainDisplay.h"
@@ -123,23 +123,22 @@ Patch::UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay
 	if (mainDisplay)
 	{
 		const std::string txt(GetDisplayText(true));
-		std::strstream msgstr;
-		msgstr << txt;
+		std::string msgstr(txt);
 		if (mNumber > 0)
 		{
 #ifdef _DEBUG
 			if (txt.empty())
-				msgstr << "(off)   (" << mNumber << ')';
+				std::format_to(std::back_inserter(msgstr), "(off)   ({})", mNumber);
 			else
-				msgstr << "   (" << mNumber << ')';
+				std::format_to(std::back_inserter(msgstr), "   ({})", mNumber);
 #else
 			if (txt.empty())
-				msgstr << "(off)";
+				msgstr += "(off)";
 #endif
 		}
 
-		msgstr << '\n' << std::ends;
-		mainDisplay->TextOut(msgstr.str());
+		msgstr += '\n';
+		mainDisplay->TextOut(msgstr);
 	}
 }
 

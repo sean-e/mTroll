@@ -38,9 +38,9 @@ public:
 	SimpleProgramChangePatch(int number,
 		const std::string & name,
 		IMidiOutPtr midiOut,
-		PatchCommands & cmds,
+		PatchCommands * cmds,
 		int midiChannel) :
-		TwoStatePatch(number, name, midiOut, cmds, PatchCommands{}, psDisallow),
+		TwoStatePatch(number, name, midiOut, cmds, nullptr, psDisallow),
 		mMidiChannel(midiChannel)
 	{
 		_ASSERTE(-1 != mMidiChannel);

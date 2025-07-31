@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2021 Sean Echevarria
+ * Copyright (C) 2021,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -25,6 +25,7 @@
 #ifndef CompositeTogglePatch_h__
 #define CompositeTogglePatch_h__
 
+#include <format>
 #include "TogglePatch.h"
 
 
@@ -41,7 +42,7 @@ public:
 		IMidiOutPtr midiOut,
 		std::vector<std::pair<int, int>> groupA,
 		std::vector<std::pair<int, int>> groupB) :
-		TogglePatch(number, name, midiOut, PatchCommands{}, PatchCommands{}),
+		TogglePatch(number, name, midiOut),
 		mPatchNumbersA(groupA),
 		mPatchNumbersB(groupB)
 	{
@@ -63,18 +64,10 @@ public:
 				if (isTwo)
 					mPatchesA.emplace_back(curPatch, curPair.second);
 				else if (trc)
-				{
-					std::strstream traceMsg;
-					traceMsg << "Patch " << curPatchNum << " referenced in CompositeTogglePatch " << GetName() << " (" << GetNumber() << ") is not a two-state patch type!\n" << std::ends;
-					trc->Trace(std::string(traceMsg.str()));
-				}
+					trc->Trace(std::format("Patch {} referenced in CompositeTogglePatch {} ({}) is not a two-state patch type!\n", curPatchNum, GetName(), GetNumber()));
 			}
 			else if (trc)
-			{
-				std::strstream traceMsg;
-				traceMsg << "Patch " << curPatchNum << " referenced in CompositeTogglePatch " << GetName() << " (" << GetNumber() << ") does not exist!\n" << std::ends;
-				trc->Trace(std::string(traceMsg.str()));
-			}
+				trc->Trace(std::format("Patch {} referenced in CompositeTogglePatch {} ({}) does not exist!\n", curPatchNum, GetName(), GetNumber()));
 		}
 
 		for (auto& curPair : mPatchNumbersB)
@@ -87,18 +80,10 @@ public:
 				if (isTwo)
 					mPatchesB.emplace_back(curPatch, curPair.second);
 				else if (trc)
-				{
-					std::strstream traceMsg;
-					traceMsg << "Patch " << curPatchNum << " referenced in CompositeTogglePatch " << GetName() << " (" << GetNumber() << ") is not a two-state patch type!\n" << std::ends;
-					trc->Trace(std::string(traceMsg.str()));
-				}
+					trc->Trace(std::format("Patch {} referenced in CompositeTogglePatch {} ({}) is not a two-state patch type!\n", curPatchNum, GetName(), GetNumber()));
 			}
 			else if (trc)
-			{
-				std::strstream traceMsg;
-				traceMsg << "Patch " << curPatchNum << " referenced in CompositeTogglePatch " << GetName() << " (" << GetNumber() << ") does not exist!\n" << std::ends;
-				trc->Trace(std::string(traceMsg.str()));
-			}
+				trc->Trace(std::format("Patch {} referenced in CompositeTogglePatch {} ({}) does not exist!\n", curPatchNum, GetName(), GetNumber()));
 		}
 	}
 

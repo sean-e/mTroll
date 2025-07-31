@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2013,2015,2018,2021,2024 Sean Echevarria
+ * Copyright (C) 2007-2010,2013,2015,2018,2021,2024-2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -56,6 +56,21 @@ protected:
 	{
 		mCmdsA.swap(cmdsA);
 		mCmdsB.swap(cmdsB);
+	}
+
+	TwoStatePatch(int number,
+		const std::string & name,
+		IMidiOutPtr midiOut,
+		PatchCommands * cmdsA,
+		PatchCommands * cmdsB,
+		PedalSupport pedalSupport) :
+		Patch(number, name, midiOut),
+		mPedalSupport(pedalSupport)
+	{
+		if (cmdsA)
+			mCmdsA.swap(*cmdsA);
+		if (cmdsB)
+			mCmdsB.swap(*cmdsB);
 	}
 
 	~TwoStatePatch() = default;

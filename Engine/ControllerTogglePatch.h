@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2022 Sean Echevarria
+ * Copyright (C) 2022,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -43,7 +43,7 @@ public:
 		IMidiOutPtr midiOut,
 		int channel,
 		int controller) :
-		TogglePatch(number, name, midiOut, PatchCommands{}, PatchCommands{})
+		TogglePatch(number, name, midiOut)
 	{
 		Bytes bytesA, bytesB;
 		bytesA.push_back(0xb0 | channel);

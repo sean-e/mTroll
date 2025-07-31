@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2012-2013,2015,2017-2018,2020,2023,2024 Sean Echevarria
+ * Copyright (C) 2012-2013,2015,2017-2018,2020,2023-2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -28,7 +28,7 @@
 #include "IMidiOut.h"
 #include "IPatchCommand.h"
 #include <algorithm>
-#include <strstream>
+#include <format>
 #include <memory>
 #include "MidiControlEngine.h"
 #include "PersistentPedalOverridePatch.h"
@@ -79,16 +79,14 @@ public:
 		if (!mCurrentSubPatch)
 			return GetName();
 
-		std::strstream msgstr;
-		msgstr << mCurrentSubPatch->GetName();
+		std::string msgstr(mCurrentSubPatch->GetName());
 #ifdef _DEBUG
 		const int patchNum = mCurrentSubPatch->GetNumber();
 		if (patchNum > 0)
-			msgstr << "   (" << patchNum << ")";
+			std::format_to(std::back_inserter(msgstr), "   ({})", patchNum);
 #endif
-		msgstr << std::ends;
 		static std::string sSubPatchDisplayText;
-		sSubPatchDisplayText = msgstr.str();
+		sSubPatchDisplayText = msgstr;
 		return sSubPatchDisplayText;
 	}
 
@@ -206,11 +204,7 @@ public:
 			mPatches.push_back(curPatch);
 			
 			if (!curPatch && trc)
-			{
-				std::strstream traceMsg;
-				traceMsg << "Patch " << curNum << " referenced in PatchListSequence " << GetName() << " (" << GetNumber() << ") does not exist!\n" << std::ends;
-				trc->Trace(std::string(traceMsg.str()));
-			}
+				trc->Trace(std::format("Patch {} referenced in PatchListSequence {} ({}) does not exist!\n", curNum, GetName(), GetNumber()));
 		}
 	}
 

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010,2012,2015,2018,2021 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2012,2015,2018,2021,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -25,6 +25,7 @@
 #ifndef MetaPatch_LoadBank_h__
 #define MetaPatch_LoadBank_h__
 
+#include <format>
 #include "Patch.h"
 #include "MidiControlEngine.h"
 
@@ -75,11 +76,7 @@ public:
 		{
 			mTargetBankNumber = mEngine->GetBankNumber(mOptionalTargetBankName);
 			if (-1 == mTargetBankNumber && trc)
-			{
-				std::strstream traceMsg;
-				traceMsg << "Error: failed to identify bank referenced by LoadBank command; bank name " << mOptionalTargetBankName << '\n' << std::ends;
-				trc->Trace(std::string(traceMsg.str()));
-			}
+				trc->Trace(std::format("Error: failed to identify bank referenced by LoadBank command; bank name {}\n", mOptionalTargetBankName));
 		}
 
 		std::string name(GetName());
@@ -94,11 +91,7 @@ public:
 				SetName(name);
 			}
 			else if (trc)
-			{
-				std::strstream traceMsg;
-				traceMsg << "Error: failed to identify name of bank referenced by LoadBank command; bank number " << bankNum << '\n' << std::ends;
-				trc->Trace(std::string(traceMsg.str()));
-			}
+				trc->Trace(std::format("Error: failed to identify name of bank referenced by LoadBank command; bank number {}\n", bankNum));
 		}
 	}
 

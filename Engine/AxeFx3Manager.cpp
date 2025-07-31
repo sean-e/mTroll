@@ -24,7 +24,7 @@
 
 #include <string>
 #include <memory.h>
-#include <strstream>
+#include <format>
 #include <algorithm>
 #include <QEvent>
 #include <QApplication>
@@ -376,7 +376,8 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 	if (!::IsAxeFx3Sysex(bytes, len))
 		return false;
 
-	switch (bytes[5])
+	AxeFx3MessageIds cmd = static_cast<AxeFx3MessageIds>(bytes[5]);
+	switch (cmd)
 	{
 	case AxeFx3MessageIds::EditorSyncMsg:
 	case AxeFx3MessageIds::EditorSyncMsg2:
@@ -497,7 +498,8 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 	case AxeFx3MessageIds::Ack:
 		if (len > 7)
 		{
-			switch (bytes[6])
+			AxeFx3MessageIds cmd2 = static_cast<AxeFx3MessageIds>(bytes[6]);
+			switch (cmd2)
 			{
 			case AxeFx3MessageIds::EditorAmpMsg1:
 			case AxeFx3MessageIds::EditorAmpMsg2:
@@ -524,7 +526,7 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 				}
 				break;
 
-			case 0:
+			case AxeFx3MessageIds::OtherEditorAck:
 				if (len > 8 && 0 == bytes[7])
 					return true; // frequent ack when editor is open (64 00 00)
 				break;
@@ -544,9 +546,7 @@ AxeFx3Manager::ReceivedSysex(const byte * bytes, int len)
 		if (kDbgFlag && mTrace)
 		{
 			const std::string byteDump(::GetAsciiHexStr(&bytes[5], len - 5, true));
-			std::strstream traceMsg;
-			traceMsg << byteDump.c_str() << '\n' << std::ends;
-			mTrace->Trace(std::string(traceMsg.str()));
+			mTrace->Trace(std::format("{}\n", byteDump));
 		}
 	}
 
@@ -982,21 +982,19 @@ AxeFx3Manager::ReceiveFirmwareVersionResponse(const byte * bytes, int len)
 		if (0xa == bytes[6] && 0x04 == bytes[7])
 			return; // our request got looped back
 
-		model = "III ";
+		model = "III";
 		_ASSERTE(mModel == Axe3);
 		break;
 	default:
-		model = "Unknown model ";
+		model = "Unknown model";
 	}
 
 	if (mTrace)
 	{
-		std::strstream traceMsg;
-		traceMsg << "Axe-Fx " << model << "firmware version " << (int) bytes[6] << "." << (int) bytes[7] << '\n';
+		std::string traceMsg = std::format("Axe-Fx {} firmware version {}.{}\n", model, (int) bytes[6], (int) bytes[7]);
 		if (len > 10)
-			traceMsg << "Axe-Fx " << model << "USB firmware version " << (int)bytes[9] << "." << (int)bytes[10] << '\n';
-		traceMsg << std::ends;
-		mTrace->Trace(std::string(traceMsg.str()));
+			traceMsg += std::format("Axe-Fx {} USB firmware version {}.{}\n", model, (int)bytes[9], (int)bytes[10]);
+		mTrace->Trace(traceMsg);
 	}
 
 	mFirmwareMajorVersion = (int) bytes[6];
@@ -1402,11 +1400,7 @@ AxeFx3Manager::ReceiveLooperState(byte newLoopState)
 	mLooperState = newLoopState;
 
 	if (mMainDisplay)
-	{
-		std::strstream traceMsg;
-		traceMsg << "AxeFx lpr: " << GetLooperStateDesc(mLooperState) << '\n' << std::ends;
-		mMainDisplay->TransientTextOut(std::string(traceMsg.str()));
-	}
+		mMainDisplay->TransientTextOut(std::format("AxeFx lpr: {}\n", GetLooperStateDesc(mLooperState)));
 }
 
 void

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2022 Sean Echevarria
+ * Copyright (C) 2022,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -22,7 +22,7 @@
  * Contact Sean: "fester" at the domain of the original project site
  */
 
-#include <strstream>
+#include <format>
 #include "ControllerInputMonitor.h"
 #include "ITraceDisplay.h"
 #include "HexStringUtils.h"
@@ -48,11 +48,7 @@ ControllerInputMonitor::AddPatch(ControllerTogglePatchPtr p, int channel, int co
 	if (mPatches.find(key) != mPatches.end())
 	{
 		if (mTrace)
-		{
-			std::strstream traceMsg;
-			traceMsg << "Error setting up input device monitor: duplicate port+channel in DeviceChannelMap?\n" << std::ends;
-			mTrace->Trace(std::string(traceMsg.str()));
-		}
+			mTrace->Trace("Error setting up input device monitor: duplicate port+channel in DeviceChannelMap?\n");
 		return;
 	}
 

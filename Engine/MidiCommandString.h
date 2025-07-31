@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2009,2018 Sean Echevarria
+ * Copyright (C) 2009,2018,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -33,7 +33,7 @@ class MidiCommandString : public IPatchCommand
 {
 public:
 	MidiCommandString(IMidiOutPtr midiOut, 
-					  Bytes & midiString) :
+					  Bytes midiString) :
 		mMidiOut(midiOut)
 	{
 		mCommandString.swap(midiString);

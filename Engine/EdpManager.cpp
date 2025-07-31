@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2021-2023 Sean Echevarria
+ * Copyright (C) 2021-2023,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -24,7 +24,7 @@
 
 #include <string>
 #include <memory.h>
-#include <strstream>
+#include <format>
 #include <algorithm>
 #include "EdpManager.h"
 #include "ITraceDisplay.h"
@@ -134,9 +134,7 @@ EdpManager::ReceivedSysex(const byte * bytesIn, int len)
 			if (kDbgFlag && mTrace)
 			{
 				const std::string byteDump(::GetAsciiHexStr(&bytes[kCmdPos], len - kCmdPos, true));
-				std::strstream traceMsg;
-				traceMsg << "EDP unexpected sysex: " << byteDump.c_str() << '\n' << std::ends;
-				mTrace->Trace(std::string(traceMsg.str()));
+				mTrace->Trace(std::format("EDP unexpected sysex: {}\n", byteDump));
 			}
 		}
 	}
@@ -161,9 +159,7 @@ EdpManager::ReceiveGlobalParamData(const byte * bytes, int len)
 		if (kDbgFlag && mTrace)
 		{
 			const std::string byteDump(::GetAsciiHexStr(bytes, len, true));
-			std::strstream traceMsg;
-			traceMsg << "EDP unexpected global param data len: " << byteDump.c_str() << '\n' << std::ends;
-			mTrace->Trace(std::string(traceMsg.str()));
+			mTrace->Trace(std::format("EDP unexpected global param data len: {}\n", byteDump));
 		}
 		return;
 	}
@@ -173,24 +169,21 @@ EdpManager::ReceiveGlobalParamData(const byte * bytes, int len)
 		if (kDbgFlag && mTrace)
 		{
 			const std::string byteDump(::GetAsciiHexStr(bytes, len, true));
-			std::strstream traceMsg;
-			traceMsg << "EDP unexpected global param data: " << byteDump.c_str() << '\n' << std::ends;
-			mTrace->Trace(std::string(traceMsg.str()));
+			mTrace->Trace(std::format("EDP unexpected global param data: {}\n", byteDump));
 		}
 		return;
 	}
 
 	constexpr int kByteOffset = 3;
-	std::strstream dispMsg;
-	dispMsg << "EDP Global State";
-	dispMsg << "\nPreset: " << (int)bytes[(int)EdpGlobalParamIndexes::ParamSet + kByteOffset];
+	std::string dispMsg("EDP Global State");
+	std::format_to(std::back_inserter(dispMsg), "\nPreset: {}", (int)bytes[(int)EdpGlobalParamIndexes::ParamSet + kByteOffset]);
 	if (bytes[(int)EdpGlobalParamIndexes::PrevParamSet + kByteOffset] != bytes[(int)EdpGlobalParamIndexes::ParamSet + kByteOffset])
-		dispMsg << "\nPrev preset: " << (int)bytes[(int)EdpGlobalParamIndexes::PrevParamSet + kByteOffset];
-	dispMsg << "\nMIDI ch/dev ID: " << (int)bytes[(int)EdpGlobalParamIndexes::MIDIChannel + kByteOffset] << "/" << (int)bytes[(int)EdpGlobalParamIndexes::MIDIDevID + kByteOffset];
-	dispMsg << "\nCtrl/loop source: " << (int)bytes[(int)EdpGlobalParamIndexes::MIDIFirstKey + kByteOffset] << "/" << (int)bytes[(int)EdpGlobalParamIndexes::MIDIFirstLoop + kByteOffset];
-	dispMsg << "\nVolume/feedback ctrl: " << (int)bytes[(int)EdpGlobalParamIndexes::MIDIVolCtrlr + kByteOffset] << "/" << (int)bytes[(int)EdpGlobalParamIndexes::MIDIFBCtrlr + kByteOffset];
-	dispMsg << std::ends;
-	mMainDisplay->TextOut(std::string(dispMsg.str()));
+		std::format_to(std::back_inserter(dispMsg), "\nPrev preset: ", (int)bytes[(int)EdpGlobalParamIndexes::PrevParamSet + kByteOffset]);
+	std::format_to(std::back_inserter(dispMsg), "\nMIDI ch/dev ID: {}/{}", (int)bytes[(int)EdpGlobalParamIndexes::MIDIChannel + kByteOffset], (int)bytes[(int)EdpGlobalParamIndexes::MIDIDevID + kByteOffset]);
+	std::format_to(std::back_inserter(dispMsg), "\nCtrl/loop source: {}/{}", (int)bytes[(int)EdpGlobalParamIndexes::MIDIFirstKey + kByteOffset], (int)bytes[(int)EdpGlobalParamIndexes::MIDIFirstLoop + kByteOffset]);
+	std::format_to(std::back_inserter(dispMsg), "\nVolume/feedback ctrl: {}/{}", (int)bytes[(int)EdpGlobalParamIndexes::MIDIVolCtrlr + kByteOffset], (int)bytes[(int)EdpGlobalParamIndexes::MIDIFBCtrlr + kByteOffset]);
+
+	mMainDisplay->TextOut(dispMsg);
 }
 
 // req: F0 00 01 30 0B 01 01 12 00 13 00 F7
@@ -204,9 +197,7 @@ EdpManager::ReceiveLocalParamData(const byte * bytes, int len)
 		if (kDbgFlag && mTrace)
 		{
 			const std::string byteDump(::GetAsciiHexStr(bytes, len, true));
-			std::strstream traceMsg;
-			traceMsg << "EDP unexpected local param data len: " << byteDump.c_str() << '\n' << std::ends;
-			mTrace->Trace(std::string(traceMsg.str()));
+			mTrace->Trace(std::format("EDP unexpected local param data len: {}\n", byteDump));
 		}
 		return;
 	}
@@ -216,44 +207,40 @@ EdpManager::ReceiveLocalParamData(const byte * bytes, int len)
 		if (kDbgFlag && mTrace)
 		{
 			const std::string byteDump(::GetAsciiHexStr(bytes, len, true));
-			std::strstream traceMsg;
-			traceMsg << "EDP unexpected local param data: " << byteDump.c_str() << '\n' << std::ends;
-			mTrace->Trace(std::string(traceMsg.str()));
+			mTrace->Trace(std::format("EDP unexpected local param data: {}\n", byteDump));
 		}
 		return;
 	}
 
 	constexpr int kByteOffset = 3;
-	std::strstream dispMsg;
-	dispMsg << "EDP Local State";
+	std::string dispMsg("EDP Local State");
 	if (bytes[2])
-		dispMsg << "\nPreset: " << (int)bytes[2]; // preset 0 is the active/edit buffer
+		std::format_to(std::back_inserter(dispMsg), "\nPreset: {}", (int)bytes[2]); // preset 0 is the active/edit buffer
 	if (bytes[3])
-		dispMsg << "\nUnknown param: " << (int)bytes[3]; // local param index 0 is not documented
+		std::format_to(std::back_inserter(dispMsg), "\nUnknown param: {}", (int)bytes[3]); // local param index 0 is not documented
 
-	dispMsg << "\nRecord mode: " << ::EdpEnumToString(static_cast<EdpRecordMode>(bytes[(int)EdpLocalParamIndexes::RecordMode + kByteOffset]));
-	dispMsg << "\nOverdub mode: " << ::EdpEnumToString(static_cast<EdpOverdubMode>(bytes[(int)EdpLocalParamIndexes::OverdubMode + kByteOffset]));
-	dispMsg << "\nInsert mode: " << ::EdpEnumToString(static_cast<EdpInsertMode>(bytes[(int)EdpLocalParamIndexes::InsertMode + kByteOffset]));
-	dispMsg << "\nTime quantize mode: " << ::EdpEnumToString(static_cast<EdpTimeQuantization>(bytes[(int)EdpLocalParamIndexes::TimingQuantization + kByteOffset]));
-	dispMsg << "\n8th/cycle: " << ::DecodeEdpEighthsPerCycle(bytes[(int)EdpLocalParamIndexes::EighthsPerCycle + kByteOffset]);
-	dispMsg << "\nMute mode: " << ::EdpEnumToString(static_cast<EdpMuteMode>(bytes[(int)EdpLocalParamIndexes::MuteMode + kByteOffset]));
-	dispMsg << "\nRound mode: " << ::EdpEnumToString(static_cast<EdpRoundMode>(bytes[(int)EdpLocalParamIndexes::RoundMode + kByteOffset]));
+	std::format_to(std::back_inserter(dispMsg), "\nRecord mode: {}", ::EdpEnumToString(static_cast<EdpRecordMode>(bytes[(int)EdpLocalParamIndexes::RecordMode + kByteOffset])));
+	std::format_to(std::back_inserter(dispMsg), "\nOverdub mode: {}", ::EdpEnumToString(static_cast<EdpOverdubMode>(bytes[(int)EdpLocalParamIndexes::OverdubMode + kByteOffset])));
+	std::format_to(std::back_inserter(dispMsg), "\nInsert mode: {}", ::EdpEnumToString(static_cast<EdpInsertMode>(bytes[(int)EdpLocalParamIndexes::InsertMode + kByteOffset])));
+	std::format_to(std::back_inserter(dispMsg), "\nTime quantize mode: {}", ::EdpEnumToString(static_cast<EdpTimeQuantization>(bytes[(int)EdpLocalParamIndexes::TimingQuantization + kByteOffset])));
+	std::format_to(std::back_inserter(dispMsg), "\n8th/cycle: {}", ::DecodeEdpEighthsPerCycle(bytes[(int)EdpLocalParamIndexes::EighthsPerCycle + kByteOffset]));
+	std::format_to(std::back_inserter(dispMsg), "\nMute mode: {}", ::EdpEnumToString(static_cast<EdpMuteMode>(bytes[(int)EdpLocalParamIndexes::MuteMode + kByteOffset])));
+	std::format_to(std::back_inserter(dispMsg), "\nRound mode: {}", ::EdpEnumToString(static_cast<EdpRoundMode>(bytes[(int)EdpLocalParamIndexes::RoundMode + kByteOffset])));
 
-	dispMsg << "\nNext loop switch quantization: " << ::EdpEnumToString(static_cast<EdpLoopSwitchQuant>(bytes[(int)EdpLocalParamIndexes::SwitchLoopQuantization + kByteOffset]));
-	dispMsg << "\nNext loop copy: " << ::EdpEnumToString(static_cast<EdpNextLoopCopy>(bytes[(int)EdpLocalParamIndexes::NextLoopCopy + kByteOffset]));
-	dispMsg << "\nNext loop auto record: " << ::EdpEnumToString(static_cast<EdpAutoRecord>(bytes[(int)EdpLocalParamIndexes::AutoRecord + kByteOffset]));
-	dispMsg << "\nSampler style: " << ::EdpEnumToString(static_cast<EdpSamplerStyle>(bytes[(int)EdpLocalParamIndexes::SamplerStyle + kByteOffset]));
+	std::format_to(std::back_inserter(dispMsg), "\nNext loop switch quantization: {}", ::EdpEnumToString(static_cast<EdpLoopSwitchQuant>(bytes[(int)EdpLocalParamIndexes::SwitchLoopQuantization + kByteOffset])));
+	std::format_to(std::back_inserter(dispMsg), "\nNext loop copy: {}", ::EdpEnumToString(static_cast<EdpNextLoopCopy>(bytes[(int)EdpLocalParamIndexes::NextLoopCopy + kByteOffset])));
+	std::format_to(std::back_inserter(dispMsg), "\nNext loop auto record: {}", ::EdpEnumToString(static_cast<EdpAutoRecord>(bytes[(int)EdpLocalParamIndexes::AutoRecord + kByteOffset])));
+	std::format_to(std::back_inserter(dispMsg), "\nSampler style: {}", ::EdpEnumToString(static_cast<EdpSamplerStyle>(bytes[(int)EdpLocalParamIndexes::SamplerStyle + kByteOffset])));
 
-	dispMsg << "\nRecord trigger threshold: " << (int)bytes[(int)EdpLocalParamIndexes::TrigThreshold + kByteOffset];
-	dispMsg << "\nInterface mode: " << ::EdpEnumToString(static_cast<EdpInterfaceModes>(bytes[(int)EdpLocalParamIndexes::InterfaceMode + kByteOffset]));
-	dispMsg << "\nLoops: " << (int)bytes[(int)EdpLocalParamIndexes::MoreLoops + kByteOffset] + 1;
-	dispMsg << "\nSync mode: " << ::EdpEnumToString(static_cast<EdpSyncMode>(bytes[(int)EdpLocalParamIndexes::SyncMode + kByteOffset]));
-	dispMsg << "\nVelocity: " << ::EdpEnumToString(static_cast<EdpVelocity>(bytes[(int)EdpLocalParamIndexes::Velocity + kByteOffset]));
-	dispMsg << "\nOverflow: " << ::EdpEnumToString(static_cast<EdpOverflow>(bytes[(int)EdpLocalParamIndexes::Overflow + kByteOffset]));
+	std::format_to(std::back_inserter(dispMsg), "\nRecord trigger threshold: {}", (int)bytes[(int)EdpLocalParamIndexes::TrigThreshold + kByteOffset]);
+	std::format_to(std::back_inserter(dispMsg), "\nInterface mode: {}", ::EdpEnumToString(static_cast<EdpInterfaceModes>(bytes[(int)EdpLocalParamIndexes::InterfaceMode + kByteOffset])));
+	std::format_to(std::back_inserter(dispMsg), "\nLoops: {}", (int)bytes[(int)EdpLocalParamIndexes::MoreLoops + kByteOffset] + 1);
+	std::format_to(std::back_inserter(dispMsg), "\nSync mode: {}", ::EdpEnumToString(static_cast<EdpSyncMode>(bytes[(int)EdpLocalParamIndexes::SyncMode + kByteOffset])));
+	std::format_to(std::back_inserter(dispMsg), "\nVelocity: {}", ::EdpEnumToString(static_cast<EdpVelocity>(bytes[(int)EdpLocalParamIndexes::Velocity + kByteOffset])));
+	std::format_to(std::back_inserter(dispMsg), "\nOverflow: {}", ::EdpEnumToString(static_cast<EdpOverflow>(bytes[(int)EdpLocalParamIndexes::Overflow + kByteOffset])));
 
 	if (bytes[21])
-		dispMsg << "\nTempo: " << ::DecodeEdpTempo(bytes[(int)EdpLocalParamIndexes::Tempo + kByteOffset]) << "bpm";
+		std::format_to(std::back_inserter(dispMsg), "\nTempo: {}bpm", ::DecodeEdpTempo(bytes[(int)EdpLocalParamIndexes::Tempo + kByteOffset]));
 
-	dispMsg << std::ends;
-	mMainDisplay->TextOut(std::string(dispMsg.str()));
+	mMainDisplay->TextOut(dispMsg);
 }

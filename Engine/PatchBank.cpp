@@ -23,7 +23,7 @@
  */
 
 #include <algorithm>
-#include <strstream>
+#include <format>
 #include <iomanip>
 #include <atomic>
 #include "PatchBank.h"
@@ -191,11 +191,7 @@ PatchBank::InitPatches(const MidiControlEngine::Patches & enginePatches,
 						if (curItem->mPatchNumber != -1)
 						{
 							if (traceDisp)
-							{
-								std::strstream traceMsg;
-								traceMsg << "Patch " << curItem->mPatchNumber << " referenced in bank " << mName << " (" << mNumber << ") does not exist!\n" << std::ends;
-								traceDisp->Trace(std::string(traceMsg.str()));
-							}
+								traceDisp->Trace(std::format("Patch {} referenced in bank {} ({}) does not exist!\n", curItem->mPatchNumber, mName, mNumber));
 
 							inc = false;
 							it2 = patches.erase(it2);
@@ -491,7 +487,7 @@ PatchBank::PatchSwitchPressed(SwitchFunctionAssignment st,
 
 	// do standard pressed processing (send A)
 	bool once = (st == ssPrimary);
-	std::strstream msgstr;
+	std::string msgstr;
 	for (it = curPatches.begin();
 		 it != curPatches.end();
 		 ++it)
@@ -548,31 +544,28 @@ PatchBank::PatchSwitchPressed(SwitchFunctionAssignment st,
 		if (curSwitchItem->mPatch->UpdateMainDisplayOnPress())
 		{
 			const std::string txt(curSwitchItem->mPatch->GetDisplayText(true));
-			msgstr << txt;
+			msgstr += txt;
 			const int patchNum = curSwitchItem->mPatch->GetNumber();
 			if (patchNum > 0)
 			{
 #ifdef _DEBUG
 				if (txt.empty())
-					msgstr << "(off)   (" << patchNum << ")";
+					std::format_to(std::back_inserter(msgstr), "(off)   ({})", patchNum);
 				else
-					msgstr << "   (" << patchNum << ")";
+					std::format_to(std::back_inserter(msgstr), "   ({})", patchNum);
 #else
 				if (txt.empty())
-					msgstr << "(off)";
+					msgstr += "(off)";
 #endif
 			}
-			msgstr << '\n';
+			msgstr += '\n';
 		}
 		else
 			doDisplayUpdate = false;
 	}
 
 	if (mainDisplay && doDisplayUpdate)
-	{
-		msgstr << std::ends;
-		mainDisplay->TextOut(msgstr.str());
-	}
+		mainDisplay->TextOut(msgstr);
 }
 
 void
@@ -758,21 +751,22 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 					   bool showPatchInfo,
 					   bool temporaryDisplay)
 {
-	std::ostrstream info;
-	info << mName;
+	std::string info;
 #ifdef _DEBUG
-	info << "   (bank " << mNumber << ")";
+	info = std::format("{}   (bank {})", mName, mNumber);
+#else
+	info = mName;
 #endif
 
 	if (!mAdditionalText.empty())
 	{
-		info << '\n';
-		info << mAdditionalText;
+		info += '\n';
+		info += mAdditionalText;
 	}
 
 	if (showPatchInfo)
 	{
-		info << '\n';
+		info += '\n';
 		for (auto & curPatch : mPatches)
 		{
 			for (int idx = ssPrimary; idx < ssCount; ++idx)
@@ -805,11 +799,11 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 								switchDisplay->SetSwitchText(curPatch.first, curItem->mOverrideSwitchName);
 						}
 
-						info << "sw" << std::setw(2) << (curPatch.first + 1);
+						std::format_to(std::back_inserter(info), "sw{:2}", curPatch.first + 1);
 						if (ssSecondary == idx)
-							info << "-2:";
+							info += "-2:";
 						else
-							info << ":  ";
+							info += ":  ";
 		
 						if (temporaryDisplay)
 						{
@@ -820,37 +814,35 @@ PatchBank::DisplayInfo(IMainDisplay * mainDisplay,
 					else
 					{
 						// secondary patches
-						info << "       ";
+						info += "       ";
 					}
 
-					info << curItem->mPatch->GetName();
+					info += curItem->mPatch->GetName();
 #ifdef _DEBUG
 					if (patchNum > 0)
-						info << "   (" << patchNum << ")\n";
+						std::format_to(std::back_inserter(info), "   ({})\n", patchNum);
 					else
 #endif
-						info << '\n';
+						info += '\n';
 				}
 			}
 		}
 	}
 
-	info << std::ends;
 	if (mainDisplay)
-		mainDisplay->TextOut(info.str());
+		mainDisplay->TextOut(info);
 }
 
 void
 PatchBank::DisplayDetailedPatchInfo(int switchNumber, IMainDisplay * mainDisplay)
 {
-	std::ostrstream info;
-	info << "Patch info for bank '" << mName
+	std::string info = std::format(
 #ifdef _DEBUG
-		<< "' (" << mNumber << "), switch "
+		"Patch info for bank '{}' ({}), switch {}:\n", mName, mNumber, (switchNumber + 1)
 #else
-		<< "', switch "
+		"Patch info for bank '{}', switch {}:\n", mName, (switchNumber + 1)
 #endif
-		<< (switchNumber + 1) << ":\n";
+	);
 
 	bool displayedPatchheader = false;
 	for (int idx = ssPrimary; idx < ssCount; ++idx)
@@ -864,7 +856,7 @@ PatchBank::DisplayDetailedPatchInfo(int switchNumber, IMainDisplay * mainDisplay
 			SwitchFunctionAssignment ss = static_cast<SwitchFunctionAssignment>(idx);
 			PatchVect & patches = curPatch.second.GetPatchVect(ss);
 			if (ssSecondary == ss && !patches.empty())
-				info << "secondary switch functions:\n";
+				info += "secondary switch functions:\n";
 
 			for (const BankPatchStatePtr& curItem : patches)
 			{
@@ -873,24 +865,23 @@ PatchBank::DisplayDetailedPatchInfo(int switchNumber, IMainDisplay * mainDisplay
 
 				if (cnt == 0 && !displayedPatchheader)
 				{
-					info << "Status / Type / Name (num)\n";
+					info += "Status / Type / Name (num)\n";
 					displayedPatchheader = true;
 				}
 
 // 				if (cnt == 1)
-// 					info << "(Hidden patches)\n";
+// 					info += "(Hidden patches)\n";
 
-				info << (curItem->mPatch->IsActive() ? "ON   " : "off  ") 
-					<< std::setiosflags(std::ios::left) << std::setw(19) << curItem->mPatch->GetPatchTypeStr() 
-					<< "  " << curItem->mPatch->GetName();
+				 
+				std::format_to(std::back_inserter(info), "{}{:<19}  {}", (curItem->mPatch->IsActive() ? "ON   " : "off  "), curItem->mPatch->GetPatchTypeStr(), curItem->mPatch->GetName());
 
 #ifdef _DEBUG
 				const int patchNum = curItem->mPatch->GetNumber();
 				if (patchNum > 0)
-					info << "   (" << patchNum << ")\n";
+					std::format_to(std::back_inserter(info), "   ({})\n", patchNum);
 				else
 #endif
-					info << '\n';
+					info += '\n';
 
 				++cnt;
 			}
@@ -899,9 +890,8 @@ PatchBank::DisplayDetailedPatchInfo(int switchNumber, IMainDisplay * mainDisplay
 		}
 	}
 
-	info << std::ends;
 	if (mainDisplay)
-		mainDisplay->TextOut(info.str());
+		mainDisplay->TextOut(info);
 }
 
 void
@@ -925,11 +915,7 @@ PatchBank::ResetPatches(IMainDisplay * mainDisplay,
 	}
 
 	if (mainDisplay)
-	{
-		std::ostrstream info;
-		info << "Bank patches reset\n" << std::ends;
-		mainDisplay->TextOut(info.str());
-	}
+		mainDisplay->TextOut("Bank patches reset\n");
 }
 
 void
