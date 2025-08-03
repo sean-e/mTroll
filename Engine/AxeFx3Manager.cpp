@@ -138,7 +138,7 @@ struct Axe3EffectBlockInfo
 			// display channel after effect block patch name #axe3blockChannelAppendToName
 			std::string nm(patch->GetName());
 
-			int chPos = nm.rfind(' ');
+			auto chPos = nm.rfind(' ');
 			if (-1 == chPos)
 			{
 				// will append channel
@@ -1825,7 +1825,7 @@ NormalizeAxe3EffectName(const std::string &effectNameIn)
 	std::string effectName(effectNameIn);
 	std::transform(effectName.begin(), effectName.end(), effectName.begin(), ::tolower);
 
-	int pos = effectName.find("axe");
+	auto pos = effectName.find("axe");
 	if (-1 != pos)
 	{
 		std::string searchStr;
@@ -1856,7 +1856,7 @@ Axe3SynonymNormalization(std::string & name)
 {
 #define MapName(subst, legit) if (name == subst) { name = legit; return; }
 
-	int pos = name.find('(');
+	auto pos = name.find('(');
 	if (std::string::npos != pos)
 	{
 		name = name.substr(0, pos);

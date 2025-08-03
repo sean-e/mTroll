@@ -99,7 +99,7 @@ EdpManager::ReceivedSysex(const byte * bytesIn, int len)
 			if (bytesIn[idx] != 0xFF)
 				backingStore.push_back(bytesIn[idx]);
 
-		len = backingStore.size();
+		len = (int)backingStore.size();
 		bytes = &backingStore[0];
 	}
 

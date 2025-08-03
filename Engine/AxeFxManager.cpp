@@ -179,7 +179,7 @@ AxeFxManager::SetSyncPatch(PatchPtr patch, int bypassCc /*= -1*/)
 	}
 
 	const std::string xy(" x/y");
-	const int xyPos = normalizedEffectName.find(xy);
+	const auto xyPos = normalizedEffectName.find(xy);
 	if (-1 != xyPos)
 	{
 		normalizedEffectName.replace(xyPos, xy.length(), "");
@@ -1667,7 +1667,7 @@ NormalizeAxeEffectName(std::string &effectName)
 {
 	std::transform(effectName.begin(), effectName.end(), effectName.begin(), ::tolower);
 
-	int pos = effectName.find("axe");
+	auto pos = effectName.find("axe");
 	if (-1 != pos)
 	{
 		std::string searchStr;
@@ -1913,7 +1913,7 @@ SynonymNormalization(std::string & name)
 {
 #define MapName(subst, legit) if (name == subst) { name = legit; return; }
 
-	int pos = name.find('(');
+	auto pos = name.find('(');
 	if (std::string::npos != pos)
 	{
 		name = name.substr(0, pos);

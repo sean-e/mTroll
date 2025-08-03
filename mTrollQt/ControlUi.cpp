@@ -2038,18 +2038,18 @@ ControlUi::TestLeds(int testPattern)
 	{
 		// show color presets, 15 at a time
 		QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-		const int kPresets = mLedConfig.mPresetColors.size();
-		for (int preset = 0; preset < kPresets; )
+		const size_t kPresets = mLedConfig.mPresetColors.size();
+		for (size_t preset = 0; preset < kPresets; )
 		{
-			int displayed = 0;
-			for (int switchNumber = 0; switchNumber < 15 && preset < kPresets; ++switchNumber)
+			auto displayed = 0;
+			for (auto switchNumber = 0; switchNumber < 15 && preset < kPresets; ++switchNumber)
 			{
 				byte row, col;
 				if (RowColFromSwitchNumber(switchNumber, row, col))
 				{
 					if (mLedConfig.mPresetColors[preset++])
 					{
-						SetSwitchDisplay(switchNumber, kPresetColorMarkerBit | (preset - 1));
+						SetSwitchDisplay(switchNumber, kPresetColorMarkerBit | (int)(preset - 1));
 						++displayed;
 					}
 				}

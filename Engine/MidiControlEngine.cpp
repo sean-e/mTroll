@@ -624,14 +624,14 @@ bool
 MidiControlEngine::NavigateBankRelative(int relativeBankIndex)
 {
 	// bank inc/dec does not commit bank
-	const int kBankCnt = mBanksInNavOrder.size();
+	const auto kBankCnt = mBanksInNavOrder.size();
 	if (!kBankCnt || kBankCnt == 1)
 		return false;
 
 	mBankNavigationIndex = mBankNavigationIndex + relativeBankIndex;
 	if (mBankNavigationIndex < 0)
-		mBankNavigationIndex = kBankCnt - 1;
-	if (mBankNavigationIndex >= kBankCnt)
+		mBankNavigationIndex = (int)kBankCnt - 1;
+	if (mBankNavigationIndex >= (int)kBankCnt)
 		mBankNavigationIndex = 0;
 
 	if (mSwitchDisplay)
@@ -664,14 +664,14 @@ void
 MidiControlEngine::LoadBankRelative(int relativeBankIndex)
 {
 	// navigate and commit bank
-	const int kBankCnt = mBanksInNavOrder.size();
+	const auto kBankCnt = mBanksInNavOrder.size();
 	if (!kBankCnt || kBankCnt == 1)
 		return;
 
 	mBankNavigationIndex = mBankNavigationIndex + relativeBankIndex;
 	if (mBankNavigationIndex < 0)
-		mBankNavigationIndex = kBankCnt - 1;
-	if (mBankNavigationIndex >= kBankCnt)
+		mBankNavigationIndex = (int)kBankCnt - 1;
+	if (mBankNavigationIndex >= (int)kBankCnt)
 		mBankNavigationIndex = 0;
 
 	ChangeMode(emBank);

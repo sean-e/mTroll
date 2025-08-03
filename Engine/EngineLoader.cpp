@@ -2344,7 +2344,7 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 					if (curSwitch)
 						switches->insert(curSwitch - 1);
 
-					const int spacePos = switchesStr.find(' ');
+					const auto spacePos = switchesStr.find(' ');
 					if (std::string::npos == spacePos)
 						break;
 
@@ -2704,7 +2704,7 @@ EngineLoader::LoadDeviceChannelMap(TiXmlElement * pElem)
 				axeModel = Axe2XLPlus;
 			else
 			{
-				int pos = dev.find("XL");
+				auto pos = dev.find("XL");
 				if (std::string::npos != pos)
 				{
 					axeModel = Axe2XL;
@@ -3025,7 +3025,7 @@ ReadTwoIntValues(std::string tmp, int & val1, int & val2)
 	if (tmp.empty())
 		return;
 
-	int tokenPos = tmp.find_first_of(" ,:;");
+	auto tokenPos = tmp.find_first_of(" ,:;");
 	if (std::string::npos == tokenPos)
 		return;
 

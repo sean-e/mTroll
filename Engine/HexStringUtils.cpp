@@ -113,13 +113,13 @@ ValidateString(const std::string & inString,
 			   Bytes & outBytes)
 {
 	outBytes.clear();
-	const int len = inString.length();
+	const size_t len = inString.length();
 	if (!len)
 		return 0;
 
 	outBytes.reserve(len / 2);
 
-	for (int idx = 0; idx < len;)
+	for (size_t idx = 0; idx < len;)
 	{
 		unsigned char ch = (unsigned char) inString[idx++];
 		if (isspace(ch))
@@ -148,14 +148,14 @@ ValidateString(const std::string & inString,
 		}
 	}
 
-	return outBytes.size();
+	return (int)outBytes.size();
 }
 
 std::string 
 GetAsciiHexStr(const Bytes & inBytes, 
 			   bool format /*= true*/)
 {
-	const int len = inBytes.size();
+	const auto len = inBytes.size();
 	return GetAsciiHexStr(&inBytes[0], len, format);
 }
 

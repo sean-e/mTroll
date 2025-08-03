@@ -179,7 +179,7 @@ AxemlLoader::LoadParameterLists(TiXmlElement* pElem)
 
 			// for each EffectParameter: check name; if ends in _BYPASS (but not _BYPASSMODE) keep id
 			const std::string kBypass("_BYPASS");
-			int pos = paramName.find(kBypass);
+			auto pos = paramName.find(kBypass);
 			if (-1 == pos)
 			{
 				// _FLAGS instead of _BYPASS for:

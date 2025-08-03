@@ -66,7 +66,7 @@ public:
 			{
 				std::string baseEffectName(name);
 				std::string xy(" x/y");
-				int xyPos = -1;
+				size_t xyPos = UINT_MAX;
 				xyPos = baseEffectName.find(xy);
 				if (-1 == xyPos)
 				{
@@ -280,7 +280,7 @@ public:
 			// see #axe3blockChannelAppendToName
 			std::string nm(GetName());
 
-			int chPos = nm.rfind(' ');
+			auto chPos = nm.rfind(' ');
 			if (-1 == chPos)
 			{
 				// no channel in name
