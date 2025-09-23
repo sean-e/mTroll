@@ -5,8 +5,8 @@
 #define MyAppPublisher "Sean Echevarria"
 #define MyAppURL "http://www.creepingfog.com/mTroll/"
 #define MyAppExeName "mTrollQt.exe"
-#define ExeDir ".\..\mTrollQt\Release"
-#define DependenciesDir ".\..\ReleaseDependencies"
+#define ExeDir ".\..\build\Win32\Release"
+#define DependenciesDir ".\..\ReleaseDependencies\Win32"
 #define DataDir ".\..\data"
 
 #include "mTrollVersion.txt"

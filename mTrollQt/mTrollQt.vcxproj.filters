@@ -96,28 +96,52 @@
     <ClCompile Include="..\midi\WinMidiOut.cpp">
       <Filter>midi</Filter>
     </ClCompile>
-    <ClCompile Include="Release\moc_AxeFx3Manager.cpp">
+    <ClCompile Include="..\build\Win32\Release\moc_AxeFx3Manager.cpp">
       <Filter>Moc Generated Source</Filter>
     </ClCompile>
-    <ClCompile Include="Debug\moc_AxeFx3Manager.cpp">
+    <ClCompile Include="..\build\Win32\Debug\moc_AxeFx3Manager.cpp">
       <Filter>Moc Generated Source</Filter>
     </ClCompile>
-    <ClCompile Include="Release\moc_AxeFxManager.cpp">
+    <ClCompile Include="..\build\Win32\Release\moc_AxeFxManager.cpp">
       <Filter>Moc Generated Source</Filter>
     </ClCompile>
-    <ClCompile Include="Debug\moc_AxeFxManager.cpp">
+    <ClCompile Include="..\build\Win32\Debug\moc_AxeFxManager.cpp">
       <Filter>Moc Generated Source</Filter>
     </ClCompile>
-    <ClCompile Include="Release\moc_ControlUi.cpp">
+    <ClCompile Include="..\build\Win32\Release\moc_ControlUi.cpp">
       <Filter>Moc Generated Source</Filter>
     </ClCompile>
-    <ClCompile Include="Debug\moc_ControlUi.cpp">
+    <ClCompile Include="..\build\Win32\Debug\moc_ControlUi.cpp">
       <Filter>Moc Generated Source</Filter>
     </ClCompile>
-    <ClCompile Include="Release\moc_MainTrollWindow.cpp">
+    <ClCompile Include="..\build\Win32\Release\moc_MainTrollWindow.cpp">
       <Filter>Moc Generated Source</Filter>
     </ClCompile>
-    <ClCompile Include="Debug\moc_MainTrollWindow.cpp">
+    <ClCompile Include="..\build\Win32\Debug\moc_MainTrollWindow.cpp">
+      <Filter>Moc Generated Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\build\Win64\Release\moc_AxeFx3Manager.cpp">
+      <Filter>Moc Generated Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\build\Win64\Debug\moc_AxeFx3Manager.cpp">
+      <Filter>Moc Generated Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\build\Win64\Release\moc_AxeFxManager.cpp">
+      <Filter>Moc Generated Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\build\Win64\Debug\moc_AxeFxManager.cpp">
+      <Filter>Moc Generated Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\build\Win64\Release\moc_ControlUi.cpp">
+      <Filter>Moc Generated Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\build\Win64\Debug\moc_ControlUi.cpp">
+      <Filter>Moc Generated Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\build\Win64\Release\moc_MainTrollWindow.cpp">
+      <Filter>Moc Generated Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\build\Win64\Debug\moc_MainTrollWindow.cpp">
       <Filter>Moc Generated Source</Filter>
     </ClCompile>
     <ClCompile Include="..\Engine\PersistentPedalOverridePatch.cpp">
