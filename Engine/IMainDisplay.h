@@ -43,6 +43,7 @@ public:
 	virtual void TransientTextOut(const std::string & txt) = 0;
 	virtual void ClearTransientText() = 0;
 	virtual std::string GetCurrentText() = 0;
+	virtual std::string GetQueuedText() = 0;
 };
 
 #endif // IMainDisplay_h__

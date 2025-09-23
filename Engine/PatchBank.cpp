@@ -564,7 +564,20 @@ PatchBank::PatchSwitchPressed(SwitchFunctionAssignment st,
 	}
 
 	if (mainDisplay && doDisplayUpdate)
-		mainDisplay->TextOut(msgstr);
+	{
+		std::string txt;
+		if (mAdditionalText.size() < 2 || !mEngine->IsBankActive(this))
+			txt = msgstr;
+		else
+		{
+			// prepend bank notes
+			txt = mAdditionalText;
+			txt += '\n';
+			txt += msgstr;
+		}
+
+		mainDisplay->TextOut(txt);
+	}
 }
 
 void
@@ -690,6 +703,21 @@ PatchBank::PatchSwitchReleased(SwitchFunctionAssignment st,
 			curSwitchItem->mPatch->OverridePedals(true); // expression pedals only apply to first patch
 
 		curSwitchItem->mPatch->SwitchReleased(mainDisplay, switchDisplay);
+
+		if (mainDisplay && mAdditionalText.size() > 1 && mEngine->IsBankActive(this))
+		{
+			// retain bank notes, if not already present
+			std::string txt;
+			txt = mAdditionalText;
+			txt += '\n';
+
+			const std::string queuedText(mainDisplay->GetQueuedText());
+			if (0 != queuedText.find(txt))
+			{
+				txt += queuedText;
+				mainDisplay->TextOut(txt);
+			}
+		}
 
 		if (once)
 			once = false;

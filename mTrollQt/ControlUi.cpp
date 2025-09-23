@@ -543,6 +543,7 @@ ControlUi::TextOut(const std::string & txt)
 	if (!mMainDisplay)
 		return;
 
+	mQueuedMainText = txt;
 	QCoreApplication::postEvent(this, 
 		new EditTextOutEvent(this, mMainDisplay, txt.c_str()));
 }
@@ -553,7 +554,8 @@ ControlUi::AppendText(const std::string & text)
 	if (!mMainDisplay)
 		return;
 
-	QCoreApplication::postEvent(this, 
+	mQueuedMainText.clear();
+	QCoreApplication::postEvent(this,
 		new EditAppendEvent(this, mMainDisplay, text.c_str()));
 }
 
@@ -563,6 +565,7 @@ ControlUi::ClearDisplay()
 	if (!mMainDisplay)
 		return;
 
+	mQueuedMainText.clear();
 	// set to " " so that the string check doesn't prevent display update
 	QCoreApplication::postEvent(this, 
 		new EditTextOutEvent(this, mMainDisplay, " "));
@@ -574,13 +577,15 @@ ControlUi::TransientTextOut(const std::string & txt)
 	if (!mMainDisplay)
 		return;
 
-	QCoreApplication::postEvent(this, 
+	mQueuedMainText.clear();
+	QCoreApplication::postEvent(this,
 		new EditTextOutEvent(this, mMainDisplay, txt.c_str(), true));
 }
 
 void
 ControlUi::ClearTransientText()
 {
+	mQueuedMainText.clear();
 	QCoreApplication::postEvent(this, 
 		new RestoreMainTextEvent(this, mMainDisplay));
 }
@@ -589,6 +594,12 @@ std::string
 ControlUi::GetCurrentText()
 {
 	return std::string(mMainText.toUtf8());
+}
+
+std::string
+ControlUi::GetQueuedText()
+{
+	return mQueuedMainText;
 }
 
 // ITraceDisplay

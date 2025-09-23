@@ -112,6 +112,7 @@ public:
 	PatchPtr				GetPatch(int number);
 	int						GetPatchNumber(const std::string & name) const;
 	ISwitchDisplay *		GetSwitchDisplay() const { return mSwitchDisplay; }
+	bool					IsBankActive(PatchBank * bnk) const { return mActiveBank.get() == bnk; }
 
 	void					SwitchPressed(int switchNumber);
 	void					SwitchReleased(int switchNumber);

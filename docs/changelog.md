@@ -1,5 +1,8 @@
 ### mTroll MIDI controller changelog / process milestones
 
+#### 2025.xx.yy
+- Retain display of bank notes when pressing patch switches [#55](../../../issues/55)
+
 #### 2025.05.25
 - Added `AxeFx3ReloadCurrentPreset` patch command to force an Axe-FX III to reload the currently loaded preset number, reverting edits and calling up the default scene [#44](../../../issues/44)
 - Simple program change commands no longer self-filter when patch already active [#43](../../../issues/43)

@@ -114,6 +114,7 @@ public: // IMainDisplay
 	virtual void		ClearTransientText() override;
 	virtual void		TransientTextOut(const std::string & txt) override;
 	virtual std::string GetCurrentText() override;
+	virtual std::string GetQueuedText() override;
 
 public: // ITraceDisplay
 	virtual void		Trace(const std::string & txt) override;
@@ -365,6 +366,7 @@ private:
 	DWORD						mBackgroundColor;
 	DWORD						mFrameHighlightColor;
 	QString						mMainText, mPendingMainText;
+	std::string					mQueuedMainText;
 	bool						mSwitchLedUpdateEnabled;
 	QGridLayout					* mGrid = nullptr;
 	int							mDisplaysGridInfo[6] = { 0 };
