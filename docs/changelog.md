@@ -2,6 +2,7 @@
 
 #### 2025.xx.yy
 - Retain display of bank notes when pressing patch switches [#55](../../../issues/55)
+- Added an up to 4 item MRU to File menu for easier load of recently opened config files [#56](../../../issues/56)
 
 #### 2025.05.25
 - Added `AxeFx3ReloadCurrentPreset` patch command to force an Axe-FX III to reload the currently loaded preset number, reverting edits and calling up the default scene [#44](../../../issues/44)

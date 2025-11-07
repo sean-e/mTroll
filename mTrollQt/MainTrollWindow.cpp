@@ -45,7 +45,7 @@
 #define kOrganizationDomain	QString("creepingfog.com")
 #define kAppKey				QString("mTroll")
 #define kActiveUiFile		QString("UiFile")
-#define kActiveConfigFile	QString("ConfigFile")
+#define kConfigMru			QString("MRUconfig")
 #define kAdcOverride		QString("AdcOverride%1")
 
 
@@ -132,8 +132,57 @@ MainTrollWindow::MainTrollWindow() :
 	fileMenu->addAction(tr("Open &Config..."), this, &MainTrollWindow::OpenDataFile, QKeySequence(tr("Ctrl+O")));
 	fileMenu->addAction(tr("Open &UI..."), this, &MainTrollWindow::OpenUiFile, QKeySequence(tr("Ctrl+U")));
 	fileMenu->addAction(tr("&Open..."), this, &MainTrollWindow::OpenConfigAndUiFiles, QKeySequence(tr("Ctrl+Shift+O")));
+
+	if (!hasTouchInput)
+		fileMenu->addSeparator();
 	fileMenu->addAction(tr("&Refresh"), this, &MainTrollWindow::Refresh, QKeySequence(tr("F5")));
 	fileMenu->addAction(tr("Reconnect to &monome device"), this, &MainTrollWindow::Reconnect, QKeySequence(tr("Ctrl+R")));
+
+	{
+		decltype(&MainTrollWindow::LoadConfigMru1) configMruMembers[kMruCount] =
+		{
+			&MainTrollWindow::LoadConfigMru1,
+			&MainTrollWindow::LoadConfigMru2,
+			&MainTrollWindow::LoadConfigMru3,
+			&MainTrollWindow::LoadConfigMru4
+		};
+
+		for (int idx = 0; idx < kMruCount; ++idx)
+		{
+			mMruActions[idx] = fileMenu->addAction("", this, configMruMembers[idx]);
+			mMruActions[idx]->setEnabled(false);
+			mMruActions[idx]->setVisible(false);
+		}
+	}
+
+	bool addedSep = false;
+	for (int idx = 1; idx <= kMruCount; ++idx)
+	{
+		QString curVal(kConfigMru);
+		curVal.append(QChar(0x30 + idx));
+
+		QString mruItem = settings.value(curVal, "").value<QString>();
+		if (mruItem.isEmpty())
+			break;
+
+		if (!addedSep)
+		{
+			addedSep = true;
+			if (!hasTouchInput)
+				fileMenu->addSeparator();
+		}
+
+		QString actionTxt("&");
+		actionTxt.append(QChar(0x30 + idx));
+		actionTxt.append(" ");
+		{
+			QFileInfo fi(mruItem);
+			actionTxt.append(fi.fileName());
+		}
+		mMruActions[idx - 1]->setText(actionTxt);
+		mMruActions[idx - 1]->setVisible(true);
+		mMruActions[idx - 1]->setEnabled(true);
+	}
 
 	if (!hasTouchInput)
 		fileMenu->addSeparator();
@@ -215,7 +264,7 @@ MainTrollWindow::MainTrollWindow() :
 	helpMenu->addAction(tr("&About mTroll..."), this, &MainTrollWindow::About);
 
 	mUiFilename = settings.value(kActiveUiFile, "config/autoGrid.ui.xml").value<QString>();
-	mConfigFilename = settings.value(kActiveConfigFile, "config/axefx3v2.config.xml").value<QString>();
+	mConfigFilename = settings.value(kConfigMru + QChar('1'), "config/axefx3v2.config.xml").value<QString>();
 
 	Refresh();
 }
@@ -249,37 +298,79 @@ MainTrollWindow::About()
 void
 MainTrollWindow::OpenFile(bool config, bool ui)
 {
+	if (config)
 	{
+		const QString cfgFleSelection = QFileDialog::getOpenFileName(this,
+			tr("Select Config Settings File"),
+			mConfigFilename,
+			tr("Config files (*.config.xml)"));
+		if (cfgFleSelection.isEmpty())
+			return;
+
+		mConfigFilename = cfgFleSelection;
+		UpdateMru();
+	}
+
+	if (ui)
+	{
+		const QString uiFileSelection = QFileDialog::getOpenFileName(this,
+			tr("Select UI Settings File"),
+			mUiFilename,
+			tr("UI files (*.ui.xml)"));
+		if (uiFileSelection.isEmpty())
+			return;
+
+		mUiFilename = uiFileSelection;
 		QSettings settings;
-
-		if (config)
-		{
-			const QString cfgFleSelection = QFileDialog::getOpenFileName(this,
-				tr("Select Config Settings File"),
-				mConfigFilename,
-				tr("Config files (*.config.xml)"));
-			if (cfgFleSelection.isEmpty())
-				return;
-
-			mConfigFilename = cfgFleSelection;
-			settings.setValue(kActiveConfigFile, mConfigFilename);
-		}
-
-		if (ui)
-		{
-			const QString uiFileSelection = QFileDialog::getOpenFileName(this,
-				tr("Select UI Settings File"),
-				mUiFilename,
-				tr("UI files (*.ui.xml)"));
-			if (uiFileSelection.isEmpty())
-				return;
-
-			mUiFilename = uiFileSelection;
-			settings.setValue(kActiveUiFile, mUiFilename);
-		}
+		settings.setValue(kActiveUiFile, mUiFilename);
 	}
 
 	Refresh();
+}
+
+void
+MainTrollWindow::UpdateMru()
+{
+	QSettings settings;
+
+	// build new mru data
+	std::vector<QString> mruFiles;
+	mruFiles.push_back(mConfigFilename);
+	for (int idx = 1; idx <= kMruCount; ++idx)
+	{
+		QString curVal(kConfigMru);
+		curVal.append(QChar(0x30 + idx));
+
+		QString mruItem = settings.value(curVal, "").value<QString>();
+		if (!mruItem.isEmpty() && mruItem != mConfigFilename)
+		{
+			mruFiles.push_back(mruItem);
+			if (mruFiles.size() == kMruCount)
+				break;
+		}
+	}
+
+	// update file menu mru actions
+	int idx = 1;
+	for (const QString curFile : mruFiles)
+	{
+		QString curMruName(kConfigMru);
+		curMruName.append(QChar(0x30 + idx));
+		settings.setValue(curMruName, curFile);
+
+		QString actionTxt("&");
+		actionTxt.append(QChar(0x30 + idx));
+		actionTxt.append(" ");
+		{
+			QFileInfo fi(curFile);
+			actionTxt.append(fi.fileName());
+		}
+		_ASSERTE((idx - 1) < kMruCount);
+		mMruActions[idx - 1]->setText(actionTxt);
+		mMruActions[idx - 1]->setVisible(true);
+		mMruActions[idx - 1]->setEnabled(true);
+		++idx;
+	}
 }
 
 void
@@ -414,6 +505,22 @@ MainTrollWindow::ToggleAdcOverride(int adc,
 	QSettings settings;
 	for (int idx = 0; idx < ExpressionPedals::PedalCount; ++idx)
 		settings.setValue(kAdcOverride.arg(idx), mAdcForceDisable[idx]);
+}
+
+void
+MainTrollWindow::LoadConfigMruItem(int idx)
+{
+	QString curVal(kConfigMru);
+	curVal.append(QChar(0x30 + idx));
+
+	QSettings settings;
+	QString mruItem = settings.value(curVal, "").value<QString>();
+	if (mruItem.isEmpty())
+		return;
+		
+	mConfigFilename = mruItem;
+	UpdateMru();
+	Refresh();
 }
 
 std::string

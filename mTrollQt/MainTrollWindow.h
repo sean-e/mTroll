@@ -53,12 +53,17 @@ private slots:
 	virtual void ToggleTraceWindow() override;
 	virtual std::string ApplicationDirectory() override;
 	void OpenFile(bool config, bool ui);
+
 	void ToggleAdc0Override(bool checked) { ToggleAdcOverride(0, checked); }
 	void ToggleAdc1Override(bool checked) { ToggleAdcOverride(1, checked); }
 	void ToggleAdc2Override(bool checked) { ToggleAdcOverride(2, checked); }
 	void ToggleAdc3Override(bool checked) { ToggleAdcOverride(3, checked); }
 	void IncreaseMainDisplayHeight();
 	void DecreaseMainDisplayHeight();
+	void LoadConfigMru1() { LoadConfigMruItem(1); }
+	void LoadConfigMru2() { LoadConfigMruItem(2); }
+	void LoadConfigMru3() { LoadConfigMruItem(3); }
+	void LoadConfigMru4() { LoadConfigMruItem(4); }
 
 private:
 	virtual bool IsAdcOverridden(int adc) override { if (adc >=0 && adc < 4) return mAdcForceDisable[adc]; return false;}
@@ -70,6 +75,7 @@ private:
 	virtual void Exit(ExitAction action) override;
 
 private:
+	static constexpr int kMruCount = 4;
 	ControlUi	* mUi = nullptr;
 	QString		mConfigFilename;
 	QString		mUiFilename;
@@ -79,12 +85,15 @@ private:
 	QAction		* mToggleExpressionPedalDetailStatus = nullptr;
 	QAction		* mIncreaseMainDisplayHeight = nullptr;
 	QAction		* mDecreaseMainDisplayHeight = nullptr;
+	QAction		* mMruActions[kMruCount] = {};
 	QDateTime	mStartTime;
 	QDateTime	mPauseTime;
 	ExitAction	mShutdownOnExit = soeExit;
 
 private:
 	void ToggleAdcOverride(int adc, bool checked);
+	void LoadConfigMruItem(int idx);
+	void UpdateMru();
 };
 
 #endif // MainTrollWindow_h__
