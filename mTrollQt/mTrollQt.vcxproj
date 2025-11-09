@@ -117,7 +117,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;tmp\moc\debug_shared;.;$(QTDIR)\mkspecs\win32-x86-msvc2019;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_DEBUG;ITEM_COUNTING;_SILENCE_CXX17_STRSTREAM_DEPRECATION_WARNING;_WINDOWS;UNICODE;WIN32;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;STRICT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;ITEM_COUNTING;FTD2XX_STATIC;_SILENCE_CXX17_STRSTREAM_DEPRECATION_WARNING;_WINDOWS;UNICODE;WIN32;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;STRICT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Async</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -138,10 +138,10 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>.\..\Monome40h\FTD2XX.lib;$(QTDIR)\lib\qtmaind.lib;$(QTDIR)\lib\Qt5Guid.lib;$(QTDIR)\lib\Qt5Widgetsd.lib;$(QTDIR)\lib\Qt5Cored.lib;PowrProf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>.\..\Monome40h\FTDI\Static\i386\FTD2XX.lib;$(QTDIR)\lib\qtmaind.lib;$(QTDIR)\lib\Qt5Guid.lib;$(QTDIR)\lib\Qt5Widgetsd.lib;$(QTDIR)\lib\Qt5Cored.lib;PowrProf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <DelayLoadDLLs>FTD2XX.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -165,7 +165,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;tmp\moc\debug_shared;.;$(QTDIR)\mkspecs\win32-x86-msvc2019;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_DEBUG;ITEM_COUNTING;_SILENCE_CXX17_STRSTREAM_DEPRECATION_WARNING;_WINDOWS;UNICODE;WIN32;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;STRICT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;ITEM_COUNTING;FTD2XX_STATIC;_SILENCE_CXX17_STRSTREAM_DEPRECATION_WARNING;_WINDOWS;UNICODE;WIN32;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;STRICT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Async</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -186,10 +186,10 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>.\..\Monome40h\FTD2XX.lib;$(QTDIR)\lib\qtmaind.lib;$(QTDIR)\lib\Qt5Guid.lib;$(QTDIR)\lib\Qt5Widgetsd.lib;$(QTDIR)\lib\Qt5Cored.lib;PowrProf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>.\..\Monome40h\FTDI\Static\amd64\FTD2XX.lib;$(QTDIR)\lib\qtmaind.lib;$(QTDIR)\lib\Qt5Guid.lib;$(QTDIR)\lib\Qt5Widgetsd.lib;$(QTDIR)\lib\Qt5Cored.lib;PowrProf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <DelayLoadDLLs>FTD2XX.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -216,7 +216,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;tmp\moc\release_shared;.;$(QTDIR)\mkspecs\win32-x86-msvc2019;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>QT_NO_DEBUG;NDEBUG;_SILENCE_CXX17_STRSTREAM_DEPRECATION_WARNING;_WINDOWS;UNICODE;WIN32;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;STRICT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>FTD2XX_STATIC;QT_NO_DEBUG;NDEBUG;_SILENCE_CXX17_STRSTREAM_DEPRECATION_WARNING;_WINDOWS;UNICODE;WIN32;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;STRICT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Async</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -236,10 +236,10 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>.\..\Monome40h\FTD2XX.lib;$(QTDIR)\lib\qtmain.lib;$(QTDIR)\lib\Qt5Gui.lib;$(QTDIR)\lib\Qt5Widgets.lib;$(QTDIR)\lib\Qt5Core.lib;PowrProf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>.\..\Monome40h\FTDI\Static\i386\FTD2XX.lib;$(QTDIR)\lib\qtmain.lib;$(QTDIR)\lib\Qt5Gui.lib;$(QTDIR)\lib\Qt5Widgets.lib;$(QTDIR)\lib\Qt5Core.lib;PowrProf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <DelayLoadDLLs>FTD2XX.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -270,7 +270,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;tmp\moc\release_shared;.;$(QTDIR)\mkspecs\win32-x86-msvc2019;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>QT_NO_DEBUG;NDEBUG;_SILENCE_CXX17_STRSTREAM_DEPRECATION_WARNING;_WINDOWS;UNICODE;WIN32;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;STRICT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>FTD2XX_STATIC;QT_NO_DEBUG;NDEBUG;_SILENCE_CXX17_STRSTREAM_DEPRECATION_WARNING;_WINDOWS;UNICODE;WIN32;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;STRICT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Async</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -290,10 +290,10 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>.\..\Monome40h\FTD2XX.lib;$(QTDIR)\lib\qtmain.lib;$(QTDIR)\lib\Qt5Gui.lib;$(QTDIR)\lib\Qt5Widgets.lib;$(QTDIR)\lib\Qt5Core.lib;PowrProf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>.\..\Monome40h\FTDI\Static\amd64\FTD2XX.lib;$(QTDIR)\lib\qtmain.lib;$(QTDIR)\lib\Qt5Gui.lib;$(QTDIR)\lib\Qt5Widgets.lib;$(QTDIR)\lib\Qt5Core.lib;PowrProf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <DelayLoadDLLs>FTD2XX.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>

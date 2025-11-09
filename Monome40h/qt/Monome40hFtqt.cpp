@@ -64,13 +64,6 @@ Monome40hFtqt::Monome40hFtqt(ITraceDisplay * trace) :
 	mAdcInputSubscriber(nullptr),
 	mLedBrightness(10)
 {
-#ifdef _WINDOWS
-	// using Win32 delay loading - see if it is found
-	HMODULE hMod = ::LoadLibraryW(L"FTD2XX.dll");
-	if (!hMod)
-		throw std::string("ERROR: Failed to load FTDI library\n");
-#endif // _WINDOWS
-
 	for (int portIdx = 0; portIdx < kAdcPortCount; ++portIdx)
 	{
 		mAdcEnable[portIdx] = false;
@@ -129,6 +122,13 @@ Monome40hFtqt::GetDeviceSerialNumber(int devIndex)
 		return "";
 	}
 
+	if (devIndex < 0)
+	{
+		if (mTrace)
+			mTrace->Trace(std::format("ERROR: Requested FTDI device idx is negative\n"));
+		return "";
+	}
+
 	if (devIndex >= numDevs)
 	{
 		if (mTrace)
@@ -137,7 +137,13 @@ Monome40hFtqt::GetDeviceSerialNumber(int devIndex)
 	}
 
 	char serialNo[64];
-	ftStatus = ::FT_ListDevices((PVOID)devIndex, serialNo, FT_LIST_BY_INDEX|FT_OPEN_BY_SERIAL_NUMBER);
+	ftStatus = ::FT_ListDevices(
+#ifdef _M_X64
+		(PVOID)(UINT64)devIndex,
+#else
+		(PVOID)devIndex,
+#endif
+		serialNo, FT_LIST_BY_INDEX|FT_OPEN_BY_SERIAL_NUMBER);
 	if (FT_OK != ftStatus)
 	{
 		mTrace->Trace(std::format("ERROR: Failed to get FTDI device {} serial, status: {}\n", devIndex, ftStatus));
@@ -172,7 +178,7 @@ Monome40hFtqt::AcquireDevice()
 		::FT_W32_CloseHandle(prevDev);
 	}
 
-	mFtDevice = ::FT_W32_CreateFile((LPCSTR)mDevSerialNumber.c_str(), 
+	mFtDevice = ::FT_W32_CreateFile((LPCTSTR)mDevSerialNumber.c_str(), 
 		GENERIC_READ|GENERIC_WRITE, 0, nullptr, OPEN_EXISTING,
 		FILE_ATTRIBUTE_NORMAL|FT_OPEN_BY_SERIAL_NUMBER, nullptr);
 	if (INVALID_HANDLE_VALUE == mFtDevice)
