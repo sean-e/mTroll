@@ -74,7 +74,7 @@ private:
 	void TurnOffIndicator();
 	void ReleaseMidiOut();
 	static void CALLBACK TimerProc(HWND, UINT, UINT_PTR id, DWORD);
-	static void CALLBACK MidiOutCallbackProc(HMIDIOUT hmo, UINT wMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2);
+	static void CALLBACK MidiOutCallbackProc(HMIDIOUT hmo, UINT wMsg, DWORD_PTR dwInstance, DWORD_PTR dwParam1, DWORD_PTR dwParam2);
 
 	static unsigned int __stdcall ClockThread(void* _this);
 	void ClockThread();

@@ -60,7 +60,7 @@ private:
 	void ReportError(LPCTSTR msg, int param1);
 	void ReportError(LPCTSTR msg, int param1, int param2);
 
-	static void CALLBACK MidiInCallbackProc(HMIDIIN hmi, UINT wMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2);
+	static void CALLBACK MidiInCallbackProc(HMIDIIN hmi, UINT wMsg, DWORD_PTR dwInstance, DWORD_PTR dwParam1, DWORD_PTR dwParam2);
 
 	enum ThreadState { tsNotStarted, tsStarting, tsRunning, tsEnding };
 

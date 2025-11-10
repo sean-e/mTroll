@@ -227,9 +227,9 @@ WinMidiIn::ServiceThread(void * _thisParam)
 void CALLBACK 
 WinMidiIn::MidiInCallbackProc(HMIDIIN hmi, 
 							  UINT wMsg, 
-							  DWORD dwInstance, 
-							  DWORD dwParam1, 
-							  DWORD dwParam2)
+							  DWORD_PTR dwInstance, 
+							  DWORD_PTR dwParam1, 
+							  DWORD_PTR dwParam2)
 {
 	MMRESULT res;
 	LPMIDIHDR hdr;

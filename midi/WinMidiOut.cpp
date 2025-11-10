@@ -250,14 +250,14 @@ WinMidiOut::MidiOut(const Bytes & bytes, bool useIndicator /*= true*/)
 
 			if (statusByteIdx < 0)
 			{
-				ReportError(_T("Status byte handling error at byte %d (%x).\n"), idx+1, dataPtr[idx]);
+				ReportError(_T("Status byte handling error at byte %d (%x).\n"), (int)idx+1, dataPtr[idx]);
 				break;
 			}
 
 			curMsgLen = statusByteIdx >= kMsgDataBytesLen ? 1 : kMsgDataBytes[statusByteIdx] + 1;
 			if ((idx + curMsgLen) > kDataSize)
 			{
-				ReportError(_T("Data string consistency error at byte %d.  Missing data byte.\n"), idx+1);
+				ReportError(_T("Data string consistency error at byte %d.  Missing data byte.\n"), (int)idx+1);
 				break;
 			}
 
@@ -528,9 +528,9 @@ WinMidiOut::GetTempo() const
 void CALLBACK 
 WinMidiOut::MidiOutCallbackProc(HMIDIOUT hmo, 
 								UINT wMsg, 
-								DWORD dwInstance, 
-								DWORD dwParam1, 
-								DWORD dwParam2)
+								DWORD_PTR dwInstance, 
+								DWORD_PTR dwParam1, 
+								DWORD_PTR dwParam2)
 {
 	if (MOM_DONE == wMsg)
 	{
