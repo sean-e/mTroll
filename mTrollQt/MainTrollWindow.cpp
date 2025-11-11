@@ -129,14 +129,34 @@ MainTrollWindow::MainTrollWindow() :
 #endif
 	if (hasTouchInput)
 		fileMenu->setStyleSheet(touchMenuStyle);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	fileMenu->addAction(tr("Open &Config..."), this, &MainTrollWindow::OpenDataFile, QKeySequence(tr("Ctrl+O")));
+#else
+	fileMenu->addAction(tr("Open &Config..."), QKeySequence(tr("Ctrl+O")), this, &MainTrollWindow::OpenDataFile);
+#endif
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	fileMenu->addAction(tr("Open &UI..."), this, &MainTrollWindow::OpenUiFile, QKeySequence(tr("Ctrl+U")));
+#else
+	fileMenu->addAction(tr("Open &UI..."), QKeySequence(tr("Ctrl+U")), this, &MainTrollWindow::OpenUiFile);
+#endif
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	fileMenu->addAction(tr("&Open..."), this, &MainTrollWindow::OpenConfigAndUiFiles, QKeySequence(tr("Ctrl+Shift+O")));
+#else
+	fileMenu->addAction(tr("&Open..."), QKeySequence(tr("Ctrl+Shift+O")), this, &MainTrollWindow::OpenConfigAndUiFiles);
+#endif
 
 	if (!hasTouchInput)
 		fileMenu->addSeparator();
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	fileMenu->addAction(tr("&Refresh"), this, &MainTrollWindow::Refresh, QKeySequence(tr("F5")));
+#else
+	fileMenu->addAction(tr("&Refresh"), QKeySequence(tr("F5")), this, &MainTrollWindow::Refresh);
+#endif
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	fileMenu->addAction(tr("Reconnect to &monome device"), this, &MainTrollWindow::Reconnect, QKeySequence(tr("Ctrl+R")));
+#else
+	fileMenu->addAction(tr("Reconnect to &monome device"), QKeySequence(tr("Ctrl+R")), this, &MainTrollWindow::Reconnect);
+#endif
 
 	{
 		decltype(&MainTrollWindow::LoadConfigMru1) configMruMembers[kMruCount] =
@@ -195,7 +215,11 @@ MainTrollWindow::MainTrollWindow() :
 #endif
 	if (hasTouchInput)
 		viewMenu->setStyleSheet(touchMenuStyle);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	viewMenu->addAction(tr("&Toggle trace window visibility"), this, &MainTrollWindow::ToggleTraceWindow, QKeySequence(tr("Ctrl+T")));
+#else
+	viewMenu->addAction(tr("&Toggle trace window visibility"), QKeySequence(tr("Ctrl+T")), this, &MainTrollWindow::ToggleTraceWindow);
+#endif
 	if (!hasTouchInput)
 		fileMenu->addSeparator();
 

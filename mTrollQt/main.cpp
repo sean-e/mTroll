@@ -42,11 +42,13 @@ int main(int argc, char **argv)
 	::_set_se_translator(::trans_func);
 #endif // _WINDOWS
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	// High DPI support
 	//   http://blog.qt.io/blog/2016/01/26/high-dpi-support-in-qt-5-6/
 	//   http://doc.qt.io/qt-5/highdpi.html
 	//   https://stackoverflow.com/questions/32313658/qt-high-dpi-support-on-windows
 	QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#endif
 
 	QApplication app(argc, argv);
 	MainTrollWindow mainWin;

@@ -116,8 +116,8 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;tmp\moc\debug_shared;.;$(QTDIR)\mkspecs\win32-x86-msvc2019;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_DEBUG;ITEM_COUNTING;FTD2XX_STATIC;_SILENCE_CXX17_STRSTREAM_DEPRECATION_WARNING;_WINDOWS;UNICODE;WIN32;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;STRICT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(QT5DIR)\include;$(QT5DIR)\include\QtCore;$(QT5DIR)\include\QtWidgets;$(QT5DIR)\include\QtGui;tmp\moc\debug_shared;.;$(QT5DIR)\mkspecs\win32-x86-msvc2019;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;ITEM_COUNTING;FTD2XX_STATIC;_WINDOWS;UNICODE;WIN32;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;STRICT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Async</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -138,7 +138,7 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>.\..\Monome40h\FTDI\Static\i386\FTD2XX.lib;$(QTDIR)\lib\qtmaind.lib;$(QTDIR)\lib\Qt5Guid.lib;$(QTDIR)\lib\Qt5Widgetsd.lib;$(QTDIR)\lib\Qt5Cored.lib;PowrProf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>.\..\Monome40h\FTDI\Static\i386\FTD2XX.lib;$(QT5DIR)\lib\qtmaind.lib;$(QT5DIR)\lib\Qt5Guid.lib;$(QT5DIR)\lib\Qt5Widgetsd.lib;$(QT5DIR)\lib\Qt5Cored.lib;PowrProf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
@@ -164,8 +164,8 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;tmp\moc\debug_shared;.;$(QTDIR)\mkspecs\win32-x86-msvc2019;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_DEBUG;ITEM_COUNTING;FTD2XX_STATIC;_SILENCE_CXX17_STRSTREAM_DEPRECATION_WARNING;_WINDOWS;UNICODE;WIN32;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;STRICT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;tmp\moc\debug_shared;.;$(QTDIR)\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;ITEM_COUNTING;FTD2XX_STATIC;_WINDOWS;UNICODE;WIN32;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;STRICT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Async</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -178,7 +178,8 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
-      <DisableSpecificWarnings>4100;5054</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4100</DisableSpecificWarnings>
+      <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -186,9 +187,9 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>.\..\Monome40h\FTDI\Static\amd64\FTD2XX.lib;$(QTDIR)\lib\qtmaind.lib;$(QTDIR)\lib\Qt5Guid.lib;$(QTDIR)\lib\Qt5Widgetsd.lib;$(QTDIR)\lib\Qt5Cored.lib;PowrProf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>.\..\Monome40h\FTDI\Static\amd64\FTD2XX.lib;$(QTDIR)\lib\Qt6EntryPointd.lib;$(QTDIR)\lib\Qt6Guid.lib;$(QTDIR)\lib\Qt6Widgetsd.lib;$(QTDIR)\lib\Qt6Cored.lib;PowrProf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -215,8 +216,8 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;tmp\moc\release_shared;.;$(QTDIR)\mkspecs\win32-x86-msvc2019;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>FTD2XX_STATIC;QT_NO_DEBUG;NDEBUG;_SILENCE_CXX17_STRSTREAM_DEPRECATION_WARNING;_WINDOWS;UNICODE;WIN32;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;STRICT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(QT5DIR)\include;$(QT5DIR)\include\QtCore;$(QT5DIR)\include\QtWidgets;$(QT5DIR)\include\QtGui;tmp\moc\release_shared;.;$(QT5DIR)\mkspecs\win32-x86-msvc2019;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>FTD2XX_STATIC;QT_NO_DEBUG;NDEBUG;_WINDOWS;UNICODE;WIN32;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;STRICT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Async</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -236,7 +237,7 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>.\..\Monome40h\FTDI\Static\i386\FTD2XX.lib;$(QTDIR)\lib\qtmain.lib;$(QTDIR)\lib\Qt5Gui.lib;$(QTDIR)\lib\Qt5Widgets.lib;$(QTDIR)\lib\Qt5Core.lib;PowrProf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>.\..\Monome40h\FTDI\Static\i386\FTD2XX.lib;$(QT5DIR)\lib\qtmain.lib;$(QT5DIR)\lib\Qt5Gui.lib;$(QT5DIR)\lib\Qt5Widgets.lib;$(QT5DIR)\lib\Qt5Core.lib;PowrProf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
@@ -269,8 +270,8 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;tmp\moc\release_shared;.;$(QTDIR)\mkspecs\win32-x86-msvc2019;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>FTD2XX_STATIC;QT_NO_DEBUG;NDEBUG;_SILENCE_CXX17_STRSTREAM_DEPRECATION_WARNING;_WINDOWS;UNICODE;WIN32;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;STRICT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;tmp\moc\release_shared;.;$(QTDIR)\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>FTD2XX_STATIC;QT_NO_DEBUG;NDEBUG;_WINDOWS;UNICODE;WIN32;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;STRICT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Async</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -282,7 +283,8 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
-      <DisableSpecificWarnings>4100;5054</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4100</DisableSpecificWarnings>
+      <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -290,9 +292,9 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>.\..\Monome40h\FTDI\Static\amd64\FTD2XX.lib;$(QTDIR)\lib\qtmain.lib;$(QTDIR)\lib\Qt5Gui.lib;$(QTDIR)\lib\Qt5Widgets.lib;$(QTDIR)\lib\Qt5Core.lib;PowrProf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>.\..\Monome40h\FTDI\Static\amd64\FTD2XX.lib;$(QTDIR)\lib\Qt6EntryPoint.lib;$(QTDIR)\lib\Qt6Gui.lib;$(QTDIR)\lib\Qt6Widgets.lib;$(QTDIR)\lib\Qt6Core.lib;PowrProf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -444,21 +446,21 @@
     <CustomBuild Include="ControlUi.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MOC ControlUi.h</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">MOC ControlUi.h</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 ControlUi.h -o ..\build\Win32\debug\moc_ControlUi.cpp
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QT5DIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 ControlUi.h -o ..\build\Win32\debug\moc_ControlUi.cpp
 </Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 ControlUi.h -o ..\build\Win64\debug\moc_ControlUi.cpp
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc -D_MSC_VER=1600 -DWIN32 ControlUi.h -o ..\build\Win64\debug\moc_ControlUi.cpp
 </Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;ControlUi.h;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QT5DIR)\bin\moc.exe;ControlUi.h;%(AdditionalInputs)</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;ControlUi.h;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\build\Win32\debug\moc_ControlUi.cpp;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\build\Win64\debug\moc_ControlUi.cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MOC ControlUi.h</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MOC ControlUi.h</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 ControlUi.h -o ..\build\Win32\release\moc_ControlUi.cpp
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QT5DIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 ControlUi.h -o ..\build\Win32\release\moc_ControlUi.cpp
 </Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 ControlUi.h -o ..\build\Win64\release\moc_ControlUi.cpp
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc -D_MSC_VER=1600 -DWIN32 ControlUi.h -o ..\build\Win64\release\moc_ControlUi.cpp
 </Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;ControlUi.h;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QT5DIR)\bin\moc.exe;ControlUi.h;%(AdditionalInputs)</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;ControlUi.h;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\build\Win32\release\moc_ControlUi.cpp;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\build\Win64\release\moc_ControlUi.cpp;%(Outputs)</Outputs>
@@ -466,21 +468,21 @@
     <CustomBuild Include="MainTrollWindow.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MOC MainTrollWindow.h</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">MOC MainTrollWindow.h</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 MainTrollWindow.h -o ..\build\Win32\debug\moc_MainTrollWindow.cpp
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QT5DIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 MainTrollWindow.h -o ..\build\Win32\debug\moc_MainTrollWindow.cpp
 </Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 MainTrollWindow.h -o ..\build\Win64\debug\moc_MainTrollWindow.cpp
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc -D_MSC_VER=1600 -DWIN32 MainTrollWindow.h -o ..\build\Win64\debug\moc_MainTrollWindow.cpp
 </Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;MainTrollWindow.h;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QT5DIR)\bin\moc.exe;MainTrollWindow.h;%(AdditionalInputs)</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;MainTrollWindow.h;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\build\Win32\debug\moc_MainTrollWindow.cpp;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\build\Win64\debug\moc_MainTrollWindow.cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MOC MainTrollWindow.h</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MOC MainTrollWindow.h</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 MainTrollWindow.h -o ..\build\Win32\release\moc_MainTrollWindow.cpp
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QT5DIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 MainTrollWindow.h -o ..\build\Win32\release\moc_MainTrollWindow.cpp
 </Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 MainTrollWindow.h -o ..\build\Win64\release\moc_MainTrollWindow.cpp
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc -D_MSC_VER=1600 -DWIN32 MainTrollWindow.h -o ..\build\Win64\release\moc_MainTrollWindow.cpp
 </Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;MainTrollWindow.h;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QT5DIR)\bin\moc.exe;MainTrollWindow.h;%(AdditionalInputs)</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;MainTrollWindow.h;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\build\Win32\release\moc_MainTrollWindow.cpp;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\build\Win64\release\moc_MainTrollWindow.cpp;%(Outputs)</Outputs>
@@ -489,21 +491,21 @@
     <CustomBuild Include="..\Engine\AxeFx3Manager.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MOC AxeFx3Manager.h</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">MOC AxeFx3Manager.h</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 ..\Engine\AxeFx3Manager.h -o ..\build\Win32\debug\moc_AxeFx3Manager.cpp
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QT5DIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 ..\Engine\AxeFx3Manager.h -o ..\build\Win32\debug\moc_AxeFx3Manager.cpp
 </Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 ..\Engine\AxeFx3Manager.h -o ..\build\Win64\debug\moc_AxeFx3Manager.cpp
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc -D_MSC_VER=1600 -DWIN32 ..\Engine\AxeFx3Manager.h -o ..\build\Win64\debug\moc_AxeFx3Manager.cpp
 </Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;..\Engine\AxeFx3Manager.h;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QT5DIR)\bin\moc.exe;..\Engine\AxeFx3Manager.h;%(AdditionalInputs)</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;..\Engine\AxeFx3Manager.h;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\build\Win32\debug\moc_AxeFx3Manager.cpp;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\build\Win64\debug\moc_AxeFx3Manager.cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MOC AxeFx3Manager.h</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MOC AxeFx3Manager.h</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 ..\Engine\AxeFx3Manager.h -o ..\build\Win32\release\moc_AxeFx3Manager.cpp
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QT5DIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 ..\Engine\AxeFx3Manager.h -o ..\build\Win32\release\moc_AxeFx3Manager.cpp
 </Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 ..\Engine\AxeFx3Manager.h -o ..\build\Win64\release\moc_AxeFx3Manager.cpp
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc -D_MSC_VER=1600 -DWIN32 ..\Engine\AxeFx3Manager.h -o ..\build\Win64\release\moc_AxeFx3Manager.cpp
 </Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;..\Engine\AxeFx3Manager.h;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QT5DIR)\bin\moc.exe;..\Engine\AxeFx3Manager.h;%(AdditionalInputs)</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;..\Engine\AxeFx3Manager.h;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\build\Win32\release\moc_AxeFx3Manager.cpp;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\build\Win64\release\moc_AxeFx3Manager.cpp;%(Outputs)</Outputs>
@@ -511,21 +513,21 @@
     <CustomBuild Include="..\Engine\AxeFxManager.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MOC AxeFxManager.h</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">MOC AxeFxManager.h</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 ..\Engine\AxeFxManager.h -o ..\build\Win32\debug\moc_AxeFxManager.cpp
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QT5DIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 ..\Engine\AxeFxManager.h -o ..\build\Win32\debug\moc_AxeFxManager.cpp
 </Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 ..\Engine\AxeFxManager.h -o ..\build\Win64\debug\moc_AxeFxManager.cpp
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc -D_MSC_VER=1600 -DWIN32 ..\Engine\AxeFxManager.h -o ..\build\Win64\debug\moc_AxeFxManager.cpp
 </Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;..\Engine\AxeFxManager.h;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QT5DIR)\bin\moc.exe;..\Engine\AxeFxManager.h;%(AdditionalInputs)</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;..\Engine\AxeFxManager.h;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\build\Win32\debug\moc_AxeFxManager.cpp;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\build\Win64\debug\moc_AxeFxManager.cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MOC AxeFxManager.h</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MOC AxeFxManager.h</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 ..\Engine\AxeFxManager.h -o ..\build\Win32\release\moc_AxeFxManager.cpp
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QT5DIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 ..\Engine\AxeFxManager.h -o ..\build\Win32\release\moc_AxeFxManager.cpp
 </Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc2012 -D_MSC_VER=1600 -DWIN32 ..\Engine\AxeFxManager.h -o ..\build\Win64\release\moc_AxeFxManager.cpp
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\..\include\QtCore" -I"..\..\..\include\QtGui" -I"..\..\..\include" -I"tmp\moc\debug_shared" -I"." -I..\..\..\mkspecs\win32-msvc -D_MSC_VER=1600 -DWIN32 ..\Engine\AxeFxManager.h -o ..\build\Win64\release\moc_AxeFxManager.cpp
 </Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;..\Engine\AxeFxManager.h;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QT5DIR)\bin\moc.exe;..\Engine\AxeFxManager.h;%(AdditionalInputs)</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;..\Engine\AxeFxManager.h;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\build\Win32\release\moc_AxeFxManager.cpp;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\build\Win64\release\moc_AxeFxManager.cpp;%(Outputs)</Outputs>
