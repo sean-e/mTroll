@@ -1,5 +1,5 @@
 /*
-Original code copyright (c) 2007-2008,2018,2020 Sean Echevarria ( http://www.creepingfog.com/sean/ )
+Original code copyright (c) 2007-2008,2018,2020,2025 Sean Echevarria ( http://www.creepingfog.com/sean/ )
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any
@@ -55,11 +55,7 @@ MonthNumber(const QString & name)
 		if (name == month.mAbbr)
 			return month.mNumber;
 
-#if defined(Q_OS_WIN)
 	_ASSERTE(!"no month name match");
-#else
-	Q_ASSERT_X(0, "MonthNumber", "no month name match");
-#endif
 	return 0;
 }
 
