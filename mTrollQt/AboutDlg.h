@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008 Sean Echevarria
+ * Copyright (C) 2007-2008,2025 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -36,7 +36,7 @@ class QGroupBox;
 class AboutDlg : public QDialog
 {
 public:
-	AboutDlg();
+	AboutDlg(QWidget * parent);
 	~AboutDlg();
 
 private:

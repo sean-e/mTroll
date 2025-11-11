@@ -315,7 +315,7 @@ MainTrollWindow::~MainTrollWindow()
 void
 MainTrollWindow::About()
 {
-	AboutDlg dlg;
+	AboutDlg dlg(this);
 	dlg.exec();
 }
 

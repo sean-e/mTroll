@@ -33,7 +33,7 @@
 extern QString GetBuildDate();
 
 
-AboutDlg::AboutDlg()
+AboutDlg::AboutDlg(QWidget * parent) : QDialog(parent)
 {
 	setWindowTitle(tr("About mTroll"));
 	QString labelTxt =
