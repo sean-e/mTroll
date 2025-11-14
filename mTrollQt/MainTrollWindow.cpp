@@ -47,6 +47,7 @@
 #define kActiveUiFile		QString("UiFile")
 #define kConfigMru			QString("MRUconfig")
 #define kAdcOverride		QString("AdcOverride%1")
+#define kMainWindowGeom		QString("MainWindowGeometry")
 
 
 MainTrollWindow::MainTrollWindow() : 
@@ -290,6 +291,8 @@ MainTrollWindow::MainTrollWindow() :
 	mUiFilename = settings.value(kActiveUiFile, "config/autoGrid.ui.xml").value<QString>();
 	mConfigFilename = settings.value(kConfigMru + QChar('1'), "config/axefx3v2.config.xml").value<QString>();
 
+	restoreGeometry(settings.value(kMainWindowGeom).toByteArray());
+
 	Refresh();
 }
 
@@ -441,32 +444,8 @@ MainTrollWindow::Refresh()
 
 	int width, height;
 	mUi->GetPreferredSize(width, height);
-	if (width && height)
-	{
-#ifdef _WINDOWS
-		// don't resize if maximized, but do change the size that
-		// will be used when it becomes unmaximized.
-		// Is there a way to do this with Qt?
-		WINDOWPLACEMENT wp;
-		::ZeroMemory(&wp, sizeof(WINDOWPLACEMENT));
-		::GetWindowPlacement((HWND)winId(), &wp);
-		if (SW_MAXIMIZE == wp.showCmd)
-		{
-			NONCLIENTMETRICS ncm;
-			::ZeroMemory(&ncm, sizeof(NONCLIENTMETRICS));
-			ncm.cbSize = sizeof(NONCLIENTMETRICS);
-			::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &ncm, 0);
-			wp.rcNormalPosition.right = wp.rcNormalPosition.left + width + (ncm.iBorderWidth * 2);
-			wp.rcNormalPosition.bottom = wp.rcNormalPosition.top + height + ncm.iCaptionHeight + (ncm.iBorderWidth * 2);
-			::SetWindowPlacement((HWND)winId(), &wp);
-		}
-		else
-			resize(width, height);
-#else
-		if (!isMaximized())
-			resize(width, height);
-#endif
-	}
+	if (width && height && !isMaximized())
+		resize(width, height);
 
 	QApplication::restoreOverrideCursor();
 }
@@ -691,4 +670,12 @@ MainTrollWindow::ToggleExpressionPedalDetails(bool checked)
 {
 	extern bool gEnableStatusDetails;
 	gEnableStatusDetails = checked;
+}
+
+void
+MainTrollWindow::closeEvent(QCloseEvent *event)
+{
+	QSettings settings;
+	settings.setValue(kMainWindowGeom, saveGeometry());
+	QMainWindow::closeEvent(event);
 }

@@ -65,6 +65,9 @@ private slots:
 	void LoadConfigMru3() { LoadConfigMruItem(3); }
 	void LoadConfigMru4() { LoadConfigMruItem(4); }
 
+protected:
+	virtual void closeEvent(QCloseEvent *event) override;
+
 private:
 	virtual bool IsAdcOverridden(int adc) override { if (adc >=0 && adc < 4) return mAdcForceDisable[adc]; return false;}
 	virtual void ToggleAdcOverride(int adc) override { if (adc >=0 && adc < 4) ToggleAdcOverride(adc, !mAdcForceDisable[adc]); }
