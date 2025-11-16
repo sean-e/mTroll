@@ -168,6 +168,9 @@ MainTrollWindow::MainTrollWindow() :
 			&MainTrollWindow::LoadConfigMru4
 		};
 
+		if (!hasTouchInput)
+			fileMenu->addSeparator();
+
 		for (int idx = 0; idx < kMruCount; ++idx)
 		{
 			mMruActions[idx] = fileMenu->addAction("", this, configMruMembers[idx]);
@@ -176,7 +179,7 @@ MainTrollWindow::MainTrollWindow() :
 		}
 	}
 
-	bool addedSep = false;
+	bool addedMruAction = false;
 	for (int idx = 1; idx <= kMruCount; ++idx)
 	{
 		QString curVal(kConfigMru);
@@ -185,13 +188,6 @@ MainTrollWindow::MainTrollWindow() :
 		QString mruItem = settings.value(curVal, "").value<QString>();
 		if (mruItem.isEmpty())
 			break;
-
-		if (!addedSep)
-		{
-			addedSep = true;
-			if (!hasTouchInput)
-				fileMenu->addSeparator();
-		}
 
 		QString actionTxt("&");
 		actionTxt.append(QChar(0x30 + idx));
@@ -203,9 +199,10 @@ MainTrollWindow::MainTrollWindow() :
 		mMruActions[idx - 1]->setText(actionTxt);
 		mMruActions[idx - 1]->setVisible(true);
 		mMruActions[idx - 1]->setEnabled(true);
+		addedMruAction = true;
 	}
 
-	if (!hasTouchInput)
+	if (addedMruAction && !hasTouchInput)
 		fileMenu->addSeparator();
 	fileMenu->addAction(tr("E&xit"), this, &MainTrollWindow::close);
 	// http://doc.qt.nokia.com/4.4/stylesheet-examples.html#customizing-qmenu
