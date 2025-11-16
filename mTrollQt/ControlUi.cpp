@@ -1320,6 +1320,7 @@ ControlUi::CreateMainDisplay(const std::string &fontName,
 	pal.setColor(QPalette::Dark, mFrameHighlightColor);
 	mMainDisplay->setPalette(pal);
 
+	mMainDisplay->setAutoFillBackground(true);
 	mMainDisplay->horizontalScrollBar()->setStyleSheet(sHorizontalScrollStyle);
 	mMainDisplay->verticalScrollBar()->setStyleSheet(sVerticalScrollStyle);
 }
