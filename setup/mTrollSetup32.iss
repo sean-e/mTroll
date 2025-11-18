@@ -23,7 +23,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={pf32}\{#MyAppName}
+DefaultDirName={commonpf32}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 OutputDir=.\
@@ -31,6 +31,7 @@ OutputBaseFilename=mTrollSetup32.{#mTrollAppVersion}
 Compression=lzma
 SolidCompression=yes
 DisableWelcomePage=yes
+WizardStyle=modern dynamic
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
