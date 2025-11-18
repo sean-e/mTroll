@@ -42,7 +42,20 @@ AboutDlg::AboutDlg(QWidget * parent) : QDialog(parent)
 		"<a href=\"https://github.com/sean-e/mtroll/\">https://github.com/sean-e/mtroll/</a><br><br>"
 		"&copy; copyright 2007-2025 Sean Echevarria<br><br>"
 		"MIDI beat clock thread &copy; copyright 2016 Pete Brown<br><br>";
-	labelTxt += "Built " + ::GetBuildDate() + "<br><br>";
+	labelTxt += "Built " + ::GetBuildDate() + 
+#ifdef _M_X64
+		" (x86-64)"
+#else
+	#ifdef _M_IX86
+			" (x86-32)"
+	#else
+		#ifdef _M_ARM64
+				" (ARM64)"
+		#else
+		#endif
+	#endif
+#endif
+		"<br><br>";
 	labelTxt += "Uses the open source <a href=\"https://www.qt.io/download-open-source\">Qt</a> framework licensed under GPL v3";
 	labelTxt += "</body></html>";
 
