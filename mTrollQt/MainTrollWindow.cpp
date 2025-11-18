@@ -47,7 +47,11 @@
 #define kActiveUiFile		QString("UiFile")
 #define kConfigMru			QString("MRUconfig")
 #define kAdcOverride		QString("AdcOverride%1")
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#define kMainWindowGeom		QString("MainWindowGeometry5")
+#else
 #define kMainWindowGeom		QString("MainWindowGeometry")
+#endif
 
 
 MainTrollWindow::MainTrollWindow() : 
