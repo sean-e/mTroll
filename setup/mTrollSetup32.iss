@@ -31,7 +31,7 @@ OutputBaseFilename=mTrollSetup32.{#mTrollAppVersion}
 Compression=lzma
 SolidCompression=yes
 DisableWelcomePage=yes
-WizardStyle=modern dynamic
+WizardStyle=modern dark
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
