@@ -1,8 +1,12 @@
 ### mTroll MIDI controller changelog / process milestones
 
-#### 2025.xx.yy
+#### 2025.11.20
 - Retain display of bank notes when pressing patch switches [#55](../../../issues/55)
 - Added an up to 4 item MRU to File menu for easier load of recently opened config files [#56](../../../issues/56)
+- Updated FTDI library to static link eliminating need for driver install [#57](../../../issues/57)
+- Restore window position and maximized window state at startup [#58](../../../issues/58)
+- Add 64-bit build option [#53](../../../issues/53)
+- Updated to Qt6 in 64-bit build (32-bit build uses Qt5 since Qt6 doesn't support 32 bits) [#51](../../../issues/51)
 
 #### 2025.05.25
 - Added `AxeFx3ReloadCurrentPreset` patch command to force an Axe-FX III to reload the currently loaded preset number, reverting edits and calling up the default scene [#44](../../../issues/44)
