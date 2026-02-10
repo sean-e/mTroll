@@ -3,8 +3,8 @@
 	Name="mTroll GitHub Issue"
 	Keywords="issue"
 	KeywordSfx="#=:"
+	UrlExe="https://github.com/sean-e/mTroll/issues/$(Value)"
 	ValueType="Number"
-	UrlExe=""
 	Args=""
 	Behavior="OpenInExtBrowser">
 	<Plugin
