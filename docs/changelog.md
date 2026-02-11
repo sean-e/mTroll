@@ -1,6 +1,6 @@
 ### mTroll MIDI controller changelog / process milestones
 
-#### 2026.xx.xx
+#### 2026.02.11
 - In raw ADC pedal display engine mode, if a disabled ADC port has been selected for monitoring, temporarily enable it [#59](../../../issues/59)
 
 #### 2025.11.20
