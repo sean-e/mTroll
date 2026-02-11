@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2015,2018,2020,2021,2025 Sean Echevarria
+ * Copyright (C) 2007-2015,2018,2020,2021,2025,2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -2281,4 +2281,22 @@ ControlUi::ResumeMidi()
 		Trace("Resumed MIDI connections\n");
 
 	return allResumed;
+}
+
+bool
+ControlUi::IsHardwareAdcEnabled(int idx) const
+{
+	if (!mHardwareUi)
+		return false;
+
+	return mHardwareUi->IsAdcEnabled(idx);
+}
+
+void
+ControlUi::EnableHardwareAdc(int idx, bool enable) const
+{
+	if (!mHardwareUi)
+		return;
+
+	mHardwareUi->EnableAdc(idx, enable);
 }

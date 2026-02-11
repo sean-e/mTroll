@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2013,2015,2018,2020-2022,2024-2025 Sean Echevarria
+ * Copyright (C) 2007-2013,2015,2018,2020-2022,2024-2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -217,6 +217,7 @@ private:
 	HistoryNavMode			mHistoryNavMode;
 	unsigned int			mSwitchPressedEventTime;
 	int						mTempo = 120;
+	bool					mPedalDisplayModeAdcSavedState[ExpressionPedals::PedalCount];
 
 	// retained in different form
 	Patches					mPatches;		// patchNum is key

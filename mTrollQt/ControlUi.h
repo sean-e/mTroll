@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2015,2018,2020,2021,2025 Sean Echevarria
+ * Copyright (C) 2007-2015,2018,2020,2021,2025,2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -86,6 +86,8 @@ public:
 			bool EnableTimeDisplay(bool enable);
 			bool SuspendMidi();
 			bool ResumeMidi();
+			bool IsHardwareAdcEnabled(int idx) const;
+			void EnableHardwareAdc(int idx, bool enable) const;
 
 			void GetPreferredSize(int & width, int & height) const { width = mPreferredWidth; height = mPreferredHeight; }
 			DWORD GetBackGroundColor() const { return mBackgroundColor; }

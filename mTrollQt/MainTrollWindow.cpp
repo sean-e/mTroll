@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2012-2013,2015,2018,2020,2023-2025 Sean Echevarria
+ * Copyright (C) 2007-2010,2012-2013,2015,2018,2020,2023-2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -463,6 +463,21 @@ MainTrollWindow::ToggleTraceWindow()
 {
 	if (mUi)
 		mUi->ToggleTraceWindow();
+}
+
+bool
+MainTrollWindow::IsHardwareAdcEnabled(int idx) const
+{
+	if (!mUi)
+		return false;
+	return mUi->IsHardwareAdcEnabled(idx);
+}
+
+void
+MainTrollWindow::EnableHardwareAdc(int idx, bool enable) const
+{
+	if (mUi)
+		mUi->EnableHardwareAdc(idx, enable);
 }
 
 void

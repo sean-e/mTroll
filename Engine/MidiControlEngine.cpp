@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2013,2015,2018,2020-2022,2024-2025 Sean Echevarria
+ * Copyright (C) 2007-2013,2015,2018,2020-2022,2024-2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -1042,6 +1042,11 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 	case emExprPedalDisplay:
 		msg = "Raw ADC values";
 		mPedalModePort = 0;
+
+		// save current hardware ADC state
+		for (int idx = 0; idx < ExpressionPedals::PedalCount; ++idx)
+			mPedalDisplayModeAdcSavedState[idx] = mApplication->IsHardwareAdcEnabled(idx);
+
 		if (mSwitchDisplay)
 		{
 			mSwitchDisplay->SetSwitchText(0, "Pedal 1");
@@ -1399,6 +1404,11 @@ MidiControlEngine::SwitchReleased_PedalDisplayMode(int switchNumber)
 	if (switchNumber == mModeSwitchNumber)
 	{
 		EscapeToDefaultMode();
+
+		// disable hardware ADC state if it is now on and was previously off
+		for (int idx = 0; idx < ExpressionPedals::PedalCount; ++idx)
+			if (!mPedalDisplayModeAdcSavedState[idx] && mApplication->IsHardwareAdcEnabled(idx))
+				mApplication->EnableHardwareAdc(idx, false);
 	}
 	else if (switchNumber >= 0 && switchNumber <= 3)
 	{
@@ -1406,6 +1416,10 @@ MidiControlEngine::SwitchReleased_PedalDisplayMode(int switchNumber)
 		if (mSwitchDisplay)
 			mSwitchDisplay->ForceSwitchDisplay(mPedalModePort, 0);
 		mPedalModePort = switchNumber;
+
+		if (!mApplication->IsHardwareAdcEnabled(mPedalModePort))
+			mApplication->EnableHardwareAdc(mPedalModePort, true);
+
 		if (mSwitchDisplay)
 			mSwitchDisplay->ForceSwitchDisplay(mPedalModePort, mEngineLedColor);
 

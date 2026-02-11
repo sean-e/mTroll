@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010,2015,2025 Sean Echevarria
+ * Copyright (C) 2010,2015,2025,2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -37,6 +37,8 @@ public:
 	enum ExitAction { soeExit, soeExitAndSleep, soeExitAndHibernate };
 	virtual void Reconnect() = 0;
 	virtual void ToggleTraceWindow() = 0;
+	virtual bool IsHardwareAdcEnabled(int idx) const = 0;
+	virtual void EnableHardwareAdc(int idx, bool enable) const = 0;
 	virtual bool IsAdcOverridden(int adc) = 0;
 	virtual void ToggleAdcOverride(int adc) = 0;
 	virtual bool EnableTimeDisplay(bool enable) = 0;

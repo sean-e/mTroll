@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2013,2015,2018,2020,2024-2025 Sean Echevarria
+ * Copyright (C) 2007-2010,2013,2015,2018,2020,2024-2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -69,6 +69,8 @@ protected:
 	virtual void closeEvent(QCloseEvent *event) override;
 
 private:
+	virtual bool IsHardwareAdcEnabled(int idx) const override;
+	virtual void EnableHardwareAdc(int idx, bool enable) const override;
 	virtual bool IsAdcOverridden(int adc) override { if (adc >=0 && adc < 4) return mAdcForceDisable[adc]; return false;}
 	virtual void ToggleAdcOverride(int adc) override { if (adc >=0 && adc < 4) ToggleAdcOverride(adc, !mAdcForceDisable[adc]); }
 	virtual bool EnableTimeDisplay(bool enable) override;

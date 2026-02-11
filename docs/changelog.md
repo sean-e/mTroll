@@ -1,5 +1,8 @@
 ### mTroll MIDI controller changelog / process milestones
 
+#### 2026.xx.xx
+- In raw ADC pedal display engine mode, if a disabled ADC port has been selected for monitoring, temporarily enable it [#59](../../../issues/59)
+
 #### 2025.11.20
 - Retain display of bank notes when pressing patch switches [#55](../../../issues/55)
 - Added an up to 4 item MRU to File menu for easier load of recently opened config files [#56](../../../issues/56)
