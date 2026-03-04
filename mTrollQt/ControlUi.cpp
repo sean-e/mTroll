@@ -1582,8 +1582,8 @@ ControlUi::OpenMidiOuts()
 			continue;
 
 		const unsigned int kDeviceIdx = mMidiOut.first;
-
-		if (curOut->OpenMidiOut(kDeviceIdx))
+		const unsigned int kCnt = curOut->GetMidiOutDeviceCount();
+		if (kDeviceIdx < kCnt && curOut->OpenMidiOut(kDeviceIdx))
 			Trace(std::format("Opened MIDI out {} {}\n", kDeviceIdx, curOut->GetMidiOutDeviceName(kDeviceIdx)));
 		else
 			Trace(std::format("Failed to open MIDI out {}\n", kDeviceIdx));
@@ -2211,8 +2211,8 @@ ControlUi::OpenMidiIns()
 			continue;
 
 		const unsigned int kDeviceIdx = mMidiIn.first;
-
-		if (curIn->OpenMidiIn(kDeviceIdx))
+		const unsigned int kCnt = curIn->GetMidiInDeviceCount();
+		if (kDeviceIdx < kCnt && curIn->OpenMidiIn(kDeviceIdx))
 			Trace(std::format("Opened MIDI in {} {}\n", kDeviceIdx, curIn->GetMidiInDeviceName(kDeviceIdx)));
 		else
 			Trace(std::format("Failed to open MIDI in {}\n", kDeviceIdx));
