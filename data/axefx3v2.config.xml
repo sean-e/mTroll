@@ -1731,6 +1731,10 @@
 			<patchListItemName>Axe Flanger 2 Ch A</patchListItemName>
 			<patchListItemName>Axe Flanger 2 Ch B</patchListItemName>
 		</patch>
+		<patch type="patchListSequence" name="Input 1 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Input 1 Ch A</patchListItemName>
+			<patchListItemName>Axe Input 1 Ch B</patchListItemName>
+		</patch>
 		<patch type="patchListSequence" name="Megatap 1 A/B" gaplessRestart="1">
 			<patchListItemName>Axe Megatap 1 Ch A</patchListItemName>
 			<patchListItemName>Axe Megatap 1 Ch B</patchListItemName>
@@ -1746,6 +1750,10 @@
 		<patch type="patchListSequence" name="Multidelay 2 A/B" gaplessRestart="1">
 			<patchListItemName>Axe Multi-delay 2 Ch A</patchListItemName>
 			<patchListItemName>Axe Multi-delay 2 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Multiplexer 1 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Multiplexer 1 Ch A</patchListItemName>
+			<patchListItemName>Axe Multiplexer 1 Ch B</patchListItemName>
 		</patch>
 		<patch type="patchListSequence" name="Phaser 1 A/B" gaplessRestart="1">
 			<patchListItemName>Axe Phaser 1 Ch A</patchListItemName>
@@ -1860,14 +1868,14 @@
 		<patch name="Axe Ext 15 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="30" />
 		<patch name="Axe Ext 16 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="31" />
 
-		<patch name="Scene 1" scene="1" device="Axe-Fx" />
-		<patch name="Scene 2" scene="2" device="Axe-Fx" />
-		<patch name="Scene 3" scene="3" device="Axe-Fx" />
-		<patch name="Scene 4" scene="4" device="Axe-Fx" />
-		<patch name="Scene 5" scene="5" device="Axe-Fx" />
-		<patch name="Scene 6" scene="6" device="Axe-Fx" />
-		<patch name="Scene 7" scene="7" device="Axe-Fx" />
-		<patch name="Scene 8" scene="8" device="Axe-Fx" />
+		<patch name="Scene 1" scene="1" groupId="AxeFxScene" device="Axe-Fx" />
+		<patch name="Scene 2" scene="2" groupId="AxeFxScene" device="Axe-Fx" />
+		<patch name="Scene 3" scene="3" groupId="AxeFxScene" device="Axe-Fx" />
+		<patch name="Scene 4" scene="4" groupId="AxeFxScene" device="Axe-Fx" />
+		<patch name="Scene 5" scene="5" groupId="AxeFxScene" device="Axe-Fx" />
+		<patch name="Scene 6" scene="6" groupId="AxeFxScene" device="Axe-Fx" />
+		<patch name="Scene 7" scene="7" groupId="AxeFxScene" device="Axe-Fx" />
+		<patch name="Scene 8" scene="8" groupId="AxeFxScene" device="Axe-Fx" />
 
 		<patch type="patchListSequence" name="Scene List 1-5" gaplessRestart="1">
 			<patchListItemName>Scene 1</patchListItemName>
@@ -2589,19 +2597,17 @@
 
 		<!-- start Axe-Fx III axefx3v2 data file non-preset banks -->
     <bank name="Axe-Fx Scenes">
-      <ExclusiveSwitchGroup>1 2 3 4 6 7 8 9</ExclusiveSwitchGroup>
       <switch number="1" patchName="Scene 1" />
       <switch number="2" patchName="Scene 2" />
       <switch number="3" patchName="Scene 3" />
       <switch number="4" patchName="Scene 4" />
-      
-      <switch number="6" patchName="Scene 5" />
-      <switch number="7" patchName="Scene 6" />
-      <switch number="8" patchName="Scene 7" />
-      <switch number="9" patchName="Scene 8" />
+      <switch number="5" patchName="Scene 5" />
+      <switch number="6" patchName="Scene 6" />
+      <switch number="7" patchName="Scene 7" />
+      <switch number="8" patchName="Scene 8" />
 
-      
-      
+      <switch number="10" command="AxeFx3ReloadCurrentPreset" />
+
       <switch number="11" command="AxeFx3DecrementScene" label="Prev Scene" />
       <switch number="12" command="AxeFx3IncrementScene" label="Next Scene" />
       
