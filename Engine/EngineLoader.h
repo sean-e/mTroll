@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2010,2018,2020,2021,2023-2024 Sean Echevarria
+ * Copyright (C) 2007-2010,2018,2020,2021,2023-2024,2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -76,7 +76,8 @@ private:
 	void					LoadLedDefaultColors(TiXmlElement * pElem);
 	void					LoadExpressionPedalSettings(TiXmlElement * pElem, ExpressionPedals &pedals, int defaultChannel);
 	void					GenerateDefaultNotePatches();
-	void					GeneratePatchNumbers(TiXmlElement* pElem);
+	void					GeneratePatchNumbers(TiXmlElement* pElem, int &generatedPatchNumber);
+	void					GeneratePatchNumbersForDefaultNotePatches(int &generatedPatchNumber);
 	void					LoadPatches(TiXmlElement * pElem);
 	void					LoadElementColorAttributes(TiXmlElement * pElem, unsigned int &ledActiveColor, unsigned int &ledInactiveColor);
 
@@ -120,6 +121,7 @@ private:
 	using Patches = std::map<const std::string, int>;
 	Patches					mPatchMap;
 	std::set<int>			mPatchNumbersUsed;
+	std::string				mConfigFileDirectory;
 };
 
 #endif // EngineLoader_h__

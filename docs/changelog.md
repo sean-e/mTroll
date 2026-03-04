@@ -1,5 +1,9 @@
 ### mTroll MIDI controller changelog / process milestones
 
+#### 2026.03.04
+- Added support for importing patches from another file so that, for example, device patches don't need to be copied/pasted across configs [#60](../../../issues/60)
+- If multiple patches are identically named, the first one wins (gets loaded), rather than the last
+
 #### 2026.02.11
 - In raw ADC pedal display engine mode, if a disabled ADC port has been selected for monitoring, temporarily enable it [#59](../../../issues/59)
 

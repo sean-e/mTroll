@@ -137,9 +137,15 @@ MidiControlEngine::AddPatch(PatchPtr patch)
 {
 	const int patchNum = patch->GetNumber();
 	PatchPtr prev = mPatches[patchNum];
-	if (prev && mTrace)
-		mTrace->Trace(std::format("ERROR: multiple patches with patch number {}\n", patchNum));
-	mPatches[patchNum] = patch;
+	if (prev)
+	{
+		// first one wins, ignore dupes
+		if (mTrace)
+			mTrace->Trace(std::format("ERROR: multiple patches with patch number {}; kept: {}, ignored: {}\n", 
+				patchNum, prev->GetName(), patch->GetName()));
+	}
+	else
+		mPatches[patchNum] = patch;
 }
 
 void
