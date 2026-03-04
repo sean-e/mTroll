@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2009,2014,2018,2020,2025 Sean Echevarria
+ * Copyright (C) 2007-2009,2014,2018,2020,2025,2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -64,6 +64,15 @@ Monome40hFtqt::Monome40hFtqt(ITraceDisplay * trace) :
 	mAdcInputSubscriber(nullptr),
 	mLedBrightness(10)
 {
+#ifdef FTD2XX_STATIC
+	FT_Initialise();
+#elif defined(_WINDOWS)
+	// using Win32 delay loading - see if it is found
+	HMODULE hMod = ::LoadLibraryW(L"FTD2XX.dll");
+	if (!hMod)
+		throw std::string("ERROR: Failed to load FTDI library\n");
+#endif // _WINDOWS
+
 	for (int portIdx = 0; portIdx < kAdcPortCount; ++portIdx)
 	{
 		mAdcEnable[portIdx] = false;
@@ -76,6 +85,10 @@ Monome40hFtqt::Monome40hFtqt(ITraceDisplay * trace) :
 Monome40hFtqt::~Monome40hFtqt()
 {
 	ReleaseDevice();
+
+#ifdef FTD2XX_STATIC
+	FT_Finalise();
+#endif
 }
 
 int
