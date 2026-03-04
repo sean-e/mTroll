@@ -42,7 +42,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 [Files]
 Source: "{#ExeDir}\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#DependenciesDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "{#DataDir}\*"; DestDir: "{app}\config"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#DataDir}\*"; DestDir: "{app}\config"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
