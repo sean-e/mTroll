@@ -1,0 +1,236 @@
+<?xml version="1.0" ?>
+<?xml-stylesheet type="text/xsl" href="mtrollConfig.xsl"?>
+<MidiControlSettings>
+	<patches>
+<!--
+		Unlike MIDI VirtualButtons, in most cases DirectMIDI commands only
+		require the NoteOn message, or the single continuous controller
+		message. They do not need the NoteOff. 
+		This is not true for the SUS DirectMIDI commands. These use the 
+		NoteOn message to start their function and the NoteOff message to 
+		end it, similar to the way SUS commands work from the front panel.
+-->
+		<!-- EDP MIDI VirtualButtons (all are SUS action) -->
+		<patch name="EDP V Parameter" type="momentaryControlChange" device="EDP" controller="36" />
+		<patch name="EDP V Record" type="momentaryControlChange" device="EDP" controller="38" />
+		<patch name="EDP V Overdub" type="momentaryControlChange" device="EDP" controller="39" />
+		<patch name="EDP V Multiply" type="momentaryControlChange" device="EDP" controller="40" />
+		<patch name="EDP V Insert (dep)" type="momentaryControlChange" device="EDP" controller="41" />
+		<patch name="EDP V Mute" type="momentaryControlChange" device="EDP" controller="42" />
+		<patch name="EDP V Undo" type="momentaryControlChange" device="EDP" controller="43" />
+		<patch name="EDP V NextLoop" type="momentaryControlChange" device="EDP" controller="44" />
+		<patch name="EDP V Replace" type="momentaryControlChange" device="EDP" controller="45" />
+		<patch name="EDP V Substitute" type="momentaryControlChange" device="EDP" controller="46" />
+		<patch name="EDP V Insert (only)" type="momentaryControlChange" device="EDP" controller="47" />
+		<patch name="EDP V Tgl Speed" type="momentaryControlChange" device="EDP" controller="48" />
+		<patch name="EDP V Tgl Reverse" type="momentaryControlChange" device="EDP" controller="49" />
+
+		<!-- EDP Direct MIDI (some are SUS action, otherwise not) -->
+		<patch name="EDP SusRecord" type="momentaryControlChange" device="EDP" controller="50" />
+		<patch name="EDP SusOverdub" type="momentaryControlChange" device="EDP" controller="51" />
+		<patch name="EDP SusRndMultiply" type="momentaryControlChange" device="EDP" controller="52" />
+		<patch name="EDP SusRndInsert" type="momentaryControlChange" device="EDP" controller="53" />
+		<patch name="EDP SusMute" type="momentaryControlChange" device="EDP" controller="54" />
+		<patch name="EDP Mute" type="momentary" device="EDP">
+			<ControlChange group="A" controller="54" value="127" />
+		</patch>
+		<patch name="EDP SusMute (volCont)" type="momentary" device="EDP">
+			<ControlChange group="A" controller="1" value="0" />
+			<ControlChange group="B" controller="1" value="127" />
+		</patch>
+		<patch name="EDP TglMute (volCont)" type="toggle" device="EDP">
+			<ControlChange group="A" controller="1" value="0" />
+			<ControlChange group="B" controller="1" value="127" />
+		</patch>
+		<patch name="EDP ShortUndo" type="momentary" device="EDP">
+			<ControlChange group="A" controller="55" value="127" /> <!-- is this right? causes unexpected record after loop select? -->
+		</patch>
+		<patch name="EDP SusNextLoop" type="momentaryControlChange" device="EDP" controller="56" />
+		<patch name="EDP SusReplace" type="momentaryControlChange" device="EDP" controller="57" />
+		<patch name="EDP SusSubstitute" type="momentaryControlChange" device="EDP" controller="58" />
+		<patch name="EDP SusReverse" type="momentaryControlChange" device="EDP" controller="59" />
+		<patch name="EDP TglReverse" type="toggleControlChange" device="EDP" controller="59" />
+		<patch name="EDP SusSpeed" type="momentaryControlChange" device="EDP" controller="60" />
+		<patch name="EDP TglSpeed" type="toggleControlChange" device="EDP" controller="60" />
+		<patch name="EDP Reset" type="momentary" device="EDP">
+			<ControlChange group="A" controller="61" value="127" />
+		</patch>
+		<patch name="EDP Gen Reset" type="momentary" device="EDP">
+			<ControlChange group="A" controller="62" value="127" />
+		</patch>
+		<patch name="EDP Exit Params" type="momentary" device="EDP">
+			<ControlChange group="A" controller="63" value="127" />
+		</patch>
+		<patch name="EDP SusUnrndMult" type="momentaryControlChange" device="EDP" controller="64" />
+		<patch name="EDP SusUnrndInsert" type="momentaryControlChange" device="EDP" controller="65" />
+		<patch name="EDP SusMute-ReTrigger" type="momentaryControlChange" device="EDP" controller="66" />
+		<patch name="EDP Long Undo" type="momentary" device="EDP">
+			<ControlChange group="A" controller="67" value="127" />
+		</patch>
+		<patch name="EDP Forward" type="momentary" device="EDP">
+			<ControlChange group="A" controller="68" value="127" />
+		</patch>
+		<patch name="EDP Reverse" type="momentary" device="EDP">
+			<ControlChange group="A" controller="69" value="127" />
+		</patch>
+		<patch name="EDP Full Speed" type="momentary" device="EDP">
+			<ControlChange group="A" controller="70" value="127" />
+		</patch>
+		<patch name="EDP Half Speed" type="momentary" device="EDP">
+			<ControlChange group="A" controller="71" value="127" />
+		</patch>
+		<patch name="EDP Play Once (PlaySample)" type="momentary" device="EDP">
+			<ControlChange group="A" controller="72" value="127" />
+		</patch>
+		<patch name="EDP ReTrigger/restart" type="momentary" device="EDP">
+			<ControlChange group="A" controller="73" value="127" />
+		</patch>
+		<patch name="EDP ReAlign" type="momentary" device="EDP">
+			<ControlChange group="A" controller="74" value="127" />
+		</patch>
+		<patch name="EDP MuteReAlign" type="momentary" device="EDP">
+			<ControlChange group="A" controller="75" value="127" />
+		</patch>
+		<patch name="EDP QntStartSingle" type="momentary" device="EDP">
+			<ControlChange group="A" controller="76" value="127" />
+		</patch>
+		<patch name="EDP MUnqntStartSingle" type="momentary" device="EDP">
+			<ControlChange group="A" controller="77" value="127" />
+		</patch>
+		<patch name="EDP Start Point" type="momentary" device="EDP">
+			<ControlChange group="A" controller="78" value="127" />
+		</patch>
+		<patch name="EDP Qnt Start Point" type="momentary" device="EDP">
+			<ControlChange group="A" controller="79" value="127" />
+		</patch>
+		<patch name="EDP BeatTrigSmp" type="momentary" device="EDP">
+			<ControlChange group="A" controller="80" value="127" />
+		</patch>
+		<patch name="EDP MIDI BeatSync" type="momentary" device="EDP">
+			<ControlChange group="A" controller="81" value="127" />
+		</patch>
+
+		<!-- EDP Loop Triggers
+			LoopTriggering only works via NoteOn
+			loop play is dependent upon SamplerStyle
+			NoteOff is required else loop gets erased 
+		-->
+		<patch name="EDP Loop 1" type="normal" groupId="EdpLoop" device="EDP">
+			<NoteOn group="A" note="84" velocity="127" />
+			<NoteOff group="A" note="84" velocity="0" />
+		</patch>
+		<patch name="EDP Loop 2" type="normal" groupId="EdpLoop" device="EDP">
+			<NoteOn group="A" note="85" velocity="127" />
+			<NoteOff group="A" note="85" velocity="0" />
+		</patch>
+		<patch name="EDP Loop 3" type="normal" groupId="EdpLoop" device="EDP">
+			<NoteOn group="A" note="86" velocity="127" />
+			<NoteOff group="A" note="86" velocity="0" />
+		</patch>
+		<patch name="EDP Loop 4" type="normal" groupId="EdpLoop" device="EDP">
+			<NoteOn group="A" note="87" velocity="127" />
+			<NoteOff group="A" note="87" velocity="0" />
+		</patch>
+		<patch name="EDP Loop 5" type="normal" groupId="EdpLoop" device="EDP">
+			<NoteOn group="A" note="88" velocity="127" />
+			<NoteOff group="A" note="88" velocity="0" />
+		</patch>
+		<patch name="EDP Loop 6" type="normal" groupId="EdpLoop" device="EDP">
+			<NoteOn group="A" note="89" velocity="127" />
+			<NoteOff group="A" note="89" velocity="0" />
+		</patch>
+		<patch name="EDP Loop 7" type="normal" groupId="EdpLoop" device="EDP">
+			<NoteOn group="A" note="90" velocity="127" />
+			<NoteOff group="A" note="90" velocity="0" />
+		</patch>
+		<patch name="EDP Loop 8" type="normal" groupId="EdpLoop" device="EDP">
+			<NoteOn group="A" note="91" velocity="127" />
+			<NoteOff group="A" note="91" velocity="0" />
+		</patch>
+		<patch name="EDP Loop 9" type="normal" groupId="EdpLoop" device="EDP">
+			<NoteOn group="A" note="92" velocity="127" />
+			<NoteOff group="A" note="92" velocity="0" />
+		</patch>
+		<patch name="EDP Loop 10" type="normal" groupId="EdpLoop" device="EDP">
+			<NoteOn group="A" note="93" velocity="127" />
+			<NoteOff group="A" note="93" velocity="0" />
+		</patch>
+		<patch name="EDP Loop 11" type="normal" groupId="EdpLoop" device="EDP">
+			<NoteOn group="A" note="94" velocity="127" />
+			<NoteOff group="A" note="94" velocity="0" />
+		</patch>
+		<patch name="EDP Loop 12" type="normal" groupId="EdpLoop" device="EDP">
+			<NoteOn group="A" note="95" velocity="127" />
+			<NoteOff group="A" note="95" velocity="0" />
+		</patch>
+		<patch name="EDP Loop 13" type="normal" groupId="EdpLoop" device="EDP">
+			<NoteOn group="A" note="96" velocity="127" />
+			<NoteOff group="A" note="96" velocity="0" />
+		</patch>
+		<patch name="EDP Loop 14" type="normal" groupId="EdpLoop" device="EDP">
+			<NoteOn group="A" note="97" velocity="127" />
+			<NoteOff group="A" note="97" velocity="0" />
+		</patch>
+		<patch name="EDP Loop 15" type="normal" groupId="EdpLoop" device="EDP">
+			<NoteOn group="A" note="98" velocity="127" />
+			<NoteOff group="A" note="98" velocity="0" />
+		</patch>
+		<patch name="EDP Loop 16" type="normal" groupId="EdpLoop" device="EDP">
+			<NoteOn group="A" note="99" velocity="127" />
+			<NoteOff group="A" note="99" velocity="0" />
+		</patch>
+
+		<!-- EDP macros -->
+		<patch name="EDP SusRec-Reverse" type="momentary" device="EDP">
+			<ControlChange group="A" controller="50" value="127" />
+			<ControlChange group="B" controller="50" value="0" />
+			<ControlChange group="B" controller="59" value="127" />
+		</patch>
+		<patch name="EDP Rec/Mute mom" type="momentary" device="EDP">
+			<midiByteString name="A">b6 26 7f b6 26 00</midiByteString>
+			<midiByteString name="B">b6 2a 7f b6 2a 00</midiByteString>
+		</patch>
+
+		<!-- EDP macros using Parameter button (unconfirmed) -->
+		<patch name="EDP Quantz Cycle" type="momentary" device="EDP">
+			<midiByteString name="A">b6 24 7f</midiByteString>
+			<midiByteString name="B">b6 24 00 b6 27 7f b6 27 00 b6 27 7f b6 27 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</midiByteString>
+		</patch>
+		<patch name="EDP Ins Mode Cycle" type="momentary" device="EDP">
+			<midiByteString name="A">b6 24 7f</midiByteString>
+			<midiByteString name="B">b6 24 00 b6 24 7f b6 24 00 b6 29 7f b6 29 00 b6 29 7f b6 29 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</midiByteString>
+		</patch>
+		<patch name="EDP Rec Mode Cycle" type="momentary" device="EDP">
+			<midiByteString name="A">b6 24 7f</midiByteString>
+			<midiByteString name="B">b6 24 00 b6 24 7f b6 24 00 b6 26 7f b6 26 00 b6 26 7f b6 26 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</midiByteString>
+		</patch>
+		<patch name="EDP Rnd Mode Toggle" type="momentary" device="EDP">
+			<midiByteString name="A">b6 24 7f</midiByteString>
+			<midiByteString name="B">b6 24 00 b6 24 7f b6 24 00 b6 28 7f b6 28 00 b6 28 7f b6 28 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</midiByteString>
+		</patch>
+		<patch name="EDP Dub Mode Toggle" type="momentary" device="EDP">
+			<midiByteString name="A">b6 24 7f</midiByteString>
+			<midiByteString name="B">b6 24 00 b6 24 7f b6 24 00 b6 27 7f b6 27 00 b6 27 7f b6 27 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</midiByteString>
+		</patch>
+		<patch name="EDP Mute Mode Toggle" type="momentary" device="EDP">
+			<midiByteString name="A">b6 24 7f</midiByteString>
+			<midiByteString name="B">b6 24 00 b6 24 7f b6 24 00 b6 2a 7f b6 2a 00 b6 2a 7f b6 2a 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00</midiByteString>
+		</patch>
+		<patch name="EDP Sw Quant Cycle" type="momentary" device="EDP">
+			<midiByteString name="A">b6 24 7f</midiByteString>
+			<midiByteString name="B">b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 29 7f b6 29 00 b6 29 7f b6 29 00 b6 24 7f b6 24 00</midiByteString>
+		</patch>
+		<patch name="EDP AutoRec Toggle" type="momentary" device="EDP">
+			<midiByteString name="A">b6 24 7f</midiByteString>
+			<midiByteString name="B">b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 27 7f b6 27 00 b6 27 7f b6 27 00 b6 24 7f b6 24 00</midiByteString>
+		</patch>
+		<patch name="EDP MoreLoops Cycle" type="momentary" device="EDP">
+			<midiByteString name="A">b6 24 7f</midiByteString>
+			<midiByteString name="B">b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 26 7f b6 26 00 b6 26 7f b6 26 00 b6 24 7f b6 24 00</midiByteString>
+		</patch>
+		<patch name="EDP LoopCpy Toggle" type="momentary" device="EDP">
+			<midiByteString name="A">b6 24 7f</midiByteString>
+			<midiByteString name="B">b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 24 7f b6 24 00 b6 28 7f b6 28 00 b6 28 7f b6 28 00 b6 24 7f b6 24 00</midiByteString>
+		</patch>
+	</patches>
+</MidiControlSettings>

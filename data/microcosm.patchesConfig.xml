@@ -1,0 +1,95 @@
+<?xml version="1.0" ?>
+<?xml-stylesheet type="text/xsl" href="mtrollConfig.xsl"?>
+<MidiControlSettings>
+	<patches>
+		<patch name="MC Bypass" type="toggle" device="Microcosm" >
+			<ControlChange group="A" controller="102" value="0" />
+			<ControlChange group="B" controller="102" value="127" />
+		</patch>
+		<patch name="MC Hold (mom)" type="momentary" device="Microcosm" >
+			<ControlChange group="A" controller="48" value="127" />
+			<ControlChange group="B" controller="48" value="0" />
+		</patch>
+		<patch name="MC Hold (tgl)" type="toggle" device="Microcosm" >
+			<ControlChange group="A" controller="48" value="127" />
+			<ControlChange group="B" controller="48" value="0" />
+		</patch>
+		<patch name="MC Erase Loop" type="momentary" device="Microcosm" >
+			<ControlChange group="A" controller="34" value="127" />
+			<ControlChange group="B" controller="34" value="0" />
+		</patch>
+		<patch name="MC Reverse (mom)" type="momentary" device="Microcosm" >
+			<ControlChange group="A" controller="47" value="127" />
+			<ControlChange group="B" controller="47" value="0" />
+		</patch>
+		<patch name="MC Reverse (tgl)" type="toggle" device="Microcosm" >
+			<ControlChange group="A" controller="47" value="127" />
+			<ControlChange group="B" controller="47" value="0" />
+		</patch>
+		<patch name="MC Mix 0"    type="normal" device="Microcosm" ><ControlChange controller="9" value="0" /></patch>
+		<patch name="MC Mix 25%"  type="normal" device="Microcosm" ><ControlChange controller="9" value="32" /></patch>
+		<patch name="MC Mix 50%"  type="normal" device="Microcosm" ><ControlChange controller="9" value="64" /></patch>
+		<patch name="MC Mix 75%"  type="normal" device="Microcosm" ><ControlChange controller="9" value="96" /></patch>
+		<patch name="MC Mix 100%" type="normal" device="Microcosm" ><ControlChange controller="9" value="127" /></patch>
+		<patch name="MC ARP A" type="normal" device="Microcosm" ><ProgramChange program="0" /></patch>
+		<patch name="MC ARP B" type="normal" device="Microcosm" ><ProgramChange program="1" /></patch>
+		<patch name="MC ARP C" type="normal" device="Microcosm" ><ProgramChange program="2" /></patch>
+		<patch name="MC ARP D" type="normal" device="Microcosm" ><ProgramChange program="3" /></patch>
+		<patch name="MC INT A" type="normal" device="Microcosm" ><ProgramChange program="4" /></patch>
+		<patch name="MC INT B" type="normal" device="Microcosm" ><ProgramChange program="5" /></patch>
+		<patch name="MC INT C" type="normal" device="Microcosm" ><ProgramChange program="6" /></patch>
+		<patch name="MC INT D" type="normal" device="Microcosm" ><ProgramChange program="7" /></patch>
+		<patch name="MC BLK A" type="normal" device="Microcosm" ><ProgramChange program="8" /></patch>
+		<patch name="MC BLK B" type="normal" device="Microcosm" ><ProgramChange program="9" /></patch>
+		<patch name="MC BLK C" type="normal" device="Microcosm" ><ProgramChange program="10" /></patch>
+		<patch name="MC BLK D" type="normal" device="Microcosm" ><ProgramChange program="11" /></patch>
+		<patch name="MC GLD A" type="normal" device="Microcosm" ><ProgramChange program="12" /></patch>
+		<patch name="MC GLD B" type="normal" device="Microcosm" ><ProgramChange program="13" /></patch>
+		<patch name="MC GLD C" type="normal" device="Microcosm" ><ProgramChange program="14" /></patch>
+		<patch name="MC GLD D" type="normal" device="Microcosm" ><ProgramChange program="15" /></patch>
+		<patch name="MC SEQ A" type="normal" device="Microcosm" ><ProgramChange program="16" /></patch>
+		<patch name="MC SEQ B" type="normal" device="Microcosm" ><ProgramChange program="17" /></patch>
+		<patch name="MC SEQ C" type="normal" device="Microcosm" ><ProgramChange program="18" /></patch>
+		<patch name="MC SEQ D" type="normal" device="Microcosm" ><ProgramChange program="19" /></patch>
+		<patch name="MC MOS A" type="normal" device="Microcosm" ><ProgramChange program="20" /></patch>
+		<patch name="MC MOS B" type="normal" device="Microcosm" ><ProgramChange program="21" /></patch>
+		<patch name="MC MOS C" type="normal" device="Microcosm" ><ProgramChange program="22" /></patch>
+		<patch name="MC MOS D" type="normal" device="Microcosm" ><ProgramChange program="23" /></patch>
+		<patch name="MC HAZ A" type="normal" device="Microcosm" ><ProgramChange program="24" /></patch>
+		<patch name="MC HAZ B" type="normal" device="Microcosm" ><ProgramChange program="25" /></patch>
+		<patch name="MC HAZ C" type="normal" device="Microcosm" ><ProgramChange program="26" /></patch>
+		<patch name="MC HAZ D" type="normal" device="Microcosm" ><ProgramChange program="27" /></patch>
+		<patch name="MC TNL A" type="normal" device="Microcosm" ><ProgramChange program="28" /></patch>
+		<patch name="MC TNL B" type="normal" device="Microcosm" ><ProgramChange program="29" /></patch>
+		<patch name="MC TNL C" type="normal" device="Microcosm" ><ProgramChange program="30" /></patch>
+		<patch name="MC TNL D" type="normal" device="Microcosm" ><ProgramChange program="31" /></patch>
+		<patch name="MC STM A" type="normal" device="Microcosm" ><ProgramChange program="32" /></patch>
+		<patch name="MC STM B" type="normal" device="Microcosm" ><ProgramChange program="33" /></patch>
+		<patch name="MC STM C" type="normal" device="Microcosm" ><ProgramChange program="34" /></patch>
+		<patch name="MC STM D" type="normal" device="Microcosm" ><ProgramChange program="35" /></patch>
+		<patch name="MC PTN A" type="normal" device="Microcosm" ><ProgramChange program="36" /></patch>
+		<patch name="MC PTN B" type="normal" device="Microcosm" ><ProgramChange program="37" /></patch>
+		<patch name="MC PTN C" type="normal" device="Microcosm" ><ProgramChange program="38" /></patch>
+		<patch name="MC PTN D" type="normal" device="Microcosm" ><ProgramChange program="39" /></patch>
+		<patch name="MC WRP A" type="normal" device="Microcosm" ><ProgramChange program="40" /></patch>
+		<patch name="MC WRP B" type="normal" device="Microcosm" ><ProgramChange program="41" /></patch>
+		<patch name="MC WRP C" type="normal" device="Microcosm" ><ProgramChange program="42" /></patch>
+		<patch name="MC WRP D" type="normal" device="Microcosm" ><ProgramChange program="43" /></patch>
+		<patch name="MC US1 A" type="normal" device="Microcosm" ><ProgramChange program="44" /></patch>
+		<patch name="MC US1 B" type="normal" device="Microcosm" ><ProgramChange program="45" /></patch>
+		<patch name="MC US1 C" type="normal" device="Microcosm" ><ProgramChange program="46" /></patch>
+		<patch name="MC US1 D" type="normal" device="Microcosm" ><ProgramChange program="47" /></patch>
+		<patch name="MC US2 A" type="normal" device="Microcosm" ><ProgramChange program="48" /></patch>
+		<patch name="MC US2 B" type="normal" device="Microcosm" ><ProgramChange program="49" /></patch>
+		<patch name="MC US2 C" type="normal" device="Microcosm" ><ProgramChange program="50" /></patch>
+		<patch name="MC US2 D" type="normal" device="Microcosm" ><ProgramChange program="51" /></patch>
+		<patch name="MC US3 A" type="normal" device="Microcosm" ><ProgramChange program="52" /></patch>
+		<patch name="MC US3 B" type="normal" device="Microcosm" ><ProgramChange program="53" /></patch>
+		<patch name="MC US3 C" type="normal" device="Microcosm" ><ProgramChange program="54" /></patch>
+		<patch name="MC US3 D" type="normal" device="Microcosm" ><ProgramChange program="55" /></patch>
+		<patch name="MC US4 A" type="normal" device="Microcosm" ><ProgramChange program="56" /></patch>
+		<patch name="MC US4 B" type="normal" device="Microcosm" ><ProgramChange program="57" /></patch>
+		<patch name="MC US4 C" type="normal" device="Microcosm" ><ProgramChange program="58" /></patch>
+		<patch name="MC US4 D" type="normal" device="Microcosm" ><ProgramChange program="59" /></patch>
+	</patches>
+</MidiControlSettings>
