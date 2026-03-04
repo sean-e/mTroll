@@ -1,0 +1,1984 @@
+<?xml version="1.0" ?>
+<?xml-stylesheet type="text/xsl" href="mtrollConfig.xsl"?>
+<MidiControlSettings>
+	<patches>
+		<!-- default Axe-Fx III non-preset patches -->
+
+		<!-- Axe-Fx III default controllers -->
+		<patch name="Disable ped 1" type="persistentPedalOverride"><globalExpr inputNumber="1" enable="0" /></patch>
+		<patch name="Disable ped 2" type="persistentPedalOverride"><globalExpr inputNumber="2" enable="0" /></patch>
+		<patch name="Disable ped 3" type="persistentPedalOverride"><globalExpr inputNumber="3" enable="0" /></patch>
+		<patch name="Disable ped 4" type="persistentPedalOverride"><globalExpr inputNumber="4" enable="0" /></patch>
+
+		<patch name="Axe Input Volume" comment="Input Volume 10" type="normal" device="Axe-Fx">
+			<localExpr inputNumber="1" assignmentNumber="1" controller="10" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="Axe Out 1 Volume (pedal 1)" comment="Out 1 Volume 11" type="normal" device="Axe-Fx">
+			<localExpr inputNumber="1" assignmentNumber="1" controller="11" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="Axe Out 2 Volume" comment="Out 2 Volume 12" type="normal" device="Axe-Fx">
+			<localExpr inputNumber="1" assignmentNumber="1" controller="12" min="0" max="127" invert="0" enable="1" />
+		</patch>
+
+		<patch name="Axe Ext 1-2 (pedal 1-2)" comment="External 1 cc16, Ext 2 cc17" type="persistentPedalOverride" device="Axe-Fx">
+			<localExpr inputNumber="1" assignmentNumber="1" controller="16" min="0" max="127" invert="0" enable="1" />
+			<localExpr inputNumber="2" assignmentNumber="1" controller="17" min="0" max="127" invert="0" enable="1" />
+		</patch>
+
+		<patch name="Axe Tap Tempo" type="AxeFxTapTempo" device="Axe-Fx" />
+		<patch name="Axe Tuner" device="Axe-Fx" />
+
+		<patch name="Axe Ext 1 (pedal 4)" comment="External 1 cc16" type="normal" device="Axe-Fx">
+			<localExpr inputNumber="4" assignmentNumber="1" controller="16" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="Axe Ext 2 (pedal 4)" comment="External 2 cc17" type="normal" device="Axe-Fx">
+			<localExpr inputNumber="4" assignmentNumber="1" controller="17" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="Axe Ext 3 (pedal 4)" comment="External 3 cc18" type="normal" device="Axe-Fx">
+			<localExpr inputNumber="4" assignmentNumber="1" controller="18" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="Axe Ext 4 (pedal 4)" comment="External 4 cc19" type="normal" device="Axe-Fx">
+			<localExpr inputNumber="4" assignmentNumber="1" controller="19" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="Axe Ext 5 (pedal 4)" comment="External 5 cc20" type="normal" device="Axe-Fx">
+			<localExpr inputNumber="4" assignmentNumber="1" controller="20" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="Axe Ext 6 (pedal 4)" comment="External 6 cc21" type="normal" device="Axe-Fx">
+			<localExpr inputNumber="4" assignmentNumber="1" controller="21" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="Axe Ext 7 (pedal 4)" comment="External 7 cc22" type="normal" device="Axe-Fx">
+			<localExpr inputNumber="4" assignmentNumber="1" controller="22" min="0" max="127" invert="0" enable="1" />
+		</patch>
+		<patch name="Axe Ext 8 (pedal 4)" comment="External 8 cc23" type="normal" device="Axe-Fx">
+			<localExpr inputNumber="4" assignmentNumber="1" controller="23" min="0" max="127" invert="0" enable="1" />
+		</patch>
+
+		<!-- Axe-Fx default controllers; note no controllers specified, mTroll will look up 
+			default based on patch name.
+			Axe, AxeFx, Axe-Fx are removed prior to lookup (not necessary in name).
+			Lookup is not case-sensitive.
+			Some aliases have been setup (for example, Wah == Wah-Wah == Wahwah).
+			Aliases are defined in function SynonymNormalization in AxeFxManager.cpp.
+			The lookup is initiated if no controller specified and if device="Axe-Fx".
+			Note also, no patch type.  AxeToggle is assumed if device="Axe-Fx" but can
+			be overridden. -->
+		<!-- Axe-Fx III blocks -->
+    <patch name="Amp 1" device="Axe-Fx" />
+    <patch name="Amp 2" device="Axe-Fx" />
+    <patch name="Cab 1" device="Axe-Fx" />
+    <patch name="Cab 2" device="Axe-Fx" />
+    <patch name="Chorus 1" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Chorus 2" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Compressor 1" device="Axe-Fx" />
+    <patch name="Compressor 2" device="Axe-Fx" />
+    <patch name="Crossover 1" device="Axe-Fx" />
+    <patch name="Crossover 2" device="Axe-Fx" />
+    <patch name="Delay 1" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Delay 2" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Delay 3 (mod)" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Delay 4" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Drive 1" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Drive 2" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Drive 3" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Drive 4" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Dyn Dist 1" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Dyn Dist 2" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Enhancer 1" device="Axe-Fx" />
+    <patch name="Enhancer 2" device="Axe-Fx" />
+    <patch name="Filter 1" device="Axe-Fx" />
+    <patch name="Filter 2" device="Axe-Fx" />
+    <patch name="Filter 3" device="Axe-Fx" />
+    <patch name="Filter 4" device="Axe-Fx" />
+    <patch name="Flanger 1" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Flanger 2" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Formant 1" device="Axe-Fx" />
+    <patch name="Formant 2" device="Axe-Fx" />
+    <patch name="Gate 1" device="Axe-Fx" />
+    <patch name="Gate 2" device="Axe-Fx" />
+    <patch name="Gate 3" device="Axe-Fx" />
+    <patch name="Gate 4" device="Axe-Fx" />
+    <patch name="Graphic EQ 1" device="Axe-Fx" />
+    <patch name="Graphic EQ 2" device="Axe-Fx" />
+    <patch name="Graphic EQ 3" device="Axe-Fx" />
+    <patch name="Graphic EQ 4" device="Axe-Fx" />
+    <patch name="IR Player 1" device="Axe-Fx" />
+    <patch name="IR Player 2" device="Axe-Fx" />
+    <patch name="MegaTap 1" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="MegaTap 2" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Mixer 1" device="Axe-Fx" />
+    <patch name="Mixer 2" device="Axe-Fx" />
+    <patch name="Mixer 3" device="Axe-Fx" />
+    <patch name="Mixer 4" device="Axe-Fx" />
+    <patch name="Multi-Delay 1" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Multi-Delay 2" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Multiband Comp 1" device="Axe-Fx" />
+    <patch name="Multiband Comp 2" device="Axe-Fx" />
+    <patch name="Multiplexer 1" device="Axe-Fx" />
+    <patch name="Multiplexer 2" device="Axe-Fx" />
+    <patch name="Para EQ 1" device="Axe-Fx" />
+    <patch name="Para EQ 2" device="Axe-Fx" />
+    <patch name="Para EQ 3" device="Axe-Fx" />
+    <patch name="Para EQ 4" device="Axe-Fx" />
+    <patch name="Phaser 1" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Phaser 2" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Pitch 1" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Pitch 2" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Pitch 1 (mom)" device="Axe-Fx" type="AxeMomentary" />
+    <patch name="Pitch 2 (mom)" device="Axe-Fx" type="AxeMomentary" />
+    <patch name="Plex Delay 1" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Plex Delay 2" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Resonator 1" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Resonator 2" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Return 1" device="Axe-Fx" />
+    <patch name="Return 2" device="Axe-Fx" />
+    <patch name="Reverb 1" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Reverb 2" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Ring Mod" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Rotary 1" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Rotary 2" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="RTA" device="Axe-Fx" />
+    <patch name="Scene MIDI" device="Axe-Fx" />
+    <patch name="Send 1" device="Axe-Fx" />
+    <patch name="Send 2" device="Axe-Fx" />
+    <patch name="Synth 1" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Synth 2" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Ten-Tap Delay 1" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Ten-Tap Delay 2" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Tone Match" device="Axe-Fx" />
+    <patch name="Tremolo 1" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Tremolo 2" device="Axe-Fx" type="AxeHybridToggle" />
+    <patch name="Vocoder" device="Axe-Fx" />
+    <patch name="Volume 1" device="Axe-Fx" />
+    <patch name="Volume 2" device="Axe-Fx" />
+    <patch name="Volume 3" device="Axe-Fx" />
+    <patch name="Volume 4" device="Axe-Fx" />
+    <patch name="Wah 1" device="Axe-Fx" />
+    <patch name="Wah 2" device="Axe-Fx" />
+    <patch name="Axe Input 1" device="Axe-Fx" />
+    <patch name="Axe Input 2" device="Axe-Fx" />
+    <patch name="Axe Input 3" device="Axe-Fx" />
+    <patch name="Axe Input 4" device="Axe-Fx" />
+    <patch name="Axe USB Input" device="Axe-Fx" />
+    <patch name="Axe Output 1" device="Axe-Fx" />
+    <patch name="Axe Output 2" device="Axe-Fx" />
+    <patch name="Axe Output 3" device="Axe-Fx" />
+    <patch name="Axe Output 4" device="Axe-Fx" />
+
+    <patch name="Axe Looper" device="Axe-Fx" />
+    <patch name="Axe Loop Record/Overdub" device="Axe-Fx" />
+    <patch name="Axe Loop Play/Stop" device="Axe-Fx" />
+    <patch name="Axe Loop Once/Retrigger" device="Axe-Fx" />
+    <patch name="Axe Loop Reverse" device="Axe-Fx" />
+    <patch name="Axe Loop Half Speed" device="Axe-Fx" />
+    <patch name="Axe Loop Undo" type="AxeMomentary" device="Axe-Fx" />
+
+    <!-- Axe-Fx III block channel patches -->
+    <patch name="Axe Amp 1 Ch A" axeBlockId="Amp 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Amp 1 Ch B" axeBlockId="Amp 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Amp 1 Ch C" axeBlockId="Amp 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Amp 1 Ch D" axeBlockId="Amp 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Amp 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Amp 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Amp 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Amp 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Amp 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Amp 2 Ch A" axeBlockId="Amp 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Amp 2 Ch B" axeBlockId="Amp 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Amp 2 Ch C" axeBlockId="Amp 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Amp 2 Ch D" axeBlockId="Amp 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Amp 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Amp 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Amp 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Amp 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Amp 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Cabinet 1 Ch A" axeBlockId="Cab 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Cabinet 1 Ch B" axeBlockId="Cab 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Cabinet 1 Ch C" axeBlockId="Cab 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Cabinet 1 Ch D" axeBlockId="Cab 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Cab 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Cabinet 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Cabinet 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Cabinet 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Cabinet 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Cabinet 2 Ch A" axeBlockId="Cab 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Cabinet 2 Ch B" axeBlockId="Cab 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Cabinet 2 Ch C" axeBlockId="Cab 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Cabinet 2 Ch D" axeBlockId="Cab 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Cab 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Cabinet 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Cabinet 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Cabinet 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Cabinet 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Chorus 1 Ch A" axeBlockId="Chorus 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Chorus 1 Ch B" axeBlockId="Chorus 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Chorus 1 Ch C" axeBlockId="Chorus 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Chorus 1 Ch D" axeBlockId="Chorus 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Chorus 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Chorus 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Chorus 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Chorus 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Chorus 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Chorus 2 Ch A" axeBlockId="Chorus 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Chorus 2 Ch B" axeBlockId="Chorus 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Chorus 2 Ch C" axeBlockId="Chorus 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Chorus 2 Ch D" axeBlockId="Chorus 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Chorus 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Chorus 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Chorus 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Chorus 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Chorus 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Comp 1 Ch A" axeBlockId="Compressor 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Comp 1 Ch B" axeBlockId="Compressor 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Comp 1 Ch C" axeBlockId="Compressor 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Comp 1 Ch D" axeBlockId="Compressor 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Comp 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Comp 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Comp 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Comp 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Comp 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Comp 2 Ch A" axeBlockId="Compressor 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Comp 2 Ch B" axeBlockId="Compressor 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Comp 2 Ch C" axeBlockId="Compressor 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Comp 2 Ch D" axeBlockId="Compressor 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Comp 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Comp 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Comp 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Comp 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Comp 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe X-over 1 Ch A" axeBlockId="Crossover 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe X-over 1 Ch B" axeBlockId="Crossover 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch type="patchListSequence" name="X-over 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe X-over 1 Ch A</patchListItemName>
+      <patchListItemName>Axe X-over 1 Ch B</patchListItemName>
+    </patch>
+
+    <patch name="Axe X-over 2 Ch A" axeBlockId="Crossover 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe X-over 2 Ch B" axeBlockId="Crossover 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch type="patchListSequence" name="X-over 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe X-over 2 Ch A</patchListItemName>
+      <patchListItemName>Axe X-over 2 Ch B</patchListItemName>
+    </patch>
+
+    <patch name="Axe Delay 1 Ch A" axeBlockId="Delay 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Delay 1 Ch B" axeBlockId="Delay 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Delay 1 Ch C" axeBlockId="Delay 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Delay 1 Ch D" axeBlockId="Delay 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Delay 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Delay 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Delay 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Delay 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Delay 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Delay 2 Ch A" axeBlockId="Delay 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Delay 2 Ch B" axeBlockId="Delay 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Delay 2 Ch C" axeBlockId="Delay 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Delay 2 Ch D" axeBlockId="Delay 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Delay 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Delay 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Delay 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Delay 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Delay 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Delay 3 Ch A" axeBlockId="Delay 3" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Delay 3 Ch B" axeBlockId="Delay 3" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Delay 3 Ch C" axeBlockId="Delay 3" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Delay 3 Ch D" axeBlockId="Delay 3" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Delay 3 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Delay 3 Ch A</patchListItemName>
+      <patchListItemName>Axe Delay 3 Ch B</patchListItemName>
+      <patchListItemName>Axe Delay 3 Ch C</patchListItemName>
+      <patchListItemName>Axe Delay 3 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Delay 4 Ch A" axeBlockId="Delay 4" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Delay 4 Ch B" axeBlockId="Delay 4" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Delay 4 Ch C" axeBlockId="Delay 4" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Delay 4 Ch D" axeBlockId="Delay 4" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Delay 4 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Delay 4 Ch A</patchListItemName>
+      <patchListItemName>Axe Delay 4 Ch B</patchListItemName>
+      <patchListItemName>Axe Delay 4 Ch C</patchListItemName>
+      <patchListItemName>Axe Delay 4 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Drive 1 Ch A" axeBlockId="Drive 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Drive 1 Ch B" axeBlockId="Drive 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Drive 1 Ch C" axeBlockId="Drive 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Drive 1 Ch D" axeBlockId="Drive 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Drive 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Drive 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Drive 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Drive 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Drive 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Drive 2 Ch A" axeBlockId="Drive 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Drive 2 Ch B" axeBlockId="Drive 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Drive 2 Ch C" axeBlockId="Drive 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Drive 2 Ch D" axeBlockId="Drive 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Drive 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Drive 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Drive 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Drive 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Drive 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Drive 3 Ch A" axeBlockId="Drive 3" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Drive 3 Ch B" axeBlockId="Drive 3" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Drive 3 Ch C" axeBlockId="Drive 3" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Drive 3 Ch D" axeBlockId="Drive 3" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Drive 3 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Drive 3 Ch A</patchListItemName>
+      <patchListItemName>Axe Drive 3 Ch B</patchListItemName>
+      <patchListItemName>Axe Drive 3 Ch C</patchListItemName>
+      <patchListItemName>Axe Drive 3 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Drive 4 Ch A" axeBlockId="Drive 4" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Drive 4 Ch B" axeBlockId="Drive 4" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Drive 4 Ch C" axeBlockId="Drive 4" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Drive 4 Ch D" axeBlockId="Drive 4" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Drive 4 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Drive 4 Ch A</patchListItemName>
+      <patchListItemName>Axe Drive 4 Ch B</patchListItemName>
+      <patchListItemName>Axe Drive 4 Ch C</patchListItemName>
+      <patchListItemName>Axe Drive 4 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Dyn Dist 1 Ch A" axeBlockId="Dyn Dist 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Dyn Dist 1 Ch B" axeBlockId="Dyn Dist 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Dyn Dist 1 Ch C" axeBlockId="Dyn Dist 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Dyn Dist 1 Ch D" axeBlockId="Dyn Dist 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Dyn Dist 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Dyn Dist 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Dyn Dist 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Dyn Dist 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Dyn Dist 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Dyn Dist 2 Ch A" axeBlockId="Dyn Dist 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Dyn Dist 2 Ch B" axeBlockId="Dyn Dist 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Dyn Dist 2 Ch C" axeBlockId="Dyn Dist 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Dyn Dist 2 Ch D" axeBlockId="Dyn Dist 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Dyn Dist 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Dyn Dist 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Dyn Dist 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Dyn Dist 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Dyn Dist 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Enhancer 1 Ch A" axeBlockId="Enhancer 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Enhancer 1 Ch B" axeBlockId="Enhancer 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Enhancer 1 Ch C" axeBlockId="Enhancer 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Enhancer 1 Ch D" axeBlockId="Enhancer 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Enhancer 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Enhancer 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Enhancer 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Enhancer 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Enhancer 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Enhancer 2 Ch A" axeBlockId="Enhancer 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Enhancer 2 Ch B" axeBlockId="Enhancer 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Enhancer 2 Ch C" axeBlockId="Enhancer 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Enhancer 2 Ch D" axeBlockId="Enhancer 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Enhancer 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Enhancer 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Enhancer 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Enhancer 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Enhancer 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Filter 1 Ch A" axeBlockId="Filter 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Filter 1 Ch B" axeBlockId="Filter 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Filter 1 Ch C" axeBlockId="Filter 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Filter 1 Ch D" axeBlockId="Filter 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Filter 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Filter 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Filter 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Filter 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Filter 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Filter 2 Ch A" axeBlockId="Filter 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Filter 2 Ch B" axeBlockId="Filter 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Filter 2 Ch C" axeBlockId="Filter 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Filter 2 Ch D" axeBlockId="Filter 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Filter 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Filter 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Filter 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Filter 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Filter 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Filter 3 Ch A" axeBlockId="Filter 3" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Filter 3 Ch B" axeBlockId="Filter 3" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Filter 3 Ch C" axeBlockId="Filter 3" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Filter 3 Ch D" axeBlockId="Filter 3" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Filter 3 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Filter 3 Ch A</patchListItemName>
+      <patchListItemName>Axe Filter 3 Ch B</patchListItemName>
+      <patchListItemName>Axe Filter 3 Ch C</patchListItemName>
+      <patchListItemName>Axe Filter 3 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Filter 4 Ch A" axeBlockId="Filter 4" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Filter 4 Ch B" axeBlockId="Filter 4" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Filter 4 Ch C" axeBlockId="Filter 4" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Filter 4 Ch D" axeBlockId="Filter 4" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Filter 4 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Filter 4 Ch A</patchListItemName>
+      <patchListItemName>Axe Filter 4 Ch B</patchListItemName>
+      <patchListItemName>Axe Filter 4 Ch C</patchListItemName>
+      <patchListItemName>Axe Filter 4 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Flanger 1 Ch A" axeBlockId="Flanger 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Flanger 1 Ch B" axeBlockId="Flanger 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Flanger 1 Ch C" axeBlockId="Flanger 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Flanger 1 Ch D" axeBlockId="Flanger 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Flanger 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Flanger 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Flanger 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Flanger 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Flanger 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Flanger 2 Ch A" axeBlockId="Flanger 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Flanger 2 Ch B" axeBlockId="Flanger 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Flanger 2 Ch C" axeBlockId="Flanger 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Flanger 2 Ch D" axeBlockId="Flanger 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Flanger 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Flanger 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Flanger 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Flanger 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Flanger 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Formant 1 Ch A" axeBlockId="Formant 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Formant 1 Ch B" axeBlockId="Formant 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Formant 1 Ch C" axeBlockId="Formant 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Formant 1 Ch D" axeBlockId="Formant 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Formant 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Formant 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Formant 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Formant 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Formant 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Formant 2 Ch A" axeBlockId="Formant 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Formant 2 Ch B" axeBlockId="Formant 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Formant 2 Ch C" axeBlockId="Formant 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Formant 2 Ch D" axeBlockId="Formant 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Formant 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Formant 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Formant 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Formant 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Formant 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Gate 1 Ch A" axeBlockId="Gate 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Gate 1 Ch B" axeBlockId="Gate 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Gate 1 Ch C" axeBlockId="Gate 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Gate 1 Ch D" axeBlockId="Gate 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Gate 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Gate 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Gate 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Gate 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Gate 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Gate 2 Ch A" axeBlockId="Gate 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Gate 2 Ch B" axeBlockId="Gate 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Gate 2 Ch C" axeBlockId="Gate 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Gate 2 Ch D" axeBlockId="Gate 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Gate 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Gate 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Gate 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Gate 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Gate 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Gate 3 Ch A" axeBlockId="Gate 3" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Gate 3 Ch B" axeBlockId="Gate 3" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Gate 3 Ch C" axeBlockId="Gate 3" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Gate 3 Ch D" axeBlockId="Gate 3" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Gate 3 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Gate 3 Ch A</patchListItemName>
+      <patchListItemName>Axe Gate 3 Ch B</patchListItemName>
+      <patchListItemName>Axe Gate 3 Ch C</patchListItemName>
+      <patchListItemName>Axe Gate 3 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Gate 4 Ch A" axeBlockId="Gate 4" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Gate 4 Ch B" axeBlockId="Gate 4" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Gate 4 Ch C" axeBlockId="Gate 4" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Gate 4 Ch D" axeBlockId="Gate 4" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Gate 4 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Gate 4 Ch A</patchListItemName>
+      <patchListItemName>Axe Gate 4 Ch B</patchListItemName>
+      <patchListItemName>Axe Gate 4 Ch C</patchListItemName>
+      <patchListItemName>Axe Gate 4 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Graphic EQ 1 Ch A" axeBlockId="Graphic EQ 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Graphic EQ 1 Ch B" axeBlockId="Graphic EQ 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Graphic EQ 1 Ch C" axeBlockId="Graphic EQ 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Graphic EQ 1 Ch D" axeBlockId="Graphic EQ 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="GEQ 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Graphic EQ 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Graphic EQ 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Graphic EQ 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Graphic EQ 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Graphic EQ 2 Ch A" axeBlockId="Graphic EQ 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Graphic EQ 2 Ch B" axeBlockId="Graphic EQ 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Graphic EQ 2 Ch C" axeBlockId="Graphic EQ 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Graphic EQ 2 Ch D" axeBlockId="Graphic EQ 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="GEQ 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Graphic EQ 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Graphic EQ 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Graphic EQ 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Graphic EQ 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Graphic EQ 3 Ch A" axeBlockId="Graphic EQ 3" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Graphic EQ 3 Ch B" axeBlockId="Graphic EQ 3" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Graphic EQ 3 Ch C" axeBlockId="Graphic EQ 3" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Graphic EQ 3 Ch D" axeBlockId="Graphic EQ 3" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="GEQ 3 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Graphic EQ 3 Ch A</patchListItemName>
+      <patchListItemName>Axe Graphic EQ 3 Ch B</patchListItemName>
+      <patchListItemName>Axe Graphic EQ 3 Ch C</patchListItemName>
+      <patchListItemName>Axe Graphic EQ 3 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Graphic EQ 4 Ch A" axeBlockId="Graphic EQ 4" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Graphic EQ 4 Ch B" axeBlockId="Graphic EQ 4" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Graphic EQ 4 Ch C" axeBlockId="Graphic EQ 4" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Graphic EQ 4 Ch D" axeBlockId="Graphic EQ 4" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="GEQ 4 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Graphic EQ 4 Ch A</patchListItemName>
+      <patchListItemName>Axe Graphic EQ 4 Ch B</patchListItemName>
+      <patchListItemName>Axe Graphic EQ 4 Ch C</patchListItemName>
+      <patchListItemName>Axe Graphic EQ 4 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Input 1 Ch A" axeBlockId="Input 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Input 1 Ch B" axeBlockId="Input 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Input 1 Ch C" axeBlockId="Input 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Input 1 Ch D" axeBlockId="Input 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Input 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Input 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Input 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Input 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Input 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Input 2 Ch A" axeBlockId="Input 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Input 2 Ch B" axeBlockId="Input 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Input 2 Ch C" axeBlockId="Input 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Input 2 Ch D" axeBlockId="Input 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Input 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Input 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Input 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Input 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Input 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Input 3 Ch A" axeBlockId="Input 3" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Input 3 Ch B" axeBlockId="Input 3" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Input 3 Ch C" axeBlockId="Input 3" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Input 3 Ch D" axeBlockId="Input 3" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Input 3 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Input 3 Ch A</patchListItemName>
+      <patchListItemName>Axe Input 3 Ch B</patchListItemName>
+      <patchListItemName>Axe Input 3 Ch C</patchListItemName>
+      <patchListItemName>Axe Input 3 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Input 4 Ch A" axeBlockId="Input 4" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Input 4 Ch B" axeBlockId="Input 4" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Input 4 Ch C" axeBlockId="Input 4" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Input 4 Ch D" axeBlockId="Input 4" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Input 4 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Input 4 Ch A</patchListItemName>
+      <patchListItemName>Axe Input 4 Ch B</patchListItemName>
+      <patchListItemName>Axe Input 4 Ch C</patchListItemName>
+      <patchListItemName>Axe Input 4 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Input 5 Ch A" axeBlockId="Input 5" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Input 5 Ch B" axeBlockId="Input 5" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Input 5 Ch C" axeBlockId="Input 5" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Input 5 Ch D" axeBlockId="Input 5" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Input 5 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Input 5 Ch A</patchListItemName>
+      <patchListItemName>Axe Input 5 Ch B</patchListItemName>
+      <patchListItemName>Axe Input 5 Ch C</patchListItemName>
+      <patchListItemName>Axe Input 5 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe IR Player 1 Ch A" axeBlockId="IR Player 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe IR Player 1 Ch B" axeBlockId="IR Player 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe IR Player 1 Ch C" axeBlockId="IR Player 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe IR Player 1 Ch D" axeBlockId="IR Player 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="IR Player 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe IR Player 1 Ch A</patchListItemName>
+      <patchListItemName>Axe IR Player 1 Ch B</patchListItemName>
+      <patchListItemName>Axe IR Player 1 Ch C</patchListItemName>
+      <patchListItemName>Axe IR Player 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe IR Player 2 Ch A" axeBlockId="IR Player 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe IR Player 2 Ch B" axeBlockId="IR Player 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe IR Player 2 Ch C" axeBlockId="IR Player 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe IR Player 2 Ch D" axeBlockId="IR Player 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="IR Player 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe IR Player 2 Ch A</patchListItemName>
+      <patchListItemName>Axe IR Player 2 Ch B</patchListItemName>
+      <patchListItemName>Axe IR Player 2 Ch C</patchListItemName>
+      <patchListItemName>Axe IR Player 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Megatap 1 Ch A" axeBlockId="Megatap 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Megatap 1 Ch B" axeBlockId="Megatap 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Megatap 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Megatap 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Megatap 1 Ch B</patchListItemName>
+    </patch>
+
+    <patch name="Axe Megatap 2 Ch A" axeBlockId="Megatap 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Megatap 2 Ch B" axeBlockId="Megatap 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Megatap 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Megatap 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Megatap 2 Ch B</patchListItemName>
+    </patch>
+
+    <patch name="Axe Mixer 1 Ch A" axeBlockId="Mixer 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Mixer 1 Ch B" axeBlockId="Mixer 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Mixer 1 Ch C" axeBlockId="Mixer 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Mixer 1 Ch D" axeBlockId="Mixer 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Mixer 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Mixer 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Mixer 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Mixer 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Mixer 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Mixer 2 Ch A" axeBlockId="Mixer 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Mixer 2 Ch B" axeBlockId="Mixer 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Mixer 2 Ch C" axeBlockId="Mixer 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Mixer 2 Ch D" axeBlockId="Mixer 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Mixer 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Mixer 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Mixer 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Mixer 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Mixer 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Mixer 3 Ch A" axeBlockId="Mixer 3" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Mixer 3 Ch B" axeBlockId="Mixer 3" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Mixer 3 Ch C" axeBlockId="Mixer 3" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Mixer 3 Ch D" axeBlockId="Mixer 3" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Mixer 3 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Mixer 3 Ch A</patchListItemName>
+      <patchListItemName>Axe Mixer 3 Ch B</patchListItemName>
+      <patchListItemName>Axe Mixer 3 Ch C</patchListItemName>
+      <patchListItemName>Axe Mixer 3 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Mixer 4 Ch A" axeBlockId="Mixer 4" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Mixer 4 Ch B" axeBlockId="Mixer 4" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Mixer 4 Ch C" axeBlockId="Mixer 4" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Mixer 4 Ch D" axeBlockId="Mixer 4" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Mixer 4 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Mixer 4 Ch A</patchListItemName>
+      <patchListItemName>Axe Mixer 4 Ch B</patchListItemName>
+      <patchListItemName>Axe Mixer 4 Ch C</patchListItemName>
+      <patchListItemName>Axe Mixer 4 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Multi-delay 1 Ch A" axeBlockId="Multi-delay 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Multi-delay 1 Ch B" axeBlockId="Multi-delay 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Multi-delay 1 Ch C" axeBlockId="Multi-delay 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Multi-delay 1 Ch D" axeBlockId="Multi-delay 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Multi-delay 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Multi-delay 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Multi-delay 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Multi-delay 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Multi-delay 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Multi-delay 2 Ch A" axeBlockId="Multi-delay 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Multi-delay 2 Ch B" axeBlockId="Multi-delay 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Multi-delay 2 Ch C" axeBlockId="Multi-delay 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Multi-delay 2 Ch D" axeBlockId="Multi-delay 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Multi-delay 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Multi-delay 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Multi-delay 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Multi-delay 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Multi-delay 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Multiband Compressor 1 Ch A" axeBlockId="Multiband comp 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Multiband Compressor 1 Ch B" axeBlockId="Multiband comp 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Multiband Compressor 1 Ch C" axeBlockId="Multiband comp 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Multiband Compressor 1 Ch D" axeBlockId="Multiband comp 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Multiband Comp 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Multiband Compressor 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Multiband Compressor 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Multiband Compressor 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Multiband Compressor 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Multiband Compressor 2 Ch A" axeBlockId="Multiband comp 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Multiband Compressor 2 Ch B" axeBlockId="Multiband comp 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Multiband Compressor 2 Ch C" axeBlockId="Multiband comp 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Multiband Compressor 2 Ch D" axeBlockId="Multiband comp 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Multiband Comp 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Multiband Compressor 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Multiband Compressor 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Multiband Compressor 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Multiband Compressor 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Multiplexer 1 Ch A" axeBlockId="Multiplexer 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Multiplexer 1 Ch B" axeBlockId="Multiplexer 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Multiplexer 1 Ch C" axeBlockId="Multiplexer 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Multiplexer 1 Ch D" axeBlockId="Multiplexer 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch name="Axe Multiplexer 1 Ch E" axeBlockId="Multiplexer 1" axeBlockChannel="E" device="Axe-Fx" />
+    <patch name="Axe Multiplexer 1 Ch F" axeBlockId="Multiplexer 1" axeBlockChannel="F" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Multiplexer 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Multiplexer 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Multiplexer 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Multiplexer 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Multiplexer 1 Ch D</patchListItemName>
+      <patchListItemName>Axe Multiplexer 1 Ch E</patchListItemName>
+      <patchListItemName>Axe Multiplexer 1 Ch F</patchListItemName>
+    </patch>
+
+    <patch name="Axe Multiplexer 2 Ch A" axeBlockId="Multiplexer 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Multiplexer 2 Ch B" axeBlockId="Multiplexer 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Multiplexer 2 Ch C" axeBlockId="Multiplexer 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Multiplexer 2 Ch D" axeBlockId="Multiplexer 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch name="Axe Multiplexer 2 Ch E" axeBlockId="Multiplexer 2" axeBlockChannel="E" device="Axe-Fx" />
+    <patch name="Axe Multiplexer 2 Ch F" axeBlockId="Multiplexer 2" axeBlockChannel="F" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Multiplexer 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Multiplexer 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Multiplexer 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Multiplexer 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Multiplexer 2 Ch D</patchListItemName>
+      <patchListItemName>Axe Multiplexer 2 Ch E</patchListItemName>
+      <patchListItemName>Axe Multiplexer 2 Ch F</patchListItemName>
+    </patch>
+
+    <patch name="Axe Output 1 Ch A" axeBlockId="Output 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Output 1 Ch B" axeBlockId="Output 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Output 1 Ch C" axeBlockId="Output 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Output 1 Ch D" axeBlockId="Output 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Output 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Output 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Output 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Output 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Output 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Output 2 Ch A" axeBlockId="Output 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Output 2 Ch B" axeBlockId="Output 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Output 2 Ch C" axeBlockId="Output 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Output 2 Ch D" axeBlockId="Output 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Output 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Output 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Output 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Output 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Output 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Output 3 Ch A" axeBlockId="Output 3" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Output 3 Ch B" axeBlockId="Output 3" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Output 3 Ch C" axeBlockId="Output 3" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Output 3 Ch D" axeBlockId="Output 3" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Output 3 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Output 3 Ch A</patchListItemName>
+      <patchListItemName>Axe Output 3 Ch B</patchListItemName>
+      <patchListItemName>Axe Output 3 Ch C</patchListItemName>
+      <patchListItemName>Axe Output 3 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Output 4 Ch A" axeBlockId="Output 4" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Output 4 Ch B" axeBlockId="Output 4" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Output 4 Ch C" axeBlockId="Output 4" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Output 4 Ch D" axeBlockId="Output 4" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Output 4 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Output 4 Ch A</patchListItemName>
+      <patchListItemName>Axe Output 4 Ch B</patchListItemName>
+      <patchListItemName>Axe Output 4 Ch C</patchListItemName>
+      <patchListItemName>Axe Output 4 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Parametric EQ 1 Ch A" axeBlockId="Parametric EQ 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Parametric EQ 1 Ch B" axeBlockId="Parametric EQ 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Parametric EQ 1 Ch C" axeBlockId="Parametric EQ 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Parametric EQ 1 Ch D" axeBlockId="Parametric EQ 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="PEQ 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Parametric EQ 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Parametric EQ 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Parametric EQ 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Parametric EQ 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Parametric EQ 2 Ch A" axeBlockId="Parametric EQ 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Parametric EQ 2 Ch B" axeBlockId="Parametric EQ 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Parametric EQ 2 Ch C" axeBlockId="Parametric EQ 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Parametric EQ 2 Ch D" axeBlockId="Parametric EQ 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="PEQ 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Parametric EQ 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Parametric EQ 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Parametric EQ 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Parametric EQ 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Parametric EQ 3 Ch A" axeBlockId="Parametric EQ 3" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Parametric EQ 3 Ch B" axeBlockId="Parametric EQ 3" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Parametric EQ 3 Ch C" axeBlockId="Parametric EQ 3" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Parametric EQ 3 Ch D" axeBlockId="Parametric EQ 3" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="PEQ 3 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Parametric EQ 3 Ch A</patchListItemName>
+      <patchListItemName>Axe Parametric EQ 3 Ch B</patchListItemName>
+      <patchListItemName>Axe Parametric EQ 3 Ch C</patchListItemName>
+      <patchListItemName>Axe Parametric EQ 3 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Parametric EQ 4 Ch A" axeBlockId="Parametric EQ 4" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Parametric EQ 4 Ch B" axeBlockId="Parametric EQ 4" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Parametric EQ 4 Ch C" axeBlockId="Parametric EQ 4" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Parametric EQ 4 Ch D" axeBlockId="Parametric EQ 4" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="PEQ 4 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Parametric EQ 4 Ch A</patchListItemName>
+      <patchListItemName>Axe Parametric EQ 4 Ch B</patchListItemName>
+      <patchListItemName>Axe Parametric EQ 4 Ch C</patchListItemName>
+      <patchListItemName>Axe Parametric EQ 4 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Phaser 1 Ch A" axeBlockId="Phaser 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Phaser 1 Ch B" axeBlockId="Phaser 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Phaser 1 Ch C" axeBlockId="Phaser 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Phaser 1 Ch D" axeBlockId="Phaser 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Phaser 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Phaser 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Phaser 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Phaser 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Phaser 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Phaser 2 Ch A" axeBlockId="Phaser 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Phaser 2 Ch B" axeBlockId="Phaser 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Phaser 2 Ch C" axeBlockId="Phaser 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Phaser 2 Ch D" axeBlockId="Phaser 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Phaser 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Phaser 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Phaser 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Phaser 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Phaser 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Pitch Shift 1 Ch A" axeBlockId="Pitch 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Pitch Shift 1 Ch B" axeBlockId="Pitch 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Pitch Shift 1 Ch C" axeBlockId="Pitch 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Pitch Shift 1 Ch D" axeBlockId="Pitch 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Pitch 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Pitch Shift 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Pitch Shift 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Pitch Shift 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Pitch Shift 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Pitch Shift 2 Ch A" axeBlockId="Pitch 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Pitch Shift 2 Ch B" axeBlockId="Pitch 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Pitch Shift 2 Ch C" axeBlockId="Pitch 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Pitch Shift 2 Ch D" axeBlockId="Pitch 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Pitch 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Pitch Shift 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Pitch Shift 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Pitch Shift 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Pitch Shift 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Plex Delay 1 Ch A" axeBlockId="Plex Delay 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Plex Delay 1 Ch B" axeBlockId="Plex Delay 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Plex Delay 1 Ch C" axeBlockId="Plex Delay 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Plex Delay 1 Ch D" axeBlockId="Plex Delay 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Plex Dly 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Plex Delay 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Plex Delay 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Plex Delay 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Plex Delay 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Plex Delay 2 Ch A" axeBlockId="Plex Delay 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Plex Delay 2 Ch B" axeBlockId="Plex Delay 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Plex Delay 2 Ch C" axeBlockId="Plex Delay 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Plex Delay 2 Ch D" axeBlockId="Plex Delay 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Plex Dly 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Plex Delay 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Plex Delay 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Plex Delay 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Plex Delay 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Resonator 1 Ch A" axeBlockId="Resonator 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Resonator 1 Ch B" axeBlockId="Resonator 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Resonator 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Resonator 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Resonator 1 Ch B</patchListItemName>
+    </patch>
+
+    <patch name="Axe Resonator 2 Ch A" axeBlockId="Resonator 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Resonator 2 Ch B" axeBlockId="Resonator 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Resonator 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Resonator 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Resonator 2 Ch B</patchListItemName>
+    </patch>
+
+    <patch name="Axe Reverb 1 Ch A" axeBlockId="Reverb 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Reverb 1 Ch B" axeBlockId="Reverb 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Reverb 1 Ch C" axeBlockId="Reverb 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Reverb 1 Ch D" axeBlockId="Reverb 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Reverb 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Reverb 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Reverb 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Reverb 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Reverb 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Reverb 2 Ch A" axeBlockId="Reverb 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Reverb 2 Ch B" axeBlockId="Reverb 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Reverb 2 Ch C" axeBlockId="Reverb 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Reverb 2 Ch D" axeBlockId="Reverb 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Reverb 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Reverb 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Reverb 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Reverb 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Reverb 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Ring Mod 1 Ch A" axeBlockId="Ring Mod 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Ring Mod 1 Ch B" axeBlockId="Ring Mod 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Ring Mod 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Ring Mod 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Ring Mod 1 Ch B</patchListItemName>
+    </patch>
+
+    <patch name="Axe Rotary 1 Ch A" axeBlockId="Rotary 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Rotary 1 Ch B" axeBlockId="Rotary 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Rotary 1 Ch C" axeBlockId="Rotary 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Rotary 1 Ch D" axeBlockId="Rotary 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Rotary 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Rotary 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Rotary 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Rotary 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Rotary 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Rotary 2 Ch A" axeBlockId="Rotary 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Rotary 2 Ch B" axeBlockId="Rotary 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Rotary 2 Ch C" axeBlockId="Rotary 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Rotary 2 Ch D" axeBlockId="Rotary 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Rotary 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Rotary 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Rotary 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Rotary 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Rotary 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Synth 1 Ch A" axeBlockId="Synth 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Synth 1 Ch B" axeBlockId="Synth 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Synth 1 Ch C" axeBlockId="Synth 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Synth 1 Ch D" axeBlockId="Synth 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Synth 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Synth 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Synth 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Synth 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Synth 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Synth 2 Ch A" axeBlockId="Synth 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Synth 2 Ch B" axeBlockId="Synth 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Synth 2 Ch C" axeBlockId="Synth 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Synth 2 Ch D" axeBlockId="Synth 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Synth 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Synth 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Synth 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Synth 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Synth 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Ten-tap Delay 1 Ch A" axeBlockId="Ten-tap Delay 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Ten-tap Delay 1 Ch B" axeBlockId="Ten-tap Delay 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Ten-tap Delay 1 Ch C" axeBlockId="Ten-tap Delay 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Ten-tap Delay 1 Ch D" axeBlockId="Ten-tap Delay 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Ten-tap Dly 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Ten-tap Delay 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Ten-tap Delay 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Ten-tap Delay 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Ten-tap Delay 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Ten-tap Delay 2 Ch A" axeBlockId="Ten-tap Delay 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Ten-tap Delay 2 Ch B" axeBlockId="Ten-tap Delay 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Ten-tap Delay 2 Ch C" axeBlockId="Ten-tap Delay 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Ten-tap Delay 2 Ch D" axeBlockId="Ten-tap Delay 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Ten-tap Dly 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Ten-tap Delay 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Ten-tap Delay 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Ten-tap Delay 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Ten-tap Delay 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Tremolo 1 Ch A" axeBlockId="Tremolo 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Tremolo 1 Ch B" axeBlockId="Tremolo 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Tremolo 1 Ch C" axeBlockId="Tremolo 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Tremolo 1 Ch D" axeBlockId="Tremolo 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Tremolo 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Tremolo 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Tremolo 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Tremolo 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Tremolo 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Tremolo 2 Ch A" axeBlockId="Tremolo 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Tremolo 2 Ch B" axeBlockId="Tremolo 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Tremolo 2 Ch C" axeBlockId="Tremolo 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Tremolo 2 Ch D" axeBlockId="Tremolo 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Tremolo 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Tremolo 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Tremolo 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Tremolo 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Tremolo 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Volume/Pan 1 Ch A" axeBlockId="Volume 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Volume/Pan 1 Ch B" axeBlockId="Volume 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Volume/Pan 1 Ch C" axeBlockId="Volume 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Volume/Pan 1 Ch D" axeBlockId="Volume 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Vol/Pan 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Volume/Pan 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Volume/Pan 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Volume/Pan 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Volume/Pan 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Volume/Pan 2 Ch A" axeBlockId="Volume 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Volume/Pan 2 Ch B" axeBlockId="Volume 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Volume/Pan 2 Ch C" axeBlockId="Volume 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Volume/Pan 2 Ch D" axeBlockId="Volume 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Vol/Pan 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Volume/Pan 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Volume/Pan 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Volume/Pan 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Volume/Pan 2 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Volume/Pan 3 Ch A" axeBlockId="Volume 3" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Volume/Pan 3 Ch B" axeBlockId="Volume 3" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Volume/Pan 3 Ch C" axeBlockId="Volume 3" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Volume/Pan 3 Ch D" axeBlockId="Volume 3" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Vol/Pan 3 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Volume/Pan 3 Ch A</patchListItemName>
+      <patchListItemName>Axe Volume/Pan 3 Ch B</patchListItemName>
+      <patchListItemName>Axe Volume/Pan 3 Ch C</patchListItemName>
+      <patchListItemName>Axe Volume/Pan 3 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Volume/Pan 4 Ch A" axeBlockId="Volume 4" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Volume/Pan 4 Ch B" axeBlockId="Volume 4" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Volume/Pan 4 Ch C" axeBlockId="Volume 4" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Volume/Pan 4 Ch D" axeBlockId="Volume 4" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Vol/Pan 4 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Volume/Pan 4 Ch A</patchListItemName>
+      <patchListItemName>Axe Volume/Pan 4 Ch B</patchListItemName>
+      <patchListItemName>Axe Volume/Pan 4 Ch C</patchListItemName>
+      <patchListItemName>Axe Volume/Pan 4 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Wah 1 Ch A" axeBlockId="Wah 1" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Wah 1 Ch B" axeBlockId="Wah 1" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Wah 1 Ch C" axeBlockId="Wah 1" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Wah 1 Ch D" axeBlockId="Wah 1" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Wah 1 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Wah 1 Ch A</patchListItemName>
+      <patchListItemName>Axe Wah 1 Ch B</patchListItemName>
+      <patchListItemName>Axe Wah 1 Ch C</patchListItemName>
+      <patchListItemName>Axe Wah 1 Ch D</patchListItemName>
+    </patch>
+
+    <patch name="Axe Wah 2 Ch A" axeBlockId="Wah 2" axeBlockChannel="A" device="Axe-Fx" />
+    <patch name="Axe Wah 2 Ch B" axeBlockId="Wah 2" axeBlockChannel="B" device="Axe-Fx" />
+    <patch name="Axe Wah 2 Ch C" axeBlockId="Wah 2" axeBlockChannel="C" device="Axe-Fx" />
+    <patch name="Axe Wah 2 Ch D" axeBlockId="Wah 2" axeBlockChannel="D" device="Axe-Fx" />
+    <patch type="patchListSequence" name="Wah 2 Ch" gaplessRestart="1">
+      <patchListItemName>Axe Wah 2 Ch A</patchListItemName>
+      <patchListItemName>Axe Wah 2 Ch B</patchListItemName>
+      <patchListItemName>Axe Wah 2 Ch C</patchListItemName>
+      <patchListItemName>Axe Wah 2 Ch D</patchListItemName>
+    </patch>
+
+    <!-- Axe-Fx III pseudo x/y -->
+		<patch type="patchListSequence" name="Amp 1 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Amp 1 Ch A</patchListItemName>
+			<patchListItemName>Axe Amp 1 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Amp 2 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Amp 2 Ch A</patchListItemName>
+			<patchListItemName>Axe Amp 2 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Chorus 1 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Chorus 1 Ch A</patchListItemName>
+			<patchListItemName>Axe Chorus 1 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Chorus 2 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Chorus 2 Ch A</patchListItemName>
+			<patchListItemName>Axe Chorus 2 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Compressor 1 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Comp 1 Ch A</patchListItemName>
+			<patchListItemName>Axe Comp 1 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Compressor 2 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Comp 2 Ch A</patchListItemName>
+			<patchListItemName>Axe Comp 2 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Delay 1 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Delay 1 Ch A</patchListItemName>
+			<patchListItemName>Axe Delay 1 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Delay 2 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Delay 2 Ch A</patchListItemName>
+			<patchListItemName>Axe Delay 2 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Delay 3 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Delay 3 Ch A</patchListItemName>
+			<patchListItemName>Axe Delay 3 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Delay 4 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Delay 4 Ch A</patchListItemName>
+			<patchListItemName>Axe Delay 4 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Drive 1 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Drive 1 Ch A</patchListItemName>
+			<patchListItemName>Axe Drive 1 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Drive 2 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Drive 2 Ch A</patchListItemName>
+			<patchListItemName>Axe Drive 2 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Drive 3 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Drive 3 Ch A</patchListItemName>
+			<patchListItemName>Axe Drive 3 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Drive 4 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Drive 4 Ch A</patchListItemName>
+			<patchListItemName>Axe Drive 4 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Enhancer 1 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Enhancer 1 Ch A</patchListItemName>
+			<patchListItemName>Axe Enhancer 1 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Filter 1 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Filter 1 Ch A</patchListItemName>
+			<patchListItemName>Axe Filter 1 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Flanger 1 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Flanger 1 Ch A</patchListItemName>
+			<patchListItemName>Axe Flanger 1 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Flanger 2 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Flanger 2 Ch A</patchListItemName>
+			<patchListItemName>Axe Flanger 2 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Input 1 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Input 1 Ch A</patchListItemName>
+			<patchListItemName>Axe Input 1 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Megatap 1 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Megatap 1 Ch A</patchListItemName>
+			<patchListItemName>Axe Megatap 1 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Megatap 2 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Megatap 2 Ch A</patchListItemName>
+			<patchListItemName>Axe Megatap 2 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Multidelay 1 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Multi-delay 1 Ch A</patchListItemName>
+			<patchListItemName>Axe Multi-delay 1 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Multidelay 2 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Multi-delay 2 Ch A</patchListItemName>
+			<patchListItemName>Axe Multi-delay 2 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Multiplexer 1 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Multiplexer 1 Ch A</patchListItemName>
+			<patchListItemName>Axe Multiplexer 1 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Phaser 1 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Phaser 1 Ch A</patchListItemName>
+			<patchListItemName>Axe Phaser 1 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Phaser 2 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Phaser 2 Ch A</patchListItemName>
+			<patchListItemName>Axe Phaser 2 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Pitch Shift 1 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Pitch Shift 1 Ch A</patchListItemName>
+			<patchListItemName>Axe Pitch Shift 1 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Pitch Shift 2 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Pitch Shift 2 Ch A</patchListItemName>
+			<patchListItemName>Axe Pitch Shift 2 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Plex Delay 1 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Plex Delay 1 Ch A</patchListItemName>
+			<patchListItemName>Axe Plex Delay 1 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Plex Delay 2 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Plex Delay 2 Ch A</patchListItemName>
+			<patchListItemName>Axe Plex Delay 2 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Reverb 1 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Reverb 1 Ch A</patchListItemName>
+			<patchListItemName>Axe Reverb 1 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Reverb 2 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Reverb 2 Ch A</patchListItemName>
+			<patchListItemName>Axe Reverb 2 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Rotary 1 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Rotary 1 Ch A</patchListItemName>
+			<patchListItemName>Axe Rotary 1 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Rotary 2 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Rotary 2 Ch A</patchListItemName>
+			<patchListItemName>Axe Rotary 2 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Synth 1 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Synth 1 Ch A</patchListItemName>
+			<patchListItemName>Axe Synth 1 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Synth 2 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Synth 2 Ch A</patchListItemName>
+			<patchListItemName>Axe Synth 2 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Ten-tap Delay 1 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Ten-tap Delay 1 Ch A</patchListItemName>
+			<patchListItemName>Axe Ten-tap Delay 1 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Ten-tap Delay 2 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Ten-tap Delay 2 Ch A</patchListItemName>
+			<patchListItemName>Axe Ten-tap Delay 2 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Tremolo 1 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Tremolo 1 Ch A</patchListItemName>
+			<patchListItemName>Axe Tremolo 1 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Tremolo 2 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Tremolo 2 Ch A</patchListItemName>
+			<patchListItemName>Axe Tremolo 2 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Volume/Pan 1 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Volume/Pan 1 Ch A</patchListItemName>
+			<patchListItemName>Axe Volume/Pan 1 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Volume/Pan 2 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Volume/Pan 2 Ch A</patchListItemName>
+			<patchListItemName>Axe Volume/Pan 2 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Wah 1 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Wah 1 Ch A</patchListItemName>
+			<patchListItemName>Axe Wah 1 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Wah 2 A/B" gaplessRestart="1">
+			<patchListItemName>Axe Wah 2 Ch A</patchListItemName>
+			<patchListItemName>Axe Wah 2 Ch B</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Ring Mod A/B" gaplessRestart="1">
+			<patchListItemName>Axe Ring Mod 1 Ch A</patchListItemName>
+			<patchListItemName>Axe Ring Mod 1 Ch B</patchListItemName>
+		</patch>
+
+		<patch type="patchListSequence" name="Pitch Shift 1 Ch" gaplessRestart="1">
+			<patchListItemName>Axe Pitch Shift 1 Ch A</patchListItemName>
+			<patchListItemName>Axe Pitch Shift 1 Ch B</patchListItemName>
+			<patchListItemName>Axe Pitch Shift 1 Ch C</patchListItemName>
+			<patchListItemName>Axe Pitch Shift 1 Ch D</patchListItemName>
+		</patch>
+		<patch type="patchListSequence" name="Pitch Shift 1 C/D" gaplessRestart="1">
+			<patchListItemName>Axe Pitch Shift 1 Ch C</patchListItemName>
+			<patchListItemName>Axe Pitch Shift 1 Ch D</patchListItemName>
+		</patch>
+
+		<patch name="Axe Ext 1 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="16" />
+		<patch name="Axe Ext 2 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="17" />
+		<patch name="Axe Ext 3 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="18" />
+		<patch name="Axe Ext 4 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="19" />
+		<patch name="Axe Ext 5 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="20" />
+		<patch name="Axe Ext 6 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="21" />
+		<patch name="Axe Ext 7 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="22" />
+		<patch name="Axe Ext 8 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="23" />
+		<patch name="Axe Ext 9 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="24" />
+		<patch name="Axe Ext 10 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="25" />
+		<patch name="Axe Ext 11 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="26" />
+		<patch name="Axe Ext 12 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="27" />
+		<patch name="Axe Ext 13 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="28" />
+		<patch name="Axe Ext 14 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="29" />
+		<patch name="Axe Ext 15 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="30" />
+		<patch name="Axe Ext 16 (toggle)" device="Axe-Fx" type="toggleControlChange" controller="31" />
+
+		<patch name="Scene 1" scene="1" groupId="AxeFxScene" device="Axe-Fx" />
+		<patch name="Scene 2" scene="2" groupId="AxeFxScene" device="Axe-Fx" />
+		<patch name="Scene 3" scene="3" groupId="AxeFxScene" device="Axe-Fx" />
+		<patch name="Scene 4" scene="4" groupId="AxeFxScene" device="Axe-Fx" />
+		<patch name="Scene 5" scene="5" groupId="AxeFxScene" device="Axe-Fx" />
+		<patch name="Scene 6" scene="6" groupId="AxeFxScene" device="Axe-Fx" />
+		<patch name="Scene 7" scene="7" groupId="AxeFxScene" device="Axe-Fx" />
+		<patch name="Scene 8" scene="8" groupId="AxeFxScene" device="Axe-Fx" />
+
+		<patch type="patchListSequence" name="Scene List 1-5" gaplessRestart="1">
+			<patchListItemName>Scene 1</patchListItemName>
+			<patchListItemName>Scene 2</patchListItemName>
+			<patchListItemName>Scene 3</patchListItemName>
+			<patchListItemName>Scene 4</patchListItemName>
+			<patchListItemName>Scene 5</patchListItemName>
+		</patch>
+
+		<!-- sysex messages that are unsupported by Fractal Audio, but appear to work fine -->
+		<patch name="Amp1 Boost" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 52 00 3A 00 28 00 00 00 00 7C 03 00 00 00 00 2B F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 52 00 3A 00 28 00 00 00 00 00 00 00 00 00 00 54 F7</midiByteString>
+		</patch>
+		<patch name="Amp1 Cut" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 52 00 3A 00 2D 00 00 00 00 7C 03 00 00 00 00 2E F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 52 00 3A 00 2D 00 00 00 00 00 00 00 00 00 00 51 F7</midiByteString>
+		</patch>
+		<patch name="Amp1 Fat" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 52 00 3A 00 4E 00 00 00 00 7C 03 00 00 00 00 4D F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 52 00 3A 00 4E 00 00 00 00 00 00 00 00 00 00 32 F7</midiByteString>
+		</patch>
+		<patch name="Amp1 BS" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 52 00 3A 00 27 00 00 00 00 7C 03 00 00 00 00 24 F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 52 00 3A 00 27 00 00 00 00 00 00 00 00 00 00 5B F7</midiByteString>
+		</patch>
+		<patch name="Amp1 Eq" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 52 00 3A 00 7E 00 00 00 00 7C 03 00 00 00 00 7D F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 52 00 3A 00 7E 00 00 00 00 00 00 00 00 00 00 02 F7</midiByteString>
+		</patch>
+
+		<patch name="Amp2 Boost" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 52 00 3B 00 28 00 00 00 00 7C 03 00 00 00 00 2A F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 52 00 3B 00 28 00 00 00 00 00 00 00 00 00 00 55 F7</midiByteString>
+		</patch>
+		<patch name="Amp2 Cut" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 52 00 3B 00 2D 00 00 00 00 7C 03 00 00 00 00 2F F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 52 00 3B 00 2D 00 00 00 00 00 00 00 00 00 00 50 F7</midiByteString>
+		</patch>
+		<patch name="Amp2 Fat" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 52 00 3B 00 4E 00 00 00 00 7C 03 00 00 00 00 4C F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 52 00 3B 00 4E 00 00 00 00 00 00 00 00 00 00 33 F7</midiByteString>
+		</patch>
+		<patch name="Amp2 BS" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 52 00 3B 00 27 00 00 00 00 7C 03 00 00 00 00 25 F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 52 00 3B 00 27 00 00 00 00 00 00 00 00 00 00 5A F7</midiByteString>
+		</patch>
+		<patch name="Amp2 Eq" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 52 00 3B 00 7E 00 00 00 00 7C 03 00 00 00 00 7C F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 52 00 3B 00 7E 00 00 00 00 00 00 00 00 00 00 03 F7</midiByteString>
+		</patch>
+
+		<!-- reverb repeat: individual toggle for each, 2x toggle 2 states, sequence all 3 states -->
+		<patch name="Reverb 1 Hold" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 42 00 2C 00 00 00 00 00 04 00 00 77 F7</midiByteString>
+		</patch>
+		<patch name="Reverb 1 Stack" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 42 00 2C 00 00 00 00 7C 03 00 00 0C F7</midiByteString>
+		</patch>
+		<patch name="Reverb 1 no repeat" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 42 00 2C 00 00 00 00 00 00 00 00 73 F7</midiByteString>
+		</patch>
+		<patch name="Reverb 1 Hold (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Reverb 1 no repeat</patchListItemName>
+			<patchListItemName>Reverb 1 Hold</patchListItemName>
+		</patch>
+		<patch name="Reverb 1 Stack (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Reverb 1 no repeat</patchListItemName>
+			<patchListItemName>Reverb 1 Stack</patchListItemName>
+		</patch>
+		<patch name="Reverb 1 Hold (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 42 00 2C 00 00 00 00 00 04 00 00 77 F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 42 00 2C 00 00 00 00 00 00 00 00 73 F7</midiByteString>
+		</patch>
+		<patch name="Reverb 1 Stack (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 42 00 2C 00 00 00 00 7C 03 00 00 0C F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 42 00 2C 00 00 00 00 00 00 00 00 73 F7</midiByteString>
+		</patch>
+		<patch type="patchListSequence" name="Reverb 1 Repeat" gaplessRestart="1">
+			<patchListItemName>Reverb 1 no repeat</patchListItemName>
+			<patchListItemName>Reverb 1 Stack</patchListItemName>
+			<patchListItemName>Reverb 1 Hold</patchListItemName>
+		</patch>
+
+		<patch name="Reverb 1 Q Economy" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 42 00 2B 00 00 00 00 00 00 00 00 00 74 F7</midiByteString>
+		</patch>
+		<patch name="Reverb 1 Q Normal" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 42 00 2B 00 00 00 00 7C 03 00 00 00 0B F7</midiByteString>
+		</patch>
+		<patch name="Reverb 1 Q High" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 42 00 2B 00 00 00 00 00 04 00 00 00 70 F7</midiByteString>
+		</patch>
+		<patch name="Reverb 1 Q Ultra-High" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 42 00 2B 00 00 00 00 7C 04 00 00 00 0C F7</midiByteString>
+		</patch>
+		<patch name="Reverb 1 Q High (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Reverb 1 Q Economy</patchListItemName>
+			<patchListItemName>Reverb 1 Q High</patchListItemName>
+		</patch>
+		<patch name="Reverb 1 Q Ultra-High (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Reverb 1 Q Economy</patchListItemName>
+			<patchListItemName>Reverb 1 Q Ultra-High</patchListItemName>
+		</patch>
+
+		<patch name="Reverb 2 Hold" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 43 00 2C 00 00 00 00 00 04 00 00 76 F7</midiByteString>
+		</patch>
+		<patch name="Reverb 2 Stack" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 43 00 2C 00 00 00 00 7C 03 00 00 0D F7</midiByteString>
+		</patch>
+		<patch name="Reverb 2 no repeat" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 43 00 2C 00 00 00 00 00 00 00 00 72 F7</midiByteString>
+		</patch>
+		<patch name="Reverb 2 Hold (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Reverb 2 no repeat</patchListItemName>
+			<patchListItemName>Reverb 2 Hold</patchListItemName>
+		</patch>
+		<patch name="Reverb 2 Stack (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Reverb 2 no repeat</patchListItemName>
+			<patchListItemName>Reverb 2 Stack</patchListItemName>
+		</patch>
+		<patch name="Reverb 2 Hold (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 43 00 2C 00 00 00 00 00 04 00 00 76 F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 43 00 2C 00 00 00 00 00 00 00 00 72 F7</midiByteString>
+		</patch>
+		<patch name="Reverb 2 Stack (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 43 00 2C 00 00 00 00 7C 03 00 00 0D F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 43 00 2C 00 00 00 00 00 00 00 00 72 F7</midiByteString>
+		</patch>
+		<patch type="patchListSequence" name="Reverb 2 Repeat" gaplessRestart="1">
+			<patchListItemName>Reverb 2 no repeat</patchListItemName>
+			<patchListItemName>Reverb 2 Stack</patchListItemName>
+			<patchListItemName>Reverb 2 Hold</patchListItemName>
+		</patch>
+
+		<patch name="Reverb 2 Q Economy" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 43 00 2B 00 00 00 00 00 00 00 00 00 75 F7</midiByteString>
+		</patch>
+		<patch name="Reverb 2 Q Normal" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 43 00 2B 00 00 00 00 7C 03 00 00 00 0A F7</midiByteString>
+		</patch>
+		<patch name="Reverb 2 Q High" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 43 00 2B 00 00 00 00 00 04 00 00 00 71 F7</midiByteString>
+		</patch>
+		<patch name="Reverb 2 Q Ultra-High" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 43 00 2B 00 00 00 00 7C 04 00 00 00 0D F7</midiByteString>
+		</patch>
+		<patch name="Reverb 2 Q High (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Reverb 2 Q Economy</patchListItemName>
+			<patchListItemName>Reverb 2 Q High</patchListItemName>
+		</patch>
+		<patch name="Reverb 2 Q Ultra-High (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Reverb 2 Q Economy</patchListItemName>
+			<patchListItemName>Reverb 2 Q Ultra-High</patchListItemName>
+		</patch>
+
+		<!-- delay repeat: individual toggle for each, 2x toggle 2 states, sequence all 3 states -->
+		<!-- alt:
+			Delay 1 Hold    : F0 00 01 74 10 01 52 00 46 00 1B 00 00 00 00 7C 03 00 00 00 00 64 F7
+			Delay 1 Off     : F0 00 01 74 10 01 52 00 46 00 1B 00 00 00 00 00 00 00 00 00 00 1B F7 -->
+		<patch name="Delay 1 Hold" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 1B 00 00 00 00 00 04 00 00 44 F7</midiByteString>
+		</patch>
+		<patch name="Delay 1 Stack" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 1B 00 00 00 00 7C 03 00 00 3F F7</midiByteString>
+		</patch>
+		<patch name="Delay 1 no repeat" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 1B 00 00 00 00 00 00 00 00 40 F7</midiByteString>
+		</patch>
+		<patch name="Delay 1 Hold (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Delay 1 no repeat</patchListItemName>
+			<patchListItemName>Delay 1 Hold</patchListItemName>
+		</patch>
+		<patch name="Delay 1 Stack (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Delay 1 no repeat</patchListItemName>
+			<patchListItemName>Delay 1 Stack</patchListItemName>
+		</patch>
+		<patch name="Delay 1 Hold (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 1B 00 00 00 00 00 04 00 00 44 F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 46 00 1B 00 00 00 00 00 00 00 00 40 F7</midiByteString>
+		</patch>
+		<patch name="Delay 1 Stack (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 1B 00 00 00 00 7C 03 00 00 3F F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 46 00 1B 00 00 00 00 00 00 00 00 40 F7</midiByteString>
+		</patch>
+		<patch type="patchListSequence" name="Delay 1 Repeat" gaplessRestart="1">
+			<patchListItemName>Delay 1 no repeat</patchListItemName>
+			<patchListItemName>Delay 1 Stack</patchListItemName>
+			<patchListItemName>Delay 1 Hold</patchListItemName>
+		</patch>
+		<patch name="Delay 1 Run" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 27 00 00 00 00 00 04 00 00 78 F7</midiByteString>
+		</patch>
+		<patch name="Delay 1 Run stop" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 27 00 00 00 00 00 00 00 00 7C F7</midiByteString>
+		</patch>
+		<patch name="Delay 1 Run (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Delay 1 Run stop</patchListItemName>
+			<patchListItemName>Delay 1 Run</patchListItemName>
+		</patch>
+		<patch name="Delay 1 Trigger" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 28 00 00 00 00 00 04 00 00 77 F7</midiByteString>
+		</patch>
+		<patch name="Delay 1 Trigger off" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 28 00 00 00 00 00 00 00 00 73 F7</midiByteString>
+		</patch>
+		<patch name="Delay 1 Trigger (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Delay 1 Trigger off</patchListItemName>
+			<patchListItemName>Delay 1 Trigger</patchListItemName>
+		</patch>
+		<patch name="Delay 1 Bit Reduce 0" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 3C 00 00 00 00 00 00 00 00 67 F7</midiByteString>
+		</patch>
+		<patch name="Delay 1 Bit Reduce 2" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 3C 00 00 00 00 00 04 00 00 63 F7</midiByteString>
+		</patch>
+		<patch name="Delay 1 Bit Reduce 4" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 3C 00 00 00 00 04 04 00 00 67 F7</midiByteString>
+		</patch>
+		<patch name="Delay 1 Bit Reduce 6" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 3C 00 00 00 00 06 04 00 00 65 F7</midiByteString>
+		</patch>
+		<patch name="Delay 1 Bit Reduce 8" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 3C 00 00 00 00 08 04 00 00 6B F7</midiByteString>
+		</patch>
+		<patch name="Delay 1 Bit Reduce 10" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 3C 00 00 00 00 09 04 00 00 6A F7</midiByteString>
+		</patch>
+		<patch name="Delay 1 Bit Reduce 12" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 3C 00 00 00 00 0A 04 00 00 69 F7</midiByteString>
+		</patch>
+		<patch name="Delay 1 Bit Reduce 14" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 3C 00 00 00 00 0B 04 00 00 68 F7</midiByteString>
+		</patch>
+		<patch name="Delay 1 Bit Reduce 16" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 3C 00 00 00 00 0C 04 00 00 6F F7</midiByteString>
+		</patch>
+		<patch name="Delay 1 Bit Reduce 17" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 3C 00 00 00 20 0C 04 00 00 4F F7</midiByteString>
+		</patch>
+		<patch name="Delay 1 Bit Reduce 18" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 3C 00 00 00 40 0C 04 00 00 2F F7</midiByteString>
+		</patch>
+		<patch name="Delay 1 Bit Reduce 19" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 3C 00 00 00 60 0C 04 00 00 0F F7</midiByteString>
+		</patch>
+		<patch name="Delay 1 Bit Reduce 20" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 3C 00 00 00 00 0D 04 00 00 6E F7</midiByteString>
+		</patch>
+		<patch name="Delay 1 Bit Reduce 21" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 3C 00 00 00 20 0D 04 00 00 4E F7</midiByteString>
+		</patch>
+		<patch name="Delay 1 Bit Reduce 22" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 3C 00 00 00 40 0D 04 00 00 2E F7</midiByteString>
+		</patch>
+		<patch name="Delay 1 Bit Reduce 23" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 46 00 3C 00 00 00 60 0D 04 00 00 0E F7</midiByteString>
+		</patch>
+
+		<patch name="Delay 2 Hold" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 1B 00 00 00 00 00 04 00 00 45 F7</midiByteString>
+		</patch>
+		<patch name="Delay 2 Stack" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 1B 00 00 00 00 7C 03 00 00 3E F7</midiByteString>
+		</patch>
+		<patch name="Delay 2 no repeat" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 1B 00 00 00 00 00 00 00 00 41 F7</midiByteString>
+		</patch>
+		<patch name="Delay 2 Hold (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Delay 2 no repeat</patchListItemName>
+			<patchListItemName>Delay 2 Hold</patchListItemName>
+		</patch>
+		<patch name="Delay 2 Stack (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Delay 2 no repeat</patchListItemName>
+			<patchListItemName>Delay 2 Stack</patchListItemName>
+		</patch>
+		<patch name="Delay 2 Hold (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 1B 00 00 00 00 00 04 00 00 45 F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 47 00 1B 00 00 00 00 00 00 00 00 41 F7</midiByteString>
+		</patch>
+		<patch name="Delay 2 Stack (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 1B 00 00 00 00 7C 03 00 00 3E F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 47 00 1B 00 00 00 00 00 00 00 00 41 F7</midiByteString>
+		</patch>
+		<patch type="patchListSequence" name="Delay 2 Repeat" gaplessRestart="1">
+			<patchListItemName>Delay 2 no repeat</patchListItemName>
+			<patchListItemName>Delay 2 Stack</patchListItemName>
+			<patchListItemName>Delay 2 Hold</patchListItemName>
+		</patch>
+		<patch name="Delay 2 Run" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 27 00 00 00 00 00 04 00 00 79 F7</midiByteString>
+		</patch>
+		<patch name="Delay 2 Run stop" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 27 00 00 00 00 00 00 00 00 7D F7</midiByteString>
+		</patch>
+		<patch name="Delay 2 Run (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Delay 2 Run stop</patchListItemName>
+			<patchListItemName>Delay 2 Run</patchListItemName>
+		</patch>
+		<patch name="Delay 2 Trigger" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 28 00 00 00 00 00 04 00 00 76 F7</midiByteString>
+		</patch>
+		<patch name="Delay 2 Trigger off" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 28 00 00 00 00 00 00 00 00 72 F7</midiByteString>
+		</patch>
+		<patch name="Delay 2 Trigger (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Delay 2 Trigger off</patchListItemName>
+			<patchListItemName>Delay 2 Trigger</patchListItemName>
+		</patch>
+		<patch name="Delay 2 Bit Reduce 0" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 3C 00 00 00 00 00 00 00 00 66 F7</midiByteString>
+		</patch>
+		<patch name="Delay 2 Bit Reduce 2" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 3C 00 00 00 00 00 04 00 00 62 F7</midiByteString>
+		</patch>
+		<patch name="Delay 2 Bit Reduce 4" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 3C 00 00 00 00 04 04 00 00 66 F7</midiByteString>
+		</patch>
+		<patch name="Delay 2 Bit Reduce 6" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 3C 00 00 00 00 06 04 00 00 64 F7</midiByteString>
+		</patch>
+		<patch name="Delay 2 Bit Reduce 8" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 3C 00 00 00 00 08 04 00 00 6A F7</midiByteString>
+		</patch>
+		<patch name="Delay 2 Bit Reduce 10" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 3C 00 00 00 00 09 04 00 00 6B F7</midiByteString>
+		</patch>
+		<patch name="Delay 2 Bit Reduce 12" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 3C 00 00 00 00 0A 04 00 00 68 F7</midiByteString>
+		</patch>
+		<patch name="Delay 2 Bit Reduce 14" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 3C 00 00 00 00 0B 04 00 00 69 F7</midiByteString>
+		</patch>
+		<patch name="Delay 2 Bit Reduce 16" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 3C 00 00 00 00 0C 04 00 00 6E F7</midiByteString>
+		</patch>
+		<patch name="Delay 2 Bit Reduce 17" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 3C 00 00 00 20 0C 04 00 00 4E F7</midiByteString>
+		</patch>
+		<patch name="Delay 2 Bit Reduce 18" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 3C 00 00 00 40 0C 04 00 00 2E F7</midiByteString>
+		</patch>
+		<patch name="Delay 2 Bit Reduce 19" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 3C 00 00 00 60 0C 04 00 00 0E F7</midiByteString>
+		</patch>
+		<patch name="Delay 2 Bit Reduce 20" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 3C 00 00 00 00 0D 04 00 00 6F F7</midiByteString>
+		</patch>
+		<patch name="Delay 2 Bit Reduce 21" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 3C 00 00 00 20 0D 04 00 00 4F F7</midiByteString>
+		</patch>
+		<patch name="Delay 2 Bit Reduce 22" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 3C 00 00 00 40 0D 04 00 00 2F F7</midiByteString>
+		</patch>
+		<patch name="Delay 2 Bit Reduce 23" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 47 00 3C 00 00 00 60 0D 04 00 00 0F F7</midiByteString>
+		</patch>
+
+		<patch name="Delay 3 Hold" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 1B 00 00 00 00 00 04 00 00 4A F7</midiByteString>
+		</patch>
+		<patch name="Delay 3 Stack" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 1B 00 00 00 00 7C 03 00 00 31 F7</midiByteString>
+		</patch>
+		<patch name="Delay 3 no repeat" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 1B 00 00 00 00 00 00 00 00 4E F7</midiByteString>
+		</patch>
+		<patch name="Delay 3 Hold (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Delay 3 no repeat</patchListItemName>
+			<patchListItemName>Delay 3 Hold</patchListItemName>
+		</patch>
+		<patch name="Delay 3 Stack (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Delay 3 no repeat</patchListItemName>
+			<patchListItemName>Delay 3 Stack</patchListItemName>
+		</patch>
+		<patch name="Delay 3 Hold (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 1B 00 00 00 00 00 04 00 00 4A F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 48 00 1B 00 00 00 00 00 00 00 00 4E F7</midiByteString>
+		</patch>
+		<patch name="Delay 3 Stack (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 1B 00 00 00 00 7C 03 00 00 31 F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 48 00 1B 00 00 00 00 00 00 00 00 4E F7</midiByteString>
+		</patch>
+		<patch type="patchListSequence" name="Delay 3 Repeat" gaplessRestart="1">
+			<patchListItemName>Delay 3 no repeat</patchListItemName>
+			<patchListItemName>Delay 3 Stack</patchListItemName>
+			<patchListItemName>Delay 3 Hold</patchListItemName>
+		</patch>
+		<patch name="Delay 3 Run" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 27 00 00 00 00 00 04 00 00 76 F7</midiByteString>
+		</patch>
+		<patch name="Delay 3 Run stop" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 27 00 00 00 00 00 00 00 00 72 F7</midiByteString>
+		</patch>
+		<patch name="Delay 3 Run (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Delay 3 Run stop</patchListItemName>
+			<patchListItemName>Delay 3 Run</patchListItemName>
+		</patch>
+		<patch name="Delay 3 Trigger" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 28 00 00 00 00 00 04 00 00 79 F7</midiByteString>
+		</patch>
+		<patch name="Delay 3 Trigger off" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 28 00 00 00 00 00 00 00 00 7D F7</midiByteString>
+		</patch>
+		<patch name="Delay 3 Trigger (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Delay 3 Trigger off</patchListItemName>
+			<patchListItemName>Delay 3 Trigger</patchListItemName>
+		</patch>
+		<patch name="Delay 3 Bit Reduce 0" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 3C 00 00 00 00 00 00 00 00 69 F7</midiByteString>
+		</patch>
+		<patch name="Delay 3 Bit Reduce 2" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 3C 00 00 00 00 00 04 00 00 6D F7</midiByteString>
+		</patch>
+		<patch name="Delay 3 Bit Reduce 4" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 3C 00 00 00 00 04 04 00 00 69 F7</midiByteString>
+		</patch>
+		<patch name="Delay 3 Bit Reduce 6" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 3C 00 00 00 00 06 04 00 00 6B F7</midiByteString>
+		</patch>
+		<patch name="Delay 3 Bit Reduce 8" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 3C 00 00 00 00 08 04 00 00 65 F7</midiByteString>
+		</patch>
+		<patch name="Delay 3 Bit Reduce 10" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 3C 00 00 00 00 09 04 00 00 64 F7</midiByteString>
+		</patch>
+		<patch name="Delay 3 Bit Reduce 12" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 3C 00 00 00 00 0A 04 00 00 67 F7</midiByteString>
+		</patch>
+		<patch name="Delay 3 Bit Reduce 14" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 3C 00 00 00 00 0B 04 00 00 66 F7</midiByteString>
+		</patch>
+		<patch name="Delay 3 Bit Reduce 16" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 3C 00 00 00 00 0C 04 00 00 61 F7</midiByteString>
+		</patch>
+		<patch name="Delay 3 Bit Reduce 17" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 3C 00 00 00 20 0C 04 00 00 41 F7</midiByteString>
+		</patch>
+		<patch name="Delay 3 Bit Reduce 18" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 3C 00 00 00 40 0C 04 00 00 21 F7</midiByteString>
+		</patch>
+		<patch name="Delay 3 Bit Reduce 19" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 3C 00 00 00 60 0C 04 00 00 01 F7</midiByteString>
+		</patch>
+		<patch name="Delay 3 Bit Reduce 20" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 3C 00 00 00 00 0D 04 00 00 60 F7</midiByteString>
+		</patch>
+		<patch name="Delay 3 Bit Reduce 21" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 3C 00 00 00 20 0D 04 00 00 40 F7</midiByteString>
+		</patch>
+		<patch name="Delay 3 Bit Reduce 22" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 3C 00 00 00 40 0D 04 00 00 20 F7</midiByteString>
+		</patch>
+		<patch name="Delay 3 Bit Reduce 23" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 48 00 3C 00 00 00 60 0D 04 00 00 00 F7</midiByteString>
+		</patch>
+
+		<patch name="Delay 4 Hold" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 1B 00 00 00 00 00 04 00 00 4B F7</midiByteString>
+		</patch>
+		<patch name="Delay 4 Stack" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 1B 00 00 00 00 7C 03 00 00 30 F7</midiByteString>
+		</patch>
+		<patch name="Delay 4 no repeat" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 1B 00 00 00 00 00 00 00 00 4F F7</midiByteString>
+		</patch>
+		<patch name="Delay 4 Hold (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Delay 4 no repeat</patchListItemName>
+			<patchListItemName>Delay 4 Hold</patchListItemName>
+		</patch>
+		<patch name="Delay 4 Stack (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Delay 4 no repeat</patchListItemName>
+			<patchListItemName>Delay 4 Stack</patchListItemName>
+		</patch>
+		<patch name="Delay 4 Hold (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 1B 00 00 00 00 00 04 00 00 4B F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 49 00 1B 00 00 00 00 00 00 00 00 4F F7</midiByteString>
+		</patch>
+		<patch name="Delay 4 Stack (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 1B 00 00 00 00 7C 03 00 00 30 F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 49 00 1B 00 00 00 00 00 00 00 00 4F F7</midiByteString>
+		</patch>
+		<patch type="patchListSequence" name="Delay 4 Repeat" gaplessRestart="1">
+			<patchListItemName>Delay 4 no repeat</patchListItemName>
+			<patchListItemName>Delay 4 Stack</patchListItemName>
+			<patchListItemName>Delay 4 Hold</patchListItemName>
+		</patch>
+		<patch name="Delay 4 Run" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 27 00 00 00 00 00 04 00 00 77 F7</midiByteString>
+		</patch>
+		<patch name="Delay 4 Run stop" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 27 00 00 00 00 00 00 00 00 73 F7</midiByteString>
+		</patch>
+		<patch name="Delay 4 Run (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Delay 4 Run stop</patchListItemName>
+			<patchListItemName>Delay 4 Run</patchListItemName>
+		</patch>
+		<patch name="Delay 4 Trigger" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 28 00 00 00 00 00 04 00 00 78 F7</midiByteString>
+		</patch>
+		<patch name="Delay 4 Trigger off" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 28 00 00 00 00 00 00 00 00 7C F7</midiByteString>
+		</patch>
+		<patch name="Delay 4 Trigger (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Delay 4 Trigger off</patchListItemName>
+			<patchListItemName>Delay 4 Trigger</patchListItemName>
+		</patch>
+		<patch name="Delay 4 Bit Reduce 0" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 3C 00 00 00 00 00 00 00 00 68 F7</midiByteString>
+		</patch>
+		<patch name="Delay 4 Bit Reduce 2" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 3C 00 00 00 00 00 04 00 00 6C F7</midiByteString>
+		</patch>
+		<patch name="Delay 4 Bit Reduce 4" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 3C 00 00 00 00 04 04 00 00 68 F7</midiByteString>
+		</patch>
+		<patch name="Delay 4 Bit Reduce 6" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 3C 00 00 00 00 06 04 00 00 6A F7</midiByteString>
+		</patch>
+		<patch name="Delay 4 Bit Reduce 8" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 3C 00 00 00 00 08 04 00 00 64 F7</midiByteString>
+		</patch>
+		<patch name="Delay 4 Bit Reduce 10" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 3C 00 00 00 00 09 04 00 00 65 F7</midiByteString>
+		</patch>
+		<patch name="Delay 4 Bit Reduce 12" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 3C 00 00 00 00 0A 04 00 00 66 F7</midiByteString>
+		</patch>
+		<patch name="Delay 4 Bit Reduce 14" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 3C 00 00 00 00 0B 04 00 00 67 F7</midiByteString>
+		</patch>
+		<patch name="Delay 4 Bit Reduce 16" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 3C 00 00 00 00 0C 04 00 00 60 F7</midiByteString>
+		</patch>
+		<patch name="Delay 4 Bit Reduce 17" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 3C 00 00 00 20 0C 04 00 00 40 F7</midiByteString>
+		</patch>
+		<patch name="Delay 4 Bit Reduce 18" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 3C 00 00 00 40 0C 04 00 00 20 F7</midiByteString>
+		</patch>
+		<patch name="Delay 4 Bit Reduce 19" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 3C 00 00 00 60 0C 04 00 00 00 F7</midiByteString>
+		</patch>
+		<patch name="Delay 4 Bit Reduce 20" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 3C 00 00 00 00 0D 04 00 00 61 F7</midiByteString>
+		</patch>
+		<patch name="Delay 4 Bit Reduce 21" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 3C 00 00 00 20 0D 04 00 00 41 F7</midiByteString>
+		</patch>
+		<patch name="Delay 4 Bit Reduce 22" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 3C 00 00 00 40 0D 04 00 00 21 F7</midiByteString>
+		</patch>
+		<patch name="Delay 4 Bit Reduce 23" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 49 00 3C 00 00 00 60 0D 04 00 00 01 F7</midiByteString>
+		</patch>
+
+		<patch name="Plex 1 Hold" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 32 01 58 00 00 00 00 00 04 00 00 72 F7</midiByteString>
+		</patch>
+		<patch name="Plex 1 Stack" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 32 01 58 00 00 00 00 7C 03 00 00 09 F7</midiByteString>
+		</patch>
+		<patch name="Plex 1 no repeat" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 32 01 58 00 00 00 00 00 00 00 00 76 F7</midiByteString>
+		</patch>
+		<patch name="Plex 1 Hold (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Plex 1 no repeat</patchListItemName>
+			<patchListItemName>Plex 1 Hold</patchListItemName>
+		</patch>
+		<patch name="Plex 1 Stack (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Plex 1 no repeat</patchListItemName>
+			<patchListItemName>Plex 1 Stack</patchListItemName>
+		</patch>
+		<patch name="Plex 1 Hold (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 32 01 58 00 00 00 00 00 04 00 00 72 F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 32 01 58 00 00 00 00 00 00 00 00 76 F7</midiByteString>
+		</patch>
+		<patch name="Plex 1 Stack (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 32 01 58 00 00 00 00 7C 03 00 00 09 F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 32 01 58 00 00 00 00 00 00 00 00 76 F7</midiByteString>
+		</patch>
+		<patch type="patchListSequence" name="Plex 1 Repeat" gaplessRestart="1">
+			<patchListItemName>Plex 1 no repeat</patchListItemName>
+			<patchListItemName>Plex 1 Stack</patchListItemName>
+			<patchListItemName>Plex 1 Hold</patchListItemName>
+		</patch>
+
+		<patch name="Plex 2 Hold" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 33 01 58 00 00 00 00 00 04 00 00 73 F7</midiByteString>
+		</patch>
+		<patch name="Plex 2 Stack" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 33 01 58 00 00 00 00 7C 03 00 00 08 F7</midiByteString>
+		</patch>
+		<patch name="Plex 2 no repeat" device="Axe-Fx" type="toggle" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 33 01 58 00 00 00 00 00 00 00 00 77 F7</midiByteString>
+		</patch>
+		<patch name="Plex 2 Hold (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Plex 2 no repeat</patchListItemName>
+			<patchListItemName>Plex 2 Hold</patchListItemName>
+		</patch>
+		<patch name="Plex 2 Stack (tgl)" device="Axe-Fx" type="patchListSequence" gaplessRestart="1" initialStep="1" >
+			<patchListItemName>Plex 2 no repeat</patchListItemName>
+			<patchListItemName>Plex 2 Stack</patchListItemName>
+		</patch>
+		<patch name="Plex 2 Hold (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 33 01 58 00 00 00 00 00 04 00 00 73 F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 33 01 58 00 00 00 00 00 00 00 00 77 F7</midiByteString>
+		</patch>
+		<patch name="Plex 2 Stack (mom)" device="Axe-Fx" type="momentary" >
+			<midiByteString name="A">F0 00 01 74 10 01 09 00 33 01 58 00 00 00 00 7C 03 00 00 08 F7</midiByteString>
+			<midiByteString name="B">F0 00 01 74 10 01 09 00 33 01 58 00 00 00 00 00 00 00 00 77 F7</midiByteString>
+		</patch>
+		<patch type="patchListSequence" name="Plex 2 Repeat" gaplessRestart="1">
+			<patchListItemName>Plex 2 no repeat</patchListItemName>
+			<patchListItemName>Plex 2 Stack</patchListItemName>
+			<patchListItemName>Plex 2 Hold</patchListItemName>
+		</patch>
+
+	</patches>
+</MidiControlSettings>
