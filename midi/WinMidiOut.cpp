@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010,2013,2015,2018,2020-2022,2025 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2013,2015,2018,2020-2022,2025,2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -656,7 +656,8 @@ WinMidiOut::ReportMidiError(MMRESULT resultCode,
 	CString msg;
 
 	mMidiOutError = true;
-	msg.Format(_T("Error: %s\nError location: %s (%d)\n"), (LPCWSTR)errMsg, (LPCWSTR)CString(__FILE__), lineNumber);
+	msg.Format(_T("Error: [%08x] %s\nat: %s:%d\n"), 
+		resultCode, (LPCWSTR)errMsg, (LPCWSTR)CString(__FILE__), lineNumber);
 	if (mTrace)
 		mTrace->Trace(std::string(CStringA(msg)));
 }
