@@ -536,12 +536,10 @@ WinMidiOut::MidiOutCallbackProc(HMIDIOUT hmo,
 	{
 		WinMidiOut * _this = (WinMidiOut *) dwInstance;
 		LPMIDIHDR hdr = (LPMIDIHDR) dwParam1;
-#ifdef _DEBUG
-		MMRESULT res = 
-#endif
-			::midiOutUnprepareHeader(_this->mMidiOut, hdr, sizeof(MIDIHDR));
+		MMRESULT res = ::midiOutUnprepareHeader(_this->mMidiOut, hdr, sizeof(MIDIHDR));
 		hdr->dwFlags = 0;
-		_ASSERTE(MMSYSERR_NOERROR == res);
+		if (MMSYSERR_NOERROR != res)
+			_this->ReportMidiError(res, __LINE__);
 	}
 }
 

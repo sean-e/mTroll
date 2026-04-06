@@ -136,15 +136,18 @@ WinMidiIn::ServiceThread()
 		mMidiHdrs[idx].dwBufferLength = kDataBufLen;
 		
 		res = ::midiInPrepareHeader(mMidiIn, &mMidiHdrs[idx], (UINT)sizeof(MIDIHDR));
-		_ASSERTE(res == MMSYSERR_NOERROR);
+		if (MMSYSERR_NOERROR != res)
+			ReportMidiError(res, __LINE__);
 
 		res = ::midiInAddBuffer(mMidiIn, &mMidiHdrs[idx], sizeof(MIDIHDR));
-		_ASSERTE(res == MMSYSERR_NOERROR);
+		if (MMSYSERR_NOERROR != res)
+			ReportMidiError(res, __LINE__);
 	}
 
 	mThreadState = tsRunning;
 	res = ::midiInStart(mMidiIn);
-	_ASSERTE(res == MMSYSERR_NOERROR);
+	if (MMSYSERR_NOERROR != res)
+		ReportMidiError(res, __LINE__);
 
 	_ASSERTE(mDoneEvent && mDoneEvent != INVALID_HANDLE_VALUE);
 	for (;;)
@@ -186,12 +189,14 @@ WinMidiIn::ServiceThread()
 
 	mThreadState = tsEnding;
 	res = ::midiInReset(mMidiIn);
-	_ASSERTE(res == MMSYSERR_NOERROR);
+	if (MMSYSERR_NOERROR != res)
+		ReportMidiError(res, __LINE__);
 
 	for (idx = 0; idx < MIDIHDR_CNT; ++idx)
 	{
 		res = ::midiInUnprepareHeader(mMidiIn, &mMidiHdrs[idx], (UINT)sizeof(MIDIHDR));
-		_ASSERTE(res == MMSYSERR_NOERROR);
+		if (MMSYSERR_NOERROR != res)
+			ReportMidiError(res, __LINE__);
 		::free(mMidiHdrs[idx].lpData);
 		mMidiHdrs[idx].lpData = nullptr;
 	}
@@ -269,12 +274,14 @@ WinMidiIn::MidiInCallbackProc(HMIDIIN hmi,
 		}
 
 		res = ::midiInAddBuffer(_this->mMidiIn, hdr, sizeof(MIDIHDR));
-		_ASSERTE(res == MMSYSERR_NOERROR);
+		if (MMSYSERR_NOERROR != res)
+			_this->ReportMidiError(res, __LINE__);
 		break;
 	case MIM_LONGERROR:
 		hdr = (LPMIDIHDR) dwParam1;
 		res = ::midiInAddBuffer(_this->mMidiIn, hdr, sizeof(MIDIHDR));
-		_ASSERTE(res == MMSYSERR_NOERROR);
+		if (MMSYSERR_NOERROR != res)
+			_this->ReportMidiError(res, __LINE__);
 		break;
 	}
 }
