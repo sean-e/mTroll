@@ -190,30 +190,7 @@ MainTrollWindow::MainTrollWindow() :
 		}
 	}
 
-	bool addedMruAction = false;
-	for (int idx = 1; idx <= kMruCount; ++idx)
-	{
-		QString curVal(kConfigMru);
-		curVal.append(QChar(0x30 + idx));
-
-		QString mruItem = settings.value(curVal, "").value<QString>();
-		if (mruItem.isEmpty())
-			break;
-
-		QString actionTxt("&");
-		actionTxt.append(QChar(0x30 + idx));
-		actionTxt.append(" ");
-		{
-			QFileInfo fi(mruItem);
-			actionTxt.append(fi.fileName());
-		}
-		mMruActions[idx - 1]->setText(actionTxt);
-		mMruActions[idx - 1]->setVisible(true);
-		mMruActions[idx - 1]->setEnabled(true);
-		addedMruAction = true;
-	}
-
-	if (addedMruAction && !hasTouchInput)
+	if (!hasTouchInput)
 		fileMenu->addSeparator();
 	fileMenu->addAction(tr("E&xit"), this, &MainTrollWindow::close);
 	// http://doc.qt.nokia.com/4.4/stylesheet-examples.html#customizing-qmenu
@@ -303,6 +280,7 @@ MainTrollWindow::MainTrollWindow() :
 
 	RegisterDevicesNotification();
 
+	UpdateMru();
 	Refresh();
 }
 
@@ -374,6 +352,7 @@ MainTrollWindow::UpdateMru()
 
 	// build new mru data
 	std::vector<QString> mruFiles;
+	if (QFileInfo::exists(mConfigFilename))
 		mruFiles.push_back(mConfigFilename);
 	for (int idx = 1; idx <= kMruCount; ++idx)
 	{
@@ -381,12 +360,26 @@ MainTrollWindow::UpdateMru()
 		curVal.append(QChar(0x30 + idx));
 
 		QString mruItem = settings.value(curVal, "").value<QString>();
-		if (!mruItem.isEmpty() && mruItem != mConfigFilename)
+		if (mruItem.isEmpty() || mruItem == mConfigFilename)
+			continue;
+
+		bool isDupe = false;
+		for (const auto & cur : mruFiles)
 		{
+			if (mruItem == cur)
+			{
+				isDupe = true;
+				break;
+			}
+		}
+
+		if (isDupe)
+			continue;
+
+		if (QFileInfo::exists(mruItem))
 			mruFiles.push_back(mruItem);
 		if (mruFiles.size() == kMruCount)
 			break;
-	}
 	}
 
 	// update file menu mru actions
@@ -409,6 +402,13 @@ MainTrollWindow::UpdateMru()
 		mMruActions[idx - 1]->setVisible(true);
 		mMruActions[idx - 1]->setEnabled(true);
 		++idx;
+	}
+
+	// ensure any now unused actions (that might have been visible before), are now hidden
+	for (; idx <= kMruCount; ++idx)
+	{
+		mMruActions[idx - 1]->setVisible(false);
+		mMruActions[idx - 1]->setEnabled(false);
 	}
 }
 

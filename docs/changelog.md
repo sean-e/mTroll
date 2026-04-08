@@ -3,6 +3,7 @@
 #### 2026.xx.xx
 - Trace window now displays MIDI device add/remove change status messages
 - Updated WinMM MIDI error reporting
+- Improved MRU handling of deleted files
 
 #### 2026.03.04
 - Added support for importing patches from another file so that, for example, device patches don't need to be copied/pasted across configs [#60](../../../issues/60)
