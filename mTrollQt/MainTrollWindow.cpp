@@ -759,7 +759,7 @@ GetSetupDiDeviceName(const wchar_t *device_interface)
 				if (SetupDiGetDevicePropertyW(devInfo, &deviceData, &DEVPKEY_NAME, &propType, nameBytes, kIdLen, nullptr, 0))
 				{
 					if (DEVPROP_TYPE_STRING == propType)
-						qname = QString::fromRawData((const char16_t*)nameBytes, wcslen((wchar_t*)nameBytes));
+						qname = QString::fromRawData((const QChar*)nameBytes, wcslen((wchar_t*)nameBytes));
 				}
 			}
 
@@ -800,7 +800,7 @@ MainTrollWindow::nativeEventFilter(const QByteArray &eventType, void *message,
 					std::string name(::GetSetupDiDeviceName(reinterpret_cast<wchar_t*>(&pInter->dbcc_name[0])));
 					if (name.empty())
 					{
-						const QString devName(reinterpret_cast<wchar_t*>(&pInter->dbcc_name[0]));
+						const QString devName(reinterpret_cast<QChar*>(&pInter->dbcc_name[0]));
 						name = devName.toStdString();
 					}
 					Trace(std::format("Audio/MIDI device attached: {}\n", name));
@@ -816,7 +816,7 @@ MainTrollWindow::nativeEventFilter(const QByteArray &eventType, void *message,
 					std::string name(::GetSetupDiDeviceName(reinterpret_cast<wchar_t*>(&pInter->dbcc_name[0])));
 					if (name.empty())
 					{
-						const QString devName(reinterpret_cast<wchar_t*>(&pInter->dbcc_name[0]));
+						const QString devName(reinterpret_cast<QChar*>(&pInter->dbcc_name[0]));
 						name = devName.toStdString();
 					}
 					Trace(std::format("Audio/MIDI device detached: {}\n", name));
