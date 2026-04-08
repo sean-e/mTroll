@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2018,2020,2025 Sean Echevarria
+ * Copyright (C) 2007-2008,2018,2020,2025,2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -52,6 +52,7 @@ int main(int argc, char **argv)
 
 	QApplication app(argc, argv);
 	MainTrollWindow mainWin;
+	app.installNativeEventFilter(&mainWin);
 	mainWin.show();
 	return app.exec();
 }

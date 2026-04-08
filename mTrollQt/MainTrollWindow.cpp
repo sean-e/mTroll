@@ -37,6 +37,13 @@
 #if defined(Q_OS_WIN)
 #include <windows.h>
 #include <powrprof.h>
+#include <dbt.h>
+#include <ks.h>
+#include <ksmedia.h>
+#include <SetupAPI.h>
+#include <initguid.h>   // include before devpropdef.h
+#include <devpropdef.h>
+#include <devpkey.h>
 #include "../winUtil/WinDark.h"
 #endif
 
@@ -294,11 +301,15 @@ MainTrollWindow::MainTrollWindow() :
 
 	restoreGeometry(settings.value(kMainWindowGeom).toByteArray());
 
+	RegisterDevicesNotification();
+
 	Refresh();
 }
 
 MainTrollWindow::~MainTrollWindow()
 {
+	RegisterDevicesNotification(false);
+
 	switch (mShutdownOnExit)
 	{
 	case soeExit:
@@ -363,7 +374,7 @@ MainTrollWindow::UpdateMru()
 
 	// build new mru data
 	std::vector<QString> mruFiles;
-	mruFiles.push_back(mConfigFilename);
+		mruFiles.push_back(mConfigFilename);
 	for (int idx = 1; idx <= kMruCount; ++idx)
 	{
 		QString curVal(kConfigMru);
@@ -373,9 +384,9 @@ MainTrollWindow::UpdateMru()
 		if (!mruItem.isEmpty() && mruItem != mConfigFilename)
 		{
 			mruFiles.push_back(mruItem);
-			if (mruFiles.size() == kMruCount)
-				break;
-		}
+		if (mruFiles.size() == kMruCount)
+			break;
+	}
 	}
 
 	// update file menu mru actions
@@ -689,9 +700,168 @@ MainTrollWindow::ToggleExpressionPedalDetails(bool checked)
 }
 
 void
+MainTrollWindow::Trace(const std::string & txt)
+{
+	if (mUi)
+		mUi->Trace(txt);
+}
+
+void
 MainTrollWindow::closeEvent(QCloseEvent *event)
 {
 	QSettings settings;
 	settings.setValue(kMainWindowGeom, saveGeometry());
 	QMainWindow::closeEvent(event);
+}
+
+#if defined(Q_OS_WIN)
+// For MIDI interfaces, use a Device Interface Class GUID rather than the Device Setup Class GUID. 
+// MIDI devices typically register under the Kernel Streaming(KS) audio 
+// category and are internally handled as KS audio endpoints.
+// MIDI interfaces, including USB MIDI controllers and external sound cards, register as audio interface instances.
+// MIDI devices are supposed to register as:
+//	KSCATEGORY_AUDIO
+//	KSCATEGORY_RENDER
+//	KSCATEGORY_CAPTURE
+// other class guids:
+// USB Devices (General) 				{ 0x36FC9E60, 0xC465, 0x11CF, 0x80, 0x56, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00 }
+// HID (Human Interface Devices)	 	{ 0x4D1E55B2, 0xF16F, 0x11CF, 0x88, 0xCB, 0x00, 0x11, 0x11, 0x00, 0x00, 0x30 }
+// Serial Ports 						{ 0x86E0D1E0, 0x8089, 0x11D0, 0x9C, 0xE4, 0x08, 0x00, 0x3E, 0x30, 0x1F, 0x73 }
+// Media device setup class				{ 0x4d36e96c, 0xe325, 0x11ce, 0xbf, 0xc1, 0x08, 0x00, 0x2b, 0xe1, 0x03, 0x18 }
+// KSCATEGORY_PREFERRED_WAVEOUT_DEVICE	{ 0xD6C50674, 0x72C1, 0x11D2, 0x97, 0x55, 0x00, 0x00, 0xF8, 0x00, 0x47, 0x88 }
+// KSCATEGORY_WDMAUD
+// https://learn.microsoft.com/en-us/windows-hardware/drivers/install/system-defined-device-setup-classes-available-to-vendors
+// https://learn.microsoft.com/en-us/windows-hardware/drivers/install/kscategory-preferred-midiout-device
+// https://www.lifewire.com/device-class-guids-for-most-common-types-of-hardware-2619208
+
+std::string
+GetSetupDiDeviceName(const wchar_t *device_interface)
+{
+	QString qname;
+	HDEVINFO devInfo = SetupDiCreateDeviceInfoList(NULL, NULL);
+	if (devInfo && INVALID_HANDLE_VALUE != devInfo)
+	{
+		SP_DEVICE_INTERFACE_DATA interfaceData;
+		ZeroMemory(&interfaceData, sizeof(interfaceData));
+		interfaceData.cbSize = sizeof(interfaceData);
+		if (SetupDiOpenDeviceInterfaceW(devInfo, device_interface, 0, &interfaceData))
+		{
+			SP_DEVINFO_DATA deviceData;
+			ZeroMemory(&deviceData, sizeof(deviceData));
+			deviceData.cbSize = sizeof(SP_DEVINFO_DATA);
+			if (!SetupDiGetDeviceInterfaceDetailW(devInfo, &interfaceData, NULL, 0, NULL, &deviceData) &&
+				GetLastError() == ERROR_INSUFFICIENT_BUFFER)
+			{
+				constexpr int kIdLen = 256;
+				BYTE nameBytes[kIdLen * 2];
+				ZeroMemory(nameBytes, kIdLen * 2);
+				DEVPROPTYPE propType = 0;
+				if (SetupDiGetDevicePropertyW(devInfo, &deviceData, &DEVPKEY_NAME, &propType, nameBytes, kIdLen, nullptr, 0))
+				{
+					if (DEVPROP_TYPE_STRING == propType)
+						qname = QString::fromRawData((const char16_t*)nameBytes, wcslen((wchar_t*)nameBytes));
+				}
+			}
+
+			SetupDiDeleteDeviceInterfaceData(devInfo, &interfaceData);
+		}
+
+		SetupDiDestroyDeviceInfoList(devInfo);
+	}
+
+	return qname.toStdString();
+}
+#endif
+
+bool
+MainTrollWindow::nativeEventFilter(const QByteArray &eventType, void *message,
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	qintptr *result
+#else
+	long *result
+#endif
+	)
+{
+	Q_UNUSED(eventType);
+	Q_UNUSED(result);
+#if defined(Q_OS_WIN)
+	MSG *msg = (MSG *)message;
+	if (WM_DEVICECHANGE == msg->message)
+	{
+		auto pDev = reinterpret_cast<PDEV_BROADCAST_HDR>(msg->lParam);
+		switch (msg->wParam)
+		{
+		case DBT_DEVICEARRIVAL:
+			if (pDev && DBT_DEVTYP_DEVICEINTERFACE == pDev->dbch_devicetype)
+			{
+				auto pInter = reinterpret_cast<const PDEV_BROADCAST_DEVICEINTERFACE>(pDev);
+				if (KSCATEGORY_AUDIO == pInter->dbcc_classguid)
+				{
+					std::string name(::GetSetupDiDeviceName(reinterpret_cast<wchar_t*>(&pInter->dbcc_name[0])));
+					if (name.empty())
+					{
+						const QString devName(reinterpret_cast<wchar_t*>(&pInter->dbcc_name[0]));
+						name = devName.toStdString();
+					}
+					Trace(std::format("Audio/MIDI device attached: {}\n", name));
+				}
+			}
+			break;
+		case DBT_DEVICEREMOVECOMPLETE:
+			if (pDev && DBT_DEVTYP_DEVICEINTERFACE == pDev->dbch_devicetype)
+			{
+				auto pInter = reinterpret_cast<const PDEV_BROADCAST_DEVICEINTERFACE>(pDev);
+				if (KSCATEGORY_AUDIO == pInter->dbcc_classguid)
+				{
+					std::string name(::GetSetupDiDeviceName(reinterpret_cast<wchar_t*>(&pInter->dbcc_name[0])));
+					if (name.empty())
+					{
+						const QString devName(reinterpret_cast<wchar_t*>(&pInter->dbcc_name[0]));
+						name = devName.toStdString();
+					}
+					Trace(std::format("Audio/MIDI device detached: {}\n", name));
+				}
+			}
+			break;
+		case DBT_DEVNODES_CHANGED:
+			break;
+		default:
+#ifdef _DEBUG
+			Trace(std::format("Unhandled device notification: {}\n", msg->wParam))
+#endif
+			;
+		}
+	}
+#endif
+
+	return false;
+}
+
+void
+MainTrollWindow::RegisterDevicesNotification(bool registerDevNotification /*= true*/) noexcept
+{
+	if (registerDevNotification)
+	{
+#if defined(Q_OS_WIN)
+		_ASSERTE(!mDevNotify);
+		DEV_BROADCAST_DEVICEINTERFACE notificationFilter;
+		ZeroMemory(&notificationFilter, sizeof(notificationFilter));
+		notificationFilter.dbcc_size = sizeof(DEV_BROADCAST_DEVICEINTERFACE);
+		notificationFilter.dbcc_devicetype = DBT_DEVTYP_DEVICEINTERFACE;
+		mDevNotify = ::RegisterDeviceNotification((HANDLE)winId(), &notificationFilter,
+			DEVICE_NOTIFY_WINDOW_HANDLE | DEVICE_NOTIFY_ALL_INTERFACE_CLASSES);
+		if (nullptr == mDevNotify)
+			Trace("ERROR: failed to register audio/midi device notification\n");
+#endif
+	}
+	else
+	{
+#if defined(Q_OS_WIN)
+		if (mDevNotify)
+		{
+			::UnregisterDeviceNotification(mDevNotify);
+			mDevNotify = nullptr;
+		}
+#endif
+	}
 }

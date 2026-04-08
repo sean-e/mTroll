@@ -27,14 +27,19 @@
 
 #include <QMainWindow>
 #include <QDateTime>
+#include <QAbstractNativeEventFilter>
 #include "../Engine/ExpressionPedals.h"
 #include "../Engine/ITrollApplication.h"
+#include "../Engine/ITraceDisplay.h"
 
 class ControlUi;
 class QAction;
 
 
-class MainTrollWindow : public QMainWindow, ITrollApplication
+class MainTrollWindow : public QMainWindow, 
+	public ITrollApplication,
+	public ITraceDisplay,
+	public QAbstractNativeEventFilter
 {
 	Q_OBJECT;
 public:
@@ -65,6 +70,16 @@ private slots:
 	void LoadConfigMru3() { LoadConfigMruItem(3); }
 	void LoadConfigMru4() { LoadConfigMruItem(4); }
 
+public: // ITraceDisplay
+	virtual void Trace(const std::string & txt) override;
+
+	// QAbstractNativeEventFilter
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	virtual bool nativeEventFilter(const QByteArray &eventType, void *message, qintptr *result) override;
+#else
+	virtual bool nativeEventFilter(const QByteArray &eventType, void *message, long *result) override;
+#endif
+
 protected:
 	virtual void closeEvent(QCloseEvent *event) override;
 
@@ -93,12 +108,16 @@ private:
 	QAction		* mMruActions[kMruCount] = {};
 	QDateTime	mStartTime;
 	QDateTime	mPauseTime;
+#if defined(Q_OS_WIN)
+	void		* mDevNotify = nullptr;
+#endif
 	ExitAction	mShutdownOnExit = soeExit;
 
 private:
 	void ToggleAdcOverride(int adc, bool checked);
 	void LoadConfigMruItem(int idx);
 	void UpdateMru();
+	void RegisterDevicesNotification(bool registerDevNotification = true) noexcept;
 };
 
 #endif // MainTrollWindow_h__
