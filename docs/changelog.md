@@ -1,6 +1,6 @@
 ### mTroll MIDI controller changelog / process milestones
 
-#### 2026.xx.xx
+#### 2026.04.08
 - Trace window now displays MIDI device add/remove change status messages
 - Updated WinMM MIDI error reporting
 - Improved MRU handling of deleted files
