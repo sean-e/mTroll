@@ -1018,10 +1018,12 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			mSwitchDisplay->ForceSwitchDisplay(switchNumber + 1, mEngineLedColor);
 			mSwitchDisplay->SetSwitchText(switchNumber + 2, "Color presets");
 			mSwitchDisplay->ForceSwitchDisplay(switchNumber + 2, mEngineLedColor);
-			mSwitchDisplay->SetSwitchText(switchNumber + 3, "monome RGB rows");
+			mSwitchDisplay->SetSwitchText(switchNumber + 3, "Grouped color presets for seeing intensities");
 			mSwitchDisplay->ForceSwitchDisplay(switchNumber + 3, mEngineLedColor);
-			mSwitchDisplay->SetSwitchText(switchNumber + 4, "monome RGB rows and columns");
+			mSwitchDisplay->SetSwitchText(switchNumber + 4, "monome RGB rows");
 			mSwitchDisplay->ForceSwitchDisplay(switchNumber + 4, mEngineLedColor);
+			mSwitchDisplay->SetSwitchText(switchNumber + 5, "monome RGB rows and columns");
+			mSwitchDisplay->ForceSwitchDisplay(switchNumber + 5, mEngineLedColor);
 		}
 		break;
 	case emMidiOutSelect:
@@ -1502,8 +1504,14 @@ MidiControlEngine::SwitchReleased_LedTests(int switchNumber)
 		ChangeMode(emLedTests);
 	}
 	else if (switchNumber == cmdSwitchNumberBase + 3)
-		mSwitchDisplay->TestLeds(10); // don't reset mode since the call happens on the hardware without blocking
+	{
+		mSwitchDisplay->TestLeds(2);
+		// ok to restore mode since pattern 2 is software-defined, the other patterns are firmware-defined
+		ChangeMode(emLedTests);
+	}
 	else if (switchNumber == cmdSwitchNumberBase + 4)
+		mSwitchDisplay->TestLeds(10); // don't reset mode since the call happens on the hardware without blocking
+	else if (switchNumber == cmdSwitchNumberBase + 5)
 		mSwitchDisplay->TestLeds(11); // don't reset mode since the call happens on the hardware without blocking
 }
 

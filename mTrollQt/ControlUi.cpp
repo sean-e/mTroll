@@ -2115,6 +2115,67 @@ ControlUi::TestLeds(int testPattern)
 
 		QApplication::restoreOverrideCursor();
 	}
+	else if (2 == testPattern)
+	{
+		// show color presets, grouping intensities of same color together
+		QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+
+		constexpr int kBasicColorGroupings = 7; // 4 intensities for each basic color
+		int presetNormal = 0;		// from EngineLoader::InitDefaultLedPresetColors
+		int presetMostDim = 8;		// from EngineLoader::InitDefaultLedPresetColors
+		int presetBright = 15;		// from EngineLoader::InitDefaultLedPresetColors
+		int presetDim = 23;			// from EngineLoader::InitDefaultLedPresetColors
+
+		for (int currentColorGrouping = 0; currentColorGrouping < kBasicColorGroupings; )
+		{
+			byte row, col;
+			for (row = 0; row < kMaxRows; ++row)
+			{
+				for (col = 0; col < kMaxCols; ++col)
+					TurnOffSwitchDisplay((row * kMaxCols) + col);
+			}
+
+			QApplication::processEvents();
+			QApplication::processEvents();
+			xp::Sleep(100);
+
+			int switchNumber = 0;
+			RowColFromSwitchNumber(switchNumber, row, col);
+			for (int displayRows = 0; 
+				displayRows < 3 && currentColorGrouping < kBasicColorGroupings; 
+				++displayRows, ++row, ++currentColorGrouping)
+			{
+				switchNumber = SwitchNumberFromRowCol(row, col);
+				SetSwitchDisplay(switchNumber, kPresetColorMarkerBit | presetMostDim++);
+
+				switchNumber = SwitchNumberFromRowCol(row, col + 1);
+				SetSwitchDisplay(switchNumber, kPresetColorMarkerBit | presetDim++);
+
+				switchNumber = SwitchNumberFromRowCol(row, col + 2);
+				SetSwitchDisplay(switchNumber, kPresetColorMarkerBit | presetNormal++);
+
+				switchNumber = SwitchNumberFromRowCol(row, col + 3);
+				SetSwitchDisplay(switchNumber, kPresetColorMarkerBit | presetBright++);
+			}
+
+			QApplication::processEvents();
+			QApplication::processEvents();
+			xp::Sleep(5000);
+
+			// can't use row commands on IMonome since we need to update GUI also
+			for (row = 0; row < kMaxRows; ++row)
+			{
+				for (col = 0; col < kMaxCols; ++col)
+					TurnOffSwitchDisplay((row * kMaxCols) + col);
+			}
+
+			QApplication::processEvents();
+			QApplication::processEvents();
+			xp::Sleep(100);
+		}
+
+		QApplication::restoreOverrideCursor();
+	}
 	else if (mHardwareUi)
 		mHardwareUi->TestLed(testPattern);
 }

@@ -2,6 +2,7 @@
 
 #### 2026.05.xx
 - Support for updated firmware in which LED pixel layout is defined at runtime rather than hardcoded in firmware
+- Added additional LED test mode that displays all 4 intensities of each color next to each other
 
 #### 2026.04.08
 - Trace window now displays MIDI device add/remove change status messages
