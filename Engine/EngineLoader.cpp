@@ -2863,14 +2863,15 @@ EngineLoader::InitDefaultLedPresetColors()
 
 		0x000000, //  8 blank
 
-		// most dim
-		0x000001, //  9 dimmest blue
-		0x000100, // 10 dimmest green
-		0x010000, // 11 dimmest red
-		0x000101, // 12 dimmest cyan
-		0x010100, // 13 dimmest yellow
-		0x010001, // 14 dimmest violet
-		0x010101, // 15 dimmest white
+		// most dim 
+		// (values of 1 instead of 2 were fine with my old LED strip, but not with adafruit neopixels)
+		0x000002, //  9 dimmest blue
+		0x000200, // 10 dimmest green
+		0x020000, // 11 dimmest red
+		0x000202, // 12 dimmest cyan
+		0x020200, // 13 dimmest yellow
+		0x020002, // 14 dimmest violet
+		0x020202, // 15 dimmest white
 
 		// bright
 		0x00001f, // 16 blue
