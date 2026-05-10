@@ -474,17 +474,6 @@ UiLoader::LoadOtherStuffAndFinalize(TiXmlElement * pElem)
 			}
 		}
 	}
-
-	// <hardware ledBrightness="0" />
-	pElem = hRoot.FirstChild("hardware").Element();
-	if (pElem)
-	{
-		int ledBrightness = -1;
-		pElem->QueryIntAttribute("ledBrightness", &ledBrightness);
-
-		if (-1 != ledBrightness)
-			mUi->SetHardwareLedIntensity((short)ledBrightness);
-	}
 }
 
 void

@@ -61,8 +61,7 @@ Monome40hFtqt::Monome40hFtqt(ITraceDisplay * trace) :
 	mThreadId(nullptr),
 	mServicingSubscribers(false),
 	mInputSubscriber(nullptr),
-	mAdcInputSubscriber(nullptr),
-	mLedBrightness(10)
+	mAdcInputSubscriber(nullptr)
 {
 #ifdef FTD2XX_STATIC
 	FT_Initialise();
@@ -172,8 +171,6 @@ Monome40hFtqt::AcquireDevice(const std::string & devSerialNum)
 	mDevSerialNumber = devSerialNum;
 	if (!AcquireDevice())
 		return false;
-
-	SetLedIntensity(mLedBrightness);
 
 	// startup listener
 	mShouldContinueListening = true;
@@ -352,16 +349,19 @@ Monome40hFtqt::UpdatePreset(unsigned int preset, unsigned int color)
 }
 
 void
-Monome40hFtqt::SetLedIntensity(byte brightness)
+Monome40hFtqt::SetPixelRowCol(byte pixel, byte row, byte col)
 {
-	if (0 > brightness)
-		mLedBrightness = 0;
-	else if (15 < brightness)
-		mLedBrightness = 15;
-	else
-		mLedBrightness = brightness;
+	_ASSERTE(pixel >= 0 && pixel < 64);
+	_ASSERTE(row >= 0 && row < 8);
+	_ASSERTE(col>= 0 && col < 8);
 
-	DispatchCommand(new MonomeSetLedIntensity(mLedBrightness));
+	DispatchCommand(new MonomeSetPixelRowCol(pixel, row, col));
+}
+
+void
+Monome40hFtqt::InvalidateAllPixels()
+{
+	DispatchCommand(new MonomeInvalidateAllPixels());
 }
 
 void

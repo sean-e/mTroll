@@ -1,5 +1,8 @@
 ### mTroll MIDI controller changelog / process milestones
 
+#### 2026.05.xx
+- Support for updated firmware in which LED pixel layout is defined at runtime rather than hardcoded in firmware
+
 #### 2026.04.08
 - Trace window now displays MIDI device add/remove change status messages
 - Updated WinMM MIDI error reporting

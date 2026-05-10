@@ -1,5 +1,5 @@
 /*
-Original code copyright (c) 2007-2008,2014,2018,2020,2025 Sean Echevarria ( http://www.creepingfog.com/sean/ )
+Original code copyright (c) 2007-2008,2014,2018,2020,2025,2026 Sean Echevarria ( http://www.creepingfog.com/sean/ )
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any
@@ -43,7 +43,8 @@ public:
 	virtual void EnableLed(byte row, byte col, unsigned int color) = 0;
 	virtual void EnableLedPreset(byte row, byte col, unsigned int preset) = 0;
 	virtual void UpdatePreset(unsigned int preset, unsigned int color) = 0;
-	virtual void SetLedIntensity(byte brightness) = 0;
+	virtual void SetPixelRowCol(byte pixel, byte row, byte col) = 0;
+	virtual void InvalidateAllPixels() = 0;
 	virtual void EnableLedRow(byte row, byte columnValues) = 0;
 	virtual void EnableLedColumn(byte column, byte rowValues) = 0;
 	virtual void TestLed(int pattern) = 0;

@@ -60,7 +60,6 @@ public:
 	virtual void	CreateTraceDisplayInGrid(int row, int col, int colSpan, const std::string & fontName, int fontHeight, bool bold) = 0;
 
 	virtual void	SetMainSize(int width, int height) = 0;
-	virtual void	SetHardwareLedIntensity(short brightness) = 0;
 	virtual void	SetColors(unsigned int backgroundColor, unsigned int frameHighlightColor) = 0;
 };
 

@@ -1,5 +1,5 @@
 /*
-Original code copyright (c) 2007,2014-2015,2020 Sean Echevarria ( http://www.creepingfog.com/sean/ )
+Original code copyright (c) 2007,2014-2015,2020,2026 Sean Echevarria ( http://www.creepingfog.com/sean/ )
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any
@@ -30,10 +30,11 @@ class MonomeSerialProtocolData
 public:
 	enum ProtocolCommand
 	{
+		// 4 bit command identifiers
 		getPress				= 0,
 		getAdcVal				= 1,
 		setLed					= 2,
-		setLedIntensity			= 3,
+		setPixelIndex			= 3,
 		ledTest					= 4,
 		enableAdc				= 5,
 		shutdown				= 6,
@@ -43,7 +44,9 @@ public:
 		updatePresetGroup1,		// set preset color slot to specified RGB value (for slots 0 - 15) (4 byte message)
 		setLedOnPresetGroup1,	// enable LED using preset color slot 0-15 (2 byte message)
 		updatePresetGroup2,		// set preset color slot to specified RGB value (slots 16 - 31 specified as 0 - 15) (4 byte message)
-		setLedOnPresetGroup2	// enable LED using preset color slot 16-31 (specified as 0 - 15) (2 byte message)
+		setLedOnPresetGroup2,	// enable LED using preset color slot 16-31 (specified as 0 - 15) (2 byte message)
+		invalidateAllPixels		// in lieu of using setPixelIndex with a value that can't be sent
+		// Reserve value 15 to use as marker for 8 bit identifiers -- requires update of firmware to support 8 bit identifiers
 	};
 
 protected:
@@ -70,8 +73,30 @@ protected:
 
 	MonomeSerialProtocolData(ProtocolCommand command, byte data1, byte data2, byte data3)
 	{
-		mData[0] = ((command & 0x0f) << 4) | (data1 & 0x0f);
-		mData[1] = ((data2 & 0x0f) << 4) | (data3 & 0x0f);
+		if (setPixelIndex == command)
+		{
+			// 	kMessageTypePixelIndexToXY message bits
+			// 		4 message type
+			// 		6 pixel index 0-63
+			// 		3 row 0-7
+			// 		3 col 0-7
+			// 
+			// 	4 bits message type : 6 bits pixel ID (0-63) : 3 bits X (0-7) : 3 bits Y (0-7)
+			// 	the 6 bits pixel ID are 4 bits lsb in data0 and 2 bits msb in data1
+			// 	
+			// 	Read in monome firmware as:
+			//  i1 = (serial_in.data0 & 0xF) | ((serial_in.data1 >> 2) & 0x30); // index
+			// 	i2 = (serial_in.data1 >> 3) & 0x7; // X, col, data3
+			// 	i3 = serial_in.data1 & 0x7; // Y, row, data2
+			// 	kLedMatrix[i3][i2] = i1;
+			mData[0] = ((command & 0x0f) << 4) | (data1 & 0x0f);
+			mData[1] = ((data1 & 0x30) << 2) | ((data3 & 0x07) << 3) | (data2 & 0x07);
+		}
+		else
+		{
+			mData[0] = ((command & 0x0f) << 4) | (data1 & 0x0f);
+			mData[1] = ((data2 & 0x0f) << 4) | (data3 & 0x0f);
+		}
 	}
 
 	// updatePresetGroup1 and updatePresetGroup2
@@ -129,11 +154,18 @@ public:
 		MonomeSerialProtocolData(MonomeSerialProtocolData::setLedOnPresetGroup2, preset, col, row) { }
 };
 
-class MonomeSetLedIntensity : public MonomeSerialProtocolData 
+class MonomeSetPixelRowCol : public MonomeSerialProtocolData
 {
 public:
-	MonomeSetLedIntensity(byte intensity) :
-		MonomeSerialProtocolData(MonomeSerialProtocolData::setLedIntensity, 0, 0, intensity) { }
+	MonomeSetPixelRowCol(byte pixel, byte row, byte col) :
+		MonomeSerialProtocolData(MonomeSerialProtocolData::setPixelIndex, pixel, row, col) { }
+};
+
+class MonomeInvalidateAllPixels : public MonomeSerialProtocolData
+{
+public:
+	MonomeInvalidateAllPixels() :
+		MonomeSerialProtocolData(MonomeSerialProtocolData::invalidateAllPixels) { }
 };
 
 class MonomeTestLed : public MonomeSerialProtocolData

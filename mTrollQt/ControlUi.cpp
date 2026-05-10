@@ -85,7 +85,6 @@ ControlUi::ControlUi(QWidget * parent, ITrollApplication * app) :
 	mPreferredWidth(0),
 	mMaxSwitchId(0),
 	mHardwareUi(nullptr),
-	mLedIntensity(0),
 	mDisplayTime(false),
 	mSystemPowerOverride(nullptr),
 	mBackgroundColor(0x1a1a1a),
@@ -304,9 +303,39 @@ ControlUi::LoadMonome(bool displayStartSequence)
 				{
 					mHardwareUi = monome;
 					monome = nullptr;
+
+					mHardwareUi->InvalidateAllPixels();
+
+					int pixelId = 1;
+#if 0
+					// 6 column config:
+					// { 13, 14, 15, 16, 17, 18 },
+					// { 12, 11, 10,  9,  8,  7 },
+					// {  1,  2,  3,  4,  5,  6 },
+					// {  -,  -,  -,  -,  -, 19 },
+					for (int idx = 0; idx < 6; ++idx) // LEDs start at 3rd physical full row
+						mHardwareUi->SetPixelRowCol(pixelId++, 2, idx);
+					for (int idx = 5; idx >= 0; --idx) // LEDs continue in reverse order on 2nd full row
+						mHardwareUi->SetPixelRowCol(pixelId++, 1, idx);
+					for (int idx = 0; idx < 6; ++idx) // LEDs continue in forward order on 1st full row
+						mHardwareUi->SetPixelRowCol(pixelId++, 0, idx);
+					mHardwareUi->SetPixelRowCol(pixelId++, 3, 5); // midi activity indicator last but on top partial row
+#else
+					// 5 column config:
+					// { 11, 12, 13, 14, 15 },
+					// { 10,  9,  8,  7,  6 },
+					// {  1,  2,  3,  4,  5 },
+					// {  -,  -,  -,  -, 16 },
+					for (int idx = 0; idx < 5; ++idx) // LEDs start at 3rd physical full row
+						mHardwareUi->SetPixelRowCol(pixelId++, 2, idx);
+					for (int idx = 4; idx >= 0; --idx) // LEDs continue in reverse order on 2nd full row
+						mHardwareUi->SetPixelRowCol(pixelId++, 1, idx);
+					for (int idx = 0; idx < 5; ++idx) // LEDs continue in forward order on 1st full row
+						mHardwareUi->SetPixelRowCol(pixelId++, 0, idx);
+					mHardwareUi->SetPixelRowCol(pixelId++, 3, 4); // midi activity indicator last but on top partial row
+#endif
 					if (displayStartSequence)
 						MonomeStartupSequence();
-					mHardwareUi->SetLedIntensity(mLedIntensity);
 				}
 			}
 		}

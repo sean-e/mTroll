@@ -156,7 +156,6 @@ private: // IMidiControlUi
 	virtual void		CreateMainDisplayInGrid(int row, int col, int colSpan, const std::string & fontName, int fontHeight, bool bold, unsigned int bgColor, unsigned int fgColor, int minHeight) override;
 	virtual void		CreateTraceDisplayInGrid(int row, int col, int colSpan, const std::string & fontName, int fontHeight, bool bold) override;
 	virtual void		SetMainSize(int width, int height) override;
-	virtual void		SetHardwareLedIntensity(short brightness) override { mLedIntensity = brightness; }
 	virtual void		SetColors(unsigned int backgroundColor, unsigned int frameHighlightColor) override { mFrameHighlightColor = frameHighlightColor; mBackgroundColor = backgroundColor; }
 
 public slots:
