@@ -307,7 +307,7 @@ ControlUi::LoadMonome(bool displayStartSequence)
 					mHardwareUi->InvalidateAllPixels();
 
 					int pixelId = 1;
-#if 0
+#if 1
 					// 6 column config:
 					// { 13, 14, 15, 16, 17, 18 },
 					// { 12, 11, 10,  9,  8,  7 },
