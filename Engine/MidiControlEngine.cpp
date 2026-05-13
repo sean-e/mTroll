@@ -977,23 +977,43 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 		{
 			msg = "Time Display";
 			showModeInMainDisplay = false;
-			int switchNumber = GetSwitchNumber(kModeTime);
-			if (kUnassignedSwitchNumber != switchNumber)
+			const int kTimeModeSwitchNumber = GetSwitchNumber(kModeTime);
+			if (kUnassignedSwitchNumber != kTimeModeSwitchNumber)
 			{
 				mSwitchDisplay->EnableDisplayUpdate(false);
 
-				mSwitchDisplay->SetSwitchText(switchNumber, "Exit Time Display");
-				mSwitchDisplay->ForceSwitchDisplay(switchNumber, mEngineLedColor);
-				mSwitchDisplay->SetSwitchText(switchNumber + 1, "Pause/Resume time");
-				mSwitchDisplay->ForceSwitchDisplay(switchNumber + 1, mEngineLedColor);
-				mSwitchDisplay->SetSwitchText(switchNumber + 2, "Reset elapsed time");
-				mSwitchDisplay->ForceSwitchDisplay(switchNumber + 2, mEngineLedColor);
-				mSwitchDisplay->SetSwitchText(switchNumber + 3, "Exit mTroll");
-				mSwitchDisplay->ForceSwitchDisplay(switchNumber + 3, mEngineLedColor);
-				mSwitchDisplay->SetSwitchText(switchNumber + 4, "Exit + sleep");
-				mSwitchDisplay->ForceSwitchDisplay(switchNumber + 4, mEngineLedColor);
-				mSwitchDisplay->SetSwitchText(switchNumber + 5, "Exit + hibernate");
-				mSwitchDisplay->ForceSwitchDisplay(switchNumber + 5, mEngineLedColor);
+				mSwitchDisplay->SetSwitchText(kTimeModeSwitchNumber, "Exit Time Display");
+				mSwitchDisplay->ForceSwitchDisplay(kTimeModeSwitchNumber, mEngineLedColor);
+
+				// funky workaround for ensuring that exit time mode is same switch 
+				// number that entered time mode -- the other actions move around
+				// depending on position of kTimeModeSwitchNumber
+
+				int switchNumber = 0;
+				if (kTimeModeSwitchNumber == switchNumber)
+					++switchNumber;
+				mSwitchDisplay->SetSwitchText(switchNumber, "Reset elapsed time");
+				mSwitchDisplay->ForceSwitchDisplay(switchNumber++, mEngineLedColor);
+
+				if (kTimeModeSwitchNumber == switchNumber)
+					++switchNumber;
+				mSwitchDisplay->SetSwitchText(switchNumber, "Pause/Resume time");
+				mSwitchDisplay->ForceSwitchDisplay(switchNumber++, mEngineLedColor);
+
+				if (kTimeModeSwitchNumber == switchNumber)
+					++switchNumber;
+				mSwitchDisplay->SetSwitchText(switchNumber, "Exit mTroll");
+				mSwitchDisplay->ForceSwitchDisplay(switchNumber++, mEngineLedColor);
+
+				if (kTimeModeSwitchNumber == switchNumber)
+					++switchNumber;
+				mSwitchDisplay->SetSwitchText(switchNumber, "Exit + sleep");
+				mSwitchDisplay->ForceSwitchDisplay(switchNumber++, mEngineLedColor);
+
+				if (kTimeModeSwitchNumber == switchNumber)
+					++switchNumber;
+				mSwitchDisplay->SetSwitchText(switchNumber, "Exit + hibernate");
+				mSwitchDisplay->ForceSwitchDisplay(switchNumber++, mEngineLedColor);
 			}
 			if (!mApplication || !mApplication->EnableTimeDisplay(true))
 				EscapeToDefaultMode();
@@ -1004,26 +1024,17 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			msg = "LED Tests";
 			mSwitchDisplay->EnableDisplayUpdate(false);
 
-			int switchNumber = GetSwitchNumber(kModeTestLeds);
-			if (kUnassignedSwitchNumber != switchNumber)
-			{
-				mSwitchDisplay->SetSwitchText(switchNumber, "Exit LED Tests");
-				mSwitchDisplay->ForceSwitchDisplay(switchNumber, mEngineLedColor);
-			}
-
-			switchNumber = 0;
-			mSwitchDisplay->SetSwitchText(switchNumber, "Exit LED Tests");
-			mSwitchDisplay->ForceSwitchDisplay(switchNumber, mEngineLedColor);
-			mSwitchDisplay->SetSwitchText(switchNumber + 1, "mTroll Quick Blue test");
-			mSwitchDisplay->ForceSwitchDisplay(switchNumber + 1, mEngineLedColor);
-			mSwitchDisplay->SetSwitchText(switchNumber + 2, "Color presets");
-			mSwitchDisplay->ForceSwitchDisplay(switchNumber + 2, mEngineLedColor);
-			mSwitchDisplay->SetSwitchText(switchNumber + 3, "Grouped color presets for seeing intensities");
-			mSwitchDisplay->ForceSwitchDisplay(switchNumber + 3, mEngineLedColor);
-			mSwitchDisplay->SetSwitchText(switchNumber + 4, "monome RGB rows");
-			mSwitchDisplay->ForceSwitchDisplay(switchNumber + 4, mEngineLedColor);
-			mSwitchDisplay->SetSwitchText(switchNumber + 5, "monome RGB rows and columns");
-			mSwitchDisplay->ForceSwitchDisplay(switchNumber + 5, mEngineLedColor);
+			int switchNumber = 0;
+			mSwitchDisplay->SetSwitchText(switchNumber, "mTroll Quick Blue test");
+			mSwitchDisplay->ForceSwitchDisplay(switchNumber++, mEngineLedColor);
+			mSwitchDisplay->SetSwitchText(switchNumber, "Color presets");
+			mSwitchDisplay->ForceSwitchDisplay(switchNumber++, mEngineLedColor);
+			mSwitchDisplay->SetSwitchText(switchNumber, "Grouped color presets for seeing intensities");
+			mSwitchDisplay->ForceSwitchDisplay(switchNumber++, mEngineLedColor);
+			mSwitchDisplay->SetSwitchText(switchNumber, "monome RGB rows");
+			mSwitchDisplay->ForceSwitchDisplay(switchNumber++, mEngineLedColor);
+			mSwitchDisplay->SetSwitchText(switchNumber, "monome RGB rows and columns");
+			mSwitchDisplay->ForceSwitchDisplay(switchNumber++, mEngineLedColor);
 		}
 		break;
 	case emMidiOutSelect:
@@ -1138,10 +1149,10 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 			if (emBankDirect == curMode)
 			{
 				showModeInMainDisplay = false;
-				mSwitchDisplay->SetSwitchText(mDecrementSwitchNumber, "Backspace");
-				mSwitchDisplay->ForceSwitchDisplay(mDecrementSwitchNumber, mEngineLedColor);
-				mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Commit/Load");
+				mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Backspace");
 				mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, mEngineLedColor);
+				mSwitchDisplay->SetSwitchText(12, "Commit/Load");
+				mSwitchDisplay->ForceSwitchDisplay(12, mEngineLedColor);
 
 				// display list of banks
 				if (mMainDisplay)
@@ -1201,12 +1212,12 @@ MidiControlEngine::ChangeMode(EngineMode newMode)
 					// 	Commit	Toggle	(tap)	Decr	Incr
 					mSwitchDisplay->SetSwitchText(mIncrementSwitchNumber, "Clear");
 					mSwitchDisplay->ForceSwitchDisplay(mIncrementSwitchNumber, mEngineLedColor);
-					mSwitchDisplay->SetSwitchText(10, "Set tempo");
-					mSwitchDisplay->ForceSwitchDisplay(10, mEngineLedColor);
+					mSwitchDisplay->SetSwitchText(10, "");
+					// mSwitchDisplay->ForceSwitchDisplay(10, mEngineLedColor);
 					mSwitchDisplay->SetSwitchText(11, "Toggle clock on/off");
 					mSwitchDisplay->ForceSwitchDisplay(11, mEngineLedColor);
-					mSwitchDisplay->SetSwitchText(12, ""); // maybe tap tempo??
-					// mSwitchDisplay->ForceSwitchDisplay(12, mEngineLedColor);
+					mSwitchDisplay->SetSwitchText(12, "Set tempo");
+					mSwitchDisplay->ForceSwitchDisplay(12, mEngineLedColor);
 					mSwitchDisplay->SetSwitchText(13, "Decrement tempo");
 					mSwitchDisplay->ForceSwitchDisplay(13, mEngineLedColor);
 					mSwitchDisplay->SetSwitchText(14, "Increment tempo");
@@ -1454,33 +1465,39 @@ MidiControlEngine::SwitchReleased_AdcOverrideMode(int switchNumber)
 void
 MidiControlEngine::SwitchReleased_TimeDisplay(int switchNumber)
 {
-	int timeModeSwitchNumber = GetSwitchNumber(kModeTime);
-	if (kUnassignedSwitchNumber == timeModeSwitchNumber)
+	const int kTimeModeSwitchNumber = GetSwitchNumber(kModeTime);
+	if (kUnassignedSwitchNumber == kTimeModeSwitchNumber)
 		return;
 
-	if (timeModeSwitchNumber == switchNumber ||
+	if (kTimeModeSwitchNumber == switchNumber ||
 		mModeSwitchNumber == switchNumber)
 	{
 		mApplication->EnableTimeDisplay(false);
 		EscapeToDefaultMode();
+		return;
 	}
-	else if (switchNumber == timeModeSwitchNumber + 1)
-		mApplication->PauseOrResumeTime();
-	else if (switchNumber == timeModeSwitchNumber + 2)
+
+	// funky workaround for ensuring that exit time mode is same switch 
+	// number that entered time mode
+	int offset = 0;
+	if (switchNumber > kTimeModeSwitchNumber)
+		++offset;
+
+	if (switchNumber == 0 + offset)
 		mApplication->ResetTime();
-	else if (switchNumber == timeModeSwitchNumber + 3)
+	else if (switchNumber == 1 + offset)
+		mApplication->PauseOrResumeTime();
+	else if (switchNumber == 2 + offset)
 		mApplication->Exit(ITrollApplication::soeExit);
-	else if (switchNumber == timeModeSwitchNumber + 4)
+	else if (switchNumber == 3 + offset)
 		mApplication->Exit(ITrollApplication::soeExitAndSleep);
-	else if (switchNumber == timeModeSwitchNumber + 5)
+	else if (switchNumber == 4 + offset)
 		mApplication->Exit(ITrollApplication::soeExitAndHibernate);
 }
 
 void
 MidiControlEngine::SwitchReleased_LedTests(int switchNumber)
 {
-	const int ledTestsModeSwitchNumber = GetSwitchNumber(kModeTestLeds);
-	const int cmdSwitchNumberBase = 0;
 	if (!mSwitchDisplay)
 	{
 		EscapeToDefaultMode();
@@ -1489,29 +1506,29 @@ MidiControlEngine::SwitchReleased_LedTests(int switchNumber)
 
 	mSwitchDisplay->EnableDisplayUpdate(true);
 
-	if (ledTestsModeSwitchNumber == switchNumber || mModeSwitchNumber == switchNumber || cmdSwitchNumberBase == switchNumber)
+	if (mModeSwitchNumber == switchNumber)
 		EscapeToDefaultMode();
-	else if (switchNumber == cmdSwitchNumberBase + 1)
+	else if (switchNumber == 0)
 	{
 		mSwitchDisplay->TestLeds(0);
 		// ok to restore mode since pattern 0 is software-defined, the other patterns are firmware-defined
 		ChangeMode(emLedTests);
 	}
-	else if (switchNumber == cmdSwitchNumberBase + 2)
+	else if (switchNumber == 1)
 	{
 		mSwitchDisplay->TestLeds(1);
 		// ok to restore mode since pattern 1 is software-defined, the other patterns are firmware-defined
 		ChangeMode(emLedTests);
 	}
-	else if (switchNumber == cmdSwitchNumberBase + 3)
+	else if (switchNumber == 2)
 	{
 		mSwitchDisplay->TestLeds(2);
 		// ok to restore mode since pattern 2 is software-defined, the other patterns are firmware-defined
 		ChangeMode(emLedTests);
 	}
-	else if (switchNumber == cmdSwitchNumberBase + 4)
+	else if (switchNumber == 3)
 		mSwitchDisplay->TestLeds(10); // don't reset mode since the call happens on the hardware without blocking
-	else if (switchNumber == cmdSwitchNumberBase + 5)
+	else if (switchNumber == 4)
 		mSwitchDisplay->TestLeds(11); // don't reset mode since the call happens on the hardware without blocking
 }
 
@@ -1655,13 +1672,13 @@ MidiControlEngine::SwitchReleased_BankDirect(int switchNumber)
 			EscapeToDefaultMode();
 			updateMainDisplay = false;
 		}
-		else if (switchNumber == mDecrementSwitchNumber)
+		else if (switchNumber == mIncrementSwitchNumber)
 		{
 			// remove last char
 			if (mDirectNumber.length())
 				mDirectNumber = mDirectNumber.erase(mDirectNumber.length() - 1);
 		}
-		else if (switchNumber == mIncrementSwitchNumber)
+		else if (switchNumber == 12)
 		{
 			const int bnkIdx = GetBankIndex(::atoi(mDirectNumber.c_str()));
 			if (bnkIdx != -1)
@@ -2088,13 +2105,7 @@ MidiControlEngine::SwitchPressed_ClockSetup(int switchNumber)
 	case 8:		mDirectNumber += "9";	break;
 	case 9:		mDirectNumber += "0";	break;
 	case 10:
-		// commit tempo
-		if (mDirectNumber.empty())
-			clockTempo = mTempo;
-		else
-			clockTempo = ::atoi(mDirectNumber.c_str());
-		mDirectNumber.clear();
-		break;
+		return;
 	case 11:
 		// toggle clock on/off
 		if (mMidiOut)
@@ -2114,8 +2125,13 @@ MidiControlEngine::SwitchPressed_ClockSetup(int switchNumber)
 			mMainDisplay->AppendText("\r\nNo midi out available for clock beat");
 		return;
 	case 12:
-		// maybe tap tempo...
-		return;
+		// commit tempo
+		if (mDirectNumber.empty())
+			clockTempo = mTempo;
+		else
+			clockTempo = ::atoi(mDirectNumber.c_str());
+		mDirectNumber.clear();
+		break;
 	case 13:
 	case 14:
 		// dec/inc clock
