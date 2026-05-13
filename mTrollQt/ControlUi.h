@@ -330,7 +330,14 @@ private:
 	}
 	inline int SwitchNumberFromRowCol(byte row, byte col)
 	{
-		return mRowColToSwitchNumber[(row << 16) | col];
+		const int rc = (row << 16) | col;
+		const auto it = mRowColToSwitchNumber.find(rc);
+		if (mRowColToSwitchNumber.end() == it)
+		{
+			Trace(std::format("Error: device button at row {} col {} not mapped to UI\n", row+1, col+1));
+			return 0;
+		}
+		return it->second;
 	}
 
 	decltype(&ControlUi::UiButtonPressed_0) GetUiButtonPressedMember(int id);

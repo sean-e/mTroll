@@ -5,6 +5,7 @@
 - Added additional LED test mode that displays all 4 intensities of each color next to each other
 - Updated the dimmest set of default LED preset colors due to switching over hardware to Adafruit NeoPixel LEDs
 - Switch to 6 column footswitch layout
+- Added error message for when the press of a button on the hardware is unable to be mapped to a UI element
 
 #### 2026.04.08
 - Trace window now displays MIDI device add/remove change status messages
