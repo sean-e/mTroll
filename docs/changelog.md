@@ -6,6 +6,7 @@
 - Updated the dimmest set of default LED preset colors due to switching over hardware to Adafruit NeoPixel LEDs
 - Switch to 6 column footswitch layout
 - Updated button assignments in several non-bank engine modes
+- Display LEDs for LoadBank commands the same as engine mode selection LEDs
 - Added error message for when the press of a button on the hardware is unable to be mapped to a UI element
 
 #### 2026.04.08

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2012,2014-2015,2017-2018,2020-2021,2024 Sean Echevarria
+ * Copyright (C) 2007-2012,2014-2015,2017-2018,2020-2021,2024,2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -94,6 +94,7 @@ protected:
 	bool					mPatchSupportsDisabledState = false;
 	bool					mPatchIsDisabled = false;
 	bool					mOverridePedals = false;
+	bool					mOverrideInactiveForLEDcolor = false;
 
 private:
 	const int				mNumber;	// unique across patches

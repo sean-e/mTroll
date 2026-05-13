@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2012,2014-2015,2017-2018,2020-2021,2024-2025 Sean Echevarria
+ * Copyright (C) 2007-2012,2014-2015,2017-2018,2020-2021,2024-2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -110,7 +110,7 @@ Patch::UpdateDisplays(IMainDisplay * mainDisplay, ISwitchDisplay * switchDisplay
 		{
 			if (mPatchSupportsDisabledState && !mPatchIsDisabled && !mPatchIsActive && mLedInactiveColor)
 				switchDisplay->DimSwitchDisplay(switchNumber, mLedInactiveColor);
-			else if (mPatchIsActive)
+			else if (mPatchIsActive || (!mPatchIsActive && mOverrideInactiveForLEDcolor))
 				switchDisplay->SetSwitchDisplay(switchNumber, mLedActiveColor);
 			else
 				switchDisplay->TurnOffSwitchDisplay(switchNumber);

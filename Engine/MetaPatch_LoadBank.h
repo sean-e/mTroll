@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010,2012,2015,2018,2021,2025 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2012,2015,2018,2021,2025,2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -39,6 +39,7 @@ public:
 		mTargetBankNumber(bankNumber)
 	{
 		_ASSERTE(mEngine);
+		mOverrideInactiveForLEDcolor = true;
 	}
 
 	MetaPatch_LoadBank(MidiControlEngine * engine, int number, const std::string & name, const std::string &targetBankName) :
@@ -47,6 +48,7 @@ public:
 		mOptionalTargetBankName(targetBankName)
 	{
 		_ASSERTE(mEngine);
+		mOverrideInactiveForLEDcolor = true;
 	}
 
 	virtual std::string GetPatchTypeStr() const override {return "meta: LoadBank";}
