@@ -695,6 +695,15 @@ MidiControlEngine::LoadBankRelative(int relativeBankIndex)
 }
 
 void
+MidiControlEngine::RefreshLEDs()
+{
+	if (mSwitchDisplay)
+		mSwitchDisplay->EnableDisplayUpdate(false);
+	ChangeMode(emModeSelect);
+	EscapeToDefaultMode();
+}
+
+void
 MidiControlEngine::LoadBankByNumber(int bankNumber)
 {
 	int bankidx = GetBankIndex(bankNumber);

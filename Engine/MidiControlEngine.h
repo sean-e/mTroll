@@ -127,6 +127,7 @@ public:
 	void					ResetExclusiveGroup(int switchNumberToActivate);
 	void					LoadBankByNumber(int bankNumber);
 	void					LoadBankRelative(int relativeBankIndex);
+	void					RefreshLEDs();
 
 	void					EnterNavMode() { ChangeMode(emBankNav); }
 	void					HistoryBackward();

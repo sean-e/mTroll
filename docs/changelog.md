@@ -8,6 +8,7 @@
 - Updated button assignments in several non-bank engine modes
 - Display LEDs for LoadBank commands the same as engine mode selection LEDs
 - Added error message for when the press of a button on the hardware is unable to be mapped to a UI element
+- Restore LED colors during reconnect to hardware
 - Updated 64-bit build to Qt 6.11.1
 
 #### 2026.04.08

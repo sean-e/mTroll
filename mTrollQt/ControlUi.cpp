@@ -225,7 +225,6 @@ ControlUi::Load(const std::string & uiSettingsFile,
 
 	if (mHardwareUi)
 	{
-		SendPresetColorsToMonome();
 		mHardwareUi->Subscribe(this);
 		mHardwareUi->Subscribe(mEngine.get());
 	}
@@ -371,7 +370,10 @@ ControlUi::LoadMidiSettings(const std::string & file,
 	if (mEngine)
 	{
 		if (mHardwareUi)
+		{
 			ldr.InitMonome(mHardwareUi, adcOverrides, mUserAdcSettings);
+			SendPresetColorsToMonome();
+		}
 	}
 	else
 		TextOut("Failed to load MIDI settings.");
@@ -938,6 +940,9 @@ ControlUi::SendPresetColorsToMonome()
 	int idx = 0;
 	for (const auto& it : mLedConfig.mPresetColors)
 		mHardwareUi->UpdatePreset(idx++, it);
+
+	if (mEngine)
+		mEngine->RefreshLEDs();
 }
 
 
