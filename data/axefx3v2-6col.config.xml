@@ -1,0 +1,1711 @@
+<?xml version="1.0" ?>
+<?xml-stylesheet type="text/xsl" href="mtrollConfig.xsl"?>
+<MidiControlSettings>
+	<SystemConfig>
+		<powerup bankName="Axe-Fx 1" />
+		<switches>
+			<!-- 'menu', 'decrement' and 'increment' switch nodes are required.
+				switch id attributes are 0-based and map to the switchMappings block in the .ui.xml file.
+				Menu switch is like a '2nd' or alternate function switch.
+				Increment and decrement switches are reserved by the engine after pressing Menu.
+				Increment and decrement switches are available for patches in the default startup mode.  -->
+			<switch command="menu" id="20" />
+			<switch command="decrement" id="21" />
+			<switch command="increment" id="22" />
+
+			<!-- Optional assignments that define what functions are available and on what switch
+				when you press the Menu switch. 
+				If this section is not used, then default assignments will be made. -->
+			<switch command="recall" id="0" />
+			<switch command="back" id="1" />
+			<switch command="forward" id="2" />
+			<switch command="time" id="3" />
+			<switch command="programChangeDirect" id="4" />
+			<switch command="controlChangeDirect" id="5" />
+			<switch command="adcOverride" id="6" />
+			<switch command="toggleTraceWindow" id="7" />
+			<switch command="bankDirect" id="15" />
+			<switch command="adcDisplay" id="16" />
+			<switch command="testLeds" id="17" />
+			<switch command="bankDescription" id="18" />
+
+			<!-- Optional bank load assignments. Make sure these don't conflict with defaults if 
+				defaults aren't specified.
+				These can be used to jump directly to any particular bank after pressing the Menu switch. -->
+			<switch command="LoadBank" id="10" bankName="Directory" />
+			<switch command="LoadBank" id="11" bankName="Axe-Fx Scenes" />
+			<switch command="LoadBank" id="12" bankName="Axe-Fx Looper" />
+			<switch command="LoadBank" id="13" bankName="Axe-Fx Reveal 1" />
+		</switches>
+
+		<midiDevices>
+			<midiDevice port="1" activityIndicatorId="23" out="Axe-Fx III" in="Axe-Fx III" />
+
+			<!-- default device if the named devices fail -->
+			<midiDevice port="2" activityIndicatorId="23" outIdx="0" />
+		</midiDevices>
+
+		<!-- port attr on expression block is required -->
+		<expression port="1">
+			<adc inputNumber="1" enable="1" minimumAdcVal="50" maximumAdcVal="990" />
+			<adc inputNumber="2" enable="1" minimumAdcVal="3"  maximumAdcVal="315" />
+			<adc inputNumber="3" enable="1" minimumAdcVal="75" maximumAdcVal="1015" />
+			<adc inputNumber="4" enable="0" minimumAdcVal="1"  maximumAdcVal="1020" bottomToggleZoneSize="1" bottomToggleDeadzoneSize="150" topToggleZoneSize="1" topToggleDeadzoneSize="100" />
+			<globalExpr inputNumber="1" assignmentNumber="1" device="Axe-Fx" comment="ext 1 (Fremen gain/fx)" 	 controller="16" min="0" max="127" invert="0" enable="1" />
+			<globalExpr inputNumber="2" assignmentNumber="1" device="Axe-Fx" comment="ext 2 (Fremen wah/whammy)" controller="17" min="0" max="127" invert="0" enable="1" />
+			<globalExpr inputNumber="3" assignmentNumber="1" device="Axe-Fx" comment="ext 3 (Fremen vol)"	     controller="18" min="0" max="127" invert="0" enable="1" />
+			<globalExpr inputNumber="4" assignmentNumber="1" device="Axe-Fx" comment="out 1 vol" 				 controller="11" min="0" max="127" invert="0" enable="1" />
+		</expression>
+	</SystemConfig>
+
+	<DeviceChannelMap>
+		<!-- map a textString (name of a device) to a channel and MIDI port (that was 
+			defined in MidiDevices above). 
+			Completely optional if you would rather specify a numeric channel in each 
+			patch.-->
+		<Device channel="1" port="2"></Device>
+		<Device channel="2" port="2"></Device>
+		<Device channel="3" port="2"></Device>
+		<Device channel="4" port="2"></Device>
+		<Device channel="5" port="2"></Device>
+		<Device channel="6" port="2"></Device>
+		<Device channel="7" port="2"></Device>
+		<!-- this is key to Axe-Fx synchronization; make sure Axe-Fx is on the right line (based on MIDI channel). -->
+		<Device channel="8" port="1" model="3">Axe-Fx</Device>
+		<Device channel="9" port="2"></Device>
+		<Device channel="10" port="2"></Device>
+		<Device channel="11" port="2"></Device>
+		<Device channel="12" port="2"></Device>
+		<Device channel="13" port="2"></Device>
+		<Device channel="14" port="2"></Device>
+		<Device channel="15" port="2"></Device>
+		<Device channel="16" port="2"></Device>
+	</DeviceChannelMap>
+
+	<LedPresetColors> 
+		<!-- max 32, none required, defaults already exist -->
+		<!--
+		<color preset="1" comment="blue"   >00000b</color>
+		<color preset="2" comment="green"  >000b00</color>
+		<color preset="3" comment="red"    >0b0000</color>
+		<color preset="4" comment="cyan"   >000b0b</color>
+		<color preset="5" comment="yellow" >0b0b00</color>
+		<color preset="6" comment="violet" >0b000b</color>
+		<color preset="7" comment="white"  >0b0b0b</color>
+		-->
+	</LedPresetColors>
+
+	<LedDefaultColors> <!-- category defaults; lookup occurs in this order: device+type, axe types, devices, types -->
+    <color type="normal" preset="1"/>
+    <color type="toggle" preset="1"/>
+    <color type="hybridToggle" preset="1"/>
+    <color type="momentary" preset="1"/>
+    <color type="persistentPedalOverride" preset="1"/>
+
+    <color device="mtroll" preset="14"/>
+    <color device="midi" preset="13"/>
+    <color device="Axe-Fx" preset="1"/>
+    <color device="dynamic" preset="5"/>
+
+    <color type="AxeScene" preset="2"/>
+    <color type="AxeScene" state="inactive" preset="11"/>
+
+    <color type="AxeToggle" preset="2"/>
+    <color type="AxeToggle" state="inactive" preset="10"/>
+    <color type="AxeHybridToggle" preset="2"/>
+    <color type="AxeHybridToggle" state="inactive" preset="10"/>
+
+    <color type="AxeBlock" preset="1"/>
+    <color type="AxeBlock" state="inactive" preset="13"/>
+    <color type="AxeBlockA" preset="24"/>
+    <color type="AxeBlockB" preset="25"/>
+    <color type="AxeBlockC" preset="26"/>
+    <color type="AxeBlockD" preset="27"/>
+    <color type="AxeBlockE" preset="28"/>
+    <color type="AxeBlockF" preset="29"/>
+
+    <color type="AxeLooper" preset="2"/>
+    <color type="AxeLooper" state="inactive" preset="9"/>
+	</LedDefaultColors>
+
+	<patches>
+		<importPatches>Axefx3Presets.patchesConfig.xml</importPatches>
+		<importPatches>Axefx3Patches.patchesConfig.xml</importPatches>
+	</patches>
+
+	<banks>
+		<!-- switch number attributes are 1-based -->
+
+		<!-- "Defaults" is a special bank; assigns defaults for switches in all banks that don't otherwise make a switch assignment -->
+		<bank name="Defaults">
+			<ExclusiveSwitchGroup>11 12 13 14 15</ExclusiveSwitchGroup>
+			<!-- override toggle behavior so that press doesn't clear LED (not normal so that presets are) -->
+			<switch number="11" patchName="Scene 1" override="A" />
+			<switch number="11" patchName="Scene 6" override="A" secondFunction="immediateToggle" />
+			<switch number="12" patchName="Scene 2" override="A" />
+			<switch number="12" patchName="Scene 7" override="A" secondFunction="immediateToggle" />
+			<switch number="13" patchName="Scene 3" override="A" />
+			<switch number="13" patchName="Scene 8" override="A" secondFunction="immediateToggle" />
+			<switch number="14" patchName="Scene 4" override="A" />
+			<switch number="14" command="AxeFx3DecrementPreset" secondFunction="immediateToggle" />
+			<switch number="15" patchName="Scene 5" override="A" />
+			<switch number="15" command="AxeFx3IncrementPreset" secondFunction="immediateToggle" />
+
+			<!-- Previous and Next Bank switches are not required. -->
+			<switch number="22" command="BankHistoryBackward" />
+			<switch number="23" command="LoadNextBank" />
+			<!-- long press of Next loads tuner -->
+			<switch number="23" patchName="Axe Tuner" secondFunction="auto" />
+
+			<switch number="20" command="SyncAxeFx" />
+		</bank>
+
+		<bank name="Directory">
+			<!-- empty patch number in PatchMap will override the default, if any exists -->
+			<switch number="1" label="Scenes"    command="LoadBank" bankName="Axe-Fx Scenes" />
+			<switch number="2" label="Looper"    command="LoadBank" bankName="Axe-Fx Looper" />
+			<switch number="3" label="Externals" command="LoadBank" bankName="Axe-Fx Externals" />
+
+			<switch number="6" label="Reveal 1"  command="LoadBank" bankName="Axe-Fx Reveal 1" />
+			<switch number="7" label="Reveal 2"  command="LoadBank" bankName="Axe-Fx Reveal 2" />
+			<switch number="8" label="Reveal 3"  command="LoadBank" bankName="Axe-Fx Reveal 3" />
+			<switch number="9" label="Reveal 4"  command="LoadBank" bankName="Axe-Fx Reveal 4" />
+			<switch number="10" label="Reveal 5"  command="LoadBank" bankName="Axe-Fx Reveal 5" />
+			<switch number="11" label="Reveal 6"  command="LoadBank" bankName="Axe-Fx Reveal 6" />
+			<switch number="12" label="Reveal 7"  command="LoadBank" bankName="Axe-Fx Reveal 7" />
+			<switch number="13" />
+			<switch number="14" />
+			<switch number="15" />
+
+			<switch number="22" command="LoadPreviousBank" />
+			<!-- long press of Prev loads reveal 1 -->
+			<switch number="22" command="LoadBank" bankName="Axe-Fx Reveal 1" secondFunction="immediateToggle" />
+		</bank>
+
+		<bank name="Axe-Fx 1">
+			<switch number="1"  patchName="Axe 001" />
+			<switch number="2"  patchName="Axe 002" />
+			<switch number="3"  patchName="Axe 003" />
+			<switch number="4"  patchName="Axe 004" />
+			<switch number="5"  patchName="Axe 005" />
+			<switch number="6"  patchName="Scene List 1-5" />
+			<switch number="6"  command="ResetPatch" patchNameToReset="Scene List 1-5" secondFunction="immediateToggle" />
+			<switch number="7"  patchName="Axe 007" />
+			<switch number="8"  patchName="Axe 008" />
+			<switch number="9"  patchName="Axe 009" />
+			<switch number="10" patchName="Axe 010" />
+
+			<switch number="22" command="LoadPreviousBank" />
+			<!-- long press of Prev loads reveal 1 -->
+			<switch number="22" command="LoadBank" bankName="Axe-Fx Reveal 1" secondFunction="immediateToggle" />
+		</bank>
+		<bank name="Axe-Fx 11">
+			<switch number="1"  patchName="Axe 011" />
+			<switch number="2"  patchName="Axe 012" />
+			<switch number="3"  patchName="Axe 013" />
+			<switch number="4"  patchName="Axe 014" />
+			<switch number="5"  patchName="Axe 015" />
+			<switch number="6"  patchName="Axe 016" />
+			<switch number="7"  patchName="Axe 017" />
+			<switch number="8"  patchName="Axe 018" />
+			<switch number="9"  patchName="Axe 019" />
+			<switch number="10" patchName="Axe 020" />
+
+			<switch number="22" command="LoadPreviousBank" />
+			<!-- long press of Prev loads reveal 1 -->
+			<switch number="22" command="LoadBank" bankName="Axe-Fx Reveal 1" secondFunction="immediateToggle" />
+		</bank>
+		<bank name="Axe-Fx 21">
+			<switch number="1"  patchName="Axe 021" />
+			<switch number="2"  patchName="Axe 022" />
+			<switch number="3"  patchName="Axe 023" />
+			<switch number="4"  patchName="Axe 024" />
+			<switch number="5"  patchName="Axe 025" />
+			<switch number="6"  patchName="Axe 026" />
+			<switch number="7"  patchName="Axe 027" />
+			<switch number="8"  patchName="Axe 028" />
+			<switch number="9"  patchName="Axe 029" />
+			<switch number="10" patchName="Axe 030" />
+
+			<switch number="22" command="LoadPreviousBank" />
+			<!-- long press of Prev loads reveal 1 -->
+			<switch number="22" command="LoadBank" bankName="Axe-Fx Reveal 1" secondFunction="immediateToggle" />
+		</bank>
+		<bank name="Axe-Fx 31">
+			<switch number="1"  patchName="Axe 031" />
+			<switch number="2"  patchName="Axe 032" />
+			<switch number="3"  patchName="Axe 033" />
+			<switch number="4"  patchName="Axe 034" />
+			<switch number="5"  patchName="Axe 035" />
+			<switch number="6"  patchName="Axe 036" />
+			<switch number="7"  patchName="Axe 037" />
+			<switch number="8"  patchName="Axe 038" />
+			<switch number="9"  patchName="Axe 039" />
+			<switch number="10" patchName="Axe 040" />
+
+			<switch number="22" command="LoadPreviousBank" />
+			<!-- long press of Prev loads reveal 1 -->
+			<switch number="22" command="LoadBank" bankName="Axe-Fx Reveal 1" secondFunction="immediateToggle" />
+		</bank>
+
+		<!-- start Axe-Fx III axefx3v2 data file non-preset banks -->
+		<bank name="Axe-Fx Scenes">
+			<switch number="1" patchName="Scene 1" />
+			<switch number="2" patchName="Scene 2" />
+			<switch number="3" patchName="Scene 3" />
+			<switch number="4" patchName="Scene 4" />
+			<switch number="5" patchName="Scene 5" />
+			<switch number="6" patchName="Scene 6" />
+			<switch number="7" patchName="Scene 7" />
+			<switch number="8" patchName="Scene 8" />
+			<switch number="12" command="AxeFx3ReloadCurrentPreset" />
+
+			<switch number="13" command="AxeFx3DecrementScene" label="Prev Scene" />
+			<switch number="14" command="AxeFx3IncrementScene" label="Next Scene" />
+			<switch number="15" PatchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" command="AxeFx3DecrementPreset" label="Prev Preset" />
+			<switch number="18" command="AxeFx3IncrementPreset" label="Next Preset" />
+		</bank>
+		<bank name="Axe-Fx Looper">
+			<switch number="1" patchName="Axe Loop Record/Overdub" />
+			<switch number="2" patchName="Axe Loop Play/Stop" />
+			<switch number="3" patchName="" />
+			<switch number="4" patchName="Axe Loop Once/Retrigger" />
+			<switch number="5" patchName="Axe Looper" />
+			<switch number="6" patchName="Axe Loop Undo" />
+			<switch number="7" patchName="Axe Loop Reverse" />
+			<switch number="8" patchName="Axe Loop Half Speed" />
+			<switch number="12" patchName="Axe Tap Tempo" />
+		</bank>
+		<bank name="Axe-Fx Externals">
+			<switch number="1" patchName="Axe Ext 1 (toggle)" />
+			<switch number="1" patchName="Axe Ext 6 (toggle)" secondFunction="manual"/>
+			<switch number="2" patchName="Axe Ext 2 (toggle)" />
+			<switch number="2" patchName="Axe Ext 7 (toggle)" secondFunction="manual"/>
+			<switch number="3" patchName="Axe Ext 3 (toggle)" />
+			<switch number="3" patchName="Axe Ext 8 (toggle)" secondFunction="manual"/>
+			<switch number="4" patchName="Axe Ext 4 (toggle)" />
+			<switch number="4" patchName="Axe Ext 9 (toggle)" secondFunction="manual"/>
+			<switch number="5" patchName="Axe Ext 5 (toggle)" />
+			<switch number="5" patchName="Axe Ext 10 (toggle)" secondFunction="manual"/>
+			<switch number="7" patchName="Axe Ext 5 (pedal 4)" />
+			<switch number="7" patchName="Disable ped 1" secondFunction="immediateToggle"/>
+			<switch number="8" patchName="Axe Ext 6 (pedal 4)" />
+			<switch number="8" patchName="Disable ped 1" secondFunction="immediateToggle"/>
+			<switch number="9" patchName="Axe Ext 7 (pedal 4)" />
+			<switch number="9" patchName="Disable ped 1" secondFunction="immediateToggle"/>
+			<switch number="10" patchName="Axe Ext 8 (pedal 4)" />
+			<switch number="10" patchName="Disable ped 1" secondFunction="immediateToggle" />
+			<switch number="12" patchName="Disable ped 1" />
+			<switch number="13" patchName="Axe Ext 1 (pedal 4)" />
+			<switch number="13" patchName="Disable ped 4" secondFunction="immediateToggle"/>
+			<switch number="14" patchName="Axe Ext 2 (pedal 4)" />
+			<switch number="14" patchName="Disable ped 4" secondFunction="immediateToggle"/>
+			<switch number="15" patchName="Axe Ext 3 (pedal 4)" />
+			<switch number="15" patchName="Disable ped 4" secondFunction="immediateToggle"/>
+			<switch number="16" patchName="Axe Ext 4 (pedal 4)" />
+			<switch number="16" patchName="Disable ped 4" secondFunction="immediateToggle"/>
+			<switch number="17" PatchName="" />
+			<switch number="18" patchName="Disable ped 4" />
+		</bank>
+		<bank name="Axe-Fx Reveal 1">
+			<switch number="1" patchName="Amp 1" />
+			<switch number="1" command="LoadBank" bankName="Axe-Fx Amp 1 Channels" secondFunction="immediateToggle" />
+			<switch number="2" patchName="Amp 2" />
+			<switch number="2" command="LoadBank" bankName="Axe-Fx Amp 2 Channels" secondFunction="immediateToggle" />
+			<switch number="3" patchName="Chorus 1" />
+			<switch number="3" command="LoadBank" bankName="Axe-Fx Chorus Channels" secondFunction="immediateToggle" />
+			<switch number="4" patchName="Chorus 2" />
+			<switch number="4" command="LoadBank" bankName="Axe-Fx Chorus Channels" secondFunction="immediateToggle" />
+			<switch number="5" patchName="Compressor 1" />
+			<switch number="5" command="LoadBank" bankName="Axe-Fx Comp Channels" secondFunction="immediateToggle" />
+			<switch number="6" patchName="Compressor 2" />
+			<switch number="6" command="LoadBank" bankName="Axe-Fx Comp Channels" secondFunction="immediateToggle" />
+			<switch number="7" patchName="Delay 1" />
+			<switch number="7" command="LoadBank" bankName="Axe-Fx Dly 1 Channels" secondFunction="immediateToggle" />
+			<switch number="8" patchName="Delay 2" />
+			<switch number="8" command="LoadBank" bankName="Axe-Fx Dly 2 Channels" secondFunction="immediateToggle" />
+			<switch number="9" patchName="Delay 3 (mod)" />
+			<switch number="9" command="LoadBank" bankName="Axe-Fx Dly 3 Channels" secondFunction="immediateToggle" />
+			<switch number="10" patchName="Delay 4" />
+			<switch number="10" command="LoadBank" bankName="Axe-Fx Dly 4 Channels" secondFunction="immediateToggle" />
+			<switch number="11" patchName="Drive 1" />
+			<switch number="11" command="LoadBank" bankName="Axe-Fx Drv 1/2 Channels" secondFunction="immediateToggle" />
+			<switch number="12" patchName="Drive 2" />
+			<switch number="12" command="LoadBank" bankName="Axe-Fx Drv 1/2 Channels" secondFunction="immediateToggle" />
+			<switch number="13" patchName="Drive 3" />
+			<switch number="13" command="LoadBank" bankName="Axe-Fx Drv 3/4 Channels" secondFunction="immediateToggle" />
+			<switch number="14" patchName="Flanger 1" />
+			<switch number="14" command="LoadBank" bankName="Axe-Fx Flanger Channels" secondFunction="immediateToggle" />
+			<switch number="15" patchName="Flanger 2" />
+			<switch number="15" command="LoadBank" bankName="Axe-Fx Flanger Channels" secondFunction="immediateToggle" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Reveal 2">
+			<switch number="1" patchName="Multi-Delay 1" />
+			<switch number="1" command="LoadBank" bankName="Axe-Fx MultiDly Channels" secondFunction="immediateToggle" />
+			<switch number="2" patchName="Multi-Delay 2" />
+			<switch number="2" command="LoadBank" bankName="Axe-Fx MultiDly Channels" secondFunction="immediateToggle" />
+			<switch number="3" patchName="Phaser 1" />
+			<switch number="3" command="LoadBank" bankName="Axe-Fx Phaser Channels" secondFunction="immediateToggle" />
+			<switch number="4" patchName="Phaser 2" />
+			<switch number="4" command="LoadBank" bankName="Axe-Fx Phaser Channels" secondFunction="immediateToggle" />
+			<switch number="5" patchName="Pitch 1" />
+			<switch number="5" command="LoadBank" bankName="Axe-Fx Pitch Channels" secondFunction="immediateToggle" />
+			<switch number="6" patchName="Pitch 2" />
+			<switch number="6" command="LoadBank" bankName="Axe-Fx Pitch Channels" secondFunction="immediateToggle" />
+			<switch number="7" patchName="Plex Delay 1" />
+			<switch number="7" command="LoadBank" bankName="Axe-Fx Plex 1 Channels" secondFunction="immediateToggle" />
+			<switch number="8" patchName="Plex Delay 2" />
+			<switch number="8" command="LoadBank" bankName="Axe-Fx Plex 2 Channels" secondFunction="immediateToggle" />
+			<switch number="9" patchName="Reverb 1" />
+			<switch number="9" command="LoadBank" bankName="Axe-Fx Reverb 1 Channels" secondFunction="immediateToggle" />
+			<switch number="10" patchName="Reverb 2" />
+			<switch number="10" command="LoadBank" bankName="Axe-Fx Reverb 2 Channels" secondFunction="immediateToggle" />
+			<switch number="11" patchName="Rotary 1" />
+			<switch number="11" command="LoadBank" bankName="Axe-Fx Rotary Channels" secondFunction="immediateToggle" />
+			<switch number="12" patchName="Tremolo 1" />
+			<switch number="12" command="LoadBank" bankName="Axe-Fx Tremolo Channels" secondFunction="immediateToggle" />
+			<switch number="13" patchName="Tremolo 2" />
+			<switch number="13" command="LoadBank" bankName="Axe-Fx Tremolo Channels" secondFunction="immediateToggle" />
+			<switch number="14" patchName="Wah 1" />
+			<switch number="14" command="LoadBank" bankName="Axe-Fx Wah Channels" secondFunction="immediateToggle" />
+			<switch number="15" patchName="Wah 2" />
+			<switch number="15" command="LoadBank" bankName="Axe-Fx Wah Channels" secondFunction="immediateToggle" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Reveal 3">
+			<switch number="1" patchName="Cab 1" />
+			<switch number="1" command="LoadBank" bankName="Axe-Fx Cab Channels" secondFunction="immediateToggle" />
+			<switch number="2" patchName="Cab 2" />
+			<switch number="2" command="LoadBank" bankName="Axe-Fx Cab Channels" secondFunction="immediateToggle" />
+			<switch number="3" patchName="Crossover 1" />
+			<switch number="3" command="LoadBank" bankName="Axe-Fx Crossover Channels" secondFunction="immediateToggle" />
+			<switch number="4" patchName="Crossover 2" />
+			<switch number="4" command="LoadBank" bankName="Axe-Fx Crossover Channels" secondFunction="immediateToggle" />
+			<switch number="5" patchName="Enhancer 1" />
+			<switch number="5" command="LoadBank" bankName="Axe-Fx Enhancer Channels" secondFunction="immediateToggle" />
+			<switch number="6" patchName="Enhancer 2" />
+			<switch number="6" command="LoadBank" bankName="Axe-Fx Enhancer Channels" secondFunction="immediateToggle" />
+			<switch number="7" patchName="Filter 1" />
+			<switch number="7" command="LoadBank" bankName="Axe-Fx Filter 1/2 Channels" secondFunction="immediateToggle" />
+			<switch number="8" patchName="Filter 2" />
+			<switch number="8" command="LoadBank" bankName="Axe-Fx Filter 1/2 Channels" secondFunction="immediateToggle" />
+			<switch number="9" patchName="Filter 3" />
+			<switch number="9" command="LoadBank" bankName="Axe-Fx Filter 3/4 Channels" secondFunction="immediateToggle" />
+			<switch number="10" patchName="Filter 4" />
+			<switch number="10" command="LoadBank" bankName="Axe-Fx Filter 3/4 Channels" secondFunction="immediateToggle" />
+			<switch number="11" patchName="Formant 1" />
+			<switch number="11" command="LoadBank" bankName="Axe-Fx Formant Channels" secondFunction="immediateToggle" />
+			<switch number="12" patchName="Formant 2" />
+			<switch number="12" command="LoadBank" bankName="Axe-Fx Formant Channels" secondFunction="immediateToggle" />
+			<switch number="13" patchName="Gate 1" />
+			<switch number="13" command="LoadBank" bankName="Axe-Fx Gate 1/2 Channels" secondFunction="immediateToggle" />
+			<switch number="14" patchName="Gate 2" />
+			<switch number="14" command="LoadBank" bankName="Axe-Fx Gate 1/2 Channels" secondFunction="immediateToggle" />
+			<switch number="15" patchName="Gate 3" />
+			<switch number="15" command="LoadBank" bankName="Axe-Fx Gate 3/4 Channels" secondFunction="immediateToggle" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Reveal 4">
+			<switch number="1" patchName="Graphic EQ 1" />
+			<switch number="1" command="LoadBank" bankName="Axe-Fx GEQ 1/2 Channels" secondFunction="immediateToggle" />
+			<switch number="2" patchName="Graphic EQ 2" />
+			<switch number="2" command="LoadBank" bankName="Axe-Fx GEQ 1/2 Channels" secondFunction="immediateToggle" />
+			<switch number="3" patchName="Graphic EQ 3" />
+			<switch number="3" command="LoadBank" bankName="Axe-Fx GEQ 3/4 Channels" secondFunction="immediateToggle" />
+			<switch number="4" patchName="Graphic EQ 4" />
+			<switch number="4" command="LoadBank" bankName="Axe-Fx GEQ 3/4 Channels" secondFunction="immediateToggle" />
+			<switch number="5" patchName="IR Player 1" />
+			<switch number="5" command="LoadBank" bankName="Axe-Fx IR Player Channels" secondFunction="immediateToggle" />
+			<switch number="6" patchName="IR Player 2" />
+			<switch number="6" command="LoadBank" bankName="Axe-Fx IR Player Channels" secondFunction="immediateToggle" />
+			<switch number="7" patchName="MegaTap 1" />
+			<switch number="7" command="LoadBank" bankName="Axe-Fx MegaTap Channels" secondFunction="immediateToggle" />
+			<switch number="8" patchName="MegaTap 2" />
+			<switch number="8" command="LoadBank" bankName="Axe-Fx MegaTap Channels" secondFunction="immediateToggle" />
+			<switch number="9" patchName="Mixer 1" />
+			<switch number="9" command="LoadBank" bankName="Axe-Fx Mixer 1/2 Channels" secondFunction="immediateToggle" />
+			<switch number="10" patchName="Mixer 2" />
+			<switch number="10" command="LoadBank" bankName="Axe-Fx Mixer 1/2 Channels" secondFunction="immediateToggle" />
+			<switch number="11" patchName="Mixer 3" />
+			<switch number="11" command="LoadBank" bankName="Axe-Fx Mixer 3/4 Channels" secondFunction="immediateToggle" />
+			<switch number="13" patchName="Multiband Comp 1" />
+			<switch number="13" command="LoadBank" bankName="Axe-Fx Multiband Comp Channels" secondFunction="immediateToggle" />
+			<switch number="14" patchName="Multiband Comp 2" />
+			<switch number="14" command="LoadBank" bankName="Axe-Fx Multiband Comp Channels" secondFunction="immediateToggle" />
+			<switch number="15" patchName="Multiplexer 1" />
+			<switch number="15" command="LoadBank" bankName="Axe-Fx Multiplexer Channels" secondFunction="immediateToggle" />
+			<switch number="16" patchName="Multiplexer 2" />
+			<switch number="16" command="LoadBank" bankName="Axe-Fx Multiplexer Channels" secondFunction="immediateToggle" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Reveal 5">
+			<switch number="1" patchName="Para EQ 1" />
+			<switch number="1" command="LoadBank" bankName="Axe-Fx Para EQ 1/2 Channels" secondFunction="immediateToggle" />
+			<switch number="2" patchName="Para EQ 2" />
+			<switch number="2" command="LoadBank" bankName="Axe-Fx Para EQ 1/2 Channels" secondFunction="immediateToggle" />
+			<switch number="3" patchName="Para EQ 3" />
+			<switch number="3" command="LoadBank" bankName="Axe-Fx Para EQ 3/4 Channels" secondFunction="immediateToggle" />
+			<switch number="4" patchName="Para EQ 4" />
+			<switch number="4" command="LoadBank" bankName="Axe-Fx Para EQ 3/4 Channels" secondFunction="immediateToggle" />
+			<switch number="5" patchName="Resonator 1" />
+			<switch number="5" command="LoadBank" bankName="Axe-Fx Resonator Channels" secondFunction="immediateToggle" />
+			<switch number="6" patchName="Resonator 2" />
+			<switch number="6" command="LoadBank" bankName="Axe-Fx Resonator Channels" secondFunction="immediateToggle" />
+			<switch number="7" patchName="Return 1" />
+			<switch number="8" patchName="Return 2" />
+			<switch number="9" patchName="Ring Mod" />
+			<switch number="9" command="LoadBank" bankName="Axe-Fx Ring Mod Channels" secondFunction="immediateToggle" />
+			<switch number="10" patchName="RTA" />
+			<switch number="11" patchName="Scene MIDI" />
+			<switch number="13" patchName="Send 1" />
+			<switch number="14" patchName="Send 2" />
+			<switch number="15" patchName="Synth 1" />
+			<switch number="15" command="LoadBank" bankName="Axe-Fx Synth Channels" secondFunction="immediateToggle" />
+			<switch number="16" patchName="Synth 2" />
+			<switch number="16" command="LoadBank" bankName="Axe-Fx Synth Channels" secondFunction="immediateToggle" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Reveal 6">
+			<switch number="1" patchName="Ten-Tap Delay 1" />
+			<switch number="1" command="LoadBank" bankName="Axe-Fx Ten-Tap Delay Channels" secondFunction="immediateToggle" />
+			<switch number="2" patchName="Ten-Tap Delay 2" />
+			<switch number="2" command="LoadBank" bankName="Axe-Fx Ten-Tap Delay Channels" secondFunction="immediateToggle" />
+			<switch number="3" patchName="Tone Match" />
+			<switch number="4" patchName="Vocoder" />
+			<switch number="5" patchName="Dyn Dist 1" />
+			<switch number="5" command="LoadBank" bankName="Axe-Fx Dyn Dist Channels" secondFunction="immediateToggle" />
+			<switch number="6" patchName="Dyn Dist 2" />
+			<switch number="6" command="LoadBank" bankName="Axe-Fx Dyn Dist Channels" secondFunction="immediateToggle" />
+			<switch number="7" patchName="Volume 1" />
+			<switch number="7" command="LoadBank" bankName="Axe-Fx Volume 1/2 Channels" secondFunction="immediateToggle" />
+			<switch number="8" patchName="Volume 2" />
+			<switch number="8" command="LoadBank" bankName="Axe-Fx Volume 1/2 Channels" secondFunction="immediateToggle" />
+			<switch number="9" patchName="Volume 3" />
+			<switch number="9" command="LoadBank" bankName="Axe-Fx Volume 3/4 Channels" secondFunction="immediateToggle" />
+			<switch number="10" patchName="Volume 4" />
+			<switch number="10" command="LoadBank" bankName="Axe-Fx Volume 3/4 Channels" secondFunction="immediateToggle" />
+
+			<switch number="11" patchName="" />
+			<switch number="12" patchName="" />
+			<switch number="13" patchName="" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Reveal 7">
+			<switch number="1" patchName="Axe Input 1" />
+			<switch number="1" command="LoadBank" bankName="Axe-Fx Input 1/2 Channels" secondFunction="immediateToggle" />
+			<switch number="2" patchName="Axe Input 2" />
+			<switch number="2" command="LoadBank" bankName="Axe-Fx Input 1/2 Channels" secondFunction="immediateToggle" />
+			<switch number="3" patchName="Axe Input 3" />
+			<switch number="3" command="LoadBank" bankName="Axe-Fx Input 3-5 Channels" secondFunction="immediateToggle" />
+			<switch number="4" patchName="Axe Input 4" />
+			<switch number="4" command="LoadBank" bankName="Axe-Fx Input 3-5 Channels" secondFunction="immediateToggle" />
+			<switch number="5" patchName="Axe USB Input" />
+			<switch number="5" command="LoadBank" bankName="Axe-Fx Input 3-5 Channels" secondFunction="immediateToggle" />
+			<switch number="7" patchName="Axe Output 1" />
+			<switch number="7" command="LoadBank" bankName="Axe-Fx Output 1/2 Channels" secondFunction="immediateToggle" />
+			<switch number="8" patchName="Axe Output 2" />
+			<switch number="8" command="LoadBank" bankName="Axe-Fx Output 1/2 Channels" secondFunction="immediateToggle" />
+			<switch number="9" patchName="Axe Output 3" />
+			<switch number="9" command="LoadBank" bankName="Axe-Fx Output 3/4 Channels" secondFunction="immediateToggle" />
+			<switch number="10" patchName="Axe Output 4" />
+			<switch number="10" command="LoadBank" bankName="Axe-Fx Output 3/4 Channels" secondFunction="immediateToggle" />
+			<switch number="11" patchName="" />
+			<switch number="12" patchName="" />
+			<switch number="13" patchName="" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+
+		<bank name="Axe-Fx Amp 1 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Amp 1 Ch A" />
+			<switch number="2" patchName="Axe Amp 1 Ch B" />
+			<switch number="3" patchName="Axe Amp 1 Ch C" />
+			<switch number="4" patchName="Axe Amp 1 Ch D" />
+			<switch number="5" patchName="Amp 1" />
+
+			<switch number="7" patchName="Amp1 Boost" />
+			<switch number="8" patchName="Amp1 Cut" />
+			<switch number="9" patchName="Amp1 Fat" />
+			<switch number="10" patchName="Amp1 BS" />
+			<switch number="11" patchName="Amp1 Eq" />
+
+			<switch number="13" command="LoadBank" bankName="Axe-Fx Cab Channels" />
+			<switch number="14" command="LoadBank" bankName="Axe-Fx Drv 1/2 Channels" />
+			<switch number="15" command="LoadBank" bankName="Axe-Fx Dly 1 Channels" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Amp 2 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Amp 2 Ch A" />
+			<switch number="2" patchName="Axe Amp 2 Ch B" />
+			<switch number="3" patchName="Axe Amp 2 Ch C" />
+			<switch number="4" patchName="Axe Amp 2 Ch D" />
+			<switch number="5" patchName="Amp 2" />
+
+			<switch number="7" patchName="Amp2 Boost" />
+			<switch number="8" patchName="Amp2 Cut" />
+			<switch number="9" patchName="Amp2 Fat" />
+			<switch number="10" patchName="Amp2 BS" />
+			<switch number="11" patchName="Amp2 Eq" />
+
+			<switch number="13" command="LoadBank" bankName="Axe-Fx Cab Channels" />
+			<switch number="14" command="LoadBank" bankName="Axe-Fx Drv 1/2 Channels" />
+			<switch number="15" command="LoadBank" bankName="Axe-Fx Dly 1 Channels" />
+			<switch number="16" patchName="" />
+			<switch number="17" command="LoadBank" bankName="Axe-Fx Amp 1 Channels" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Chorus Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Chorus 1 Ch A" />
+			<switch number="2" patchName="Axe Chorus 1 Ch B" />
+			<switch number="3" patchName="Axe Chorus 1 Ch C" />
+			<switch number="4" patchName="Axe Chorus 1 Ch D" />
+			<switch number="5" patchName="Chorus 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Chorus 2 Ch A" />
+			<switch number="8" patchName="Axe Chorus 2 Ch B" />
+			<switch number="9" patchName="Axe Chorus 2 Ch C" />
+			<switch number="10" patchName="Axe Chorus 2 Ch D" />
+			<switch number="11" patchName="Chorus 2" />
+
+			<switch number="11" patchName="" />
+			<switch number="12" patchName="" />
+			<switch number="13" patchName="" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Comp Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Comp 1 Ch A" />
+			<switch number="2" patchName="Axe Comp 1 Ch B" />
+			<switch number="3" patchName="Axe Comp 1 Ch C" />
+			<switch number="4" patchName="Axe Comp 1 Ch D" />
+			<switch number="5" patchName="Compressor 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Comp 2 Ch A" />
+			<switch number="8" patchName="Axe Comp 2 Ch B" />
+			<switch number="9" patchName="Axe Comp 2 Ch C" />
+			<switch number="10" patchName="Axe Comp 2 Ch D" />
+			<switch number="11" patchName="Compressor 2" />
+
+			<switch number="11" patchName="" />
+			<switch number="12" patchName="" />
+			<switch number="13" patchName="" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Dly 1 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Delay 1 Ch A" />
+			<switch number="2" patchName="Axe Delay 1 Ch B" />
+			<switch number="3" patchName="Axe Delay 1 Ch C" />
+			<switch number="4" patchName="Axe Delay 1 Ch D" />
+			<switch number="5" patchName="Delay 1" />
+			<ExclusiveSwitchGroup>7 8 9 13 14 15 16</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Delay 1 no repeat" />
+			<switch number="8" patchName="Delay 1 Hold" />
+			<switch number="9" patchName="Delay 1 Stack" />
+			<switch number="10" patchName="Delay 1 Repeat" />
+			<switch number="11" command="LoadBank" bankName="Axe-Fx Dly 2 Channels" />
+
+			<switch number="13" patchName="Delay 1 Hold (mom)" />
+			<switch number="14" patchName="Delay 1 Stack (mom)" />
+			<switch number="15" patchName="Delay 1 Hold (tgl)" />
+			<switch number="16" patchName="Delay 1 Stack (tgl)" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Dly 1 Params">
+			<ExclusiveSwitchGroup>1 2 3</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Delay 1 Run" />
+			<switch number="2" patchName="Delay 1 Run stop" />
+			<switch number="3" patchName="Delay 1 Run (tgl)" />
+			<switch number="5" patchName="Delay 1 Bit Reduce 16" />
+			<switch number="6" patchName="Delay 1 Bit Reduce 17" />
+			<ExclusiveSwitchGroup>7 8 9</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Delay 1 Trigger" />
+			<switch number="8" patchName="Delay 1 Trigger off" />
+			<switch number="9" patchName="Delay 1 Trigger (tgl)" />
+			<switch number="11" patchName="Delay 1 Bit Reduce 18" />
+			<switch number="12" patchName="Delay 1 Bit Reduce 19" />
+			<ExclusiveSwitchGroup>5 6 11 12 13 14 15 16 17 18</ExclusiveSwitchGroup>
+			<switch number="13" patchName="Delay 1 Bit Reduce 0" />
+			<switch number="14" PatchName="" />
+			<switch number="15" patchName="Delay 1 Bit Reduce 20" />
+			<switch number="16" patchName="Delay 1 Bit Reduce 21" />
+			<switch number="17" patchName="Delay 1 Bit Reduce 22" />
+			<switch number="18" patchName="Delay 1 Bit Reduce 23" />
+		</bank>
+		<bank name="Axe-Fx Dly 2 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Delay 2 Ch A" />
+			<switch number="2" patchName="Axe Delay 2 Ch B" />
+			<switch number="3" patchName="Axe Delay 2 Ch C" />
+			<switch number="4" patchName="Axe Delay 2 Ch D" />
+			<switch number="5" patchName="Delay 2" />
+			<ExclusiveSwitchGroup>7 8 9 13 14 15 16</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Delay 2 no repeat" />
+			<switch number="8" patchName="Delay 2 Hold" />
+			<switch number="9" patchName="Delay 2 Stack" />
+			<switch number="10" patchName="Delay 2 Repeat" />
+			<switch number="11" command="LoadBank" bankName="Axe-Fx Dly 1 Channels" />
+
+			<switch number="13" patchName="Delay 2 Hold (mom)" />
+			<switch number="14" patchName="Delay 2 Stack (mom)" />
+			<switch number="15" patchName="Delay 2 Hold (tgl)" />
+			<switch number="16" patchName="Delay 2 Stack (tgl)" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Dly 2 Params">
+			<ExclusiveSwitchGroup>1 2 3</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Delay 2 Run" />
+			<switch number="2" patchName="Delay 2 Run stop" />
+			<switch number="3" patchName="Delay 2 Run (tgl)" />
+			<switch number="5" patchName="Delay 2 Bit Reduce 16" />
+			<switch number="6" patchName="Delay 2 Bit Reduce 17" />
+			<ExclusiveSwitchGroup>7 8 9</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Delay 2 Trigger" />
+			<switch number="8" patchName="Delay 2 Trigger off" />
+			<switch number="9" patchName="Delay 2 Trigger (tgl)" />
+			<switch number="11" patchName="Delay 2 Bit Reduce 18" />
+			<switch number="12" patchName="Delay 2 Bit Reduce 19" />
+			<ExclusiveSwitchGroup>5 6 11 12 13 14 15 16 17 18</ExclusiveSwitchGroup>
+			<switch number="13" patchName="Delay 2 Bit Reduce 0" />
+			<switch number="14" PatchName="" />
+			<switch number="15" patchName="Delay 2 Bit Reduce 20" />
+			<switch number="16" patchName="Delay 2 Bit Reduce 21" />
+			<switch number="17" patchName="Delay 2 Bit Reduce 22" />
+			<switch number="18" patchName="Delay 2 Bit Reduce 23" />
+		</bank>
+		<bank name="Axe-Fx Dly 3 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Delay 3 Ch A" />
+			<switch number="2" patchName="Axe Delay 3 Ch B" />
+			<switch number="3" patchName="Axe Delay 3 Ch C" />
+			<switch number="4" patchName="Axe Delay 3 Ch D" />
+			<switch number="5" patchName="Delay 3 (mod)" />
+			<ExclusiveSwitchGroup>7 8 9 13 14 15 16</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Delay 3 no repeat" />
+			<switch number="8" patchName="Delay 3 Hold" />
+			<switch number="9" patchName="Delay 3 Stack" />
+			<switch number="10" patchName="Delay 3 Repeat" />
+			<switch number="11" command="LoadBank" bankName="Axe-Fx Dly 4 Channels" />
+
+			<switch number="13" patchName="Delay 3 Hold (mom)" />
+			<switch number="14" patchName="Delay 3 Stack (mom)" />
+			<switch number="15" patchName="Delay 3 Hold (tgl)" />
+			<switch number="16" patchName="Delay 3 Stack (tgl)" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Dly 3 Params">
+			<ExclusiveSwitchGroup>1 2 3</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Delay 3 Run" />
+			<switch number="2" patchName="Delay 3 Run stop" />
+			<switch number="3" patchName="Delay 3 Run (tgl)" />
+			<switch number="5" patchName="Delay 3 Bit Reduce 16" />
+			<switch number="6" patchName="Delay 3 Bit Reduce 17" />
+			<ExclusiveSwitchGroup>7 8 9</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Delay 3 Trigger" />
+			<switch number="8" patchName="Delay 3 Trigger off" />
+			<switch number="9" patchName="Delay 3 Trigger (tgl)" />
+			<switch number="11" patchName="Delay 3 Bit Reduce 18" />
+			<switch number="12" patchName="Delay 3 Bit Reduce 19" />
+			<ExclusiveSwitchGroup>5 6 11 12 13 14 15 16 17 18</ExclusiveSwitchGroup>
+			<switch number="13" patchName="Delay 3 Bit Reduce 0" />
+			<switch number="14" PatchName="" />
+			<switch number="15" patchName="Delay 3 Bit Reduce 20" />
+			<switch number="16" patchName="Delay 3 Bit Reduce 21" />
+			<switch number="17" patchName="Delay 3 Bit Reduce 22" />
+			<switch number="18" patchName="Delay 3 Bit Reduce 23" />
+		</bank>
+		<bank name="Axe-Fx Dly 4 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Delay 4 Ch A" />
+			<switch number="2" patchName="Axe Delay 4 Ch B" />
+			<switch number="3" patchName="Axe Delay 4 Ch C" />
+			<switch number="4" patchName="Axe Delay 4 Ch D" />
+			<switch number="5" patchName="Delay 4" />
+			<ExclusiveSwitchGroup>7 8 9 13 14 15 16</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Delay 4 no repeat" />
+			<switch number="8" patchName="Delay 4 Hold" />
+			<switch number="9" patchName="Delay 4 Stack" />
+			<switch number="10" patchName="Delay 4 Repeat" />
+			<switch number="11" command="LoadBank" bankName="Axe-Fx Dly 3 Channels" />
+
+			<switch number="13" patchName="Delay 4 Hold (mom)" />
+			<switch number="14" patchName="Delay 4 Stack (mom)" />
+			<switch number="15" patchName="Delay 4 Hold (tgl)" />
+			<switch number="16" patchName="Delay 4 Stack (tgl)" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Dly 4 Params">
+			<ExclusiveSwitchGroup>1 2 3</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Delay 4 Run" />
+			<switch number="2" patchName="Delay 4 Run stop" />
+			<switch number="3" patchName="Delay 4 Run (tgl)" />
+			<switch number="5" patchName="Delay 4 Bit Reduce 16" />
+			<switch number="6" patchName="Delay 4 Bit Reduce 17" />
+			<ExclusiveSwitchGroup>7 8 9</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Delay 4 Trigger" />
+			<switch number="8" patchName="Delay 4 Trigger off" />
+			<switch number="9" patchName="Delay 4 Trigger (tgl)" />
+			<switch number="11" patchName="Delay 4 Bit Reduce 18" />
+			<switch number="12" patchName="Delay 4 Bit Reduce 19" />
+			<ExclusiveSwitchGroup>5 6 11 12 13 14 15 16 17 18</ExclusiveSwitchGroup>
+			<switch number="13" patchName="Delay 4 Bit Reduce 0" />
+			<switch number="14" PatchName="" />
+			<switch number="15" patchName="Delay 4 Bit Reduce 20" />
+			<switch number="16" patchName="Delay 4 Bit Reduce 21" />
+			<switch number="17" patchName="Delay 4 Bit Reduce 22" />
+			<switch number="18" patchName="Delay 4 Bit Reduce 23" />
+		</bank>
+		<bank name="Axe-Fx Drv 1/2 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Drive 1 Ch A" />
+			<switch number="2" patchName="Axe Drive 1 Ch B" />
+			<switch number="3" patchName="Axe Drive 1 Ch C" />
+			<switch number="4" patchName="Axe Drive 1 Ch D" />
+			<switch number="5" patchName="Drive 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Drive 2 Ch A" />
+			<switch number="8" patchName="Axe Drive 2 Ch B" />
+			<switch number="9" patchName="Axe Drive 2 Ch C" />
+			<switch number="10" patchName="Axe Drive 2 Ch D" />
+			<switch number="11" patchName="Drive 2" />
+
+			<switch number="13" patchName="" />
+			<switch number="14" PatchName="" />
+			<switch number="15" PatchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" command="LoadBank" bankName="Axe-Fx Drv 3/4 Channels" />
+			<switch number="18" command="LoadBank" bankName="Axe-Fx Amp 1 Channels" />
+		</bank>
+		<bank name="Axe-Fx Drv 3/4 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Drive 3 Ch A" />
+			<switch number="2" patchName="Axe Drive 3 Ch B" />
+			<switch number="3" patchName="Axe Drive 3 Ch C" />
+			<switch number="4" patchName="Axe Drive 3 Ch D" />
+			<switch number="5" patchName="Drive 3" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Drive 4 Ch A" />
+			<switch number="8" patchName="Axe Drive 4 Ch B" />
+			<switch number="9" patchName="Axe Drive 4 Ch C" />
+			<switch number="10" patchName="Axe Drive 4 Ch D" />
+			<switch number="11" patchName="Drive 4" />
+
+			<switch number="13" patchName="" />
+			<switch number="14" patchName="" />
+			<switch number="15" PatchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" command="LoadBank" bankName="Axe-Fx Drv 1/2 Channels" />
+			<switch number="18" command="LoadBank" bankName="Axe-Fx Amp 2 Channels" />
+		</bank>
+		<bank name="Axe-Fx Dyn Dist Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Dyn Dist 1 Ch A" />
+			<switch number="2" patchName="Axe Dyn Dist 1 Ch B" />
+			<switch number="3" patchName="Axe Dyn Dist 1 Ch C" />
+			<switch number="4" patchName="Axe Dyn Dist 1 Ch D" />
+			<switch number="5" patchName="Dyn Dist 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Dyn Dist 2 Ch A" />
+			<switch number="8" patchName="Axe Dyn Dist 2 Ch B" />
+			<switch number="9" patchName="Axe Dyn Dist 2 Ch C" />
+			<switch number="10" patchName="Axe Dyn Dist 2 Ch D" />
+			<switch number="11" patchName="Dyn Dist 2" />
+
+			<switch number="13" patchName="" />
+			<switch number="14" PatchName="" />
+			<switch number="15" PatchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" command="LoadBank" bankName="Axe-Fx Drv 1/2 Channels" />
+			<switch number="18" command="LoadBank" bankName="Axe-Fx Amp 1 Channels" />
+		</bank>
+		<bank name="Axe-Fx Flanger Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Flanger 1 Ch A" />
+			<switch number="2" patchName="Axe Flanger 1 Ch B" />
+			<switch number="3" patchName="Axe Flanger 1 Ch C" />
+			<switch number="4" patchName="Axe Flanger 1 Ch D" />
+			<switch number="5" patchName="Flanger 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Flanger 2 Ch A" />
+			<switch number="8" patchName="Axe Flanger 2 Ch B" />
+			<switch number="9" patchName="Axe Flanger 2 Ch C" />
+			<switch number="10" patchName="Axe Flanger 2 Ch D" />
+			<switch number="11" patchName="Flanger 2" />
+
+			<switch number="13" patchName="" />
+			<switch number="14" patchName="" />
+			<switch number="15" PatchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" command="LoadBank" bankName="Axe-Fx Phaser Channels" />
+		</bank>
+		<bank name="Axe-Fx MultiDly Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Multi-delay 1 Ch A" />
+			<switch number="2" patchName="Axe Multi-delay 1 Ch B" />
+			<switch number="3" patchName="Axe Multi-delay 1 Ch C" />
+			<switch number="4" patchName="Axe Multi-delay 1 Ch D" />
+			<switch number="5" patchName="Multi-Delay 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Multi-delay 2 Ch A" />
+			<switch number="8" patchName="Axe Multi-delay 2 Ch B" />
+			<switch number="9" patchName="Axe Multi-delay 2 Ch C" />
+			<switch number="10" patchName="Axe Multi-delay 2 Ch D" />
+			<switch number="11" patchName="Multi-Delay 2" />
+
+			<switch number="13" patchName="" />
+			<switch number="14" patchName="" />
+			<switch number="15" PatchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" command="LoadBank" bankName="Axe-Fx Plex 1 Channels" />
+		</bank>
+		<bank name="Axe-Fx Phaser Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Phaser 1 Ch A" />
+			<switch number="2" patchName="Axe Phaser 1 Ch B" />
+			<switch number="3" patchName="Axe Phaser 1 Ch C" />
+			<switch number="4" patchName="Axe Phaser 1 Ch D" />
+			<switch number="5" patchName="Phaser 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Phaser 2 Ch A" />
+			<switch number="8" patchName="Axe Phaser 2 Ch B" />
+			<switch number="9" patchName="Axe Phaser 2 Ch C" />
+			<switch number="10" patchName="Axe Phaser 2 Ch D" />
+			<switch number="11" patchName="Phaser 2" />
+
+			<switch number="13" patchName="" />
+			<switch number="14" patchName="" />
+			<switch number="15" PatchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" command="LoadBank" bankName="Axe-Fx Flanger Channels" />
+		</bank>
+		<bank name="Axe-Fx Pitch Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Pitch Shift 1 Ch A" />
+			<switch number="2" patchName="Axe Pitch Shift 1 Ch B" />
+			<switch number="3" patchName="Axe Pitch Shift 1 Ch C" />
+			<switch number="4" patchName="Axe Pitch Shift 1 Ch D" />
+			<switch number="5" patchName="Pitch 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Pitch Shift 2 Ch A" />
+			<switch number="8" patchName="Axe Pitch Shift 2 Ch B" />
+			<switch number="9" patchName="Axe Pitch Shift 2 Ch C" />
+			<switch number="10" patchName="Axe Pitch Shift 2 Ch D" />
+			<switch number="11" patchName="Pitch 2" />
+
+			<switch number="13" patchName="Pitch 1 (mom)" />
+			<switch number="14" patchName="Pitch 2 (mom)" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Plex 1 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Plex Delay 1 Ch A" />
+			<switch number="2" patchName="Axe Plex Delay 1 Ch B" />
+			<switch number="3" patchName="Axe Plex Delay 1 Ch C" />
+			<switch number="4" patchName="Axe Plex Delay 1 Ch D" />
+			<switch number="5" patchName="Plex Delay 1" />
+			<ExclusiveSwitchGroup>7 8 9 10 13 14 15 16</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Plex 1 no repeat" />
+			<switch number="8" patchName="Plex 1 Hold" />
+			<switch number="9" patchName="Plex 1 Stack" />
+			<switch number="10" patchName="Plex 1 Repeat" />
+			<switch number="11" command="LoadBank" bankName="Axe-Fx MultiDly Channels" />
+
+			<switch number="13" patchName="Plex 1 Hold (mom)" />
+			<switch number="14" patchName="Plex 1 Stack (mom)" />
+			<switch number="15" patchName="Plex 1 Hold (tgl)" />
+			<switch number="16" patchName="Plex 1 Stack (tgl)" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Plex 2 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Plex Delay 2 Ch A" />
+			<switch number="2" patchName="Axe Plex Delay 2 Ch B" />
+			<switch number="3" patchName="Axe Plex Delay 2 Ch C" />
+			<switch number="4" patchName="Axe Plex Delay 2 Ch D" />
+			<switch number="5" patchName="Plex Delay 2" />
+			<ExclusiveSwitchGroup>7 8 9 10 13 14 15 16</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Plex 2 no repeat" />
+			<switch number="8" patchName="Plex 2 Hold" />
+			<switch number="9" patchName="Plex 2 Stack" />
+			<switch number="10" patchName="Plex 2 Repeat" />
+			<switch number="11" command="LoadBank" bankName="Axe-Fx Plex 1 Channels" />
+
+			<switch number="13" patchName="Plex 2 Hold (mom)" />
+			<switch number="14" patchName="Plex 2 Stack (mom)" />
+			<switch number="15" patchName="Plex 2 Hold (tgl)" />
+			<switch number="16" patchName="Plex 2 Stack (tgl)" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Reverb 1 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Reverb 1 Ch A" />
+			<switch number="2" patchName="Axe Reverb 1 Ch B" />
+			<switch number="3" patchName="Axe Reverb 1 Ch C" />
+			<switch number="4" patchName="Axe Reverb 1 Ch D" />
+			<switch number="5" patchName="Reverb 1" />
+			<ExclusiveSwitchGroup>7 8 9 10 13 14 15 16</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Reverb 1 no repeat" />
+			<switch number="8" patchName="Reverb 1 Hold" />
+			<switch number="9" patchName="Reverb 1 Stack" />
+			<switch number="10" patchName="Reverb 1 Repeat" />
+
+			<switch number="13" patchName="Reverb 1 Hold (mom)" />
+			<switch number="14" patchName="Reverb 1 Stack (mom)" />
+			<switch number="15" patchName="Reverb 1 Hold (tgl)" />
+			<switch number="16" patchName="Reverb 1 Stack (tgl)" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Reverb 1 Quality">
+			<ExclusiveSwitchGroup>1 2 3 4 13 14</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Reverb 1 Q Economy" />
+			<switch number="2" patchName="Reverb 1 Q Normal" />
+			<switch number="3" patchName="Reverb 1 Q High" />
+			<switch number="4" patchName="Reverb 1 Q Ultra-High" />
+			<switch number="5" patchName="Reverb 1" />
+
+			<switch number="13" patchName="Reverb 1 Q High (tgl)" />
+			<switch number="14" patchName="Reverb 1 Q Ultra-High (tgl)" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Reverb 2 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Reverb 2 Ch A" />
+			<switch number="2" patchName="Axe Reverb 2 Ch B" />
+			<switch number="3" patchName="Axe Reverb 2 Ch C" />
+			<switch number="4" patchName="Axe Reverb 2 Ch D" />
+			<switch number="5" patchName="Reverb 2" />
+			<ExclusiveSwitchGroup>7 8 9 10 13 14 15 16</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Reverb 2 no repeat" />
+			<switch number="8" patchName="Reverb 2 Hold" />
+			<switch number="9" patchName="Reverb 2 Stack" />
+			<switch number="10" patchName="Reverb 2 Repeat" />
+			<switch number="11" command="LoadBank" bankName="Axe-Fx Reverb 1 Channels" />
+
+			<switch number="13" patchName="Reverb 2 Hold (mom)" />
+			<switch number="14" patchName="Reverb 2 Stack (mom)" />
+			<switch number="15" patchName="Reverb 2 Hold (tgl)" />
+			<switch number="16" patchName="Reverb 2 Stack (tgl)" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Reverb 2 Quality">
+			<ExclusiveSwitchGroup>1 2 3 4 13 14</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Reverb 2 Q Economy" />
+			<switch number="2" patchName="Reverb 2 Q Normal" />
+			<switch number="3" patchName="Reverb 2 Q High" />
+			<switch number="4" patchName="Reverb 2 Q Ultra-High" />
+			<switch number="5" patchName="Reverb 2" />
+
+			<switch number="13" patchName="Reverb 2 Q High (tgl)" />
+			<switch number="14" patchName="Reverb 2 Q Ultra-High (tgl)" />
+			<switch number="13" patchName="" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Rotary Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Rotary 1 Ch A" />
+			<switch number="2" patchName="Axe Rotary 1 Ch B" />
+			<switch number="3" patchName="Axe Rotary 1 Ch C" />
+			<switch number="4" patchName="Axe Rotary 1 Ch D" />
+			<switch number="5" patchName="Rotary 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Rotary 2 Ch A" />
+			<switch number="8" patchName="Axe Rotary 2 Ch B" />
+			<switch number="9" patchName="Axe Rotary 2 Ch C" />
+			<switch number="10" patchName="Axe Rotary 2 Ch D" />
+			<switch number="11" patchName="Rotary 2" />
+
+			<switch number="13" patchName="" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Tremolo Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Tremolo 1 Ch A" />
+			<switch number="2" patchName="Axe Tremolo 1 Ch B" />
+			<switch number="3" patchName="Axe Tremolo 1 Ch C" />
+			<switch number="4" patchName="Axe Tremolo 1 Ch D" />
+			<switch number="5" patchName="Tremolo 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Tremolo 2 Ch A" />
+			<switch number="8" patchName="Axe Tremolo 2 Ch B" />
+			<switch number="9" patchName="Axe Tremolo 2 Ch C" />
+			<switch number="10" patchName="Axe Tremolo 2 Ch D" />
+			<switch number="11" patchName="Tremolo 2" />
+
+			<switch number="13" patchName="" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Wah Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Wah 1 Ch A" />
+			<switch number="2" patchName="Axe Wah 1 Ch B" />
+			<switch number="3" patchName="Axe Wah 1 Ch C" />
+			<switch number="4" patchName="Axe Wah 1 Ch D" />
+			<switch number="5" patchName="Wah 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Wah 2 Ch A" />
+			<switch number="8" patchName="Axe Wah 2 Ch B" />
+			<switch number="9" patchName="Axe Wah 2 Ch C" />
+			<switch number="10" patchName="Axe Wah 2 Ch D" />
+			<switch number="11" patchName="Wah 2" />
+
+			<switch number="13" patchName="" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Cab Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Cabinet 1 Ch A" />
+			<switch number="2" patchName="Axe Cabinet 1 Ch B" />
+			<switch number="3" patchName="Axe Cabinet 1 Ch C" />
+			<switch number="4" patchName="Axe Cabinet 1 Ch D" />
+			<switch number="5" patchName="Cab 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Cabinet 2 Ch A" />
+			<switch number="8" patchName="Axe Cabinet 2 Ch B" />
+			<switch number="9" patchName="Axe Cabinet 2 Ch C" />
+			<switch number="10" patchName="Axe Cabinet 2 Ch D" />
+			<switch number="11" patchName="Cab 2" />
+
+			<switch number="13" command="LoadBank" bankName="Axe-Fx Amp 1 Channels" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Crossover Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe X-over 1 Ch A" />
+			<switch number="2" patchName="Axe X-over 1 Ch B" />
+			<switch number="3" patchName="" />
+			<switch number="4" patchName="" />
+			<switch number="5" patchName="Crossover 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe X-over 2 Ch A" />
+			<switch number="8" patchName="Axe X-over 2 Ch B" />
+			<switch number="9" patchName="" />
+			<switch number="10" patchName="" />
+			<switch number="11" patchName="Crossover 2" />
+
+			<switch number="13" patchName="" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Enhancer Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Enhancer 1 Ch A" />
+			<switch number="2" patchName="Axe Enhancer 1 Ch B" />
+			<switch number="3" patchName="Axe Enhancer 1 Ch C" />
+			<switch number="4" patchName="Axe Enhancer 1 Ch D" />
+			<switch number="5" patchName="Enhancer 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Enhancer 2 Ch A" />
+			<switch number="8" patchName="Axe Enhancer 2 Ch B" />
+			<switch number="9" patchName="Axe Enhancer 2 Ch C" />
+			<switch number="10" patchName="Axe Enhancer 2 Ch D" />
+			<switch number="11" patchName="Enhancer 2" />
+
+			<switch number="13" patchName="" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Filter 1/2 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Filter 1 Ch A" />
+			<switch number="2" patchName="Axe Filter 1 Ch B" />
+			<switch number="3" patchName="Axe Filter 1 Ch C" />
+			<switch number="4" patchName="Axe Filter 1 Ch D" />
+			<switch number="5" patchName="Filter 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Filter 2 Ch A" />
+			<switch number="8" patchName="Axe Filter 2 Ch B" />
+			<switch number="9" patchName="Axe Filter 2 Ch C" />
+			<switch number="10" patchName="Axe Filter 2 Ch D" />
+			<switch number="11" patchName="Filter 2" />
+
+			<switch number="13" command="LoadBank" bankName="Axe-Fx Filter 3/4 Channels" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Filter 3/4 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Filter 3 Ch A" />
+			<switch number="2" patchName="Axe Filter 3 Ch B" />
+			<switch number="3" patchName="Axe Filter 3 Ch C" />
+			<switch number="4" patchName="Axe Filter 3 Ch D" />
+			<switch number="5" patchName="Filter 3" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Filter 4 Ch A" />
+			<switch number="8" patchName="Axe Filter 4 Ch B" />
+			<switch number="9" patchName="Axe Filter 4 Ch C" />
+			<switch number="10" patchName="Axe Filter 4 Ch D" />
+			<switch number="11" patchName="Filter 4" />
+
+			<switch number="13" command="LoadBank" bankName="Axe-Fx Filter 1/2 Channels" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Formant Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Formant 1 Ch A" />
+			<switch number="2" patchName="Axe Formant 1 Ch B" />
+			<switch number="3" patchName="Axe Formant 1 Ch C" />
+			<switch number="4" patchName="Axe Formant 1 Ch D" />
+			<switch number="5" patchName="Formant 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Formant 2 Ch A" />
+			<switch number="8" patchName="Axe Formant 2 Ch B" />
+			<switch number="9" patchName="Axe Formant 2 Ch C" />
+			<switch number="10" patchName="Axe Formant 2 Ch D" />
+			<switch number="11" patchName="Formant 2" />
+
+			<switch number="13" patchName="" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Gate 1/2 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Gate 1 Ch A" />
+			<switch number="2" patchName="Axe Gate 1 Ch B" />
+			<switch number="3" patchName="Axe Gate 1 Ch C" />
+			<switch number="4" patchName="Axe Gate 1 Ch D" />
+			<switch number="5" patchName="Gate 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Gate 2 Ch A" />
+			<switch number="8" patchName="Axe Gate 2 Ch B" />
+			<switch number="9" patchName="Axe Gate 2 Ch C" />
+			<switch number="10" patchName="Axe Gate 2 Ch D" />
+			<switch number="11" patchName="Gate 2" />
+
+			<switch number="13" command="LoadBank" bankName="Axe-Fx Gate 3/4 Channels" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Gate 3/4 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Gate 3 Ch A" />
+			<switch number="2" patchName="Axe Gate 3 Ch B" />
+			<switch number="3" patchName="Axe Gate 3 Ch C" />
+			<switch number="4" patchName="Axe Gate 3 Ch D" />
+			<switch number="5" patchName="Gate 3" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Gate 4 Ch A" />
+			<switch number="8" patchName="Axe Gate 4 Ch B" />
+			<switch number="9" patchName="Axe Gate 4 Ch C" />
+			<switch number="10" patchName="Axe Gate 4 Ch D" />
+			<switch number="11" patchName="Gate 4" />
+
+			<switch number="13" command="LoadBank" bankName="Axe-Fx Gate 1/2 Channels" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx GEQ 1/2 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Graphic EQ 1 Ch A" />
+			<switch number="2" patchName="Axe Graphic EQ 1 Ch B" />
+			<switch number="3" patchName="Axe Graphic EQ 1 Ch C" />
+			<switch number="4" patchName="Axe Graphic EQ 1 Ch D" />
+			<switch number="5" patchName="Graphic EQ 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Graphic EQ 2 Ch A" />
+			<switch number="8" patchName="Axe Graphic EQ 2 Ch B" />
+			<switch number="9" patchName="Axe Graphic EQ 2 Ch C" />
+			<switch number="10" patchName="Axe Graphic EQ 2 Ch D" />
+			<switch number="11" patchName="Graphic EQ 2" />
+
+			<switch number="13" command="LoadBank" bankName="Axe-Fx GEQ 3/4 Channels" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx GEQ 3/4 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Graphic EQ 3 Ch A" />
+			<switch number="2" patchName="Axe Graphic EQ 3 Ch B" />
+			<switch number="3" patchName="Axe Graphic EQ 3 Ch C" />
+			<switch number="4" patchName="Axe Graphic EQ 3 Ch D" />
+			<switch number="5" patchName="Graphic EQ 3" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Graphic EQ 4 Ch A" />
+			<switch number="8" patchName="Axe Graphic EQ 4 Ch B" />
+			<switch number="9" patchName="Axe Graphic EQ 4 Ch C" />
+			<switch number="10" patchName="Axe Graphic EQ 4 Ch D" />
+			<switch number="11" patchName="Graphic EQ 4" />
+
+			<switch number="13" command="LoadBank" bankName="Axe-Fx GEQ 1/2 Channels" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx IR Player Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe IR Player 1 Ch A" />
+			<switch number="2" patchName="Axe IR Player 1 Ch B" />
+			<switch number="3" patchName="Axe IR Player 1 Ch C" />
+			<switch number="4" patchName="Axe IR Player 1 Ch D" />
+			<switch number="5" patchName="IR Player 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe IR Player 2 Ch A" />
+			<switch number="8" patchName="Axe IR Player 2 Ch B" />
+			<switch number="9" patchName="Axe IR Player 2 Ch C" />
+			<switch number="10" patchName="Axe IR Player 2 Ch D" />
+			<switch number="11" patchName="IR Player 2" />
+
+			<switch number="13" patchName="" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx MegaTap Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Megatap 1 Ch A" />
+			<switch number="2" patchName="Axe Megatap 1 Ch B" />
+			<switch number="3" patchName="" />
+			<switch number="4" patchName="" />
+			<switch number="5" patchName="MegaTap 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Megatap 2 Ch A" />
+			<switch number="8" patchName="Axe Megatap 2 Ch B" />
+			<switch number="9" patchName="" />
+			<switch number="10" patchName="" />
+			<switch number="11" patchName="MegaTap 2" />
+
+			<switch number="13" patchName="" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Mixer 1/2 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Mixer 1 Ch A" />
+			<switch number="2" patchName="Axe Mixer 1 Ch B" />
+			<switch number="3" patchName="Axe Mixer 1 Ch C" />
+			<switch number="4" patchName="Axe Mixer 1 Ch D" />
+			<switch number="5" patchName="Mixer 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Mixer 2 Ch A" />
+			<switch number="8" patchName="Axe Mixer 2 Ch B" />
+			<switch number="9" patchName="Axe Mixer 2 Ch C" />
+			<switch number="10" patchName="Axe Mixer 2 Ch D" />
+			<switch number="11" patchName="Mixer 2" />
+
+			<switch number="13" command="LoadBank" bankName="Axe-Fx Mixer 3/4 Channels" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Mixer 3/4 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Mixer 3 Ch A" />
+			<switch number="2" patchName="Axe Mixer 3 Ch B" />
+			<switch number="3" patchName="Axe Mixer 3 Ch C" />
+			<switch number="4" patchName="Axe Mixer 3 Ch D" />
+			<switch number="5" patchName="Mixer 3" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Mixer 4 Ch A" />
+			<switch number="8" patchName="Axe Mixer 4 Ch B" />
+			<switch number="9" patchName="Axe Mixer 4 Ch C" />
+			<switch number="10" patchName="Axe Mixer 4 Ch D" />
+			<switch number="11" patchName="Mixer 4" />
+
+			<switch number="13" command="LoadBank" bankName="Axe-Fx Mixer 1/2 Channels" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Multiband Comp Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Multiband Compressor 1 Ch A" />
+			<switch number="2" patchName="Axe Multiband Compressor 1 Ch B" />
+			<switch number="3" patchName="Axe Multiband Compressor 1 Ch C" />
+			<switch number="4" patchName="Axe Multiband Compressor 1 Ch D" />
+			<switch number="5" patchName="Multiband Comp 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Multiband Compressor 2 Ch A" />
+			<switch number="8" patchName="Axe Multiband Compressor 2 Ch B" />
+			<switch number="9" patchName="Axe Multiband Compressor 2 Ch C" />
+			<switch number="10" patchName="Axe Multiband Compressor 2 Ch D" />
+			<switch number="11" patchName="Multiband Comp 2" />
+
+			<switch number="13" patchName="" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Multiplexer Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Multiplexer 1 Ch A" />
+			<switch number="2" patchName="Axe Multiplexer 1 Ch B" />
+			<switch number="3" patchName="Axe Multiplexer 1 Ch C" />
+			<switch number="4" patchName="Axe Multiplexer 1 Ch D" />
+			<switch number="5" patchName="Multiplexer 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Multiplexer 2 Ch A" />
+			<switch number="8" patchName="Axe Multiplexer 2 Ch B" />
+			<switch number="9" patchName="Axe Multiplexer 2 Ch C" />
+			<switch number="10" patchName="Axe Multiplexer 2 Ch D" />
+			<switch number="11" patchName="Multiplexer 2" />
+
+			<switch number="13" patchName="Axe Multiplexer 1 Ch E" />
+			<switch number="14" patchName="Axe Multiplexer 1 Ch F" />
+			<switch number="15" patchName="" />
+			<switch number="16" patchName="Axe Multiplexer 2 Ch E" />
+			<switch number="17" patchName="Axe Multiplexer 2 Ch F" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Para EQ 1/2 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Parametric EQ 1 Ch A" />
+			<switch number="2" patchName="Axe Parametric EQ 1 Ch B" />
+			<switch number="3" patchName="Axe Parametric EQ 1 Ch C" />
+			<switch number="4" patchName="Axe Parametric EQ 1 Ch D" />
+			<switch number="5" patchName="Para EQ 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Parametric EQ 2 Ch A" />
+			<switch number="8" patchName="Axe Parametric EQ 2 Ch B" />
+			<switch number="9" patchName="Axe Parametric EQ 2 Ch C" />
+			<switch number="10" patchName="Axe Parametric EQ 2 Ch D" />
+			<switch number="11" patchName="Para EQ 2" />
+
+			<switch number="13" command="LoadBank" bankName="Axe-Fx Para EQ 3/4 Channels" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Para EQ 3/4 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Parametric EQ 3 Ch A" />
+			<switch number="2" patchName="Axe Parametric EQ 3 Ch B" />
+			<switch number="3" patchName="Axe Parametric EQ 3 Ch C" />
+			<switch number="4" patchName="Axe Parametric EQ 3 Ch D" />
+			<switch number="5" patchName="Para EQ 3" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Parametric EQ 4 Ch A" />
+			<switch number="8" patchName="Axe Parametric EQ 4 Ch B" />
+			<switch number="9" patchName="Axe Parametric EQ 4 Ch C" />
+			<switch number="10" patchName="Axe Parametric EQ 4 Ch D" />
+			<switch number="11" patchName="Para EQ 4" />
+
+			<switch number="13" command="LoadBank" bankName="Axe-Fx Para EQ 1/2 Channels" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Resonator Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Resonator 1 Ch A" />
+			<switch number="2" patchName="Axe Resonator 1 Ch B" />
+			<switch number="3" patchName="" />
+			<switch number="4" patchName="" />
+			<switch number="5" patchName="Resonator 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Resonator 2 Ch A" />
+			<switch number="8" patchName="Axe Resonator 2 Ch B" />
+			<switch number="9" patchName="" />
+			<switch number="10" patchName="" />
+			<switch number="11" patchName="Resonator 2" />
+
+			<switch number="13" patchName="" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Ring Mod Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Ring Mod 1 Ch A" />
+			<switch number="2" patchName="Axe Ring Mod 1 Ch B" />
+			<switch number="3" patchName="" />
+			<switch number="4" patchName="" />
+			<switch number="5" patchName="Ring Mod" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="6" patchName="" />
+			<switch number="7" patchName="" />
+			<switch number="8" patchName="" />
+			<switch number="9" patchName="" />
+			<switch number="10" patchName="" />
+
+			<switch number="11" patchName="" />
+			<switch number="12" patchName="" />
+			<switch number="13" patchName="" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Synth Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Synth 1 Ch A" />
+			<switch number="2" patchName="Axe Synth 1 Ch B" />
+			<switch number="3" patchName="Axe Synth 1 Ch C" />
+			<switch number="4" patchName="Axe Synth 1 Ch D" />
+			<switch number="5" patchName="Synth 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Synth 2 Ch A" />
+			<switch number="8" patchName="Axe Synth 2 Ch B" />
+			<switch number="9" patchName="Axe Synth 2 Ch C" />
+			<switch number="10" patchName="Axe Synth 2 Ch D" />
+			<switch number="11" patchName="Synth 2" />
+
+			<switch number="13" patchName="" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Ten-Tap Delay Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Ten-tap Delay 1 Ch A" />
+			<switch number="2" patchName="Axe Ten-tap Delay 1 Ch B" />
+			<switch number="3" patchName="Axe Ten-tap Delay 1 Ch C" />
+			<switch number="4" patchName="Axe Ten-tap Delay 1 Ch D" />
+			<switch number="5" patchName="Ten-Tap Delay 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Ten-tap Delay 2 Ch A" />
+			<switch number="8" patchName="Axe Ten-tap Delay 2 Ch B" />
+			<switch number="9" patchName="Axe Ten-tap Delay 2 Ch C" />
+			<switch number="10" patchName="Axe Ten-tap Delay 2 Ch D" />
+			<switch number="11" patchName="Ten-Tap Delay 2" />
+
+			<switch number="13" patchName="" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Volume 1/2 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Volume/Pan 1 Ch A" />
+			<switch number="2" patchName="Axe Volume/Pan 1 Ch B" />
+			<switch number="3" patchName="Axe Volume/Pan 1 Ch C" />
+			<switch number="4" patchName="Axe Volume/Pan 1 Ch D" />
+			<switch number="5" patchName="Volume 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Volume/Pan 2 Ch A" />
+			<switch number="8" patchName="Axe Volume/Pan 2 Ch B" />
+			<switch number="9" patchName="Axe Volume/Pan 2 Ch C" />
+			<switch number="10" patchName="Axe Volume/Pan 2 Ch D" />
+			<switch number="11" patchName="Volume 2" />
+
+			<switch number="13" command="LoadBank" bankName="Axe-Fx Volume 3/4 Channels" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Volume 3/4 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Volume/Pan 3 Ch A" />
+			<switch number="2" patchName="Axe Volume/Pan 3 Ch B" />
+			<switch number="3" patchName="Axe Volume/Pan 3 Ch C" />
+			<switch number="4" patchName="Axe Volume/Pan 3 Ch D" />
+			<switch number="5" patchName="Volume 3" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Volume/Pan 4 Ch A" />
+			<switch number="8" patchName="Axe Volume/Pan 4 Ch B" />
+			<switch number="9" patchName="Axe Volume/Pan 4 Ch C" />
+			<switch number="10" patchName="Axe Volume/Pan 4 Ch D" />
+			<switch number="11" patchName="Volume 4" />
+
+			<switch number="13" command="LoadBank" bankName="Axe-Fx Volume 1/2 Channels" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Input 1/2 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Input 1 Ch A" />
+			<switch number="2" patchName="Axe Input 1 Ch B" />
+			<switch number="3" patchName="Axe Input 1 Ch C" />
+			<switch number="4" patchName="Axe Input 1 Ch D" />
+			<switch number="5" patchName="Axe Input 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Input 2 Ch A" />
+			<switch number="8" patchName="Axe Input 2 Ch B" />
+			<switch number="9" patchName="Axe Input 2 Ch C" />
+			<switch number="10" patchName="Axe Input 2 Ch D" />
+			<switch number="11" patchName="Axe Input 2" />
+
+			<switch number="13" command="LoadBank" bankName="Axe-Fx Input 3-5 Channels" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Input 3-5 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Input 3 Ch A" />
+			<switch number="2" patchName="Axe Input 3 Ch B" />
+			<switch number="3" patchName="Axe Input 3 Ch C" />
+			<switch number="4" patchName="Axe Input 3 Ch D" />
+			<switch number="5" patchName="Axe Input 3" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Input 4 Ch A" />
+			<switch number="8" patchName="Axe Input 4 Ch B" />
+			<switch number="9" patchName="Axe Input 4 Ch C" />
+			<switch number="10" patchName="Axe Input 4 Ch D" />
+			<switch number="11" patchName="Axe Input 4" />
+
+			<ExclusiveSwitchGroup>13 14 15 16 17</ExclusiveSwitchGroup>
+			<switch number="13" patchName="Axe Input 5 Ch A" />
+			<switch number="14" patchName="Axe Input 5 Ch B" />
+			<switch number="15" patchName="Axe Input 5 Ch C" />
+			<switch number="16" patchName="Axe Input 5 Ch D" />
+			<switch number="17" patchName="Axe USB Input" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Output 1/2 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Output 1 Ch A" />
+			<switch number="2" patchName="Axe Output 1 Ch B" />
+			<switch number="3" patchName="Axe Output 1 Ch C" />
+			<switch number="4" patchName="Axe Output 1 Ch D" />
+			<switch number="5" patchName="Axe Output 1" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Output 2 Ch A" />
+			<switch number="8" patchName="Axe Output 2 Ch B" />
+			<switch number="9" patchName="Axe Output 2 Ch C" />
+			<switch number="10" patchName="Axe Output 2 Ch D" />
+			<switch number="11" patchName="Axe Output 2" />
+
+			<switch number="13" command="LoadBank" bankName="Axe-Fx Output 3/4 Channels" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<bank name="Axe-Fx Output 3/4 Channels">
+			<ExclusiveSwitchGroup>1 2 3 4</ExclusiveSwitchGroup>
+			<switch number="1" patchName="Axe Output 3 Ch A" />
+			<switch number="2" patchName="Axe Output 3 Ch B" />
+			<switch number="3" patchName="Axe Output 3 Ch C" />
+			<switch number="4" patchName="Axe Output 3 Ch D" />
+			<switch number="5" patchName="Axe Output 3" />
+			<ExclusiveSwitchGroup>7 8 9 10</ExclusiveSwitchGroup>
+			<switch number="7" patchName="Axe Output 4 Ch A" />
+			<switch number="8" patchName="Axe Output 4 Ch B" />
+			<switch number="9" patchName="Axe Output 4 Ch C" />
+			<switch number="10" patchName="Axe Output 4 Ch D" />
+			<switch number="11" patchName="Axe Output 4" />
+
+			<switch number="13" command="LoadBank" bankName="Axe-Fx Output 1/2 Channels" />
+			<switch number="14" patchName="" />
+			<switch number="15" patchName="" />
+			<switch number="16" PatchName="" />
+			<switch number="17" PatchName="" />
+			<switch number="18" PatchName="" />
+		</bank>
+		<!-- end Axe-Fx III axefx3v2 data file banks -->
+	</banks>
+</MidiControlSettings>

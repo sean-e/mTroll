@@ -273,8 +273,8 @@ MainTrollWindow::MainTrollWindow() :
 		helpMenu->setStyleSheet(touchMenuStyle);
 	helpMenu->addAction(tr("&About mTroll..."), this, &MainTrollWindow::About);
 
-	mUiFilename = settings.value(kActiveUiFile, "config/autoGrid.ui.xml").value<QString>();
-	mConfigFilename = settings.value(kConfigMru + QChar('1'), "config/axefx3v2.config.xml").value<QString>();
+	mUiFilename = settings.value(kActiveUiFile, "config/autoGrid-6col.ui.xml").value<QString>();
+	mConfigFilename = settings.value(kConfigMru + QChar('1'), "config/axefx3v2-6col.config.xml").value<QString>();
 
 	restoreGeometry(settings.value(kMainWindowGeom).toByteArray());
 
