@@ -7,3 +7,4 @@
 moc_*.cpp
 build/*
 .DS_Store
+data/caseCAD/old/*
