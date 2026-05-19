@@ -1,6 +1,6 @@
 ### mTroll MIDI controller changelog / process milestones
 
-#### 2026.05.xx
+#### 2026.05.19
 - Support for updated firmware in which LED pixel layout is defined at runtime rather than hardcoded in firmware
 - Added additional LED test mode that displays all 4 intensities of each color next to each other
 - Updated the dimmest set of default LED preset colors due to switching over hardware to Adafruit NeoPixel LEDs
