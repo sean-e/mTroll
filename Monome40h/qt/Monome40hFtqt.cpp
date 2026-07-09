@@ -407,9 +407,50 @@ Monome40hFtqt::ReadInput(byte * readData)
 	case MonomeSerialProtocolData::getPress:
 		if (mInputSubscriber)
 		{
+			static byte sPreviousButtonCol = 65;
+			static byte sPreviousButtonRow = 65;
+			static byte sPreviousButtonState = 65;
+			static unsigned int sPreviousButtonTime = 65;
+			static bool sPreviousButtonIgnoredWasPress = false;
+
+			bool ignore = false;
 			byte state = readData[0] & 0x0f;
 			byte col = readData[1] >> 4;
 			byte row = readData[1] & 0x0f;
+
+			const unsigned int kCurTime = xp::CurTime();
+			if (sPreviousButtonState == 0 && state) // release followed by press
+			{
+				if (sPreviousButtonCol == col && sPreviousButtonRow == row) // of same switch
+				{
+					if ((kCurTime - sPreviousButtonTime) < 50) // re-pressed within 50ms of the previous release
+					{
+						sPreviousButtonIgnoredWasPress = true;
+						ignore = true;
+						if (mTrace)
+							mTrace->Trace(std::format("warn: monome button ({}, {}) press ignored\n", (int)col, (int)row));
+					}
+				}
+			}
+			else if (sPreviousButtonIgnoredWasPress) // press was ignored, now ignore release
+			{ 
+				sPreviousButtonIgnoredWasPress = false;
+				if (!state && sPreviousButtonCol == col && sPreviousButtonRow == row && sPreviousButtonState != state)
+				{
+					ignore = true;
+					if (mTrace)
+						mTrace->Trace(std::format("warn: monome button ({}, {}) release ignored\n", (int)col, (int)row));
+				}
+			}
+
+			sPreviousButtonState = state;
+			sPreviousButtonTime = kCurTime;
+
+			if (ignore)
+				return false;
+
+			sPreviousButtonCol = col;
+			sPreviousButtonRow = row;
 
 			ScopeSet<volatile bool> active(&mServicingSubscribers, true);
 			if (state)

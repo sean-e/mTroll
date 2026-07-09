@@ -1,5 +1,8 @@
 ### mTroll MIDI controller changelog / process milestones
 
+#### 2026.07.xx
+- Debounce unintended press+release of button (where unintended is defined as a press of a button that occurs within 50ms of a preceding release of that button). [#61](../../../issues/61)
+
 #### 2026.05.19
 - Support for updated firmware in which LED pixel layout is defined at runtime rather than hardcoded in firmware
 - Added additional LED test mode that displays all 4 intensities of each color next to each other
