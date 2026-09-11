@@ -188,6 +188,10 @@ WinMidiIn::ServiceThread()
 	}
 
 	mThreadState = tsEnding;
+	res = ::midiInStop(mMidiIn);
+	if (MMSYSERR_NOERROR != res)
+		ReportMidiError(res, __LINE__);
+
 	res = ::midiInReset(mMidiIn);
 	if (MMSYSERR_NOERROR != res)
 		ReportMidiError(res, __LINE__);
