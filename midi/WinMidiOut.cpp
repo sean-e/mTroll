@@ -239,7 +239,12 @@ WinMidiOut::MidiOut(const Bytes & bytes, bool useIndicator /*= true*/)
 
 			res = ::midiOutPrepareHeader(mMidiOut, curHdr, sizeof(MIDIHDR));
 			if (MMSYSERR_NOERROR == res)
+			{
+				// the midi device driver determines whether the call is synchronous and blocks, 
+				// or returns immediately and handles the output data asynchronously.
+				// curHdr->lpData must outlive the WinMidiOut::MidiOut call -- it shouldn't be on the stack.
 				res = ::midiOutLongMsg(mMidiOut, curHdr, sizeof(MIDIHDR));
+			}
 		}
 		else
 		{
@@ -536,6 +541,7 @@ WinMidiOut::MidiOutCallbackProc(HMIDIOUT hmo,
 	{
 		WinMidiOut * _this = (WinMidiOut *) dwInstance;
 		LPMIDIHDR hdr = (LPMIDIHDR) dwParam1;
+		// #winmmQuestionable -- midiOutCallbackProc shouldn't call winmm APIs like midiOutUnprepareHeader due to possibility of deadlock
 		MMRESULT res = ::midiOutUnprepareHeader(_this->mMidiOut, hdr, sizeof(MIDIHDR));
 		hdr->dwFlags = 0;
 		if (MMSYSERR_NOERROR != res)

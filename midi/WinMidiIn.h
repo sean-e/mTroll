@@ -68,7 +68,6 @@ private:
 	HMIDIIN						mMidiIn;
 	enum { MIDIHDR_CNT = 512 };
 	MIDIHDR						mMidiHdrs[MIDIHDR_CNT];
-	int							mCurMidiHdrIdx;
 	unsigned int				mDeviceIdx;
 	bool						mMidiInError;
 	HANDLE						mDoneEvent;

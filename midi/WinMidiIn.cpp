@@ -47,8 +47,7 @@ WinMidiIn::WinMidiIn(ITraceDisplay * trace) :
 	mThread(nullptr),
 	mThreadId(0),
 	mDeviceIdx(0),
-	mThreadState(tsNotStarted),
-	mCurMidiHdrIdx(0)
+	mThreadState(tsNotStarted)
 {
 #ifdef ITEM_COUNTING
 	++gWinMidiInCnt;
@@ -261,6 +260,9 @@ WinMidiIn::MidiInCallbackProc(HMIDIIN hmi,
 				(*it)->ReceivedData(LOBYTE(dwParam1), HIBYTE(dwParam1), LOBYTE(HIWORD(dwParam1)));
 		}
 		break;
+	case MIM_MOREDATA:
+		_this->ReportError(L"Error: MIDI IN not processing data quickly enough -- callback called with MIM_MOREDATA -- data lost\n");
+		break;
 	case MIM_ERROR:
 		break;
 	case MIM_LONGDATA:
@@ -272,17 +274,21 @@ WinMidiIn::MidiInCallbackProc(HMIDIIN hmi,
 			for (MidiInSubscribers::const_iterator it = _this->mInputSubscribers.begin();
 				it != _this->mInputSubscribers.end(); ++it)
 			{
+				// #winmmQuestionable -- midiInCallbackProc should copy sysex data and process after the callback or in a worker thread
+				// #winmmQuestionable -- midiInCallbackProc shouldn't call winmm APIs due to possibility of deadlock -- ReceivedSysex implementers might send midiOut?
 				if (*it)
 					(*it)->ReceivedSysex((byte*)hdr->lpData, (int)hdr->dwBytesRecorded);
 			}
 		}
 
+		// #winmmQuestionable -- midiInCallbackProc shouldn't call winmm APIs like midiInAddBuffer due to possibility of deadlock
 		res = ::midiInAddBuffer(_this->mMidiIn, hdr, sizeof(MIDIHDR));
 		if (MMSYSERR_NOERROR != res)
 			_this->ReportMidiError(res, __LINE__);
 		break;
 	case MIM_LONGERROR:
 		hdr = (LPMIDIHDR) dwParam1;
+		// #winmmQuestionable -- midiInCallbackProc shouldn't call winmm APIs like midiInAddBuffer due to possibility of deadlock
 		res = ::midiInAddBuffer(_this->mMidiIn, hdr, sizeof(MIDIHDR));
 		if (MMSYSERR_NOERROR != res)
 			_this->ReportMidiError(res, __LINE__);
