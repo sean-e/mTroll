@@ -423,12 +423,15 @@ Monome40hFtqt::ReadInput(byte * readData)
 			{
 				if (sPreviousButtonCol == col && sPreviousButtonRow == row) // of same switch
 				{
-					if ((kCurTime - sPreviousButtonTime) < 50) // re-pressed within 50ms of the previous release
+					constexpr unsigned int kIgnoreRepeatThreshold = 30;
+					const unsigned int kElapsed = kCurTime - sPreviousButtonTime;
+					if (kElapsed < kIgnoreRepeatThreshold)
 					{
+						// re-pressed within kIgnoreRepeatThreshold ms of the previous release
 						sPreviousButtonIgnoredWasPress = true;
 						ignore = true;
 						if (mTrace)
-							mTrace->Trace(std::format("warn: monome button ({}, {}) press ignored\n", (int)col, (int)row));
+							mTrace->Trace(std::format("warn: monome button ({}, {}) press ignored ({}ms)\n", (int)col, (int)row, (int)kElapsed));
 					}
 				}
 			}
