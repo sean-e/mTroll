@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010,2013,2018,2022,2025 Sean Echevarria
+ * Copyright (C) 2010,2013,2018,2022,2025-2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -55,7 +55,7 @@ private:
 	static unsigned int __stdcall ServiceThread(void * _this);
 	void ServiceThread();
 	void ReleaseMidiIn();
-	void ReportMidiError(MMRESULT resultCode, unsigned int lineNumber);
+	void ReportMidiError(LPCTSTR func, MMRESULT resultCode, unsigned int lineNumber);
 	void ReportError(LPCTSTR msg);
 	void ReportError(LPCTSTR msg, int param1);
 	void ReportError(LPCTSTR msg, int param1, int param2);

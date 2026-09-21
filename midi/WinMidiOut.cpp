@@ -157,7 +157,7 @@ WinMidiOut::OpenMidiOut(unsigned int deviceIdx)
 	mDeviceIdx = deviceIdx;
 	MMRESULT res = ::midiOutOpen(&mMidiOut, deviceIdx, (DWORD_PTR)MidiOutCallbackProc, (DWORD_PTR)this, CALLBACK_FUNCTION);
 	if (MMSYSERR_NOERROR != res)
-		ReportMidiError(res, __LINE__);
+		ReportMidiError(L"midiOutOpen", res, __LINE__);
 	else
 		mName = GetMidiOutDeviceName(deviceIdx);
 
@@ -295,7 +295,7 @@ WinMidiOut::MidiOut(const Bytes & bytes, bool useIndicator /*= true*/)
 			}
 			else
 			{
-				ReportMidiError(res, __LINE__);
+				ReportMidiError(L"midiOutShortMsg", res, __LINE__);
 				break;
 			}
 		}
@@ -363,7 +363,7 @@ WinMidiOut::MidiOut(DWORD shortMsg,
 			}
 			else
 			{
-				ReportMidiError(res, __LINE__);
+				ReportMidiError(L"midiOutShortMsg", res, __LINE__);
 			}
 		}
 		else if (useIndicator)
@@ -545,7 +545,7 @@ WinMidiOut::MidiOutCallbackProc(HMIDIOUT hmo,
 		MMRESULT res = ::midiOutUnprepareHeader(_this->mMidiOut, hdr, sizeof(MIDIHDR));
 		hdr->dwFlags = 0;
 		if (MMSYSERR_NOERROR != res)
-			_this->ReportMidiError(res, __LINE__);
+			_this->ReportMidiError(L"midiOutUnprepareHeader", res, __LINE__);
 	}
 }
 
@@ -644,24 +644,28 @@ WinMidiOut::ReleaseMidiOut()
 	if (mMidiOut)
 	{
 		MMRESULT res = ::midiOutReset(mMidiOut);
+		if (MMSYSERR_NOERROR != res)
+			ReportMidiError(L"midiOutReset", res, __LINE__);
+
 		res = ::midiOutClose(mMidiOut);
 		if (res == MMSYSERR_NOERROR)
 			mMidiOut = nullptr;
 		else
-			ReportMidiError(res, __LINE__);
+			ReportMidiError(L"midiOutClose", res, __LINE__);
 	}
 }
 
 void
-WinMidiOut::ReportMidiError(MMRESULT resultCode, 
+WinMidiOut::ReportMidiError(LPCTSTR func,
+							MMRESULT resultCode, 
 							unsigned int lineNumber)
 {
 	CString errMsg(::GetMidiErrorText(resultCode));
 	CString msg;
 
 	mMidiOutError = true;
-	msg.Format(_T("Error: [%08x] %s\nat: %s:%d\n"), 
-		resultCode, (LPCWSTR)errMsg, (LPCWSTR)CString(__FILE__), lineNumber);
+	msg.Format(_T("Error: %s [%08x] %s\nat: %s:%d\n"), 
+		func, resultCode, (LPCWSTR)errMsg, (LPCWSTR)CString(__FILE__), lineNumber);
 	if (mTrace)
 		mTrace->Trace(std::string(CStringA(msg)));
 }

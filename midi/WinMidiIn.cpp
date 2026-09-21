@@ -122,7 +122,7 @@ WinMidiIn::ServiceThread()
 	if (MMSYSERR_NOERROR != res)
 	{
 		mThreadState = tsEnding;
-		ReportMidiError(res, __LINE__);
+		ReportMidiError(L"midiInOpen", res, __LINE__);
 		mThreadState = tsNotStarted;
 		return;
 	}
@@ -136,17 +136,17 @@ WinMidiIn::ServiceThread()
 		
 		res = ::midiInPrepareHeader(mMidiIn, &mMidiHdrs[idx], (UINT)sizeof(MIDIHDR));
 		if (MMSYSERR_NOERROR != res)
-			ReportMidiError(res, __LINE__);
+			ReportMidiError(L"midiInPrepareHeader", res, __LINE__);
 
 		res = ::midiInAddBuffer(mMidiIn, &mMidiHdrs[idx], sizeof(MIDIHDR));
 		if (MMSYSERR_NOERROR != res)
-			ReportMidiError(res, __LINE__);
+			ReportMidiError(L"midiInAddBuffer", res, __LINE__);
 	}
 
 	mThreadState = tsRunning;
 	res = ::midiInStart(mMidiIn);
 	if (MMSYSERR_NOERROR != res)
-		ReportMidiError(res, __LINE__);
+		ReportMidiError(L"midiInStart", res, __LINE__);
 
 	_ASSERTE(mDoneEvent && mDoneEvent != INVALID_HANDLE_VALUE);
 	for (;;)
@@ -189,17 +189,17 @@ WinMidiIn::ServiceThread()
 	mThreadState = tsEnding;
 	res = ::midiInStop(mMidiIn);
 	if (MMSYSERR_NOERROR != res)
-		ReportMidiError(res, __LINE__);
+		ReportMidiError(L"midiInStop", res, __LINE__);
 
 	res = ::midiInReset(mMidiIn);
 	if (MMSYSERR_NOERROR != res)
-		ReportMidiError(res, __LINE__);
+		ReportMidiError(L"midiInReset", res, __LINE__);
 
 	for (idx = 0; idx < MIDIHDR_CNT; ++idx)
 	{
 		res = ::midiInUnprepareHeader(mMidiIn, &mMidiHdrs[idx], (UINT)sizeof(MIDIHDR));
 		if (MMSYSERR_NOERROR != res)
-			ReportMidiError(res, __LINE__);
+			ReportMidiError(L"midiInUnprepareHeader", res, __LINE__);
 		::free(mMidiHdrs[idx].lpData);
 		mMidiHdrs[idx].lpData = nullptr;
 	}
@@ -208,7 +208,7 @@ WinMidiIn::ServiceThread()
 	if (res == MMSYSERR_NOERROR)
 		mMidiIn = nullptr;
 	else
-		ReportMidiError(res, __LINE__);
+		ReportMidiError(L"midiInClose", res, __LINE__);
 
 	mThreadState = tsNotStarted;
 	mThreadId = 0;
@@ -284,14 +284,14 @@ WinMidiIn::MidiInCallbackProc(HMIDIIN hmi,
 		// #winmmQuestionable -- midiInCallbackProc shouldn't call winmm APIs like midiInAddBuffer due to possibility of deadlock
 		res = ::midiInAddBuffer(_this->mMidiIn, hdr, sizeof(MIDIHDR));
 		if (MMSYSERR_NOERROR != res)
-			_this->ReportMidiError(res, __LINE__);
+			_this->ReportMidiError(L"midiInAddBuffer", res, __LINE__);
 		break;
 	case MIM_LONGERROR:
 		hdr = (LPMIDIHDR) dwParam1;
 		// #winmmQuestionable -- midiInCallbackProc shouldn't call winmm APIs like midiInAddBuffer due to possibility of deadlock
 		res = ::midiInAddBuffer(_this->mMidiIn, hdr, sizeof(MIDIHDR));
 		if (MMSYSERR_NOERROR != res)
-			_this->ReportMidiError(res, __LINE__);
+			_this->ReportMidiError(L"midiInAddBuffer", res, __LINE__);
 		break;
 	}
 }
@@ -316,15 +316,16 @@ WinMidiIn::CloseMidiIn()
 }
 
 void
-WinMidiIn::ReportMidiError(MMRESULT resultCode, 
+WinMidiIn::ReportMidiError(LPCTSTR func, 
+						   MMRESULT resultCode,
 						   unsigned int lineNumber)
 {
 	CString errMsg(::GetMidiErrorText(resultCode));
 	CString msg;
 
 	mMidiInError = true;
-	msg.Format(_T("Error: [%08x] %s\nat: %s:%d\n"), 
-		resultCode, (LPCWSTR)errMsg, (LPCWSTR)CString(__FILE__), lineNumber);
+	msg.Format(_T("Error: %s [%08x] %s\nat: %s:%d\n"), 
+		func, resultCode, (LPCWSTR)errMsg, (LPCWSTR)CString(__FILE__), lineNumber);
 	if (mTrace)
 		mTrace->Trace(std::string(CStringA(msg)));
 }
