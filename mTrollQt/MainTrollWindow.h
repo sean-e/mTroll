@@ -109,7 +109,7 @@ private:
 	QDateTime	mStartTime;
 	QDateTime	mPauseTime;
 #if defined(Q_OS_WIN)
-	void		* mDevNotify = nullptr;
+	std::vector<void*> mDevNotify;
 #endif
 	ExitAction	mShutdownOnExit = soeExit;
 

@@ -715,24 +715,14 @@ MainTrollWindow::closeEvent(QCloseEvent *event)
 }
 
 #if defined(Q_OS_WIN)
-// For MIDI interfaces, use a Device Interface Class GUID rather than the Device Setup Class GUID. 
-// MIDI devices typically register under the Kernel Streaming(KS) audio 
-// category and are internally handled as KS audio endpoints.
-// MIDI interfaces, including USB MIDI controllers and external sound cards, register as audio interface instances.
-// MIDI devices are supposed to register as:
-//	KSCATEGORY_AUDIO
-//	KSCATEGORY_RENDER
-//	KSCATEGORY_CAPTURE
-// other class guids:
-// USB Devices (General) 				{ 0x36FC9E60, 0xC465, 0x11CF, 0x80, 0x56, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00 }
-// HID (Human Interface Devices)	 	{ 0x4D1E55B2, 0xF16F, 0x11CF, 0x88, 0xCB, 0x00, 0x11, 0x11, 0x00, 0x00, 0x30 }
-// Serial Ports 						{ 0x86E0D1E0, 0x8089, 0x11D0, 0x9C, 0xE4, 0x08, 0x00, 0x3E, 0x30, 0x1F, 0x73 }
-// Media device setup class				{ 0x4d36e96c, 0xe325, 0x11ce, 0xbf, 0xc1, 0x08, 0x00, 0x2b, 0xe1, 0x03, 0x18 }
-// KSCATEGORY_PREFERRED_WAVEOUT_DEVICE	{ 0xD6C50674, 0x72C1, 0x11D2, 0x97, 0x55, 0x00, 0x00, 0xF8, 0x00, 0x47, 0x88 }
-// KSCATEGORY_WDMAUD
-// https://learn.microsoft.com/en-us/windows-hardware/drivers/install/system-defined-device-setup-classes-available-to-vendors
-// https://learn.microsoft.com/en-us/windows-hardware/drivers/install/kscategory-preferred-midiout-device
-// https://www.lifewire.com/device-class-guids-for-most-common-types-of-hardware-2619208
+// https://github.com/juce-framework/JUCE/issues/1726
+// Pete Brown explained:
+// mmdeviceapi.h declares these as DEVINTERFACE_MIDI_INPUT / DEVINTERFACE_MIDI_OUTPUT via
+// DEFINE_GUID, which needs INITGUID or a lib reference, so define them locally instead.
+static constexpr GUID kDeviceInterfaceMidiInput{ 0x504be32c, 0xccf6, 0x4d2c,
+												  { 0xb7, 0x3f, 0x6f, 0x8b, 0x37, 0x47, 0xe2, 0x2b } };
+static constexpr GUID kDeviceInterfaceMidiOutput{ 0x6dc23320, 0xab33, 0x4ce4,
+												  { 0x80, 0xd4, 0xbb, 0xb3, 0xeb, 0xbf, 0x28, 0x14 } };
 
 std::string
 GetSetupDiDeviceName(const wchar_t *device_interface)
@@ -795,7 +785,8 @@ MainTrollWindow::nativeEventFilter(const QByteArray &eventType, void *message,
 			if (pDev && DBT_DEVTYP_DEVICEINTERFACE == pDev->dbch_devicetype)
 			{
 				auto pInter = reinterpret_cast<const PDEV_BROADCAST_DEVICEINTERFACE>(pDev);
-				if (KSCATEGORY_AUDIO == pInter->dbcc_classguid)
+				if (kDeviceInterfaceMidiInput == pInter->dbcc_classguid ||
+					kDeviceInterfaceMidiOutput == pInter->dbcc_classguid)
 				{
 					std::string name(::GetSetupDiDeviceName(reinterpret_cast<wchar_t*>(&pInter->dbcc_name[0])));
 					if (name.empty())
@@ -803,7 +794,7 @@ MainTrollWindow::nativeEventFilter(const QByteArray &eventType, void *message,
 						const QString devName(reinterpret_cast<QChar*>(&pInter->dbcc_name[0]));
 						name = devName.toStdString();
 					}
-					Trace(std::format("Audio/MIDI device attached: {}\n", name));
+					Trace(std::format("MIDI device attached: {}\n", name));
 				}
 			}
 			break;
@@ -811,7 +802,8 @@ MainTrollWindow::nativeEventFilter(const QByteArray &eventType, void *message,
 			if (pDev && DBT_DEVTYP_DEVICEINTERFACE == pDev->dbch_devicetype)
 			{
 				auto pInter = reinterpret_cast<const PDEV_BROADCAST_DEVICEINTERFACE>(pDev);
-				if (KSCATEGORY_AUDIO == pInter->dbcc_classguid)
+				if (kDeviceInterfaceMidiInput == pInter->dbcc_classguid ||
+					kDeviceInterfaceMidiOutput == pInter->dbcc_classguid)
 				{
 					std::string name(::GetSetupDiDeviceName(reinterpret_cast<wchar_t*>(&pInter->dbcc_name[0])));
 					if (name.empty())
@@ -819,7 +811,7 @@ MainTrollWindow::nativeEventFilter(const QByteArray &eventType, void *message,
 						const QString devName(reinterpret_cast<QChar*>(&pInter->dbcc_name[0]));
 						name = devName.toStdString();
 					}
-					Trace(std::format("Audio/MIDI device detached: {}\n", name));
+					Trace(std::format("MIDI device detached: {}\n", name));
 				}
 			}
 			break;
@@ -843,25 +835,31 @@ MainTrollWindow::RegisterDevicesNotification(bool registerDevNotification /*= tr
 	if (registerDevNotification)
 	{
 #if defined(Q_OS_WIN)
-		_ASSERTE(!mDevNotify);
-		DEV_BROADCAST_DEVICEINTERFACE notificationFilter;
-		ZeroMemory(&notificationFilter, sizeof(notificationFilter));
-		notificationFilter.dbcc_size = sizeof(DEV_BROADCAST_DEVICEINTERFACE);
-		notificationFilter.dbcc_devicetype = DBT_DEVTYP_DEVICEINTERFACE;
-		mDevNotify = ::RegisterDeviceNotification((HANDLE)winId(), &notificationFilter,
-			DEVICE_NOTIFY_WINDOW_HANDLE | DEVICE_NOTIFY_ALL_INTERFACE_CLASSES);
-		if (nullptr == mDevNotify)
-			Trace("ERROR: failed to register audio/midi device notification\n");
+		static constexpr GUID midiInterfaceClasses[]{ kDeviceInterfaceMidiInput, kDeviceInterfaceMidiOutput };
+		for (auto it : midiInterfaceClasses)
+		{
+			DEV_BROADCAST_DEVICEINTERFACE notificationFilter;
+			ZeroMemory(&notificationFilter, sizeof(DEV_BROADCAST_DEVICEINTERFACE));
+			notificationFilter.dbcc_size = sizeof(DEV_BROADCAST_DEVICEINTERFACE);
+			notificationFilter.dbcc_devicetype = DBT_DEVTYP_DEVICEINTERFACE;
+			notificationFilter.dbcc_classguid = it;
+			void *devNotification = ::RegisterDeviceNotification((HANDLE)winId(), &notificationFilter,
+				DEVICE_NOTIFY_WINDOW_HANDLE);
+			if (devNotification)
+				mDevNotify.push_back(devNotification);
+			else
+				Trace("ERROR: failed to register MIDI device notification\n");
+		}
 #endif
 	}
 	else
 	{
 #if defined(Q_OS_WIN)
-		if (mDevNotify)
-		{
-			::UnregisterDeviceNotification(mDevNotify);
-			mDevNotify = nullptr;
-		}
+		for (auto &it : mDevNotify)
+			if (it)
+				::UnregisterDeviceNotification(it);
+
+		mDevNotify.clear();
 #endif
 	}
 }
