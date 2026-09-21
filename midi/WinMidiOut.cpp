@@ -254,6 +254,14 @@ WinMidiOut::MidiOut(const Bytes *bytes, bool useIndicator /*= true*/, bool delet
 				// curHdr->lpData must outlive the WinMidiOut::MidiOut call -- it shouldn't be on the stack.
 				res = ::midiOutLongMsg(mMidiOut, curHdr, sizeof(MIDIHDR));
 			}
+
+			if (MMSYSERR_NOERROR != res)
+			{
+				ReportMidiError(L"midiOutPrepareHeader or midiOutLongMsg", res, __LINE__);
+				// unprepare and potentially free bytes (see https://github.com/juce-framework/JUCE/issues/1727 )
+				MidiOutCallbackProc(mMidiOut, MOM_DONE, (DWORD_PTR)this, (DWORD_PTR)curHdr, (DWORD_PTR)nullptr);
+				return false;
+			}
 		}
 		else
 		{
