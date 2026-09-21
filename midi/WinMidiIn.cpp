@@ -274,21 +274,25 @@ WinMidiIn::MidiInCallbackProc(HMIDIIN hmi,
 			for (MidiInSubscribers::const_iterator it = _this->mInputSubscribers.begin();
 				it != _this->mInputSubscribers.end(); ++it)
 			{
-				// #winmmQuestionable -- midiInCallbackProc should copy sysex data and process after the callback or in a worker thread
-				// #winmmQuestionable -- midiInCallbackProc shouldn't call winmm APIs due to possibility of deadlock -- ReceivedSysex implementers might send midiOut?
+				// #winmmQuestionable -- midiInCallbackProc shouldn't call winmm APIs due to possibility of deadlock in ReceivedSysex implementers (see https://github.com/juce-framework/JUCE/issues/1728 item 2 which states that midiOutShortMsg and midiOutLongMsg ARE safe to call from here)
+				// midiInCallbackProc could copy sysex data and process after the callback or in a worker thread
 				if (*it)
 					(*it)->ReceivedSysex((byte*)hdr->lpData, (int)hdr->dwBytesRecorded);
 			}
 		}
 
-		// #winmmQuestionable -- midiInCallbackProc shouldn't call winmm APIs like midiInAddBuffer due to possibility of deadlock
+		// #winmmQuestionable -- midiInCallbackProc shouldn't call winmm APIs like midiInAddBuffer due to possibility of deadlock (see https://github.com/juce-framework/JUCE/issues/1728 item 2)
+		// maybe ok here since we have: a dedicated non-ui thread for processing midi input, and large header pool?
+		// midiInCallbackProc could save hdr and process after the callback or in a worker thread
 		res = ::midiInAddBuffer(_this->mMidiIn, hdr, sizeof(MIDIHDR));
 		if (MMSYSERR_NOERROR != res)
 			_this->ReportMidiError(L"midiInAddBuffer", res, __LINE__);
 		break;
 	case MIM_LONGERROR:
 		hdr = (LPMIDIHDR) dwParam1;
-		// #winmmQuestionable -- midiInCallbackProc shouldn't call winmm APIs like midiInAddBuffer due to possibility of deadlock
+		// #winmmQuestionable -- midiInCallbackProc shouldn't call winmm APIs like midiInAddBuffer due to possibility of deadlock (see https://github.com/juce-framework/JUCE/issues/1728 item 2)
+		// maybe ok here since we have: a dedicated non-ui thread for processing midi input, and large header pool?
+		// midiInCallbackProc could save hdr and process after the callback or in a worker thread
 		res = ::midiInAddBuffer(_this->mMidiIn, hdr, sizeof(MIDIHDR));
 		if (MMSYSERR_NOERROR != res)
 			_this->ReportMidiError(L"midiInAddBuffer", res, __LINE__);
