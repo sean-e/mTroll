@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2024-2025 Sean Echevarria
+ * Copyright (C) 2024-2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -221,7 +221,8 @@ DynamicMidiCommand::Exec()
 	case 0:
 		break;
 	default:
-		curMidiOut->MidiOut(commandString);
+		_ASSERTE(!"unsupported DynamicMidiCommand command string -- sysex not supported");
+		// curMidiOut->MidiOut(commandString); // sysex out requires buffer management
 	}
 }
 

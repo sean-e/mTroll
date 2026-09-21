@@ -1878,7 +1878,7 @@ MidiControlEngine::SwitchPressed_ProgramChangeDirect(int switchNumber)
 				mMainDisplay->AppendText(byteDump);
 			}
 
-			mMidiOut->MidiOut(bytes);
+			mMidiOut->MidiOut(&bytes); // not sysex, no buffer management required
 
 			if (sJustDidProgramChange)
 			{
@@ -2043,7 +2043,7 @@ MidiControlEngine::SwitchPressed_ControlChangeDirect(int switchNumber)
 				const std::string byteDump("\r\n" + ::GetAsciiHexStr(bytes, true) + "\r\n");
 				mMainDisplay->AppendText(byteDump);
 			}
-			mMidiOut->MidiOut(bytes);
+			mMidiOut->MidiOut(&bytes); // not sysex, no buffer management required
 		}
 	}
 	else if (mMainDisplay)

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2020-2021,2025 Sean Echevarria
+ * Copyright (C) 2020-2021,2025-2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -173,6 +173,10 @@ private:
 	int				mLooperBlockIsPresent = -1;
 	bool			mLooperStatusRequested = false;
 	bool			mLooperOnceIsRunning = false;
+	Bytes			mSysex_FirmwareVersionQuery;
+	Bytes			mSysex_PresetNameRequest;
+	Bytes			mSysex_StatusDumpRequest;
+	Bytes			mSysex_LooperStateRequest;
 
 	// state for chained scene name requests that occur when presets change
 	int				mSceneNameRequestIdx = -1;

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2015,2018,2020,2025 Sean Echevarria
+ * Copyright (C) 2010-2015,2018,2020,2025-2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -1021,16 +1021,16 @@ AxeFxManager::RequestNextParamValue()
 
 	// #notUpdatedForAxe2: not updated for Axe-Fx 2
 	const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x02, 0, 0, 0, 0, 0x0, 0x0, 0x00, 0xF7 };
-	Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
+	Bytes *bb = new Bytes(rawBytes, rawBytes + sizeof(rawBytes));
 	AxeEffectBlockInfo * next = *mQueries.begin();
-	bb[6] = next->mSysexEffectIdLs;
-	bb[7] = next->mSysexEffectIdMs;
-	bb[8] = next->mSysexBypassParameterIdLs;
-	bb[9] = next->mSysexBypassParameterIdMs;
+	(*bb)[6] = next->mSysexEffectIdLs;
+	(*bb)[7] = next->mSysexEffectIdMs;
+	(*bb)[8] = next->mSysexBypassParameterIdLs;
+	(*bb)[9] = next->mSysexBypassParameterIdMs;
 
 	QCoreApplication::postEvent(this, new StartQueryTimer(GetSharedThis()));
 
-	mMidiOut->MidiOut(bb);
+	mMidiOut->MidiOut(bb, true, true);
 }
 
 void
@@ -1055,8 +1055,8 @@ AxeFxManager::SendFirmwareVersionQuery()
 		byte chkSum = (rawBytes[0] ^ rawBytes[1] ^ rawBytes[2] ^ rawBytes[3] ^ rawBytes[4] ^ rawBytes[5] ^ rawBytes[6]) & 0x7f;
 		rawBytes[7] = chkSum;
 	}
-	const Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
-	mMidiOut->MidiOut(bb);
+	const Bytes *bb = new Bytes(rawBytes, rawBytes + sizeof(rawBytes));
+	mMidiOut->MidiOut(bb, true, true);
 }
 
 void
@@ -1138,14 +1138,14 @@ AxeFxManager::RequestPresetName()
 		byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x0f, 0x00, 0xF7 };
 		byte chkSum = (rawBytes[0] ^ rawBytes[1] ^ rawBytes[2] ^ rawBytes[3] ^ rawBytes[4] ^ rawBytes[5]) & 0x7f;
 		rawBytes[6] = chkSum;
-		const Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
-		mMidiOut->MidiOut(bb);
+		const Bytes *bb = new Bytes(rawBytes, rawBytes + sizeof(rawBytes));
+		mMidiOut->MidiOut(bb, true, true);
 	}
 	else
 	{
 		const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x0f, 0xF7 };
-		const Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
-		mMidiOut->MidiOut(bb);
+		const Bytes *bb = new Bytes(rawBytes, rawBytes + sizeof(rawBytes));
+		mMidiOut->MidiOut(bb, true, true);
 	}
 }
 
@@ -1197,14 +1197,14 @@ AxeFxManager::RequestPresetEffects()
 		byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x0e, 0x00, 0xF7 };
 		byte chkSum = (rawBytes[0] ^ rawBytes[1] ^ rawBytes[2] ^ rawBytes[3] ^ rawBytes[4] ^ rawBytes[5]) & 0x7f;
 		rawBytes[6] = chkSum;
-		const Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
-		mMidiOut->MidiOut(bb);
+		const Bytes *bb = new Bytes(rawBytes, rawBytes + sizeof(rawBytes));
+		mMidiOut->MidiOut(bb, true, true);
 	}
 	else
 	{
 		const byte rawBytes[] = { 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x0e, 0xF7 };
-		const Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
-		mMidiOut->MidiOut(bb);
+		const Bytes *bb = new Bytes(rawBytes, rawBytes + sizeof(rawBytes));
+		mMidiOut->MidiOut(bb, true, true);
 	}
 }
 
@@ -1428,8 +1428,8 @@ AxeFxManager::EnableLooperStatusMonitor(bool enable)
 	QMutexLocker lock(&mQueryLock);
 	const byte rawBytes[] = 
 	{ 0xF0, 0x00, 0x01, 0x74, byte(mModel), 0x23, byte(enable ? 1 : 0), byte(enable ? 0x24 : 0x25), 0xF7 };
-	const Bytes bb(rawBytes, rawBytes + sizeof(rawBytes));
-	mMidiOut->MidiOut(bb);
+	const Bytes *bb = new Bytes(rawBytes, rawBytes + sizeof(rawBytes));
+	mMidiOut->MidiOut(bb, true, true);
 }
 
 enum AxeFxLooperState

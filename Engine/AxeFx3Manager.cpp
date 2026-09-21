@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2020-2021,2023,2025 Sean Echevarria
+ * Copyright (C) 2020-2021,2023,2025-2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -173,6 +173,9 @@ struct Axe3EffectBlockInfo
 };
 
 
+#define FRACTAL_SYSEX_HEADER_BYTES 0xf0, 0x00, 0x01, 0x74
+
+
 AxeFx3Manager::AxeFx3Manager(IMainDisplay * mainDisp, 
 						   ISwitchDisplay * switchDisp,
 						   ITraceDisplay *pTrace,
@@ -183,11 +186,20 @@ AxeFx3Manager::AxeFx3Manager(IMainDisplay * mainDisp,
 	mMainDisplay(mainDisp),
 	mTrace(pTrace),
 	mAxeChannel(ch),
-	mModel(mod)
+	mModel(mod),
+	mSysex_FirmwareVersionQuery { FRACTAL_SYSEX_HEADER_BYTES, Axe3, (byte)AxeFx3MessageIds::FirmwareVersion, 0x0a },
+	mSysex_PresetNameRequest { FRACTAL_SYSEX_HEADER_BYTES, Axe3, (byte)AxeFx3MessageIds::PresetName, 0x7f, 0x7f },
+	mSysex_StatusDumpRequest { FRACTAL_SYSEX_HEADER_BYTES, Axe3, (byte)AxeFx3MessageIds::StatusDump },
+	mSysex_LooperStateRequest { FRACTAL_SYSEX_HEADER_BYTES, Axe3, (byte)AxeFx3MessageIds::LooperState, 0x7f }
 {
 #ifdef ITEM_COUNTING
 	++gAxeFx3MgrCnt;
 #endif
+
+	AppendChecksumAndTerminate(mSysex_FirmwareVersionQuery);
+	AppendChecksumAndTerminate(mSysex_PresetNameRequest);
+	AppendChecksumAndTerminate(mSysex_StatusDumpRequest);
+	AppendChecksumAndTerminate(mSysex_LooperStateRequest);
 
 	mDelayedNameSyncTimer = new QTimer(this);
 	connect(mDelayedNameSyncTimer, &QTimer::timeout, this, &AxeFx3Manager::SyncNameAndEffectsFromAxe);
@@ -354,8 +366,6 @@ AxeFx3Manager::ReceivedData(byte b1, byte b2, byte b3)
 // 		mTrace->Trace(msg);
 // 	}
 }
-
-#define FRACTAL_SYSEX_HEADER_BYTES 0xf0, 0x00, 0x01, 0x74
 
 bool
 IsAxeFx3Sysex(const byte * bytes, const int len)
@@ -968,10 +978,8 @@ AxeFx3Manager::SendFirmwareVersionQuery()
 	// respond:		F0 00 01 74 03 08 02 00 0C F7	(for 2.0)
 	// respond:		F0 00 01 74 03 08 03 02 0f F7	(for 3.2)
 
-	Bytes bb{ FRACTAL_SYSEX_HEADER_BYTES, Axe3, (byte)AxeFx3MessageIds::FirmwareVersion, 0x0a };
-	AppendChecksumAndTerminate(bb);
 	QMutexLocker lock(&mQueryLock);
-	mMidiOut->MidiOut(bb);
+	mMidiOut->MidiOut(&mSysex_FirmwareVersionQuery);
 }
 
 void
@@ -1022,9 +1030,7 @@ AxeFx3Manager::RequestPresetName(bool silentRequest /*= false*/)
 	if (!mFirmwareMajorVersion)
 		return;
 
-	Bytes bb{ FRACTAL_SYSEX_HEADER_BYTES, Axe3, (byte)AxeFx3MessageIds::PresetName, 0x7f, 0x7f };
-	AppendChecksumAndTerminate(bb);
-	mMidiOut->MidiOut(bb, !silentRequest);
+	mMidiOut->MidiOut(&mSysex_PresetNameRequest, !silentRequest);
 }
 
 static void
@@ -1074,9 +1080,10 @@ AxeFx3Manager::RequestSceneName(int sceneNumber /*= kQueryCurrentScene*/)
 	if (kQueryCurrentScene == sceneNumber)
 		mSceneNameRequestIdx = -1;
 
-	Bytes bb{ FRACTAL_SYSEX_HEADER_BYTES, Axe3, (byte)AxeFx3MessageIds::SceneName, (byte)sceneNumber };
-	AppendChecksumAndTerminate(bb);
-	mMidiOut->MidiOut(bb);
+	Bytes *bb = new Bytes{ FRACTAL_SYSEX_HEADER_BYTES, Axe3, (byte)AxeFx3MessageIds::SceneName, (byte)sceneNumber };
+	AppendChecksumAndTerminate(*bb);
+	mMidiOut->MidiOut(bb, true, true);
+	bb = nullptr;
 }
 
 void
@@ -1150,9 +1157,7 @@ AxeFx3Manager::RequestStatusDump()
 		cur.mEffectIsPresentInAxePatch = false;
 	}
 
-	Bytes bb{ FRACTAL_SYSEX_HEADER_BYTES, Axe3, (byte)AxeFx3MessageIds::StatusDump };
-	AppendChecksumAndTerminate(bb);
-	mMidiOut->MidiOut(bb);
+	mMidiOut->MidiOut(&mSysex_StatusDumpRequest);
 }
 
 void
@@ -1272,10 +1277,8 @@ AxeFx3Manager::RequestLooperState()
 		return;
 
 	QMutexLocker lock(&mQueryLock);
-	Bytes bb{ FRACTAL_SYSEX_HEADER_BYTES, Axe3, (byte)AxeFx3MessageIds::LooperState, 0x7f };
-	AppendChecksumAndTerminate(bb);
 	mLooperStatusRequested = true;
-	mMidiOut->MidiOut(bb);
+	mMidiOut->MidiOut(&mSysex_LooperStateRequest);
 }
 
 enum class AxeFx3LooperState
@@ -1581,7 +1584,7 @@ AxeFx3Manager::RequestProgramChange(int offset)
 
 	{
 		QMutexLocker lock(&mQueryLock);
-		mMidiOut->MidiOut(cmd);
+		mMidiOut->MidiOut(&cmd); // not sysex, no buffer management required
 	}
 
 	SyncNameAndEffectsFromAxe();
@@ -1619,16 +1622,19 @@ AxeFx3Manager::RequestSceneChange(int offset)
 		nextScene = AxeScenes - 1; // reverse wraparound
 	else if (nextScene >= AxeScenes)
 		nextScene = 0; // wraparound
-	const Bytes cmd{ GetSceneSelectCommandString(nextScene + 1) };
-	if (!cmd.empty())
+	const Bytes *cmd = new Bytes{ GetSceneSelectCommandString(nextScene + 1) };
+	if (!cmd->empty())
 	{
 		{
 			QMutexLocker lock(&mQueryLock);
-			mMidiOut->MidiOut(cmd);
+			mMidiOut->MidiOut(cmd, true, true);
+			cmd = nullptr;
 		}
 
 		SyncNameAndEffectsFromAxe();
 	}
+	else
+		delete cmd;
 }
 
 void

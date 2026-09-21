@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2013,2018,2020,2022 Sean Echevarria
+ * Copyright (C) 2007-2008,2013,2018,2020,2022,2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -50,7 +50,7 @@ public:
 	virtual void EnableActivityIndicator(bool enable) = 0;
 	virtual bool OpenMidiOut(unsigned int deviceIdx) = 0;
 	virtual bool IsMidiOutOpen() const = 0;
-	virtual bool MidiOut(const Bytes & bytes, bool useIndicator = true) = 0;
+	virtual bool MidiOut(const Bytes *bytes, bool useIndicator = true, bool deleteBytesAfterUse = false) = 0;
 	virtual void MidiOut(byte singleByte, bool useIndicator = true) = 0;
 	virtual void MidiOut(byte byte1, byte byte2, bool useIndicator = true) = 0;
 	virtual void MidiOut(byte byte1, byte byte2, byte byte3, bool useIndicator = true) = 0;

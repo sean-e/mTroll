@@ -180,7 +180,7 @@ WinMidiOut::OpenMidiOut(unsigned int deviceIdx)
 #define	MIDI_STOP		0xFC
 
 bool
-WinMidiOut::MidiOut(const Bytes & bytes, bool useIndicator /*= true*/)
+WinMidiOut::MidiOut(const Bytes *bytes, bool useIndicator /*= true*/, bool deleteBytesAfterUse /*= false*/)
 {
 	if (!mMidiOut)
 	{
@@ -189,7 +189,14 @@ WinMidiOut::MidiOut(const Bytes & bytes, bool useIndicator /*= true*/)
 		return false;
 	}
 
-	const size_t kDataSize = bytes.size();
+	if (!bytes)
+	{ 
+		if (mTrace)
+			mTrace->Trace("midiout was sent null bytes.\n");
+		return false;
+	}
+
+	const size_t kDataSize = bytes->size();
 	if (!kDataSize)
 		return false;
 
@@ -200,7 +207,7 @@ WinMidiOut::MidiOut(const Bytes & bytes, bool useIndicator /*= true*/)
 	static const int kMsgDataBytesLen = 23;
 	static const int kMsgDataBytes[23] = { 2, 2, 2, 2, 1, 1, 2, 0, 1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-	const byte * dataPtr = &bytes[0];
+	const byte *dataPtr = &(*bytes)[0];
 	size_t idx = 0;
 	MMRESULT res;
 	mMidiOutError = false;
@@ -235,7 +242,9 @@ WinMidiOut::MidiOut(const Bytes & bytes, bool useIndicator /*= true*/)
 				mCurMidiHdrIdx = 0;
 
 			curHdr->dwBufferLength = curMsgLen;
-			curHdr->lpData = (LPSTR)(byte*)&bytes[idx];
+			curHdr->lpData = (LPSTR)(byte*)&(*bytes)[idx];
+			if (deleteBytesAfterUse && !idx)
+				curHdr->dwUser = (DWORD_PTR)bytes;
 
 			res = ::midiOutPrepareHeader(mMidiOut, curHdr, sizeof(MIDIHDR));
 			if (MMSYSERR_NOERROR == res)
@@ -248,6 +257,9 @@ WinMidiOut::MidiOut(const Bytes & bytes, bool useIndicator /*= true*/)
 		}
 		else
 		{
+			// the bytes can contain multiple MIDI commands, process each independently even 
+			// though I later learned that the entire buffer could be sent via midiOutLongMsg though 
+			// lifetime would need to be maintained like sysex msgs
 			if ((statusByteIdx & 0xF0) < SYSEX)		// is it a channel message?
 				statusByteIdx = ((statusByteIdx & 0xF0) >> 4) - 8;
 			else		// or system message
@@ -544,6 +556,12 @@ WinMidiOut::MidiOutCallbackProc(HMIDIOUT hmo,
 		// #winmmQuestionable -- midiOutCallbackProc shouldn't call winmm APIs like midiOutUnprepareHeader due to possibility of deadlock
 		MMRESULT res = ::midiOutUnprepareHeader(_this->mMidiOut, hdr, sizeof(MIDIHDR));
 		hdr->dwFlags = 0;
+		if (hdr->dwUser)
+		{
+			Bytes *bytes = (Bytes *)hdr->dwUser;
+			hdr->dwUser = 0;
+			delete bytes;
+		}
 		if (MMSYSERR_NOERROR != res)
 			_this->ReportMidiError(L"midiOutUnprepareHeader", res, __LINE__);
 	}

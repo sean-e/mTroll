@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2009,2018,2025 Sean Echevarria
+ * Copyright (C) 2009,2018,2025-2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -55,7 +55,7 @@ public:
 		case 0:
 			break;
 		default:
-			mMidiOut->MidiOut(mCommandString);
+			mMidiOut->MidiOut(&mCommandString);
 		}
 	}
 
