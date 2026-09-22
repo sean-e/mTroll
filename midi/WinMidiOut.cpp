@@ -67,8 +67,6 @@ WinMidiOut::WinMidiOut(ITraceDisplay * trace) :
 	++gWinMidiOutCnt;
 #endif
 
-	AddMidiHeaders();
-
 	mTimerId = ::SetTimer(nullptr, mTimerId, 150, TimerProc);
 	::QueryPerformanceFrequency(&mPerfFreq);
 }
@@ -175,6 +173,9 @@ bool
 WinMidiOut::OpenMidiOut(unsigned int deviceIdx)
 {
 	_ASSERTE(!mMidiOut);
+	if (mMidiHdrs.empty())
+		AddMidiHeaders();
+
 	mDeviceIdx = deviceIdx;
 	MMRESULT res = ::midiOutOpen(&mMidiOut, deviceIdx, (DWORD_PTR)MidiOutCallbackProc, (DWORD_PTR)this, CALLBACK_FUNCTION);
 	if (MMSYSERR_NOERROR != res)
