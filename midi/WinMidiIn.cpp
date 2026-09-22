@@ -55,14 +55,19 @@ WinMidiIn::WinMidiIn(ITraceDisplay * trace) :
 
 	for (auto & midiHdr : mMidiHdrs)
 		ZeroMemory(&midiHdr, sizeof(MIDIHDR));
-	mDoneEvent = ::CreateEvent(nullptr, FALSE, FALSE, nullptr);
+
+	mEvents[EventIndexes::kDoneEvent] = ::CreateEvent(nullptr, FALSE, FALSE, nullptr);
+	mEvents[EventIndexes::kWakeEvent] = ::CreateEvent(nullptr, FALSE, FALSE, nullptr);
 }
 
 WinMidiIn::~WinMidiIn()
 {
 	CloseMidiIn();
-	if (mDoneEvent && mDoneEvent != INVALID_HANDLE_VALUE)
-		::CloseHandle(mDoneEvent);
+	for (auto &h : mEvents)
+	{
+		if (h && h != INVALID_HANDLE_VALUE)
+			::CloseHandle(h);
+	}
 
 #ifdef ITEM_COUNTING
 	--gWinMidiInCnt;
@@ -148,11 +153,14 @@ WinMidiIn::ServiceThread()
 	if (MMSYSERR_NOERROR != res)
 		ReportMidiError(L"midiInStart", res, __LINE__);
 
-	_ASSERTE(mDoneEvent && mDoneEvent != INVALID_HANDLE_VALUE);
+	_ASSERTE(mEvents[EventIndexes::kDoneEvent] && mEvents[EventIndexes::kDoneEvent] != INVALID_HANDLE_VALUE);
+	_ASSERTE(mEvents[EventIndexes::kWakeEvent] && mEvents[EventIndexes::kWakeEvent] != INVALID_HANDLE_VALUE);
 	for (;;)
 	{
 		DWORD result;
 		MSG msg;
+
+		ClearFinishedHeaders();
 
 		// Read all of the messages in this next loop, 
 		// removing each message as we read it.
@@ -168,10 +176,10 @@ WinMidiIn::ServiceThread()
 
 		// Wait for any message sent or posted to this queue 
 		// or for one of the passed handles be set to signaled.
-		result = ::MsgWaitForMultipleObjects(1, &mDoneEvent, FALSE, INFINITE, QS_ALLINPUT);
+		result = ::MsgWaitForMultipleObjects(EventIndexes::kEventCount, mEvents, FALSE, INFINITE, QS_ALLINPUT);
 
 		// The result tells us the type of event we have.
-		if (result == (WAIT_OBJECT_0 + 1))
+		if ((WAIT_OBJECT_0 + EventIndexes::kEventCount) == result)
 		{
 			// New messages have arrived. 
 			// Continue to the top of the always while loop to 
@@ -180,8 +188,10 @@ WinMidiIn::ServiceThread()
 		}
 		else if (WAIT_TIMEOUT == result)
 			continue;
-		else if (WAIT_OBJECT_0 == result)
+		else if ((WAIT_OBJECT_0 + EventIndexes::kDoneEvent) == result)
 			break; // done event fired
+		else if ((WAIT_OBJECT_0 + EventIndexes::kWakeEvent) == result)
+			continue; // wake event fired
 		else
 			break; // ??
 	}
@@ -239,7 +249,6 @@ WinMidiIn::MidiInCallbackProc(HMIDIIN hmi,
 							  DWORD_PTR dwParam1, 
 							  DWORD_PTR dwParam2)
 {
-	MMRESULT res;
 	LPMIDIHDR hdr;
 	WinMidiIn * _this = (WinMidiIn *) dwInstance;
 	if (_this->mThreadState == tsEnding)
@@ -274,29 +283,61 @@ WinMidiIn::MidiInCallbackProc(HMIDIIN hmi,
 			for (MidiInSubscribers::const_iterator it = _this->mInputSubscribers.begin();
 				it != _this->mInputSubscribers.end(); ++it)
 			{
-				// #winmmQuestionable -- midiInCallbackProc shouldn't call winmm APIs due to possibility of deadlock in ReceivedSysex implementers (see https://github.com/juce-framework/JUCE/issues/1728 item 2 which states that midiOutShortMsg and midiOutLongMsg ARE safe to call from here)
-				// midiInCallbackProc could copy sysex data and process after the callback or in a worker thread
+				// midiInCallbackProc shouldn't call winmm APIs due to possibility of deadlock 
+				// ReceivedSysex implementers need to be more thoroughly audited
+				// (see https://github.com/juce-framework/JUCE/issues/1728 item 2 which states that midiOutShortMsg and midiOutLongMsg ARE safe to call from here)
+				// we could copy sysex data and process after the callback interrupt in the midiIn service thread
 				if (*it)
 					(*it)->ReceivedSysex((byte*)hdr->lpData, (int)hdr->dwBytesRecorded);
 			}
 		}
 
-		// #winmmQuestionable -- midiInCallbackProc shouldn't call winmm APIs like midiInAddBuffer due to possibility of deadlock (see https://github.com/juce-framework/JUCE/issues/1728 item 2)
-		// maybe ok here since we have: a dedicated non-ui thread for processing midi input, and large header pool?
-		// midiInCallbackProc could save hdr and process after the callback or in a worker thread
-		res = ::midiInAddBuffer(_this->mMidiIn, hdr, sizeof(MIDIHDR));
-		if (MMSYSERR_NOERROR != res)
-			_this->ReportMidiError(L"midiInAddBuffer", res, __LINE__);
+		// midiInCallbackProc shouldn't call winmm APIs like midiInAddBuffer due to possibility of deadlock 
+		// see https://github.com/juce-framework/JUCE/issues/1728 item 2
+		// https://learn.microsoft.com/en-us/previous-versions/ms711612(v=vs.85)
+		_this->QueueFinishedHeader(hdr);
 		break;
 	case MIM_LONGERROR:
-		hdr = (LPMIDIHDR) dwParam1;
-		// #winmmQuestionable -- midiInCallbackProc shouldn't call winmm APIs like midiInAddBuffer due to possibility of deadlock (see https://github.com/juce-framework/JUCE/issues/1728 item 2)
-		// maybe ok here since we have: a dedicated non-ui thread for processing midi input, and large header pool?
-		// midiInCallbackProc could save hdr and process after the callback or in a worker thread
-		res = ::midiInAddBuffer(_this->mMidiIn, hdr, sizeof(MIDIHDR));
-		if (MMSYSERR_NOERROR != res)
-			_this->ReportMidiError(L"midiInAddBuffer", res, __LINE__);
+		// midiInCallbackProc shouldn't call winmm APIs like midiInAddBuffer due to possibility of deadlock 
+		// see https://github.com/juce-framework/JUCE/issues/1728 item 2
+		// https://learn.microsoft.com/en-us/previous-versions/ms711612(v=vs.85)
+		hdr = (LPMIDIHDR)dwParam1;
+		_this->QueueFinishedHeader(hdr);
 		break;
+	}
+}
+
+void
+WinMidiIn::QueueFinishedHeader(LPMIDIHDR hdr)
+{
+	if (!hdr)
+		return;
+
+	{
+		std::lock_guard l(mFinishedMidiHrsLock);
+		mFinishedMidiHrs.push_back(hdr);
+	}
+
+	_ASSERTE(mEvents[EventIndexes::kWakeEvent]);
+	if (mEvents[EventIndexes::kWakeEvent])
+		::SetEvent(mEvents[EventIndexes::kWakeEvent]);
+}
+
+void
+WinMidiIn::ClearFinishedHeaders()
+{
+	std::vector<LPMIDIHDR> finishedHeaders;
+
+	{
+		std::lock_guard l(mFinishedMidiHrsLock);
+		finishedHeaders.swap(mFinishedMidiHrs);
+	}
+
+	for (auto &hdr : finishedHeaders)
+	{
+		MMRESULT res = ::midiInAddBuffer(mMidiIn, hdr, sizeof(MIDIHDR));
+		if (MMSYSERR_NOERROR != res)
+			ReportMidiError(L"midiInAddBuffer", res, __LINE__);
 	}
 }
 
@@ -422,9 +463,9 @@ WinMidiIn::ReleaseMidiIn()
 {
 	if (mThread)
 	{
-		_ASSERTE(mDoneEvent);
-		if (mDoneEvent)
-			::SetEvent(mDoneEvent);
+		_ASSERTE(mEvents[EventIndexes::kDoneEvent]);
+		if (mEvents[EventIndexes::kDoneEvent])
+			::SetEvent(mEvents[EventIndexes::kDoneEvent]);
 		::WaitForSingleObjectEx(mThread, 30000, FALSE);
 		_ASSERTE(mThreadState == tsNotStarted);
 		::CloseHandle(mThread);

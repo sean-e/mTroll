@@ -30,6 +30,7 @@
 #include <MMSystem.h>
 #include <tchar.h>
 #include <vector>
+#include <mutex>
 
 class ITraceDisplay;
 
@@ -55,6 +56,8 @@ private:
 	static unsigned int __stdcall ServiceThread(void * _this);
 	void ServiceThread();
 	void ReleaseMidiIn();
+	void QueueFinishedHeader(LPMIDIHDR hdr);
+	void ClearFinishedHeaders();
 	void ReportMidiError(LPCTSTR func, MMRESULT resultCode, unsigned int lineNumber);
 	void ReportError(LPCTSTR msg);
 	void ReportError(LPCTSTR msg, int param1);
@@ -66,11 +69,14 @@ private:
 
 	ITraceDisplay				* mTrace;
 	HMIDIIN						mMidiIn;
-	enum { MIDIHDR_CNT = 512 };
+	enum { MIDIHDR_CNT = 64 };
 	MIDIHDR						mMidiHdrs[MIDIHDR_CNT];
+	std::mutex					mFinishedMidiHrsLock;
+	std::vector<LPMIDIHDR>		mFinishedMidiHrs;
 	unsigned int				mDeviceIdx;
 	bool						mMidiInError;
-	HANDLE						mDoneEvent;
+	enum EventIndexes { kDoneEvent, kWakeEvent, kEventCount };
+	HANDLE						mEvents[EventIndexes::kEventCount];
 	HANDLE						mThread;
 	ThreadState					mThreadState;
 	DWORD						mThreadId;

@@ -29,6 +29,9 @@
 #include <Windows.h>
 #include <MMSystem.h>
 #include <tchar.h>
+#include <mutex>
+#include <vector>
+#include <queue>
 #include "../Engine/EngineLoader.h"
 
 class ITraceDisplay;
@@ -38,6 +41,8 @@ class WinMidiOut : public IMidiOut
 {
 public:
 	WinMidiOut(ITraceDisplay * trace);
+
+public:
 	virtual ~WinMidiOut();
 
 	// IMidiOut
@@ -69,13 +74,16 @@ private:
 	void ReportError(LPCTSTR msg, int param1);
 	void ReportError(LPCTSTR msg, int param1, int param2);
 
+	void AddMidiHeaders();
 	void MidiOut(DWORD shortMsg, bool useIndicator = true);
 	void IndicateActivity();
 	void TurnOffIndicator();
 	void ReleaseMidiOut();
+	void QueueFinishedHeader(LPMIDIHDR hdr);
+	void ClearFinishedHeaders();
+
 	static void CALLBACK TimerProc(HWND, UINT, UINT_PTR id, DWORD);
 	static void CALLBACK MidiOutCallbackProc(HMIDIOUT hmo, UINT wMsg, DWORD_PTR dwInstance, DWORD_PTR dwParam1, DWORD_PTR dwParam2);
-
 	static unsigned int __stdcall ClockThread(void* _this);
 	void ClockThread();
 
@@ -85,9 +93,9 @@ private:
 	volatile bool				mEnableActivityIndicator;
 	int							mActivityIndicatorIndex;
 	HMIDIOUT					mMidiOut;
-	enum {MIDIHDR_CNT = 128};
-	MIDIHDR						mMidiHdrs[MIDIHDR_CNT];
-	int							mCurMidiHdrIdx;
+	std::mutex					mMidiHdrsLock;
+	std::queue<LPMIDIHDR>		mMidiHdrs;
+	std::vector<LPMIDIHDR>		mFinishedMidiHrs;
 	bool						mMidiOutError;
 	UINT_PTR					mTimerId;
 	LONG						mTimerEventCount;

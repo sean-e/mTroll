@@ -56,7 +56,6 @@ WinMidiOut::WinMidiOut(ITraceDisplay * trace) :
 	mTrace(trace), 
 	mMidiOut(nullptr),
 	mMidiOutError(false),
-	mCurMidiHdrIdx(0),
 	mActivityIndicator(nullptr),
 	mActivityIndicatorIndex(0),
 	mEnableActivityIndicator(false),
@@ -68,11 +67,23 @@ WinMidiOut::WinMidiOut(ITraceDisplay * trace) :
 	++gWinMidiOutCnt;
 #endif
 
-	for (auto & midiHdr : mMidiHdrs)
-		ZeroMemory(&midiHdr, sizeof(MIDIHDR));
+	AddMidiHeaders();
 
 	mTimerId = ::SetTimer(nullptr, mTimerId, 150, TimerProc);
 	::QueryPerformanceFrequency(&mPerfFreq);
+}
+
+void
+WinMidiOut::AddMidiHeaders()
+{
+	for (int idx = 0; idx < 8; ++idx)
+	{
+		LPMIDIHDR midiHdr = new MIDIHDR;
+		ZeroMemory(midiHdr, sizeof(MIDIHDR));
+
+		std::lock_guard l(mMidiHdrsLock);
+		mMidiHdrs.push(midiHdr);
+	}
 }
 
 WinMidiOut::~WinMidiOut()
@@ -86,6 +97,16 @@ WinMidiOut::~WinMidiOut()
 	}
 
 	CloseMidiOut();
+
+	{
+		std::lock_guard l(mMidiHdrsLock);
+		while (!mMidiHdrs.empty())
+		{
+			auto it = mMidiHdrs.front();
+			delete it;
+			mMidiHdrs.pop();
+		}
+	}
 
 #ifdef ITEM_COUNTING
 	--gWinMidiOutCnt;
@@ -237,9 +258,21 @@ WinMidiOut::MidiOut(const Bytes *bytes, bool useIndicator /*= true*/, bool delet
 			}
 			while (sysexDepth && (idx + curMsgLen) < kDataSize);
 
-			LPMIDIHDR curHdr = &mMidiHdrs[mCurMidiHdrIdx++];
-			if (mCurMidiHdrIdx == MIDIHDR_CNT)
-				mCurMidiHdrIdx = 0;
+			LPMIDIHDR curHdr;
+			ClearFinishedHeaders();
+
+			{
+				std::lock_guard l(mMidiHdrsLock);
+				if (mMidiHdrs.empty())
+				{
+					mMidiHdrsLock.unlock();
+					AddMidiHeaders();
+					mMidiHdrsLock.lock();
+				}
+
+				curHdr = mMidiHdrs.front();
+				mMidiHdrs.pop();
+			}
 
 			curHdr->dwBufferLength = curMsgLen;
 			curHdr->lpData = (LPSTR)(byte*)&(*bytes)[idx];
@@ -259,7 +292,7 @@ WinMidiOut::MidiOut(const Bytes *bytes, bool useIndicator /*= true*/, bool delet
 			{
 				ReportMidiError(L"midiOutPrepareHeader or midiOutLongMsg", res, __LINE__);
 				// unprepare and potentially free bytes (see https://github.com/juce-framework/JUCE/issues/1727 )
-				MidiOutCallbackProc(mMidiOut, MOM_DONE, (DWORD_PTR)this, (DWORD_PTR)curHdr, (DWORD_PTR)nullptr);
+				QueueFinishedHeader(curHdr);
 				return false;
 			}
 		}
@@ -560,9 +593,35 @@ WinMidiOut::MidiOutCallbackProc(HMIDIOUT hmo,
 	if (MOM_DONE == wMsg)
 	{
 		WinMidiOut * _this = (WinMidiOut *) dwInstance;
-		LPMIDIHDR hdr = (LPMIDIHDR) dwParam1;
-		// #winmmQuestionable -- midiOutCallbackProc shouldn't call winmm APIs like midiOutUnprepareHeader due to possibility of deadlock
-		MMRESULT res = ::midiOutUnprepareHeader(_this->mMidiOut, hdr, sizeof(MIDIHDR));
+		// midiOutCallbackProc shouldn't call winmm APIs like midiOutUnprepareHeader due to possibility of deadlock
+		// https://learn.microsoft.com/en-us/previous-versions/ms711637(v=vs.85)
+		_this->QueueFinishedHeader((LPMIDIHDR)dwParam1);
+	}
+}
+
+void
+WinMidiOut::QueueFinishedHeader(LPMIDIHDR hdr)
+{
+	if (!hdr)
+		return;
+
+	std::lock_guard l(mMidiHdrsLock);
+	mFinishedMidiHrs.push_back(hdr);
+}
+
+void
+WinMidiOut::ClearFinishedHeaders()
+{
+	std::vector<LPMIDIHDR> finishedHeaders;
+
+	{
+		std::lock_guard l(mMidiHdrsLock);
+		finishedHeaders.swap(mFinishedMidiHrs);
+	}
+
+	for (auto &hdr : finishedHeaders)
+	{
+		MMRESULT res = ::midiOutUnprepareHeader(mMidiOut, hdr, sizeof(MIDIHDR));
 		hdr->dwFlags = 0;
 		if (hdr->dwUser)
 		{
@@ -570,8 +629,14 @@ WinMidiOut::MidiOutCallbackProc(HMIDIOUT hmo,
 			hdr->dwUser = 0;
 			delete bytes;
 		}
+
 		if (MMSYSERR_NOERROR != res)
-			_this->ReportMidiError(L"midiOutUnprepareHeader", res, __LINE__);
+			ReportMidiError(L"midiOutUnprepareHeader", res, __LINE__);
+
+		{
+			std::lock_guard l(mMidiHdrsLock);
+			mMidiHdrs.push(hdr);
+		}
 	}
 }
 
@@ -672,6 +737,8 @@ WinMidiOut::ReleaseMidiOut()
 		MMRESULT res = ::midiOutReset(mMidiOut);
 		if (MMSYSERR_NOERROR != res)
 			ReportMidiError(L"midiOutReset", res, __LINE__);
+
+		ClearFinishedHeaders();
 
 		res = ::midiOutClose(mMidiOut);
 		if (res == MMSYSERR_NOERROR)
