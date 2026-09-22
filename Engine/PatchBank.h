@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010,2012-2015,2018,2024-2025 Sean Echevarria
+ * Copyright (C) 2007-2008,2010,2012-2015,2018,2024-2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -75,12 +75,13 @@ public:
 	{
 		sfoNone,			// no secondary function
 
-		// secondFunction="manual|auto|autoOn|autoOff|immediateToggle"
+		// secondFunction="manual|auto|autoOn|autoOff|immediateToggle|inherit"
 		sfoManual,			// long-press simply changes switch display; default
 		sfoAutoEnable,		// long-press changes switch display and presses switch to enable
 		sfoAutoDisable,		// long-press changes switch display; user must press again to enable; press to disable also does 'long-press' to toggle back
 		sfoAuto,			// long-press changes switch display and presses switch to enable; press to disable also does 'long-press' to toggle back
-		sfoStatelessToggle	// long-press activates second (presses switch of second), reverts back to primary
+		sfoStatelessToggle,	// long-press activates second (presses switch of second), reverts back to primary
+		sfoInherit			// secondary function of stacked patch on switch follows definition of first secondary patch // also supports: secondFunction=""
 	};
 
 	// creation/init

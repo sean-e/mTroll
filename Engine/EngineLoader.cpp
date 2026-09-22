@@ -2400,9 +2400,20 @@ EngineLoader::LoadBanks(TiXmlElement * pElem)
 				}
 
 				tmp.clear();
-				childElem->QueryValueAttribute("secondFunction", &tmp);
-				const PatchBank::SwitchFunctionAssignment swFunc = (tmp.length()) ? PatchBank::ssSecondary : PatchBank::ssPrimary;
-				const PatchBank::SecondFunctionOperation sfoOp = ::GetSecondFuncOp(tmp);
+				PatchBank::SwitchFunctionAssignment swFunc = PatchBank::ssPrimary;
+				PatchBank::SecondFunctionOperation sfoOp = PatchBank::sfoNone;
+				if (childElem->Attribute("secondFunction"))
+				{
+					swFunc = PatchBank::ssSecondary;
+					childElem->QueryValueAttribute("secondFunction", &tmp);
+
+					sfoOp = ::GetSecondFuncOp(tmp);
+					if (PatchBank::sfoNone == sfoOp)
+					{
+						if (mTraceDisplay)
+							mTraceDisplay->Trace(std::format("Error loading config file: secondaryFunction unhandled value `{}`\n", tmp));
+					}
+				}
 
 				tmp.clear();
 				childElem->QueryValueAttribute("loadState", &tmp);
@@ -3101,7 +3112,7 @@ GetSyncState(const std::string & syncState)
 PatchBank::SecondFunctionOperation
 GetSecondFuncOp(const std::string & secFuncOp)
 {
-	// secondFunction="manual|auto|autoOn|autoOff"
+	// secondFunction="manual|auto|autoOn|autoOff|inherit"
 	if (secFuncOp == "manual")
 		return PatchBank::sfoManual;
 	else if (secFuncOp == "auto")
@@ -3112,8 +3123,10 @@ GetSecondFuncOp(const std::string & secFuncOp)
 		return PatchBank::sfoAutoDisable;
 	else if (secFuncOp == "immediateToggle")
 		return PatchBank::sfoStatelessToggle;
+	else if (secFuncOp == "" || secFuncOp == "inherit")
+		return PatchBank::sfoInherit;
 	else
-		return PatchBank::sfoManual;
+		return PatchBank::sfoNone;
 }
 
 void

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2007-2008,2010-2016,2018,2021,2024-2025 Sean Echevarria
+ * Copyright (C) 2007-2008,2010-2016,2018,2021,2024-2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -76,9 +76,18 @@ PatchBank::AddSwitchAssignment(int switchNumber,
 	if (ssSecondary == st)
 	{
 		if (!SwitchHasSecondaryLogic(switchNumber))
-			mPatches[switchNumber].mSfOp = sfoOp; // first secondary patch sets the op for all secondary patches
+		{
+			if (sfoInherit == sfoOp || sfoNone == sfoOp)
+			{
+				_ASSERTE(!"unspecified secondary operation of initial secondary patch -- setting to auto");
+				sfoOp = sfoAuto;
+			}
 
-		_ASSERTE(mPatches[switchNumber].mSfOp == sfoOp);
+			// first secondary patch sets the op for all secondary patches
+			mPatches[switchNumber].mSfOp = sfoOp; 
+		}
+
+		_ASSERTE(mPatches[switchNumber].mSfOp == sfoOp || sfoInherit == sfoOp);
 	}
 }
 
