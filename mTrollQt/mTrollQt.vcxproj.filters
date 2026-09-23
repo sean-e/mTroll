@@ -159,9 +159,6 @@
     <ClCompile Include="..\midi\SleepShort.cpp">
       <Filter>midi</Filter>
     </ClCompile>
-    <ClCompile Include="..\winUtil\WinDark.cpp">
-      <Filter>winUtils</Filter>
-    </ClCompile>
     <ClCompile Include="..\Engine\ControllerInputMonitor.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
@@ -344,9 +341,6 @@
     <ClInclude Include="..\midi\SleepShort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\winUtil\WinDark.h">
-      <Filter>winUtils</Filter>
-    </ClInclude>
     <ClInclude Include="..\Engine\RepeatingTogglePatch.h">
       <Filter>Engine</Filter>
     </ClInclude>
@@ -388,6 +382,9 @@
     </ClInclude>
     <ClInclude Include="..\Engine\CrossPlatform.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\IMidiInSysexSubscriber.h">
+      <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

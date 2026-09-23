@@ -315,7 +315,6 @@
     <ClCompile Include="..\Engine\PersistentPedalOverridePatch.cpp" />
     <ClCompile Include="..\Engine\TwoStatePatch.cpp" />
     <ClCompile Include="..\midi\SleepShort.cpp" />
-    <ClCompile Include="..\winUtil\WinDark.cpp" />
     <ClCompile Include="AboutDlg.cpp" />
     <ClCompile Include="BuildDate.cpp" />
     <ClCompile Include="ControlUi.cpp" />
@@ -431,6 +430,7 @@
     <ClInclude Include="..\Engine\EdpIds.h" />
     <ClInclude Include="..\Engine\EdpManager.h" />
     <ClInclude Include="..\Engine\IAxeFx.h" />
+    <ClInclude Include="..\Engine\IMidiInSysexSubscriber.h" />
     <ClInclude Include="..\Engine\MetaPatch_ResetPatch.h" />
     <ClInclude Include="..\Engine\MetaPatch_ResetExclusiveGroup.h" />
     <ClInclude Include="..\Engine\PersistentPedalOverridePatch.h" />
@@ -441,7 +441,6 @@
     <ClInclude Include="..\Engine\SimpleProgramChangePatch.h" />
     <ClInclude Include="..\Engine\SleepRandomCommand.h" />
     <ClInclude Include="..\midi\SleepShort.h" />
-    <ClInclude Include="..\winUtil\WinDark.h" />
     <ClInclude Include="AboutDlg.h" />
     <CustomBuild Include="ControlUi.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MOC ControlUi.h</Message>
