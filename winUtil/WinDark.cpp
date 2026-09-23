@@ -60,6 +60,33 @@ namespace WinDark
 	using fnSetPreferredAppMode = PreferredAppMode(WINAPI *)(PreferredAppMode appMode);
 	using fnSetWindowCompositionAttribute = BOOL(WINAPI *)(HWND hwnd, WINDOWCOMPOSITIONATTRIBDATA *);
 
+	void SetImmersiveDarkMode(HWND hwnd, BOOL dark)
+	{
+		// Standard attribute ID for Windows 11 and late Windows 10 (Build 22000+)
+#ifndef DWMWA_USE_IMMERSIVE_DARK_MODE
+#define DWMWA_USE_IMMERSIVE_DARK_MODE 20
+#endif
+
+// Legacy attribute ID for older Windows 10 builds (Build 18985 to 19044)
+#ifndef DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_V21H2
+#define DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_V21H2 19
+#endif
+
+		HMODULE hDwm = GetModuleHandleW(L"Dwmapi.dll");
+		using fnDwmSetWindowAttribute = HRESULT(WINAPI*)(HWND hwnd, DWORD dwAttribute, _In_reads_bytes_(cbAttribute) LPCVOID pvAttribute, DWORD cbAttribute);
+		fnDwmSetWindowAttribute dwmSetWindowAttribute = reinterpret_cast<fnDwmSetWindowAttribute>(GetProcAddress(hDwm, "DwmSetWindowAttribute"));
+		if (!dwmSetWindowAttribute)
+			return;
+
+		// 1. Try setting the modern Windows 11/10 attribute ID
+		HRESULT hr = dwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &dark, sizeof(dark));
+
+		// 2. If it fails, fallback to the legacy Windows 10 attribute ID
+		if (FAILED(hr)) {
+			dwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_V21H2, &dark, sizeof(dark));
+		}
+	}
+
 	void setDarkTitlebar(HWND hwnd, bool enableDark)
 	{
 		HMODULE hUxtheme = LoadLibraryExW(L"uxtheme.dll", NULL, LOAD_LIBRARY_SEARCH_SYSTEM32);
@@ -86,5 +113,7 @@ namespace WinDark
 			sizeof(dark)
 		};
 		SetWindowCompositionAttribute(hwnd, &data);
+
+		SetImmersiveDarkMode(hwnd, dark);
 	}
 }
