@@ -51,6 +51,7 @@ int main(int argc, char **argv)
 #endif
 
 	QApplication app(argc, argv);
+	app.setStyle("fusion"); // https://www.qt.io/blog/dark-mode-on-windows-11-with-qt-6.5
 	MainTrollWindow mainWin;
 	app.installNativeEventFilter(&mainWin);
 	mainWin.show();
