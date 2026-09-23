@@ -25,6 +25,7 @@
 #include <atomic>
 #include "WinMidiIn.h"
 #include "../Engine/IMidiInSubscriber.h"
+#include "../Engine/IMidiInSysexSubscriber.h"
 #include "../Engine/ITraceDisplay.h"
 #include "../Engine/ISwitchDisplay.h"
 #include "../Engine/HexStringUtils.h"
@@ -280,8 +281,8 @@ WinMidiIn::MidiInCallbackProc(HMIDIIN hmi,
 		hdr = (LPMIDIHDR) dwParam1;
 		if (_this->mThreadState == tsRunning)
 		{
-			for (MidiInSubscribers::const_iterator it = _this->mInputSubscribers.begin();
-				it != _this->mInputSubscribers.end(); ++it)
+			for (MidiInSysexSubscribers::const_iterator it = _this->mInputSysexSubscribers.begin();
+				it != _this->mInputSysexSubscribers.end(); ++it)
 			{
 				// midiInCallbackProc shouldn't call winmm APIs due to possibility of deadlock 
 				// ReceivedSysex implementers need to be more thoroughly audited
@@ -345,6 +346,7 @@ void
 WinMidiIn::CloseMidiIn()
 {
 	ReleaseMidiIn();
+
 	for (auto & curItem : mInputSubscribers)
 	{
 		try
@@ -358,6 +360,20 @@ WinMidiIn::CloseMidiIn()
 		}
 	}
 	mInputSubscribers.clear();
+
+	for (auto & curItem : mInputSysexSubscribers)
+	{
+		try
+		{
+			auto _this = shared_from_this();
+			if (_this)
+				curItem->Closed(_this);
+		}
+		catch (const std::exception &)
+		{
+		}
+	}
+	mInputSysexSubscribers.clear();
 }
 
 void
@@ -437,6 +453,44 @@ WinMidiIn::Unsubscribe(IMidiInSubscriberPtr sub)
 	else
 	{
 		_ASSERTE(!"don't unsubscribe to midi in events until thread has stopped");
+	}
+}
+
+bool
+WinMidiIn::Subscribe(IMidiInSysexSubscriberPtr sub)
+{
+	if (mThreadState != tsRunning)
+	{
+		for (auto & inputSubscriber : mInputSysexSubscribers)
+		{
+			if (inputSubscriber == sub)
+				return false;
+		}
+
+		mInputSysexSubscribers.push_back(sub);
+		return true;
+	}
+	else
+	{
+		_ASSERTE(!"don't subscribe to midi in sysex events after thread has started");
+		return false;
+	}
+}
+
+void
+WinMidiIn::Unsubscribe(IMidiInSysexSubscriberPtr sub)
+{
+	if (mThreadState != tsRunning)
+	{
+		for (auto & inputSubscriber : mInputSysexSubscribers)
+		{
+			if (inputSubscriber == sub)
+				inputSubscriber = nullptr;
+		}
+	}
+	else
+	{
+		_ASSERTE(!"don't unsubscribe to midi in sysex events until thread has stopped");
 	}
 }
 

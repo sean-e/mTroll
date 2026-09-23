@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2022,2025 Sean Echevarria
+ * Copyright (C) 2022,2025-2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -68,12 +68,6 @@ ControllerInputMonitor::ReceivedData(byte b1, byte b2, byte b3)
 		return;
 
 	it->second->UpdateState(mSwitchDisplay, b3 > 0);
-}
-
-bool
-ControllerInputMonitor::ReceivedSysex(const byte * bytes, int len)
-{
-	return false;
 }
 
 void

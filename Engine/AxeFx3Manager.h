@@ -30,7 +30,7 @@
 #include <time.h>
 #include <set>
 #include <memory>
-#include "IMidiInSubscriber.h"
+#include "IMidiInSysexSubscriber.h"
 #include "AxemlLoader.h"
 #include "IAxeFx.h"
 #include "HexStringUtils.h"
@@ -56,7 +56,7 @@ using Axe3EffectBlocks = std::vector<Axe3EffectBlockInfo>;
 //
 class AxeFx3Manager :
 	public QObject,
-	public IMidiInSubscriber,
+	public IMidiInSysexSubscriber,
 	public IAxeFx
 {
 	Q_OBJECT;
@@ -65,8 +65,7 @@ public:
 	AxeFx3Manager(IMainDisplay * mainDisp, ISwitchDisplay * switchDisp, ITraceDisplay * pTrace, const std::string & appPath, int ch, AxeFxModel m);
 	virtual ~AxeFx3Manager();
 
-	// IMidiInSubscriber
-	virtual void ReceivedData(byte b1, byte b2, byte b3) override;
+	// IMidiInSysexSubscriber
 	virtual bool ReceivedSysex(const byte * bytes, int len) override;
 	virtual void Closed(IMidiInPtr midIn) override;
 
@@ -107,11 +106,11 @@ public slots:
 	void PollingSyncTimerFired();
 
 private:
-	// basically an overload of IMidiInSubscriber::shared_from_this() but returning 
-	// AxeFx3ManagerPtr instead of IMidiInSubscriberPtr
+	// basically an overload of IMidiInSysexSubscriber::shared_from_this() but returning 
+	// AxeFx3ManagerPtr instead of IMidiInSysexSubscriberPtr
 	AxeFx3ManagerPtr GetSharedThis()
 	{
-		return std::dynamic_pointer_cast<AxeFx3Manager>(IMidiInSubscriber::shared_from_this());
+		return std::dynamic_pointer_cast<AxeFx3Manager>(IMidiInSysexSubscriber::shared_from_this());
 	}
 
 	void LoadEffectPool();

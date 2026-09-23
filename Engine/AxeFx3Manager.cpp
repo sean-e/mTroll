@@ -357,16 +357,6 @@ AxeFx3Manager::Closed(IMidiInPtr midIn)
 	midIn->Unsubscribe(shared_from_this());
 }
 
-void
-AxeFx3Manager::ReceivedData(byte b1, byte b2, byte b3)
-{
-// 	if (mTrace)
-// 	{
-// 		const std::string msg(::GetAsciiHexStr((byte*)&dwParam1, 4, true) + "\n");
-// 		mTrace->Trace(msg);
-// 	}
-}
-
 bool
 IsAxeFx3Sysex(const byte * bytes, const int len)
 {

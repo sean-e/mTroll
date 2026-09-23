@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2022 Sean Echevarria
+ * Copyright (C) 2022,2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -52,7 +52,6 @@ public:
 
 	// IMidiInSubscriber
 	void ReceivedData(byte b1, byte b2, byte b3) override;
-	bool ReceivedSysex(const byte * bytes, int len) override;
 	void Closed(IMidiInPtr midIn) override;
 
 private:

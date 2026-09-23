@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2021-2023,2025 Sean Echevarria
+ * Copyright (C) 2021-2023,2025-2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -56,16 +56,6 @@ EdpManager::SubscribeToMidiIn(IMidiInPtr midiIn, int deviceIdx)
 	const std::string name(midiIn->GetMidiInDeviceName(deviceIdx));
 	if (-1 != name.find("U2MIDI"))
 		mHackForCmeInterface = true;
-}
-
-void
-EdpManager::ReceivedData(byte b1, byte b2, byte b3)
-{
-// 	if (mTrace)
-// 	{
-// 		const std::string msg(::GetAsciiHexStr((byte*)&dwParam1, 4, true) + "\n");
-// 		mTrace->Trace(msg);
-// 	}
 }
 
 bool

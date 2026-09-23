@@ -48,6 +48,8 @@ public:
 	virtual bool IsMidiInOpen() const override {return mMidiIn != nullptr;}
 	virtual bool Subscribe(IMidiInSubscriberPtr sub) override;
 	virtual void Unsubscribe(IMidiInSubscriberPtr sub) override;
+	virtual bool Subscribe(IMidiInSysexSubscriberPtr sub) override;
+	virtual void Unsubscribe(IMidiInSysexSubscriberPtr sub) override;
 	virtual bool SuspendMidiIn() override;
 	virtual bool ResumeMidiIn() override;
 	virtual void CloseMidiIn() override;
@@ -82,6 +84,8 @@ private:
 	DWORD						mThreadId;
 	using MidiInSubscribers = std::vector<IMidiInSubscriberPtr>;
 	MidiInSubscribers			mInputSubscribers;
+	using MidiInSysexSubscribers = std::vector<IMidiInSysexSubscriberPtr>;
+	MidiInSysexSubscribers		mInputSysexSubscribers;
 };
 
 #endif // WinMidiIn_h__

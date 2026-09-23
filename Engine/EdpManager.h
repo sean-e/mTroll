@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2021,2023 Sean Echevarria
+ * Copyright (C) 2021,2023,2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -26,7 +26,7 @@
 #define EdpManager_h__
 
 #include <memory>
-#include "IMidiInSubscriber.h"
+#include "IMidiInSysexSubscriber.h"
 #include "HexStringUtils.h"
 
 class IMainDisplay;
@@ -41,7 +41,7 @@ using EdpManagerPtr = std::shared_ptr<EdpManager>;
 // Manages extended Echoplex Digital Pro support
 //
 class EdpManager :
-	public IMidiInSubscriber
+	public IMidiInSysexSubscriber
 {
 public:
 	EdpManager(IMainDisplay * mainDisp, ISwitchDisplay * switchDisp, ITraceDisplay * pTrace);
@@ -59,8 +59,7 @@ public:
 		return { 0xF0, 0x00, 0x01, 0x30, 0x0B, 0x01, 0x01, 0x12, 0x00, 0x13, 0x00, 0xF7 };
 	}
 
-	// IMidiInSubscriber
-	void ReceivedData(byte b1, byte b2, byte b3) override;
+	// IMidiInSysexSubscriber
 	bool ReceivedSysex(const byte * bytes, int len) override;
 	void Closed(IMidiInPtr midIn) override;
 

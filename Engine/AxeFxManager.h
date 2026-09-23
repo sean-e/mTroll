@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010-2014,2018,2020-2021,2025 Sean Echevarria
+ * Copyright (C) 2010-2014,2018,2020-2021,2025-2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -30,7 +30,7 @@
 #include <time.h>
 #include <set>
 #include <memory>
-#include "IMidiInSubscriber.h"
+#include "IMidiInSysexSubscriber.h"
 #include "AxemlLoader.h"
 #include "IAxeFx.h"
 
@@ -52,7 +52,7 @@ using IMidiOutPtr = std::shared_ptr<IMidiOut>;
 //
 class AxeFxManager : 
 	public QObject, 
-	public IMidiInSubscriber,
+	public IMidiInSysexSubscriber,
 	public IAxeFx
 {
 	Q_OBJECT;
@@ -61,8 +61,7 @@ public:
 	AxeFxManager(IMainDisplay * mainDisp, ISwitchDisplay * switchDisp, ITraceDisplay * pTrace, const std::string & appPath, int ch, AxeFxModel m);
 	virtual ~AxeFxManager();
 
-	// IMidiInSubscriber
-	virtual void ReceivedData(byte b1, byte b2, byte b3) override;
+	// IMidiInSysexSubscriber
 	virtual bool ReceivedSysex(const byte * bytes, int len) override;
 	virtual void Closed(IMidiInPtr midIn) override;
 
@@ -99,11 +98,11 @@ public slots:
 	void SyncEffectsFromAxe();
 
 private:
-	// basically an overload of IMidiInSubscriber::shared_from_this() but returning 
-	// AxeFxManagerPtr instead of IMidiInSubscriberPtr
+	// basically an overload of IMidiInSysexSubscriber::shared_from_this() but returning 
+	// AxeFxManagerPtr instead of IMidiInSysexSubscriberPtr
 	AxeFxManagerPtr GetSharedThis()
 	{
-		return std::dynamic_pointer_cast<AxeFxManager>(IMidiInSubscriber::shared_from_this());
+		return std::dynamic_pointer_cast<AxeFxManager>(IMidiInSysexSubscriber::shared_from_this());
 	}
 
 	AxeEffectBlockInfo * IdentifyBlockInfoUsingBypassId(const byte * bytes);

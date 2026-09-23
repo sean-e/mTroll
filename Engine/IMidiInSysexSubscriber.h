@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010,2018,2021,2025-2026 Sean Echevarria
+ * Copyright (C) 2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -22,8 +22,8 @@
  * Contact Sean: "fester" at the domain of the original project site
  */
 
-#ifndef IMidiInSubscriber_h__
-#define IMidiInSubscriber_h__
+#ifndef IMidiInSysexSubscriber_h__
+#define IMidiInSysexSubscriber_h__
 
 #include <memory>
 
@@ -32,19 +32,19 @@ class IMidiIn;
 
 using IMidiInPtr = std::shared_ptr<IMidiIn>;
 
-// IMidiInSubscriber
+// IMidiInSysexSubscriber
 // ----------------------------------------------------------------------------
-// Implement to get notification of MIDI IN events
+// Implement to get notification of MIDI IN sysex events
 //
-class IMidiInSubscriber : public std::enable_shared_from_this<IMidiInSubscriber>
+class IMidiInSysexSubscriber : public std::enable_shared_from_this<IMidiInSysexSubscriber>
 {
 public:
-	virtual ~IMidiInSubscriber() = default;
+	virtual ~IMidiInSysexSubscriber() = default;
 
-	virtual void ReceivedData(byte b1, byte b2, byte b3) = 0;
+	virtual bool ReceivedSysex(const byte * bytes, int len) = 0;
 	virtual void Closed(IMidiInPtr midIn) = 0;
 };
 
-using IMidiInSubscriberPtr = std::shared_ptr<IMidiInSubscriber>;
+using IMidiInSysexSubscriberPtr = std::shared_ptr<IMidiInSysexSubscriber>;
 
-#endif // IMidiInSubscriber_h__
+#endif // IMidiInSysexSubscriber_h__

@@ -1,6 +1,6 @@
 /*
  * mTroll MIDI Controller
- * Copyright (C) 2010,2013,2018 Sean Echevarria
+ * Copyright (C) 2010,2013,2018,2026 Sean Echevarria
  *
  * This file is part of mTroll.
  *
@@ -30,8 +30,10 @@
 
 using byte = unsigned char;
 class IMidiInSubscriber;
+class IMidiInSysexSubscriber;
 
 using IMidiInSubscriberPtr = std::shared_ptr<IMidiInSubscriber>;
+using IMidiInSysexSubscriberPtr = std::shared_ptr<IMidiInSysexSubscriber>;
 
 
 // IMidiIn
@@ -49,6 +51,8 @@ public:
 	virtual bool IsMidiInOpen() const = 0;
 	virtual bool Subscribe(IMidiInSubscriberPtr sub) = 0;
 	virtual void Unsubscribe(IMidiInSubscriberPtr sub) = 0;
+	virtual bool Subscribe(IMidiInSysexSubscriberPtr sub) = 0;
+	virtual void Unsubscribe(IMidiInSysexSubscriberPtr sub) = 0;
 	virtual bool SuspendMidiIn() = 0;
 	virtual bool ResumeMidiIn() = 0;
 	virtual void CloseMidiIn() = 0;
