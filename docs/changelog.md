@@ -1,7 +1,10 @@
 ### mTroll MIDI controller changelog / process milestones
 
-#### 2026.07.xx
-- Debounce unintended press+release of button (where unintended is defined as a press of a button that occurs within 50ms of a preceding release of that button). [#61](../../../issues/61)
+#### 2026.09.23
+- Debounce unintended press+release of button (where unintended is defined as a press of a button that occurs within 30ms of a preceding release of that button). [#61](../../../issues/61)
+- Prevent audio device add/remove change status messages (leaving only MIDI device change status messages)
+- Improved dark mode support on Windows 10
+- Updated MIDI i/o implementation
 
 #### 2026.05.19
 - Support for updated firmware in which LED pixel layout is defined at runtime rather than hardcoded in firmware
